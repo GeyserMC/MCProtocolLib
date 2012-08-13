@@ -209,6 +209,10 @@ public class Client extends Connection {
 		this.key = key;
 	}
 	
+	public boolean isConnected() {
+		return this.connected;
+	}
+	
 	private class ListenThread extends Thread {
 		@Override
 		public void run() {

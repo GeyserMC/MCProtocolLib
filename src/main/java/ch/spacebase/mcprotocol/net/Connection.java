@@ -38,4 +38,6 @@ public abstract class Connection {
 	
 	public abstract void send(Packet packet);
 	
+	public abstract boolean isConnected();
+	
 }
