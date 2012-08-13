@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ch.spacebase</groupId>
+	<artifactId>mc-protocol-lib</artifactId>
+	<version>dev-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>mc-protocol-lib</name>
+	<description>A library for communicating with a Minecraft client or server.</description>
+	<url>http://github.com/Steveice10/mc-protocol-lib/</url>
+
+	<licenses>
+		<license>
+			<name>MIT</name>
+			<url>http://www.opensource.org/licenses/mit-license.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+    		<connection>scm:git:git@github.com:Steveice10/mc-protocol-lib.git</connection>
+		<developerConnection>scm:git:git@github.com:Steveice10/mc-protocol-lib.git</developerConnection>
+		<url>git@github.com:Steveice10/mc-protocol-lib/</url>
+	</scm>
+
+       <distributionManagement>        
+                <repository>            
+                        <id>dropbox</id>                        
+                        <url>file:///home/steven/Dropbox/Public/maven</url>                      
+                </repository>           
+        </distributionManagement>
+
+  	<developers>
+    		<developer>
+      			<id>steveice10</id>
+      			<name>Steveice10</name>
+      			<email>Steveice10@gmail.com</email>
+    		</developer>
+  	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!--  Dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.47</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<defaultGoal>clean install</defaultGoal>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+			</plugin>
+			<!-- JAR creation plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+			</plugin>
+			<!-- JAR dependency addition plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
