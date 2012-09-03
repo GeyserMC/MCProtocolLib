@@ -74,7 +74,11 @@ public class Server {
 				try {
 					Socket client = this.sock.accept();
 					connections.add(new ServerConnection(Server.this, client).connect());
-				} catch(IOException | ConnectException e) {
+				} catch(IOException e) {
+					Util.logger().severe("Failed to accept connection from client!");
+					e.printStackTrace();
+					continue;
+				} catch(ConnectException e) {
 					Util.logger().severe("Failed to accept connection from client!");
 					e.printStackTrace();
 					continue;
