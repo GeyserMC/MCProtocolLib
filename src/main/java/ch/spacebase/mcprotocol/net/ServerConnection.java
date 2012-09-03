@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.crypto.SecretKey;
@@ -23,6 +24,7 @@ import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
 import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.net.packet.Packet;
 import ch.spacebase.mcprotocol.net.packet.PacketDisconnect;
+import ch.spacebase.mcprotocol.net.packet.PacketKeepAlive;
 import ch.spacebase.mcprotocol.util.Util;
 
 public class ServerConnection extends Connection {
@@ -39,6 +41,9 @@ public class ServerConnection extends Connection {
 	private Server server;
 	private SecretKey key;
 	
+	private int aliveId;
+	private long aliveTime = System.currentTimeMillis();
+	
 	private String loginKey;
 	private byte token[];
 	
@@ -49,14 +54,13 @@ public class ServerConnection extends Connection {
 	}
 	
 	public ServerConnection connect() throws ConnectException {
-		Util.logger().info("Connecting to \"" + this.host + ":" + this.port + "\"...");
-		
 		try {
 			this.input = new DataInputStream(this.sock.getInputStream());
 			this.output = new DataOutputStream(this.sock.getOutputStream());
 			this.connected = true;
 			new ListenThread().start();
 			new WriteThread().start();
+			new KeepAliveThread().start();
 		} catch(UnknownHostException e) {
 			throw new ConnectException("Unknown host: " + this.host);
 		} catch(IOException e) {
@@ -174,6 +178,21 @@ public class ServerConnection extends Connection {
 						e.printStackTrace();
 						disconnect("Error while writing packet.");
 					}
+				}
+			}
+		}
+	}
+	
+	private class KeepAliveThread extends Thread {
+		private final Random rand = new Random();
+		
+		@Override
+		public void run() {
+			while(connected) {
+				if(System.currentTimeMillis() - aliveTime > 1000) {
+					aliveTime = System.currentTimeMillis();
+					aliveId = rand.nextInt();
+					send(new PacketKeepAlive(aliveId));
 				}
 			}
 		}

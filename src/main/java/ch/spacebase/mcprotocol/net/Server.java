@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.util.Util;
 
 public class Server {
@@ -45,7 +46,7 @@ public class Server {
 	}
 	
 	public void shutdown() {
-		for(ServerConnection conn : connections) {
+		for(ServerConnection conn : this.connections) {
 			conn.disconnect("The server is shutting down!");
 		}
 		
@@ -72,8 +73,8 @@ public class Server {
 			while(online) {
 				try {
 					Socket client = this.sock.accept();
-					connections.add(new ServerConnection(Server.this, client));
-				} catch (IOException e) {
+					connections.add(new ServerConnection(Server.this, client).connect());
+				} catch(IOException | ConnectException e) {
 					Util.logger().severe("Failed to accept connection from client!");
 					e.printStackTrace();
 					continue;
