@@ -57,8 +57,7 @@ public class Client extends Connection {
 	/**
 	 * Assigns username without logging into minecraft.net. Use this login method
 	 * together with the Bukkit server online-mode=false in server.properties.
-	 * 
-	 * @param username pick one
+	 * @param username The username to assign.
 	 */
 	public void setUser(String username) {
 		this.username = username;
