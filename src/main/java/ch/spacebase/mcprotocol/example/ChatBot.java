@@ -13,8 +13,8 @@ import ch.spacebase.mcprotocol.net.packet.PacketChat;
 import ch.spacebase.mcprotocol.net.packet.PacketPlayerPositionLook;
 
 /**
- * A simple bot that prints "Hello, this is Heisenberg at <coordinates>".
- * Be sure to use the Bukkit server setting online-mode-false in server.properties.
+ * A simple bot that prints "Hello, this is Heisenberg at coordinate <coordinate>".
+ * Be sure to use the Bukkit server setting online-mode=false in server.properties.
  * Otherwise supply a valid minecraft.net username and password.
  */
 public class ChatBot {
