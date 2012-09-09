@@ -8,6 +8,10 @@
 
 mc-protocol-lib is a simple library for communicating with a Minecraft client/server. It aims to allow people to make custom bots, clients, or servers for Minecraft easily.
 
+<b>Chat Example</b>
+
+See ch.spacebase.mcprotocol.example.ChatBot
+
 
 <b>Building the Source</b>
 --------
