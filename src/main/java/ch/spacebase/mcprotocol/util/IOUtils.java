@@ -7,9 +7,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.spacebase.mcprotocol.data.Coordinates;
-import ch.spacebase.mcprotocol.data.ItemStack;
-import ch.spacebase.mcprotocol.data.WatchableObject;
+import ch.spacebase.mcprotocol.standard.data.Coordinates;
+import ch.spacebase.mcprotocol.standard.data.ItemStack;
+import ch.spacebase.mcprotocol.standard.data.WatchableObject;
 
 /**
  * Contains several {@link DataInputStream}-related utility methods.

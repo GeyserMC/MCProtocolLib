@@ -1,6 +1,6 @@
 package ch.spacebase.mcprotocol.event;
 
-import ch.spacebase.mcprotocol.net.packet.Packet;
+import ch.spacebase.mcprotocol.packet.Packet;
 
 public class PacketRecieveEvent extends ProtocolEvent {
 

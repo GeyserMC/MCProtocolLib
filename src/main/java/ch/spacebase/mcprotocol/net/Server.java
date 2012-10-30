@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.util.Util;
 
 public class Server {
@@ -21,10 +20,12 @@ public class Server {
 	private List<ServerConnection> connections = new CopyOnWriteArrayList<ServerConnection>();
 	private KeyPair keys;
 	private boolean verify;
+	private Class<? extends Protocol> protocol;
 	
-	public Server(int port, boolean verifyUsers) {
+	public Server(Class<? extends Protocol> prot, int port, boolean verifyUsers) {
 		this.port = port;
 		this.verify = verifyUsers;
+		this.protocol = prot;
 		
 		try {
 			KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
@@ -73,12 +74,13 @@ public class Server {
 			while(online) {
 				try {
 					Socket client = this.sock.accept();
-					connections.add(new ServerConnection(Server.this, client).connect());
+					try {
+						connections.add(new ServerConnection(Server.this.protocol.getDeclaredConstructor().newInstance(), Server.this, client).connect());
+					} catch (Exception e) {
+						Util.logger().severe("Failed to create server connection!");
+						e.printStackTrace();
+					}
 				} catch(IOException e) {
-					Util.logger().severe("Failed to accept connection from client!");
-					e.printStackTrace();
-					continue;
-				} catch(ConnectException e) {
 					Util.logger().severe("Failed to accept connection from client!");
 					e.printStackTrace();
 					continue;
