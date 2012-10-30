@@ -5,6 +5,6 @@ public class Constants {
 	public static final int LAUNCHER_VERSION = 13;
 	public static final byte STANDARD_PROTOCOL_VERSION = 47;
 	public static final byte CLASSIC_PROTOCOL_VERSION = 7;
-	public static final byte POCKET_PROTOCOL_VERSION = 0; // TODO: unknown
+	public static final byte[] POCKET_MAGIC = new byte[] { 0, -1, -1, 0, -2, -2, -2, -2, -3, -3, -3, -3, 18, 52, 86, 120 };
 	
 }
