@@ -10,22 +10,26 @@ import ch.spacebase.mcprotocol.packet.Packet;
 
 public class PacketTimeUpdate extends Packet {
 
+	public long age;
 	public long time;
 	
 	public PacketTimeUpdate() {
 	}
 	
-	public PacketTimeUpdate(long time) {
+	public PacketTimeUpdate(long age, long time) {
+		this.age = age;
 		this.time = time;
 	}
 
 	@Override
 	public void read(DataInputStream in) throws IOException {
+		this.age = in.readLong();
 		this.time = in.readLong();
 	}
 
 	@Override
 	public void write(DataOutputStream out) throws IOException {
+		out.writeLong(this.age);
 		out.writeLong(this.time);
 	}
 

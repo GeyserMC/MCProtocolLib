@@ -15,16 +15,18 @@ public class PacketEffect extends Packet {
 	public byte y;
 	public int z;
 	public int data;
+	public boolean ignoreVolume;
 	
 	public PacketEffect() {
 	}
 	
-	public PacketEffect(int effectId, int x, byte y, int z, int data) {
+	public PacketEffect(int effectId, int x, byte y, int z, int data, boolean ignoreVolume) {
 		this.effectId = effectId;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.data = data;
+		this.ignoreVolume = ignoreVolume;
 	}
 
 	@Override
@@ -34,6 +36,7 @@ public class PacketEffect extends Packet {
 		this.y = in.readByte();
 		this.z = in.readInt();
 		this.data = in.readInt();
+		this.ignoreVolume = in.readBoolean();
 	}
 
 	@Override
@@ -43,6 +46,7 @@ public class PacketEffect extends Packet {
 		out.writeByte(this.y);
 		out.writeInt(this.z);
 		out.writeInt(this.data);
+		out.writeBoolean(this.ignoreVolume);
 	}
 
 	@Override

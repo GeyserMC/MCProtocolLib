@@ -10,15 +10,19 @@ import ch.spacebase.mcprotocol.packet.Packet;
 
 public class PacketServerPing extends Packet {
 	
+	private static final byte MAGIC = 1;
+	
 	public PacketServerPing() {
 	}
 
 	@Override
 	public void read(DataInputStream in) throws IOException {
+		in.readByte();
 	}
 
 	@Override
 	public void write(DataOutputStream out) throws IOException {
+		out.writeByte(MAGIC);
 	}
 
 	@Override

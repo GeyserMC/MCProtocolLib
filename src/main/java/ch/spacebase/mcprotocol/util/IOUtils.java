@@ -115,8 +115,13 @@ public final class IOUtils {
                     break;
                 case 5:
                     short item = in.readShort();
-                    byte stackSize = in.readByte();
-                    short damage = in.readShort();
+                    byte stackSize = 0;
+                    short damage = 0;
+                    if(item >= 0) {
+                    	stackSize = in.readByte();
+                    	damage = in.readShort();
+                    }
+                    
                     obj = new WatchableObject(type, id, new ItemStack(item, stackSize, damage));
                     break;
                 case 6:
@@ -157,8 +162,11 @@ public final class IOUtils {
 	            case 5:
 	                ItemStack itemstack = (ItemStack) obj.getValue();
 	                out.writeShort(itemstack.getItem());
-	                out.writeByte(itemstack.getStackSize());
-	                out.writeShort(itemstack.getDamage());
+	                if(itemstack.getItem() >= 0) {
+		                out.writeByte(itemstack.getStackSize());
+		                out.writeShort(itemstack.getDamage());
+	                }
+	                
 	                break;
 	            case 6:
 	                Coordinates chunkcoordinates = (Coordinates) obj.getValue();

@@ -15,15 +15,17 @@ public class PacketClientInfo extends Packet {
 	public byte viewDistance;
 	public byte chatFlags;
 	public byte difficulty;
+	public boolean cape;
 	
 	public PacketClientInfo() {
 	}
 	
-	public PacketClientInfo(String locale, byte viewDistance, byte chatFlags, byte difficulty) {
+	public PacketClientInfo(String locale, byte viewDistance, byte chatFlags, byte difficulty, boolean cape) {
 		this.locale = locale;
 		this.viewDistance = viewDistance;
 		this.chatFlags = chatFlags;
 		this.difficulty = difficulty;
+		this.cape = cape;
 	}
 
 	@Override
@@ -32,6 +34,7 @@ public class PacketClientInfo extends Packet {
 		this.viewDistance = in.readByte();
 		this.chatFlags = in.readByte();
 		this.difficulty = in.readByte();
+		this.cape = in.readBoolean();
 	}
 
 	@Override
@@ -40,6 +43,7 @@ public class PacketClientInfo extends Packet {
 		out.writeByte(this.viewDistance);
 		out.writeByte(this.chatFlags);
 		out.writeByte(this.difficulty);
+		out.writeBoolean(this.cape);
 	}
 
 	@Override

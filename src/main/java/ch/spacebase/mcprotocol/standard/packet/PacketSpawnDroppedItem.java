@@ -7,13 +7,12 @@ import java.io.IOException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
+import ch.spacebase.mcprotocol.standard.data.ItemStack;
 
 public class PacketSpawnDroppedItem extends Packet {
 
 	public int entityId;
-	public short item;
-	public byte count;
-	public short damage;
+	public ItemStack item;
 	public int x;
 	public int y;
 	public int z;
@@ -24,11 +23,9 @@ public class PacketSpawnDroppedItem extends Packet {
 	public PacketSpawnDroppedItem() {
 	}
 	
-	public PacketSpawnDroppedItem(int entityId, short item, byte count, short damage, int x, int y, int z, byte yaw, byte pitch, byte roll) {
+	public PacketSpawnDroppedItem(int entityId, ItemStack item, int x, int y, int z, byte yaw, byte pitch, byte roll) {
 		this.entityId = entityId;
 		this.item = item;
-		this.count = count;
-		this.damage = damage;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -40,9 +37,8 @@ public class PacketSpawnDroppedItem extends Packet {
 	@Override
 	public void read(DataInputStream in) throws IOException {
 		this.entityId = in.readInt();
-		this.item = in.readShort();
-		this.count = in.readByte();
-		this.damage = in.readShort();
+		this.item = new ItemStack();
+		this.item.read(in);
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
@@ -54,9 +50,7 @@ public class PacketSpawnDroppedItem extends Packet {
 	@Override
 	public void write(DataOutputStream out) throws IOException {
 		out.writeInt(this.entityId);
-		out.writeShort(this.item);
-		out.writeByte(this.count);
-		out.writeShort(this.damage);
+		this.item.write(out);
 		out.writeInt(this.x);
 		out.writeInt(this.y);
 		out.writeInt(this.z);
