@@ -15,10 +15,10 @@ public class PacketSpawnExpOrb extends Packet {
 	public int y;
 	public int z;
 	public short count;
-	
+
 	public PacketSpawnExpOrb() {
 	}
-	
+
 	public PacketSpawnExpOrb(int entityId, int x, int y, int z, short count) {
 		this.entityId = entityId;
 		this.x = x;
@@ -48,14 +48,14 @@ public class PacketSpawnExpOrb extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 26;
 	}
-	
+
 }

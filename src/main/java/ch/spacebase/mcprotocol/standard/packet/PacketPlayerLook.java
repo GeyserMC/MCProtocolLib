@@ -13,10 +13,10 @@ public class PacketPlayerLook extends Packet {
 	public float yaw;
 	public float pitch;
 	public boolean grounded;
-	
+
 	public PacketPlayerLook() {
 	}
-	
+
 	public PacketPlayerLook(float yaw, float pitch, boolean grounded) {
 		this.yaw = yaw;
 		this.pitch = pitch;
@@ -40,14 +40,14 @@ public class PacketPlayerLook extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 12;
 	}
-	
+
 }

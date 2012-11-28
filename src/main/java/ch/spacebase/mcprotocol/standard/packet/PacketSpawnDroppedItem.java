@@ -19,10 +19,10 @@ public class PacketSpawnDroppedItem extends Packet {
 	public byte yaw;
 	public byte pitch;
 	public byte roll;
-	
+
 	public PacketSpawnDroppedItem() {
 	}
-	
+
 	public PacketSpawnDroppedItem(int entityId, ItemStack item, int x, int y, int z, byte yaw, byte pitch, byte roll) {
 		this.entityId = entityId;
 		this.item = item;
@@ -62,14 +62,14 @@ public class PacketSpawnDroppedItem extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 21;
 	}
-	
+
 }

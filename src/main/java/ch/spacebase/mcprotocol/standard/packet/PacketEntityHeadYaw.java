@@ -12,10 +12,10 @@ public class PacketEntityHeadYaw extends Packet {
 
 	public int entityId;
 	public byte headYaw;
-	
+
 	public PacketEntityHeadYaw() {
 	}
-	
+
 	public PacketEntityHeadYaw(int entityId, byte headYaw) {
 		this.entityId = entityId;
 		this.headYaw = headYaw;
@@ -36,14 +36,14 @@ public class PacketEntityHeadYaw extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 35;
 	}
-	
+
 }

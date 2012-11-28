@@ -16,10 +16,10 @@ public class PacketRespawn extends Packet {
 	public byte gameMode;
 	public byte worldHeight;
 	public String levelType;
-	
+
 	public PacketRespawn() {
 	}
-	
+
 	public PacketRespawn(byte dimension, byte difficulty, byte gameMode, byte worldHeight, String levelType) {
 		this.dimension = dimension;
 		this.difficulty = difficulty;
@@ -49,14 +49,14 @@ public class PacketRespawn extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 9;
 	}
-	
+
 }

@@ -12,10 +12,10 @@ import ch.spacebase.mcprotocol.util.IOUtils;
 public class PacketTabComplete extends Packet {
 
 	public String text;
-	
+
 	public PacketTabComplete() {
 	}
-	
+
 	public PacketTabComplete(String text) {
 		this.text = text;
 	}
@@ -33,14 +33,14 @@ public class PacketTabComplete extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 203;
 	}
-	
+
 }

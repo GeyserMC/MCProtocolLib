@@ -15,10 +15,10 @@ public class PacketOpenWindow extends Packet {
 	public byte type;
 	public String name;
 	public byte slots;
-	
+
 	public PacketOpenWindow() {
 	}
-	
+
 	public PacketOpenWindow(byte id, byte type, String name, byte slots) {
 		this.id = id;
 		this.type = type;
@@ -45,14 +45,14 @@ public class PacketOpenWindow extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 100;
 	}
-	
+
 }

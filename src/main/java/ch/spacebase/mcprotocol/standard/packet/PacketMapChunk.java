@@ -20,29 +20,29 @@ public class PacketMapChunk extends Packet {
 	public int endY;
 	public byte data[];
 	public int length;
-	
+
 	public PacketMapChunk() {
 	}
-	
+
 	public PacketMapChunk(int x, int z, boolean groundUp, int startY, int endY, byte data[]) {
 		this.x = x;
 		this.z = z;
 		this.groundUp = groundUp;
-		this.startY	= startY;
+		this.startY = startY;
 		this.endY = endY;
-		
-        Deflater deflater = new Deflater(-1);
 
-        try {
-            deflater.setInput(data, 0, data.length);
-            deflater.finish();
-            this.data = new byte[data.length];
-            this.length = deflater.deflate(this.data);
-        } finally {
-            deflater.end();
-        }
+		Deflater deflater = new Deflater(-1);
+
+		try {
+			deflater.setInput(data, 0, data.length);
+			deflater.finish();
+			this.data = new byte[data.length];
+			this.length = deflater.deflate(this.data);
+		} finally {
+			deflater.end();
+		}
 	}
-	
+
 	@Override
 	public void read(DataInputStream in) throws IOException {
 		this.x = in.readInt();
@@ -51,17 +51,17 @@ public class PacketMapChunk extends Packet {
 		this.startY = in.readShort();
 		this.endY = in.readShort();
 		this.length = in.readInt();
-		
+
 		byte[] compressed = new byte[this.length];
 		in.readFully(compressed, 0, this.length);
-		
+
 		int off = 0;
-		for (int count = 0; count < 16; count++) {
+		for(int count = 0; count < 16; count++) {
 			off += this.startY >> count & 1;
 		}
 
 		int size = 12288 * off;
-		if (this.groundUp) {
+		if(this.groundUp) {
 			size += 256;
 		}
 
@@ -92,14 +92,14 @@ public class PacketMapChunk extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 51;
 	}
-	
+
 }

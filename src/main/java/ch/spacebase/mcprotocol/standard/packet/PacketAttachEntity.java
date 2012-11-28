@@ -12,10 +12,10 @@ public class PacketAttachEntity extends Packet {
 
 	public int entityId;
 	public int vehicleId;
-	
+
 	public PacketAttachEntity() {
 	}
-	
+
 	public PacketAttachEntity(int entityId, int vehicleId) {
 		this.entityId = entityId;
 		this.vehicleId = vehicleId;
@@ -36,14 +36,14 @@ public class PacketAttachEntity extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 39;
 	}
-	
+
 }

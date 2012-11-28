@@ -19,10 +19,10 @@ public class PacketHandshake extends Packet {
 	public String user;
 	public String host;
 	public int port;
-	
+
 	public PacketHandshake() {
 	}
-	
+
 	public PacketHandshake(String user, String host, int port) {
 		this.protocol = Constants.STANDARD_PROTOCOL_VERSION;
 		this.user = user;
@@ -49,7 +49,7 @@ public class PacketHandshake extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 		if(!Util.stripColor(this.user).equals(this.user)) {
@@ -63,14 +63,14 @@ public class PacketHandshake extends Packet {
 		} else {
 			PublicKey key = conn.getServer().getKeys().getPublic();
 			((StandardProtocol) conn.getProtocol()).setLoginKey(conn.getServer().verifyUsers() ? Long.toString(Util.random().nextLong(), 16) : "-");
-            byte token[] = new byte[4];
-            Util.random().nextBytes(token);
-            ((StandardProtocol) conn.getProtocol()).setToken(token);
-            
-            conn.send(new PacketKeyRequest(((StandardProtocol) conn.getProtocol()).getLoginKey(), key.getEncoded(), token));
+			byte token[] = new byte[4];
+			Util.random().nextBytes(token);
+			((StandardProtocol) conn.getProtocol()).setToken(token);
+
+			conn.send(new PacketKeyRequest(((StandardProtocol) conn.getProtocol()).getLoginKey(), key.getEncoded(), token));
 		}
 	}
-	
+
 	@Override
 	public int getId() {
 		return 2;

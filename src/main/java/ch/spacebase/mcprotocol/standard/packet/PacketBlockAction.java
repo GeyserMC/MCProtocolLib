@@ -16,10 +16,10 @@ public class PacketBlockAction extends Packet {
 	public byte b1;
 	public byte b2;
 	public int block;
-	
+
 	public PacketBlockAction() {
 	}
-	
+
 	public PacketBlockAction(int x, int y, int z, byte b1, byte b2, short block) {
 		this.x = x;
 		this.y = y;
@@ -52,14 +52,14 @@ public class PacketBlockAction extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 54;
 	}
-	
+
 }

@@ -11,10 +11,10 @@ import ch.spacebase.mcprotocol.packet.Packet;
 public class PacketHeldItemChange extends Packet {
 
 	public short slot;
-	
+
 	public PacketHeldItemChange() {
 	}
-	
+
 	public PacketHeldItemChange(short slot) {
 		this.slot = slot;
 	}
@@ -32,14 +32,14 @@ public class PacketHeldItemChange extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 16;
 	}
-	
+
 }

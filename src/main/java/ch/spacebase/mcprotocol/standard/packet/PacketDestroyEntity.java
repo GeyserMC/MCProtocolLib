@@ -11,10 +11,10 @@ import ch.spacebase.mcprotocol.packet.Packet;
 public class PacketDestroyEntity extends Packet {
 
 	public int entityIds[];
-	
+
 	public PacketDestroyEntity() {
 	}
-	
+
 	public PacketDestroyEntity(int... entityIds) {
 		this.entityIds = entityIds;
 	}
@@ -38,14 +38,14 @@ public class PacketDestroyEntity extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 29;
 	}
-	
+
 }

@@ -13,10 +13,10 @@ public class PacketUseEntity extends Packet {
 	public int user;
 	public int target;
 	public boolean leftclick;
-	
+
 	public PacketUseEntity() {
 	}
-	
+
 	public PacketUseEntity(int user, int target, boolean leftclick) {
 		this.user = user;
 		this.target = target;
@@ -40,14 +40,14 @@ public class PacketUseEntity extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 7;
 	}
-	
+
 }

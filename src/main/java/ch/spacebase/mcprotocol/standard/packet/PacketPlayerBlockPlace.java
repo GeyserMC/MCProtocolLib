@@ -10,7 +10,7 @@ import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.standard.data.ItemStack;
 
 public class PacketPlayerBlockPlace extends Packet {
-	
+
 	public int x;
 	public int y;
 	public int z;
@@ -22,10 +22,10 @@ public class PacketPlayerBlockPlace extends Packet {
 	public byte cursorX;
 	public byte cursorY;
 	public byte cursorZ;
-	
+
 	public PacketPlayerBlockPlace() {
 	}
-	
+
 	public PacketPlayerBlockPlace(int x, int y, int z, byte direction, ItemStack item, byte cursorX, byte cursorY, byte cursorZ) {
 		this.x = x;
 		this.y = y;
@@ -65,14 +65,14 @@ public class PacketPlayerBlockPlace extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 15;
 	}
-	
+
 }

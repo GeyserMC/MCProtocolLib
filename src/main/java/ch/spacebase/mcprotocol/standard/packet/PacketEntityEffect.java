@@ -14,10 +14,10 @@ public class PacketEntityEffect extends Packet {
 	public byte effect;
 	public byte amplifier;
 	public short duration;
-	
+
 	public PacketEntityEffect() {
 	}
-	
+
 	public PacketEntityEffect(int entityId, byte effect, byte amplifier, short duration) {
 		this.entityId = entityId;
 		this.effect = effect;
@@ -44,14 +44,14 @@ public class PacketEntityEffect extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 41;
 	}
-	
+
 }

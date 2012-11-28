@@ -14,10 +14,10 @@ public class PacketEntityRelativeMove extends Packet {
 	public byte dX;
 	public byte dY;
 	public byte dZ;
-	
+
 	public PacketEntityRelativeMove() {
 	}
-	
+
 	public PacketEntityRelativeMove(int entityId, byte dX, byte dY, byte dZ) {
 		this.entityId = entityId;
 		this.dX = dX;
@@ -44,14 +44,14 @@ public class PacketEntityRelativeMove extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 31;
 	}
-	
+
 }

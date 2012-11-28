@@ -24,47 +24,47 @@ public abstract class Connection {
 	protected Protocol protocol;
 	protected String host;
 	protected int port;
-	
+
 	private DataInputStream input;
 	private DataOutputStream output;
-	
+
 	private Queue<Packet> packets = new ConcurrentLinkedQueue<Packet>();
 	private boolean connected;
-	
+
 	private List<ProtocolListener> listeners = new ArrayList<ProtocolListener>();
-	
+
 	public Connection(Protocol prot, String host, int port) {
 		this.protocol = prot;
 		this.host = host;
 		this.port = port;
 	}
-	
+
 	public Protocol getProtocol() {
 		return this.protocol;
 	}
-	
+
 	public String getHost() {
 		return this.host;
 	}
-	
+
 	public int getPort() {
 		return this.port;
 	}
-	
+
 	public void listen(ProtocolListener listener) {
 		this.listeners.add(listener);
 	}
-	
+
 	public <T extends ProtocolEvent> T call(T event) {
 		for(ProtocolListener listener : this.listeners) {
 			event.call(listener);
 		}
-		
+
 		return event;
 	}
-	
+
 	public abstract Connection connect() throws ConnectException;
-	
+
 	protected void connect(Socket sock) throws ConnectException {
 		try {
 			this.input = new DataInputStream(sock.getInputStream());
@@ -72,25 +72,25 @@ public abstract class Connection {
 			this.connected = true;
 			new ListenThread().start();
 			new WriteThread().start();
-		} catch(UnknownHostException e) {
+		} catch (UnknownHostException e) {
 			throw new ConnectException("Unknown host: " + this.host);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			throw new ConnectException("Failed to open stream: " + this.host, e);
 		}
 	}
-	
+
 	public DataInputStream getIn() {
 		return this.input;
 	}
-	
+
 	public DataOutputStream getOut() {
 		return this.output;
 	}
-	
+
 	public void setIn(InputStream in) {
 		this.input = new DataInputStream(in);
 	}
-	
+
 	public void setOut(OutputStream out) {
 		this.output = new DataOutputStream(out);
 	}
@@ -98,21 +98,21 @@ public abstract class Connection {
 	public void send(Packet packet) {
 		this.packets.add(packet);
 	}
-	
+
 	public void disconnect(String reason) {
 		this.disconnect(reason, true);
 	}
-	
+
 	public void disconnect(String reason, boolean packet) {
 		this.getProtocol().disconnected(this, reason, packet);
 		this.packets.clear();
 		this.connected = false;
 	}
-	
+
 	public boolean isConnected() {
 		return this.connected;
 	}
-	
+
 	private class ListenThread extends Thread {
 		@Override
 		public void run() {
@@ -122,13 +122,13 @@ public abstract class Connection {
 					if(opcode < 0) {
 						continue;
 					}
-					
+
 					if(protocol.getType().getPacket(opcode) == null) {
 						Util.logger().severe("Bad packet ID: " + opcode);
 						disconnect("Bad packet ID: " + opcode);
 						return;
 					}
-					
+
 					Packet packet = protocol.getType().getPacket(opcode).newInstance();
 					packet.read(input);
 					if(Connection.this instanceof Client) {
@@ -136,9 +136,9 @@ public abstract class Connection {
 					} else {
 						packet.handleServer((ServerConnection) Connection.this);
 					}
-					
+
 					call(new PacketRecieveEvent(packet));
-				} catch(Exception e) {
+				} catch (Exception e) {
 					Util.logger().severe("Error while listening to connection!");
 					e.printStackTrace();
 					disconnect("Error while listening to connection!");
@@ -146,19 +146,19 @@ public abstract class Connection {
 			}
 		}
 	}
-	
+
 	private class WriteThread extends Thread {
 		@Override
 		public void run() {
 			while(isConnected()) {
 				if(packets.size() > 0) {
 					Packet packet = packets.poll();
-					
+
 					try {
 						output.write(packet.getId());
 						packet.write(output);
 						output.flush();
-					} catch(Exception e) {
+					} catch (Exception e) {
 						Util.logger().severe("Error while writing packet \"" + packet.getId() + "\"!");
 						e.printStackTrace();
 						disconnect("Error while writing packet.");
@@ -167,5 +167,5 @@ public abstract class Connection {
 			}
 		}
 	}
-	
+
 }

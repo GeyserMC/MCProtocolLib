@@ -23,19 +23,19 @@ public class PacketKeyResponse extends Packet {
 
 	public byte[] sharedKey;
 	public byte[] verifyToken;
-	
+
 	public PacketKeyResponse() {
 	}
-	
+
 	public PacketKeyResponse(byte[] sharedKey, byte[] verifyToken) {
 		this.sharedKey = sharedKey;
 		this.verifyToken = verifyToken;
 	}
-	
+
 	public byte[] getSharedKey() {
 		return this.sharedKey;
 	}
-	
+
 	public byte[] getVerifyToken() {
 		return this.verifyToken;
 	}
@@ -45,7 +45,7 @@ public class PacketKeyResponse extends Packet {
 		byte sharedKey[] = new byte[in.readShort()];
 		in.readFully(sharedKey);
 		this.sharedKey = sharedKey;
-		
+
 		byte verifyToken[] = new byte[in.readShort()];
 		in.readFully(verifyToken);
 		this.verifyToken = verifyToken;
@@ -62,27 +62,27 @@ public class PacketKeyResponse extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 		((StandardProtocol) conn.getProtocol()).setAES(conn);
-		conn.send(new PacketClientStatus((byte) 0)); 
+		conn.send(new PacketClientStatus((byte) 0));
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
-        PrivateKey priv = conn.getServer().getKeys().getPrivate();
+		PrivateKey priv = conn.getServer().getKeys().getPrivate();
 
-        ((StandardProtocol) conn.getProtocol()).setSecretKey(new SecretKeySpec(encryptBytes(priv, this.sharedKey), "AES"));
-        if (!Arrays.equals(((StandardProtocol) conn.getProtocol()).getToken(), encryptBytes(priv, this.verifyToken))) {
-            conn.disconnect("Invalid client reply");
-            return;
-        }
-        
-        conn.send(new PacketKeyResponse(new byte[0], new byte[0]));
+		((StandardProtocol) conn.getProtocol()).setSecretKey(new SecretKeySpec(encryptBytes(priv, this.sharedKey), "AES"));
+		if(!Arrays.equals(((StandardProtocol) conn.getProtocol()).getToken(), encryptBytes(priv, this.verifyToken))) {
+			conn.disconnect("Invalid client reply");
+			return;
+		}
+
+		conn.send(new PacketKeyResponse(new byte[0], new byte[0]));
 	}
-	
+
 	@Override
 	public int getId() {
 		return 252;
 	}
-	
+
 	private static byte[] encryptBytes(PrivateKey key, byte[] bytes) {
 		try {
 			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
@@ -99,8 +99,8 @@ public class PacketKeyResponse extends Packet {
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 }

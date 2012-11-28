@@ -16,17 +16,17 @@ public class Server {
 
 	private int port;
 	private boolean online;
-	
+
 	private List<ServerConnection> connections = new CopyOnWriteArrayList<ServerConnection>();
 	private KeyPair keys;
 	private boolean verify;
 	private Class<? extends Protocol> protocol;
-	
+
 	public Server(Class<? extends Protocol> prot, int port, boolean verifyUsers) {
 		this.port = port;
 		this.verify = verifyUsers;
 		this.protocol = prot;
-		
+
 		try {
 			KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
 			gen.initialize(1024);
@@ -35,7 +35,7 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void bind() {
 		try {
 			ServerSocket sock = new ServerSocket(this.port);
@@ -45,30 +45,30 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void shutdown() {
 		for(ServerConnection conn : this.connections) {
 			conn.disconnect("The server is shutting down!");
 		}
-		
+
 		this.online = false;
 	}
-	
+
 	public KeyPair getKeys() {
 		return this.keys;
 	}
-	
+
 	public boolean verifyUsers() {
 		return this.verify;
 	}
-	
+
 	private class ServerConnectionThread extends Thread {
 		private ServerSocket sock;
-		
+
 		public ServerConnectionThread(ServerSocket sock) {
 			this.sock = sock;
 		}
-		
+
 		@Override
 		public void run() {
 			while(online) {
@@ -80,7 +80,7 @@ public class Server {
 						Util.logger().severe("Failed to create server connection!");
 						e.printStackTrace();
 					}
-				} catch(IOException e) {
+				} catch (IOException e) {
 					Util.logger().severe("Failed to accept connection from client!");
 					e.printStackTrace();
 					continue;
@@ -92,5 +92,5 @@ public class Server {
 	public List<ServerConnection> getConnections() {
 		return new ArrayList<ServerConnection>(this.connections);
 	}
-	
+
 }

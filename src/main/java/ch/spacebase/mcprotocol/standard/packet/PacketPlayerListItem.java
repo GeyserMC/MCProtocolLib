@@ -14,10 +14,10 @@ public class PacketPlayerListItem extends Packet {
 	public String name;
 	public boolean online;
 	public short ping;
-	
+
 	public PacketPlayerListItem() {
 	}
-	
+
 	public PacketPlayerListItem(String name, boolean online, short ping) {
 		this.name = name;
 		this.online = online;
@@ -41,14 +41,14 @@ public class PacketPlayerListItem extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 201;
 	}
-	
+
 }

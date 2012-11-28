@@ -11,10 +11,10 @@ import ch.spacebase.mcprotocol.packet.Packet;
 public class PacketPlayer extends Packet {
 
 	public boolean grounded;
-	
+
 	public PacketPlayer() {
 	}
-	
+
 	public PacketPlayer(boolean grounded) {
 		this.grounded = grounded;
 	}
@@ -32,14 +32,14 @@ public class PacketPlayer extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 10;
 	}
-	
+
 }

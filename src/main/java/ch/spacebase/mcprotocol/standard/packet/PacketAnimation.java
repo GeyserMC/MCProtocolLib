@@ -12,10 +12,10 @@ public class PacketAnimation extends Packet {
 
 	public int entityId;
 	public byte animation;
-	
+
 	public PacketAnimation() {
 	}
-	
+
 	public PacketAnimation(int entityId, byte animation) {
 		this.entityId = entityId;
 		this.animation = animation;
@@ -36,14 +36,14 @@ public class PacketAnimation extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 18;
 	}
-	
+
 }

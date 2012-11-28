@@ -24,10 +24,10 @@ public class PacketSpawnMob extends Packet {
 	public short velY;
 	public short velZ;
 	public WatchableObject metadata[];
-	
+
 	public PacketSpawnMob() {
 	}
-	
+
 	public PacketSpawnMob(int entityId, byte type, int x, int y, int z, byte yaw, byte pitch, byte headYaw, short velX, short velY, short velZ, WatchableObject metadata[]) {
 		this.entityId = entityId;
 		this.type = type;
@@ -78,14 +78,14 @@ public class PacketSpawnMob extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 24;
 	}
-	
+
 }

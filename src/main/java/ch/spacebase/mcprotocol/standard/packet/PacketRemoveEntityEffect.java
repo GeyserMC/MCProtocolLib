@@ -12,10 +12,10 @@ public class PacketRemoveEntityEffect extends Packet {
 
 	public int entityId;
 	public byte effect;
-	
+
 	public PacketRemoveEntityEffect() {
 	}
-	
+
 	public PacketRemoveEntityEffect(int entityId, byte effect) {
 		this.entityId = entityId;
 		this.effect = effect;
@@ -36,14 +36,14 @@ public class PacketRemoveEntityEffect extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 42;
 	}
-	
+
 }

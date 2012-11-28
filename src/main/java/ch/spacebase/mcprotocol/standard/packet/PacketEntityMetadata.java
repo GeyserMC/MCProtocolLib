@@ -14,10 +14,10 @@ public class PacketEntityMetadata extends Packet {
 
 	public int entityId;
 	public WatchableObject metadata[];
-	
+
 	public PacketEntityMetadata() {
 	}
-	
+
 	public PacketEntityMetadata(int entityId, WatchableObject metadata[]) {
 		this.entityId = entityId;
 		this.metadata = metadata;
@@ -38,14 +38,14 @@ public class PacketEntityMetadata extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 40;
 	}
-	
+
 }

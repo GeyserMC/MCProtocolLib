@@ -16,10 +16,10 @@ public class PacketEffect extends Packet {
 	public int z;
 	public int data;
 	public boolean ignoreVolume;
-	
+
 	public PacketEffect() {
 	}
-	
+
 	public PacketEffect(int effectId, int x, byte y, int z, int data, boolean ignoreVolume) {
 		this.effectId = effectId;
 		this.x = x;
@@ -52,14 +52,14 @@ public class PacketEffect extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 61;
 	}
-	
+
 }

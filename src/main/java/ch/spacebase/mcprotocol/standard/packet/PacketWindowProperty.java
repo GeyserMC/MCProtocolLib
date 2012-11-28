@@ -13,10 +13,10 @@ public class PacketWindowProperty extends Packet {
 	public byte id;
 	public short prop;
 	public short value;
-	
+
 	public PacketWindowProperty() {
 	}
-	
+
 	public PacketWindowProperty(byte id, short prop, short value) {
 		this.id = id;
 		this.prop = prop;
@@ -40,14 +40,14 @@ public class PacketWindowProperty extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 105;
 	}
-	
+
 }

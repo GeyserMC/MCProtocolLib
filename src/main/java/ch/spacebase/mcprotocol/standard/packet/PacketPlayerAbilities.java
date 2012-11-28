@@ -13,10 +13,10 @@ public class PacketPlayerAbilities extends Packet {
 	public byte flags;
 	public byte flySpeed;
 	public byte walkSpeed;
-	
+
 	public PacketPlayerAbilities() {
 	}
-	
+
 	public PacketPlayerAbilities(byte flags, byte flySpeed, byte walkSpeed) {
 		this.flags = flags;
 		this.flySpeed = flySpeed;
@@ -40,14 +40,14 @@ public class PacketPlayerAbilities extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 202;
 	}
-	
+
 }

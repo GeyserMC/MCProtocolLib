@@ -15,10 +15,10 @@ public class PacketBlockBreakAnimation extends Packet {
 	public int y;
 	public int z;
 	public byte stage;
-	
+
 	public PacketBlockBreakAnimation() {
 	}
-	
+
 	public PacketBlockBreakAnimation(int entityId, int x, int y, int z, byte stage) {
 		this.entityId = entityId;
 		this.x = x;
@@ -48,14 +48,14 @@ public class PacketBlockBreakAnimation extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 55;
 	}
-	
+
 }

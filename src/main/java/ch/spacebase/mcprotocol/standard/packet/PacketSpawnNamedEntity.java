@@ -21,10 +21,10 @@ public class PacketSpawnNamedEntity extends Packet {
 	public byte pitch;
 	public short item;
 	public WatchableObject metadata[];
-	
+
 	public PacketSpawnNamedEntity() {
 	}
-	
+
 	public PacketSpawnNamedEntity(int entityId, String name, int x, int y, int z, byte yaw, byte pitch, short item, WatchableObject metadata[]) {
 		this.entityId = entityId;
 		this.name = name;
@@ -66,14 +66,14 @@ public class PacketSpawnNamedEntity extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 20;
 	}
-	
+
 }

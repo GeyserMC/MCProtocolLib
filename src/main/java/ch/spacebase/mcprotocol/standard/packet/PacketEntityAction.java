@@ -12,10 +12,10 @@ public class PacketEntityAction extends Packet {
 
 	public int entityId;
 	public byte action;
-	
+
 	public PacketEntityAction() {
 	}
-	
+
 	public PacketEntityAction(int entityId, byte action) {
 		this.entityId = entityId;
 		this.action = action;
@@ -36,14 +36,14 @@ public class PacketEntityAction extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 19;
 	}
-	
+
 }

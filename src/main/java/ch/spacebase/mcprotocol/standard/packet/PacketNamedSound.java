@@ -17,10 +17,10 @@ public class PacketNamedSound extends Packet {
 	public int z;
 	public float volume;
 	public int pitch;
-	
+
 	public PacketNamedSound() {
 	}
-	
+
 	public PacketNamedSound(String sound, int x, byte y, int z, float volume, int pitch) {
 		this.sound = sound;
 		this.x = x;
@@ -53,14 +53,14 @@ public class PacketNamedSound extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 62;
 	}
-	
+
 }

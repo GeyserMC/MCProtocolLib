@@ -19,10 +19,10 @@ public class PacketSpawnVehicle extends Packet {
 	public short speedX;
 	public short speedY;
 	public short speedZ;
-	
+
 	public PacketSpawnVehicle() {
 	}
-	
+
 	public PacketSpawnVehicle(int entityId, byte type, int x, int y, int z, int data, short speedX, short speedY, short speedZ) {
 		this.entityId = entityId;
 		this.type = type;
@@ -68,14 +68,14 @@ public class PacketSpawnVehicle extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 23;
 	}
-	
+
 }

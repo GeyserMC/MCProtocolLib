@@ -12,14 +12,14 @@ import ch.spacebase.mcprotocol.util.IOUtils;
 public class PacketChat extends Packet {
 
 	public String message;
-	
+
 	public PacketChat() {
 	}
-	
+
 	public PacketChat(String message) {
 		this.message = message;
 	}
-	
+
 	public String getMessage() {
 		return this.message;
 	}
@@ -37,7 +37,7 @@ public class PacketChat extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}

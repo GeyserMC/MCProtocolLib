@@ -18,10 +18,10 @@ public class PacketExplosion extends Packet {
 	public float unk1;
 	public float unk2;
 	public float unk3;
-	
+
 	public PacketExplosion() {
 	}
-	
+
 	public PacketExplosion(double x, double y, double z, float radius, byte blocks[], float unk1, float unk2, float unk3) {
 		this.x = x;
 		this.y = y;
@@ -62,14 +62,14 @@ public class PacketExplosion extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 60;
 	}
-	
+
 }

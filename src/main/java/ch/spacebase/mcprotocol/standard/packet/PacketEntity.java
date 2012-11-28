@@ -11,10 +11,10 @@ import ch.spacebase.mcprotocol.packet.Packet;
 public class PacketEntity extends Packet {
 
 	public int entityId;
-	
+
 	public PacketEntity() {
 	}
-	
+
 	public PacketEntity(int entityId) {
 		this.entityId = entityId;
 	}
@@ -32,14 +32,14 @@ public class PacketEntity extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 30;
 	}
-	
+
 }

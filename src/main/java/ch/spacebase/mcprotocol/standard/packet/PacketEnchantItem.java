@@ -12,10 +12,10 @@ public class PacketEnchantItem extends Packet {
 
 	public byte id;
 	public byte enchantment;
-	
+
 	public PacketEnchantItem() {
 	}
-	
+
 	public PacketEnchantItem(byte id, byte enchantment) {
 		this.id = id;
 		this.enchantment = enchantment;
@@ -36,14 +36,14 @@ public class PacketEnchantItem extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 108;
 	}
-	
+
 }

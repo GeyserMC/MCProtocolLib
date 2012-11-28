@@ -12,10 +12,10 @@ public class PacketIncrementStatistic extends Packet {
 
 	public int statistic;
 	public byte amount;
-	
+
 	public PacketIncrementStatistic() {
 	}
-	
+
 	public PacketIncrementStatistic(int statistic, byte amount) {
 		this.statistic = statistic;
 		this.amount = amount;
@@ -36,14 +36,14 @@ public class PacketIncrementStatistic extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 200;
 	}
-	
+
 }

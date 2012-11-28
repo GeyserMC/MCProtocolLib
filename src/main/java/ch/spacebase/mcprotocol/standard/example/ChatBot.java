@@ -12,12 +12,13 @@ import ch.spacebase.mcprotocol.standard.packet.PacketChat;
 import ch.spacebase.mcprotocol.standard.packet.PacketPlayerPositionLook;
 
 /**
- * A simple bot that prints "Hello, this is Heisenberg at coordinate <coordinate>".
- * Be sure to use the Bukkit server setting online-mode=false in server.properties.
- * Otherwise supply a valid minecraft.net username and password.
+ * A simple bot that prints
+ * "Hello, this is Heisenberg at coordinate <coordinate>". Be sure to use the
+ * Bukkit server setting online-mode=false in server.properties. Otherwise
+ * supply a valid minecraft.net username and password.
  */
 public class ChatBot {
-	
+
 	private Client client;
 	private Listener listener;
 
@@ -47,12 +48,12 @@ public class ChatBot {
 	public static void main(String[] args) {
 		ChatBot bot = new ChatBot("127.0.0.1", 25565);
 		System.out.println("Logging in...");
-		bot.login("Heisenberg");		
+		bot.login("Heisenberg");
 	}
 
 	private class Listener extends ProtocolListener {
 		@Override
-		public void onPacketRecieve(PacketRecieveEvent event) {			
+		public void onPacketRecieve(PacketRecieveEvent event) {
 			Packet packet = event.getPacket();
 
 			switch(event.getPacket().getId()) {
@@ -66,10 +67,8 @@ public class ChatBot {
 			client.send(packet);
 			DecimalFormat format = new DecimalFormat("#.00");
 
-			ChatBot.this.say("Hello, this is Heisenberg at coordinate (" +
-					format.format(packet.x) + ", " +  format.format(packet.y) + ", " + format.format(packet.z) +
-					")");
+			ChatBot.this.say("Hello, this is Heisenberg at coordinate (" + format.format(packet.x) + ", " + format.format(packet.y) + ", " + format.format(packet.z) + ")");
 		}
 	}
-	
+
 }

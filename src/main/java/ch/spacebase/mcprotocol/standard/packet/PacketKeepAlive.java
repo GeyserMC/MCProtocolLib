@@ -11,10 +11,10 @@ import ch.spacebase.mcprotocol.packet.Packet;
 public class PacketKeepAlive extends Packet {
 
 	public int id;
-	
+
 	public PacketKeepAlive() {
 	}
-	
+
 	public PacketKeepAlive(int id) {
 		this.id = id;
 	}
@@ -33,14 +33,14 @@ public class PacketKeepAlive extends Packet {
 	public void handleClient(Client conn) {
 		conn.send(new PacketKeepAlive(this.id));
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 0;
 	}
-	
+
 }

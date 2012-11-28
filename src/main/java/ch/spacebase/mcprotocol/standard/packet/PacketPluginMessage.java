@@ -13,10 +13,10 @@ public class PacketPluginMessage extends Packet {
 
 	public String channel;
 	public byte data[];
-	
+
 	public PacketPluginMessage() {
 	}
-	
+
 	public PacketPluginMessage(String channel, byte data[]) {
 		this.channel = channel;
 		this.data = data;
@@ -39,14 +39,14 @@ public class PacketPluginMessage extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 250;
 	}
-	
+
 }

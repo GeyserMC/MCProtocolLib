@@ -15,10 +15,10 @@ public class PacketUpdateTileEntity extends Packet {
 	public int z;
 	public byte action;
 	public byte nbt[];
-	
+
 	public PacketUpdateTileEntity() {
 	}
-	
+
 	public PacketUpdateTileEntity(int x, short y, int z, byte action, byte nbt[]) {
 		this.x = x;
 		this.y = y;
@@ -52,14 +52,14 @@ public class PacketUpdateTileEntity extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 132;
 	}
-	
+
 }

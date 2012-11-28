@@ -15,10 +15,10 @@ public class PacketUpdateSign extends Packet {
 	public short y;
 	public int z;
 	public String lines[];
-	
+
 	public PacketUpdateSign() {
 	}
-	
+
 	public PacketUpdateSign(int x, short y, int z, String lines[]) {
 		this.x = x;
 		this.y = y;
@@ -53,14 +53,14 @@ public class PacketUpdateSign extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 130;
 	}
-	
+
 }

@@ -17,10 +17,10 @@ public class PacketWindowClick extends Packet {
 	public short action;
 	public boolean shift;
 	public ItemStack clicked;
-	
+
 	public PacketWindowClick() {
 	}
-	
+
 	public PacketWindowClick(byte id, short slot, byte mousebutton, short action, boolean shift, ItemStack clicked) {
 		this.id = id;
 		this.slot = slot;
@@ -56,14 +56,14 @@ public class PacketWindowClick extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 102;
 	}
-	
+
 }

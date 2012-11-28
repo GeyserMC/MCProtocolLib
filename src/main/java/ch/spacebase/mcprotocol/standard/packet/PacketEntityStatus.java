@@ -12,10 +12,10 @@ public class PacketEntityStatus extends Packet {
 
 	public int entityId;
 	public byte status;
-	
+
 	public PacketEntityStatus() {
 	}
-	
+
 	public PacketEntityStatus(int entityId, byte status) {
 		this.entityId = entityId;
 		this.status = status;
@@ -36,14 +36,14 @@ public class PacketEntityStatus extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 38;
 	}
-	
+
 }

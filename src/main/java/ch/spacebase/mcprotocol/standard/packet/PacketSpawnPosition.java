@@ -13,10 +13,10 @@ public class PacketSpawnPosition extends Packet {
 	public int x;
 	public int y;
 	public int z;
-	
+
 	public PacketSpawnPosition() {
 	}
-	
+
 	public PacketSpawnPosition(int x, int y, int z) {
 		this.x = x;
 		this.y = y;
@@ -40,14 +40,14 @@ public class PacketSpawnPosition extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 6;
 	}
-	
+
 }

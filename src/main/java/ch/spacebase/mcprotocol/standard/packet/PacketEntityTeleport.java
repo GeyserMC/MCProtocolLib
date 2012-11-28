@@ -16,10 +16,10 @@ public class PacketEntityTeleport extends Packet {
 	public int z;
 	public byte yaw;
 	public byte pitch;
-	
+
 	public PacketEntityTeleport() {
 	}
-	
+
 	public PacketEntityTeleport(int entityId, int x, int y, int z, byte yaw, byte pitch) {
 		this.entityId = entityId;
 		this.x = x;
@@ -52,14 +52,14 @@ public class PacketEntityTeleport extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 34;
 	}
-	
+
 }

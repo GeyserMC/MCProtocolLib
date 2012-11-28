@@ -14,17 +14,17 @@ public class PacketMultiBlockChange extends Packet {
 	public int z;
 	public int records;
 	public byte data[];
-	
+
 	public PacketMultiBlockChange() {
 	}
-	
+
 	public PacketMultiBlockChange(int x, int z, int records, byte data[]) {
 		this.x = x;
 		this.z = z;
 		this.records = records;
 		this.data = data;
 	}
-	
+
 	@Override
 	public void read(DataInputStream in) throws IOException {
 		this.x = in.readInt();
@@ -53,14 +53,14 @@ public class PacketMultiBlockChange extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 52;
 	}
-	
+
 }

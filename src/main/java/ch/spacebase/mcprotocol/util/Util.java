@@ -13,15 +13,15 @@ public class Util {
 
 	private static final Logger logger = Logger.getLogger("mc-protocol-lib");
 	private static final Random rand = new Random();
-	
+
 	public static Logger logger() {
 		return logger;
 	}
-	
+
 	public static Random random() {
 		return rand;
 	}
-	
+
 	public static String stripColor(String str) {
 		StringBuilder build = new StringBuilder();
 		for(int index = 0; index < str.length(); index++) {
@@ -29,13 +29,13 @@ public class Util {
 				index++;
 				continue;
 			}
-			
+
 			build.append(str.charAt(index));
 		}
-		
+
 		return build.toString();
 	}
-	
+
 	public static byte[] encrypt(String serverId, PublicKey key, SecretKey secret) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -51,5 +51,5 @@ public class Util {
 			return null;
 		}
 	}
-	
+
 }

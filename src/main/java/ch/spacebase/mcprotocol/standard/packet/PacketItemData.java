@@ -13,10 +13,10 @@ public class PacketItemData extends Packet {
 	public short item;
 	public short damage;
 	public byte data[];
-	
+
 	public PacketItemData() {
 	}
-	
+
 	public PacketItemData(short item, short damage, byte data[]) {
 		this.item = item;
 		this.damage = damage;
@@ -42,14 +42,14 @@ public class PacketItemData extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 131;
 	}
-	
+
 }

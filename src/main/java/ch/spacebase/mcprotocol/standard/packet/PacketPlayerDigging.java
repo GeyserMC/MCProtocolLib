@@ -15,10 +15,10 @@ public class PacketPlayerDigging extends Packet {
 	public byte y;
 	public int z;
 	public byte face;
-	
+
 	public PacketPlayerDigging() {
 	}
-	
+
 	public PacketPlayerDigging(byte status, int x, byte y, int z, byte face) {
 		this.status = status;
 		this.x = x;
@@ -48,14 +48,14 @@ public class PacketPlayerDigging extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 14;
 	}
-	
+
 }

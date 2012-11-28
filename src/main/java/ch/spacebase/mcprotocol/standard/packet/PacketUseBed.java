@@ -15,10 +15,10 @@ public class PacketUseBed extends Packet {
 	public int x;
 	public byte y;
 	public int z;
-	
+
 	public PacketUseBed() {
 	}
-	
+
 	public PacketUseBed(int entityId, byte unknown, int x, byte y, int z) {
 		this.entityId = entityId;
 		this.unknown = unknown;
@@ -48,14 +48,14 @@ public class PacketUseBed extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 17;
 	}
-	
+
 }

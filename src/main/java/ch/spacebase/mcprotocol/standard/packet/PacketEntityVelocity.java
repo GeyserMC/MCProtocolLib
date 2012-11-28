@@ -14,10 +14,10 @@ public class PacketEntityVelocity extends Packet {
 	public short velX;
 	public short velY;
 	public short velZ;
-	
+
 	public PacketEntityVelocity() {
 	}
-	
+
 	public PacketEntityVelocity(int entityId, short velX, short velY, short velZ) {
 		this.entityId = entityId;
 		this.velX = velX;
@@ -44,14 +44,14 @@ public class PacketEntityVelocity extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 28;
 	}
-	
+
 }

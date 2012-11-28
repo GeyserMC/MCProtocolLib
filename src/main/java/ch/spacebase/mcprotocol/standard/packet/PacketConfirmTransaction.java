@@ -13,10 +13,10 @@ public class PacketConfirmTransaction extends Packet {
 	public byte id;
 	public short action;
 	public boolean confirm;
-	
+
 	public PacketConfirmTransaction() {
 	}
-	
+
 	public PacketConfirmTransaction(byte id, short action, boolean confirm) {
 		this.id = id;
 		this.action = action;
@@ -40,14 +40,14 @@ public class PacketConfirmTransaction extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 106;
 	}
-	
+
 }

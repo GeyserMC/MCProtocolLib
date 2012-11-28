@@ -12,10 +12,10 @@ public class PacketTimeUpdate extends Packet {
 
 	public long age;
 	public long time;
-	
+
 	public PacketTimeUpdate() {
 	}
-	
+
 	public PacketTimeUpdate(long age, long time) {
 		this.age = age;
 		this.time = time;
@@ -36,14 +36,14 @@ public class PacketTimeUpdate extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 4;
 	}
-	
+
 }

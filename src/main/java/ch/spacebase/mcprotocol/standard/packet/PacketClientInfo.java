@@ -16,10 +16,10 @@ public class PacketClientInfo extends Packet {
 	public byte chatFlags;
 	public byte difficulty;
 	public boolean cape;
-	
+
 	public PacketClientInfo() {
 	}
-	
+
 	public PacketClientInfo(String locale, byte viewDistance, byte chatFlags, byte difficulty, boolean cape) {
 		this.locale = locale;
 		this.viewDistance = viewDistance;
@@ -49,14 +49,14 @@ public class PacketClientInfo extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 204;
 	}
-	
+
 }

@@ -13,10 +13,10 @@ public class PacketCreativeSlot extends Packet {
 
 	public short slot;
 	public ItemStack clicked;
-	
+
 	public PacketCreativeSlot() {
 	}
-	
+
 	public PacketCreativeSlot(short slot, ItemStack clicked) {
 		this.slot = slot;
 		this.clicked = clicked;
@@ -40,14 +40,14 @@ public class PacketCreativeSlot extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 107;
 	}
-	
+
 }

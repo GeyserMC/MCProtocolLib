@@ -17,10 +17,10 @@ public class PacketSpawnPainting extends Packet {
 	public int y;
 	public int z;
 	public int direction;
-	
+
 	public PacketSpawnPainting() {
 	}
-	
+
 	public PacketSpawnPainting(int entityId, String title, int x, int y, int z, int direction) {
 		this.entityId = entityId;
 		this.title = title;
@@ -53,14 +53,14 @@ public class PacketSpawnPainting extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 25;
 	}
-	
+
 }

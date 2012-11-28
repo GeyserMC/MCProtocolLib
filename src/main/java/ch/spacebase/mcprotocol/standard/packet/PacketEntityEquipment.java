@@ -14,24 +14,24 @@ public class PacketEntityEquipment extends Packet {
 	public int entityId;
 	public short slot;
 	public ItemStack item;
-	
+
 	public PacketEntityEquipment() {
 	}
-	
+
 	public PacketEntityEquipment(int entityId, short slot, ItemStack item) {
 		this.entityId = entityId;
 		this.slot = slot;
 		this.item = item;
 	}
-	
+
 	public int getEntityId() {
 		return this.entityId;
 	}
-	
+
 	public short getSlot() {
 		return this.slot;
 	}
-	
+
 	public ItemStack getItem() {
 		return this.item;
 	}
@@ -54,14 +54,14 @@ public class PacketEntityEquipment extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 5;
 	}
-	
+
 }

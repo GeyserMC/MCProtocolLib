@@ -12,10 +12,10 @@ public class PacketGameState extends Packet {
 
 	public byte reason;
 	public byte gamemode;
-	
+
 	public PacketGameState() {
 	}
-	
+
 	public PacketGameState(byte reason, byte gamemode) {
 		this.reason = reason;
 		this.gamemode = gamemode;
@@ -36,14 +36,14 @@ public class PacketGameState extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 70;
 	}
-	
+
 }

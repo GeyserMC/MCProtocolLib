@@ -12,14 +12,14 @@ import ch.spacebase.mcprotocol.util.IOUtils;
 public class PacketDisconnect extends Packet {
 
 	public String reason;
-	
+
 	public PacketDisconnect() {
 	}
-	
+
 	public PacketDisconnect(String reason) {
 		this.reason = reason;
 	}
-	
+
 	public String getReason() {
 		return this.reason;
 	}
@@ -38,7 +38,7 @@ public class PacketDisconnect extends Packet {
 	public void handleClient(Client conn) {
 		conn.disconnect("", false);
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}

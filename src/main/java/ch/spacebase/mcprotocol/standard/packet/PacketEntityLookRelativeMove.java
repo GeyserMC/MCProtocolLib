@@ -16,10 +16,10 @@ public class PacketEntityLookRelativeMove extends Packet {
 	public byte dZ;
 	public byte yaw;
 	public byte pitch;
-	
+
 	public PacketEntityLookRelativeMove() {
 	}
-	
+
 	public PacketEntityLookRelativeMove(int entityId, byte dX, byte dY, byte dZ, byte yaw, byte pitch) {
 		this.entityId = entityId;
 		this.dX = dX;
@@ -52,14 +52,14 @@ public class PacketEntityLookRelativeMove extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 33;
 	}
-	
+
 }

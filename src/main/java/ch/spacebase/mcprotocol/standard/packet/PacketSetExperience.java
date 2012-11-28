@@ -13,10 +13,10 @@ public class PacketSetExperience extends Packet {
 	public float experienceBar;
 	public short level;
 	public short experience;
-	
+
 	public PacketSetExperience() {
 	}
-	
+
 	public PacketSetExperience(float experienceBar, short level, short experience) {
 		this.experienceBar = experienceBar;
 		this.level = level;
@@ -40,14 +40,14 @@ public class PacketSetExperience extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 43;
 	}
-	
+
 }

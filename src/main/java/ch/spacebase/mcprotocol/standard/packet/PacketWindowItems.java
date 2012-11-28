@@ -13,10 +13,10 @@ public class PacketWindowItems extends Packet {
 
 	public byte id;
 	public ItemStack items[];
-	
+
 	public PacketWindowItems() {
 	}
-	
+
 	public PacketWindowItems(byte id, ItemStack items[]) {
 		this.id = id;
 		this.items = items;
@@ -44,14 +44,14 @@ public class PacketWindowItems extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 104;
 	}
-	
+
 }

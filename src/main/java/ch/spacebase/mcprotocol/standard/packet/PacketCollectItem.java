@@ -12,10 +12,10 @@ public class PacketCollectItem extends Packet {
 
 	public int collected;
 	public int collector;
-	
+
 	public PacketCollectItem() {
 	}
-	
+
 	public PacketCollectItem(int collected, int collector) {
 		this.collected = collected;
 		this.collector = collector;
@@ -36,14 +36,14 @@ public class PacketCollectItem extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 22;
 	}
-	
+
 }

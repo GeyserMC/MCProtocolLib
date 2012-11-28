@@ -14,10 +14,10 @@ public class PacketSetSlot extends Packet {
 	public byte id;
 	public short slot;
 	public ItemStack item;
-	
+
 	public PacketSetSlot() {
 	}
-	
+
 	public PacketSetSlot(byte id, short slot, ItemStack item) {
 		this.id = id;
 		this.slot = slot;
@@ -44,14 +44,14 @@ public class PacketSetSlot extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 103;
 	}
-	
+
 }

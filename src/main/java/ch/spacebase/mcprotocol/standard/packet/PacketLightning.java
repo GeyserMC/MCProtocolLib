@@ -15,10 +15,10 @@ public class PacketLightning extends Packet {
 	public int x;
 	public int y;
 	public int z;
-	
+
 	public PacketLightning() {
 	}
-	
+
 	public PacketLightning(int entityId, boolean unk, int x, int y, int z) {
 		this.entityId = entityId;
 		this.unk = unk;
@@ -48,14 +48,14 @@ public class PacketLightning extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 71;
 	}
-	
+
 }

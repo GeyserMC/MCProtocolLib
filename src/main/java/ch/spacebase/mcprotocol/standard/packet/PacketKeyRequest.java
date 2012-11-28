@@ -38,23 +38,23 @@ public class PacketKeyRequest extends Packet {
 	public String serverId;
 	public byte[] pubKey;
 	public byte[] verifyToken;
-	
+
 	public PacketKeyRequest() {
 	}
-	
+
 	public PacketKeyRequest(String serverId, byte[] pubKey, byte[] verifyToken) {
 		this.pubKey = pubKey;
 		this.verifyToken = verifyToken;
 	}
-	
+
 	public String getServerId() {
 		return this.serverId;
 	}
-	
+
 	public byte[] getPublicKey() {
 		return this.pubKey;
 	}
-	
+
 	public byte[] getVerifyToken() {
 		return this.verifyToken;
 	}
@@ -65,7 +65,7 @@ public class PacketKeyRequest extends Packet {
 		byte pubKey[] = new byte[in.readShort()];
 		in.readFully(pubKey);
 		this.pubKey = pubKey;
-		
+
 		byte verifyToken[] = new byte[in.readShort()];
 		in.readFully(verifyToken);
 		this.verifyToken = verifyToken;
@@ -93,20 +93,20 @@ public class PacketKeyRequest extends Packet {
 				return;
 			}
 		}
-		
+
 		conn.send(new PacketKeyResponse(encryptBytes(key, secret.getEncoded()), encryptBytes(key, this.verifyToken)));
 		((StandardProtocol) conn.getProtocol()).setSecretKey(secret);
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 253;
 	}
-	
+
 	private static byte[] encryptBytes(PublicKey key, byte[] bytes) {
 		try {
 			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
@@ -123,16 +123,16 @@ public class PacketKeyRequest extends Packet {
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	private static SecretKey generateKey() {
-        CipherKeyGenerator gen = new CipherKeyGenerator();
-        gen.init(new KeyGenerationParameters(new SecureRandom(), 128));
-        return new SecretKeySpec(gen.generateKey(), "AES");
+		CipherKeyGenerator gen = new CipherKeyGenerator();
+		gen.init(new KeyGenerationParameters(new SecureRandom(), 128));
+		return new SecretKeySpec(gen.generateKey(), "AES");
 	}
-	
+
 	private static PublicKey toKey(byte[] key) {
 		try {
 			X509EncodedKeySpec spec = new X509EncodedKeySpec(key);
@@ -148,17 +148,17 @@ public class PacketKeyRequest extends Packet {
 			return null;
 		}
 	}
-	
+
 	private static String joinServer(String user, String session, String key) {
-        try {
-            URL url = new URL("http://session.minecraft.net/game/joinserver.jsp?user=" + URLEncoder.encode(user, "UTF-8") + "&sessionId=" + URLEncoder.encode(session, "UTF-8") + "&serverId=" + URLEncoder.encode(key, "UTF-8"));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            String response = reader.readLine();
-            reader.close();
-            return response;
-        } catch (IOException e) {
-            return e.toString();
-        }
+		try {
+			URL url = new URL("http://session.minecraft.net/game/joinserver.jsp?user=" + URLEncoder.encode(user, "UTF-8") + "&sessionId=" + URLEncoder.encode(session, "UTF-8") + "&serverId=" + URLEncoder.encode(key, "UTF-8"));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+			String response = reader.readLine();
+			reader.close();
+			return response;
+		} catch (IOException e) {
+			return e.toString();
+		}
 	}
-	
+
 }

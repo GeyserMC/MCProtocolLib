@@ -13,10 +13,10 @@ public class PacketHealthUpdate extends Packet {
 	public short health;
 	public short food;
 	public float saturation;
-	
+
 	public PacketHealthUpdate() {
 	}
-	
+
 	public PacketHealthUpdate(short health, short food, float saturation) {
 		this.health = health;
 		this.food = food;
@@ -40,14 +40,14 @@ public class PacketHealthUpdate extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 8;
 	}
-	
+
 }

@@ -17,10 +17,10 @@ public class PacketPlayerPositionLook extends Packet {
 	public float yaw;
 	public float pitch;
 	public boolean grounded;
-	
+
 	public PacketPlayerPositionLook() {
 	}
-	
+
 	public PacketPlayerPositionLook(double x, double y, double stance, double z, float yaw, float pitch, boolean grounded) {
 		this.x = x;
 		this.y = y;
@@ -56,14 +56,14 @@ public class PacketPlayerPositionLook extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 13;
 	}
-	
+
 }

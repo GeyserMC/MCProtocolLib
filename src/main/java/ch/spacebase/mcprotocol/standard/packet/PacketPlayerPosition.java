@@ -15,10 +15,10 @@ public class PacketPlayerPosition extends Packet {
 	public double stance;
 	public double z;
 	public boolean grounded;
-	
+
 	public PacketPlayerPosition() {
 	}
-	
+
 	public PacketPlayerPosition(double x, double y, double stance, double z, boolean grounded) {
 		this.x = x;
 		this.y = y;
@@ -48,14 +48,14 @@ public class PacketPlayerPosition extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 11;
 	}
-	
+
 }

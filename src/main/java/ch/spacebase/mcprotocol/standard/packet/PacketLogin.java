@@ -18,10 +18,10 @@ public class PacketLogin extends Packet {
 	public byte difficulty;
 	public byte unused;
 	public byte maxPlayers;
-	
+
 	public PacketLogin() {
 	}
-	
+
 	public PacketLogin(int entityId, String levelType, byte gameMode, byte dimension, byte difficulty, byte unused, byte maxPlayers) {
 		this.entityId = entityId;
 		this.levelType = levelType;
@@ -57,14 +57,14 @@ public class PacketLogin extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 1;
 	}
-	
+
 }

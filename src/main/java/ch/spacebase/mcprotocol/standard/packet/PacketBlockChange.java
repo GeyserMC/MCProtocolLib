@@ -15,10 +15,10 @@ public class PacketBlockChange extends Packet {
 	public int z;
 	public short block;
 	public byte data;
-	
+
 	public PacketBlockChange() {
 	}
-	
+
 	public PacketBlockChange(int x, int y, int z, short block, byte data) {
 		this.x = x;
 		this.y = y;
@@ -48,14 +48,14 @@ public class PacketBlockChange extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 53;
 	}
-	
+
 }
