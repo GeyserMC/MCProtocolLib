@@ -2,7 +2,7 @@ package ch.spacebase.mcprotocol.event;
 
 import ch.spacebase.mcprotocol.packet.Packet;
 
-public class PacketRecieveEvent extends ProtocolEvent {
+public class PacketRecieveEvent extends ProtocolEvent<ProtocolListener> {
 
 	private Packet packet;
 

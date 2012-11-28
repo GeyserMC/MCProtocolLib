@@ -43,6 +43,7 @@ public class PacketKeyRequest extends Packet {
 	}
 
 	public PacketKeyRequest(String serverId, byte[] pubKey, byte[] verifyToken) {
+		this.serverId = serverId;
 		this.pubKey = pubKey;
 		this.verifyToken = verifyToken;
 	}

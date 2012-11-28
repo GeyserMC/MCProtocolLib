@@ -61,6 +61,7 @@ public class PacketHandshake extends Packet {
 				conn.disconnect("Outdated Client!");
 			}
 		} else {
+			conn.setUsername(this.user);
 			PublicKey key = conn.getServer().getKeys().getPublic();
 			((StandardProtocol) conn.getProtocol()).setLoginKey(conn.getServer().verifyUsers() ? Long.toString(Util.random().nextLong(), 16) : "-");
 			byte token[] = new byte[4];

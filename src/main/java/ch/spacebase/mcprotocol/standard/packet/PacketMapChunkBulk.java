@@ -20,32 +20,32 @@ public class PacketMapChunkBulk extends Packet {
 	public byte compressed[];
 	public byte chunks[][];
 	public int length;
-	
+
 	public PacketMapChunkBulk() {
 	}
-	
+
 	public PacketMapChunkBulk(int columnX[], int columnZ[], int primary[], int add[], byte data[], byte chunks[][]) {
 		this.columnX = columnX;
 		this.columnZ = columnZ;
 		this.primary = primary;
 		this.add = add;
-		
-        Deflater deflater = new Deflater(-1);
 
-        try {
-            deflater.setInput(data, 0, data.length);
-            deflater.finish();
-            this.compressed = new byte[data.length];
-            this.length = deflater.deflate(this.compressed);
-        } finally {
-            deflater.end();
-        }
-        
+		Deflater deflater = new Deflater(-1);
+
+		try {
+			deflater.setInput(data, 0, data.length);
+			deflater.finish();
+			this.compressed = new byte[data.length];
+			this.length = deflater.deflate(this.compressed);
+		} finally {
+			deflater.end();
+		}
+
 		this.chunks = chunks;
 	}
-	
+
 	@Override
-	public void read(DataInputStream in) throws IOException {	
+	public void read(DataInputStream in) throws IOException {
 		short columns = in.readShort();
 		this.length = in.readInt();
 		this.columnX = new int[columns];
@@ -56,28 +56,28 @@ public class PacketMapChunkBulk extends Packet {
 
 		this.compressed = new byte[this.length];
 		in.readFully(this.compressed, 0, this.length);
-		
+
 		byte decompressed[] = new byte[0x30100 * columns];
 		Inflater inflater = new Inflater();
 		inflater.setInput(this.compressed, 0, this.length);
 
 		try {
 			inflater.inflate(decompressed);
-		} catch (DataFormatException dataformatexception) {
+		} catch (DataFormatException e) {
 			throw new IOException("Bad compressed data format");
 		} finally {
 			inflater.end();
 		}
 
 		int currlen = 0;
-		for (int column = 0; column < columns; column++) {
+		for(int column = 0; column < columns; column++) {
 			this.columnX[column] = in.readInt();
 			this.columnZ[column] = in.readInt();
 			this.primary[column] = in.readShort();
 			this.add[column] = in.readShort();
 			int off = 0;
 
-			for (int count = 0; count < 16; count++) {
+			for(int count = 0; count < 16; count++) {
 				off += this.primary[column] >> count & 1;
 			}
 
@@ -104,14 +104,14 @@ public class PacketMapChunkBulk extends Packet {
 	@Override
 	public void handleClient(Client conn) {
 	}
-	
+
 	@Override
 	public void handleServer(ServerConnection conn) {
 	}
-	
+
 	@Override
 	public int getId() {
 		return 56;
 	}
-	
+
 }

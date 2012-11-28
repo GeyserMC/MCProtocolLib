@@ -10,17 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import ch.spacebase.mcprotocol.event.ProtocolEvent;
+import ch.spacebase.mcprotocol.event.ServerListener;
 import ch.spacebase.mcprotocol.util.Util;
 
 public class Server {
 
 	private int port;
-	private boolean online;
+	private boolean online = true;
 
 	private List<ServerConnection> connections = new CopyOnWriteArrayList<ServerConnection>();
 	private KeyPair keys;
 	private boolean verify;
 	private Class<? extends Protocol> protocol;
+	private List<ServerListener> listeners = new ArrayList<ServerListener>();
 
 	public Server(Class<? extends Protocol> prot, int port, boolean verifyUsers) {
 		this.port = port;
@@ -52,6 +55,18 @@ public class Server {
 		}
 
 		this.online = false;
+	}
+	
+	public void listen(ServerListener listener) {
+		this.listeners.add(listener);
+	}
+
+	public <T extends ProtocolEvent<ServerListener>> T call(T event) {
+		for(ServerListener listener : this.listeners) {
+			event.call(listener);
+		}
+
+		return event;
 	}
 
 	public KeyPair getKeys() {

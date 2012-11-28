@@ -76,6 +76,7 @@ public class PacketKeyResponse extends Packet {
 		}
 
 		conn.send(new PacketKeyResponse(new byte[0], new byte[0]));
+		((StandardProtocol) conn.getProtocol()).setAES(conn);
 	}
 
 	@Override

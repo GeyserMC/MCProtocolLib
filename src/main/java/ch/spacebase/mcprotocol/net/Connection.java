@@ -55,7 +55,7 @@ public abstract class Connection {
 		this.listeners.add(listener);
 	}
 
-	public <T extends ProtocolEvent> T call(T event) {
+	public <T extends ProtocolEvent<ProtocolListener>> T call(T event) {
 		for(ProtocolListener listener : this.listeners) {
 			event.call(listener);
 		}
@@ -131,6 +131,7 @@ public abstract class Connection {
 
 					Packet packet = protocol.getType().getPacket(opcode).newInstance();
 					packet.read(input);
+					System.out.println("Rec " + packet.getId());
 					if(Connection.this instanceof Client) {
 						packet.handleClient((Client) Connection.this);
 					} else {
