@@ -13,10 +13,11 @@ import ch.spacebase.mcprotocol.packet.Packet;
 
 public class PacketMapChunkBulk extends Packet {
 
-	private int columnX[];
-	private int columnZ[];
-	private int primary[];
-	private int add[];
+	public boolean skylight;
+	public int columnX[];
+	public int columnZ[];
+	public int primary[];
+	public int add[];
 	public byte compressed[];
 	public byte chunks[][];
 	public int length;
@@ -24,11 +25,12 @@ public class PacketMapChunkBulk extends Packet {
 	public PacketMapChunkBulk() {
 	}
 
-	public PacketMapChunkBulk(int columnX[], int columnZ[], int primary[], int add[], byte data[], byte chunks[][]) {
+	public PacketMapChunkBulk(int columnX[], int columnZ[], int primary[], int add[], byte data[], byte chunks[][], boolean skylight) {
 		this.columnX = columnX;
 		this.columnZ = columnZ;
 		this.primary = primary;
 		this.add = add;
+		this.skylight = skylight;
 
 		Deflater deflater = new Deflater(-1);
 
@@ -48,6 +50,7 @@ public class PacketMapChunkBulk extends Packet {
 	public void read(DataInputStream in) throws IOException {
 		short columns = in.readShort();
 		this.length = in.readInt();
+		this.skylight = in.readBoolean();
 		this.columnX = new int[columns];
 		this.columnZ = new int[columns];
 		this.primary = new int[columns];
@@ -92,6 +95,7 @@ public class PacketMapChunkBulk extends Packet {
 	public void write(DataOutputStream out) throws IOException {
 		out.writeShort(this.columnX.length);
 		out.writeInt(this.length);
+		out.writeBoolean(this.skylight);
 		out.write(this.compressed, 0, this.length);
 		for(int count = 0; count < this.columnX.length; count++) {
 			out.writeInt(this.columnX[count]);

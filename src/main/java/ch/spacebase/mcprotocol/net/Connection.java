@@ -2,6 +2,7 @@ package ch.spacebase.mcprotocol.net;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -131,7 +132,6 @@ public abstract class Connection {
 
 					Packet packet = protocol.getType().getPacket(opcode).newInstance();
 					packet.read(input);
-					System.out.println("Rec " + packet.getId());
 					if(Connection.this instanceof Client) {
 						packet.handleClient((Client) Connection.this);
 					} else {
@@ -139,6 +139,8 @@ public abstract class Connection {
 					}
 
 					call(new PacketRecieveEvent(packet));
+				} catch(EOFException e) {
+					disconnect("End of Stream");
 				} catch (Exception e) {
 					Util.logger().severe("Error while listening to connection!");
 					e.printStackTrace();

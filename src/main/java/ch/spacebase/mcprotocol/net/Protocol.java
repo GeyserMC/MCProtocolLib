@@ -62,7 +62,6 @@ import ch.spacebase.mcprotocol.standard.packet.PacketRespawn;
 import ch.spacebase.mcprotocol.standard.packet.PacketServerPing;
 import ch.spacebase.mcprotocol.standard.packet.PacketSetExperience;
 import ch.spacebase.mcprotocol.standard.packet.PacketSetSlot;
-import ch.spacebase.mcprotocol.standard.packet.PacketSpawnDroppedItem;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnExpOrb;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnMob;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnNamedEntity;
@@ -125,7 +124,6 @@ public abstract class Protocol {
 			STANDARD.registerPacket(18, PacketAnimation.class);
 			STANDARD.registerPacket(19, PacketEntityAction.class);
 			STANDARD.registerPacket(20, PacketSpawnNamedEntity.class);
-			STANDARD.registerPacket(21, PacketSpawnDroppedItem.class);
 			STANDARD.registerPacket(22, PacketCollectItem.class);
 			STANDARD.registerPacket(23, PacketSpawnVehicle.class);
 			STANDARD.registerPacket(24, PacketSpawnMob.class);

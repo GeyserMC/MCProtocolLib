@@ -15,6 +15,8 @@ public class PacketSpawnVehicle extends Packet {
 	public int x;
 	public int y;
 	public int z;
+	public byte yaw;
+	public byte pitch;
 	public int data;
 	public short speedX;
 	public short speedY;
@@ -23,12 +25,14 @@ public class PacketSpawnVehicle extends Packet {
 	public PacketSpawnVehicle() {
 	}
 
-	public PacketSpawnVehicle(int entityId, byte type, int x, int y, int z, int data, short speedX, short speedY, short speedZ) {
+	public PacketSpawnVehicle(int entityId, byte type, int x, int y, int z, byte yaw, byte pitch, int data, short speedX, short speedY, short speedZ) {
 		this.entityId = entityId;
 		this.type = type;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.yaw = yaw;
+		this.pitch = pitch;
 		this.data = data;
 		this.speedX = speedX;
 		this.speedY = speedY;
@@ -42,6 +46,8 @@ public class PacketSpawnVehicle extends Packet {
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
+		this.yaw = in.readByte();
+		this.pitch = in.readByte();
 		this.data = in.readInt();
 		if(this.data > 0) {
 			this.speedX = in.readShort();
@@ -57,6 +63,8 @@ public class PacketSpawnVehicle extends Packet {
 		out.writeInt(this.x);
 		out.writeInt(this.y);
 		out.writeInt(this.z);
+		out.writeByte(this.yaw);
+		out.writeByte(this.pitch);
 		out.writeInt(this.data);
 		if(this.data > 0) {
 			out.writeShort(this.speedX);
