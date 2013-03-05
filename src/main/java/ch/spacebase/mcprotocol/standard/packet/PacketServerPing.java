@@ -11,13 +11,19 @@ import ch.spacebase.mcprotocol.packet.Packet;
 public class PacketServerPing extends Packet {
 
 	private static final byte MAGIC = 1;
+	public boolean newFormat = false;
 
 	public PacketServerPing() {
 	}
 
 	@Override
 	public void read(DataInputStream in) throws IOException {
-		in.readByte();
+		if(in.available() > 0) {
+			in.readByte();
+			this.newFormat = true;
+		} else {
+			this.newFormat = false;
+		}
 	}
 
 	@Override

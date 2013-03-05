@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import ch.spacebase.mcprotocol.event.ConnectEvent;
 import ch.spacebase.mcprotocol.event.ProtocolEvent;
 import ch.spacebase.mcprotocol.event.ServerListener;
 import ch.spacebase.mcprotocol.util.Util;
@@ -90,7 +91,9 @@ public class Server {
 				try {
 					Socket client = this.sock.accept();
 					try {
-						connections.add(new ServerConnection(Server.this.protocol.getDeclaredConstructor().newInstance(), Server.this, client).connect());
+						ServerConnection conn = new ServerConnection(Server.this.protocol.getDeclaredConstructor().newInstance(), Server.this, client).connect();
+						connections.add(conn);
+						call(new ConnectEvent(conn));
 					} catch (Exception e) {
 						Util.logger().severe("Failed to create server connection!");
 						e.printStackTrace();

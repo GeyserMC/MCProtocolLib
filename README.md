@@ -9,6 +9,12 @@
 mc-protocol-lib is a simple library for communicating with a Minecraft client/server. It aims to allow people to make custom bots, clients, or servers for Minecraft easily.
 
 
+<b>How to respond to a server list ping</b>
+--------
+
+When you receive a server list ping packet when listening to a server, respond by calling connection.disconnect(Util.formatPingResponse(motd, players, maxplayers));
+
+
 <b>Chat Bot Example</b>
 --------
 

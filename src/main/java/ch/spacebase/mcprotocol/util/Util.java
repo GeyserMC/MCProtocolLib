@@ -51,5 +51,9 @@ public class Util {
 			return null;
 		}
 	}
+	
+	public static String formatPingResponse(String motd, int players, int maxplayers) {
+		return "§1\0" + Constants.STANDARD_PROTOCOL_VERSION + "\0" + Constants.STANDARD_MINECRAFT_VERSION + "\0" + motd + "\0" + players + "\0" + maxplayers;
+	}
 
 }
