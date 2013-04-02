@@ -3,47 +3,38 @@ package ch.spacebase.mcprotocol.standard.packet;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.util.IOUtils;
 
-public class PacketOpenWindow extends Packet {
+public class PacketScoreboardObjective extends Packet {
 
-	public byte id;
-	public byte type;
 	public String name;
-	public byte slots;
-	public boolean useTitle;
+	public String value;
+	public byte action;
 
-	public PacketOpenWindow() {
+	public PacketScoreboardObjective() {
 	}
 
-	public PacketOpenWindow(byte id, byte type, String name, byte slots, boolean useTitle) {
-		this.id = id;
-		this.type = type;
+	public PacketScoreboardObjective(String name, String value, byte action) {
 		this.name = name;
-		this.slots = slots;
-		this.useTitle = useTitle;
+		this.value = value;
+		this.action = action;
 	}
 
 	@Override
 	public void read(DataInputStream in) throws IOException {
-		this.id = in.readByte();
-		this.type = in.readByte();
 		this.name = IOUtils.readString(in);
-		this.slots = in.readByte();
-		this.useTitle = in.readBoolean();
+		this.value = IOUtils.readString(in);
+		this.action = in.readByte();
 	}
 
 	@Override
 	public void write(DataOutputStream out) throws IOException {
-		out.writeByte(this.id);
-		out.writeByte(this.type);
 		IOUtils.writeString(out, this.name);
-		out.writeByte(this.slots);
-		out.writeBoolean(this.useTitle);
+		IOUtils.writeString(out, this.value);
+		out.writeByte(this.action);
 	}
 
 	@Override
@@ -56,7 +47,7 @@ public class PacketOpenWindow extends Packet {
 
 	@Override
 	public int getId() {
-		return 100;
+		return 206;
 	}
 
 }
