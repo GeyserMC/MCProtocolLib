@@ -16,8 +16,6 @@ public class PacketPlayerBlockPlace extends Packet {
 	public int z;
 	public byte direction;
 	public ItemStack item;
-	public byte stackSize;
-	public short damage;
 	public byte[] nbt;
 	public byte cursorX;
 	public byte cursorY;
@@ -56,7 +54,7 @@ public class PacketPlayerBlockPlace extends Packet {
 		out.writeByte(this.y);
 		out.writeInt(this.z);
 		out.writeByte(this.direction);
-		this.item.write(out);
+		if(this.item != null) this.item.write(out);
 		out.writeByte(this.cursorX);
 		out.writeByte(this.cursorY);
 		out.writeByte(this.cursorZ);

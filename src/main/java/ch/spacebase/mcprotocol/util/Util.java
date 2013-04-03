@@ -55,5 +55,13 @@ public class Util {
 	public static String formatPingResponse(String motd, int players, int maxplayers) {
 		return "§1\0" + Constants.STANDARD_PROTOCOL_VERSION + "\0" + Constants.STANDARD_MINECRAFT_VERSION + "\0" + motd + "\0" + players + "\0" + maxplayers;
 	}
+	
+	public static boolean getBit(int value, int bit) {
+		return (value & bit) == bit;
+	}
+
+	public static byte setBit(byte value, int bit, boolean state) {
+		return state ? (byte) (value | bit) : (byte) (value & ~bit);
+	}
 
 }
