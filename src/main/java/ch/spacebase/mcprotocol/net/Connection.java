@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import ch.spacebase.mcprotocol.event.DisconnectEvent;
 import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
 import ch.spacebase.mcprotocol.event.ProtocolEvent;
 import ch.spacebase.mcprotocol.event.ProtocolListener;
@@ -108,6 +109,7 @@ public abstract class Connection {
 		this.getProtocol().disconnected(this, reason, packet);
 		this.packets.clear();
 		this.connected = false;
+		this.call(new DisconnectEvent(this));
 	}
 
 	public boolean isConnected() {

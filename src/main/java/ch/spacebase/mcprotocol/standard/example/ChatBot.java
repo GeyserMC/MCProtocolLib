@@ -2,6 +2,7 @@ package ch.spacebase.mcprotocol.standard.example;
 
 import java.text.DecimalFormat;
 
+import ch.spacebase.mcprotocol.event.DisconnectEvent;
 import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
 import ch.spacebase.mcprotocol.event.ProtocolListener;
 import ch.spacebase.mcprotocol.exception.ConnectException;
@@ -61,6 +62,11 @@ public class ChatBot {
 				onPositionLook((PacketPlayerPositionLook) packet);
 				break;
 			}
+		}
+		
+		@Override
+		public void onDisconnect(DisconnectEvent event) {
+			System.out.println("Disconnected.");
 		}
 
 		public void onPositionLook(PacketPlayerPositionLook packet) {
