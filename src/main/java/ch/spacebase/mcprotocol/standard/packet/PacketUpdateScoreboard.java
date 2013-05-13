@@ -29,16 +29,20 @@ public class PacketUpdateScoreboard extends Packet {
 	public void read(DataInputStream in) throws IOException {
 		this.item = IOUtils.readString(in);
 		this.action = in.readByte();
-		this.scoreboard = IOUtils.readString(in);
-		this.value = in.readInt();
+		if (this.action != 1) {
+			this.scoreboard = IOUtils.readString(in);
+			this.value = in.readInt();
+		}
 	}
 
 	@Override
 	public void write(DataOutputStream out) throws IOException {
 		IOUtils.writeString(out, this.item);
 		out.writeByte(this.action);
-		IOUtils.writeString(out, this.scoreboard);
-		out.writeInt(this.value);
+		if (this.action != 1) {
+			IOUtils.writeString(out, this.scoreboard);
+			out.writeInt(this.value);
+		}
 	}
 
 	@Override
