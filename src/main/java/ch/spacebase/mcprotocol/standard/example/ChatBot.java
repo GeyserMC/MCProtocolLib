@@ -66,7 +66,7 @@ public class ChatBot {
 		
 		@Override
 		public void onDisconnect(DisconnectEvent event) {
-			System.out.println("Disconnected.");
+			System.out.println("Disconnected: " + event.getReason());
 		}
 
 		public void onPositionLook(PacketPlayerPositionLook packet) {

@@ -29,7 +29,7 @@ public class PacketUpdateScoreboard extends Packet {
 	public void read(DataInputStream in) throws IOException {
 		this.item = IOUtils.readString(in);
 		this.action = in.readByte();
-		if (this.action != 1) {
+		if(this.action != 1) {
 			this.scoreboard = IOUtils.readString(in);
 			this.value = in.readInt();
 		}
@@ -39,7 +39,7 @@ public class PacketUpdateScoreboard extends Packet {
 	public void write(DataOutputStream out) throws IOException {
 		IOUtils.writeString(out, this.item);
 		out.writeByte(this.action);
-		if (this.action != 1) {
+		if(this.action != 1) {
 			IOUtils.writeString(out, this.scoreboard);
 			out.writeInt(this.value);
 		}

@@ -109,7 +109,7 @@ public abstract class Connection {
 		this.getProtocol().disconnected(this, reason, packet);
 		this.packets.clear();
 		this.connected = false;
-		this.call(new DisconnectEvent(this));
+		this.call(new DisconnectEvent(this, reason));
 	}
 
 	public boolean isConnected() {
