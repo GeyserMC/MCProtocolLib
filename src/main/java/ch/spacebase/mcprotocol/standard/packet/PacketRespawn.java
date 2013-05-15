@@ -11,16 +11,16 @@ import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketRespawn extends Packet {
 
-	public byte dimension;
+	public int dimension;
 	public byte difficulty;
 	public byte gameMode;
-	public byte worldHeight;
+	public short worldHeight;
 	public String levelType;
 
 	public PacketRespawn() {
 	}
 
-	public PacketRespawn(byte dimension, byte difficulty, byte gameMode, byte worldHeight, String levelType) {
+	public PacketRespawn(int dimension, byte difficulty, byte gameMode, short worldHeight, String levelType) {
 		this.dimension = dimension;
 		this.difficulty = difficulty;
 		this.gameMode = gameMode;
@@ -30,19 +30,19 @@ public class PacketRespawn extends Packet {
 
 	@Override
 	public void read(DataInputStream in) throws IOException {
-		this.dimension = in.readByte();
+		this.dimension = in.readInt();
 		this.difficulty = in.readByte();
 		this.gameMode = in.readByte();
-		this.worldHeight = in.readByte();
+		this.worldHeight = in.readShort();
 		this.levelType = IOUtils.readString(in);
 	}
 
 	@Override
 	public void write(DataOutputStream out) throws IOException {
-		out.writeByte(this.dimension);
+		out.writeInt(this.dimension);
 		out.writeByte(this.difficulty);
 		out.writeByte(this.gameMode);
-		out.writeByte(this.worldHeight);
+		out.writeShort(this.worldHeight);
 		IOUtils.writeString(out, this.levelType);
 	}
 
