@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ch.spacebase.mcprotocol.event.DisconnectEvent;
 import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
+import ch.spacebase.mcprotocol.event.PacketSendEvent;
 import ch.spacebase.mcprotocol.event.ProtocolEvent;
 import ch.spacebase.mcprotocol.event.ProtocolListener;
 import ch.spacebase.mcprotocol.exception.ConnectException;
@@ -158,7 +159,8 @@ public abstract class Connection {
 			while(isConnected()) {
 				if(packets.size() > 0) {
 					Packet packet = packets.poll();
-
+					call(new PacketSendEvent(packet));
+					
 					try {
 						output.write(packet.getId());
 						packet.write(output);

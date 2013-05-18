@@ -4,6 +4,8 @@ public abstract class ProtocolListener {
 
 	public abstract void onPacketRecieve(PacketRecieveEvent event);
 	
+	public abstract void onPacketSend(PacketSendEvent event);
+	
 	public abstract void onDisconnect(DisconnectEvent event);
 
 }

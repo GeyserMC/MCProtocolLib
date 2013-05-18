@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import ch.spacebase.mcprotocol.event.DisconnectEvent;
 import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
+import ch.spacebase.mcprotocol.event.PacketSendEvent;
 import ch.spacebase.mcprotocol.event.ProtocolListener;
 import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.net.Client;
@@ -62,6 +63,10 @@ public class ChatBot {
 				onPositionLook((PacketPlayerPositionLook) packet);
 				break;
 			}
+		}
+		
+		@Override
+		public void onPacketSend(PacketSendEvent event) {
 		}
 		
 		@Override
