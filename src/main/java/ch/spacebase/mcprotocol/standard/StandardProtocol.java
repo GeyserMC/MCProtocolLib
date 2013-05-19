@@ -173,6 +173,11 @@ public class StandardProtocol extends Protocol {
 						conn = null;
 					}
 				}
+				
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 	}

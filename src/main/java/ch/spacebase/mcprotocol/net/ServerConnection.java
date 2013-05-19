@@ -45,6 +45,11 @@ public class ServerConnection extends Connection {
 					aliveTime = System.currentTimeMillis();
 					getProtocol().keepAlive(ServerConnection.this);
 				}
+				
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 	}

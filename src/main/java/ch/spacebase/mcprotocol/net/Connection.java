@@ -149,6 +149,11 @@ public abstract class Connection {
 					e.printStackTrace();
 					disconnect("Error while listening to connection!");
 				}
+				
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 	}
@@ -170,6 +175,11 @@ public abstract class Connection {
 						e.printStackTrace();
 						disconnect("Error while writing packet.");
 					}
+				}
+				
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
 				}
 			}
 		}

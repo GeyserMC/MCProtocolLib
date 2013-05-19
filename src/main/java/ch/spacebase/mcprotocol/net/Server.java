@@ -103,6 +103,11 @@ public class Server {
 					e.printStackTrace();
 					continue;
 				}
+				
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 	}
