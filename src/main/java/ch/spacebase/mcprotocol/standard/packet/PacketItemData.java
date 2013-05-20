@@ -27,7 +27,7 @@ public class PacketItemData extends Packet {
 	public void read(DataInputStream in) throws IOException {
 		this.item = in.readShort();
 		this.damage = in.readShort();
-		this.data = new byte[in.readUnsignedByte()];
+		this.data = new byte[in.readShort()];
 		in.readFully(this.data);
 	}
 
@@ -35,8 +35,8 @@ public class PacketItemData extends Packet {
 	public void write(DataOutputStream out) throws IOException {
 		out.writeShort(this.item);
 		out.writeShort(this.damage);
-		out.writeByte(this.data.length);
-		out.write(data);
+		out.writeShort(this.data.length);
+		out.write(this.data);
 	}
 
 	@Override
