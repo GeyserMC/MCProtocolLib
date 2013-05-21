@@ -28,11 +28,15 @@ public abstract class Connection {
 	protected String host;
 	protected int port;
 
+	private Socket sock;
 	private DataInputStream input;
 	private DataOutputStream output;
 
 	private Queue<Packet> packets = new ConcurrentLinkedQueue<Packet>();
 	private boolean connected;
+	
+	private boolean reading = false;
+	private boolean writing = false;
 
 	private List<ProtocolListener> listeners = new ArrayList<ProtocolListener>();
 
@@ -70,6 +74,7 @@ public abstract class Connection {
 
 	protected void connect(Socket sock) throws ConnectException {
 		try {
+			this.sock = sock;
 			this.input = new DataInputStream(sock.getInputStream());
 			this.output = new DataOutputStream(sock.getOutputStream());
 			this.connected = true;
@@ -111,6 +116,7 @@ public abstract class Connection {
 		this.packets.clear();
 		this.connected = false;
 		this.call(new DisconnectEvent(this, reason));
+		new CloseThread().start();
 	}
 
 	public boolean isConnected() {
@@ -122,6 +128,7 @@ public abstract class Connection {
 		public void run() {
 			while(isConnected()) {
 				try {
+					reading = true;
 					int opcode = input.readUnsignedByte();
 					if(opcode < 0) {
 						continue;
@@ -142,6 +149,7 @@ public abstract class Connection {
 					}
 
 					call(new PacketRecieveEvent(packet));
+					reading = false;
 				} catch(EOFException e) {
 					disconnect("End of Stream");
 				} catch (Exception e) {
@@ -163,6 +171,7 @@ public abstract class Connection {
 		public void run() {
 			while(isConnected()) {
 				if(packets.size() > 0) {
+					writing = true;
 					Packet packet = packets.poll();
 					call(new PacketSendEvent(packet));
 					
@@ -175,12 +184,33 @@ public abstract class Connection {
 						e.printStackTrace();
 						disconnect("Error while writing packet.");
 					}
+					
+					writing = false;
 				}
 				
 				try {
 					Thread.sleep(2);
 				} catch (InterruptedException e) {
 				}
+			}
+		}
+	}
+	
+	private class CloseThread extends Thread {
+		@Override
+		public void run() {
+			while(reading || writing) {
+				try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
+				}
+			}
+			
+			try {
+				sock.close();
+			} catch (IOException e) {
+				System.err.println("Failed to close socket.");
+				e.printStackTrace();
 			}
 		}
 	}
