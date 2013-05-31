@@ -49,6 +49,13 @@
 			<artifactId>bcprov-jdk15on</artifactId>
 			<version>1.47</version>
 		</dependency>
+		<dependency>
+			<!-- globally use junit 4.10 -->
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
