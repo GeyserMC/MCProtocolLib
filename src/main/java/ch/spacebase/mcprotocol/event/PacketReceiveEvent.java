@@ -2,11 +2,11 @@ package ch.spacebase.mcprotocol.event;
 
 import ch.spacebase.mcprotocol.packet.Packet;
 
-public class PacketRecieveEvent extends ProtocolEvent<ProtocolListener> {
+public class PacketReceiveEvent extends ProtocolEvent<ProtocolListener> {
 
 	private Packet packet;
 
-	public PacketRecieveEvent(Packet packet) {
+	public PacketReceiveEvent(Packet packet) {
 		this.packet = packet;
 	}
 

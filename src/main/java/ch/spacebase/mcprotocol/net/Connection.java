@@ -14,7 +14,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import ch.spacebase.mcprotocol.event.DisconnectEvent;
-import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
+import ch.spacebase.mcprotocol.event.PacketReceiveEvent;
 import ch.spacebase.mcprotocol.event.PacketSendEvent;
 import ch.spacebase.mcprotocol.event.ProtocolEvent;
 import ch.spacebase.mcprotocol.event.ProtocolListener;
@@ -148,7 +148,7 @@ public abstract class Connection {
 						packet.handleServer((ServerConnection) Connection.this);
 					}
 
-					call(new PacketRecieveEvent(packet));
+					call(new PacketReceiveEvent(packet));
 					reading = false;
 				} catch(EOFException e) {
 					disconnect("End of Stream");
