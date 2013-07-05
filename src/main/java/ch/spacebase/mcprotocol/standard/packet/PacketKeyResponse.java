@@ -17,7 +17,9 @@ import javax.crypto.spec.SecretKeySpec;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.standard.StandardProtocol;
+import ch.spacebase.mcprotocol.standard.StandardClient;
+import ch.spacebase.mcprotocol.standard.StandardServer;
+import ch.spacebase.mcprotocol.standard.StandardServerConnection;
 
 public class PacketKeyResponse extends Packet {
 
@@ -61,22 +63,22 @@ public class PacketKeyResponse extends Packet {
 
 	@Override
 	public void handleClient(Client conn) {
-		((StandardProtocol) conn.getProtocol()).setAES(conn);
+		((StandardClient) conn).setAES(conn);
 		conn.send(new PacketClientStatus((byte) 0));
 	}
 
 	@Override
 	public void handleServer(ServerConnection conn) {
-		PrivateKey priv = conn.getServer().getKeys().getPrivate();
+		PrivateKey priv = ((StandardServer) conn.getServer()).getKeys().getPrivate();
 
-		((StandardProtocol) conn.getProtocol()).setSecretKey(new SecretKeySpec(encryptBytes(priv, this.sharedKey), "AES"));
-		if(!Arrays.equals(((StandardProtocol) conn.getProtocol()).getToken(), encryptBytes(priv, this.verifyToken))) {
+		((StandardServerConnection) conn).setSecretKey(new SecretKeySpec(encryptBytes(priv, this.sharedKey), "AES"));
+		if(!Arrays.equals(((StandardServerConnection) conn).getToken(), encryptBytes(priv, this.verifyToken))) {
 			conn.disconnect("Invalid client reply");
 			return;
 		}
 
 		conn.send(new PacketKeyResponse(new byte[0], new byte[0]));
-		((StandardProtocol) conn.getProtocol()).setAES(conn);
+		((StandardServerConnection) conn).setAES(conn);
 	}
 
 	@Override

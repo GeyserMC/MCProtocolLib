@@ -9,7 +9,7 @@ import ch.spacebase.mcprotocol.event.ProtocolListener;
 import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.standard.StandardProtocol;
+import ch.spacebase.mcprotocol.standard.StandardClient;
 import ch.spacebase.mcprotocol.standard.packet.PacketChat;
 import ch.spacebase.mcprotocol.standard.packet.PacketPlayerPositionLook;
 
@@ -25,14 +25,14 @@ public class ChatBot {
 	private Listener listener;
 
 	public ChatBot(String host, int port) {
-		this.client = new Client(new StandardProtocol(), host, port);
+		this.client = new StandardClient(host, port);
 		this.listener = new Listener();
 
 		this.client.listen(this.listener);
 	}
 
 	public void login(String username) {
-		this.client.setUser(username);
+		this.client.setUsername(username);
 
 		try {
 			this.client.connect();

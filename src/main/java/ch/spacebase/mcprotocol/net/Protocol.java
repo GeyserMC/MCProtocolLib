@@ -1,7 +1,5 @@
 package ch.spacebase.mcprotocol.net;
 
-import ch.spacebase.mcprotocol.exception.LoginException;
-import ch.spacebase.mcprotocol.exception.OutdatedLibraryException;
 import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.standard.packet.PacketAnimation;
 import ch.spacebase.mcprotocol.standard.packet.PacketAttachEntity;
@@ -84,185 +82,139 @@ import ch.spacebase.mcprotocol.standard.packet.PacketWindowClick;
 import ch.spacebase.mcprotocol.standard.packet.PacketWindowItems;
 import ch.spacebase.mcprotocol.standard.packet.PacketWindowProperty;
 
-public abstract class Protocol {
+public enum Protocol {
 
-	private Type type;
+	/**
+	 * The standard Minecraft protocol.
+	 */
+	STANDARD,
+	
+	/**
+	 * The classic Minecraft protocol.
+	 */
+	CLASSIC,
+	
+	/**
+	 * The Minecraft Pocket Edition protocol.
+	 */
+	POCKET;
 
-	public Protocol(Type type) {
-		this.type = type;
+	static {
+		// standard protocol
+		STANDARD.registerPacket(0, PacketKeepAlive.class);
+		STANDARD.registerPacket(1, PacketLogin.class);
+		STANDARD.registerPacket(2, PacketHandshake.class);
+		STANDARD.registerPacket(3, PacketChat.class);
+		STANDARD.registerPacket(4, PacketTimeUpdate.class);
+		STANDARD.registerPacket(5, PacketEntityEquipment.class);
+		STANDARD.registerPacket(6, PacketSpawnPosition.class);
+		STANDARD.registerPacket(7, PacketUseEntity.class);
+		STANDARD.registerPacket(8, PacketHealthUpdate.class);
+		STANDARD.registerPacket(9, PacketRespawn.class);
+		STANDARD.registerPacket(10, PacketPlayer.class);
+		STANDARD.registerPacket(11, PacketPlayerPosition.class);
+		STANDARD.registerPacket(12, PacketPlayerLook.class);
+		STANDARD.registerPacket(13, PacketPlayerPositionLook.class);
+		STANDARD.registerPacket(14, PacketPlayerDigging.class);
+		STANDARD.registerPacket(15, PacketPlayerBlockPlace.class);
+		STANDARD.registerPacket(16, PacketHeldItemChange.class);
+		STANDARD.registerPacket(17, PacketUseBed.class);
+		STANDARD.registerPacket(18, PacketAnimation.class);
+		STANDARD.registerPacket(19, PacketEntityAction.class);
+		STANDARD.registerPacket(20, PacketSpawnNamedEntity.class);
+		STANDARD.registerPacket(22, PacketCollectItem.class);
+		STANDARD.registerPacket(23, PacketSpawnObject.class);
+		STANDARD.registerPacket(24, PacketSpawnMob.class);
+		STANDARD.registerPacket(25, PacketSpawnPainting.class);
+		STANDARD.registerPacket(26, PacketSpawnExpOrb.class);
+		STANDARD.registerPacket(27, PacketSteerVehicle.class);
+		STANDARD.registerPacket(28, PacketEntityVelocity.class);
+		STANDARD.registerPacket(29, PacketDestroyEntity.class);
+		STANDARD.registerPacket(30, PacketEntity.class);
+		STANDARD.registerPacket(31, PacketEntityRelativeMove.class);
+		STANDARD.registerPacket(32, PacketEntityLook.class);
+		STANDARD.registerPacket(33, PacketEntityLookRelativeMove.class);
+		STANDARD.registerPacket(34, PacketEntityTeleport.class);
+		STANDARD.registerPacket(35, PacketEntityHeadYaw.class);
+		STANDARD.registerPacket(38, PacketEntityStatus.class);
+		STANDARD.registerPacket(39, PacketAttachEntity.class);
+		STANDARD.registerPacket(40, PacketEntityMetadata.class);
+		STANDARD.registerPacket(41, PacketEntityEffect.class);
+		STANDARD.registerPacket(42, PacketRemoveEntityEffect.class);
+		STANDARD.registerPacket(43, PacketSetExperience.class);
+		STANDARD.registerPacket(44, PacketEntityProperties.class);
+		STANDARD.registerPacket(51, PacketMapChunk.class);
+		STANDARD.registerPacket(52, PacketMultiBlockChange.class);
+		STANDARD.registerPacket(53, PacketBlockChange.class);
+		STANDARD.registerPacket(54, PacketBlockAction.class);
+		STANDARD.registerPacket(55, PacketBlockBreakAnimation.class);
+		STANDARD.registerPacket(56, PacketMapChunkBulk.class);
+		STANDARD.registerPacket(60, PacketExplosion.class);
+		STANDARD.registerPacket(61, PacketEffect.class);
+		STANDARD.registerPacket(62, PacketNamedSound.class);
+		STANDARD.registerPacket(70, PacketGameState.class);
+		STANDARD.registerPacket(71, PacketLightning.class);
+		STANDARD.registerPacket(100, PacketOpenWindow.class);
+		STANDARD.registerPacket(101, PacketCloseWindow.class);
+		STANDARD.registerPacket(102, PacketWindowClick.class);
+		STANDARD.registerPacket(103, PacketSetSlot.class);
+		STANDARD.registerPacket(104, PacketWindowItems.class);
+		STANDARD.registerPacket(105, PacketWindowProperty.class);
+		STANDARD.registerPacket(106, PacketConfirmTransaction.class);
+		STANDARD.registerPacket(107, PacketCreativeSlot.class);
+		STANDARD.registerPacket(108, PacketEnchantItem.class);
+		STANDARD.registerPacket(130, PacketUpdateSign.class);
+		STANDARD.registerPacket(131, PacketItemData.class);
+		STANDARD.registerPacket(132, PacketUpdateTileEntity.class);
+		STANDARD.registerPacket(200, PacketIncrementStatistic.class);
+		STANDARD.registerPacket(201, PacketPlayerListItem.class);
+		STANDARD.registerPacket(202, PacketPlayerAbilities.class);
+		STANDARD.registerPacket(203, PacketTabComplete.class);
+		STANDARD.registerPacket(204, PacketClientInfo.class);
+		STANDARD.registerPacket(205, PacketClientStatus.class);
+		STANDARD.registerPacket(206, PacketScoreboardObjective.class);
+		STANDARD.registerPacket(207, PacketUpdateScoreboard.class);
+		STANDARD.registerPacket(208, PacketDisplayScoreboard.class);
+		STANDARD.registerPacket(209, PacketTeam.class);
+		STANDARD.registerPacket(250, PacketPluginMessage.class);
+		STANDARD.registerPacket(252, PacketKeyResponse.class);
+		STANDARD.registerPacket(253, PacketKeyRequest.class);
+		STANDARD.registerPacket(254, PacketServerPing.class);
+		STANDARD.registerPacket(255, PacketDisconnect.class);
+
+		// classic protocol
+		// TODO
+
+		// pocket protocol
+		// TODO
 	}
 
-	public Type getType() {
-		return this.type;
+	/**
+	 * The packet registry of the protocol type.
+	 */
+	@SuppressWarnings("unchecked")
+	private final Class<? extends Packet> packets[] = new Class[256];
+
+	/**
+	 * Registers a packet to the protocol type.
+	 * @param id Id of the packet.
+	 * @param packet Class of the packet.
+	 */
+	public void registerPacket(int id, Class<? extends Packet> packet) {
+		this.packets[id] = packet;
 	}
 
 	/**
-	 * Called when a client is connecting.
-	 * @param c Client connecting.
+	 * Gets a packet class from the given id.
+	 * @param id Id of the packet.
+	 * @return The packet class.
 	 */
-	public abstract void connect(Client c);
-
-	/**
-	 * Called when a client is logging in.
-	 * @param c Client logging in.
-	 * @param username Username to use.
-	 * @param password Password to use.
-	 * @return Whether the login was successful.
-	 * @throws LoginException If a login error occurs.
-	 * @throws OutdatedLibraryException If the library is outdated.
-	 */
-	public abstract boolean login(Client c, String username, String password) throws LoginException, OutdatedLibraryException;
-
-	/**
-	 * Called when a connection is disconnected.
-	 * @param conn Connection disconnected.
-	 * @param reason Reason for disconnecting.
-	 * @param packet Whether a packet should be sent due to the disconnect.
-	 */
-	public abstract void disconnected(Connection conn, String reason, boolean packet);
-
-	/**
-	 * Sends a keep alive to the connection.
-	 * @param c Connection to send to.
-	 */
-	public abstract void keepAlive(ServerConnection c);
-
-	/**
-	 * Different types of supported protocols.
-	 */
-	public enum Type {
-		/**
-		 * The standard Minecraft protocol.
-		 */
-		STANDARD,
-		
-		/**
-		 * The classic Minecraft protocol.
-		 */
-		CLASSIC,
-		
-		/**
-		 * The Minecraft Pocket Edition protocol.
-		 */
-		POCKET;
-
-		static {
-			// standard protocol
-			STANDARD.registerPacket(0, PacketKeepAlive.class);
-			STANDARD.registerPacket(1, PacketLogin.class);
-			STANDARD.registerPacket(2, PacketHandshake.class);
-			STANDARD.registerPacket(3, PacketChat.class);
-			STANDARD.registerPacket(4, PacketTimeUpdate.class);
-			STANDARD.registerPacket(5, PacketEntityEquipment.class);
-			STANDARD.registerPacket(6, PacketSpawnPosition.class);
-			STANDARD.registerPacket(7, PacketUseEntity.class);
-			STANDARD.registerPacket(8, PacketHealthUpdate.class);
-			STANDARD.registerPacket(9, PacketRespawn.class);
-			STANDARD.registerPacket(10, PacketPlayer.class);
-			STANDARD.registerPacket(11, PacketPlayerPosition.class);
-			STANDARD.registerPacket(12, PacketPlayerLook.class);
-			STANDARD.registerPacket(13, PacketPlayerPositionLook.class);
-			STANDARD.registerPacket(14, PacketPlayerDigging.class);
-			STANDARD.registerPacket(15, PacketPlayerBlockPlace.class);
-			STANDARD.registerPacket(16, PacketHeldItemChange.class);
-			STANDARD.registerPacket(17, PacketUseBed.class);
-			STANDARD.registerPacket(18, PacketAnimation.class);
-			STANDARD.registerPacket(19, PacketEntityAction.class);
-			STANDARD.registerPacket(20, PacketSpawnNamedEntity.class);
-			STANDARD.registerPacket(22, PacketCollectItem.class);
-			STANDARD.registerPacket(23, PacketSpawnObject.class);
-			STANDARD.registerPacket(24, PacketSpawnMob.class);
-			STANDARD.registerPacket(25, PacketSpawnPainting.class);
-			STANDARD.registerPacket(26, PacketSpawnExpOrb.class);
-			STANDARD.registerPacket(27, PacketSteerVehicle.class);
-			STANDARD.registerPacket(28, PacketEntityVelocity.class);
-			STANDARD.registerPacket(29, PacketDestroyEntity.class);
-			STANDARD.registerPacket(30, PacketEntity.class);
-			STANDARD.registerPacket(31, PacketEntityRelativeMove.class);
-			STANDARD.registerPacket(32, PacketEntityLook.class);
-			STANDARD.registerPacket(33, PacketEntityLookRelativeMove.class);
-			STANDARD.registerPacket(34, PacketEntityTeleport.class);
-			STANDARD.registerPacket(35, PacketEntityHeadYaw.class);
-			STANDARD.registerPacket(38, PacketEntityStatus.class);
-			STANDARD.registerPacket(39, PacketAttachEntity.class);
-			STANDARD.registerPacket(40, PacketEntityMetadata.class);
-			STANDARD.registerPacket(41, PacketEntityEffect.class);
-			STANDARD.registerPacket(42, PacketRemoveEntityEffect.class);
-			STANDARD.registerPacket(43, PacketSetExperience.class);
-			STANDARD.registerPacket(44, PacketEntityProperties.class);
-			STANDARD.registerPacket(51, PacketMapChunk.class);
-			STANDARD.registerPacket(52, PacketMultiBlockChange.class);
-			STANDARD.registerPacket(53, PacketBlockChange.class);
-			STANDARD.registerPacket(54, PacketBlockAction.class);
-			STANDARD.registerPacket(55, PacketBlockBreakAnimation.class);
-			STANDARD.registerPacket(56, PacketMapChunkBulk.class);
-			STANDARD.registerPacket(60, PacketExplosion.class);
-			STANDARD.registerPacket(61, PacketEffect.class);
-			STANDARD.registerPacket(62, PacketNamedSound.class);
-			STANDARD.registerPacket(70, PacketGameState.class);
-			STANDARD.registerPacket(71, PacketLightning.class);
-			STANDARD.registerPacket(100, PacketOpenWindow.class);
-			STANDARD.registerPacket(101, PacketCloseWindow.class);
-			STANDARD.registerPacket(102, PacketWindowClick.class);
-			STANDARD.registerPacket(103, PacketSetSlot.class);
-			STANDARD.registerPacket(104, PacketWindowItems.class);
-			STANDARD.registerPacket(105, PacketWindowProperty.class);
-			STANDARD.registerPacket(106, PacketConfirmTransaction.class);
-			STANDARD.registerPacket(107, PacketCreativeSlot.class);
-			STANDARD.registerPacket(108, PacketEnchantItem.class);
-			STANDARD.registerPacket(130, PacketUpdateSign.class);
-			STANDARD.registerPacket(131, PacketItemData.class);
-			STANDARD.registerPacket(132, PacketUpdateTileEntity.class);
-			STANDARD.registerPacket(200, PacketIncrementStatistic.class);
-			STANDARD.registerPacket(201, PacketPlayerListItem.class);
-			STANDARD.registerPacket(202, PacketPlayerAbilities.class);
-			STANDARD.registerPacket(203, PacketTabComplete.class);
-			STANDARD.registerPacket(204, PacketClientInfo.class);
-			STANDARD.registerPacket(205, PacketClientStatus.class);
-			STANDARD.registerPacket(206, PacketScoreboardObjective.class);
-			STANDARD.registerPacket(207, PacketUpdateScoreboard.class);
-			STANDARD.registerPacket(208, PacketDisplayScoreboard.class);
-			STANDARD.registerPacket(209, PacketTeam.class);
-			STANDARD.registerPacket(250, PacketPluginMessage.class);
-			STANDARD.registerPacket(252, PacketKeyResponse.class);
-			STANDARD.registerPacket(253, PacketKeyRequest.class);
-			STANDARD.registerPacket(254, PacketServerPing.class);
-			STANDARD.registerPacket(255, PacketDisconnect.class);
-
-			// classic protocol
-			// TODO
-
-			// pocket protocol
-			// TODO
-		}
-
-		/**
-		 * The packet registry of the protocol type.
-		 */
-		@SuppressWarnings("unchecked")
-		private final Class<? extends Packet> packets[] = new Class[256];
-
-		/**
-		 * Registers a packet to the protocol type.
-		 * @param id Id of the packet.
-		 * @param packet Class of the packet.
-		 */
-		public void registerPacket(int id, Class<? extends Packet> packet) {
-			this.packets[id] = packet;
-		}
-
-		/**
-		 * Gets a packet class from the given id.
-		 * @param id Id of the packet.
-		 * @return The packet class.
-		 */
-		public Class<? extends Packet> getPacket(int id) {
-			try {
-				return this.packets[id];
-			} catch (ArrayIndexOutOfBoundsException e) {
-				return null;
-			}
+	public Class<? extends Packet> getPacket(int id) {
+		try {
+			return this.packets[id];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
 		}
 	}
-
+	
 }

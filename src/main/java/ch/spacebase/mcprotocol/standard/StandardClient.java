@@ -1,82 +1,64 @@
 package ch.spacebase.mcprotocol.standard;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 
-import javax.crypto.SecretKey;
-
-import org.bouncycastle.crypto.BufferedBlockCipher;
-import org.bouncycastle.crypto.engines.AESFastEngine;
-import org.bouncycastle.crypto.io.CipherInputStream;
-import org.bouncycastle.crypto.io.CipherOutputStream;
-import org.bouncycastle.crypto.modes.CFBBlockCipher;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
-
+import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.exception.LoginException;
 import ch.spacebase.mcprotocol.exception.OutdatedLibraryException;
 import ch.spacebase.mcprotocol.net.Client;
-import ch.spacebase.mcprotocol.net.Connection;
-import ch.spacebase.mcprotocol.net.Protocol;
-import ch.spacebase.mcprotocol.net.ServerConnection;
-import ch.spacebase.mcprotocol.standard.packet.PacketDisconnect;
 import ch.spacebase.mcprotocol.standard.packet.PacketHandshake;
-import ch.spacebase.mcprotocol.standard.packet.PacketKeepAlive;
 import ch.spacebase.mcprotocol.util.Constants;
 import ch.spacebase.mcprotocol.util.Util;
 
 /**
- * The standard Minecraft protocol backend.
+ * A client implementing standard Minecraft protocol.
  */
-public class StandardProtocol extends Protocol {
+public class StandardClient extends StandardConnection implements Client {
 
 	/**
-	 * Whether the protocol's session is active.
+	 * The client's session id.
 	 */
-	private boolean session;
+	private String sessionId;
 	
 	/**
-	 * The protocol's secret key.
+	 * Whether the client is logged in.
 	 */
-	private SecretKey key;
+	private boolean loggedIn;
 	
 	/**
-	 * The protocol's last-sent server keep alive id.
+	 * Creates a new standard client.
+	 * @param host Host to connect to.
+	 * @param port Port to connect to.
 	 */
-	private int aliveId;
+	public StandardClient(String host, int port) {
+		super(host, port);
+	}
 	
 	/**
-	 * The protocol's login key.
+	 * Gets the client's session id.
+	 * @return The client's session id.
 	 */
-	private String loginKey;
-	
-	/**
-	 * The protocol's security token.
-	 */
-	private byte token[];
-
-	/**
-	 * Creates a new standard protocol instance.
-	 */
-	public StandardProtocol() {
-		super(Type.STANDARD);
+	public String getSessionId() {
+		return this.sessionId;
 	}
 
 	@Override
-	public void connect(Client c) {
-		c.send(new PacketHandshake(c.getUsername(), c.getRemoteHost(), c.getRemotePort()));
-	}
-
-	@Override
-	public boolean login(Client c, String username, String password) throws LoginException, OutdatedLibraryException {
+	public boolean login(String username, String password) throws LoginException, OutdatedLibraryException {
+		if(this.loggedIn || this.getUsername() != null) {
+			throw new IllegalStateException("Already logged in with username: " + this.getUsername());
+		}
+		
 		URL url = null;
 
 		try {
@@ -132,9 +114,9 @@ public class StandardProtocol extends Protocol {
 				String[] values = result.split(":");
 
 				try {
-					c.setUser(values[2].trim());
-					c.setSessionId(values[3].trim());
-					this.session = true;
+					this.setUsername(values[2].trim());
+					this.sessionId = values[3].trim();
+					this.loggedIn = true;
 
 					new Thread(new KeepAliveTask()).start();
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -159,7 +141,13 @@ public class StandardProtocol extends Protocol {
 			conn = null;
 		}
 	}
-
+	
+	@Override
+	public void disconnect() {
+		this.loggedIn = false;
+		super.disconnect();
+	}
+	
 	/**
 	 * A task that keeps the client's minecraft.net session alive.
 	 */
@@ -189,7 +177,7 @@ public class StandardProtocol extends Protocol {
 		@Override
 		public void run() {
 			this.last = System.currentTimeMillis();
-			while(session) {
+			while(loggedIn) {
 				if(System.currentTimeMillis() - this.last >= 300000) {
 					HttpURLConnection conn = null;
 
@@ -219,77 +207,18 @@ public class StandardProtocol extends Protocol {
 	}
 
 	@Override
-	public void disconnected(Connection conn, String reason, boolean packet) {
-		if(packet) conn.send(new PacketDisconnect(reason));
-		this.session = false;
-	}
-
-	@Override
-	public void keepAlive(ServerConnection c) {
-		this.aliveId = Util.random().nextInt();
-		c.send(new PacketKeepAlive(this.aliveId));
-	}
-
-	/**
-	 * Gets the protocol's login key.
-	 * @return The protocol's login key.
-	 */
-	public String getLoginKey() {
-		return this.loginKey;
-	}
-
-	/**
-	 * Sets the protocol's login key.
-	 * @param key The new login key.
-	 */
-	public void setLoginKey(String key) {
-		this.loginKey = key;
+	public void connect() throws ConnectException {
+		try {
+			Socket sock = new Socket(InetAddress.getByName(this.getRemoteHost()), this.getRemotePort());
+			sock.setSoTimeout(30000);
+			sock.setTrafficClass(24);
+			super.connect(sock);
+			this.send(new PacketHandshake(this.getUsername(), this.getRemoteHost(), this.getRemotePort()));
+		} catch (UnknownHostException e) {
+			throw new ConnectException("Unknown host: " + this.getRemoteHost());
+		} catch (IOException e) {
+			throw new ConnectException("Failed to open stream: " + this.getRemoteHost(), e);
+		}
 	}
 	
-	/**
-	 * Gets the protocol's secret key.
-	 * @return The protocol's secret key.
-	 */
-	public SecretKey getSecretKey() {
-		return this.key;
-	}
-
-	/**
-	 * Sets the protocol's secret key.
-	 * @param key The new secret key.
-	 */
-	public void setSecretKey(SecretKey key) {
-		this.key = key;
-	}
-
-	/**
-	 * Gets the protocol's security token.
-	 * @return The protocol's security token.
-	 */
-	public byte[] getToken() {
-		return this.token;
-	}
-
-	/**
-	 * Sets the protocol's security token.
-	 * @param token The new security token.
-	 */
-	public void setToken(byte token[]) {
-		this.token = token;
-	}
-
-	/**
-	 * Enabled AES encryption on the connection.
-	 * @param conn Connection to enable AES on.
-	 */
-	public void setAES(Connection conn) {
-		BufferedBlockCipher in = new BufferedBlockCipher(new CFBBlockCipher(new AESFastEngine(), 8));
-		in.init(false, new ParametersWithIV(new KeyParameter(this.key.getEncoded()), this.key.getEncoded(), 0, 16));
-		BufferedBlockCipher out = new BufferedBlockCipher(new CFBBlockCipher(new AESFastEngine(), 8));
-		out.init(true, new ParametersWithIV(new KeyParameter(this.key.getEncoded()), this.key.getEncoded(), 0, 16));
-
-		conn.setIn(new DataInputStream(new CipherInputStream(conn.getIn(), in)));
-		conn.setOut(new DataOutputStream(new CipherOutputStream(conn.getOut(), out)));
-	}
-
 }

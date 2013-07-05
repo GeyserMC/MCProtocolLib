@@ -12,7 +12,8 @@ import java.net.URLEncoder;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.standard.StandardProtocol;
+import ch.spacebase.mcprotocol.standard.StandardServer;
+import ch.spacebase.mcprotocol.standard.StandardServerConnection;
 import ch.spacebase.mcprotocol.util.Util;
 
 public class PacketClientStatus extends Packet {
@@ -46,8 +47,8 @@ public class PacketClientStatus extends Packet {
 
 	@Override
 	public void handleServer(ServerConnection conn) {
-		if(this.status == 0 && conn.getServer().verifyUsers()) {
-			String encrypted = new BigInteger(Util.encrypt(((StandardProtocol) conn.getProtocol()).getLoginKey(), conn.getServer().getKeys().getPublic(), ((StandardProtocol) conn.getProtocol()).getSecretKey())).toString(16);
+		if(this.status == 0 && conn.getServer().isAuthEnabled()) {
+			String encrypted = new BigInteger(Util.encrypt(((StandardServerConnection) conn).getLoginKey(), ((StandardServer) conn.getServer()).getKeys().getPublic(), ((StandardServerConnection) conn).getSecretKey())).toString(16);
 			String response = null;
 
 			try {

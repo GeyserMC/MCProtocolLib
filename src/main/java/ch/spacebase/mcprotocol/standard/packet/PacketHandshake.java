@@ -8,7 +8,8 @@ import java.security.PublicKey;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.standard.StandardProtocol;
+import ch.spacebase.mcprotocol.standard.StandardServer;
+import ch.spacebase.mcprotocol.standard.StandardServerConnection;
 import ch.spacebase.mcprotocol.util.Constants;
 import ch.spacebase.mcprotocol.util.IOUtils;
 import ch.spacebase.mcprotocol.util.Util;
@@ -62,13 +63,13 @@ public class PacketHandshake extends Packet {
 			}
 		} else {
 			conn.setUsername(this.user);
-			PublicKey key = conn.getServer().getKeys().getPublic();
-			((StandardProtocol) conn.getProtocol()).setLoginKey(conn.getServer().verifyUsers() ? Long.toString(Util.random().nextLong(), 16) : "-");
+			PublicKey key = ((StandardServer) conn.getServer()).getKeys().getPublic();
+			((StandardServerConnection) conn).setLoginKey(conn.getServer().isAuthEnabled() ? Long.toString(Util.random().nextLong(), 16) : "-");
 			byte token[] = new byte[4];
 			Util.random().nextBytes(token);
-			((StandardProtocol) conn.getProtocol()).setToken(token);
+			((StandardServerConnection) conn).setToken(token);
 
-			conn.send(new PacketKeyRequest(((StandardProtocol) conn.getProtocol()).getLoginKey(), key.getEncoded(), token));
+			conn.send(new PacketKeyRequest(((StandardServerConnection) conn).getLoginKey(), key.getEncoded(), token));
 		}
 	}
 

@@ -36,7 +36,7 @@ public class PacketDisconnect extends Packet {
 
 	@Override
 	public void handleClient(Client conn) {
-		conn.disconnect("", false);
+		conn.disconnect();
 	}
 
 	@Override

@@ -1,106 +1,73 @@
 package ch.spacebase.mcprotocol.net;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import ch.spacebase.mcprotocol.event.ConnectEvent;
 import ch.spacebase.mcprotocol.event.ProtocolEvent;
 import ch.spacebase.mcprotocol.event.ServerListener;
-import ch.spacebase.mcprotocol.util.Util;
 
 /**
- * A server for clients to connect to.
+ * A server accepting client connections.
  */
-public class Server {
+public abstract class Server {
 
 	/**
-	 * The port to listen on.
+	 * The server's host to listen on.
+	 */
+	private String host;
+	
+	/**
+	 * The server's port to listen on.
 	 */
 	private int port;
 	
 	/**
-	 * Whether the server is online.
+	 * Whether auth is enabled.
 	 */
-	private boolean online = true;
-
-	/**
-	 * The connections connected to the server.
-	 */
-	private List<ServerConnection> connections = new CopyOnWriteArrayList<ServerConnection>();
+	private boolean auth;
 	
 	/**
-	 * The server's key pair.
-	 */
-	private KeyPair keys;
-	
-	/**
-	 * Whether to verify users.
-	 */
-	private boolean verify;
-	
-	/**
-	 * The server's protocol class.
-	 */
-	private Class<? extends Protocol> protocol;
-	
-	/**
-	 * The server's event listeners.
+	 * Listeners listening to this server.
 	 */
 	private List<ServerListener> listeners = new ArrayList<ServerListener>();
-
+	
 	/**
 	 * Creates a new server instance.
-	 * @param prot Protocol to use.
+	 * @param host Host to listen on.
 	 * @param port Port to listen on.
-	 * @param verifyUsers Whether to verify users.
 	 */
-	public Server(Class<? extends Protocol> prot, int port, boolean verifyUsers) {
+	public Server(String host, int port, boolean auth) {	
+		this.host = host;
 		this.port = port;
-		this.verify = verifyUsers;
-		this.protocol = prot;
-
-		try {
-			KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-			gen.initialize(1024);
-			this.keys = gen.generateKeyPair();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Binds the server for listening.
-	 */
-	public void bind() {
-		try {
-			ServerSocket sock = new ServerSocket(this.port);
-			new ServerConnectionThread(sock).start();
-		} catch (IOException e) {
-			Util.logger().severe("Failed to bind to port " + this.port + "!");
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Shuts down the server.
-	 */
-	public void shutdown() {
-		for(ServerConnection conn : this.connections) {
-			conn.disconnect("The server is shutting down!");
-		}
-
-		this.online = false;
+		this.auth = auth;
 	}
 	
 	/**
-	 * Adds a listener to the server.
+	 * Gets the host of this server.
+	 * @return The server's host.
+	 */
+	public String getHost() {
+		return this.host;
+	}
+
+	/**
+	 * Gets the port of this server.
+	 * @return The server's port.
+	 */
+	public int getPort() {
+		return this.port;
+	}
+	
+	/**
+	 * Gets whether authentication is enabled.
+	 * @return Whether auth is enabled.
+	 */
+	public boolean isAuthEnabled() {
+		return this.auth;
+	}
+	
+	/**
+	 * Adds a listener to listen to this server.
 	 * @param listener Listener to add.
 	 */
 	public void listen(ServerListener listener) {
@@ -108,9 +75,9 @@ public class Server {
 	}
 
 	/**
-	 * Calls an event on the server.
-	 * @param event The event to call.
-	 * @return The called event.
+	 * Calls an event for this server.
+	 * @param event Event to call.
+	 * @return The event called.
 	 */
 	public <T extends ProtocolEvent<ServerListener>> T call(T event) {
 		for(ServerListener listener : this.listeners) {
@@ -119,73 +86,27 @@ public class Server {
 
 		return event;
 	}
-
+	
 	/**
-	 * Gets the server's key pair.
-	 * @return The server's key pair.
+	 * Gets whether the server is active.
+	 * @return Whether the server is active.
 	 */
-	public KeyPair getKeys() {
-		return this.keys;
-	}
-
+	public abstract boolean isActive();
+	
 	/**
-	 * Gets whether connected users need to be verified.
-	 * @return Whether to verify users.
+	 * Binds the server to its host and port.
 	 */
-	public boolean verifyUsers() {
-		return this.verify;
-	}
-
+	public abstract void bind();
+	
 	/**
-	 * Listens for new server connections.
+	 * Shuts the server down.
 	 */
-	private class ServerConnectionThread extends Thread {
-		/**
-		 * The server's socket.
-		 */
-		private ServerSocket sock;
-
-		/**
-		 * Creates a new server connection thread instance.
-		 * @param sock Socket to listen on.
-		 */
-		public ServerConnectionThread(ServerSocket sock) {
-			this.sock = sock;
-		}
-
-		@Override
-		public void run() {
-			while(online) {
-				try {
-					Socket client = this.sock.accept();
-					try {
-						ServerConnection conn = new ServerConnection(Server.this.protocol.getDeclaredConstructor().newInstance(), Server.this, client).connect();
-						connections.add(conn);
-						call(new ConnectEvent(conn));
-					} catch (Exception e) {
-						Util.logger().severe("Failed to create server connection!");
-						e.printStackTrace();
-					}
-				} catch (IOException e) {
-					Util.logger().severe("Failed to accept connection from client!");
-					e.printStackTrace();
-					continue;
-				}
-				
-				try {
-					Thread.sleep(2);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-	}
-
+	public abstract void shutdown();
+	
 	/**
-	 * Gets the server's connections.
+	 * Gets a list of connections connected to this server.
 	 * @return The server's connections.
 	 */
-	public List<ServerConnection> getConnections() {
-		return new ArrayList<ServerConnection>(this.connections);
-	}
-
+	public abstract List<ServerConnection> getConnections();
+	
 }
