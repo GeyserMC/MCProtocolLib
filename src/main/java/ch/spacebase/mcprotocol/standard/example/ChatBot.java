@@ -55,7 +55,7 @@ public class ChatBot {
 
 	private class Listener extends ProtocolListener {
 		@Override
-		public void onPacketRecieve(PacketRecieveEvent event) {
+		public void onPacketReceive(PacketRecieveEvent event) {
 			Packet packet = event.getPacket();
 
 			switch(event.getPacket().getId()) {

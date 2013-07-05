@@ -15,13 +15,13 @@ public class PacketPlayerAbilities extends Packet {
 	public boolean flying;
 	public boolean canFly;
 	public boolean creative;
-	public byte flySpeed;
-	public byte walkSpeed;
+	public float flySpeed;
+	public float walkSpeed;
 
 	public PacketPlayerAbilities() {
 	}
 
-	public PacketPlayerAbilities(boolean god, boolean flying, boolean canFly, boolean creative, byte flySpeed, byte walkSpeed) {
+	public PacketPlayerAbilities(boolean god, boolean flying, boolean canFly, boolean creative, float flySpeed, float walkSpeed) {
 		this.god = god;
 		this.flying = flying;
 		this.canFly = canFly;
@@ -37,8 +37,8 @@ public class PacketPlayerAbilities extends Packet {
 		this.flying = Util.getBit(flags, 0x2);
 		this.canFly = Util.getBit(flags, 0x4);
 		this.creative = Util.getBit(flags, 0x8);
-		this.flySpeed = in.readByte();
-		this.walkSpeed = in.readByte();
+		this.flySpeed = in.readFloat();
+		this.walkSpeed = in.readFloat();
 	}
 
 	@Override
@@ -49,8 +49,8 @@ public class PacketPlayerAbilities extends Packet {
 		flags = Util.setBit(flags, 0x4, this.canFly);
 		flags = Util.setBit(flags, 0x8, this.creative);
 		out.writeByte(flags);
-		out.writeByte(this.flySpeed);
-		out.writeByte(this.walkSpeed);
+		out.writeFloat(this.flySpeed);
+		out.writeFloat(this.walkSpeed);
 	}
 
 	@Override

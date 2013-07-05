@@ -7,10 +7,10 @@ import java.io.IOException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
+import ch.spacebase.mcprotocol.util.Constants;
 
 public class PacketServerPing extends Packet {
 
-	private static final byte MAGIC = 1;
 	public boolean newFormat = false;
 
 	public PacketServerPing() {
@@ -28,7 +28,7 @@ public class PacketServerPing extends Packet {
 
 	@Override
 	public void write(DataOutputStream out) throws IOException {
-		out.writeByte(MAGIC);
+		out.writeByte(Constants.StandardProtocol.PING_MAGIC);
 	}
 
 	@Override

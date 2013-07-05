@@ -10,7 +10,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Random;
 
 import javax.crypto.SecretKey;
 
@@ -34,24 +33,46 @@ import ch.spacebase.mcprotocol.standard.packet.PacketKeepAlive;
 import ch.spacebase.mcprotocol.util.Constants;
 import ch.spacebase.mcprotocol.util.Util;
 
+/**
+ * The standard Minecraft protocol backend.
+ */
 public class StandardProtocol extends Protocol {
 
-	private final Random rand = new Random();
-
+	/**
+	 * Whether the protocol's session is active.
+	 */
 	private boolean session;
-	private String serverId;
+	
+	/**
+	 * The protocol's secret key.
+	 */
 	private SecretKey key;
+	
+	/**
+	 * The protocol's last-sent server keep alive id.
+	 */
 	private int aliveId;
+	
+	/**
+	 * The protocol's login key.
+	 */
 	private String loginKey;
+	
+	/**
+	 * The protocol's security token.
+	 */
 	private byte token[];
 
+	/**
+	 * Creates a new standard protocol instance.
+	 */
 	public StandardProtocol() {
 		super(Type.STANDARD);
 	}
 
 	@Override
 	public void connect(Client c) {
-		c.send(new PacketHandshake(c.getUsername(), c.getHost(), c.getPort()));
+		c.send(new PacketHandshake(c.getUsername(), c.getRemoteHost(), c.getRemotePort()));
 	}
 
 	@Override
@@ -139,10 +160,24 @@ public class StandardProtocol extends Protocol {
 		}
 	}
 
+	/**
+	 * A task that keeps the client's minecraft.net session alive.
+	 */
 	private class KeepAliveTask implements Runnable {
+		/**
+		 * The minecraft.net session URL.
+		 */
 		private URL url;
+		
+		/**
+		 * The time when a keep alive was last sent.
+		 */
 		private long last;
 
+		/**
+		 * Creates a new keep alive task runnable.
+		 * @throws LoginException If a login error occurs.
+		 */
 		public KeepAliveTask() throws LoginException {
 			try {
 				this.url = new URL("https://login.minecraft.net/");
@@ -151,6 +186,7 @@ public class StandardProtocol extends Protocol {
 			}
 		}
 
+		@Override
 		public void run() {
 			this.last = System.currentTimeMillis();
 			while(session) {
@@ -190,34 +226,62 @@ public class StandardProtocol extends Protocol {
 
 	@Override
 	public void keepAlive(ServerConnection c) {
-		aliveId = rand.nextInt();
-		c.send(new PacketKeepAlive(aliveId));
+		this.aliveId = Util.random().nextInt();
+		c.send(new PacketKeepAlive(this.aliveId));
 	}
 
+	/**
+	 * Gets the protocol's login key.
+	 * @return The protocol's login key.
+	 */
 	public String getLoginKey() {
 		return this.loginKey;
 	}
 
+	/**
+	 * Sets the protocol's login key.
+	 * @param key The new login key.
+	 */
 	public void setLoginKey(String key) {
 		this.loginKey = key;
 	}
+	
+	/**
+	 * Gets the protocol's secret key.
+	 * @return The protocol's secret key.
+	 */
+	public SecretKey getSecretKey() {
+		return this.key;
+	}
 
+	/**
+	 * Sets the protocol's secret key.
+	 * @param key The new secret key.
+	 */
+	public void setSecretKey(SecretKey key) {
+		this.key = key;
+	}
+
+	/**
+	 * Gets the protocol's security token.
+	 * @return The protocol's security token.
+	 */
 	public byte[] getToken() {
 		return this.token;
 	}
 
+	/**
+	 * Sets the protocol's security token.
+	 * @param token The new security token.
+	 */
 	public void setToken(byte token[]) {
 		this.token = token;
 	}
 
-	public String getServerId() {
-		return this.serverId;
-	}
-
-	public void setServerId(String id) {
-		this.serverId = id;
-	}
-
+	/**
+	 * Enabled AES encryption on the connection.
+	 * @param conn Connection to enable AES on.
+	 */
 	public void setAES(Connection conn) {
 		BufferedBlockCipher in = new BufferedBlockCipher(new CFBBlockCipher(new AESFastEngine(), 8));
 		in.init(false, new ParametersWithIV(new KeyParameter(this.key.getEncoded()), this.key.getEncoded(), 0, 16));
@@ -226,14 +290,6 @@ public class StandardProtocol extends Protocol {
 
 		conn.setIn(new DataInputStream(new CipherInputStream(conn.getIn(), in)));
 		conn.setOut(new DataOutputStream(new CipherOutputStream(conn.getOut(), out)));
-	}
-
-	public SecretKey getSecretKey() {
-		return this.key;
-	}
-
-	public void setSecretKey(SecretKey key) {
-		this.key = key;
 	}
 
 }

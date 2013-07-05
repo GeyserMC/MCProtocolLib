@@ -22,46 +22,123 @@ import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.util.Util;
 
+/**
+ * A network connection.
+ */
 public abstract class Connection {
 
+	/**
+	 * The connection's protocol.
+	 */
 	protected Protocol protocol;
+	
+	/**
+	 * The connection's remote host.
+	 */
 	protected String host;
+	
+	/**
+	 * The connection's remote port.
+	 */
 	protected int port;
 
+	/**
+	 * The connection's socket.
+	 */
 	private Socket sock;
+	
+	/**
+	 * The connection's input stream.
+	 */
 	private DataInputStream input;
+	
+	/**
+	 * The connection's output stream.
+	 */
 	private DataOutputStream output;
 
+	/**
+	 * The connection's packet queue.
+	 */
 	private Queue<Packet> packets = new ConcurrentLinkedQueue<Packet>();
+	
+	/**
+	 * The connection's status.
+	 */
 	private boolean connected;
 	
+	/**
+	 * Whether the connection is currently reading.
+	 */
 	private boolean reading = false;
+	
+	/**
+	 * Whether the connection is currently writing.
+	 */
 	private boolean writing = false;
 
+	/**
+	 * Listeners listening to this connection.
+	 */
 	private List<ProtocolListener> listeners = new ArrayList<ProtocolListener>();
 
+	/**
+	 * Creates a new connection.
+	 * @param prot Protocol of the connection.
+	 * @param host Remote host of the connection.
+	 * @param port Remote port of the connection.
+	 */
 	public Connection(Protocol prot, String host, int port) {
 		this.protocol = prot;
 		this.host = host;
 		this.port = port;
 	}
 
+	/**
+	 * Gets the protocol of this connection.
+	 * @return The connection's protocol.
+	 */
 	public Protocol getProtocol() {
 		return this.protocol;
 	}
 
-	public String getHost() {
+	/**
+	 * Gets the remote host of this connection.
+	 * @return The connection's remote host.
+	 */
+	public String getRemoteHost() {
 		return this.host;
 	}
 
-	public int getPort() {
+	/**
+	 * Gets the remote port of this connection.
+	 * @return The connection's remote port.
+	 */
+	public int getRemotePort() {
 		return this.port;
 	}
+	
+	/**
+	 * Gets whether this connection is connected.
+	 * @return Whether the connection is connected.
+	 */
+	public boolean isConnected() {
+		return this.connected;
+	}
 
+	/**
+	 * Adds a listener to listen to this connection.
+	 * @param listener Listener to add.
+	 */
 	public void listen(ProtocolListener listener) {
 		this.listeners.add(listener);
 	}
 
+	/**
+	 * Calls an event for this connection.
+	 * @param event Event to call.
+	 * @return The event called.
+	 */
 	public <T extends ProtocolEvent<ProtocolListener>> T call(T event) {
 		for(ProtocolListener listener : this.listeners) {
 			event.call(listener);
@@ -70,8 +147,18 @@ public abstract class Connection {
 		return event;
 	}
 
+	/**
+	 * Connects the connection to its remote host.
+	 * @return This connection.
+	 * @throws ConnectException If a connection error occurs.
+	 */
 	public abstract Connection connect() throws ConnectException;
 
+	/**
+	 * Connects this connection using the given socket.
+	 * @param sock Socket to use.
+	 * @throws ConnectException If a connection error occurs.
+	 */
 	protected void connect(Socket sock) throws ConnectException {
 		try {
 			this.sock = sock;
@@ -87,30 +174,59 @@ public abstract class Connection {
 		}
 	}
 
+	/**
+	 * Gets the input stream of this connection.
+	 * @return The connection's input stream.
+	 */
 	public DataInputStream getIn() {
 		return this.input;
 	}
 
+	/**
+	 * Gets the output stream of this connection.
+	 * @return The connection's output stream.
+	 */
 	public DataOutputStream getOut() {
 		return this.output;
 	}
 
+	/**
+	 * Sets the input stream of this connection.
+	 * @param in The new input stream.
+	 */
 	public void setIn(InputStream in) {
 		this.input = new DataInputStream(in);
 	}
 
+	/**
+	 * Sets the output stream of this connection.
+	 * @param out The new output stream.
+	 */
 	public void setOut(OutputStream out) {
 		this.output = new DataOutputStream(out);
 	}
 
+	/**
+	 * Sends a packet.
+	 * @param packet Packet to send.
+	 */
 	public void send(Packet packet) {
 		this.packets.add(packet);
 	}
 
+	/**
+	 * Disconnects this connection.
+	 * @param reason Reason for disconnecting.
+	 */
 	public void disconnect(String reason) {
 		this.disconnect(reason, true);
 	}
 
+	/**
+	 * Disconnects this connection.
+	 * @param reason Reason for disconnecting.
+	 * @param packet Whether to send a packet on disconnect.
+	 */
 	public void disconnect(String reason, boolean packet) {
 		this.getProtocol().disconnected(this, reason, packet);
 		this.packets.clear();
@@ -119,10 +235,9 @@ public abstract class Connection {
 		new CloseThread().start();
 	}
 
-	public boolean isConnected() {
-		return this.connected;
-	}
-
+	/**
+	 * A thread listening for incoming packets.
+	 */
 	private class ListenThread extends Thread {
 		@Override
 		public void run() {
@@ -166,6 +281,9 @@ public abstract class Connection {
 		}
 	}
 
+	/**
+	 * A thread writing outgoing packets.
+	 */
 	private class WriteThread extends Thread {
 		@Override
 		public void run() {
@@ -196,6 +314,9 @@ public abstract class Connection {
 		}
 	}
 	
+	/**
+	 * A thread that waits for the connection to finish before closing it.
+	 */
 	private class CloseThread extends Thread {
 		@Override
 		public void run() {

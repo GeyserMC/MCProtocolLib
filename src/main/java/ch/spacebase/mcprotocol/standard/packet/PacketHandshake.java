@@ -24,7 +24,7 @@ public class PacketHandshake extends Packet {
 	}
 
 	public PacketHandshake(String user, String host, int port) {
-		this.protocol = Constants.STANDARD_PROTOCOL_VERSION;
+		this.protocol = Constants.StandardProtocol.PROTOCOL_VERSION;
 		this.user = user;
 		this.host = host;
 		this.port = port;
@@ -54,8 +54,8 @@ public class PacketHandshake extends Packet {
 	public void handleServer(ServerConnection conn) {
 		if(!Util.stripColor(this.user).equals(this.user)) {
 			conn.disconnect("Invalid username.");
-		} else if(this.protocol != Constants.STANDARD_PROTOCOL_VERSION) {
-			if(this.protocol > Constants.STANDARD_PROTOCOL_VERSION) {
+		} else if(this.protocol != Constants.StandardProtocol.PROTOCOL_VERSION) {
+			if(this.protocol > Constants.StandardProtocol.PROTOCOL_VERSION) {
 				conn.disconnect("Outdated Server!");
 			} else {
 				conn.disconnect("Outdated Client!");

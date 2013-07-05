@@ -28,6 +28,7 @@ import ch.spacebase.mcprotocol.standard.packet.PacketEntityHeadYaw;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityLook;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityLookRelativeMove;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityMetadata;
+import ch.spacebase.mcprotocol.standard.packet.PacketEntityProperties;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityRelativeMove;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityStatus;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityTeleport;
@@ -70,6 +71,7 @@ import ch.spacebase.mcprotocol.standard.packet.PacketSpawnNamedEntity;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnPainting;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnPosition;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnObject;
+import ch.spacebase.mcprotocol.standard.packet.PacketSteerVehicle;
 import ch.spacebase.mcprotocol.standard.packet.PacketTabComplete;
 import ch.spacebase.mcprotocol.standard.packet.PacketTeam;
 import ch.spacebase.mcprotocol.standard.packet.PacketTimeUpdate;
@@ -94,16 +96,55 @@ public abstract class Protocol {
 		return this.type;
 	}
 
+	/**
+	 * Called when a client is connecting.
+	 * @param c Client connecting.
+	 */
 	public abstract void connect(Client c);
 
+	/**
+	 * Called when a client is logging in.
+	 * @param c Client logging in.
+	 * @param username Username to use.
+	 * @param password Password to use.
+	 * @return Whether the login was successful.
+	 * @throws LoginException If a login error occurs.
+	 * @throws OutdatedLibraryException If the library is outdated.
+	 */
 	public abstract boolean login(Client c, String username, String password) throws LoginException, OutdatedLibraryException;
 
+	/**
+	 * Called when a connection is disconnected.
+	 * @param conn Connection disconnected.
+	 * @param reason Reason for disconnecting.
+	 * @param packet Whether a packet should be sent due to the disconnect.
+	 */
 	public abstract void disconnected(Connection conn, String reason, boolean packet);
 
+	/**
+	 * Sends a keep alive to the connection.
+	 * @param c Connection to send to.
+	 */
 	public abstract void keepAlive(ServerConnection c);
 
+	/**
+	 * Different types of supported protocols.
+	 */
 	public enum Type {
-		STANDARD, CLASSIC, POCKET;
+		/**
+		 * The standard Minecraft protocol.
+		 */
+		STANDARD,
+		
+		/**
+		 * The classic Minecraft protocol.
+		 */
+		CLASSIC,
+		
+		/**
+		 * The Minecraft Pocket Edition protocol.
+		 */
+		POCKET;
 
 		static {
 			// standard protocol
@@ -133,6 +174,7 @@ public abstract class Protocol {
 			STANDARD.registerPacket(24, PacketSpawnMob.class);
 			STANDARD.registerPacket(25, PacketSpawnPainting.class);
 			STANDARD.registerPacket(26, PacketSpawnExpOrb.class);
+			STANDARD.registerPacket(27, PacketSteerVehicle.class);
 			STANDARD.registerPacket(28, PacketEntityVelocity.class);
 			STANDARD.registerPacket(29, PacketDestroyEntity.class);
 			STANDARD.registerPacket(30, PacketEntity.class);
@@ -147,6 +189,7 @@ public abstract class Protocol {
 			STANDARD.registerPacket(41, PacketEntityEffect.class);
 			STANDARD.registerPacket(42, PacketRemoveEntityEffect.class);
 			STANDARD.registerPacket(43, PacketSetExperience.class);
+			STANDARD.registerPacket(44, PacketEntityProperties.class);
 			STANDARD.registerPacket(51, PacketMapChunk.class);
 			STANDARD.registerPacket(52, PacketMultiBlockChange.class);
 			STANDARD.registerPacket(53, PacketBlockChange.class);
@@ -193,13 +236,26 @@ public abstract class Protocol {
 			// TODO
 		}
 
+		/**
+		 * The packet registry of the protocol type.
+		 */
 		@SuppressWarnings("unchecked")
 		private final Class<? extends Packet> packets[] = new Class[256];
 
+		/**
+		 * Registers a packet to the protocol type.
+		 * @param id Id of the packet.
+		 * @param packet Class of the packet.
+		 */
 		public void registerPacket(int id, Class<? extends Packet> packet) {
 			this.packets[id] = packet;
 		}
 
+		/**
+		 * Gets a packet class from the given id.
+		 * @param id Id of the packet.
+		 * @return The packet class.
+		 */
 		public Class<? extends Packet> getPacket(int id) {
 			try {
 				return this.packets[id];

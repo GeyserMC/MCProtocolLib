@@ -12,25 +12,29 @@ public class PacketAttachEntity extends Packet {
 
 	public int entityId;
 	public int vehicleId;
+	public boolean leash;
 
 	public PacketAttachEntity() {
 	}
 
-	public PacketAttachEntity(int entityId, int vehicleId) {
+	public PacketAttachEntity(int entityId, int vehicleId, boolean leash) {
 		this.entityId = entityId;
 		this.vehicleId = vehicleId;
+		this.leash = leash;
 	}
 
 	@Override
 	public void read(DataInputStream in) throws IOException {
 		this.entityId = in.readInt();
 		this.vehicleId = in.readInt();
+		this.leash = in.readBoolean();
 	}
 
 	@Override
 	public void write(DataOutputStream out) throws IOException {
 		out.writeInt(this.entityId);
 		out.writeInt(this.vehicleId);
+		out.writeBoolean(this.leash);
 	}
 
 	@Override
