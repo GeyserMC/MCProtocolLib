@@ -11,19 +11,14 @@ import ch.spacebase.mcprotocol.util.Constants;
 
 public class PacketServerPing extends Packet {
 
-	public boolean newFormat = false;
+	public boolean readSuccessfully = false;
 
 	public PacketServerPing() {
 	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		if(in.available() > 0) {
-			in.readByte();
-			this.newFormat = true;
-		} else {
-			this.newFormat = false;
-		}
+		this.readSuccessfully = in.readBoolean();
 	}
 
 	@Override
