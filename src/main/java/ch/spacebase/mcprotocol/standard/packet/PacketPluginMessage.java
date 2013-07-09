@@ -1,13 +1,12 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketPluginMessage extends Packet {
 
@@ -23,17 +22,16 @@ public class PacketPluginMessage extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.channel = IOUtils.readString(in);
-		this.data = new byte[in.readShort()];
-		in.readFully(this.data);
+	public void read(NetInput in) throws IOException {
+		this.channel = in.readString();
+		this.data = in.readBytes(in.readShort());
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.channel);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.channel);
 		out.writeShort(this.data.length);
-		out.write(this.data);
+		out.writeBytes(this.data);
 	}
 
 	@Override

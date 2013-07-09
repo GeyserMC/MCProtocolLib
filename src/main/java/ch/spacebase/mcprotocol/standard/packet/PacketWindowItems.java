@@ -1,43 +1,44 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.standard.data.ItemStack;
+import ch.spacebase.mcprotocol.standard.data.StandardItemStack;
+import ch.spacebase.mcprotocol.standard.io.StandardInput;
+import ch.spacebase.mcprotocol.standard.io.StandardOutput;
 
 public class PacketWindowItems extends Packet {
 
 	public byte id;
-	public ItemStack items[];
+	public StandardItemStack items[];
 
 	public PacketWindowItems() {
 	}
 
-	public PacketWindowItems(byte id, ItemStack items[]) {
+	public PacketWindowItems(byte id, StandardItemStack items[]) {
 		this.id = id;
 		this.items = items;
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.id = in.readByte();
-		this.items = new ItemStack[in.readShort()];
+		this.items = new StandardItemStack[in.readShort()];
 		for(int count = 0; count < this.items.length; count++) {
-			this.items[count] = new ItemStack();
-			this.items[count].read(in);
+			this.items[count] = ((StandardInput) in).readItem();
 		}
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.id);
 		out.writeShort(this.items.length);
-		for(ItemStack item : this.items) {
-			item.write(out);
+		for(StandardItemStack item : this.items) {
+			((StandardOutput) out).writeItem(item);
 		}
 	}
 

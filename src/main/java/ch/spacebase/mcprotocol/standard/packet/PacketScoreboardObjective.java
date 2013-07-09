@@ -1,12 +1,11 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketScoreboardObjective extends Packet {
 
@@ -24,16 +23,16 @@ public class PacketScoreboardObjective extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.name = IOUtils.readString(in);
-		this.value = IOUtils.readString(in);
+	public void read(NetInput in) throws IOException {
+		this.name = in.readString();
+		this.value = in.readString();
 		this.action = in.readByte();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.name);
-		IOUtils.writeString(out, this.value);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.name);
+		out.writeString(this.value);
 		out.writeByte(this.action);
 	}
 

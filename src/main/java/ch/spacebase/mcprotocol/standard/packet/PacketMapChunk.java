@@ -1,7 +1,7 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -44,7 +44,7 @@ public class PacketMapChunk extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.x = in.readInt();
 		this.z = in.readInt();
 		this.groundUp = in.readBoolean();
@@ -52,8 +52,7 @@ public class PacketMapChunk extends Packet {
 		this.endY = in.readShort();
 		this.length = in.readInt();
 
-		byte[] compressed = new byte[this.length];
-		in.readFully(compressed, 0, this.length);
+		byte[] compressed = in.readBytes(this.length);
 
 		int off = 0;
 		for(int count = 0; count < 16; count++) {
@@ -79,14 +78,14 @@ public class PacketMapChunk extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.x);
 		out.writeInt(this.z);
 		out.writeBoolean(this.groundUp);
 		out.writeShort((short) (this.startY & 0xffff));
 		out.writeShort((short) (this.endY & 0xffff));
 		out.writeByte(this.length);
-		out.write(this.data, 0, this.length);
+		out.writeBytes(this.data, this.length);
 	}
 
 	@Override

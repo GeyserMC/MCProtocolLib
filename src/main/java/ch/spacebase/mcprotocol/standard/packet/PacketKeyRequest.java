@@ -1,8 +1,8 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -30,7 +30,6 @@ import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.standard.StandardClient;
-import ch.spacebase.mcprotocol.util.IOUtils;
 import ch.spacebase.mcprotocol.util.Util;
 
 public class PacketKeyRequest extends Packet {
@@ -61,24 +60,22 @@ public class PacketKeyRequest extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.serverId = IOUtils.readString(in);
-		byte pubKey[] = new byte[in.readShort()];
-		in.readFully(pubKey);
+	public void read(NetInput in) throws IOException {
+		this.serverId = in.readString();
+		byte pubKey[] = in.readBytes(in.readShort());
 		this.pubKey = pubKey;
 
-		byte verifyToken[] = new byte[in.readShort()];
-		in.readFully(verifyToken);
+		byte verifyToken[] = in.readBytes(in.readShort());
 		this.verifyToken = verifyToken;
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.serverId);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.serverId);
 		out.writeShort(this.pubKey.length);
-		out.write(this.pubKey);
+		out.writeBytes(this.pubKey);
 		out.writeShort(this.verifyToken.length);
-		out.write(this.verifyToken);
+		out.writeBytes(this.verifyToken);
 	}
 
 	@Override

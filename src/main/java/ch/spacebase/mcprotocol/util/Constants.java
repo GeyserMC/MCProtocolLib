@@ -17,12 +17,12 @@ public class Constants {
 		/**
 		 * The current protocol version.
 		 */
-		public static final byte PROTOCOL_VERSION = 73;
+		public static final byte PROTOCOL_VERSION = 74;
 		
 		/**
 		 * The current game version.
 		 */
-		public static final String MINECRAFT_VERSION = "1.6.1";
+		public static final String MINECRAFT_VERSION = "1.6.2";
 		
 		/**
 		 * The server list ping magic value.
@@ -269,6 +269,7 @@ public class Constants {
 			public static final String NPC_TRADES = "MC|TrList";
 			public static final String SELECT_TRADE = "MC|TrSel";
 			public static final String CLIENT_PING_DATA = "MC|PingHost";
+			public static final String BRAND = "MC|Brand";
 		}
 		
 		/**
@@ -365,6 +366,13 @@ public class Constants {
 			public static final byte STRING = 4;
 			public static final byte ITEM_STACK = 5;
 			public static final byte COORDINATES = 6;
+		}
+		
+		/**
+		 * Contains tile editor ids.
+		 */
+		public static class TileEditorIds {
+			public static final byte SIGN = 0;
 		}
 	}
 	

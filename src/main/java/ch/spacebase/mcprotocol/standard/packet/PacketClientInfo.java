@@ -1,13 +1,12 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketClientInfo extends Packet {
 
@@ -29,8 +28,8 @@ public class PacketClientInfo extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.locale = IOUtils.readString(in);
+	public void read(NetInput in) throws IOException {
+		this.locale = in.readString();
 		this.viewDistance = in.readByte();
 		this.chatFlags = in.readByte();
 		this.difficulty = in.readByte();
@@ -38,8 +37,8 @@ public class PacketClientInfo extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.locale);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.locale);
 		out.writeByte(this.viewDistance);
 		out.writeByte(this.chatFlags);
 		out.writeByte(this.difficulty);

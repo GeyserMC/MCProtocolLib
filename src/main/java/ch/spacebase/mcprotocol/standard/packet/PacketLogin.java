@@ -1,13 +1,12 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketLogin extends Packet {
 
@@ -33,9 +32,9 @@ public class PacketLogin extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
-		this.levelType = IOUtils.readString(in);
+		this.levelType = in.readString();
 		this.gameMode = in.readByte();
 		this.dimension = in.readByte();
 		this.difficulty = in.readByte();
@@ -44,9 +43,9 @@ public class PacketLogin extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
-		IOUtils.writeString(out, this.levelType);
+		out.writeString(this.levelType);
 		out.writeByte(this.gameMode);
 		out.writeByte(this.dimension);
 		out.writeByte(this.difficulty);

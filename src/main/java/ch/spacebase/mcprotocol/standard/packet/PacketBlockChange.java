@@ -1,7 +1,7 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
@@ -28,7 +28,7 @@ public class PacketBlockChange extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.x = in.readInt();
 		this.y = in.readByte();
 		this.z = in.readInt();
@@ -37,7 +37,7 @@ public class PacketBlockChange extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.x);
 		out.writeByte(this.y);
 		out.writeInt(this.z);

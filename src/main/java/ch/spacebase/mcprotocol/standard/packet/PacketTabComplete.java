@@ -1,13 +1,12 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketTabComplete extends Packet {
 
@@ -21,13 +20,13 @@ public class PacketTabComplete extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.text = IOUtils.readString(in);
+	public void read(NetInput in) throws IOException {
+		this.text = in.readString();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.text);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.text);
 	}
 
 	@Override

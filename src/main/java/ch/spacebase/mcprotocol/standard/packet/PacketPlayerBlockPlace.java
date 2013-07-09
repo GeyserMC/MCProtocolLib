@@ -1,13 +1,15 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.standard.data.ItemStack;
+import ch.spacebase.mcprotocol.standard.data.StandardItemStack;
+import ch.spacebase.mcprotocol.standard.io.StandardInput;
+import ch.spacebase.mcprotocol.standard.io.StandardOutput;
 
 public class PacketPlayerBlockPlace extends Packet {
 
@@ -15,7 +17,7 @@ public class PacketPlayerBlockPlace extends Packet {
 	public int y;
 	public int z;
 	public byte direction;
-	public ItemStack item;
+	public StandardItemStack item;
 	public byte[] nbt;
 	public byte cursorX;
 	public byte cursorY;
@@ -24,7 +26,7 @@ public class PacketPlayerBlockPlace extends Packet {
 	public PacketPlayerBlockPlace() {
 	}
 
-	public PacketPlayerBlockPlace(int x, int y, int z, byte direction, ItemStack item, byte cursorX, byte cursorY, byte cursorZ) {
+	public PacketPlayerBlockPlace(int x, int y, int z, byte direction, StandardItemStack item, byte cursorX, byte cursorY, byte cursorZ) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -36,25 +38,27 @@ public class PacketPlayerBlockPlace extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.x = in.readInt();
 		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
 		this.direction = in.readByte();
-		this.item = new ItemStack();
-		this.item.read(in);
+		this.item = ((StandardInput) in).readItem();
 		this.cursorX = in.readByte();
 		this.cursorY = in.readByte();
 		this.cursorZ = in.readByte();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.x);
 		out.writeByte(this.y);
 		out.writeInt(this.z);
 		out.writeByte(this.direction);
-		if(this.item != null) this.item.write(out);
+		if(this.item != null) {
+			((StandardOutput) out).writeItem(this.item);
+		}
+		
 		out.writeByte(this.cursorX);
 		out.writeByte(this.cursorY);
 		out.writeByte(this.cursorZ);

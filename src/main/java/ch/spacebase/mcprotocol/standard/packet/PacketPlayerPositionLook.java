@@ -1,7 +1,7 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
@@ -32,7 +32,7 @@ public class PacketPlayerPositionLook extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.x = in.readDouble();
 		this.stance = in.readDouble();
 		this.y = in.readDouble();
@@ -43,7 +43,7 @@ public class PacketPlayerPositionLook extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeDouble(this.x);
 		out.writeDouble(this.y);
 		out.writeDouble(this.stance);

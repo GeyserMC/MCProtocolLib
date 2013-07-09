@@ -1,8 +1,11 @@
 package ch.spacebase.mcprotocol.standard.util;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import ch.spacebase.mcprotocol.standard.io.StandardOutput;
 import ch.spacebase.mcprotocol.standard.packet.PacketPluginMessage;
+import ch.spacebase.mcprotocol.util.Util;
 
 /**
  * A utility used to build plugin message packets.
@@ -15,9 +18,9 @@ public class PluginMessageBuilder {
 	private String channel;
 	
 	/**
-	 * The internal stream used in building the data.
+	 * The internal output used in building the data.
 	 */
-	private ByteArrayOutputStream out;
+	private StandardOutput out;
 
 	/**
 	 * Creates a new plugin message builder.
@@ -25,7 +28,7 @@ public class PluginMessageBuilder {
 	 */
 	public PluginMessageBuilder(String channel) {
 		this.channel = channel;
-		this.out = new ByteArrayOutputStream();
+		this.out = new StandardOutput(new ByteArrayOutputStream());
 	}
 
 	/**
@@ -34,7 +37,13 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeByte(int b) {
-		this.out.write(b);
+		try {
+			this.out.writeByte(b);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
+		
 		return this;
 	}
 
@@ -44,7 +53,13 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeBoolean(boolean b) {
-		this.writeByte(b ? 1 : (byte) 0);
+		try {
+			this.out.writeBoolean(b);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
+		
 		return this;
 	}
 
@@ -54,8 +69,13 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeShort(int s) {
-		this.writeByte((byte) ((s >>> 8) & 0xFF));
-		this.writeByte((byte) ((s >>> 0) & 0xFF));
+		try {
+			this.out.writeShort(s);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
+		
 		return this;
 	}
 
@@ -65,8 +85,12 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeChar(int c) {
-		this.writeByte((byte) ((c >>> 8) & 0xFF));
-		this.writeByte((byte) ((c >>> 0) & 0xFF));
+		try {
+			this.out.writeChar(c);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
 		return this;
 	}
 
@@ -76,10 +100,13 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeInt(int i) {
-		this.writeByte((byte) ((i >>> 24) & 0xFF));
-		this.writeByte((byte) ((i >>> 16) & 0xFF));
-		this.writeByte((byte) ((i >>> 8) & 0xFF));
-		this.writeByte((byte) ((i >>> 0) & 0xFF));
+		try {
+			this.out.writeInt(i);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
+		
 		return this;
 	}
 
@@ -89,14 +116,13 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeLong(long l) {
-		this.writeByte((byte) (l >>> 56));
-		this.writeByte((byte) (l >>> 48));
-		this.writeByte((byte) (l >>> 40));
-		this.writeByte((byte) (l >>> 32));
-		this.writeByte((byte) (l >>> 24));
-		this.writeByte((byte) (l >>> 16));
-		this.writeByte((byte) (l >>> 8));
-		this.writeByte((byte) (l >>> 0));
+		try {
+			this.out.writeLong(l);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
+		
 		return this;
 	}
 
@@ -106,7 +132,13 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeFloat(float f) {
-		this.writeInt(Float.floatToIntBits(f));
+		try {
+			this.out.writeFloat(f);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
+		
 		return this;
 	}
 
@@ -116,19 +148,28 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeDouble(double d) {
-		this.writeLong(Double.doubleToLongBits(d));
+		try {
+			this.out.writeDouble(d);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
+		}
+		
 		return this;
 	}
 
 	/**
-	 * Writes a byte array to the plugin message data.
+	 * Writes a byte array to the plugin message data, prepending the array length.
 	 * @param b Bytes to write.
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeBytes(byte b[]) {
-		this.writeShort(b.length);
-		for(byte by : b) {
-			this.writeByte(by);
+		try {
+			this.out.writeShort(b.length);
+			this.out.writeBytes(b);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
 		}
 
 		return this;
@@ -140,14 +181,11 @@ public class PluginMessageBuilder {
 	 * @return This plugin message builder.
 	 */
 	public PluginMessageBuilder writeString(String s) {
-		int len = s.length();
-		if(len >= 65536) {
-			throw new IllegalArgumentException("String too long.");
-		}
-
-		this.writeShort(len);
-		for(int i = 0; i < len; ++i) {
-			this.writeChar(s.charAt(i));
+		try {
+			this.out.writeString(s);
+		} catch(IOException e) {
+			Util.logger().severe("Failed to write to plugin message");
+			e.printStackTrace();
 		}
 
 		return this;
@@ -158,7 +196,7 @@ public class PluginMessageBuilder {
 	 * @return The data's current length.
 	 */
 	public int length() {
-		return this.out.size();
+		return ((ByteArrayOutputStream) this.out.getStream()).size();
 	}
 
 	/**
@@ -166,7 +204,7 @@ public class PluginMessageBuilder {
 	 * @return The built plugin message.
 	 */
 	public PacketPluginMessage build() {
-		return new PacketPluginMessage(this.channel, this.out.toByteArray());
+		return new PacketPluginMessage(this.channel, ((ByteArrayOutputStream) this.out.getStream()).toByteArray());
 	}
 
 }

@@ -1,14 +1,13 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.util.Constants;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketOpenWindow extends Packet {
 
@@ -36,10 +35,10 @@ public class PacketOpenWindow extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.id = in.readByte();
 		this.type = in.readByte();
-		this.name = IOUtils.readString(in);
+		this.name = in.readString();
 		this.slots = in.readByte();
 		this.useTitle = in.readBoolean();
 		if(this.type == Constants.StandardProtocol.WindowTypeIds.HORSE) {
@@ -48,10 +47,10 @@ public class PacketOpenWindow extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.id);
 		out.writeByte(this.type);
-		IOUtils.writeString(out, this.name);
+		out.writeString(this.name);
 		out.writeByte(this.slots);
 		out.writeBoolean(this.useTitle);
 		if(this.type == Constants.StandardProtocol.WindowTypeIds.HORSE) {

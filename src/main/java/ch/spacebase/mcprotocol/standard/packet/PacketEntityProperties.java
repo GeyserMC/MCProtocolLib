@@ -1,15 +1,15 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketEntityProperties extends Packet {
 
@@ -29,22 +29,31 @@ public class PacketEntityProperties extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
 		int count = in.readInt();
 		this.properties = new HashMap<String, Double>();
 		for(int ct = 0; ct < count; ct++) {
-			this.properties.put(IOUtils.readString(in), in.readDouble());
+			this.properties.put(in.readString(), in.readDouble());
+			// TODO: implement properly when further docs are available
+			short len = in.readShort();
+			for(int i = 0; i < len; i++) {
+				UUID uuid = new UUID(in.readLong(), in.readLong());
+				double d = in.readDouble();
+				byte b = in.readByte();
+			}
 		}
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
 		out.writeInt(this.properties.size());
 		for(String key : this.properties.keySet()) {
-			IOUtils.writeString(out, key);
+			out.writeString(key);
 			out.writeDouble(this.properties.get(key));
+			// TODO: implement properly when further docs are available
+			out.writeShort(0);
 		}
 	}
 

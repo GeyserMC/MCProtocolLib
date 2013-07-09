@@ -1,12 +1,11 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketUpdateScoreboard extends Packet {
 
@@ -26,21 +25,21 @@ public class PacketUpdateScoreboard extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.item = IOUtils.readString(in);
+	public void read(NetInput in) throws IOException {
+		this.item = in.readString();
 		this.action = in.readByte();
 		if(this.action != 1) {
-			this.scoreboard = IOUtils.readString(in);
+			this.scoreboard = in.readString();
 			this.value = in.readInt();
 		}
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.item);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.item);
 		out.writeByte(this.action);
 		if(this.action != 1) {
-			IOUtils.writeString(out, this.scoreboard);
+			out.writeString(this.scoreboard);
 			out.writeInt(this.value);
 		}
 	}

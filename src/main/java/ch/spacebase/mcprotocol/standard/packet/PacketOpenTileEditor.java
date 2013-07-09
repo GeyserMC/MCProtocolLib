@@ -8,45 +8,37 @@ import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
 
-public class PacketNamedSound extends Packet {
+public class PacketOpenTileEditor extends Packet {
 
-	public String sound;
+	public byte type;
 	public int x;
 	public int y;
 	public int z;
-	public float volume;
-	public int pitch;
 
-	public PacketNamedSound() {
+	public PacketOpenTileEditor() {
 	}
 
-	public PacketNamedSound(String sound, int x, byte y, int z, float volume, int pitch) {
-		this.sound = sound;
+	public PacketOpenTileEditor(byte type, int x, int y, int z) {
+		this.type = type;
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.volume = volume;
-		this.pitch = pitch;
 	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.sound = in.readString();
+		this.type = in.readByte();
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
-		this.volume = in.readFloat();
-		this.pitch = in.readUnsignedByte();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeString(this.sound);
+		out.writeByte(this.type);
 		out.writeInt(this.x);
 		out.writeInt(this.y);
 		out.writeInt(this.z);
-		out.writeFloat(this.volume);
-		out.writeByte(this.pitch);
 	}
 
 	@Override
@@ -59,7 +51,7 @@ public class PacketNamedSound extends Packet {
 
 	@Override
 	public int getId() {
-		return 62;
+		return 133;
 	}
 
 }

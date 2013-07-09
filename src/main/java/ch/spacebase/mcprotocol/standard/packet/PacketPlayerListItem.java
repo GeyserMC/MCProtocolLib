@@ -1,13 +1,12 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketPlayerListItem extends Packet {
 
@@ -25,15 +24,15 @@ public class PacketPlayerListItem extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.name = IOUtils.readString(in);
+	public void read(NetInput in) throws IOException {
+		this.name = in.readString();
 		this.online = in.readBoolean();
 		this.ping = in.readShort();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.name);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.name);
 		out.writeBoolean(this.online);
 		out.writeShort(this.ping);
 	}

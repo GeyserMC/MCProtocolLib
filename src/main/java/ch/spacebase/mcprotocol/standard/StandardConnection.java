@@ -1,7 +1,5 @@
 package ch.spacebase.mcprotocol.standard;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
@@ -19,6 +17,7 @@ import org.bouncycastle.crypto.modes.CFBBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import ch.spacebase.mcprotocol.event.DisconnectEvent;
 import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
 import ch.spacebase.mcprotocol.event.PacketSendEvent;
 import ch.spacebase.mcprotocol.exception.ConnectException;
@@ -28,6 +27,8 @@ import ch.spacebase.mcprotocol.net.Connection;
 import ch.spacebase.mcprotocol.net.Protocol;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
+import ch.spacebase.mcprotocol.standard.io.StandardInput;
+import ch.spacebase.mcprotocol.standard.io.StandardOutput;
 import ch.spacebase.mcprotocol.standard.packet.PacketDisconnect;
 import ch.spacebase.mcprotocol.util.Util;
 
@@ -44,12 +45,12 @@ public abstract class StandardConnection extends BaseConnection {
 	/**
 	 * The connection's input stream.
 	 */
-	private DataInputStream input;
+	private StandardInput input;
 	
 	/**
 	 * The connection's output stream.
 	 */
-	private DataOutputStream output;
+	private StandardOutput output;
 	
 	/**
 	 * The connection's packet write queue.
@@ -65,6 +66,11 @@ public abstract class StandardConnection extends BaseConnection {
 	 * Whether the connection is writing.
 	 */
 	private boolean writing = false;
+	
+	/**
+	 * Whether the connection is connected.
+	 */
+	private boolean connected = false;
 	
 	/**
 	 * The connection's secret key.
@@ -87,7 +93,7 @@ public abstract class StandardConnection extends BaseConnection {
 
 	@Override
 	public boolean isConnected() {
-		return this.sock != null && !this.sock.isClosed();
+		return this.connected;
 	}
 
 	/**
@@ -98,8 +104,9 @@ public abstract class StandardConnection extends BaseConnection {
 	protected void connect(Socket sock) throws ConnectException {
 		this.sock = sock;
 		try {
-			this.input = new DataInputStream(this.sock.getInputStream());
-			this.output = new DataOutputStream(this.sock.getOutputStream());
+			this.input = new StandardInput(this.sock.getInputStream());
+			this.output = new StandardOutput(this.sock.getOutputStream());
+			this.connected = true;
 			new ListenThread().start();
 			new WriteThread().start();
 		} catch (UnknownHostException e) {
@@ -112,12 +119,15 @@ public abstract class StandardConnection extends BaseConnection {
 	@Override
 	public void disconnect() {
 		new CloseThread().start();
+		this.call(new DisconnectEvent(this, "Unknown"));
 	}
 
 	@Override
 	public void disconnect(String reason) {
 		this.send(new PacketDisconnect(reason));
-		this.disconnect();
+		new CloseThread().start();
+		this.connected = false;
+		this.call(new DisconnectEvent(this, reason));
 	}
 
 	@Override
@@ -151,8 +161,8 @@ public abstract class StandardConnection extends BaseConnection {
 		BufferedBlockCipher out = new BufferedBlockCipher(new CFBBlockCipher(new AESFastEngine(), 8));
 		out.init(true, new ParametersWithIV(new KeyParameter(this.key.getEncoded()), this.key.getEncoded(), 0, 16));
 
-		this.input = new DataInputStream(new CipherInputStream(this.input, in));
-		this.output = new DataOutputStream(new CipherOutputStream(this.output, out));
+		this.input = new StandardInput(new CipherInputStream(this.input.getStream(), in));
+		this.output = new StandardOutput(new CipherOutputStream(this.output.getStream(), out));
 	}
 	
 	/**
@@ -214,7 +224,7 @@ public abstract class StandardConnection extends BaseConnection {
 					call(new PacketSendEvent(packet));
 					
 					try {
-						output.write(packet.getId());
+						output.writeByte(packet.getId());
 						packet.write(output);
 						output.flush();
 					} catch (Exception e) {

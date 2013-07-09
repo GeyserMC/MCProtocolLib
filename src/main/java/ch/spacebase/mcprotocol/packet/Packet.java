@@ -1,10 +1,10 @@
 package ch.spacebase.mcprotocol.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 
 /**
  * A network data packet.
@@ -18,18 +18,18 @@ public abstract class Packet {
 	}
 
 	/**
-	 * Reads the packet's data from the given input stream.
-	 * @param in Input stream to read from.
+	 * Reads the packet's data from the given input.
+	 * @param in Input to read from.
 	 * @throws IOException If an I/O error occurs.
 	 */
-	public abstract void read(DataInputStream in) throws IOException;
+	public abstract void read(NetInput in) throws IOException;
 
 	/**
-	 * Writes the packet's data to the given output stream.
-	 * @param out Output stream to write to.
+	 * Writes the packet's data to the given output.
+	 * @param out Output to write to.
 	 * @throws IOException If an I/O error occurs.
 	 */
-	public abstract void write(DataOutputStream out) throws IOException;
+	public abstract void write(NetOutput out) throws IOException;
 
 	/**
 	 * Handles this packet when received by a client.

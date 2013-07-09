@@ -148,6 +148,12 @@ public class StandardClient extends StandardConnection implements Client {
 		super.disconnect();
 	}
 	
+	@Override
+	public void disconnect(String reason) {
+		this.loggedIn = false;
+		super.disconnect(reason);
+	}
+	
 	/**
 	 * A task that keeps the client's minecraft.net session alive.
 	 */

@@ -1,7 +1,7 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
@@ -28,24 +28,23 @@ public class PacketUpdateTileEntity extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.x = in.readInt();
 		this.y = in.readShort();
 		this.z = in.readInt();
 		this.action = in.readByte();
-		this.nbt = new byte[in.readShort()];
-		in.readFully(this.nbt);
+		this.nbt = in.readBytes(in.readShort());
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.x);
 		out.writeShort(this.y);
 		out.writeInt(this.z);
 		out.writeByte(this.action);
 		if(this.nbt != null) {
 			out.writeShort(this.nbt.length);
-			out.write(this.nbt);
+			out.writeBytes(this.nbt);
 		}
 	}
 

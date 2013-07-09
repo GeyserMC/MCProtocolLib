@@ -1,13 +1,12 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketSpawnPainting extends Packet {
 
@@ -31,9 +30,9 @@ public class PacketSpawnPainting extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
-		this.title = IOUtils.readString(in);
+		this.title = in.readString();
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
@@ -41,9 +40,9 @@ public class PacketSpawnPainting extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
-		IOUtils.writeString(out, this.title);
+		out.writeString(this.title);
 		out.writeInt(this.x);
 		out.writeInt(this.y);
 		out.writeInt(this.z);

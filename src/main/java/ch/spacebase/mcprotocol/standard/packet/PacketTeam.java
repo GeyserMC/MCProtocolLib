@@ -1,12 +1,11 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketTeam extends Packet {
 
@@ -79,34 +78,34 @@ public class PacketTeam extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
-		this.name = IOUtils.readString(in);
+	public void read(NetInput in) throws IOException {
+		this.name = in.readString();
 		this.action = in.readByte();
 		switch(this.action) {
 			case 0:
-				this.displayName = IOUtils.readString(in);
-				this.prefix = IOUtils.readString(in);
-				this.suffix = IOUtils.readString(in);
+				this.displayName = in.readString();
+				this.prefix = in.readString();
+				this.suffix = in.readString();
 				this.friendlyFire = in.readByte();
 				this.players = new String[in.readShort()];
 				for(int ind = 0; ind < this.players.length; ind++) {
-					this.players[ind] = IOUtils.readString(in);
+					this.players[ind] = in.readString();
 				}
 				
 				break;
 			case 1:
 				break;
 			case 2:
-				this.displayName = IOUtils.readString(in);
-				this.prefix = IOUtils.readString(in);
-				this.suffix = IOUtils.readString(in);
+				this.displayName = in.readString();
+				this.prefix = in.readString();
+				this.suffix = in.readString();
 				this.friendlyFire = in.readByte();
 				break;
 			case 3:
 			case 4:
 				this.players = new String[in.readShort()];
 				for(int ind = 0; ind < this.players.length; ind++) {
-					this.players[ind] = IOUtils.readString(in);
+					this.players[ind] = in.readString();
 				}
 				
 				break;
@@ -114,34 +113,34 @@ public class PacketTeam extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
-		IOUtils.writeString(out, this.name);
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.name);
 		out.writeByte(this.action);
 		switch(this.action) {
 			case 0:
-				IOUtils.writeString(out, this.displayName);
-				IOUtils.writeString(out, this.prefix);
-				IOUtils.writeString(out, this.suffix);
+				out.writeString(this.displayName);
+				out.writeString(this.prefix);
+				out.writeString(this.suffix);
 				out.writeByte(this.friendlyFire);
 				out.writeShort(this.players.length);
 				for(int ind = 0; ind < this.players.length; ind++) {
-					IOUtils.writeString(out, this.players[ind]);
+					out.writeString(this.players[ind]);
 				}
 				
 				break;
 			case 1:
 				break;
 			case 2:
-				IOUtils.writeString(out, this.displayName);
-				IOUtils.writeString(out, this.prefix);
-				IOUtils.writeString(out, this.suffix);
+				out.writeString(this.displayName);
+				out.writeString(this.prefix);
+				out.writeString(this.suffix);
 				out.writeByte(this.friendlyFire);
 				break;
 			case 3:
 			case 4:
 				out.writeShort(this.players.length);
 				for(int ind = 0; ind < this.players.length; ind++) {
-					IOUtils.writeString(out, this.players[ind]);
+					out.writeString(this.players[ind]);
 				}
 				
 				break;

@@ -1,14 +1,15 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.standard.data.WatchableObject;
-import ch.spacebase.mcprotocol.util.IOUtils;
+import ch.spacebase.mcprotocol.standard.io.StandardInput;
+import ch.spacebase.mcprotocol.standard.io.StandardOutput;
 
 public class PacketSpawnMob extends Packet {
 
@@ -44,7 +45,7 @@ public class PacketSpawnMob extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
 		this.type = in.readByte();
 		this.x = in.readInt();
@@ -56,11 +57,11 @@ public class PacketSpawnMob extends Packet {
 		this.velX = in.readShort();
 		this.velY = in.readShort();
 		this.velZ = in.readShort();
-		this.metadata = IOUtils.readMetadata(in);
+		this.metadata = ((StandardInput) in).readMetadata();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
 		out.writeByte(this.type);
 		out.writeInt(this.x);
@@ -72,7 +73,7 @@ public class PacketSpawnMob extends Packet {
 		out.writeShort(this.velX);
 		out.writeShort(this.velY);
 		out.writeShort(this.velZ);
-		IOUtils.writeMetadata(out, this.metadata);
+		((StandardOutput) out).writeMetadata(this.metadata);
 	}
 
 	@Override

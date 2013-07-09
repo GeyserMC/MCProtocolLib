@@ -63,6 +63,7 @@ import ch.spacebase.mcprotocol.standard.packet.PacketScoreboardObjective;
 import ch.spacebase.mcprotocol.standard.packet.PacketServerPing;
 import ch.spacebase.mcprotocol.standard.packet.PacketSetExperience;
 import ch.spacebase.mcprotocol.standard.packet.PacketSetSlot;
+import ch.spacebase.mcprotocol.standard.packet.PacketOpenTileEditor;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnExpOrb;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnMob;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnNamedEntity;
@@ -166,6 +167,7 @@ public enum Protocol {
 		STANDARD.registerPacket(130, PacketUpdateSign.class);
 		STANDARD.registerPacket(131, PacketItemData.class);
 		STANDARD.registerPacket(132, PacketUpdateTileEntity.class);
+		STANDARD.registerPacket(133, PacketOpenTileEditor.class);
 		STANDARD.registerPacket(200, PacketIncrementStatistic.class);
 		STANDARD.registerPacket(201, PacketPlayerListItem.class);
 		STANDARD.registerPacket(202, PacketPlayerAbilities.class);

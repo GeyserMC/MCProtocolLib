@@ -1,13 +1,12 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.util.IOUtils;
 
 public class PacketUpdateSign extends Packet {
 
@@ -28,26 +27,26 @@ public class PacketUpdateSign extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.x = in.readInt();
 		this.y = in.readShort();
 		this.z = in.readInt();
 		this.lines = new String[4];
-		this.lines[0] = IOUtils.readString(in);
-		this.lines[1] = IOUtils.readString(in);
-		this.lines[2] = IOUtils.readString(in);
-		this.lines[3] = IOUtils.readString(in);
+		this.lines[0] = in.readString();
+		this.lines[1] = in.readString();
+		this.lines[2] = in.readString();
+		this.lines[3] = in.readString();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.x);
 		out.writeShort(this.y);
 		out.writeInt(this.z);
-		IOUtils.writeString(out, this.lines[0]);
-		IOUtils.writeString(out, this.lines[1]);
-		IOUtils.writeString(out, this.lines[2]);
-		IOUtils.writeString(out, this.lines[3]);
+		out.writeString(this.lines[0]);
+		out.writeString(this.lines[1]);
+		out.writeString(this.lines[2]);
+		out.writeString(this.lines[3]);
 	}
 
 	@Override

@@ -1,43 +1,44 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
-import ch.spacebase.mcprotocol.standard.data.ItemStack;
+import ch.spacebase.mcprotocol.standard.data.StandardItemStack;
+import ch.spacebase.mcprotocol.standard.io.StandardInput;
+import ch.spacebase.mcprotocol.standard.io.StandardOutput;
 
 public class PacketSetSlot extends Packet {
 
 	public byte id;
 	public short slot;
-	public ItemStack item;
+	public StandardItemStack item;
 
 	public PacketSetSlot() {
 	}
 
-	public PacketSetSlot(byte id, short slot, ItemStack item) {
+	public PacketSetSlot(byte id, short slot, StandardItemStack item) {
 		this.id = id;
 		this.slot = slot;
 		this.item = item;
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.id = in.readByte();
 		this.slot = in.readShort();
-		this.item = new ItemStack();
-		this.item.read(in);
+		this.item = ((StandardInput) in).readItem();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.id);
 		out.writeShort(this.slot);
 		if(this.item != null) {
-			this.item.write(out);
+			((StandardOutput) out).writeItem(this.item);
 		}
 	}
 

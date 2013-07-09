@@ -1,7 +1,7 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 import java.security.PublicKey;
 
@@ -11,7 +11,6 @@ import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.standard.StandardServer;
 import ch.spacebase.mcprotocol.standard.StandardServerConnection;
 import ch.spacebase.mcprotocol.util.Constants;
-import ch.spacebase.mcprotocol.util.IOUtils;
 import ch.spacebase.mcprotocol.util.Util;
 
 public class PacketHandshake extends Packet {
@@ -32,18 +31,18 @@ public class PacketHandshake extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.protocol = in.readByte();
-		this.user = IOUtils.readString(in);
-		this.host = IOUtils.readString(in);
+		this.user = in.readString();
+		this.host = in.readString();
 		this.port = in.readInt();
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.protocol);
-		IOUtils.writeString(out, this.user);
-		IOUtils.writeString(out, this.host);
+		out.writeString(this.user);
+		out.writeString(this.host);
 		out.writeInt(this.port);
 	}
 

@@ -1,7 +1,7 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import ch.spacebase.mcprotocol.net.io.NetInput;
+import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
 
 import ch.spacebase.mcprotocol.net.Client;
@@ -26,7 +26,7 @@ public class PacketSteerVehicle extends Packet {
 	}
 
 	@Override
-	public void read(DataInputStream in) throws IOException {
+	public void read(NetInput in) throws IOException {
 		this.sideways = in.readFloat();
 		this.forward = in.readFloat();
 		this.jump = in.readBoolean();
@@ -34,7 +34,7 @@ public class PacketSteerVehicle extends Packet {
 	}
 
 	@Override
-	public void write(DataOutputStream out) throws IOException {
+	public void write(NetOutput out) throws IOException {
 		out.writeFloat(this.sideways);
 		out.writeFloat(this.forward);
 		out.writeBoolean(this.jump);
