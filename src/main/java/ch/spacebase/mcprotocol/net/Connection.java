@@ -14,7 +14,7 @@ public interface Connection {
 	 * Gets the protocol type of this connection.
 	 * @return The connection's protocol type.
 	 */
-	public abstract Protocol getType();
+	public abstract PacketRegistry getPacketRegistry();
 	
 	/**
 	 * Gets the remote host of this connection.

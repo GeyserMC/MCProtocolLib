@@ -25,6 +25,11 @@ public abstract class BaseConnection implements Connection {
 	 * The connection's username.
 	 */
 	private String username;
+	
+	/**
+	 * The connection's packets.
+	 */
+	private PacketRegistry packets;
 
 	/**
 	 * Listeners listening to this connection.
@@ -36,7 +41,8 @@ public abstract class BaseConnection implements Connection {
 	 * @param host Host to connect to.
 	 * @param port Port to connect to.
 	 */
-	public BaseConnection(String host, int port) {
+	public BaseConnection(PacketRegistry packets, String host, int port) {
+		this.packets = packets;
 		this.host = host;
 		this.port = port;
 	}
@@ -49,6 +55,11 @@ public abstract class BaseConnection implements Connection {
 	@Override
 	public int getRemotePort() {
 		return this.port;
+	}
+	
+	@Override
+	public PacketRegistry getPacketRegistry() {
+		return this.packets;
 	}
 	
 	@Override

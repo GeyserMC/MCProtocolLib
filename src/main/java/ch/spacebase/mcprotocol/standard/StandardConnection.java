@@ -24,7 +24,6 @@ import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.net.BaseConnection;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.Connection;
-import ch.spacebase.mcprotocol.net.Protocol;
 import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.standard.io.StandardInput;
@@ -83,12 +82,7 @@ public abstract class StandardConnection extends BaseConnection {
 	 * @param port Port to connect to.
 	 */
 	public StandardConnection(String host, int port) {
-		super(host, port);
-	}
-	
-	@Override
-	public Protocol getType() {
-		return Protocol.STANDARD;
+		super(new StandardPackets(), host, port);
 	}
 
 	@Override
@@ -182,13 +176,13 @@ public abstract class StandardConnection extends BaseConnection {
 						continue;
 					}
 
-					if(getType().getPacket(opcode) == null) {
+					if(getPacketRegistry().getPacket(opcode) == null) {
 						Util.logger().severe("Bad packet ID: " + opcode);
 						disconnect("Bad packet ID: " + opcode);
 						return;
 					}
 
-					Packet packet = getType().getPacket(opcode).newInstance();
+					Packet packet = getPacketRegistry().getPacket(opcode).newInstance();
 					packet.read(input);
 					call(new PacketRecieveEvent(packet));
 					if(StandardConnection.this instanceof Client) {
