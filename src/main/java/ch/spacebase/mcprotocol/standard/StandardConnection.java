@@ -123,6 +123,7 @@ public abstract class StandardConnection extends BaseConnection {
 
 	@Override
 	public void disconnect(String reason, boolean packet) {
+		this.packets.clear();
 		if(packet) {
 			this.send(new PacketDisconnect(reason));
 		}
@@ -209,6 +210,8 @@ public abstract class StandardConnection extends BaseConnection {
 					Thread.sleep(2);
 				} catch (InterruptedException e) {
 				}
+				
+				reading = false;
 			}
 		}
 	}
@@ -242,6 +245,8 @@ public abstract class StandardConnection extends BaseConnection {
 					Thread.sleep(2);
 				} catch (InterruptedException e) {
 				}
+				
+				writing = false;
 			}
 		}
 	}
