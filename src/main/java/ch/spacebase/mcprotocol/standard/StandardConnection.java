@@ -124,7 +124,7 @@ public abstract class StandardConnection extends BaseConnection {
 	@Override
 	public void disconnect(String reason, boolean packet) {
 		this.packets.clear();
-		if(packet) {
+		if(packet && this.isConnected()) {
 			this.send(new PacketDisconnect(reason));
 		}
 		
@@ -270,6 +270,8 @@ public abstract class StandardConnection extends BaseConnection {
 				System.err.println("Failed to close socket.");
 				e.printStackTrace();
 			}
+			
+			connected = false;
 		}
 	}
 
