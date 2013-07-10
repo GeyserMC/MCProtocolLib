@@ -13,13 +13,13 @@ public class PacketUseBed extends Packet {
 	public int entityId;
 	public byte unknown;
 	public int x;
-	public byte y;
+	public int y;
 	public int z;
 
 	public PacketUseBed() {
 	}
 
-	public PacketUseBed(int entityId, byte unknown, int x, byte y, int z) {
+	public PacketUseBed(int entityId, byte unknown, int x, int y, int z) {
 		this.entityId = entityId;
 		this.unknown = unknown;
 		this.x = x;
@@ -32,7 +32,7 @@ public class PacketUseBed extends Packet {
 		this.entityId = in.readInt();
 		this.unknown = in.readByte();
 		this.x = in.readInt();
-		this.y = in.readByte();
+		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
 	}
 

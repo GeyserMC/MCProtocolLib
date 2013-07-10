@@ -12,14 +12,14 @@ public class PacketPlayerDigging extends Packet {
 
 	public byte status;
 	public int x;
-	public byte y;
+	public int y;
 	public int z;
 	public byte face;
 
 	public PacketPlayerDigging() {
 	}
 
-	public PacketPlayerDigging(byte status, int x, byte y, int z, byte face) {
+	public PacketPlayerDigging(byte status, int x, int y, int z, byte face) {
 		this.status = status;
 		this.x = x;
 		this.y = y;
@@ -31,7 +31,7 @@ public class PacketPlayerDigging extends Packet {
 	public void read(NetInput in) throws IOException {
 		this.status = in.readByte();
 		this.x = in.readInt();
-		this.y = in.readByte();
+		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
 		this.face = in.readByte();
 	}
