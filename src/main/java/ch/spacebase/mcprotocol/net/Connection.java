@@ -66,15 +66,17 @@ public interface Connection {
 	public void connect() throws ConnectException;
 	
 	/**
-	 * Disconnects this connection.
-	 */
-	public void disconnect();
-	
-	/**
 	 * Disconnects this connection, sending a packet with a reason.
 	 * @param reason Reason to disconnect.
 	 */
 	public void disconnect(String reason);
+	
+	/**
+	 * Disconnects this connection, sending a packet with a reason.
+	 * @param reason Reason to disconnect.
+	 * @param packet Whether a disconnect packet is necessary.
+	 */
+	public void disconnect(String reason, boolean packet);
 	
 	/**
 	 * Sends a packet.

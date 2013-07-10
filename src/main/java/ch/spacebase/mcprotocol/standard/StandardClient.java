@@ -143,15 +143,9 @@ public class StandardClient extends StandardConnection implements Client {
 	}
 	
 	@Override
-	public void disconnect() {
+	public void disconnect(String reason, boolean packet) {
 		this.loggedIn = false;
-		super.disconnect();
-	}
-	
-	@Override
-	public void disconnect(String reason) {
-		this.loggedIn = false;
-		super.disconnect(reason);
+		super.disconnect(reason, packet);
 	}
 	
 	/**

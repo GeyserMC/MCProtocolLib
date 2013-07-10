@@ -115,16 +115,18 @@ public abstract class StandardConnection extends BaseConnection {
 			throw new ConnectException("Failed to open stream: " + this.getRemoteHost(), e);
 		}
 	}
-
+	
 	@Override
-	public void disconnect() {
-		new CloseThread().start();
-		this.call(new DisconnectEvent(this, "Unknown"));
+	public void disconnect(String reason) {
+		this.disconnect(reason, true);
 	}
 
 	@Override
-	public void disconnect(String reason) {
-		this.send(new PacketDisconnect(reason));
+	public void disconnect(String reason, boolean packet) {
+		if(packet) {
+			this.send(new PacketDisconnect(reason));
+		}
+		
 		new CloseThread().start();
 		this.connected = false;
 		this.call(new DisconnectEvent(this, reason));
@@ -187,13 +189,13 @@ public abstract class StandardConnection extends BaseConnection {
 
 					Packet packet = getType().getPacket(opcode).newInstance();
 					packet.read(input);
+					call(new PacketRecieveEvent(packet));
 					if(StandardConnection.this instanceof Client) {
 						packet.handleClient((Client) StandardConnection.this);
 					} else if(StandardConnection.this instanceof ServerConnection) {
 						packet.handleServer((ServerConnection) StandardConnection.this);
 					}
 					
-					call(new PacketRecieveEvent(packet));
 					reading = false;
 				} catch(EOFException e) {
 					disconnect("End of Stream");

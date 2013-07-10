@@ -35,11 +35,12 @@ public class PacketDisconnect extends Packet {
 
 	@Override
 	public void handleClient(Client conn) {
-		conn.disconnect(this.reason);
+		conn.disconnect(this.reason, false);
 	}
 
 	@Override
 	public void handleServer(ServerConnection conn) {
+		conn.disconnect(this.reason, false);
 	}
 
 	@Override
