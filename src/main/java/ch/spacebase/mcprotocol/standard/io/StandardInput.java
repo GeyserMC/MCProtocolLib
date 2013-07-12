@@ -91,8 +91,18 @@ public class StandardInput implements NetInput {
 	@Override
 	public byte[] readBytes(int length) throws IOException {
 		byte b[] = new byte[length];
-		if(this.in.read(b) < length) {
-			throw new EOFException();
+		if(length < 0) {
+			throw new IndexOutOfBoundsException();
+		}
+		
+		int n = 0;
+		while(n < length) {
+			int count = this.in.read(b, n, length - n);
+			if(count < 0) {
+				throw new EOFException();
+			}
+			
+			n += count;
 		}
 		
 		return b;

@@ -12,6 +12,7 @@ import ch.spacebase.mcprotocol.packet.Packet;
 import ch.spacebase.mcprotocol.standard.StandardClient;
 import ch.spacebase.mcprotocol.standard.packet.PacketChat;
 import ch.spacebase.mcprotocol.standard.packet.PacketPlayerPositionLook;
+import ch.spacebase.mcprotocol.util.Util;
 
 /**
  * A simple bot that prints
@@ -49,7 +50,7 @@ public class ChatBot {
 
 	public static void main(String[] args) {
 		ChatBot bot = new ChatBot("127.0.0.1", 25565);
-		System.out.println("Logging in...");
+		Util.logger().info("Logging in...");
 		bot.login("Heisenberg");
 	}
 
@@ -71,7 +72,7 @@ public class ChatBot {
 		
 		@Override
 		public void onDisconnect(DisconnectEvent event) {
-			System.out.println("Disconnected: " + event.getReason());
+			Util.logger().info("Disconnected: " + event.getReason());
 		}
 
 		public void onPositionLook(PacketPlayerPositionLook packet) {

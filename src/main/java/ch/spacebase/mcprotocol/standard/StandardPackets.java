@@ -85,8 +85,6 @@ import ch.spacebase.mcprotocol.standard.packet.PacketWindowProperty;
 
 /**
  * A packet registry containing standard Minecraft packets.
- * @author steven
- *
  */
 public class StandardPackets extends PacketRegistry {
 

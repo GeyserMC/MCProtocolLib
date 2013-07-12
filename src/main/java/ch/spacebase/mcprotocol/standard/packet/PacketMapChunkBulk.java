@@ -58,7 +58,6 @@ public class PacketMapChunkBulk extends Packet {
 		this.chunks = new byte[columns][];
 
 		this.compressed = in.readBytes(this.length);
-
 		byte decompressed[] = new byte[0x30100 * columns];
 		Inflater inflater = new Inflater();
 		inflater.setInput(this.compressed, 0, this.length);

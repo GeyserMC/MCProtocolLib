@@ -181,7 +181,7 @@ public abstract class StandardConnection extends BaseConnection {
 						disconnect("Bad packet ID: " + opcode);
 						return;
 					}
-
+					
 					Packet packet = getPacketRegistry().getPacket(opcode).newInstance();
 					packet.read(input);
 					call(new PacketRecieveEvent(packet));
