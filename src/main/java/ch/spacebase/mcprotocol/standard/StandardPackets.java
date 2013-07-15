@@ -26,7 +26,7 @@ import ch.spacebase.mcprotocol.standard.packet.PacketEntityHeadYaw;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityLook;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityLookRelativeMove;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityMetadata;
-import ch.spacebase.mcprotocol.standard.packet.PacketEntityProperties;
+import ch.spacebase.mcprotocol.standard.packet.PacketEntityAttributes;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityRelativeMove;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityStatus;
 import ch.spacebase.mcprotocol.standard.packet.PacketEntityTeleport;
@@ -130,7 +130,7 @@ public class StandardPackets extends PacketRegistry {
 		this.registerPacket(41, PacketEntityEffect.class);
 		this.registerPacket(42, PacketRemoveEntityEffect.class);
 		this.registerPacket(43, PacketSetExperience.class);
-		this.registerPacket(44, PacketEntityProperties.class);
+		this.registerPacket(44, PacketEntityAttributes.class);
 		this.registerPacket(51, PacketMapChunk.class);
 		this.registerPacket(52, PacketMultiBlockChange.class);
 		this.registerPacket(53, PacketBlockChange.class);

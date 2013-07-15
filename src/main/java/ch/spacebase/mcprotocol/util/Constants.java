@@ -1,5 +1,7 @@
 package ch.spacebase.mcprotocol.util;
 
+import java.util.UUID;
+
 /**
  * Contains constant values relating to protocol.
  */
@@ -273,9 +275,9 @@ public class Constants {
 		}
 		
 		/**
-		 * Contains entity property ids.
+		 * Contains entity attribute ids.
 		 */
-		public static class EntityProperties {
+		public static class EntityAttributes {
 			public static final String MAX_HEALTH = "generic.maxHealth";
 			public static final String FOLLOW_RANGE = "generic.followRange";
 			public static final String KNOCKBACK_RESISTANCE = "generic.knockbackResistance";
@@ -283,6 +285,33 @@ public class Constants {
 			public static final String ATTACK_DAMAGE = "generic.attackDamage";
 			public static final String HORSE_JUMP_STRENGTH = "horse.jumpStrength";
 			public static final String ZOMBIE_SPAWN_REINFORCEMENTS = "zombie.spawnReinforcements";
+		}
+		
+		/**
+		 * Contains entity attribute modifier operations.
+		 */
+		public static class ModifierOperations {
+			public static final int UNKNOWN0 = 0;
+			public static final int UNKNOWN1 = 1;
+			public static final int UNKNOWN2 = 2;
+		}
+		
+		/**
+		 * Contains entity attribute modifier unique ids.
+		 */
+		public static class ModifierUIDs {
+			public static final UUID CREATURE_FLEE_SPEED_BONUS = UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A");
+			public static final UUID ENDERMAN_ATTACK_SPEED_BOOST = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
+			public static final UUID SPRINT_SPEED_BOOST = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
+			public static final UUID PIGZOMBIE_ATTACK_SPEED_BOOST = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
+			public static final UUID WITCH_DRINKING_SPEED_PENALTY = UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E"); 
+			public static final UUID ZOMBIE_BABY_SPEED_BOOST = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
+			public static final UUID ITEM_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF"); 
+			public static final UUID SPEED_POTION_MODIFIER = UUID.fromString("91AEAA56-376B-4498-935B-2F7F68070635");
+			public static final UUID HEALTH_BOOST_POTION_MODIFIER = UUID.fromString("5D6F0BA2-1186-46AC-B896-C61C5CEE99CC");
+			public static final UUID SLOW_POTION_MODIFIER = UUID.fromString("7107DE5E-7CE8-4030-940E-514C1F160890");
+			public static final UUID STRENGTH_POTION_MODIFIER = UUID.fromString("648D7064-6A60-4F59-8ABE-C2C23A6DD7A9");
+			public static final UUID WEAKNESS_POTION_MODIFIER = UUID.fromString("22653B89-116E-49DC-9B6B-9971489B5BE5");
 		}
 		
 		/**
