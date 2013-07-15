@@ -291,9 +291,9 @@ public class Constants {
 		 * Contains entity attribute modifier operations.
 		 */
 		public static class ModifierOperations {
-			public static final int UNKNOWN0 = 0;
-			public static final int UNKNOWN1 = 1;
-			public static final int UNKNOWN2 = 2;
+			public static final int ADD = 0;
+			public static final int ADD_MULTIPLIED = 1;
+			public static final int MULTIPLY = 2;
 		}
 		
 		/**
