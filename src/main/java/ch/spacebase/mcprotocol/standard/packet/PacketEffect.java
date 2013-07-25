@@ -12,7 +12,7 @@ public class PacketEffect extends Packet {
 
 	public int effectId;
 	public int x;
-	public byte y;
+	public int y;
 	public int z;
 	public int data;
 	public boolean ignoreVolume;
@@ -20,7 +20,7 @@ public class PacketEffect extends Packet {
 	public PacketEffect() {
 	}
 
-	public PacketEffect(int effectId, int x, byte y, int z, int data, boolean ignoreVolume) {
+	public PacketEffect(int effectId, int x, int y, int z, int data, boolean ignoreVolume) {
 		this.effectId = effectId;
 		this.x = x;
 		this.y = y;
@@ -33,7 +33,7 @@ public class PacketEffect extends Packet {
 	public void read(NetInput in) throws IOException {
 		this.effectId = in.readInt();
 		this.x = in.readInt();
-		this.y = in.readByte();
+		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
 		this.data = in.readInt();
 		this.ignoreVolume = in.readBoolean();

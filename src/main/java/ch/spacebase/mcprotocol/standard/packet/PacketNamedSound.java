@@ -20,7 +20,7 @@ public class PacketNamedSound extends Packet {
 	public PacketNamedSound() {
 	}
 
-	public PacketNamedSound(String sound, int x, byte y, int z, float volume, int pitch) {
+	public PacketNamedSound(String sound, int x, int y, int z, float volume, int pitch) {
 		this.sound = sound;
 		this.x = x;
 		this.y = y;

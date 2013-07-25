@@ -69,6 +69,7 @@ import ch.spacebase.mcprotocol.standard.packet.PacketSpawnMob;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnNamedEntity;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnObject;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnPainting;
+import ch.spacebase.mcprotocol.standard.packet.PacketSpawnParticle;
 import ch.spacebase.mcprotocol.standard.packet.PacketSpawnPosition;
 import ch.spacebase.mcprotocol.standard.packet.PacketSteerVehicle;
 import ch.spacebase.mcprotocol.standard.packet.PacketTabComplete;
@@ -140,6 +141,7 @@ public class StandardPackets extends PacketRegistry {
 		this.registerPacket(60, PacketExplosion.class);
 		this.registerPacket(61, PacketEffect.class);
 		this.registerPacket(62, PacketNamedSound.class);
+		this.registerPacket(63, PacketSpawnParticle.class);
 		this.registerPacket(70, PacketGameState.class);
 		this.registerPacket(71, PacketLightning.class);
 		this.registerPacket(100, PacketOpenWindow.class);
@@ -171,4 +173,5 @@ public class StandardPackets extends PacketRegistry {
 		this.registerPacket(254, PacketServerPing.class);
 		this.registerPacket(255, PacketDisconnect.class);
 	}
+	
 }
