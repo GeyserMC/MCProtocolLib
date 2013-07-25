@@ -403,6 +403,34 @@ public class Constants {
 		public static class TileEditorIds {
 			public static final byte SIGN = 0;
 		}
+		
+		/**
+		 * Contains particle names.
+		 */
+		public static class ParticleNames {
+			public static final String SMOKE = "smoke";
+			public static final String LARGE_SMOKE = "largesmoke";
+			public static final String BLOCK_BREAK_ANIM = "iconcrack_";
+			public static final String SNOWBALL_BREAK = "snowballpoof";
+			public static final String TOOL_BREAK = "tilecrack_";
+			public static final String PORTAL = "portal";
+			public static final String SPLASH = "splash";
+			public static final String BUBBLES = "bubble";
+			public static final String MYCELIUM_SPORES = "townaura";
+			public static final String EXPLOSION = "hugeexplosion";
+			public static final String FLAME = "flame";
+			public static final String HEART = "heart";
+			public static final String CRITICAL_HIT_SPARK = "crit";
+			public static final String ENCHANTED_WEAPON_SPARK = "magicCrit";
+			public static final String NOTE_BLOCK = "note";
+			public static final String MAGIC_RUNES = "enchantmenttable";
+			public static final String LAVA_SPARK = "lava";
+			public static final String FOOTSTEPS = "footstep";
+			public static final String REDSTONE_FUMES = "reddust";
+			public static final String WATER_DRIPPING = "dripWater";
+			public static final String LAVA_DRIPPING = "dripLava";
+			public static final String SLIME_SPLATTER = "slime";
+		}
 	}
 	
 	/**
