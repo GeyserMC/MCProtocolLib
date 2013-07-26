@@ -57,11 +57,6 @@ public abstract class StandardConnection extends BaseConnection {
 	private Queue<Packet> packets = new ConcurrentLinkedQueue<Packet>();
 	
 	/**
-	 * Whether the connection is reading.
-	 */
-	private boolean reading = false;
-	
-	/**
 	 * Whether the connection is writing.
 	 */
 	private boolean writing = false;
@@ -170,7 +165,6 @@ public abstract class StandardConnection extends BaseConnection {
 		public void run() {
 			while(isConnected()) {
 				try {
-					reading = true;
 					int opcode = input.readUnsignedByte();
 					if(opcode < 0) {
 						continue;
@@ -190,8 +184,6 @@ public abstract class StandardConnection extends BaseConnection {
 					} else if(StandardConnection.this instanceof ServerConnection) {
 						packet.handleServer((ServerConnection) StandardConnection.this);
 					}
-					
-					reading = false;
 				} catch(EOFException e) {
 					disconnect("End of Stream");
 				} catch (Exception e) {
@@ -204,8 +196,6 @@ public abstract class StandardConnection extends BaseConnection {
 					Thread.sleep(2);
 				} catch (InterruptedException e) {
 				}
-				
-				reading = false;
 			}
 		}
 	}
@@ -246,12 +236,12 @@ public abstract class StandardConnection extends BaseConnection {
 	}
 	
 	/**
-	 * A thread that waits for the connection to finish before closing it.
+	 * A thread that waits for the connection to finish writing before closing it.
 	 */
 	private class CloseThread extends Thread {
 		@Override
 		public void run() {
-			while(reading || writing) {
+			while(writing) {
 				try {
 					Thread.sleep(2);
 				} catch (InterruptedException e) {
