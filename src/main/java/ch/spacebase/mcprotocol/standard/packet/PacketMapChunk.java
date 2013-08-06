@@ -84,7 +84,7 @@ public class PacketMapChunk extends Packet {
 		out.writeBoolean(this.groundUp);
 		out.writeShort((short) (this.startY & 0xffff));
 		out.writeShort((short) (this.endY & 0xffff));
-		out.writeByte(this.length);
+		out.writeInt(this.length);
 		out.writeBytes(this.data, this.length);
 	}
 
