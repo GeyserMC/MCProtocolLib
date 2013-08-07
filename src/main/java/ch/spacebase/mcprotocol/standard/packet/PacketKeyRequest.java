@@ -107,7 +107,14 @@ public class PacketKeyRequest extends Packet {
 
 	private static byte[] encryptBytes(PublicKey key, byte[] bytes) {
 		try {
-			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+			if(System.getProperty("java.vm.name")=="Dalvik")
+			{
+	     		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			}
+			else
+			{
+				Cipher cipher = Cipher.getInstance(key.getAlgorithm());	
+			}
 			cipher.init(1, key);
 			return cipher.doFinal(bytes);
 		} catch (InvalidKeyException e) {
@@ -120,7 +127,9 @@ public class PacketKeyRequest extends Packet {
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
-		}
+		
+		
+		}//catch (Exception e){return null;}	
 
 		return null;
 	}
