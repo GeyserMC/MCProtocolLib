@@ -126,9 +126,7 @@ public class StandardClient extends StandardConnection implements Client {
 				Util.logger().info("Finished logging in to minecraft.net");
 				return true;
 			} else {
-				if(result.trim().equals("Bad login")) {
-					return false;
-				} else if(result.trim().equals("Old version")) {
+				if(result.trim().equals("Old version")) {
 					throw new OutdatedLibraryException();
 				} else {
 					throw new LoginException(result.trim());

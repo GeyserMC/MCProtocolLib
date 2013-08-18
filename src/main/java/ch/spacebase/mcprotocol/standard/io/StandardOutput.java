@@ -84,6 +84,10 @@ public class StandardOutput implements NetOutput {
 
 	@Override
 	public void writeString(String s) throws IOException {
+		if(s == null) {
+			throw new IllegalArgumentException("String cannot be null!");
+		}
+		
 		int len = s.length();
 		if(len >= 65536) {
 			throw new IllegalArgumentException("String too long.");
@@ -150,6 +154,8 @@ public class StandardOutput implements NetOutput {
 			if(item.getNBT() != null) {
 				this.writeShort(item.getNBT().length);
 				this.writeBytes(item.getNBT());
+			} else {
+				this.writeShort(-1);
 			}
 		}
 	}

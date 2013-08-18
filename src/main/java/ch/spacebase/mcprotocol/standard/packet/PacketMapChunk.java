@@ -19,7 +19,6 @@ public class PacketMapChunk extends Packet {
 	public int startY;
 	public int endY;
 	public byte data[];
-	public int length;
 
 	public PacketMapChunk() {
 	}
@@ -30,17 +29,7 @@ public class PacketMapChunk extends Packet {
 		this.groundUp = groundUp;
 		this.startY = startY;
 		this.endY = endY;
-
-		Deflater deflater = new Deflater(-1);
-
-		try {
-			deflater.setInput(data, 0, data.length);
-			deflater.finish();
-			this.data = new byte[data.length];
-			this.length = deflater.deflate(this.data);
-		} finally {
-			deflater.end();
-		}
+		this.data = data;
 	}
 
 	@Override
@@ -50,23 +39,25 @@ public class PacketMapChunk extends Packet {
 		this.groundUp = in.readBoolean();
 		this.startY = in.readShort();
 		this.endY = in.readShort();
-		this.length = in.readInt();
+		int length = in.readInt();
 
-		byte[] compressed = in.readBytes(this.length);
+		byte[] compressed = in.readBytes(length);
 
 		int off = 0;
+		int msb = 0;
 		for(int count = 0; count < 16; count++) {
 			off += this.startY >> count & 1;
+			msb += this.endY >> count & 1;
 		}
 
-		int size = 12288 * off;
+		int size = (12288 * off) + (2048 * msb);
 		if(this.groundUp) {
 			size += 256;
 		}
 
 		this.data = new byte[size];
 		Inflater inflater = new Inflater();
-		inflater.setInput(compressed, 0, this.length);
+		inflater.setInput(compressed, 0, length);
 
 		try {
 			inflater.inflate(this.data);
@@ -79,13 +70,25 @@ public class PacketMapChunk extends Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
+		Deflater deflater = new Deflater(-1);
+		byte data[] = new byte[0];
+		int length = 0;
+		try {
+			deflater.setInput(this.data, 0, this.data.length);
+			deflater.finish();
+			data = new byte[this.data.length];
+			length = deflater.deflate(this.data);
+		} finally {
+			deflater.end();
+		}
+		
 		out.writeInt(this.x);
 		out.writeInt(this.z);
 		out.writeBoolean(this.groundUp);
 		out.writeShort((short) (this.startY & 0xffff));
 		out.writeShort((short) (this.endY & 0xffff));
-		out.writeInt(this.length);
-		out.writeBytes(this.data, this.length);
+		out.writeInt(length);
+		out.writeBytes(data, length);
 	}
 
 	@Override

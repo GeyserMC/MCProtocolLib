@@ -34,8 +34,8 @@ public class PacketPlayerPositionLook extends Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.x = in.readDouble();
-		this.stance = in.readDouble();
 		this.y = in.readDouble();
+		this.stance = in.readDouble();
 		this.z = in.readDouble();
 		this.yaw = in.readFloat();
 		this.pitch = in.readFloat();

@@ -10,10 +10,12 @@ import ch.spacebase.mcprotocol.packet.Packet;
 
 public class PacketLogin extends Packet {
 
+	public static boolean FORGE = false;
+	
 	public int entityId;
 	public String levelType;
 	public byte gameMode;
-	public byte dimension;
+	public int dimension;
 	public byte difficulty;
 	public byte unused;
 	public byte maxPlayers;
@@ -21,7 +23,7 @@ public class PacketLogin extends Packet {
 	public PacketLogin() {
 	}
 
-	public PacketLogin(int entityId, String levelType, byte gameMode, byte dimension, byte difficulty, byte unused, byte maxPlayers) {
+	public PacketLogin(int entityId, String levelType, byte gameMode, int dimension, byte difficulty, byte unused, byte maxPlayers) {
 		this.entityId = entityId;
 		this.levelType = levelType;
 		this.gameMode = gameMode;
@@ -36,7 +38,12 @@ public class PacketLogin extends Packet {
 		this.entityId = in.readInt();
 		this.levelType = in.readString();
 		this.gameMode = in.readByte();
-		this.dimension = in.readByte();
+		if(FORGE) {
+			this.dimension = in.readInt();
+		} else {
+			this.dimension = in.readByte();
+		}
+		
 		this.difficulty = in.readByte();
 		this.unused = in.readByte();
 		this.maxPlayers = in.readByte();
@@ -47,7 +54,11 @@ public class PacketLogin extends Packet {
 		out.writeInt(this.entityId);
 		out.writeString(this.levelType);
 		out.writeByte(this.gameMode);
-		out.writeByte(this.dimension);
+		if(FORGE) {
+			out.writeInt(this.dimension);
+		} else {
+			out.writeByte(this.dimension);
+		}
 		out.writeByte(this.difficulty);
 		out.writeByte(this.unused);
 		out.writeByte(this.maxPlayers);
