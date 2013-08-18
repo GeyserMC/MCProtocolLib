@@ -13,11 +13,13 @@ public class PacketLogin extends Packet {
 	public int entityId;
 	public String levelType;
 	public byte gameMode;
-	public byte dimension;
+	public int dimension;
 	public byte difficulty;
 	public byte unused;
 	public byte maxPlayers;
 
+        public boolean isVanillaCompatible = true;
+        
 	public PacketLogin() {
 	}
 
@@ -36,7 +38,11 @@ public class PacketLogin extends Packet {
 		this.entityId = in.readInt();
 		this.levelType = in.readString();
 		this.gameMode = in.readByte();
-		this.dimension = in.readByte();
+                if (this.isVanillaCompatible) {
+                    this.dimension = in.readByte();
+                } else {
+                    this.dimension = in.readInt();
+                }
 		this.difficulty = in.readByte();
 		this.unused = in.readByte();
 		this.maxPlayers = in.readByte();
@@ -47,7 +53,11 @@ public class PacketLogin extends Packet {
 		out.writeInt(this.entityId);
 		out.writeString(this.levelType);
 		out.writeByte(this.gameMode);
-		out.writeByte(this.dimension);
+                if (this.isVanillaCompatible) {
+                    out.writeByte(this.dimension);
+                } else {
+                    out.writeInt(this.dimension);
+                }
 		out.writeByte(this.difficulty);
 		out.writeByte(this.unused);
 		out.writeByte(this.maxPlayers);
@@ -65,5 +75,10 @@ public class PacketLogin extends Packet {
 	public int getId() {
 		return 1;
 	}
+        
+        @Override
+        public String toString() {
+            return "1 [entityID: " + this.entityId + ", levelType: " + this.levelType + ", gameMode: " + this.gameMode + ", dim: " + this.dimension + ", dif: " + this.difficulty + ", usd: " + this.unused + ", maxPlayers: " + this.maxPlayers + "]"; 
+        }
 
 }
