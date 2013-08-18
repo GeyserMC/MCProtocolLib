@@ -1,104 +1,169 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
+import ch.spacebase.mcprotocol.net.Client;
+import ch.spacebase.mcprotocol.net.ServerConnection;
 import ch.spacebase.mcprotocol.net.io.NetInput;
 import ch.spacebase.mcprotocol.net.io.NetOutput;
+import ch.spacebase.mcprotocol.packet.Packet;
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-import ch.spacebase.mcprotocol.net.Client;
-import ch.spacebase.mcprotocol.net.ServerConnection;
-import ch.spacebase.mcprotocol.packet.Packet;
+public class PacketMapChunk extends Packet
+{
+    /** The x-position of the transmitted chunk, in chunk coordinates. */
+    public int xCh;
 
-public class PacketMapChunk extends Packet {
+    /** The z-position of the transmitted chunk, in chunk coordinates. */
+    public int zCh;
 
-	public int x;
-	public int z;
-	public boolean groundUp;
-	public int startY;
-	public int endY;
-	public byte data[];
-	public int length;
+    /**
+     * The y-position of the lowest chunk Section in the transmitted chunk, in chunk coordinates.
+     */
+    public int yChMin;
 
-	public PacketMapChunk() {
-	}
+    /**
+     * The y-position of the highest chunk Section in the transmitted chunk, in chunk coordinates.
+     */
+    public int yChMax;
 
-	public PacketMapChunk(int x, int z, boolean groundUp, int startY, int endY, byte data[]) {
-		this.x = x;
-		this.z = z;
-		this.groundUp = groundUp;
-		this.startY = startY;
-		this.endY = endY;
+    /** The transmitted chunk data, decompressed. */
+    private byte[] chunkData;
 
-		Deflater deflater = new Deflater(-1);
+    /** The compressed chunk data */
+    private byte[] compressedChunkData;
 
-		try {
-			deflater.setInput(data, 0, data.length);
-			deflater.finish();
-			this.data = new byte[data.length];
-			this.length = deflater.deflate(this.data);
-		} finally {
-			deflater.end();
-		}
-	}
+    /**
+     * Whether to initialize the Chunk before applying the effect of the Packet51MapChunk.
+     */
+    public boolean includeInitialize;
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.x = in.readInt();
-		this.z = in.readInt();
-		this.groundUp = in.readBoolean();
-		this.startY = in.readShort();
-		this.endY = in.readShort();
-		this.length = in.readInt();
+    /** The length of the compressed chunk data byte array. */
+    private int tempLength;
 
-		byte[] compressed = in.readBytes(this.length);
+    /** A temporary storage for the compressed chunk data byte array. */
+    private static byte[] temp = new byte[196864];
 
-		int off = 0;
-		for(int count = 0; count < 16; count++) {
-			off += this.startY >> count & 1;
-		}
+    private Semaphore deflateGate;
+    private final boolean isChunkDataPacket;
 
-		int size = 12288 * off;
-		if(this.groundUp) {
-			size += 256;
-		}
+    public PacketMapChunk()
+    {
+        this.isChunkDataPacket = true;
+        this.deflateGate = new Semaphore(1);
+    }
 
-		this.data = new byte[size];
-		Inflater inflater = new Inflater();
-		inflater.setInput(compressed, 0, this.length);
+    private void deflate()
+    {
+        Deflater deflater = new Deflater(-1);
+        try
+        {
+            deflater.setInput(compressedChunkData, 0, compressedChunkData.length);
+            deflater.finish();
+            byte[] deflated = new byte[compressedChunkData.length];
+            this.tempLength = deflater.deflate(deflated);
+            this.chunkData = deflated;
+        }
+        finally
+        {
+            deflater.end();
+        }
+    }
 
-		try {
-			inflater.inflate(this.data);
-		} catch (DataFormatException e) {
-			throw new IOException("Bad compressed data format");
-		} finally {
-			inflater.end();
-		}
-	}
+    /**
+     * Abstract. Reads the raw packet data from the data stream.
+     */
+    @Override
+    public void read(NetInput par1DataInput) throws IOException
+    {
+        this.xCh = par1DataInput.readInt();
+        this.zCh = par1DataInput.readInt();
+        this.includeInitialize = par1DataInput.readBoolean();
+        this.yChMin = par1DataInput.readShort();
+        this.yChMax = par1DataInput.readShort();
+        this.tempLength = par1DataInput.readInt();
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.x);
-		out.writeInt(this.z);
-		out.writeBoolean(this.groundUp);
-		out.writeShort((short) (this.startY & 0xffff));
-		out.writeShort((short) (this.endY & 0xffff));
-		out.writeInt(this.length);
-		out.writeBytes(this.data, this.length);
-	}
+        if (temp.length < this.tempLength)
+        {
+            temp = new byte[this.tempLength];
+        }
 
-	@Override
-	public void handleClient(Client conn) {
-	}
+        temp = par1DataInput.readBytes(this.tempLength);
+        int i = 0;
+        int j;
+        int msb = 0;
 
-	@Override
-	public void handleServer(ServerConnection conn) {
-	}
+        for (j = 0; j < 16; ++j)
+        {
+            i += this.yChMin >> j & 1;
+            msb  += this.yChMax >> j & 1;
+        }
 
-	@Override
-	public int getId() {
-		return 51;
-	}
+        j = 12288 * i;
+        j += 2048 * msb;
 
+        if (this.includeInitialize)
+        {
+            j += 256;
+        }
+
+        this.compressedChunkData = new byte[j];
+        Inflater inflater = new Inflater();
+        inflater.setInput(temp, 0, this.tempLength);
+
+        try
+        {
+            inflater.inflate(this.compressedChunkData);
+        }
+        catch (DataFormatException dataformatexception)
+        {
+            throw new IOException("Bad compressed data format");
+        }
+        finally
+        {
+            inflater.end();
+        }
+    }
+
+    /**
+     * Abstract. Writes the raw packet data to the data stream.
+     */
+    @Override
+    public void write(NetOutput par1DataOutput) throws IOException
+    {
+        if (chunkData == null)
+        {
+            deflateGate.acquireUninterruptibly();
+            if (chunkData == null)
+            {
+                deflate();
+            }
+            deflateGate.release();
+        }
+
+        par1DataOutput.writeInt(this.xCh);
+        par1DataOutput.writeInt(this.zCh);
+        par1DataOutput.writeBoolean(this.includeInitialize);
+        par1DataOutput.writeShort((short)(this.yChMin & 65535));
+        par1DataOutput.writeShort((short)(this.yChMax & 65535));
+        par1DataOutput.writeInt(this.tempLength);
+        par1DataOutput.writeBytes(this.chunkData, this.tempLength);
+    }
+
+    @Override
+    public void handleClient(Client conn) {
+        
+    }
+
+    @Override
+    public void handleServer(ServerConnection conn) {
+        
+    }
+
+    @Override
+    public int getId() {
+        return 51;
+    }
 }

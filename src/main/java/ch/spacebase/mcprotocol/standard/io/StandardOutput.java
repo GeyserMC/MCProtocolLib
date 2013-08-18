@@ -150,7 +150,10 @@ public class StandardOutput implements NetOutput {
 			if(item.getNBT() != null) {
 				this.writeShort(item.getNBT().length);
 				this.writeBytes(item.getNBT());
-			}
+			} else {
+                            // v BUGFIX HERE!!! v
+                            this.writeShort(-1);
+                        }
 		}
 	}
 	
