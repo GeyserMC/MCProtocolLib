@@ -42,7 +42,7 @@ public class PacketBlockAction extends Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.x);
-		out.writeInt(this.y);
+		out.writeShort(this.y);
 		out.writeInt(this.z);
 		out.writeByte(this.b1);
 		out.writeByte(this.b2);
