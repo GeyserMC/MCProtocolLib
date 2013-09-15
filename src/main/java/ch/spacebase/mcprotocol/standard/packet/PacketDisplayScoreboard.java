@@ -1,5 +1,6 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
+import ch.spacebase.mcprotocol.event.PacketVisitor;
 import ch.spacebase.mcprotocol.net.io.NetInput;
 import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
@@ -44,5 +45,10 @@ public class PacketDisplayScoreboard extends Packet {
 	public int getId() {
 		return 208;
 	}
+
+        @Override
+        public void accept(PacketVisitor visitor) {
+                visitor.visit(this);
+        }
 
 }
