@@ -1,5 +1,6 @@
 package ch.spacebase.mcprotocol.packet;
 
+import ch.spacebase.mcprotocol.event.PacketVisitable;
 import java.io.IOException;
 import ch.spacebase.mcprotocol.net.Client;
 import ch.spacebase.mcprotocol.net.ServerConnection;
@@ -9,7 +10,7 @@ import ch.spacebase.mcprotocol.net.io.NetOutput;
 /**
  * A network data packet.
  */
-public abstract class Packet {
+public abstract class Packet implements PacketVisitable {
 
 	/**
 	 * Creates an empty packet for reading to.
@@ -47,6 +48,6 @@ public abstract class Packet {
 	 * Gets the id of this packet.
 	 * @return The packet's id.
 	 */
-	public abstract int getId();
+	public abstract int getId();        
 
 }

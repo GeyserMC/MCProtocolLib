@@ -1,5 +1,6 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
+import ch.spacebase.mcprotocol.event.PacketVisitor;
 import ch.spacebase.mcprotocol.net.io.NetInput;
 import ch.spacebase.mcprotocol.net.io.NetOutput;
 import java.io.IOException;
@@ -49,5 +50,10 @@ public class PacketUseEntity extends Packet {
 	public int getId() {
 		return 7;
 	}
+
+        @Override
+        public void accept(PacketVisitor visitor) {
+                visitor.visit(this);
+        }
 
 }

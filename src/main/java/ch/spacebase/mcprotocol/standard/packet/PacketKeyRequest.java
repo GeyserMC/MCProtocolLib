@@ -1,5 +1,6 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
+import ch.spacebase.mcprotocol.event.PacketVisitor;
 import java.io.BufferedReader;
 import ch.spacebase.mcprotocol.net.io.NetInput;
 import ch.spacebase.mcprotocol.net.io.NetOutput;
@@ -158,5 +159,10 @@ public class PacketKeyRequest extends Packet {
 			return e.toString();
 		}
 	}
+
+        @Override
+        public void accept(PacketVisitor visitor) {
+                visitor.visit(this);
+        }
 
 }

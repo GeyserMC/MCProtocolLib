@@ -1,5 +1,6 @@
 package ch.spacebase.mcprotocol.standard.packet;
 
+import ch.spacebase.mcprotocol.event.PacketVisitor;
 import java.io.BufferedReader;
 import ch.spacebase.mcprotocol.net.io.NetInput;
 import ch.spacebase.mcprotocol.net.io.NetOutput;
@@ -78,5 +79,10 @@ public class PacketClientStatus extends Packet {
 	public int getId() {
 		return 205;
 	}
+
+        @Override
+        public void accept(PacketVisitor visitor) {
+                visitor.visit(this);
+        }
 
 }
