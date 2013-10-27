@@ -5,7 +5,7 @@
 <b>Discontinued</b>
 --------
 
-This project has been discontinued (for now anyway) due to the massive amount of changes made in 1.7's protocol. A lot of things were rewritten, many packet content and id changes occurred, the packet format changed, and now some (current 1 at the time) packets are server/client specific with the same ids. If anyone wants to submit a pull request to update to 1.7, I would be glad to continue, but at the moment its just too much to do.
+This project has been discontinued (for now anyway) due to the massive amount of changes made in 1.7's protocol. A lot of things were rewritten, many packet content and id changes occurred, the packet format changed, and now some (currently 1) packets are server/client specific with the same ids. If anyone wants to submit a pull request to update to 1.7, I would be glad to continue, but at the moment its just too much to do.
 
 
 <b>About mc-protocol-lib</b>
