@@ -18,7 +18,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
 import ch.spacebase.mcprotocol.event.DisconnectEvent;
-import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
+import ch.spacebase.mcprotocol.event.PacketReceiveEvent;
 import ch.spacebase.mcprotocol.event.PacketSendEvent;
 import ch.spacebase.mcprotocol.exception.ConnectException;
 import ch.spacebase.mcprotocol.net.BaseConnection;
@@ -35,42 +35,42 @@ import ch.spacebase.mcprotocol.util.Util;
  * A connection implementing standard Minecraft protocol.
  */
 public abstract class StandardConnection extends BaseConnection {
-	
+
 	/**
 	 * The connection's socket.
 	 */
 	private Socket sock;
-	
+
 	/**
 	 * The connection's input stream.
 	 */
 	private StandardInput input;
-	
+
 	/**
 	 * The connection's output stream.
 	 */
 	private StandardOutput output;
-	
+
 	/**
 	 * The connection's packet write queue.
 	 */
 	private Queue<Packet> packets = new ConcurrentLinkedQueue<Packet>();
-	
+
 	/**
 	 * Whether the connection is writing.
 	 */
 	private boolean writing = false;
-	
+
 	/**
 	 * Whether the connection is connected.
 	 */
 	private boolean connected = false;
-	
+
 	/**
 	 * The connection's secret key.
 	 */
 	private SecretKey key;
-	
+
 	/**
 	 * Creates a new standard connection.
 	 * @param host Host to connect to.
@@ -98,13 +98,13 @@ public abstract class StandardConnection extends BaseConnection {
 			this.connected = true;
 			new ListenThread().start();
 			new WriteThread().start();
-		} catch (UnknownHostException e) {
+		} catch(UnknownHostException e) {
 			throw new ConnectException("Unknown host: " + this.getRemoteHost());
-		} catch (IOException e) {
+		} catch(IOException e) {
 			throw new ConnectException("Failed to open stream: " + this.getRemoteHost(), e);
 		}
 	}
-	
+
 	@Override
 	public void disconnect(String reason) {
 		this.disconnect(reason, true);
@@ -116,7 +116,7 @@ public abstract class StandardConnection extends BaseConnection {
 		if(packet && this.isConnected()) {
 			this.send(new PacketDisconnect(reason));
 		}
-		
+
 		new CloseThread().start();
 		this.connected = false;
 		this.call(new DisconnectEvent(this, reason));
@@ -126,7 +126,7 @@ public abstract class StandardConnection extends BaseConnection {
 	public void send(Packet packet) {
 		this.packets.add(packet);
 	}
-	
+
 	/**
 	 * Gets the protocol's secret key.
 	 * @return The protocol's secret key.
@@ -142,7 +142,7 @@ public abstract class StandardConnection extends BaseConnection {
 	public void setSecretKey(SecretKey key) {
 		this.key = key;
 	}
-	
+
 	/**
 	 * Enabled AES encryption on the connection.
 	 * @param conn Connection to enable AES on.
@@ -156,7 +156,7 @@ public abstract class StandardConnection extends BaseConnection {
 		this.input = new StandardInput(new CipherInputStream(this.input.getStream(), in));
 		this.output = new StandardOutput(new CipherOutputStream(this.output.getStream(), out));
 	}
-	
+
 	/**
 	 * A thread listening for incoming packets.
 	 */
@@ -175,10 +175,10 @@ public abstract class StandardConnection extends BaseConnection {
 						disconnect("Bad packet ID: " + opcode);
 						return;
 					}
-					
+
 					Packet packet = getPacketRegistry().getPacket(opcode).newInstance();
 					packet.read(input);
-					call(new PacketRecieveEvent(packet));
+					call(new PacketReceiveEvent(packet));
 					if(StandardConnection.this instanceof Client) {
 						packet.handleClient((Client) StandardConnection.this);
 					} else if(StandardConnection.this instanceof ServerConnection) {
@@ -186,15 +186,15 @@ public abstract class StandardConnection extends BaseConnection {
 					}
 				} catch(EOFException e) {
 					disconnect("End of Stream");
-				} catch (Exception e) {
+				} catch(Exception e) {
 					Util.logger().severe("Error while listening to connection!");
 					e.printStackTrace();
 					disconnect("Error while listening to connection!");
 				}
-				
+
 				try {
 					Thread.sleep(2);
-				} catch (InterruptedException e) {
+				} catch(InterruptedException e) {
 				}
 			}
 		}
@@ -211,32 +211,33 @@ public abstract class StandardConnection extends BaseConnection {
 					writing = true;
 					Packet packet = packets.poll();
 					call(new PacketSendEvent(packet));
-					
+
 					try {
 						output.writeByte(packet.getId());
 						packet.write(output);
 						output.flush();
-					} catch (Exception e) {
+					} catch(Exception e) {
 						Util.logger().severe("Error while writing packet \"" + packet.getId() + "\"!");
 						e.printStackTrace();
 						disconnect("Error while writing packet.");
 					}
-					
+
 					writing = false;
 				}
-				
+
 				try {
 					Thread.sleep(2);
-				} catch (InterruptedException e) {
+				} catch(InterruptedException e) {
 				}
-				
+
 				writing = false;
 			}
 		}
 	}
-	
+
 	/**
-	 * A thread that waits for the connection to finish writing before closing it.
+	 * A thread that waits for the connection to finish writing before closing
+	 * it.
 	 */
 	private class CloseThread extends Thread {
 		@Override
@@ -244,17 +245,17 @@ public abstract class StandardConnection extends BaseConnection {
 			while(writing) {
 				try {
 					Thread.sleep(2);
-				} catch (InterruptedException e) {
+				} catch(InterruptedException e) {
 				}
 			}
-			
+
 			try {
 				sock.close();
-			} catch (IOException e) {
+			} catch(IOException e) {
 				System.err.println("Failed to close socket.");
 				e.printStackTrace();
 			}
-			
+
 			connected = false;
 		}
 	}

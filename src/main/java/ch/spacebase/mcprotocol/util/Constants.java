@@ -20,17 +20,17 @@ public class Constants {
 		 * The current protocol version.
 		 */
 		public static final byte PROTOCOL_VERSION = 74;
-		
+
 		/**
 		 * The current game version.
 		 */
 		public static final String MINECRAFT_VERSION = "1.6.2";
-		
+
 		/**
 		 * The server list ping magic value.
 		 */
 		public static final byte PING_MAGIC = 1;
-	
+
 		/**
 		 * Contains animation ids.
 		 */
@@ -44,7 +44,7 @@ public class Constants {
 			public static final byte CROUCH = 104;
 			public static final byte UNCROUCH = 105;
 		}
-		
+
 		/**
 		 * Contains view distance ids.
 		 */
@@ -54,7 +54,7 @@ public class Constants {
 			public static final byte SHORT = 2;
 			public static final byte TINY = 3;
 		}
-		
+
 		/**
 		 * Contains difficulty ids.
 		 */
@@ -64,7 +64,7 @@ public class Constants {
 			public static final byte NORMAL = 2;
 			public static final byte HARD = 3;
 		}
-		
+
 		/**
 		 * Contains client status ids.
 		 */
@@ -72,7 +72,7 @@ public class Constants {
 			public static final byte INITIAL_SPAWN = 0;
 			public static final byte RESPAWN = 1;
 		}
-		
+
 		/**
 		 * Contains entity action ids.
 		 */
@@ -83,7 +83,7 @@ public class Constants {
 			public static final byte START_SPRINTING = 4;
 			public static final byte STOP_SPRINTING = 5;
 		}
-		
+
 		/**
 		 * Contains entity status ids.
 		 */
@@ -95,8 +95,18 @@ public class Constants {
 			public static final byte SHAKING_WATER = 8;
 			public static final byte EATING_ACCEPT = 9;
 			public static final byte SHEEP_EATING = 10;
+            public static final byte IRON_GOLEM_ROSE = 11;
+            public static final byte SPAWN_HEART_PARTICLES = 12;
+            public static final byte SPAWN_ANGRY_PARTICLES = 13;
+            public static final byte SPAWN_LOVE_PARTICLES = 14;
+            public static final byte SPAWN_MAGIC_PARTICLES = 15;
+            public static final byte ZOMBIE_INTO_VILLAGER = 16;
+            public static final byte EXPLODING_FIREWORK = 17;
+            public static final byte MOVE_TO_REPLICAPARTITION = 125;
+            public static final byte CONVERT_TO_AUTHORITATIVE = 126;
+            public static final byte CONVERT_TO_REPLICA = 127;
 		}
-		
+
 		/**
 		 * Contains game state ids.
 		 */
@@ -107,7 +117,7 @@ public class Constants {
 			public static final byte CHANGE_GAMEMODE = 3;
 			public static final byte ENTER_CREDITS = 4;
 		}
-		
+
 		/**
 		 * Contains game mode ids.
 		 */
@@ -116,7 +126,7 @@ public class Constants {
 			public static final byte CREATIVE = 1;
 			public static final byte ADVENTURE = 2;
 		}
-		
+
 		/**
 		 * Contains dimension ids.
 		 */
@@ -125,7 +135,7 @@ public class Constants {
 			public static final byte NORMAL = 0;
 			public static final byte END = 1;
 		}
-		
+
 		/**
 		 * Contains window type ids.
 		 */
@@ -143,7 +153,7 @@ public class Constants {
 			public static final byte DROPPER = 10;
 			public static final byte HORSE = 11;
 		}
-		
+
 		/**
 		 * Contains scoreboard objective ids.
 		 */
@@ -152,7 +162,7 @@ public class Constants {
 			public static final byte REMOVE = 1;
 			public static final byte UPDATE_TEXT = 2;
 		}
-		
+
 		/**
 		 * Contains team action ids.
 		 */
@@ -163,7 +173,7 @@ public class Constants {
 			public static final byte ADD_PLAYER = 3;
 			public static final byte REMOVE_PLAYER = 4;
 		}
-		
+
 		/**
 		 * Contains friendly fire ids.
 		 */
@@ -172,7 +182,7 @@ public class Constants {
 			public static final byte ON = 1;
 			public static final byte SEE_INVISIBLE_TEAMMATES = 3;
 		}
-		
+
 		/**
 		 * Contains ids for updating scoreboards.
 		 */
@@ -180,14 +190,14 @@ public class Constants {
 			public static final byte CREATE_OR_UPDATE = 0;
 			public static final byte REMOVE = 1;
 		}
-		
+
 		/**
 		 * Contains ids for updating tile entities.
 		 */
 		public static class UpdateTileEntityIds {
 			public static final byte SET_MOB = 1;
 		}
-		
+
 		/**
 		 * Contains window property ids.
 		 */
@@ -198,7 +208,7 @@ public class Constants {
 			public static final byte ENCHANT_SLOT_1 = 1;
 			public static final byte ENCHANT_SLOT_2 = 2;
 		}
-		
+
 		/**
 		 * Contains mob ids.
 		 */
@@ -232,7 +242,7 @@ public class Constants {
 			public static final byte IRON_GOLEM = 99;
 			public static final byte VILLAGER = 120;
 		}
-		
+
 		/**
 		 * Contains object ids.
 		 */
@@ -255,7 +265,7 @@ public class Constants {
 			public static final byte XP_BOTTLE = 75;
 			public static final byte FISHING_HOOK = 90;
 		}
-		
+
 		/**
 		 * Contains standard plugin channels.
 		 */
@@ -273,7 +283,7 @@ public class Constants {
 			public static final String CLIENT_PING_DATA = "MC|PingHost";
 			public static final String BRAND = "MC|Brand";
 		}
-		
+
 		/**
 		 * Contains entity attribute ids.
 		 */
@@ -286,7 +296,7 @@ public class Constants {
 			public static final String HORSE_JUMP_STRENGTH = "horse.jumpStrength";
 			public static final String ZOMBIE_SPAWN_REINFORCEMENTS = "zombie.spawnReinforcements";
 		}
-		
+
 		/**
 		 * Contains entity attribute modifier operations.
 		 */
@@ -295,7 +305,7 @@ public class Constants {
 			public static final int ADD_MULTIPLIED = 1;
 			public static final int MULTIPLY = 2;
 		}
-		
+
 		/**
 		 * Contains entity attribute modifier unique ids.
 		 */
@@ -304,16 +314,16 @@ public class Constants {
 			public static final UUID ENDERMAN_ATTACK_SPEED_BOOST = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
 			public static final UUID SPRINT_SPEED_BOOST = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
 			public static final UUID PIGZOMBIE_ATTACK_SPEED_BOOST = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
-			public static final UUID WITCH_DRINKING_SPEED_PENALTY = UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E"); 
+			public static final UUID WITCH_DRINKING_SPEED_PENALTY = UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E");
 			public static final UUID ZOMBIE_BABY_SPEED_BOOST = UUID.fromString("B9766B59-9566-4402-BC1F-2EE2A276D836");
-			public static final UUID ITEM_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF"); 
+			public static final UUID ITEM_MODIFIER = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
 			public static final UUID SPEED_POTION_MODIFIER = UUID.fromString("91AEAA56-376B-4498-935B-2F7F68070635");
 			public static final UUID HEALTH_BOOST_POTION_MODIFIER = UUID.fromString("5D6F0BA2-1186-46AC-B896-C61C5CEE99CC");
 			public static final UUID SLOW_POTION_MODIFIER = UUID.fromString("7107DE5E-7CE8-4030-940E-514C1F160890");
 			public static final UUID STRENGTH_POTION_MODIFIER = UUID.fromString("648D7064-6A60-4F59-8ABE-C2C23A6DD7A9");
 			public static final UUID WEAKNESS_POTION_MODIFIER = UUID.fromString("22653B89-116E-49DC-9B6B-9971489B5BE5");
 		}
-		
+
 		/**
 		 * Contains statistic ids.
 		 */
@@ -341,12 +351,12 @@ public class Constants {
 			public static final int MOB_KILLS = 2023;
 			public static final int PLAYER_KILLS = 2024;
 			public static final int FISH_CAUGHT = 2025;
-			
+
 			private static final int MINE_BLOCK_BASE = 16777216;
 			private static final int CRAFT_ITEM_BASE = 16842752;
 			private static final int USE_ITEM_BASE = 16908288;
 			private static final int BREAK_ITEM_BASE = 16973824;
-			
+
 			/**
 			 * Gets the statistic value for mining a block.
 			 * @param block Block mined.
@@ -355,7 +365,7 @@ public class Constants {
 			public static int mineBlock(int block) {
 				return MINE_BLOCK_BASE + block;
 			}
-			
+
 			/**
 			 * Gets the statistic value for crafting an item.
 			 * @param item Item crafted.
@@ -364,7 +374,7 @@ public class Constants {
 			public static int craftItem(int item) {
 				return CRAFT_ITEM_BASE + item;
 			}
-			
+
 			/**
 			 * Gets the statistic value for using an item.
 			 * @param item Item used.
@@ -383,7 +393,7 @@ public class Constants {
 				return BREAK_ITEM_BASE + item;
 			}
 		}
-		
+
 		/**
 		 * Contains watchable object ids.
 		 */
@@ -396,14 +406,14 @@ public class Constants {
 			public static final byte ITEM_STACK = 5;
 			public static final byte COORDINATES = 6;
 		}
-		
+
 		/**
 		 * Contains tile editor ids.
 		 */
 		public static class TileEditorIds {
 			public static final byte SIGN = 0;
 		}
-		
+
 		/**
 		 * Contains particle names.
 		 */
@@ -432,7 +442,7 @@ public class Constants {
 			public static final String SLIME_SPLATTER = "slime";
 		}
 	}
-	
+
 	/**
 	 * Contains constant values relating to classic Minecraft protocol.
 	 */
@@ -442,7 +452,7 @@ public class Constants {
 		 */
 		public static final byte PROTOCOL_VERSION = 7;
 	}
-	
+
 	/**
 	 * Contains constant values relating to Minecraft Pocket Edition protocol.
 	 */
@@ -452,5 +462,5 @@ public class Constants {
 		 */
 		public static final byte[] MAGIC = new byte[] { 0, -1, -1, 0, -2, -2, -2, -2, -3, -3, -3, -3, 18, 52, 86, 120 };
 	}
-	
+
 }

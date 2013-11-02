@@ -55,9 +55,9 @@ public class PacketEntityEffect extends Packet {
 		return 41;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

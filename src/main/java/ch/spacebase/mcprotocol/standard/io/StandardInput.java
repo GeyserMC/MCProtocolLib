@@ -15,11 +15,11 @@ import ch.spacebase.mcprotocol.util.Constants;
 public class StandardInput implements NetInput {
 
 	private InputStream in;
-	
+
 	public StandardInput(InputStream in) {
 		this.in = in;
 	}
-	
+
 	public InputStream getStream() {
 		return this.in;
 	}
@@ -28,7 +28,7 @@ public class StandardInput implements NetInput {
 	public boolean readBoolean() throws IOException {
 		return this.readByte() == 1;
 	}
-	
+
 	@Override
 	public byte readByte() throws IOException {
 		return (byte) this.readUnsignedByte();
@@ -40,7 +40,7 @@ public class StandardInput implements NetInput {
 		if(b < 0) {
 			throw new EOFException();
 		}
-		
+
 		return b;
 	}
 
@@ -94,17 +94,17 @@ public class StandardInput implements NetInput {
 		if(length < 0) {
 			throw new IndexOutOfBoundsException();
 		}
-		
+
 		int n = 0;
 		while(n < length) {
 			int count = this.in.read(b, n, length - n);
 			if(count < 0) {
 				throw new EOFException();
 			}
-			
+
 			n += count;
 		}
-		
+
 		return b;
 	}
 
@@ -118,12 +118,12 @@ public class StandardInput implements NetInput {
 
 		return new String(characters);
 	}
-	
+
 	@Override
 	public int available() throws IOException {
 		return this.in.available();
 	}
-	
+
 	/**
 	 * Reads an entity's metadata.
 	 * @return The read metadata objects.
@@ -166,7 +166,7 @@ public class StandardInput implements NetInput {
 
 		return objects.toArray(new WatchableObject[objects.size()]);
 	}
-	
+
 	/**
 	 * Reads an item stack.
 	 * @return The read item stack.
@@ -185,10 +185,10 @@ public class StandardInput implements NetInput {
 				nbt = this.readBytes(length);
 			}
 		}
-		
+
 		return new StandardItemStack(item, stackSize, damage, nbt);
 	}
-	
+
 	/**
 	 * Reads a coordinate group.
 	 * @return The read coordinates.
@@ -200,5 +200,5 @@ public class StandardInput implements NetInput {
 		int z = this.readInt();
 		return new Coordinates(x, y, z);
 	}
-	
+
 }

@@ -16,7 +16,7 @@ public class PluginMessageBuilder {
 	 * The channel of the plugin message.
 	 */
 	private String channel;
-	
+
 	/**
 	 * The internal output used in building the data.
 	 */
@@ -43,7 +43,7 @@ public class PluginMessageBuilder {
 			Util.logger().severe("Failed to write to plugin message");
 			e.printStackTrace();
 		}
-		
+
 		return this;
 	}
 
@@ -59,7 +59,7 @@ public class PluginMessageBuilder {
 			Util.logger().severe("Failed to write to plugin message");
 			e.printStackTrace();
 		}
-		
+
 		return this;
 	}
 
@@ -75,7 +75,7 @@ public class PluginMessageBuilder {
 			Util.logger().severe("Failed to write to plugin message");
 			e.printStackTrace();
 		}
-		
+
 		return this;
 	}
 
@@ -106,7 +106,7 @@ public class PluginMessageBuilder {
 			Util.logger().severe("Failed to write to plugin message");
 			e.printStackTrace();
 		}
-		
+
 		return this;
 	}
 
@@ -122,7 +122,7 @@ public class PluginMessageBuilder {
 			Util.logger().severe("Failed to write to plugin message");
 			e.printStackTrace();
 		}
-		
+
 		return this;
 	}
 
@@ -138,7 +138,7 @@ public class PluginMessageBuilder {
 			Util.logger().severe("Failed to write to plugin message");
 			e.printStackTrace();
 		}
-		
+
 		return this;
 	}
 
@@ -154,12 +154,13 @@ public class PluginMessageBuilder {
 			Util.logger().severe("Failed to write to plugin message");
 			e.printStackTrace();
 		}
-		
+
 		return this;
 	}
 
 	/**
-	 * Writes a byte array to the plugin message data, prepending the array length.
+	 * Writes a byte array to the plugin message data, prepending the array
+	 * length.
 	 * @param b Bytes to write.
 	 * @return This plugin message builder.
 	 */

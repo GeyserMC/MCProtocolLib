@@ -50,9 +50,9 @@ public class PacketEntityMetadata extends Packet {
 		return 40;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

@@ -47,9 +47,9 @@ public class PacketIncrementStatistic extends Packet {
 		return 200;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

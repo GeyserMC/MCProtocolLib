@@ -90,9 +90,9 @@ public class PacketSpawnMob extends Packet {
 		return 24;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

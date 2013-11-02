@@ -12,7 +12,7 @@ import ch.spacebase.mcprotocol.packet.Packet;
 public class PacketLogin extends Packet {
 
 	public static boolean FORGE = false;
-	
+
 	public int entityId;
 	public String levelType;
 	public byte gameMode;
@@ -44,7 +44,7 @@ public class PacketLogin extends Packet {
 		} else {
 			this.dimension = in.readByte();
 		}
-		
+
 		this.difficulty = in.readByte();
 		this.unused = in.readByte();
 		this.maxPlayers = in.readByte();
@@ -78,9 +78,9 @@ public class PacketLogin extends Packet {
 		return 1;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

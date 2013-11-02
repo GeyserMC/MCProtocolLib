@@ -90,24 +90,24 @@ public class PacketKeyResponse extends Packet {
 			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
 			cipher.init(2, key);
 			return cipher.doFinal(bytes);
-		} catch (InvalidKeyException e) {
+		} catch(InvalidKeyException e) {
 			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
+		} catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
+		} catch(NoSuchPaddingException e) {
 			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
+		} catch(IllegalBlockSizeException e) {
 			e.printStackTrace();
-		} catch (BadPaddingException e) {
+		} catch(BadPaddingException e) {
 			e.printStackTrace();
 		}
 
 		return null;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

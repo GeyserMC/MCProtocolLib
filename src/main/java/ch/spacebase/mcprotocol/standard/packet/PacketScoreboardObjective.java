@@ -50,9 +50,9 @@ public class PacketScoreboardObjective extends Packet {
 		return 206;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

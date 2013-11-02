@@ -37,7 +37,7 @@ public class PacketSendEvent extends ProtocolEvent<ProtocolListener> {
 	public <T extends Packet> T getPacket(Class<T> clazz) {
 		try {
 			return (T) this.packet;
-		} catch (ClassCastException e) {
+		} catch(ClassCastException e) {
 			return null;
 		}
 	}

@@ -173,5 +173,5 @@ public class StandardPackets extends PacketRegistry {
 		this.registerPacket(254, PacketServerPing.class);
 		this.registerPacket(255, PacketDisconnect.class);
 	}
-	
+
 }

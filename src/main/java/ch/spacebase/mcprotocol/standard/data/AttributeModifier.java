@@ -19,7 +19,7 @@ public class AttributeModifier {
 	 * The modifier's operation.
 	 */
 	private int operation;
-	
+
 	/**
 	 * Creates a new modifier.
 	 * @param uid Unique id of the modifier.
@@ -31,7 +31,7 @@ public class AttributeModifier {
 		this.amount = amount;
 		this.operation = operation;
 	}
-	
+
 	/**
 	 * Gets the modifier's unique id.
 	 * @return The modifier's unique id.
@@ -39,7 +39,7 @@ public class AttributeModifier {
 	public UUID getUID() {
 		return this.uid;
 	}
-	
+
 	/**
 	 * Gets the modifier's amount.
 	 * @return The modifier's amount.
@@ -47,7 +47,7 @@ public class AttributeModifier {
 	public double getAmount() {
 		return this.amount;
 	}
-	
+
 	/**
 	 * Gets the modifier's operation.
 	 * @return The modifier's operation.
@@ -55,5 +55,5 @@ public class AttributeModifier {
 	public int getOperation() {
 		return this.operation;
 	}
-	
+
 }

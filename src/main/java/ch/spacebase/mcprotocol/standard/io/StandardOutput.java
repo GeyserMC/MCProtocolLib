@@ -11,15 +11,15 @@ import ch.spacebase.mcprotocol.util.Constants;
 public class StandardOutput implements NetOutput {
 
 	private OutputStream out;
-	
+
 	public StandardOutput(OutputStream out) {
 		this.out = out;
 	}
-	
+
 	public OutputStream getStream() {
 		return this.out;
 	}
-	
+
 	@Override
 	public void writeBoolean(boolean b) throws IOException {
 		this.writeByte(b ? 1 : 0);
@@ -76,7 +76,7 @@ public class StandardOutput implements NetOutput {
 	public void writeBytes(byte b[]) throws IOException {
 		this.writeBytes(b, b.length);
 	}
-	
+
 	@Override
 	public void writeBytes(byte b[], int length) throws IOException {
 		this.out.write(b, 0, length);
@@ -87,7 +87,7 @@ public class StandardOutput implements NetOutput {
 		if(s == null) {
 			throw new IllegalArgumentException("String cannot be null!");
 		}
-		
+
 		int len = s.length();
 		if(len >= 65536) {
 			throw new IllegalArgumentException("String too long.");
@@ -98,12 +98,12 @@ public class StandardOutput implements NetOutput {
 			this.writeChar(s.charAt(i));
 		}
 	}
-	
+
 	@Override
 	public void flush() throws IOException {
 		this.out.flush();
 	}
-	
+
 	/**
 	 * Writes an entity's metadata.
 	 * @param data Metadata objects to write.
@@ -140,7 +140,7 @@ public class StandardOutput implements NetOutput {
 
 		this.writeByte(127);
 	}
-	
+
 	/**
 	 * Writes an item stack.
 	 * @param item Item stack to write.
@@ -159,7 +159,7 @@ public class StandardOutput implements NetOutput {
 			}
 		}
 	}
-	
+
 	/**
 	 * Writes a coordinate group.
 	 * @param coords Coordinates to write.
@@ -170,5 +170,5 @@ public class StandardOutput implements NetOutput {
 		this.writeInt(coords.getY());
 		this.writeInt(coords.getZ());
 	}
-	
+
 }

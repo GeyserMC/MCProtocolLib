@@ -20,7 +20,7 @@ public class EntityAttribute {
 	 * The attribute's modifiers.
 	 */
 	private List<AttributeModifier> modifiers;
-	
+
 	/**
 	 * Creates a new entity attribute instance.
 	 * @param name Name of the attribute.
@@ -29,7 +29,7 @@ public class EntityAttribute {
 	public EntityAttribute(String name, double value) {
 		this(name, value, new ArrayList<AttributeModifier>());
 	}
-	
+
 	/**
 	 * Creates a new entity attribute instance.
 	 * @param name Name of the attribute.
@@ -41,7 +41,7 @@ public class EntityAttribute {
 		this.value = value;
 		this.modifiers = modifiers;
 	}
-	
+
 	/**
 	 * Gets the attribute's name.
 	 * @return The attribute's name.
@@ -49,7 +49,7 @@ public class EntityAttribute {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * Gets the attribute's value.
 	 * @return The attribute's value.
@@ -57,7 +57,7 @@ public class EntityAttribute {
 	public double getValue() {
 		return this.value;
 	}
-	
+
 	/**
 	 * Gets the attribute's modifiers.
 	 * @return The attribute's modifiers.
@@ -65,7 +65,7 @@ public class EntityAttribute {
 	public List<AttributeModifier> getModifiers() {
 		return this.modifiers;
 	}
-	
+
 	/**
 	 * Adds a modifier to the attribute.
 	 * @param mod Modifier to add.
@@ -73,5 +73,5 @@ public class EntityAttribute {
 	public void addModifier(AttributeModifier mod) {
 		this.modifiers.add(mod);
 	}
-	
+
 }

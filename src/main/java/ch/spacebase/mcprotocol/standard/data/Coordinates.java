@@ -9,12 +9,12 @@ public class Coordinates {
 	 * The X coordinate.
 	 */
 	private int x;
-	
+
 	/**
 	 * The Y coordinate.
 	 */
 	private int y;
-	
+
 	/**
 	 * The Z coordinate.
 	 */

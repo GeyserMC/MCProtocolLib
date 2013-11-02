@@ -29,12 +29,12 @@ public class StandardServer extends Server {
 	 * The connections connected to the server.
 	 */
 	private List<ServerConnection> connections = new CopyOnWriteArrayList<ServerConnection>();
-	
+
 	/**
 	 * The server's key pair.
 	 */
 	private KeyPair keys;
-	
+
 	/**
 	 * Creates a new standard server.
 	 * @param host Host to listen on.
@@ -47,11 +47,10 @@ public class StandardServer extends Server {
 			KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
 			gen.initialize(1024);
 			this.keys = gen.generateKeyPair();
-		} catch (NoSuchAlgorithmException e) {
+		} catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 	}
-	
 
 	/**
 	 * Gets the server's key pair.
@@ -72,7 +71,7 @@ public class StandardServer extends Server {
 			ServerSocket sock = new ServerSocket();
 			sock.bind(new InetSocketAddress(this.getHost(), this.getPort()));
 			new ServerConnectionThread(sock).start();
-		} catch (IOException e) {
+		} catch(IOException e) {
 			Util.logger().severe("Failed to bind to " + this.getHost() + ":" + this.getPort() + "!");
 			e.printStackTrace();
 		}
@@ -91,7 +90,7 @@ public class StandardServer extends Server {
 	public List<ServerConnection> getConnections() {
 		return this.connections;
 	}
-	
+
 	/**
 	 * Listens for new server connections.
 	 */
@@ -119,19 +118,19 @@ public class StandardServer extends Server {
 						conn.connect();
 						connections.add(conn);
 						call(new ConnectEvent(conn));
-					} catch (Exception e) {
+					} catch(Exception e) {
 						Util.logger().severe("Failed to create server connection!");
 						e.printStackTrace();
 					}
-				} catch (IOException e) {
+				} catch(IOException e) {
 					Util.logger().severe("Failed to accept connection from client!");
 					e.printStackTrace();
 					continue;
 				}
-				
+
 				try {
 					Thread.sleep(2);
-				} catch (InterruptedException e) {
+				} catch(InterruptedException e) {
 				}
 			}
 		}

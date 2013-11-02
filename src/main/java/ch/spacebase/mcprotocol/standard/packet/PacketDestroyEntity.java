@@ -17,12 +17,12 @@ public class PacketDestroyEntity extends Packet {
 	}
 
 	public PacketDestroyEntity(int... entityIds) {
-		this.entityIds = entityIds;
+		this.entityIds = entityIds.clone();
 	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityIds = new int[in.readByte()];
+		this.entityIds = new int[in.readUnsignedByte()];
 		for(int count = 0; count < this.entityIds.length; count++) {
 			this.entityIds[count] = in.readInt();
 		}
@@ -49,9 +49,9 @@ public class PacketDestroyEntity extends Packet {
 		return 29;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

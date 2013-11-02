@@ -21,7 +21,7 @@ public class PacketOpenWindow extends Packet {
 
 	public PacketOpenWindow() {
 	}
-	
+
 	public PacketOpenWindow(byte id, byte type, String name, byte slots, boolean useTitle) {
 		this(id, type, name, slots, useTitle, 0);
 	}
@@ -72,9 +72,9 @@ public class PacketOpenWindow extends Packet {
 		return 100;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

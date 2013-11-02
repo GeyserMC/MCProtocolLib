@@ -9,12 +9,12 @@ public class WatchableObject {
 	 * The type id of the object.
 	 */
 	private int type;
-	
+
 	/**
 	 * The id of the object.
 	 */
 	private int id;
-	
+
 	/**
 	 * The value of the object.
 	 */

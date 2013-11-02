@@ -111,15 +111,15 @@ public class PacketKeyRequest extends Packet {
 			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
 			cipher.init(1, key);
 			return cipher.doFinal(bytes);
-		} catch (InvalidKeyException e) {
+		} catch(InvalidKeyException e) {
 			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
+		} catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
+		} catch(NoSuchPaddingException e) {
 			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
+		} catch(IllegalBlockSizeException e) {
 			e.printStackTrace();
-		} catch (BadPaddingException e) {
+		} catch(BadPaddingException e) {
 			e.printStackTrace();
 		}
 
@@ -137,11 +137,11 @@ public class PacketKeyRequest extends Packet {
 			X509EncodedKeySpec spec = new X509EncodedKeySpec(key);
 			KeyFactory factory = KeyFactory.getInstance("RSA");
 			return factory.generatePublic(spec);
-		} catch (NoSuchAlgorithmException e) {
+		} catch(NoSuchAlgorithmException e) {
 			Util.logger().warning("Failed to get public key from array!");
 			e.printStackTrace();
 			return null;
-		} catch (InvalidKeySpecException e) {
+		} catch(InvalidKeySpecException e) {
 			Util.logger().warning("Failed to get public key from array!");
 			e.printStackTrace();
 			return null;
@@ -155,14 +155,14 @@ public class PacketKeyRequest extends Packet {
 			String response = reader.readLine();
 			reader.close();
 			return response;
-		} catch (IOException e) {
+		} catch(IOException e) {
 			return e.toString();
 		}
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

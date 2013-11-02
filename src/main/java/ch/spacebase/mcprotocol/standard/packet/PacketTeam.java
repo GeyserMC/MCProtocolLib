@@ -29,7 +29,7 @@ public class PacketTeam extends Packet {
 		this.name = name;
 		this.action = 1;
 	}
-	
+
 	/**
 	 * Creates a packet for adding or removing a team member.
 	 * @param name Name of the team.
@@ -41,7 +41,7 @@ public class PacketTeam extends Packet {
 		this.players = players;
 		this.action = add ? (byte) 3 : 4;
 	}
-	
+
 	/**
 	 * Creates a packet for updating a team.
 	 * @param name Name of the team.
@@ -58,7 +58,7 @@ public class PacketTeam extends Packet {
 		this.friendlyFire = friendlyFire;
 		this.action = 2;
 	}
-	
+
 	/**
 	 * Creates a packet for adding a team.
 	 * @param name Name of the team.
@@ -92,7 +92,7 @@ public class PacketTeam extends Packet {
 				for(int ind = 0; ind < this.players.length; ind++) {
 					this.players[ind] = in.readString();
 				}
-				
+
 				break;
 			case 1:
 				break;
@@ -108,7 +108,7 @@ public class PacketTeam extends Packet {
 				for(int ind = 0; ind < this.players.length; ind++) {
 					this.players[ind] = in.readString();
 				}
-				
+
 				break;
 		}
 	}
@@ -127,7 +127,7 @@ public class PacketTeam extends Packet {
 				for(int ind = 0; ind < this.players.length; ind++) {
 					out.writeString(this.players[ind]);
 				}
-				
+
 				break;
 			case 1:
 				break;
@@ -143,7 +143,7 @@ public class PacketTeam extends Packet {
 				for(int ind = 0; ind < this.players.length; ind++) {
 					out.writeString(this.players[ind]);
 				}
-				
+
 				break;
 		}
 	}
@@ -161,9 +161,9 @@ public class PacketTeam extends Packet {
 		return 209;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

@@ -78,9 +78,9 @@ public class PacketSpawnNamedEntity extends Packet {
 		return 20;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

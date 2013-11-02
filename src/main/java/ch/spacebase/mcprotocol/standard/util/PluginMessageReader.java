@@ -15,7 +15,7 @@ public class PluginMessageReader {
 	 * The internal stream used to read data.
 	 */
 	private StandardInput in;
-	
+
 	/**
 	 * The array being read from.
 	 */

@@ -48,6 +48,6 @@ public abstract class Packet implements PacketVisitable {
 	 * Gets the id of this packet.
 	 * @return The packet's id.
 	 */
-	public abstract int getId();        
+	public abstract int getId();
 
 }

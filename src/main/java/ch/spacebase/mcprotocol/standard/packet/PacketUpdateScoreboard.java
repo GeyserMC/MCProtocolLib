@@ -58,9 +58,9 @@ public class PacketUpdateScoreboard extends Packet {
 		return 207;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

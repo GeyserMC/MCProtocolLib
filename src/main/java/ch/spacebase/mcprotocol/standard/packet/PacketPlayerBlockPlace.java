@@ -59,7 +59,7 @@ public class PacketPlayerBlockPlace extends Packet {
 		if(this.item != null) {
 			((StandardOutput) out).writeItem(this.item);
 		}
-		
+
 		out.writeByte(this.cursorX);
 		out.writeByte(this.cursorY);
 		out.writeByte(this.cursorZ);
@@ -78,9 +78,9 @@ public class PacketPlayerBlockPlace extends Packet {
 		return 15;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

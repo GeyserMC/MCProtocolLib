@@ -12,37 +12,37 @@ import ch.spacebase.mcprotocol.util.Util;
  * A server connection for the standard minecraft protocol.
  */
 public class StandardServerConnection extends StandardConnection implements ServerConnection {
-	
+
 	/**
 	 * The server this connection belongs to.
 	 */
 	private Server server;
-	
+
 	/**
 	 * The connection's temporary socket variable.
 	 */
 	private Socket sock;
-	
+
 	/**
 	 * The last time a keep alive was sent.
 	 */
 	private long aliveTime = System.currentTimeMillis();
-	
+
 	/**
 	 * The last sent server keep alive id.
 	 */
 	private int aliveId;
-	
+
 	/**
 	 * The protocol's login key.
 	 */
 	private String loginKey;
-	
+
 	/**
 	 * The protocol's security token.
 	 */
 	private byte token[];
-	
+
 	/**
 	 * Creates a new server connection.
 	 * @param server Server the connection belongs to.
@@ -53,7 +53,7 @@ public class StandardServerConnection extends StandardConnection implements Serv
 		this.server = server;
 		this.sock = sock;
 	}
-	
+
 	/**
 	 * Gets the last id used in a keep alive to this connection.
 	 * @return The last keep alive id.
@@ -61,7 +61,7 @@ public class StandardServerConnection extends StandardConnection implements Serv
 	public int getLastAliveId() {
 		return this.aliveId;
 	}
-	
+
 	/**
 	 * Gets the last time a keep alive was performed.
 	 * @return The last keep alive time.
@@ -81,7 +81,7 @@ public class StandardServerConnection extends StandardConnection implements Serv
 		this.sock = null;
 		new KeepAliveThread().start();
 	}
-	
+
 	/**
 	 * Gets the connection's login key.
 	 * @return The connection's login key.
@@ -113,7 +113,7 @@ public class StandardServerConnection extends StandardConnection implements Serv
 	public void setToken(byte token[]) {
 		this.token = token;
 	}
-	
+
 	/**
 	 * A thread that keeps the connection alive.
 	 */
@@ -126,13 +126,13 @@ public class StandardServerConnection extends StandardConnection implements Serv
 					aliveId = Util.random().nextInt();
 					send(new PacketKeepAlive(aliveId));
 				}
-				
+
 				try {
 					Thread.sleep(2);
-				} catch (InterruptedException e) {
+				} catch(InterruptedException e) {
 				}
 			}
 		}
 	}
-	
+
 }

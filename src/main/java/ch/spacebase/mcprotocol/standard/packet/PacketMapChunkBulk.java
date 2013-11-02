@@ -65,7 +65,7 @@ public class PacketMapChunkBulk extends Packet {
 
 		try {
 			inflater.inflate(decompressed);
-		} catch (DataFormatException e) {
+		} catch(DataFormatException e) {
 			throw new IOException("Bad compressed data format");
 		} finally {
 			inflater.end();
@@ -117,9 +117,9 @@ public class PacketMapChunkBulk extends Packet {
 		return 56;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

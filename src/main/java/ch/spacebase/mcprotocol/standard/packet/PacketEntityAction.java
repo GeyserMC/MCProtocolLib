@@ -21,7 +21,7 @@ public class PacketEntityAction extends Packet {
 	public PacketEntityAction(int entityId, byte action) {
 		this(entityId, action, 0);
 	}
-	
+
 	public PacketEntityAction(int entityId, byte action, int jumpBar) {
 		this.entityId = entityId;
 		this.action = action;
@@ -55,9 +55,9 @@ public class PacketEntityAction extends Packet {
 		return 19;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

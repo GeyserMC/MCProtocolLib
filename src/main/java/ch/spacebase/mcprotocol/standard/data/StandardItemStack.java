@@ -9,17 +9,17 @@ public class StandardItemStack {
 	 * Id of the items in the stack.
 	 */
 	private short item;
-	
+
 	/**
 	 * The size of the item stack.
 	 */
 	private byte stackSize;
-	
+
 	/**
 	 * The damage value of the items in the stack.
 	 */
 	private short damage;
-	
+
 	/**
 	 * The compressed NBT data of the item stack.
 	 */
@@ -53,7 +53,8 @@ public class StandardItemStack {
 	}
 
 	/**
-	 * Creates an item stack with the given id, size, damage value, and compressed NBT data.
+	 * Creates an item stack with the given id, size, damage value, and
+	 * compressed NBT data.
 	 * @param item Item id of the stack.
 	 * @param stackSize Size of the stack.
 	 * @param damage Damage value of the stack.
@@ -73,7 +74,7 @@ public class StandardItemStack {
 	public short getItem() {
 		return this.item;
 	}
-	
+
 	/**
 	 * Sets the item id of the stack.
 	 * @param item New item id of the stack.

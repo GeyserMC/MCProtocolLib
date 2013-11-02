@@ -57,7 +57,7 @@ public class PacketClientStatus extends Packet {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
 				response = reader.readLine();
 				reader.close();
-			} catch (IOException e) {
+			} catch(IOException e) {
 				response = e.toString();
 			}
 
@@ -80,9 +80,9 @@ public class PacketClientStatus extends Packet {
 		return 205;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

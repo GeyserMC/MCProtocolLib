@@ -67,9 +67,9 @@ public class PacketPlayerAbilities extends Packet {
 		return 202;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

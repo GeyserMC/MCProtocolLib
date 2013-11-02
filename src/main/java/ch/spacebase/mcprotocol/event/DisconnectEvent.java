@@ -11,12 +11,12 @@ public class DisconnectEvent extends ProtocolEvent<ProtocolListener> {
 	 * The connection that was disconnected.
 	 */
 	private Connection conn;
-	
+
 	/**
 	 * The given reason for disconnecting.
 	 */
 	private String reason;
-	
+
 	/**
 	 * Creates a new disconnect event instance.
 	 * @param conn Connection that is disconnecting.
@@ -34,7 +34,7 @@ public class DisconnectEvent extends ProtocolEvent<ProtocolListener> {
 	public Connection getConnection() {
 		return this.conn;
 	}
-	
+
 	/**
 	 * Gets the given reason for disconnecting.
 	 * @return The reason for disconnecting.
@@ -42,7 +42,7 @@ public class DisconnectEvent extends ProtocolEvent<ProtocolListener> {
 	public String getReason() {
 		return this.reason;
 	}
-	
+
 	@Override
 	public void call(ProtocolListener listener) {
 		listener.onDisconnect(this);

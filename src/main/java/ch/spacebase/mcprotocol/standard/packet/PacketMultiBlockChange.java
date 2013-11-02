@@ -63,9 +63,9 @@ public class PacketMultiBlockChange extends Packet {
 		return 52;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

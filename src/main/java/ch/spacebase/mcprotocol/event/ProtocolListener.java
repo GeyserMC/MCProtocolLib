@@ -9,14 +9,14 @@ public abstract class ProtocolListener {
 	 * Called when a packet is received.
 	 * @param event The called event.
 	 */
-	public abstract void onPacketReceive(PacketRecieveEvent event);
-	
+	public abstract void onPacketReceive(PacketReceiveEvent event);
+
 	/**
 	 * Called when a packet is sent.
 	 * @param event The called event.
 	 */
 	public abstract void onPacketSend(PacketSendEvent event);
-	
+
 	/**
 	 * Called when a connection is disconnected.
 	 * @param event The called event.

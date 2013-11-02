@@ -55,9 +55,9 @@ public class PacketEntityRelativeMove extends Packet {
 		return 31;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

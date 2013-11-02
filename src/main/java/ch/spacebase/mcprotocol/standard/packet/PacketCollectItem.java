@@ -46,10 +46,10 @@ public class PacketCollectItem extends Packet {
 	public int getId() {
 		return 22;
 	}
-        
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

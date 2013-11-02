@@ -10,5 +10,5 @@ public abstract class ServerListener {
 	 * @param event The called event.
 	 */
 	public abstract void onConnect(ConnectEvent event);
-	
+
 }

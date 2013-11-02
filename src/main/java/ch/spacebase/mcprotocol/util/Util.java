@@ -21,7 +21,7 @@ public class Util {
 	 * The library's logger.
 	 */
 	private static final Logger logger = Logger.getLogger("mc-protocol-lib");
-	
+
 	/**
 	 * The library's Random.
 	 */
@@ -76,15 +76,15 @@ public class Util {
 			digest.update(secret.getEncoded());
 			digest.update(key.getEncoded());
 			return digest.digest();
-		} catch (UnsupportedEncodingException e) {
+		} catch(UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
-		} catch (NoSuchAlgorithmException e) {
+		} catch(NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Formats parameters into a ping response string.
 	 * @param motd MOTD of the server.
@@ -95,9 +95,10 @@ public class Util {
 	public static String formatPingResponse(String motd, int players, int maxplayers) {
 		return "§1\0" + Constants.StandardProtocol.PROTOCOL_VERSION + "\0" + Constants.StandardProtocol.MINECRAFT_VERSION + "\0" + motd + "\0" + players + "\0" + maxplayers;
 	}
-	
+
 	/**
-	 * Prepares a plugin message packet with client data to be sent after a ping request packet.
+	 * Prepares a plugin message packet with client data to be sent after a ping
+	 * request packet.
 	 * @param serverIp IP of the server.
 	 * @param serverPort Port of the server.
 	 * @return The prepared packet.
@@ -109,7 +110,7 @@ public class Util {
 		builder.writeInt(serverPort);
 		return builder.build();
 	}
-	
+
 	/**
 	 * Gets the specified bit from the given value.
 	 * @param value Value to use.

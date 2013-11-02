@@ -59,9 +59,9 @@ public class PacketSpawnExpOrb extends Packet {
 		return 26;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

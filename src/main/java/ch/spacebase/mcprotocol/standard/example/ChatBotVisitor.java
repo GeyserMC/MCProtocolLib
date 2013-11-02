@@ -5,7 +5,7 @@ import ch.spacebase.mcprotocol.exception.OutdatedLibraryException;
 import java.text.DecimalFormat;
 
 import ch.spacebase.mcprotocol.event.DisconnectEvent;
-import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
+import ch.spacebase.mcprotocol.event.PacketReceiveEvent;
 import ch.spacebase.mcprotocol.event.PacketSendEvent;
 import ch.spacebase.mcprotocol.event.PacketVisitor;
 import ch.spacebase.mcprotocol.event.PacketVisitorAdapter;
@@ -28,78 +28,77 @@ import java.util.logging.Logger;
  */
 public class ChatBotVisitor {
 
-    private static final String USERNAME = "";
-    private static final String PASSWORD = "";
-    private static final String HOST = "127.0.0.1";
-    private static final int    PORT = 25565;
+	private static final String USERNAME = "";
+	private static final String PASSWORD = "";
+	private static final String HOST = "127.0.0.1";
+	private static final int PORT = 25565;
 
-    private Client client;
-    private Listener listener;
-    private PacketVisitor visitor;
-    
+	private Client client;
+	private Listener listener;
+	private PacketVisitor visitor;
 
-    public ChatBotVisitor(String host, int port) {
-        this.client = new StandardClient(host, port);
-        this.listener = new Listener();
+	public ChatBotVisitor(String host, int port) {
+		this.client = new StandardClient(host, port);
+		this.listener = new Listener();
 
-        this.client.listen(this.listener);
-        
-        this.visitor = new Visitor();
-    }
+		this.client.listen(this.listener);
 
-    public void login(String username, String password) {
-        try {
-            this.client.login(username, password);
-        } catch (LoginException ex) {
-            Logger.getLogger("Login Error: " + ex.getLocalizedMessage());
-        } catch (OutdatedLibraryException ex) {
-            Logger.getLogger(ChatBotVisitor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            this.client.connect();
-        } catch (ConnectException e) {
-            e.printStackTrace();
-        }
-    }
+		this.visitor = new Visitor();
+	}
 
-    public void say(String text) {
-        PacketChat chat = new PacketChat();
-        chat.message = text;
-        this.client.send(chat);
-    }
+	public void login(String username, String password) {
+		try {
+			this.client.login(username, password);
+		} catch(LoginException ex) {
+			Logger.getLogger("Login Error: " + ex.getLocalizedMessage());
+		} catch(OutdatedLibraryException ex) {
+			Logger.getLogger(ChatBotVisitor.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		try {
+			this.client.connect();
+		} catch(ConnectException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public static void main(String[] args) {
-        ChatBotVisitor bot = new ChatBotVisitor(HOST, PORT);
-        Util.logger().info("Logging in...");
-        bot.login(USERNAME, PASSWORD);
-    }
+	public void say(String text) {
+		PacketChat chat = new PacketChat();
+		chat.message = text;
+		this.client.send(chat);
+	}
 
-    private class Visitor extends PacketVisitorAdapter {
+	public static void main(String[] args) {
+		ChatBotVisitor bot = new ChatBotVisitor(HOST, PORT);
+		Util.logger().info("Logging in...");
+		bot.login(USERNAME, PASSWORD);
+	}
 
-        @Override
-        public void visit(PacketPlayerPositionLook packet) {
-            client.send(packet);
-            DecimalFormat format = new DecimalFormat("#.00");
+	private class Visitor extends PacketVisitorAdapter {
 
-            ChatBotVisitor.this.say("Hello, this is "+USERNAME+" at coordinate (" + format.format(packet.x) + ", " + format.format(packet.y) + ", " + format.format(packet.z) + ")");
-        }
-    }
+		@Override
+		public void visit(PacketPlayerPositionLook packet) {
+			client.send(packet);
+			DecimalFormat format = new DecimalFormat("#.00");
 
-    private class Listener extends ProtocolListener {
+			ChatBotVisitor.this.say("Hello, this is " + USERNAME + " at coordinate (" + format.format(packet.x) + ", " + format.format(packet.y) + ", " + format.format(packet.z) + ")");
+		}
+	}
 
-        @Override
-        public void onPacketReceive(PacketRecieveEvent event) {
-            Packet packet = event.getPacket();
-            packet.accept(visitor);                        
-        }
+	private class Listener extends ProtocolListener {
 
-        @Override
-        public void onPacketSend(PacketSendEvent event) {
-        }
+		@Override
+		public void onPacketReceive(PacketReceiveEvent event) {
+			Packet packet = event.getPacket();
+			packet.accept(visitor);
+		}
 
-        @Override
-        public void onDisconnect(DisconnectEvent event) {
-            Util.logger().info("Disconnected: " + event.getReason());
-        }
-    }
+		@Override
+		public void onPacketSend(PacketSendEvent event) {
+		}
+
+		@Override
+		public void onDisconnect(DisconnectEvent event) {
+			Util.logger().info("Disconnected: " + event.getReason());
+		}
+	}
 }

@@ -3,7 +3,7 @@ package ch.spacebase.mcprotocol.standard.example;
 import java.text.DecimalFormat;
 
 import ch.spacebase.mcprotocol.event.DisconnectEvent;
-import ch.spacebase.mcprotocol.event.PacketRecieveEvent;
+import ch.spacebase.mcprotocol.event.PacketReceiveEvent;
 import ch.spacebase.mcprotocol.event.PacketSendEvent;
 import ch.spacebase.mcprotocol.event.ProtocolListener;
 import ch.spacebase.mcprotocol.exception.ConnectException;
@@ -37,7 +37,7 @@ public class ChatBot {
 
 		try {
 			this.client.connect();
-		} catch (ConnectException e) {
+		} catch(ConnectException e) {
 			e.printStackTrace();
 		}
 	}
@@ -56,20 +56,20 @@ public class ChatBot {
 
 	private class Listener extends ProtocolListener {
 		@Override
-		public void onPacketReceive(PacketRecieveEvent event) {
+		public void onPacketReceive(PacketReceiveEvent event) {
 			Packet packet = event.getPacket();
 
 			switch(event.getPacket().getId()) {
-			case 0x0D:
-				onPositionLook((PacketPlayerPositionLook) packet);
-				break;
+				case 0x0D:
+					onPositionLook((PacketPlayerPositionLook) packet);
+					break;
 			}
 		}
-		
+
 		@Override
 		public void onPacketSend(PacketSendEvent event) {
 		}
-		
+
 		@Override
 		public void onDisconnect(DisconnectEvent event) {
 			Util.logger().info("Disconnected: " + event.getReason());

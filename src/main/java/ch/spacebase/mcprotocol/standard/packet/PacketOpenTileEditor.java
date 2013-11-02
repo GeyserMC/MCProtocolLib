@@ -55,9 +55,9 @@ public class PacketOpenTileEditor extends Packet {
 		return 133;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

@@ -51,9 +51,9 @@ public class PacketConfirmTransaction extends Packet {
 		return 106;
 	}
 
-        @Override
-        public void accept(PacketVisitor visitor) {
-                visitor.visit(this);
-        }
+	@Override
+	public void accept(PacketVisitor visitor) {
+		visitor.visit(this);
+	}
 
 }

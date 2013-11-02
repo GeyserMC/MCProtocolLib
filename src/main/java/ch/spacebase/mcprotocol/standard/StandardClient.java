@@ -30,12 +30,12 @@ public class StandardClient extends StandardConnection implements Client {
 	 * The client's session id.
 	 */
 	private String sessionId;
-	
+
 	/**
 	 * Whether the client is logged in.
 	 */
 	private boolean loggedIn;
-	
+
 	/**
 	 * Creates a new standard client.
 	 * @param host Host to connect to.
@@ -44,7 +44,7 @@ public class StandardClient extends StandardConnection implements Client {
 	public StandardClient(String host, int port) {
 		super(host, port);
 	}
-	
+
 	/**
 	 * Gets the client's session id.
 	 * @return The client's session id.
@@ -58,12 +58,12 @@ public class StandardClient extends StandardConnection implements Client {
 		if(this.loggedIn || this.getUsername() != null) {
 			throw new IllegalStateException("Already logged in with username: " + this.getUsername());
 		}
-		
+
 		URL url = null;
 
 		try {
 			url = new URL("https://login.minecraft.net/");
-		} catch (MalformedURLException e) {
+		} catch(MalformedURLException e) {
 			throw new LoginException("Login URL is malformed?", e);
 		}
 
@@ -71,7 +71,7 @@ public class StandardClient extends StandardConnection implements Client {
 
 		try {
 			params = "user=" + URLEncoder.encode(username, "UTF-8") + "&password=" + URLEncoder.encode(password, "UTF-8") + "&version=" + Constants.LAUNCHER_VERSION;
-		} catch (UnsupportedEncodingException e) {
+		} catch(UnsupportedEncodingException e) {
 			throw new LoginException("UTF-8 unsupported", e);
 		}
 
@@ -119,7 +119,7 @@ public class StandardClient extends StandardConnection implements Client {
 					this.loggedIn = true;
 
 					new Thread(new KeepAliveTask()).start();
-				} catch (ArrayIndexOutOfBoundsException e) {
+				} catch(ArrayIndexOutOfBoundsException e) {
 					throw new LoginException("Response contained incorrect amount of parameters: " + result);
 				}
 
@@ -132,20 +132,20 @@ public class StandardClient extends StandardConnection implements Client {
 					throw new LoginException(result.trim());
 				}
 			}
-		} catch (IOException e) {
+		} catch(IOException e) {
 			throw new LoginException("Failed to login", e);
 		} finally {
 			if(conn != null) conn.disconnect();
 			conn = null;
 		}
 	}
-	
+
 	@Override
 	public void disconnect(String reason, boolean packet) {
 		this.loggedIn = false;
 		super.disconnect(reason, packet);
 	}
-	
+
 	/**
 	 * A task that keeps the client's minecraft.net session alive.
 	 */
@@ -154,7 +154,7 @@ public class StandardClient extends StandardConnection implements Client {
 		 * The minecraft.net session URL.
 		 */
 		private URL url;
-		
+
 		/**
 		 * The time when a keep alive was last sent.
 		 */
@@ -167,7 +167,7 @@ public class StandardClient extends StandardConnection implements Client {
 		public KeepAliveTask() throws LoginException {
 			try {
 				this.url = new URL("https://login.minecraft.net/");
-			} catch (MalformedURLException e) {
+			} catch(MalformedURLException e) {
 				throw new LoginException("Failed to create keep alive URL!", e);
 			}
 		}
@@ -187,7 +187,7 @@ public class StandardClient extends StandardConnection implements Client {
 						conn.setDoOutput(true);
 						conn.setReadTimeout(1000 * 60 * 10);
 						conn.connect();
-					} catch (IOException e) {
+					} catch(IOException e) {
 						Util.logger().severe("Failed to send keep alive to login.minecraft.net!");
 						e.printStackTrace();
 					} finally {
@@ -195,10 +195,10 @@ public class StandardClient extends StandardConnection implements Client {
 						conn = null;
 					}
 				}
-				
+
 				try {
 					Thread.sleep(2);
-				} catch (InterruptedException e) {
+				} catch(InterruptedException e) {
 				}
 			}
 		}
@@ -212,11 +212,11 @@ public class StandardClient extends StandardConnection implements Client {
 			sock.setTrafficClass(24);
 			super.connect(sock);
 			this.send(new PacketHandshake(this.getUsername(), this.getRemoteHost(), this.getRemotePort()));
-		} catch (UnknownHostException e) {
+		} catch(UnknownHostException e) {
 			throw new ConnectException("Unknown host: " + this.getRemoteHost());
-		} catch (IOException e) {
+		} catch(IOException e) {
 			throw new ConnectException("Failed to open stream: " + this.getRemoteHost(), e);
 		}
 	}
-	
+
 }

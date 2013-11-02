@@ -27,9 +27,9 @@ public abstract class PacketRegistry {
 	public Class<? extends Packet> getPacket(int id) {
 		try {
 			return this.packets[id];
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch(ArrayIndexOutOfBoundsException e) {
 			return null;
 		}
 	}
-	
+
 }

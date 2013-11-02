@@ -7,5 +7,5 @@ package ch.spacebase.mcprotocol.event;
  */
 public interface PacketVisitable {
 
-    public void accept(PacketVisitor visitor);
+	public void accept(PacketVisitor visitor);
 }
