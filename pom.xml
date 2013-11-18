@@ -25,23 +25,23 @@
 
 	<distributionManagement>
 		<repository>
-			<id>Spacebase Artifactory</id>
-			<name>Spacebase Artifactory-releases</name>
-			<url>http://repo.spacebase.ch/artifactory/main</url>
+			<id>spacebase</id>
+			<name>spacebase-releases</name>
+			<url>http://repo.spacebase.ch/content/repositories/release/</url>
 		</repository>
 		<snapshotRepository>
-			<id>Spacebase Artifactory</id>
-			<name>Spacebase Artifactory-snapshots</name>
-			<url>http://repo.spacebase.ch/artifactory/main</url>
+			<id>spacebase</id>
+			<name>spacebase-snapshots</name>
+			<url>http://repo.spacebase.ch/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
   	<developers>
-    		<developer>
-      			<id>steveice10</id>
-      			<name>Steveice10</name>
-      			<email>Steveice10@gmail.com</email>
-    		</developer>
+    	<developer>
+      		<id>steveice10</id>
+      		<name>Steveice10</name>
+      		<email>Steveice10@gmail.com</email>
+    	</developer>
   	</developers>
 
 	<properties>
