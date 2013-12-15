@@ -10,14 +10,22 @@ public class MessageExtra {
 
 	private JsonObject json;
 
-	public MessageExtra(String str, boolean json) {
-		if(json) {
-			this.json = new Gson().fromJson(str, JsonObject.class);
-		} else {
-			this.json = new JsonObject();
-			this.json.addProperty("text", str);
-			this.json.addProperty("color", ChatColor.WHITE.toString());
+	public MessageExtra(String str) {
+		this(str, false);
+	}
+	
+	public MessageExtra(String str, boolean tryJson) {
+		if(tryJson) {
+			try {
+				this.json = new Gson().fromJson(str, JsonObject.class);
+				return;
+			} catch(Exception e) {
+			}
 		}
+		
+		this.json = new JsonObject();
+		this.json.addProperty("text", str);
+		this.json.addProperty("color", ChatColor.WHITE.toString());
 	}
 	
 	public MessageExtra(String text, ChatColor color) {

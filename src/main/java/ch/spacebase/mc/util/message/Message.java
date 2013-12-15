@@ -44,7 +44,19 @@ public class Message {
 	}
 	
 	public String getText() {
-		return this.json.get("text").getAsString();
+		return this.json.has("text") ? this.json.get("text").getAsString() : null;
+	}
+	
+	public MessageExtra[] getExtra() {
+		return this.json.has("extra") ? this.arrayToExtra(this.json.get("extra").getAsJsonArray()) : new MessageExtra[0];
+	}
+	
+	public String getTranslate() {
+		return this.json.has("translate") ? this.json.get("translate").getAsString() : null;
+	}
+	
+	public MessageExtra[] getTranslateWith() {
+		return this.json.has("with") ? this.arrayToExtra(this.json.get("with").getAsJsonArray()) : null;
 	}
 	
 	public ChatColor getColor() {
@@ -79,11 +91,16 @@ public class Message {
 	
 	public String getRawText() {
 		StringBuilder build = new StringBuilder();
-		build.append(this.json.get("text").getAsString());
-		if(this.json.has("extra")) {
-			JsonArray extra = (JsonArray) this.json.get("extra");
-			for(int index = 0; index < extra.size(); index++) {
-				build.append(extra.get(index).toString());
+		String translate = this.getTranslate();
+		if(translate != null) {
+			build.append(this.getTranslate());
+		} else {
+			build.append(this.json.get("text").getAsString());
+			if(this.json.has("extra")) {
+				JsonArray extra = (JsonArray) this.json.get("extra");
+				for(int index = 0; index < extra.size(); index++) {
+					build.append(extra.get(index).toString());
+				}
 			}
 		}
 		
@@ -97,6 +114,15 @@ public class Message {
 	@Override
 	public String toString() {
 		return this.json.toString();
+	}
+	
+	private MessageExtra[] arrayToExtra(JsonArray array) {
+		MessageExtra ret[] = new MessageExtra[array.size()];
+		for(int index = 0; index < array.size(); index++) {
+			ret[index] = new MessageExtra(array.get(index).isJsonPrimitive() ? array.get(index).getAsString() : array.get(index).toString(), true);
+		}
+		
+		return ret;
 	}
 
 }
