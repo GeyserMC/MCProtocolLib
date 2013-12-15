@@ -33,7 +33,6 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 		NetInput in = new ByteBufNetInput(buf);
 		int id = in.readVarInt();
 		Packet packet = this.session.getPacketProtocol().createIncomingPacket(id);
-		System.out.println(packet.getClass());
 		packet.read(in);
 		if(packet.isPriority()) {
 			this.session.callEvent(new PacketReceivedEvent(this.session, packet));
