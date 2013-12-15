@@ -1,7 +1,5 @@
 package ch.spacebase.packetlib;
 
-import ch.spacebase.packetlib.packet.PacketProtocol;
-
 /**
  * A listener for new sessions on a host and port.
  */
@@ -18,12 +16,6 @@ public interface ConnectionListener {
 	 * @return The listening port.
 	 */
 	public int getPort();
-	
-	/**
-	 * Gets the packet protocol of the listener.
-	 * @return The listener's packet protocol.
-	 */
-	public PacketProtocol getPacketProtocol();
 	
 	/**
 	 * Returns true if the listener is listening.

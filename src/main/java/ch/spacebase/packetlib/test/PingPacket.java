@@ -1,42 +1,40 @@
 package ch.spacebase.packetlib.test;
 
-import java.nio.ByteBuffer;
+import java.io.IOException;
 
+import ch.spacebase.packetlib.io.NetInput;
+import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
 
 public class PingPacket implements Packet {
 
-	private int id;
+	private String id;
 	
-	public PingPacket() {
+	@SuppressWarnings("unused")
+	private PingPacket() {
 	}
 	
-	public PingPacket(int id) {
+	public PingPacket(String id) {
 		this.id = id;
 	}
 	
-	public int getPingId() {
+	public String getPingId() {
 		return this.id;
 	}
-	
+
 	@Override
-	public int getId() {
-		return 0;
+	public void read(NetInput in) throws IOException {
+		this.id = in.readString();
 	}
 
 	@Override
-	public int getLength() {
-		return 4;
+	public void write(NetOutput out) throws IOException {
+		out.writeString(this.id);
 	}
 
 	@Override
-	public void read(ByteBuffer in) {
-		this.id = in.getInt();
-	}
-
-	@Override
-	public void write(ByteBuffer out) {
-		out.putInt(this.id);
+	public boolean isPriority() {
+		return false;
 	}
 
 }

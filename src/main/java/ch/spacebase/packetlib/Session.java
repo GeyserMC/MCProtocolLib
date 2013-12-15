@@ -1,6 +1,7 @@
 package ch.spacebase.packetlib;
 
 import java.util.List;
+import java.util.Map;
 
 import ch.spacebase.packetlib.event.session.SessionEvent;
 import ch.spacebase.packetlib.event.session.SessionListener;
@@ -12,6 +13,11 @@ import ch.spacebase.packetlib.packet.PacketProtocol;
  */
 public interface Session {
 
+	/**
+	 * Connects this session to its host and port.
+	 */
+	public void connect();
+	
 	/**
 	 * Gets the host the session is connected to.
 	 * @return The connected host.
@@ -29,6 +35,39 @@ public interface Session {
 	 * @return The session's packet protocol.
 	 */
 	public PacketProtocol getPacketProtocol();
+	
+	/**
+	 * Gets this session's set flags. If this session belongs to a server, the server's
+	 * flags will be included in the results.
+	 * @return This session's flags.
+	 */
+	public Map<String, Object> getFlags();
+	
+	/**
+	 * Checks whether this session has a flag set. If this session belongs to a server,
+	 * the server's flags will also be checked.
+	 * @param key Key of the flag to check for.
+	 * @return Whether this session has a flag set.
+	 */
+	public boolean hasFlag(String key);
+	
+	/**
+	 * Gets the value of the given flag as an instance of the given type. If this
+	 * session belongs to a server, the server's flags will be checked for the flag
+	 * as well.
+	 * @param key Key of the flag.
+	 * @return Value of the flag.
+	 * @throws IllegalStateException If the flag's value isn't of the required type.
+	 */
+	public <T> T getFlag(String key);
+	
+	/**
+	 * Sets the value of a flag. This does not change a server's flags if this session
+	 * belongs to a server.
+	 * @param key Key of the flag.
+	 * @param value Value to set the flag to.
+	 */
+	public void setFlag(String key, Object value);
 	
 	/**
 	 * Gets the listeners listening on this session.

@@ -1,22 +1,19 @@
-package ch.spacebase.packetlib.netty;
+package ch.spacebase.packetlib.tcp;
 
 import ch.spacebase.packetlib.ConnectionListener;
-import ch.spacebase.packetlib.packet.PacketProtocol;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 
-public class NettyConnectionListener implements ConnectionListener {
+public class TcpConnectionListener implements ConnectionListener {
 	
 	private String host;
 	private int port;
-	private PacketProtocol protocol;
 	private EventLoopGroup group;
 	private Channel channel;
 	
-	public NettyConnectionListener(String host, int port, PacketProtocol protocol, EventLoopGroup group, Channel channel) {
+	public TcpConnectionListener(String host, int port, EventLoopGroup group, Channel channel) {
 		this.host = host;
 		this.port = port;
-		this.protocol = protocol;
 		this.group = group;
 		this.channel = channel;
 	}
@@ -29,11 +26,6 @@ public class NettyConnectionListener implements ConnectionListener {
 	@Override
 	public int getPort() {
 		return this.port;
-	}
-	
-	@Override
-	public PacketProtocol getPacketProtocol() {
-		return this.protocol;
 	}
 	
 	@Override

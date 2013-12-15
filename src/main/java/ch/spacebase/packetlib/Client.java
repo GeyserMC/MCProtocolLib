@@ -10,23 +10,13 @@ public class Client {
 	private String host;
 	private int port;
 	private PacketProtocol protocol;
-	private SessionFactory factory;
 	private Session session;
 	
 	public Client(String host, int port, PacketProtocol protocol, SessionFactory factory) {
 		this.host = host;
 		this.port = port;
 		this.protocol = protocol;
-		this.factory = factory;
-	}
-	
-	/**
-	 * Connects the client.
-	 * @return This client after being connected.
-	 */
-	public Client connect() {
-		this.session = this.factory.createClientSession(this);
-		return this;
+		this.session = factory.createClientSession(this);
 	}
 	
 	/**

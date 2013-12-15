@@ -11,9 +11,9 @@ public class ClientSessionListener extends SessionAdapter {
 	@Override
 	public void packetReceived(PacketReceivedEvent event) {
 		if(event.getPacket() instanceof PingPacket) {
-			PingPacket packet = (PingPacket) event.getPacket();
+			PingPacket packet = event.getPacket();
 			System.out.println("CLIENT RECV: " + packet.getPingId());
-			if(packet.getPingId() == 2345) {
+			if(packet.getPingId().equals("exit")) {
 				event.getSession().disconnect("Finished");
 			}
 		}
@@ -21,8 +21,8 @@ public class ClientSessionListener extends SessionAdapter {
 
 	@Override
 	public void connected(ConnectedEvent event) {
-		event.getSession().send(new PingPacket(1043));
-		event.getSession().send(new PingPacket(2345));
+		event.getSession().send(new PingPacket("hello"));
+		event.getSession().send(new PingPacket("exit"));
 	}
 
 	@Override

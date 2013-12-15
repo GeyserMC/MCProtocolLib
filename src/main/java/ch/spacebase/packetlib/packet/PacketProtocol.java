@@ -1,16 +1,22 @@
 package ch.spacebase.packetlib.packet;
 
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
+
 import ch.spacebase.packetlib.Client;
 import ch.spacebase.packetlib.Server;
 import ch.spacebase.packetlib.Session;
+import ch.spacebase.packetlib.crypt.PacketEncryption;
 
 /**
  * A protocol for packet sending and receiving.
+ * All implementations must have a no-params constructor for server protocol creation.
  */
 public abstract class PacketProtocol {
 
-	@SuppressWarnings("unchecked")
-	private final Class<? extends Packet> registry[] = (Class<? extends Packet>[]) new Class<?>[256];
+	private final Map<Integer, Class<? extends Packet>> incoming = new HashMap<Integer, Class<? extends Packet>>();
+	private final Map<Class<? extends Packet>, Integer> outgoing = new HashMap<Class<? extends Packet>, Integer>();
 	
 	/**
 	 * Called when a client is created with this protocol.
@@ -20,12 +26,6 @@ public abstract class PacketProtocol {
 	public abstract void newClientSession(Client client, Session session);
 	
 	/**
-	 * Called when a server is created with this protocol.
-	 * @param server The created server.
-	 */
-	public abstract void newServer(Server server);
-	
-	/**
 	 * Called when a server's session is created with this protocol.
 	 * @param server The server that the session belongs to.
 	 * @param session The created session.
@@ -33,62 +33,97 @@ public abstract class PacketProtocol {
 	public abstract void newServerSession(Server server, Session session);
 	
 	/**
-	 * Decodes the given data array into readable form.
-	 * @param data Data to decode.
-	 * @return The decoded data.
+	 * Gets this protocol's active packet encryption.
+	 * @return The protocol's packet encryption, or null if packets should not be encrypted.
 	 */
-	public byte[] decode(byte data[]) {
-		return data;
+	public PacketEncryption getEncryption() {
+		return null;
 	}
 	
 	/**
-	 * Encodes the given data array for sending over the network.
-	 * @param data Data to encode.
-	 * @return The encoded data.
+	 * Clears all currently registered packets.
 	 */
-	public byte[] encode(byte data[]) {
-		return data;
+	public final void clearPackets() {
+		this.incoming.clear();
+		this.outgoing.clear();
 	}
 	
 	/**
-	 * Registers a packet to this protocol.
+	 * Registers a packet to this protocol as both incoming and outgoing.
+	 * @param id Id to register the packet to.
+	 * @param packet Packet to register.
+	 * @throws IllegalArgumentException If the packet fails a test creation when being registered as incoming.
+	 */
+	public final void register(int id, Class<? extends Packet> packet) {
+		this.registerIncoming(id, packet);
+		this.registerOutgoing(id, packet);
+	}
+	
+	/**
+	 * Registers an incoming packet to this protocol.
+	 * @param id Id to register the packet to.
+	 * @param packet Packet to register.
+	 * @throws IllegalArgumentException If the packet fails a test creation.
+	 */
+	public final void registerIncoming(int id, Class<? extends Packet> packet) {
+		this.incoming.put(id, packet);
+		try {
+			this.createIncomingPacket(id);
+		} catch(IllegalStateException e) {
+			this.incoming.remove(id);
+			throw new IllegalArgumentException(e.getMessage(), e.getCause());
+		}
+	}
+	
+	/**
+	 * Registers an outgoing packet to this protocol.
+	 * @param id Id to register the packet to.
 	 * @param packet Packet to register.
 	 */
-	public final void register(Class<? extends Packet> packet) {
-		int id = 0;
-		try {
-			id = packet.getDeclaredConstructor().newInstance().getId();
-		} catch(NoSuchMethodError e) {
-			System.err.println("Packet \"" + packet.getName() + "\" does not have a no-params constructor for instantiation.");
-		} catch(Exception e) {
-			System.err.println("Failed to instantiate packet " + packet.getName() + " to get id.");
-			e.printStackTrace();
-		}
-		
-		registry[id] = packet;
+	public final void registerOutgoing(int id, Class<? extends Packet> packet) {
+		this.outgoing.put(packet, id);
 	}
 	
 	/**
-	 * Creates a new instance of the packet with the given id.
-	 * @param id Id of the packet to create, or null if it could not be created.
-	 * @return The created packet
+	 * Creates a new instance of an incoming packet with the given id.
+	 * @param id Id of the packet to create.
+	 * @return The created packet.
 	 * @throws IllegalArgumentException If the packet ID is invalid.
+	 * @throws IllegalStateException If the packet does not have a no-params constructor or cannot be instantiated.
 	 */
-	public final Packet createPacket(int id) {
-		if(id < 0 || id >= registry.length || registry[id] == null) {
+	public final Packet createIncomingPacket(int id) {
+		if(id < 0 || !this.incoming.containsKey(id) || this.incoming.get(id) == null) {
 			throw new IllegalArgumentException("Invalid packet id: " + id);
 		}
 		
+		Class<? extends Packet> packet = this.incoming.get(id);
 		try {
-			return registry[id].getDeclaredConstructor().newInstance();
+			Constructor<? extends Packet> constructor = packet.getDeclaredConstructor();
+			if(!constructor.isAccessible()) {
+				constructor.setAccessible(true);
+			}
+			
+			return constructor.newInstance();
 		} catch(NoSuchMethodError e) {
-			System.err.println("Packet \"" + id + "\" does not have a no-params constructor for instantiation.");
+			throw new IllegalStateException("Packet \"" + id + ", " + packet.getName() + "\" does not have a no-params constructor for instantiation.");
 		} catch(Exception e) {
-			System.err.println("Failed to instantiate packet " + id + ".");
-			e.printStackTrace();
+			throw new IllegalStateException("Failed to instantiate packet \"" + id + ", " + packet.getName() + "\".", e);
+		}
+	}
+	
+	/**
+	 * Gets the registered id of an outgoing packet class.
+	 * @param packet Class of the packet to get the id for.
+	 * @return The packet's registered id.
+	 * @throws IllegalArgumentException If the packet is not registered.
+	 */
+	public final int getOutgoingId(Class<? extends Packet> packet) {
+		if(!this.outgoing.containsKey(packet) || this.outgoing.get(packet) == null) {
+			throw new IllegalArgumentException("Unregistered outgoing packet class: " + packet.getName());
 		}
 		
-		return null;
+		return this.outgoing.get(packet);
 	}
+	
 	
 }

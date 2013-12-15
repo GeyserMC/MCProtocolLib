@@ -1,7 +1,10 @@
 package ch.spacebase.packetlib;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.spacebase.packetlib.event.server.ServerBoundEvent;
 import ch.spacebase.packetlib.event.server.ServerClosedEvent;
@@ -19,19 +22,19 @@ public class Server {
 
 	private String host;
 	private int port;
-	private PacketProtocol protocol;
+	private Class<? extends PacketProtocol> protocol;
 	private SessionFactory factory;
 	private ConnectionListener listener;
 	private List<Session> sessions = new ArrayList<Session>();
 	
+	private Map<String, Object> flags = new HashMap<String, Object>();
 	private List<ServerListener> listeners = new ArrayList<ServerListener>();
 	
-	public Server(String host, int port, PacketProtocol protocol, SessionFactory factory) {
+	public Server(String host, int port, Class<? extends PacketProtocol> protocol, SessionFactory factory) {
 		this.host = host;
 		this.port = port;
 		this.protocol = protocol;
 		this.factory = factory;
-		this.protocol.newServer(this);
 	}
 	
 	/**
@@ -61,15 +64,92 @@ public class Server {
 	}
 	
 	/**
+	 * Gets the packet protocol of the server.
+	 * @return The server's packet protocol.
+	 */
+	public Class<? extends PacketProtocol> getPacketProtocol() {
+		return this.protocol;
+	}
+	
+	/**
+	 * Creates a new packet protocol instance from this server's protocol class.
+	 * @return The created protocol instance.
+	 * @throws IllegalStateException If the protocol does not have a no-params constructor or cannot be instantiated.
+	 */
+	public PacketProtocol createPacketProtocol() {
+		try {
+			Constructor<? extends PacketProtocol> constructor = this.protocol.getDeclaredConstructor();
+			if(!constructor.isAccessible()) {
+				constructor.setAccessible(true);
+			}
+			
+			return constructor.newInstance();
+		} catch(NoSuchMethodError e) {
+			throw new IllegalStateException("PacketProtocol \"" + this.protocol.getName() + "\" does not have a no-params constructor for instantiation.");
+		} catch(Exception e) {
+			throw new IllegalStateException("Failed to instantiate PacketProtocol " + this.protocol.getName() + ".", e);
+		}
+	}
+	
+	/**
+	 * Gets this server's set flags.
+	 * @return This server's flags.
+	 */
+	public Map<String, Object> getGlobalFlags() {
+		return new HashMap<String, Object>(this.flags);
+	}
+	
+	/**
+	 * Checks whether this server has a flag set.
+	 * @param key Key of the flag to check for.
+	 * @return Whether this server has a flag set.
+	 */
+	public boolean hasGlobalFlag(String key) {
+		return this.flags.containsKey(key);
+	}
+	
+	/**
+	 * Gets the value of the given flag as an instance of the given type. If this
+	 * session belongs to a server, the server's flags will be checked for the flag
+	 * as well.
+	 * @param key Key of the flag.
+	 * @return Value of the flag.
+	 * @throws IllegalStateException If the flag's value isn't of the required type.
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getGlobalFlag(String key) {
+		Object value = this.flags.get(key);
+		if(value == null) {
+			return null;
+		}
+		
+		try {
+			return (T) value;
+		} catch(ClassCastException e) {
+			throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
+		}
+	}
+	
+	/**
+	 * Sets the value of a flag. The flag will be used in sessions if a session does
+	 * not contain a value for the flag.
+	 * @param key Key of the flag.
+	 * @param value Value to set the flag to.
+	 */
+	public void setGlobalFlag(String key, Object value) {
+		this.flags.put(key, value);
+	}
+	
+	/**
 	 * Gets the listeners listening on this session.
-	 * @return This session's listeners.
+	 * @return This server's listeners.
 	 */
 	public List<ServerListener> getListeners() {
 		return new ArrayList<ServerListener>(this.listeners);
 	}
 	
 	/**
-	 * Adds a listener to this session.
+	 * Adds a listener to this server.
 	 * @param listener Listener to add.
 	 */
 	public void addListener(ServerListener listener) {
@@ -77,7 +157,7 @@ public class Server {
 	}
 	
 	/**
-	 * Removes a listener from this session.
+	 * Removes a listener from this server.
 	 * @param listener Listener to remove.
 	 */
 	public void removeListener(ServerListener listener) {
@@ -85,21 +165,13 @@ public class Server {
 	}
 	
 	/**
-	 * Calls an event on the listeners of this session.
+	 * Calls an event on the listeners of this server.
 	 * @param event Event to call.
 	 */
 	public void callEvent(ServerEvent event) {
 		for(ServerListener listener : this.listeners) {
 			event.call(listener);
 		}
-	}
-	
-	/**
-	 * Gets the packet protocol of the server.
-	 * @return The server's packet protocol.
-	 */
-	public PacketProtocol getPacketProtocol() {
-		return this.protocol;
 	}
 	
 	/**

@@ -10,7 +10,7 @@ public class ServerSessionListener extends SessionAdapter {
 	@Override
 	public void packetReceived(PacketReceivedEvent event) {
 		if(event.getPacket() instanceof PingPacket) {
-			System.out.println("SERVER RECV: " + ((PingPacket) event.getPacket()).getPingId());
+			System.out.println("SERVER RECV: " + event.<PingPacket>getPacket().getPingId());
 			event.getSession().send(event.getPacket());
 		}
 	}
