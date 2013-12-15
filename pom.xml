@@ -1,13 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.spacebase</groupId>
-	<artifactId>mc-protocol-lib</artifactId>
-	<version>dev-SNAPSHOT</version>
+	<artifactId>mcprotocollib</artifactId>
+	<version>1.7.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>mc-protocol-lib</name>
+	<name>MCProtocolLib</name>
 	<description>A library for communicating with a Minecraft client or server.</description>
-	<url>http://github.com/Steveice10/mc-protocol-lib/</url>
+	<url>http://github.com/Steveice10/MCProtocolLib/</url>
 
 	<licenses>
 		<license>
@@ -18,9 +20,9 @@
 	</licenses>
 
 	<scm>
-    	<connection>scm:git:git@github.com:Steveice10/mc-protocol-lib.git</connection>
-		<developerConnection>scm:git:git@github.com:Steveice10/mc-protocol-lib.git</developerConnection>
-		<url>git@github.com:Steveice10/mc-protocol-lib/</url>
+		<connection>scm:git:git@github.com:Steveice10/MCProtocolLib.git</connection>
+		<developerConnection>scm:git:git@github.com:Steveice10/MCProtocolLib.git</developerConnection>
+		<url>git@github.com:Steveice10/MCProtocolLib/</url>
 	</scm>
 
 	<distributionManagement>
@@ -36,24 +38,47 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-  	<developers>
-    	<developer>
-      		<id>steveice10</id>
-      		<name>Steveice10</name>
-      		<email>Steveice10@gmail.com</email>
-    	</developer>
-  	</developers>
+	<developers>
+		<developer>
+			<id>steveice10</id>
+			<name>Steveice10</name>
+			<email>Steveice10@gmail.com</email>
+		</developer>
+	</developers>
+
+	<repositories>
+		<repository>
+			<id>spacebase-releases</id>
+			<url>http://repo.spacebase.ch/content/repositories/release/</url>
+		</repository>
+		<repository>
+			<id>spacebase-snapshots</id>
+			<url>http://repo.spacebase.ch/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<!--  Dependencies -->
+	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.47</version>
+			<groupId>ch.spacebase</groupId>
+			<artifactId>opennbt</artifactId>
+			<version>1.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.spacebase</groupId>
+			<artifactId>packetlib</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
 		</dependency>
 	</dependencies>
 
@@ -86,16 +111,16 @@
 					</execution>
 				</executions>
 				<configuration>
-                        		<filters>
-                            			<filter>
-                                			<artifact>*:*</artifact>
-                                			<excludes>
-                                    				<exclude>META-INF/*.SF</exclude>
-                                   				<exclude>META-INF/*.DSA</exclude>
-                                    				<exclude>META-INF/*.RSA</exclude>                                       
-                                			</excludes>
-                            			</filter>
-                        		</filters>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/*.SF</exclude>
+								<exclude>META-INF/*.DSA</exclude>
+								<exclude>META-INF/*.RSA</exclude>
+							</excludes>
+						</filter>
+					</filters>
 				</configuration>
 			</plugin>
 		</plugins>

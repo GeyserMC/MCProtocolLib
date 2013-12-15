@@ -1,37 +1,28 @@
-<b><center><h1>mc-protocol-lib</h></center></b>
+<b><center><h1>MCProtocolLib</h></center></b>
 ==========
 
 
 
-<b>About mc-protocol-lib</b>
+<b>About MCProtocolLib</b>
 --------
 
-mc-protocol-lib is a simple library for communicating with a Minecraft client/server. It aims to allow people to make custom bots, clients, or servers for Minecraft easily.
+MCProtocolLib is a simple library for communicating with a Minecraft client/server. It aims to allow people to make custom bots, clients, or servers for Minecraft easily.
+The library is split into two packages, ch.spacebase.mc.auth and ch.spacebase.mc.protocol. The auth package contains some classes to work with Mojang's auth servers and the protocol package contains the protocol library.
 
 
-<b>Server List Ping</b>
+<b>Example Code</b>
 --------
 
-When you receive a server list ping packet when listening to a server, respond by calling connection.disconnect(Util.formatPingResponse(motd, players, maxplayers));
-
-When you are sending a ping request, do the following:
-  connection.send(new PacketServerPing());
-  connection.send(Util.prepareClientPingData(connection.getHost(), connection.getPort()));
-
-
-<b>Chat Bot Example</b>
---------
-
-See ch.spacebase.mcprotocol.example.ChatBot
+See ch.spacebase.mc.protocol.test.Test.
 
 
 <b>Building the Source</b>
 --------
 
-mc-protocol-lib uses Maven to manage dependencies. Simply run 'mvn clean install' in the source's directory.
+MCProtocolLib uses Maven to manage dependencies. Simply run 'mvn clean install' in the source's directory.
 
 
 <b>License</b>
 ---------
 
-mc-protocol-lib is licensed under the <b>[MIT license](http://www.opensource.org/licenses/mit-license.html)</b>.
+MCProtocolLib is licensed under the <b>[MIT license](http://www.opensource.org/licenses/mit-license.html)</b>.
