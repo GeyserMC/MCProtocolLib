@@ -26,7 +26,7 @@ public class SessionService {
 
 	public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws AuthenticationException {
 		JoinServerRequest request = new JoinServerRequest(authenticationToken, profile.getId(), serverId);
-		this.getAuthenticationService().makeRequest(JOIN_URL, request, Response.class);
+		URLUtils.makeRequest(JOIN_URL, request, Response.class);
 	}
 
 	public GameProfile hasJoinedServer(GameProfile user, String serverId) throws AuthenticationUnavailableException {
@@ -35,7 +35,7 @@ public class SessionService {
 		arguments.put("serverId", serverId);
 		URL url = URLUtils.concatenateURL(CHECK_URL, URLUtils.buildQuery(arguments));
 		try {
-			HasJoinedResponse e = this.getAuthenticationService().makeRequest(url, null, HasJoinedResponse.class);
+			HasJoinedResponse e = URLUtils.makeRequest(url, null, HasJoinedResponse.class);
 			return e != null && e.getId() != null ? new GameProfile(e.getId(), user.getName()) : null;
 		} catch(AuthenticationUnavailableException var6) {
 			throw var6;

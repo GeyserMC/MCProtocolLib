@@ -160,7 +160,7 @@ public class UserAuthentication {
 			throw new InvalidCredentialsException("Invalid password");
 		} else {
 			AuthenticationRequest request = new AuthenticationRequest(this, this.username, this.password);
-			AuthenticationResponse response = this.authService.makeRequest(ROUTE_AUTHENTICATE, request, AuthenticationResponse.class);
+			AuthenticationResponse response = URLUtils.makeRequest(ROUTE_AUTHENTICATE, request, AuthenticationResponse.class);
 			if(!response.getClientToken().equals(this.getAuthenticationService().getClientToken())) {
 				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
 			} else {
@@ -199,7 +199,7 @@ public class UserAuthentication {
 			throw new InvalidCredentialsException("Invalid access token");
 		} else {
 			RefreshRequest request = new RefreshRequest(this);
-			RefreshResponse response = this.getAuthenticationService().makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
+			RefreshResponse response = URLUtils.makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
 			if(!response.getClientToken().equals(this.getAuthenticationService().getClientToken())) {
 				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
 			} else {
@@ -243,7 +243,7 @@ public class UserAuthentication {
 			throw new AuthenticationException("Cannot change game profile. You must log out and back in.");
 		} else if(profile != null && this.profiles.contains(profile)) {
 			RefreshRequest request = new RefreshRequest(this, profile);
-			RefreshResponse response = this.getAuthenticationService().makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
+			RefreshResponse response = URLUtils.makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
 			if(!response.getClientToken().equals(this.getAuthenticationService().getClientToken())) {
 				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
 			} else {
