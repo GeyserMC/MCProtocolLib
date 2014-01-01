@@ -1,6 +1,5 @@
 package ch.spacebase.mc.auth;
 
-import ch.spacebase.mc.auth.AuthenticationService;
 import ch.spacebase.mc.auth.exceptions.AuthenticationException;
 import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
 import ch.spacebase.mc.auth.request.JoinServerRequest;
@@ -17,12 +16,6 @@ public class SessionService {
 	private static final String BASE_URL = "https://sessionserver.mojang.com/session/minecraft/";
 	private static final URL JOIN_URL = URLUtils.constantURL(BASE_URL + "join");
 	private static final URL CHECK_URL = URLUtils.constantURL(BASE_URL + "hasJoined");
-
-	private AuthenticationService authService;
-	
-	protected SessionService(AuthenticationService authService) {
-		this.authService = authService;
-	}
 
 	public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws AuthenticationException {
 		JoinServerRequest request = new JoinServerRequest(authenticationToken, profile.getId(), serverId);
@@ -43,9 +36,10 @@ public class SessionService {
 			return null;
 		}
 	}
-
-	public AuthenticationService getAuthenticationService() {
-		return this.authService;
+	
+	@Override
+	public String toString() {
+		return "SessionService{}";
 	}
 
 }

@@ -14,7 +14,7 @@ public class AuthenticationRequest {
 	public AuthenticationRequest(UserAuthentication auth, String username, String password) {
 		this.agent = new Agent("Minecraft", 1);
 		this.username = username;
-		this.clientToken = auth.getAuthenticationService().getClientToken();
+		this.clientToken = auth.getClientToken();
 		this.password = password;
 	}
 

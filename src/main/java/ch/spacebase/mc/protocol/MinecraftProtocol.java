@@ -4,7 +4,6 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.UUID;
 
-import ch.spacebase.mc.auth.AuthenticationService;
 import ch.spacebase.mc.auth.GameProfile;
 import ch.spacebase.mc.auth.UserAuthentication;
 import ch.spacebase.mc.auth.exceptions.AuthenticationException;
@@ -136,24 +135,24 @@ public class MinecraftProtocol extends PacketProtocol {
 			this.profile = new GameProfile("", "Player");
 		}
 		
-		this.clientListener = new ClientListener("", UUID.randomUUID().toString());
+		this.clientListener = new ClientListener("");
 	}
 	
 	public MinecraftProtocol(String username) {
 		this(ProtocolMode.LOGIN);
 		this.profile = new GameProfile("", username);
-		this.clientListener = new ClientListener("", UUID.randomUUID().toString());
+		this.clientListener = new ClientListener("");
 	}
 	
 	public MinecraftProtocol(String username, String password) throws AuthenticationException {
 		this(ProtocolMode.LOGIN);
 		String clientToken = UUID.randomUUID().toString();
-		UserAuthentication auth = new AuthenticationService(clientToken).createUserAuthentication();
+		UserAuthentication auth = new UserAuthentication(clientToken);
 		auth.setUsername(username);
 		auth.setPassword(password);
 		auth.logIn();
 		this.profile = auth.getSelectedProfile();
-		this.clientListener = new ClientListener(auth.getAccessToken(), clientToken);
+		this.clientListener = new ClientListener(auth.getAccessToken());
 	}
 	
 	@Override

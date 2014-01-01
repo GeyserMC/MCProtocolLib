@@ -17,7 +17,7 @@ public class RefreshRequest {
 
 	public RefreshRequest(UserAuthentication authService, GameProfile profile) {
 		this.requestUser = true;
-		this.clientToken = authService.getAuthenticationService().getClientToken();
+		this.clientToken = authService.getClientToken();
 		this.accessToken = authService.getAccessToken();
 		this.selectedProfile = profile;
 	}

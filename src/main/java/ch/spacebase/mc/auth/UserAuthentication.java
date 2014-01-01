@@ -1,6 +1,5 @@
 package ch.spacebase.mc.auth;
 
-import ch.spacebase.mc.auth.AuthenticationService;
 import ch.spacebase.mc.auth.exceptions.AuthenticationException;
 import ch.spacebase.mc.auth.exceptions.InvalidCredentialsException;
 import ch.spacebase.mc.auth.request.AuthenticationRequest;
@@ -30,7 +29,7 @@ public class UserAuthentication {
 	private static final String STORAGE_KEY_USER_ID = "userid";
 	private static final String STORAGE_KEY_ACCESS_TOKEN = "accessToken";
 	
-	private AuthenticationService authService;
+	private String clientToken;
 	private Map<String, String> userProperties = new HashMap<String, String>();
 	private String userId;
 	private String username;
@@ -40,15 +39,16 @@ public class UserAuthentication {
 	private List<GameProfile> profiles = new ArrayList<GameProfile>();
 	private GameProfile selectedProfile;
 
-	public UserAuthentication(AuthenticationService authService) {
-		if(authService == null) {
-			throw new IllegalArgumentException("AuthService cannot be null.");
+	public UserAuthentication(String clientToken) {
+		if(clientToken == null) {
+			throw new IllegalArgumentException("ClientToken cannot be null.");
 		}
-		this.authService = authService;
+		
+		this.clientToken = clientToken;
 	}
 	
-	public AuthenticationService getAuthenticationService() {
-		return this.authService;
+	public String getClientToken() {
+		return this.clientToken;
 	}
 	
 	public String getUserID() {
@@ -161,7 +161,7 @@ public class UserAuthentication {
 		} else {
 			AuthenticationRequest request = new AuthenticationRequest(this, this.username, this.password);
 			AuthenticationResponse response = URLUtils.makeRequest(ROUTE_AUTHENTICATE, request, AuthenticationResponse.class);
-			if(!response.getClientToken().equals(this.getAuthenticationService().getClientToken())) {
+			if(!response.getClientToken().equals(this.getClientToken())) {
 				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
 			} else {
 				if(response.getUser() != null && response.getUser().getId() != null) {
@@ -200,7 +200,7 @@ public class UserAuthentication {
 		} else {
 			RefreshRequest request = new RefreshRequest(this);
 			RefreshResponse response = URLUtils.makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
-			if(!response.getClientToken().equals(this.getAuthenticationService().getClientToken())) {
+			if(!response.getClientToken().equals(this.getClientToken())) {
 				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
 			} else {
 				if(response.getUser() != null && response.getUser().getId() != null) {
@@ -244,7 +244,7 @@ public class UserAuthentication {
 		} else if(profile != null && this.profiles.contains(profile)) {
 			RefreshRequest request = new RefreshRequest(this, profile);
 			RefreshResponse response = URLUtils.makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
-			if(!response.getClientToken().equals(this.getAuthenticationService().getClientToken())) {
+			if(!response.getClientToken().equals(this.getClientToken())) {
 				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
 			} else {
 				this.isOnline = true;
@@ -258,7 +258,7 @@ public class UserAuthentication {
 
 	@Override
 	public String toString() {
-		return "AuthenticationService{profiles=" + this.profiles + ", selectedProfile=" + this.getSelectedProfile() + ", username=" + this.username + ", isLoggedIn=" + this.isLoggedIn() + ", canPlayOnline=" + this.canPlayOnline() + ", accessToken=" + this.accessToken + ", clientToken=" + this.authService.getClientToken() + "}";
+		return "UserAuthentication{profiles=" + this.profiles + ", selectedProfile=" + this.getSelectedProfile() + ", username=" + this.username + ", isLoggedIn=" + this.isLoggedIn() + ", canPlayOnline=" + this.canPlayOnline() + ", accessToken=" + this.accessToken + ", clientToken=" + this.getClientToken() + "}";
 	}
 
 }

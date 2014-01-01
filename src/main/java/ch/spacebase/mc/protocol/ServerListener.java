@@ -5,11 +5,9 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
-import ch.spacebase.mc.auth.AuthenticationService;
 import ch.spacebase.mc.auth.GameProfile;
 import ch.spacebase.mc.auth.SessionService;
 import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
@@ -135,7 +133,7 @@ public class ServerListener extends SessionAdapter {
 			MinecraftProtocol protocol = (MinecraftProtocol) this.session.getPacketProtocol();
 			try {
 				String serverHash = new BigInteger(CryptUtil.getServerIdHash(serverId, pair.getPublic(), this.key)).toString(16);
-				SessionService service = new AuthenticationService(UUID.randomUUID().toString()).createMinecraftSessionService();
+				SessionService service = new SessionService();
 				GameProfile profile = service.hasJoinedServer(new GameProfile(null, username), serverHash);
 				if(profile != null) {
 					this.session.send(new LoginSuccessPacket(profile.getId(), profile.getName()));

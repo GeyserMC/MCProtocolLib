@@ -47,7 +47,7 @@ public class GameProfile {
 
 	@Override
 	public String toString() {
-		return "GameProfile{id=\'" + this.id + '\'' + ", name=\'" + this.name + '\'' + '}';
+		return "GameProfile{id=" + this.id + ", name=" + this.name + "}";
 	}
 	
 }

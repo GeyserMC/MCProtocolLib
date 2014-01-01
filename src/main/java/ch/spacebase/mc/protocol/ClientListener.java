@@ -4,8 +4,8 @@ import java.math.BigInteger;
 
 import javax.crypto.SecretKey;
 
-import ch.spacebase.mc.auth.AuthenticationService;
 import ch.spacebase.mc.auth.GameProfile;
+import ch.spacebase.mc.auth.SessionService;
 import ch.spacebase.mc.auth.exceptions.AuthenticationException;
 import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
 import ch.spacebase.mc.auth.exceptions.InvalidCredentialsException;
@@ -35,11 +35,9 @@ public class ClientListener extends SessionAdapter {
 
 	private SecretKey key;
 	private String accessToken;
-	private String clientToken;
 	
-	public ClientListener(String accessToken, String clientToken) {
+	public ClientListener(String accessToken) {
 		this.accessToken = accessToken;
-		this.clientToken = clientToken;
 	}
 
 	@Override
@@ -53,7 +51,7 @@ public class ClientListener extends SessionAdapter {
 				GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
 				String serverHash = new BigInteger(CryptUtil.getServerIdHash(packet.getServerId(), packet.getPublicKey(), this.key)).toString(16);
 				try {
-					new AuthenticationService(this.clientToken).createMinecraftSessionService().joinServer(profile, this.accessToken, serverHash);
+					new SessionService().joinServer(profile, this.accessToken, serverHash);
 				} catch(AuthenticationUnavailableException e) {
 					event.getSession().disconnect("Login failed: Authentication service unavailable.");
 					return;
