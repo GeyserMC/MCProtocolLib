@@ -15,10 +15,13 @@ import ch.spacebase.mc.protocol.data.status.handler.ServerInfoBuilder;
 import ch.spacebase.mc.protocol.data.status.handler.ServerInfoHandler;
 import ch.spacebase.mc.protocol.data.status.handler.ServerPingTimeHandler;
 import ch.spacebase.mc.protocol.packet.ingame.client.ClientChatPacket;
+import ch.spacebase.mc.protocol.packet.ingame.server.ServerChatPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket.Difficulty;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket.GameMode;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket.WorldType;
+import ch.spacebase.mc.util.message.ChatColor;
+import ch.spacebase.mc.util.message.ChatFormat;
 import ch.spacebase.mc.util.message.Message;
 import ch.spacebase.packetlib.Client;
 import ch.spacebase.packetlib.Server;
@@ -35,8 +38,8 @@ public class Test {
 	private static final boolean SPAWN_SERVER = true;
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 25565;
-	private static final String USERNAME = "Player";
-	private static final String PASSWORD = "passwordgoeshere";
+	private static final String USERNAME = "Username";
+	private static final String PASSWORD = "Password";
 
 	public static void main(String[] args) {
 		if(SPAWN_SERVER) {
@@ -66,6 +69,15 @@ public class Test {
 								ClientChatPacket packet = event.getPacket();
 								GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
 								System.out.println(profile.getName() + ": " + packet.getMessage());
+								Message msg = new Message("Hello, ");
+								msg.setColor(ChatColor.GREEN);
+								Message name = new Message(profile.getName());
+								name.setColor(ChatColor.AQUA);
+								name.setFormat(ChatFormat.UNDERLINED, true);
+								Message end = new Message("!");
+								msg.addSubMessage(name);
+								msg.addSubMessage(end);
+								event.getSession().send(new ServerChatPacket(msg));
 							}
 						}
 					});
@@ -125,6 +137,8 @@ public class Test {
 			public void packetReceived(PacketReceivedEvent event) {
 				if(event.getPacket() instanceof ServerJoinGamePacket) {
 					event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
+				} else if(event.getPacket() instanceof ServerChatPacket) {
+					System.out.println(event.<ServerChatPacket>getPacket().getRawMessage());
 					event.getSession().disconnect("Finished");
 				}
 			}

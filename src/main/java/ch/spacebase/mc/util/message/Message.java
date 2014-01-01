@@ -47,19 +47,19 @@ public class Message {
 		return this.json.has("text") ? this.json.get("text").getAsString() : null;
 	}
 	
-	public MessageExtra[] getExtra() {
-		return this.json.has("extra") ? this.arrayToExtra(this.json.get("extra").getAsJsonArray()) : new MessageExtra[0];
-	}
-	
 	public String getTranslate() {
 		return this.json.has("translate") ? this.json.get("translate").getAsString() : null;
 	}
 	
-	public MessageExtra[] getTranslateWith() {
-		return this.json.has("with") ? this.arrayToExtra(this.json.get("with").getAsJsonArray()) : null;
+	public Message[] getTranslateWith() {
+		return this.json.has("with") ? this.arrayToMessages(this.json.get("with").getAsJsonArray()) : null;
 	}
 	
 	public ChatColor getColor() {
+		if(!this.json.has("color")) {
+			return ChatColor.WHITE;
+		}
+		
 		ChatColor color = ChatColor.byValue(this.json.get("color").getAsString());
 		if(color == null) {
 			return ChatColor.WHITE;
@@ -68,24 +68,68 @@ public class Message {
 		return color;
 	}
 	
+	public void setColor(ChatColor color) {
+		this.json.addProperty("color", color.toString());
+	}
+	
 	public List<ChatFormat> getFormats() {
 		List<ChatFormat> ret = new ArrayList<ChatFormat>();
 		for(ChatFormat format : ChatFormat.values()) {
-			if(this.json.get(format.toString()).getAsBoolean()) {
+			if(this.json.has(format.toString()) && this.json.get(format.toString()).getAsBoolean()) {
 				ret.add(format);
 			}
 		}
 		
 		return ret;
 	}
+	
+	public void setFormat(ChatFormat format, boolean active) {
+		this.json.addProperty(format.toString(), active);
+	}
+	
+	public ClickEvent getClickEvent() {
+		if(!this.json.has("clickEvent")) {
+			return null;
+		}
+		
+		JsonObject json = this.json.get("clickEvent").getAsJsonObject();
+		return new ClickEvent(ClickAction.byValue(json.get("action").getAsString()), json.get("value").getAsString());
+	}
+	
+	public HoverEvent getHoverEvent() {
+		if(!this.json.has("hoverEvent")) {
+			return null;
+		}
+		
+		JsonObject json = this.json.get("hoverEvent").getAsJsonObject();
+		return new HoverEvent(HoverAction.byValue(json.get("action").getAsString()), json.get("value").getAsString());
+	}
 
-	public void addExtra(MessageExtra extra) {
+	public void setClickEvent(ClickEvent event) {
+		JsonObject json = new JsonObject();
+		json.addProperty("action", event.getAction().toString());
+		json.addProperty("value", event.getValue());
+		this.json.add("clickEvent", json);
+	}
+
+	public void setHoverEvent(HoverEvent event) {
+		JsonObject json = new JsonObject();
+		json.addProperty("action", event.getAction().toString());
+		json.addProperty("value", event.getValue());
+		this.json.add("hoverEvent", json);
+	}
+	
+	public Message[] getSubMessages() {
+		return this.json.has("extra") ? this.arrayToMessages(this.json.get("extra").getAsJsonArray()) : new Message[0];
+	}
+
+	public void addSubMessage(Message sub) {
 		if(!this.json.has("extra")) {
 			this.json.add("extra", new JsonArray());
 		}
 
 		JsonArray json = (JsonArray) this.json.get("extra");
-		json.add(extra.getJson());
+		json.add(sub.getJson());
 		this.json.add("extra", json);
 	}
 	
@@ -96,11 +140,8 @@ public class Message {
 			build.append(this.getTranslate());
 		} else {
 			build.append(this.json.get("text").getAsString());
-			if(this.json.has("extra")) {
-				JsonArray extra = (JsonArray) this.json.get("extra");
-				for(int index = 0; index < extra.size(); index++) {
-					build.append(extra.get(index).toString());
-				}
+			for(Message msg : this.getSubMessages()) {
+				build.append(msg.getRawText());
 			}
 		}
 		
@@ -116,10 +157,10 @@ public class Message {
 		return this.json.toString();
 	}
 	
-	private MessageExtra[] arrayToExtra(JsonArray array) {
-		MessageExtra ret[] = new MessageExtra[array.size()];
+	private Message[] arrayToMessages(JsonArray array) {
+		Message ret[] = new Message[array.size()];
 		for(int index = 0; index < array.size(); index++) {
-			ret[index] = new MessageExtra(array.get(index).isJsonPrimitive() ? array.get(index).getAsString() : array.get(index).toString(), true);
+			ret[index] = new Message(array.get(index).isJsonPrimitive() ? array.get(index).getAsString() : array.get(index).toString(), true);
 		}
 		
 		return ret;
