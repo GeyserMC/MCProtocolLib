@@ -57,6 +57,7 @@ public class ClientEntityActionPacket implements Packet {
 	}
 	
 	public static enum Action {
+		INVALID,
 		CROUCH,
 		UNCROUCH,
 		LEAVE_BED,
