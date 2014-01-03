@@ -30,13 +30,13 @@ public class ClientAnimationPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
-		this.animation = Animation.values()[in.readByte()];
+		this.animation = Animation.values()[in.readByte() - 1];
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
-		out.writeByte(this.animation.ordinal());
+		out.writeByte(this.animation.ordinal() + 1);
 	}
 	
 	@Override
