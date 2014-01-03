@@ -51,7 +51,8 @@ public class ServerBlockBreakAnimPacket implements Packet {
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
-		this.stage = Stage.values()[in.readByte()];
+		byte stage = in.readByte();
+		this.stage = stage == -1 ? Stage.RESET : Stage.values()[stage];
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class ServerBlockBreakAnimPacket implements Packet {
 		out.writeInt(this.x);
 		out.writeInt(this.y);
 		out.writeInt(this.z);
-		out.writeByte(this.stage.ordinal());
+		out.writeByte(this.stage == Stage.RESET ? -1 : this.stage.ordinal());
 	}
 	
 	@Override
@@ -78,7 +79,8 @@ public class ServerBlockBreakAnimPacket implements Packet {
 		STAGE_7,
 		STAGE_8,
 		STAGE_9,
-		STAGE_10;
+		STAGE_10,
+		RESET;
 	}
 	
 }
