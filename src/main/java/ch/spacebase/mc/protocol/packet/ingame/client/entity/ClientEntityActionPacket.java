@@ -40,14 +40,14 @@ public class ClientEntityActionPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
-		this.action = Action.values()[in.readByte()];
+		this.action = Action.values()[in.readByte() - 1];
 		this.jumpBoost = in.readInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
-		out.writeByte(this.action.ordinal());
+		out.writeByte(this.action.ordinal() + 1);
 		out.writeInt(this.jumpBoost);
 	}
 	
