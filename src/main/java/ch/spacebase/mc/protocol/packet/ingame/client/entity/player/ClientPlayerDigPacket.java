@@ -51,7 +51,7 @@ public class ClientPlayerDigPacket implements Packet {
 		this.x = in.readInt();
 		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
-		this.face = Face.values()[in.readUnsignedByte()];
+		this.face = valueToFace(in.readUnsignedByte());
 	}
 
 	@Override
@@ -60,12 +60,50 @@ public class ClientPlayerDigPacket implements Packet {
 		out.writeInt(this.x);
 		out.writeByte(this.y);
 		out.writeInt(this.z);
-		out.writeByte(this.face.ordinal());
+		out.writeByte(faceToValue(this.face));
 	}
 	
 	@Override
 	public boolean isPriority() {
 		return false;
+	}
+	
+	private static Face valueToFace(int value) {
+		switch(value) {
+			case 0:
+				return Face.BOTTOM;
+			case 1:
+				return Face.TOP;
+			case 2:
+				return Face.EAST;
+			case 3:
+				return Face.WEST;
+			case 4:
+				return Face.NORTH;
+			case 5:
+				return Face.SOUTH;
+			default:
+				return Face.INVALID;
+		}
+	}
+	
+	private static int faceToValue(Face face) {
+		switch(face) {
+			case BOTTOM:
+				return 0;
+			case TOP:
+				return 1;
+			case EAST:
+				return 2;
+			case WEST:
+				return 3;
+			case NORTH:
+				return 4;
+			case SOUTH:
+				return 5;
+			default:
+				return 255;
+		}
 	}
 	
 	public static enum Status {
@@ -83,7 +121,8 @@ public class ClientPlayerDigPacket implements Packet {
 		EAST,
 		WEST,
 		NORTH,
-		SOUTH;
+		SOUTH,
+		INVALID;
 	}
 
 }
