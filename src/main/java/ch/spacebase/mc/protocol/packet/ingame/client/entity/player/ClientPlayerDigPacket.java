@@ -1,7 +1,10 @@
 package ch.spacebase.mc.protocol.packet.ingame.client.entity.player;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import ch.spacebase.mc.protocol.packet.ingame.client.entity.ClientAnimationPacket.Animation;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -51,7 +54,7 @@ public class ClientPlayerDigPacket implements Packet {
 		this.x = in.readInt();
 		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
-		this.face = Face.values()[in.readUnsignedByte()];
+		this.face = Face.decode(in.readUnsignedByte());
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public class ClientPlayerDigPacket implements Packet {
 		out.writeInt(this.x);
 		out.writeByte(this.y);
 		out.writeInt(this.z);
-		out.writeByte(this.face.ordinal());
+		out.writeByte(this.face.encode());
 	}
 	
 	@Override
@@ -76,14 +79,38 @@ public class ClientPlayerDigPacket implements Packet {
 		DROP_ITEM,
 		SHOOT_ARROW_OR_FINISH_EATING;
 	}
-	
+
 	public static enum Face {
-		BOTTOM,
-		TOP,
-		EAST,
-		WEST,
-		NORTH,
-		SOUTH;
+		BOTTOM(0),
+		TOP(1),
+		EAST(2),
+		WEST(3),
+		NORTH(4),
+		SOUTH(5),
+		INVALID(255);
+		
+		private static final Map<Integer, Face> lookup = 
+			new HashMap<Integer, Face>();
+
+		static {
+			for (final Face a : Face.values()) {
+				lookup.put(a.encode(), a);
+			}
+		}
+		
+		private final int faceId;
+
+		private Face(final int faceId) {
+			this.faceId = faceId;
+		}
+		
+		public static Face decode(final int faceId) {
+			return lookup.get(faceId);
+		}
+
+		private Integer encode() {
+			return faceId;
+		}
 	}
 
 }
