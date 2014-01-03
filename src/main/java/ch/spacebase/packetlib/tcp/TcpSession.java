@@ -229,7 +229,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
     		if(cause instanceof ReadTimeoutException) {
     			this.disconnect("Connection timed out.");
     		} else {
-	    		this.disconnect("Internal exception: " + cause);
+	    		this.disconnect("Internal network exception: " + cause);
 	    		cause.printStackTrace();
     		}
     	}
