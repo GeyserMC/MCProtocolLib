@@ -6,7 +6,7 @@ public class ClientPlayerRotationPacket extends ClientPlayerMovementPacket {
 		this.rot = true;
 	}
 	
-	public ClientPlayerRotationPacket(boolean onGround, double yaw, double pitch) {
+	public ClientPlayerRotationPacket(boolean onGround, float yaw, float pitch) {
 		super(onGround);
 		this.rot = true;
 		this.yaw = yaw;

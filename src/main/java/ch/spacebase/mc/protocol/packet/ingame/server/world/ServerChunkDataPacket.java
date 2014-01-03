@@ -132,11 +132,21 @@ public class ServerChunkDataPacket implements Packet {
 		// Write data to the network.
 		out.writeInt(data.getX());
 		out.writeInt(data.getZ());
-		out.writeBoolean(data.hasBiomes());
+		out.writeBoolean(isGroundUpContinuous());
 		out.writeShort(data.getMask());
 		out.writeShort(data.getExtendedMask());
 		out.writeInt(len);
 		out.writeBytes(deflated, len);
+	}
+	
+	private boolean isGroundUpContinuous() {
+		for (final Chunk c : chunks) {
+			if (c == null) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	@Override

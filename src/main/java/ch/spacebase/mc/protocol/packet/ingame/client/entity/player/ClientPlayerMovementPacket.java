@@ -12,8 +12,8 @@ public class ClientPlayerMovementPacket implements Packet {
 	protected double stance;
 	protected double y;
 	protected double z;
-	protected double yaw;
-	protected double pitch;
+	protected float yaw;
+	protected float pitch;
 	protected boolean onGround;
 	
 	protected boolean pos = false;
@@ -64,8 +64,8 @@ public class ClientPlayerMovementPacket implements Packet {
 		}
 		
 		if(this.rot) {
-			this.yaw = in.readDouble();
-			this.pitch = in.readDouble();
+			this.yaw = in.readFloat();
+			this.pitch = in.readFloat();
 		}
 		
 		this.onGround = in.readBoolean();
