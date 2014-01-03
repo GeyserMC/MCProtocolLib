@@ -19,13 +19,14 @@ public class Message {
 		if(tryJson) {
 			try {
 				this.json = new Gson().fromJson(str, JsonObject.class);
-				return;
 			} catch(Exception e) {
 			}
 		}
 		
-		this.json = new JsonObject();
-		this.json.addProperty("text", str);
+		if(this.json == null) {
+			this.json = new JsonObject();
+			this.json.addProperty("text", str);
+		}
 	}
 	
 	public Message(String text, ChatColor color) {
