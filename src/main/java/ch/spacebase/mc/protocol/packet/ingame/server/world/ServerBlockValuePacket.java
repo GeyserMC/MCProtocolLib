@@ -66,7 +66,7 @@ public class ServerBlockValuePacket implements Packet {
 		this.z = in.readInt();
 		this.type = intToType(in.readUnsignedByte());
 		this.value = intToValue(in.readUnsignedByte());
-		this.blockId = in.readVarInt();
+		this.blockId = in.readVarInt() & 4095;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class ServerBlockValuePacket implements Packet {
 		out.writeInt(this.z);
 		out.writeByte(typeToInt(this.type));
 		out.writeByte(valueToInt(this.value));
-		out.writeVarInt(this.blockId);
+		out.writeVarInt(this.blockId & 4095);
 	}
 	
 	@Override
@@ -112,7 +112,7 @@ public class ServerBlockValuePacket implements Packet {
 				return ChestValueType.VIEWING_PLAYER_COUNT;
 			}
 		} else {
-			throw new IOException("Unknown value type for block id: " + this.blockId);
+			return GenericValueType.GENERIC;
 		}
 		
 		throw new IOException("Unknown value type id: " + value + ", " + this.blockId);
@@ -145,6 +145,10 @@ public class ServerBlockValuePacket implements Packet {
 			return 1;
 		}
 		
+		if(type == GenericValueType.GENERIC) {
+			return 0;
+		}
+		
 		throw new IOException("Unmapped value type: " + type);
 	}
 	
@@ -172,7 +176,7 @@ public class ServerBlockValuePacket implements Packet {
 		} else if(this.blockId == CHEST || this.blockId == ENDER_CHEST || this.blockId == TRAPPED_CHEST) {
 			return new ChestValue(value);
 		} else {
-			throw new IOException("Unknown value for block id: " + this.blockId);
+			return new GenericValue(value);
 		}
 		
 		throw new IOException("Unknown value id: " + value + ", " + this.blockId);
@@ -205,10 +209,18 @@ public class ServerBlockValuePacket implements Packet {
 			return ((ChestValue) value).getViewers();
 		}
 		
+		if(value instanceof GenericValue) {
+			return ((GenericValue) value).getValue();
+		}
+		
 		throw new IOException("Unmapped value: " + value);
 	}
 	
 	public static interface ValueType {
+	}
+	
+	public static enum GenericValueType implements ValueType {
+		GENERIC;
 	}
 	
 	public static enum NoteBlockValueType implements ValueType {
@@ -233,6 +245,18 @@ public class ServerBlockValuePacket implements Packet {
 	}
 	
 	public static interface Value {
+	}
+	
+	public static class GenericValue implements Value {
+		private int value;
+		
+		public GenericValue(int value) {
+			this.value = value;
+		}
+		
+		public int getValue() {
+			return this.value;
+		}
 	}
 	
 	public static class NoteBlockValue implements Value {
