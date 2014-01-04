@@ -14,7 +14,9 @@ import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
 import ch.spacebase.mc.protocol.data.status.ServerStatusInfo;
 import ch.spacebase.mc.protocol.data.status.handler.ServerInfoBuilder;
 import ch.spacebase.mc.protocol.packet.handshake.client.HandshakePacket;
+import ch.spacebase.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
+import ch.spacebase.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
 import ch.spacebase.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import ch.spacebase.mc.protocol.packet.login.client.LoginStartPacket;
 import ch.spacebase.mc.protocol.packet.login.server.EncryptionRequestPacket;
@@ -37,6 +39,9 @@ public class ServerListener extends SessionAdapter {
 	private byte verifyToken[] = new byte[4];
 	private String serverId = "";
 	private String username = "";
+	
+	private long lastPingTime = 0;
+	private int lastPingId = 0;
 	
 	public ServerListener() {
 		new Random().nextBytes(this.verifyToken);
@@ -77,6 +82,7 @@ public class ServerListener extends SessionAdapter {
 					event.getSession().send(new LoginSuccessPacket("", this.username));
 					event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, new GameProfile("", this.username));
 					protocol.setMode(ProtocolMode.GAME, false, event.getSession());
+					new KeepAliveThread(event.getSession()).start();
 					ServerLoginHandler handler = event.getSession().getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(event.getSession());
@@ -108,6 +114,16 @@ public class ServerListener extends SessionAdapter {
 				event.getSession().send(new StatusPongPacket(event.<StatusPingPacket>getPacket().getPingTime()));
 			}
 		}
+		
+		if(protocol.getMode() == ProtocolMode.GAME) {
+			if(event.getPacket() instanceof ClientKeepAlivePacket) {
+				ClientKeepAlivePacket packet = event.getPacket();
+				if(packet.getPingId() == this.lastPingId) {
+					long time = (System.nanoTime() / 1000000L) - this.lastPingTime;
+					event.getSession().setFlag(ProtocolConstants.PING_KEY, time);
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -129,6 +145,7 @@ public class ServerListener extends SessionAdapter {
 			this.session = session;
 		}
 		
+		@Override
 		public void run() {
 			MinecraftProtocol protocol = (MinecraftProtocol) this.session.getPacketProtocol();
 			try {
@@ -139,6 +156,7 @@ public class ServerListener extends SessionAdapter {
 					this.session.send(new LoginSuccessPacket(profile.getId(), profile.getName()));
 					this.session.setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, this.session);
+					new KeepAliveThread(this.session).start();
 					ServerLoginHandler handler = this.session.getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(this.session);
@@ -148,6 +166,33 @@ public class ServerListener extends SessionAdapter {
 				}
 			} catch(AuthenticationUnavailableException e) {
 				this.session.disconnect("Authentication servers are down. Please try again later, sorry!");
+			}
+		}
+	}
+	
+	private class KeepAliveThread extends Thread {
+		private Session session;
+		
+		public KeepAliveThread(Session session) {
+			this.session = session;
+		}
+		
+		@Override
+		public void run() {
+			while(this.session.isConnected()) {
+				long curr = System.nanoTime() / 1000000L;
+				long time = curr - lastPingTime;
+				if(time > 2000) {
+					lastPingTime = curr;
+					lastPingId = (int) curr;
+					this.session.send(new ServerKeepAlivePacket(lastPingId));
+				}
+				
+				try {
+					Thread.sleep(10);
+				} catch(InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
