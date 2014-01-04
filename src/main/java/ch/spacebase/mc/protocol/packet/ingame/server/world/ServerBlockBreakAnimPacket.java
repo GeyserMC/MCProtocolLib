@@ -51,8 +51,11 @@ public class ServerBlockBreakAnimPacket implements Packet {
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
-		byte stage = in.readByte();
-		this.stage = stage == -1 ? Stage.RESET : Stage.values()[stage];
+		try {
+			this.stage = Stage.values()[in.readUnsignedByte()];
+		} catch(ArrayIndexOutOfBoundsException e) {
+			this.stage = Stage.RESET;
+		}
 	}
 
 	@Override
