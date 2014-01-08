@@ -49,6 +49,11 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	
 	@Override
 	public void connect() {
+		this.connect(true);
+	}
+	
+	@Override
+	public void connect(boolean wait) {
 		if(this.bootstrap == null) {
 			if(!this.disconnected) {
 				return;
@@ -57,8 +62,17 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 			}
 		}
 		
-		this.bootstrap.connect().syncUninterruptibly();
+		ChannelFuture future = this.bootstrap.connect();
 		this.bootstrap = null;
+		if(wait) {
+			future.syncUninterruptibly();
+			while(this.channel == null && !this.disconnected) {
+				try {
+					Thread.sleep(5);
+				} catch(InterruptedException e) {
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -229,10 +243,12 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
     		if(cause instanceof ReadTimeoutException) {
     			this.disconnect("Connection timed out.");
     		} else {
-	    		this.disconnect("Internal network exception: " + cause);
+	    		this.disconnect("Internal network exception: " + cause.toString());
 	    		cause.printStackTrace();
     		}
     	}
+    	
+    	this.disconnected = true;
     }
 
 	@Override

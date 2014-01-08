@@ -19,6 +19,12 @@ public interface Session {
 	public void connect();
 	
 	/**
+	 * Connects this session to its host and port.
+	 * @param wait Whether to wait for the connection to be established before returning.
+	 */
+	public void connect(boolean wait);
+	
+	/**
 	 * Gets the host the session is connected to.
 	 * @return The connected host.
 	 */
