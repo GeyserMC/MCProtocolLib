@@ -10,7 +10,8 @@ public class ServerChangeHeldItemPacket implements Packet {
 	
 	private int slot;
 	
-	public ServerChangeHeldItemPacket() {
+	@SuppressWarnings("unused")
+	private ServerChangeHeldItemPacket() {
 	}
 	
 	public ServerChangeHeldItemPacket(int slot) {

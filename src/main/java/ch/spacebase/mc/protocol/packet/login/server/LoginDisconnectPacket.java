@@ -11,7 +11,8 @@ public class LoginDisconnectPacket implements Packet {
 	
 	private Message message;
 	
-	public LoginDisconnectPacket() {
+	@SuppressWarnings("unused")
+	private LoginDisconnectPacket() {
 	}
 	
 	public LoginDisconnectPacket(String message) {

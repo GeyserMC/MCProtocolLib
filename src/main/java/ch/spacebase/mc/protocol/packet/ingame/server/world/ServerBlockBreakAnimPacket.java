@@ -14,7 +14,8 @@ public class ServerBlockBreakAnimPacket implements Packet {
 	private int z;
 	private Stage stage;
 	
-	public ServerBlockBreakAnimPacket() {
+	@SuppressWarnings("unused")
+	private ServerBlockBreakAnimPacket() {
 	}
 	
 	public ServerBlockBreakAnimPacket(int breakerEntityId, int x, int y, int z, Stage stage) {

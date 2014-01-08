@@ -14,7 +14,8 @@ public class ClientPlayerDigPacket implements Packet {
 	private int z;
 	private Face face;
 	
-	public ClientPlayerDigPacket() {
+	@SuppressWarnings("unused")
+	private ClientPlayerDigPacket() {
 	}
 	
 	public ClientPlayerDigPacket(Status status, int x, int y, int z, Face face) {

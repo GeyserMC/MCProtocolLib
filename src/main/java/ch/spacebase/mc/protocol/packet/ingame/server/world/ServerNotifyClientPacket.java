@@ -11,7 +11,8 @@ public class ServerNotifyClientPacket implements Packet {
 	private Notification notification;
 	private NotificationValue value;
 	
-	public ServerNotifyClientPacket() {
+	@SuppressWarnings("unused")
+	private ServerNotifyClientPacket() {
 	}
 	
 	public ServerNotifyClientPacket(NotificationValue value) {

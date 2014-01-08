@@ -16,7 +16,8 @@ public class EncryptionResponsePacket implements Packet {
 	private byte sharedKey[];
 	private byte verifyToken[];
 	
-	public EncryptionResponsePacket() {
+	@SuppressWarnings("unused")
+	private EncryptionResponsePacket() {
 	}
 	
 	public EncryptionResponsePacket(SecretKey secretKey, PublicKey publicKey, byte verifyToken[]) {

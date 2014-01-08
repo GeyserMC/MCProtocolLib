@@ -20,7 +20,8 @@ public class ServerChunkDataPacket implements Packet {
 	private Chunk chunks[];
 	private byte biomeData[];
 
-	public ServerChunkDataPacket() {
+	@SuppressWarnings("unused")
+	private ServerChunkDataPacket() {
 	}
 	
 	/**

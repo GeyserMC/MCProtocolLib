@@ -10,7 +10,8 @@ public class ServerSetExperiencePacket implements Packet {
 	
 	private int slot;
 	
-	public ServerSetExperiencePacket() {
+	@SuppressWarnings("unused")
+	private ServerSetExperiencePacket() {
 	}
 	
 	public ServerSetExperiencePacket(int slot) {

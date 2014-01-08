@@ -16,7 +16,8 @@ public class ServerTeamPacket implements Packet {
 	private FriendlyFireMode friendlyFire;
 	private String players[];
 	
-	public ServerTeamPacket() {
+	@SuppressWarnings("unused")
+	private ServerTeamPacket() {
 	}
 	
 	public ServerTeamPacket(String name) {

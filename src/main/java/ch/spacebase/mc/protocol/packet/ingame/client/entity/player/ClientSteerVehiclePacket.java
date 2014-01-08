@@ -13,7 +13,8 @@ public class ClientSteerVehiclePacket implements Packet {
 	private boolean jump;
 	private boolean dismount;
 	
-	public ClientSteerVehiclePacket() {
+	@SuppressWarnings("unused")
+	private ClientSteerVehiclePacket() {
 	}
 	
 	public ClientSteerVehiclePacket(float sideways, float forward, boolean jump, boolean dismount) {

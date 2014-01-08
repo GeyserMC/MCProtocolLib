@@ -11,7 +11,8 @@ public class ServerEntityHeadLookPacket implements Packet {
 	protected int entityId;
 	protected float headYaw;
 	
-	public ServerEntityHeadLookPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityHeadLookPacket() {
 	}
 	
 	public ServerEntityHeadLookPacket(int entityId, float headYaw) {

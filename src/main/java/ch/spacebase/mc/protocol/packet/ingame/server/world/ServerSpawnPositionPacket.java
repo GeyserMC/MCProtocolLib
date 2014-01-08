@@ -12,7 +12,8 @@ public class ServerSpawnPositionPacket implements Packet {
 	private int y;
 	private int z;
 	
-	public ServerSpawnPositionPacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnPositionPacket() {
 	}
 	
 	public ServerSpawnPositionPacket(int x, int y, int z) {

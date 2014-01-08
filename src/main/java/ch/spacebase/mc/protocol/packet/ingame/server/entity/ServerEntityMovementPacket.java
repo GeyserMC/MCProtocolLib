@@ -18,7 +18,7 @@ public class ServerEntityMovementPacket implements Packet {
 	protected boolean pos = false;
 	protected boolean rot = false;
 	
-	public ServerEntityMovementPacket() {
+	protected ServerEntityMovementPacket() {
 	}
 	
 	public ServerEntityMovementPacket(int entityId) {

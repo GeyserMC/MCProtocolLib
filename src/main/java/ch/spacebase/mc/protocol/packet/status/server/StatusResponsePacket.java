@@ -26,7 +26,8 @@ public class StatusResponsePacket implements Packet {
 	
 	private ServerStatusInfo info;
 	
-	public StatusResponsePacket() {
+	@SuppressWarnings("unused")
+	private StatusResponsePacket() {
 	}
 	
 	public StatusResponsePacket(ServerStatusInfo info) {

@@ -10,7 +10,8 @@ public class StatusPongPacket implements Packet {
 	
 	private long time;
 	
-	public StatusPongPacket() {
+	@SuppressWarnings("unused")
+	private StatusPongPacket() {
 	}
 	
 	public StatusPongPacket(long time) {

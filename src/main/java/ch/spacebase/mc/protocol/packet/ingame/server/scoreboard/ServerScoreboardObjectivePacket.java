@@ -12,7 +12,8 @@ public class ServerScoreboardObjectivePacket implements Packet {
 	private String value;
 	private Action action;
 	
-	public ServerScoreboardObjectivePacket() {
+	@SuppressWarnings("unused")
+	private ServerScoreboardObjectivePacket() {
 	}
 	
 	public ServerScoreboardObjectivePacket(String name, String value, Action action) {

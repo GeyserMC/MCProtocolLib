@@ -11,7 +11,8 @@ public class ServerDisconnectPacket implements Packet {
 	
 	private Message message;
 	
-	public ServerDisconnectPacket() {
+	@SuppressWarnings("unused")
+	private ServerDisconnectPacket() {
 	}
 	
 	public ServerDisconnectPacket(String message) {

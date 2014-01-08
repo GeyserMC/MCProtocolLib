@@ -11,7 +11,8 @@ public class LoginSuccessPacket implements Packet {
 	private String id;
 	private String username;
 	
-	public LoginSuccessPacket() {
+	@SuppressWarnings("unused")
+	private LoginSuccessPacket() {
 	}
 	
 	public LoginSuccessPacket(String id, String username) {

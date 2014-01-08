@@ -19,7 +19,8 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 	private float cursorY;
 	private float cursorZ;
 	
-	public ClientPlayerPlaceBlockPacket() {
+	@SuppressWarnings("unused")
+	private ClientPlayerPlaceBlockPacket() {
 	}
 	
 	public ClientPlayerPlaceBlockPacket(int x, int y, int z, Face face, ItemStack held, float cursorX, float cursorY, float cursorZ) {

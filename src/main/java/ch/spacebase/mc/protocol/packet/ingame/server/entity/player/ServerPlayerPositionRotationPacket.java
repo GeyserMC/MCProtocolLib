@@ -15,7 +15,8 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 	protected float pitch;
 	protected boolean onGround;
 	
-	public ServerPlayerPositionRotationPacket() {
+	@SuppressWarnings("unused")
+	private ServerPlayerPositionRotationPacket() {
 	}
 	
 	public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, boolean onGround) {

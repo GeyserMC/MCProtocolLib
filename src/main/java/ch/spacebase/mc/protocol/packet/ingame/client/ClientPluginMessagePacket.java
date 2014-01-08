@@ -11,7 +11,8 @@ public class ClientPluginMessagePacket implements Packet {
 	private String channel;
 	private byte data[];
 	
-	public ClientPluginMessagePacket() {
+	@SuppressWarnings("unused")
+	private ClientPluginMessagePacket() {
 	}
 	
 	public ClientPluginMessagePacket(String channel, byte data[]) {

@@ -16,7 +16,8 @@ public class ServerUpdateTileEntityPacket implements Packet {
 	private Type type;
 	private CompoundTag nbt;
 	
-	public ServerUpdateTileEntityPacket() {
+	@SuppressWarnings("unused")
+	private ServerUpdateTileEntityPacket() {
 	}
 	
 	public ServerUpdateTileEntityPacket(int breakerEntityId, int x, int y, int z, Type type, CompoundTag nbt) {

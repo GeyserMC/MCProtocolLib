@@ -15,7 +15,8 @@ public class ClientPlayerAbilitiesPacket implements Packet {
 	private float flySpeed;
 	private float walkSpeed;
 	
-	public ClientPlayerAbilitiesPacket() {
+	@SuppressWarnings("unused")
+	private ClientPlayerAbilitiesPacket() {
 	}
 	
 	public ClientPlayerAbilitiesPacket(boolean invincible, boolean canFly, boolean flying, boolean creative, float flySpeed, float walkSpeed) {

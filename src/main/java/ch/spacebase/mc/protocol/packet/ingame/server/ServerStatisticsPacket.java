@@ -12,7 +12,8 @@ public class ServerStatisticsPacket implements Packet {
 	
 	private Map<String, Integer> statistics = new HashMap<String, Integer>();
 	
-	public ServerStatisticsPacket() {
+	@SuppressWarnings("unused")
+	private ServerStatisticsPacket() {
 	}
 	
 	public ServerStatisticsPacket(Map<String, Integer> statistics) {

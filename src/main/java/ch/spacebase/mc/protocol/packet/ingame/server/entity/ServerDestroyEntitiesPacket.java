@@ -10,7 +10,8 @@ public class ServerDestroyEntitiesPacket implements Packet {
 	
 	private int entityIds[];
 	
-	public ServerDestroyEntitiesPacket() {
+	@SuppressWarnings("unused")
+	private ServerDestroyEntitiesPacket() {
 	}
 	
 	public ServerDestroyEntitiesPacket(int... entityIds) {

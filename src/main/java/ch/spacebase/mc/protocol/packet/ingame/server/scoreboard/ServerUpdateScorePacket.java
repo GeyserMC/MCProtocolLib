@@ -13,7 +13,8 @@ public class ServerUpdateScorePacket implements Packet {
 	private String scoreName;
 	private int scoreValue;
 	
-	public ServerUpdateScorePacket() {
+	@SuppressWarnings("unused")
+	private ServerUpdateScorePacket() {
 	}
 	
 	public ServerUpdateScorePacket(String name) {

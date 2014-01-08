@@ -14,7 +14,8 @@ public class ServerSpawnExpOrbPacket implements Packet {
 	private double z;
 	private int exp;
 	
-	public ServerSpawnExpOrbPacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnExpOrbPacket() {
 	}
 	
 	public ServerSpawnExpOrbPacket(int entityId, double x, double y, double z, int exp) {

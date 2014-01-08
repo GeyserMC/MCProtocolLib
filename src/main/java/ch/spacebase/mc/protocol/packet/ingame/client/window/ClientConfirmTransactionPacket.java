@@ -12,7 +12,8 @@ public class ClientConfirmTransactionPacket implements Packet {
 	private int actionId;
 	private boolean accepted;
 	
-	public ClientConfirmTransactionPacket() {
+	@SuppressWarnings("unused")
+	private ClientConfirmTransactionPacket() {
 	}
 	
 	public ClientConfirmTransactionPacket(int windowId, int actionId, boolean accepted) {

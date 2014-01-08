@@ -10,7 +10,8 @@ public class ClientChatPacket implements Packet {
 	
 	private String message;
 	
-	public ClientChatPacket() {
+	@SuppressWarnings("unused")
+	private ClientChatPacket() {
 	}
 	
 	public ClientChatPacket(String message) {

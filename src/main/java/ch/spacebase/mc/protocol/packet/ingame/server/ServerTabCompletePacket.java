@@ -10,7 +10,8 @@ public class ServerTabCompletePacket implements Packet {
 	
 	private String matches[];
 	
-	public ServerTabCompletePacket() {
+	@SuppressWarnings("unused")
+	private ServerTabCompletePacket() {
 	}
 	
 	public ServerTabCompletePacket(String matches[]) {

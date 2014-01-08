@@ -12,7 +12,8 @@ public class ServerUpdateHealthPacket implements Packet {
 	private int food;
 	private float saturation;
 	
-	public ServerUpdateHealthPacket() {
+	@SuppressWarnings("unused")
+	private ServerUpdateHealthPacket() {
 	}
 	
 	public ServerUpdateHealthPacket(float health, int food, float saturation) {

@@ -13,7 +13,8 @@ public class ServerUpdateSignPacket implements Packet {
 	private int z;
 	private String lines[];
 	
-	public ServerUpdateSignPacket() {
+	@SuppressWarnings("unused")
+	private ServerUpdateSignPacket() {
 	}
 	
 	public ServerUpdateSignPacket(int x, int y, int z, String lines[]) {

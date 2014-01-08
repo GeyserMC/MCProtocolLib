@@ -11,7 +11,8 @@ public class ServerEntityStatusPacket implements Packet {
 	protected int entityId;
 	protected Status status;
 	
-	public ServerEntityStatusPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityStatusPacket() {
 	}
 	
 	public ServerEntityStatusPacket(int entityId, Status status) {

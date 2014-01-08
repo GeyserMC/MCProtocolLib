@@ -10,7 +10,8 @@ public class ServerKeepAlivePacket implements Packet {
 	
 	private int id;
 	
-	public ServerKeepAlivePacket() {
+	@SuppressWarnings("unused")
+	private ServerKeepAlivePacket() {
 	}
 	
 	public ServerKeepAlivePacket(int id) {

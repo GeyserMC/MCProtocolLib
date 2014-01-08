@@ -18,7 +18,8 @@ public class ServerSpawnParticlePacket implements Packet {
 	private float velocityOffset;
 	private int amount;
 	
-	public ServerSpawnParticlePacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnParticlePacket() {
 	}
 	
 	public ServerSpawnParticlePacket(String particle, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount) {

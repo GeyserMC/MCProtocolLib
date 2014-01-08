@@ -21,7 +21,8 @@ public class ServerSpawnPlayerPacket implements Packet {
 	private int currentItem;
 	private EntityMetadata metadata[];
 	
-	public ServerSpawnPlayerPacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnPlayerPacket() {
 	}
 	
 	public ServerSpawnPlayerPacket(int entityId, String uuid, String name, double x, double y, double z, float yaw, float pitch, int currentItem, EntityMetadata metadata[]) {

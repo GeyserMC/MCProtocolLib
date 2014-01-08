@@ -10,7 +10,8 @@ public class LoginStartPacket implements Packet {
 	
 	private String username;
 	
-	public LoginStartPacket() {
+	@SuppressWarnings("unused")
+	private LoginStartPacket() {
 	}
 	
 	public LoginStartPacket(String username) {

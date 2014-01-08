@@ -13,7 +13,8 @@ public class ServerWindowItemsPacket implements Packet {
 	private int windowId;
 	private ItemStack items[];
 	
-	public ServerWindowItemsPacket() {
+	@SuppressWarnings("unused")
+	private ServerWindowItemsPacket() {
 	}
 	
 	public ServerWindowItemsPacket(int windowId, ItemStack items[]) {

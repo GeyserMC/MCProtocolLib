@@ -17,7 +17,8 @@ public class ServerJoinGamePacket implements Packet {
 	private int maxPlayers;
 	private WorldType worldType;
 	
-	public ServerJoinGamePacket() {
+	@SuppressWarnings("unused")
+	private ServerJoinGamePacket() {
 	}
 	
 	public ServerJoinGamePacket(int entityId, boolean hardcore, GameMode gamemode, int dimension, Difficulty difficulty, int maxPlayers, WorldType worldType) {

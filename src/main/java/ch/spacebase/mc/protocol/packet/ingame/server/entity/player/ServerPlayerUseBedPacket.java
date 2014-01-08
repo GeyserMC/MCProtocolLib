@@ -13,7 +13,8 @@ public class ServerPlayerUseBedPacket implements Packet {
 	private int y;
 	private int z;
 	
-	public ServerPlayerUseBedPacket() {
+	@SuppressWarnings("unused")
+	private ServerPlayerUseBedPacket() {
 	}
 	
 	public ServerPlayerUseBedPacket(int entityId, int x, int y, int z) {

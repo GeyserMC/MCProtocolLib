@@ -12,7 +12,8 @@ public class ServerOpenTileEntityEditorPacket implements Packet {
 	private int y;
 	private int z;
 	
-	public ServerOpenTileEntityEditorPacket() {
+	@SuppressWarnings("unused")
+	private ServerOpenTileEntityEditorPacket() {
 	}
 	
 	public ServerOpenTileEntityEditorPacket(int x, int y, int z) {

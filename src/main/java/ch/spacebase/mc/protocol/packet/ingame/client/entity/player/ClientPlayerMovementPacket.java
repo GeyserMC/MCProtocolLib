@@ -19,7 +19,7 @@ public class ClientPlayerMovementPacket implements Packet {
 	protected boolean pos = false;
 	protected boolean rot = false;
 	
-	public ClientPlayerMovementPacket() {
+	protected ClientPlayerMovementPacket() {
 	}
 	
 	public ClientPlayerMovementPacket(boolean onGround) {

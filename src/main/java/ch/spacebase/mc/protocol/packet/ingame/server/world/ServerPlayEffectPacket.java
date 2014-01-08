@@ -15,7 +15,8 @@ public class ServerPlayEffectPacket implements Packet {
 	private EffectData data;
 	private boolean broadcast;
 	
-	public ServerPlayEffectPacket() {
+	@SuppressWarnings("unused")
+	private ServerPlayEffectPacket() {
 	}
 	
 	public ServerPlayEffectPacket(Effect effect, int x, int y, int z, EffectData data) {

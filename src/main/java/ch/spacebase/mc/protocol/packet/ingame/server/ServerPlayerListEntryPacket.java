@@ -12,7 +12,8 @@ public class ServerPlayerListEntryPacket implements Packet {
 	private boolean online;
 	private int ping;
 	
-	public ServerPlayerListEntryPacket() {
+	@SuppressWarnings("unused")
+	private ServerPlayerListEntryPacket() {
 	}
 	
 	public ServerPlayerListEntryPacket(String name, boolean online, int ping) {

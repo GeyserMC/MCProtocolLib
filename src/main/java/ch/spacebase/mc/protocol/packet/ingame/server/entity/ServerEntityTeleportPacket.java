@@ -15,7 +15,8 @@ public class ServerEntityTeleportPacket implements Packet {
 	protected float yaw;
 	protected float pitch;
 	
-	public ServerEntityTeleportPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityTeleportPacket() {
 	}
 	
 	public ServerEntityTeleportPacket(int entityId, double x, double y, double z, float yaw, float pitch) {

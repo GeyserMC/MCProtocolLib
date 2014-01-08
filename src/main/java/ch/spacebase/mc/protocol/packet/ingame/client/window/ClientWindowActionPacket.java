@@ -17,7 +17,8 @@ public class ClientWindowActionPacket implements Packet {
 	private Action action;
 	private ItemStack clicked;
 	
-	public ClientWindowActionPacket() {
+	@SuppressWarnings("unused")
+	private ClientWindowActionPacket() {
 	}
 	
 	public ClientWindowActionPacket(int windowId, int actionId, int slot, ItemStack clicked, Action action, ActionParam param) {

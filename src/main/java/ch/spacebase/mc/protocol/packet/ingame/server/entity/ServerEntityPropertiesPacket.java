@@ -16,7 +16,8 @@ public class ServerEntityPropertiesPacket implements Packet {
 	private int entityId;
 	private List<Attribute> attributes;
 	
-	public ServerEntityPropertiesPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityPropertiesPacket() {
 	}
 	
 	public ServerEntityPropertiesPacket(int entityId, List<Attribute> attributes) {

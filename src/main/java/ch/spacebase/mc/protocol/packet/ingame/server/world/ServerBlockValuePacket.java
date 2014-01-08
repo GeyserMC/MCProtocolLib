@@ -23,7 +23,8 @@ public class ServerBlockValuePacket implements Packet {
 	private Value value;
 	private int blockId;
 	
-	public ServerBlockValuePacket() {
+	@SuppressWarnings("unused")
+	private ServerBlockValuePacket() {
 	}
 	
 	public ServerBlockValuePacket(int x, int y, int z, ValueType type, Value value, int blockId) {

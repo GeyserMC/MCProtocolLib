@@ -14,7 +14,8 @@ public class ServerRespawnPacket implements Packet {
 	private GameMode gamemode;
 	private WorldType worldType;
 	
-	public ServerRespawnPacket() {
+	@SuppressWarnings("unused")
+	private ServerRespawnPacket() {
 	}
 	
 	public ServerRespawnPacket(int dimension, Difficulty difficulty, GameMode gamemode, WorldType worldType) {

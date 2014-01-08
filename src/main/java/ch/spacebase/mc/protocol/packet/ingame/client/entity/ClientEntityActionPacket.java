@@ -12,7 +12,8 @@ public class ClientEntityActionPacket implements Packet {
 	private Action action;
 	private int jumpBoost;
 	
-	public ClientEntityActionPacket() {
+	@SuppressWarnings("unused")
+	private ClientEntityActionPacket() {
 	}
 	
 	public ClientEntityActionPacket(int entityId, Action action) {

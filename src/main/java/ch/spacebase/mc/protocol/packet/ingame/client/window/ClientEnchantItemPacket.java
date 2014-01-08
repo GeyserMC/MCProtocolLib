@@ -11,7 +11,8 @@ public class ClientEnchantItemPacket implements Packet {
 	private int windowId;
 	private int enchantment;
 	
-	public ClientEnchantItemPacket() {
+	@SuppressWarnings("unused")
+	private ClientEnchantItemPacket() {
 	}
 	
 	public ClientEnchantItemPacket(int windowId, int enchantment) {

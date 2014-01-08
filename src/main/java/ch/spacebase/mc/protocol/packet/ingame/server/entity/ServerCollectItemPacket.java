@@ -11,7 +11,8 @@ public class ServerCollectItemPacket implements Packet {
 	private int collectedEntityId;
 	private int collectorEntityId;
 	
-	public ServerCollectItemPacket() {
+	@SuppressWarnings("unused")
+	private ServerCollectItemPacket() {
 	}
 	
 	public ServerCollectItemPacket(int collectedEntityId, int collectorEntityId) {

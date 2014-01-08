@@ -20,7 +20,8 @@ public class ServerSpawnObjectPacket implements Packet {
 	private double motY;
 	private double motZ;
 	
-	public ServerSpawnObjectPacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnObjectPacket() {
 	}
 	
 	public ServerSpawnObjectPacket(int entityId, Type type, double x, double y, double z, float yaw, float pitch) {

@@ -10,7 +10,8 @@ public class ClientRequestPacket implements Packet {
 	
 	private Request request;
 	
-	public ClientRequestPacket() {
+	@SuppressWarnings("unused")
+	private ClientRequestPacket() {
 	}
 	
 	public ClientRequestPacket(Request request) {

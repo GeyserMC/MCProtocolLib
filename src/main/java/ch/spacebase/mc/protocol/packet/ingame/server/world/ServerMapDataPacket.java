@@ -14,7 +14,8 @@ public class ServerMapDataPacket implements Packet {
 	private Type type;
 	private MapData data; 
 	
-	public ServerMapDataPacket() {
+	@SuppressWarnings("unused")
+	private ServerMapDataPacket() {
 	}
 	
 	public ServerMapDataPacket(int mapId, Type type, MapData data) {

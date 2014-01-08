@@ -2,7 +2,7 @@ package ch.spacebase.mc.protocol.packet.ingame.server.entity;
 
 public class ServerEntityRotationPacket extends ServerEntityMovementPacket {
 
-	public ServerEntityRotationPacket() {
+	protected ServerEntityRotationPacket() {
 		this.rot = true;
 	}
 	

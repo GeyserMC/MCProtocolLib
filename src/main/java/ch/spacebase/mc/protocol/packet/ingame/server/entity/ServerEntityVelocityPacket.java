@@ -13,7 +13,8 @@ public class ServerEntityVelocityPacket implements Packet {
 	private double motY;
 	private double motZ;
 	
-	public ServerEntityVelocityPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityVelocityPacket() {
 	}
 	
 	public ServerEntityVelocityPacket(int entityId, double motX, double motY, double motZ) {

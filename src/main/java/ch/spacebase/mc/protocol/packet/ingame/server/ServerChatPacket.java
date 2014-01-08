@@ -11,7 +11,8 @@ public class ServerChatPacket implements Packet {
 	
 	private Message message;
 	
-	public ServerChatPacket() {
+	@SuppressWarnings("unused")
+	private ServerChatPacket() {
 	}
 	
 	public ServerChatPacket(String message) {

@@ -2,7 +2,7 @@ package ch.spacebase.mc.protocol.packet.ingame.client.entity.player;
 
 public class ClientPlayerPositionRotationPacket extends ClientPlayerMovementPacket {
 
-	public ClientPlayerPositionRotationPacket() {
+	protected ClientPlayerPositionRotationPacket() {
 		this.pos = true;
 		this.rot = true;
 	}

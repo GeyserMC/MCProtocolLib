@@ -36,6 +36,7 @@ import ch.spacebase.packetlib.tcp.TcpSessionFactory;
 public class Test {
 	
 	private static final boolean SPAWN_SERVER = true;
+	private static final boolean VERIFY_USERS = false;
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 25565;
 	private static final String USERNAME = "Username";
@@ -44,7 +45,7 @@ public class Test {
 	public static void main(String[] args) {
 		if(SPAWN_SERVER) {
 			Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
-			server.setGlobalFlag(ProtocolConstants.VERIFY_USERS_KEY, true);
+			server.setGlobalFlag(ProtocolConstants.VERIFY_USERS_KEY, VERIFY_USERS);
 			server.setGlobalFlag(ProtocolConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
 				@Override
 				public ServerStatusInfo buildInfo() {
@@ -124,11 +125,15 @@ public class Test {
 	
 	private static void login() {
 		MinecraftProtocol protocol = null;
-		try {
-			protocol = new MinecraftProtocol(USERNAME, PASSWORD);
-		} catch(AuthenticationException e) {
-			e.printStackTrace();
-			return;
+		if(VERIFY_USERS) {
+			try {
+				protocol = new MinecraftProtocol(USERNAME, PASSWORD);
+			} catch(AuthenticationException e) {
+				e.printStackTrace();
+				return;
+			}
+		} else {
+			protocol = new MinecraftProtocol(USERNAME);
 		}
 		
 		Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory());

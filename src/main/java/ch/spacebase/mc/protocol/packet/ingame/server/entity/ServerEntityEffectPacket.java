@@ -13,7 +13,8 @@ public class ServerEntityEffectPacket implements Packet {
 	private int amplifier;
 	private int duration;
 	
-	public ServerEntityEffectPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityEffectPacket() {
 	}
 	
 	public ServerEntityEffectPacket(int entityId, Effect effect, int amplifier, int duration) {

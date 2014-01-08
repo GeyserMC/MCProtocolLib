@@ -13,7 +13,8 @@ public class ServerEntityMetadataPacket implements Packet {
 	private int entityId;
 	private EntityMetadata metadata[];
 	
-	public ServerEntityMetadataPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityMetadataPacket() {
 	}
 	
 	public ServerEntityMetadataPacket(int entityId, EntityMetadata metadata[]) {

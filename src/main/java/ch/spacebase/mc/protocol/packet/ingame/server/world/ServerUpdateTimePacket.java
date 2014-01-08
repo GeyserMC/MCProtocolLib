@@ -11,7 +11,8 @@ public class ServerUpdateTimePacket implements Packet {
 	private long age;
 	private long time;
 	
-	public ServerUpdateTimePacket() {
+	@SuppressWarnings("unused")
+	private ServerUpdateTimePacket() {
 	}
 	
 	public ServerUpdateTimePacket(long age, long time) {

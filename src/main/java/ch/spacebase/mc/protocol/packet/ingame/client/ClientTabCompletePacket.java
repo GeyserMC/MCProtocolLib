@@ -10,7 +10,8 @@ public class ClientTabCompletePacket implements Packet {
 	
 	private String text;
 	
-	public ClientTabCompletePacket() {
+	@SuppressWarnings("unused")
+	private ClientTabCompletePacket() {
 	}
 	
 	public ClientTabCompletePacket(String text) {

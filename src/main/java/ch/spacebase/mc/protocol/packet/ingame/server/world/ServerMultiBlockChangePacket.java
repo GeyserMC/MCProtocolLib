@@ -11,7 +11,8 @@ public class ServerMultiBlockChangePacket implements Packet {
 	
 	private BlockChangeRecord records[];
 	
-	public ServerMultiBlockChangePacket() {
+	@SuppressWarnings("unused")
+	private ServerMultiBlockChangePacket() {
 	}
 	
 	public ServerMultiBlockChangePacket(BlockChangeRecord... records) {

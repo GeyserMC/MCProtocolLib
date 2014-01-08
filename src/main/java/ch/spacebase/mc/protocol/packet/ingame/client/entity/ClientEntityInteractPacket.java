@@ -11,7 +11,8 @@ public class ClientEntityInteractPacket implements Packet {
 	private int entityId;
 	private Action action;
 	
-	public ClientEntityInteractPacket() {
+	@SuppressWarnings("unused")
+	private ClientEntityInteractPacket() {
 	}
 	
 	public ClientEntityInteractPacket(int entityId, Action action) {

@@ -14,7 +14,8 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 	private int y;
 	private int z;
 	
-	public ServerSpawnGlobalEntityPacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnGlobalEntityPacket() {
 	}
 	
 	public ServerSpawnGlobalEntityPacket(int entityId, Type type, int x, int y, int z) {

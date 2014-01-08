@@ -10,7 +10,8 @@ public class StatusPingPacket implements Packet {
 	
 	private long time;
 	
-	public StatusPingPacket() {
+	@SuppressWarnings("unused")
+	private StatusPingPacket() {
 	}
 	
 	public StatusPingPacket(long time) {

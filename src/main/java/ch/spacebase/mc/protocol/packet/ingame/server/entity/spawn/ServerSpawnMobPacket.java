@@ -23,7 +23,8 @@ public class ServerSpawnMobPacket implements Packet {
 	private double motZ;
 	private EntityMetadata metadata[];
 	
-	public ServerSpawnMobPacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnMobPacket() {
 	}
 	
 	public ServerSpawnMobPacket(int entityId, Type type, double x, double y, double z, float yaw, float pitch, float headYaw, double motX, double motY, double motZ, EntityMetadata metadata[]) {

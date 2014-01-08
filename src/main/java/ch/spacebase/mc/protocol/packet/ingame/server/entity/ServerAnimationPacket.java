@@ -11,7 +11,8 @@ public class ServerAnimationPacket implements Packet {
 	private int entityId;
 	private Animation animation;
 	
-	public ServerAnimationPacket() {
+	@SuppressWarnings("unused")
+	private ServerAnimationPacket() {
 	}
 	
 	public ServerAnimationPacket(int entityId, Animation animation) {

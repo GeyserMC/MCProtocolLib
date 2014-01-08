@@ -20,7 +20,8 @@ public class ServerMultiChunkDataPacket implements Packet {
 	private Chunk chunks[][];
 	private byte biomeData[][];
 
-	public ServerMultiChunkDataPacket() {
+	@SuppressWarnings("unused")
+	private ServerMultiChunkDataPacket() {
 	}
 
 	public ServerMultiChunkDataPacket(int x[], int z[], Chunk chunks[][], byte biomeData[][]) {

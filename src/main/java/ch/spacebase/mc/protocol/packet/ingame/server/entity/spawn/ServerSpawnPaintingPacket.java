@@ -15,7 +15,8 @@ public class ServerSpawnPaintingPacket implements Packet {
 	private int z;
 	private Direction direction;
 	
-	public ServerSpawnPaintingPacket() {
+	@SuppressWarnings("unused")
+	private ServerSpawnPaintingPacket() {
 	}
 	
 	public ServerSpawnPaintingPacket(int entityId, Art art, int x, int y, int z, Direction direction) {

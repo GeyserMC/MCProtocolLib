@@ -12,7 +12,8 @@ public class ServerEntityAttachPacket implements Packet {
 	private int attachedToId;
 	private boolean leash;
 	
-	public ServerEntityAttachPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityAttachPacket() {
 	}
 	
 	public ServerEntityAttachPacket(int entityId, int attachedToId, boolean leash) {

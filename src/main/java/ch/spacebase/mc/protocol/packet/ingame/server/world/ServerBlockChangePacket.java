@@ -11,7 +11,8 @@ public class ServerBlockChangePacket implements Packet {
 	
 	private BlockChangeRecord record;
 	
-	public ServerBlockChangePacket() {
+	@SuppressWarnings("unused")
+	private ServerBlockChangePacket() {
 	}
 	
 	public ServerBlockChangePacket(BlockChangeRecord record) {

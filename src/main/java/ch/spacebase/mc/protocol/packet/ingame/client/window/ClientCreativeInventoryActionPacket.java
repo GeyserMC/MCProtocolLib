@@ -13,7 +13,8 @@ public class ClientCreativeInventoryActionPacket implements Packet {
 	private int slot;
 	private ItemStack clicked;
 	
-	public ClientCreativeInventoryActionPacket() {
+	@SuppressWarnings("unused")
+	private ClientCreativeInventoryActionPacket() {
 	}
 	
 	public ClientCreativeInventoryActionPacket(int slot, ItemStack clicked) {

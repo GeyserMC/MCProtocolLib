@@ -15,7 +15,8 @@ public class ServerPlaySoundPacket implements Packet {
 	private float volume;
 	private float pitch;
 	
-	public ServerPlaySoundPacket() {
+	@SuppressWarnings("unused")
+	private ServerPlaySoundPacket() {
 	}
 	
 	public ServerPlaySoundPacket(String sound, double x, double y, double z, float volume, float pitch) {

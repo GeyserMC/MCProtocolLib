@@ -10,7 +10,8 @@ public class ClientKeepAlivePacket implements Packet {
 	
 	private int id;
 	
-	public ClientKeepAlivePacket() {
+	@SuppressWarnings("unused")
+	private ClientKeepAlivePacket() {
 	}
 	
 	public ClientKeepAlivePacket(int id) {

@@ -13,7 +13,8 @@ public class HandshakePacket implements Packet {
 	private int port;
 	private int intent;
 	
-	public HandshakePacket() {
+	@SuppressWarnings("unused")
+	private HandshakePacket() {
 	}
 	
 	public HandshakePacket(int protocolVersion, String hostname, int port, int nextState) {

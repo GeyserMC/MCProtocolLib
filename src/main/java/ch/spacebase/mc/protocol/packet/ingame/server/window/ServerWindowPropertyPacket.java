@@ -12,7 +12,8 @@ public class ServerWindowPropertyPacket implements Packet {
 	private int property;
 	private int value;
 	
-	public ServerWindowPropertyPacket() {
+	@SuppressWarnings("unused")
+	private ServerWindowPropertyPacket() {
 	}
 	
 	public ServerWindowPropertyPacket(int windowId, int property, int value) {

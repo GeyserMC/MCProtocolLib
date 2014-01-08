@@ -15,7 +15,8 @@ public class ClientSettingsPacket implements Packet {
 	private Difficulty difficulty;
 	private boolean capes;
 	
-	public ClientSettingsPacket() {
+	@SuppressWarnings("unused")
+	private ClientSettingsPacket() {
 	}
 	
 	public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, Difficulty difficulty, boolean capes) {

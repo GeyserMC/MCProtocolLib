@@ -19,7 +19,8 @@ public class ServerExplosionPacket implements Packet {
 	private float pushY;
 	private float pushZ;
 	
-	public ServerExplosionPacket() {
+	@SuppressWarnings("unused")
+	private ServerExplosionPacket() {
 	}
 	
 	public ServerExplosionPacket(float x, float y, float z, float radius, List<ExplodedBlockRecord> exploded, float pushX, float pushY, float pushZ) {

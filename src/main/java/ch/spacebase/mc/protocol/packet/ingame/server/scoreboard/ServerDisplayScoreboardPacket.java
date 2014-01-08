@@ -11,7 +11,8 @@ public class ServerDisplayScoreboardPacket implements Packet {
 	private Position position;
 	private String name;
 	
-	public ServerDisplayScoreboardPacket() {
+	@SuppressWarnings("unused")
+	private ServerDisplayScoreboardPacket() {
 	}
 	
 	public ServerDisplayScoreboardPacket(Position position, String name) {

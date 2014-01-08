@@ -14,7 +14,8 @@ public class EncryptionRequestPacket implements Packet {
 	private PublicKey publicKey;
 	private byte verifyToken[];
 	
-	public EncryptionRequestPacket() {
+	@SuppressWarnings("unused")
+	private EncryptionRequestPacket() {
 	}
 	
 	public EncryptionRequestPacket(String serverId, PublicKey publicKey, byte verifyToken[]) {

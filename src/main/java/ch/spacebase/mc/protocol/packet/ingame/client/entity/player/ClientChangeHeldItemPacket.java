@@ -10,7 +10,8 @@ public class ClientChangeHeldItemPacket implements Packet {
 	
 	private int slot;
 	
-	public ClientChangeHeldItemPacket() {
+	@SuppressWarnings("unused")
+	private ClientChangeHeldItemPacket() {
 	}
 	
 	public ClientChangeHeldItemPacket(int slot) {

@@ -15,7 +15,8 @@ public class ServerOpenWindowPacket implements Packet {
 	private boolean useName;
 	private int ownerEntityId;
 	
-	public ServerOpenWindowPacket() {
+	@SuppressWarnings("unused")
+	private ServerOpenWindowPacket() {
 	}
 	
 	public ServerOpenWindowPacket(int windowId, Type type, String name, int slots, boolean useName) {

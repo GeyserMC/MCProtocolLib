@@ -10,7 +10,8 @@ public class ServerCloseWindowPacket implements Packet {
 	
 	private int windowId;
 	
-	public ServerCloseWindowPacket() {
+	@SuppressWarnings("unused")
+	private ServerCloseWindowPacket() {
 	}
 	
 	public ServerCloseWindowPacket(int windowId) {

@@ -14,7 +14,8 @@ public class ServerSetSlotPacket implements Packet {
 	private int slot;
 	private ItemStack item;
 	
-	public ServerSetSlotPacket() {
+	@SuppressWarnings("unused")
+	private ServerSetSlotPacket() {
 	}
 	
 	public ServerSetSlotPacket(int windowId, int slot, ItemStack item) {

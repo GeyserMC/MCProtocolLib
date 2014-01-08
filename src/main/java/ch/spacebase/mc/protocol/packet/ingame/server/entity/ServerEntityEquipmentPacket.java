@@ -14,7 +14,8 @@ public class ServerEntityEquipmentPacket implements Packet {
 	private int slot;
 	private ItemStack item;
 	
-	public ServerEntityEquipmentPacket() {
+	@SuppressWarnings("unused")
+	private ServerEntityEquipmentPacket() {
 	}
 	
 	public ServerEntityEquipmentPacket(int entityId, int slot, ItemStack item) {

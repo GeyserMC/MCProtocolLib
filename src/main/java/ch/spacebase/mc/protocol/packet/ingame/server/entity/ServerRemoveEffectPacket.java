@@ -11,7 +11,8 @@ public class ServerRemoveEffectPacket implements Packet {
 	private int entityId;
 	private Effect effect;
 	
-	public ServerRemoveEffectPacket() {
+	@SuppressWarnings("unused")
+	private ServerRemoveEffectPacket() {
 	}
 	
 	public ServerRemoveEffectPacket(int entityId, Effect effect) {
