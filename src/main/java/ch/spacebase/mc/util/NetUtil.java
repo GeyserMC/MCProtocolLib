@@ -158,7 +158,7 @@ public class NetUtil {
 			for(int ind = 0; ind < 16; ind++) {
 				if((data.getMask() & 1 << ind) != 0) {
 					if(pass == 0) {
-						chunks[ind] = new Chunk(data.getX(), data.getZ(), new byte[4096], new NibbleArray(4096), new NibbleArray(4096), data.hasSkyLight() ? new NibbleArray(4096) : null, (data.getExtendedMask() & 1 << ind) != 0 ? new NibbleArray(4096) : null);
+						chunks[ind] = new Chunk(data.getX(), data.getZ(), (data.getExtendedMask() & 1 << ind) != 0);
 						byte[] blocks = chunks[ind].getBlocks();
 						System.arraycopy(data.getData(), pos, blocks, 0, blocks.length);
 						pos += blocks.length;
@@ -181,8 +181,6 @@ public class NetUtil {
 						System.arraycopy(data.getData(), pos, skylight.getData(), 0, skylight.getData().length);
 						pos += skylight.getData().length;
 					}
-				} else if(data.hasBiomes() && chunks[ind] != null) {
-					chunks[ind] = null;
 				}
 				
 				if(pass == 4) {
@@ -194,15 +192,13 @@ public class NetUtil {
 							System.arraycopy(data.getData(), pos, extended.getData(), 0, extended.getData().length);
 							pos += extended.getData().length;
 						}
-					} else if(data.hasBiomes() && chunks[ind] != null && chunks[ind].getExtendedBlocks() != null) {
-						chunks[ind].deleteExtendedBlocks();
 					}
 				}
 			}
 		}
 
 		byte biomeData[] = null;
-		if(data.hasBiomes()) {
+		if(data.isFullChunk()) {
 			biomeData = new byte[256];
 			System.arraycopy(data.getData(), pos, biomeData, 0, biomeData.length);
 			pos += biomeData.length;
@@ -216,7 +212,7 @@ public class NetUtil {
 		int z = 0;
 		int chunkMask = 0;
 		int extendedChunkMask = 0;
-		boolean biomes = chunks.getBiomes() != null;
+		boolean fullChunk = chunks.getBiomes() != null;
 		boolean sky = false;
 		// Determine chunk coordinates.
 		for(Chunk chunk : chunks.getChunks()) {
@@ -226,11 +222,11 @@ public class NetUtil {
 			}
 		}
 		
-		int length = biomes ? chunks.getBiomes().length : 0;
+		int length = fullChunk ? chunks.getBiomes().length : 0;
 		byte[] data = null;
 		int pos = 0;
 		// 0 = Determine length and masks.
-		// 1 = Add blocks.
+		// 1 = Create data array and add blocks.
 		// 2 = Add metadata.
 		// 3 = Add block light.
 		// 4 = Add sky light.
@@ -238,7 +234,7 @@ public class NetUtil {
 		for(int pass = 0; pass < 6; pass++) {
 			for(int ind = 0; ind < chunks.getChunks().length; ++ind) {
 				Chunk chunk = chunks.getChunks()[ind];
-				if(chunk != null && (!biomes || !chunk.isEmpty())) {
+				if(chunk != null && (!fullChunk || !chunk.isEmpty())) {
 					if(pass == 0) {
 						chunkMask |= 1 << ind;
 						if(chunk.getExtendedBlocks() != null) {
@@ -296,12 +292,12 @@ public class NetUtil {
 		}
 
 		// Add biomes.
-		if(biomes) {
+		if(fullChunk) {
 			System.arraycopy(chunks.getBiomes(), 0, data, pos, chunks.getBiomes().length);
 			pos += chunks.getBiomes().length;
 		}
 		
-		return new NetworkChunkData(x, z, chunkMask, extendedChunkMask, biomes, sky, data);
+		return new NetworkChunkData(x, z, chunkMask, extendedChunkMask, fullChunk, sky, data);
 	}
 	
 }

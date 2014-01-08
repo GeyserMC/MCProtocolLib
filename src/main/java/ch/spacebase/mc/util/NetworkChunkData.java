@@ -6,16 +6,16 @@ public class NetworkChunkData {
 	private int z;
 	private int mask;
 	private int extendedMask;
-	private boolean biomes;
+	private boolean fullChunk;
 	private boolean sky;
 	private byte data[];
 	
-	public NetworkChunkData(int x, int z, int mask, int extendedMask, boolean biomes, boolean sky, byte data[]) {
+	public NetworkChunkData(int x, int z, int mask, int extendedMask, boolean fullChunk, boolean sky, byte data[]) {
 		this.x = x;
 		this.z = z;
 		this.mask = mask;
 		this.extendedMask = extendedMask;
-		this.biomes = biomes;
+		this.fullChunk = fullChunk;
 		this.sky = sky;
 		this.data = data;
 	}
@@ -36,8 +36,8 @@ public class NetworkChunkData {
 		return this.extendedMask;
 	}
 	
-	public boolean hasBiomes() {
-		return this.biomes;
+	public boolean isFullChunk() {
+		return this.fullChunk;
 	}
 	
 	public boolean hasSkyLight() {

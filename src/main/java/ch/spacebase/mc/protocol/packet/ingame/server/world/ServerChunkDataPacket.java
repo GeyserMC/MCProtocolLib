@@ -50,8 +50,6 @@ public class ServerChunkDataPacket implements Packet {
 				} else {
 					skylight = true;
 				}
-			} else if(biomeData != null) {
-				throw new IllegalArgumentException("Chunks must contain all 16 chunks in a column if biomeData is not null.");
 			}
 		}
 		
@@ -67,12 +65,12 @@ public class ServerChunkDataPacket implements Packet {
 		return this.chunks;
 	}
 	
-	public boolean hasBiomeData() {
-		return this.biomeData != null;
-	}
-	
 	public byte[] getBiomeData() {
 		return this.biomeData;
+	}
+	
+	public boolean isFullChunk() {
+		return this.biomeData != null;
 	}
 
 	@Override
@@ -80,7 +78,7 @@ public class ServerChunkDataPacket implements Packet {
 		// Read column data.
 		int x = in.readInt();
 		int z = in.readInt();
-		boolean biomes = in.readBoolean();
+		boolean fullChunk = in.readBoolean();
 		int chunkMask = in.readShort();
 		int extendedChunkMask = in.readShort();
 		byte deflated[] = in.readBytes(in.readInt());
@@ -91,7 +89,7 @@ public class ServerChunkDataPacket implements Packet {
 		}
 
 		int len = 12288 * chunkCount;
-		if(biomes) {
+		if(fullChunk) {
 			len += 256;
 		}
 
@@ -108,7 +106,7 @@ public class ServerChunkDataPacket implements Packet {
 		}
 
 		// Parse data into chunks and biome data.
-		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(x, z, chunkMask, extendedChunkMask, biomes, NetUtil.hasSky, data));
+		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(x, z, chunkMask, extendedChunkMask, fullChunk, NetUtil.hasSky, data));
 		this.chunks = chunkData.getChunks();
 		this.biomeData = chunkData.getBiomes();
 	}
@@ -132,7 +130,7 @@ public class ServerChunkDataPacket implements Packet {
 		// Write data to the network.
 		out.writeInt(data.getX());
 		out.writeInt(data.getZ());
-		out.writeBoolean(data.hasBiomes());
+		out.writeBoolean(data.isFullChunk());
 		out.writeShort(data.getMask());
 		out.writeShort(data.getExtendedMask());
 		out.writeInt(len);

@@ -11,6 +11,10 @@ public class Chunk {
 	private NibbleArray skylight;
 	private NibbleArray extendedBlocks;
 	
+	public Chunk(int x, int z, boolean extended) {
+		this(x, z, new byte[4096], new NibbleArray(4096), new NibbleArray(4096), new NibbleArray(4096), extended ? new NibbleArray(4096) : null);
+	}
+	
 	public Chunk(int x, int z, byte blocks[], NibbleArray metadata, NibbleArray blocklight, NibbleArray skylight, NibbleArray extendedBlocks) {
 		this.x = x;
 		this.z = z;
