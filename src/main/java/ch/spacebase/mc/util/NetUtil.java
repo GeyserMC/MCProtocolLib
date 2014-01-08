@@ -216,7 +216,7 @@ public class NetUtil {
 		byte[] data = null;
 		int pos = 0;
 		// 0 = Determine length and masks.
-		// 1 = Create data array and add blocks.
+		// 1 = Add blocks.
 		// 2 = Add metadata.
 		// 3 = Add block light.
 		// 4 = Add sky light.
@@ -244,10 +244,6 @@ public class NetUtil {
 					}
 
 					if(pass == 1) {
-						if(data == null) {
-							data = new byte[length];
-						}
-						
 						byte[] blocks = chunk.getBlocks();
 						System.arraycopy(blocks, 0, data, pos, blocks.length);
 						pos += blocks.length;
@@ -278,6 +274,10 @@ public class NetUtil {
 						pos += extended.length;
 					}
 				}
+			}
+			
+			if(pass == 0) {
+				data = new byte[length];
 			}
 		}
 
