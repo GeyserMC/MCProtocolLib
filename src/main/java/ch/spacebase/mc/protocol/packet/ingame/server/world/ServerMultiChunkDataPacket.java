@@ -15,15 +15,21 @@ import ch.spacebase.packetlib.packet.Packet;
 
 public class ServerMultiChunkDataPacket implements Packet {
 
+	private int x[];
+	private int z[];
 	private Chunk chunks[][];
 	private byte biomeData[][];
 
 	public ServerMultiChunkDataPacket() {
 	}
 
-	public ServerMultiChunkDataPacket(Chunk chunks[][], byte biomeData[][]) {
+	public ServerMultiChunkDataPacket(int x[], int z[], Chunk chunks[][], byte biomeData[][]) {
 		if(biomeData == null) {
 			throw new IllegalArgumentException("BiomeData cannot be null.");
+		}
+		
+		if(x.length != chunks.length || z.length != chunks.length) {
+			throw new IllegalArgumentException("X, Z, and Chunk arrays must be equal in length.");
 		}
 
 		boolean noSkylight = false;
@@ -34,22 +40,11 @@ public class ServerMultiChunkDataPacket implements Packet {
 				throw new IllegalArgumentException("Chunk columns must contain 16 chunks each.");
 			}
 
-			int x = 0;
-			int z = 0;
-			boolean hasCoords = false;
 			for(int y = 0; y < column.length; y++) {
 				if(column[y] == null) {
 					throw new IllegalArgumentException("Chunk column must contain all 16 chunks.");
 				}
-
-				if(!hasCoords) {
-					x = column[y].getX();
-					z = column[y].getZ();
-					hasCoords = true;
-				} else if(column[y].getX() != x || column[y].getZ() != z) {
-					throw new IllegalArgumentException("Chunks in a column must all have the same coords.");
-				}
-
+				
 				if(column[y].getSkyLight() == null) {
 					noSkylight = true;
 				} else {
@@ -62,12 +57,22 @@ public class ServerMultiChunkDataPacket implements Packet {
 			throw new IllegalArgumentException("Either all chunks must have skylight values or none must have them.");
 		}
 
+		this.x = x;
+		this.z = z;
 		this.chunks = chunks;
 		this.biomeData = biomeData;
 	}
 
 	public int getColumns() {
 		return this.chunks.length;
+	}
+	
+	public int getX(int column) {
+		return this.x[column];
+	}
+	
+	public int getZ(int column) {
+		return this.z[column];
 	}
 
 	public Chunk[] getChunks(int column) {
@@ -97,6 +102,8 @@ public class ServerMultiChunkDataPacket implements Packet {
 			inflater.end();
 		}
 
+		this.x = new int[columns];
+		this.z = new int[columns];
 		this.chunks = new Chunk[columns][];
 		this.biomeData = new byte[columns][];
 		// Cycle through and read all columns.
@@ -124,7 +131,9 @@ public class ServerMultiChunkDataPacket implements Packet {
 			byte dat[] = new byte[length];
 			System.arraycopy(inflated, pos, dat, 0, length);
 			// Read data into chunks and biome data.
-			ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(x, z, chunkMask, extendedChunkMask, true, skylight, dat));
+			ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, extendedChunkMask, true, skylight, dat));
+			this.x[count] = x;
+			this.z[count] = z;
 			this.chunks[count] = chunkData.getChunks();
 			this.biomeData[count] = chunkData.getBiomes();
 			pos += length;
@@ -134,8 +143,6 @@ public class ServerMultiChunkDataPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		// Prepare chunk data arrays.
-		int x[] = new int[this.chunks.length];
-		int z[] = new int[this.chunks.length];
 		int chunkMask[] = new int[this.chunks.length];
 		int extendedChunkMask[] = new int[this.chunks.length];
 		// Determine values to be written by cycling through columns.
@@ -160,8 +167,6 @@ public class ServerMultiChunkDataPacket implements Packet {
 			System.arraycopy(netData.getData(), 0, bytes, pos, netData.getData().length);
 			pos += netData.getData().length;
 			// Set column-specific values.
-			x[count] = netData.getX();
-			z[count] = netData.getZ();
 			chunkMask[count] = netData.getMask();
 			extendedChunkMask[count] = netData.getExtendedMask();
 		}
@@ -184,8 +189,8 @@ public class ServerMultiChunkDataPacket implements Packet {
 		out.writeBoolean(skylight);
 		out.writeBytes(deflatedData, deflatedLength);
 		for(int count = 0; count < this.chunks.length; ++count) {
-			out.writeInt(x[count]);
-			out.writeInt(z[count]);
+			out.writeInt(this.x[count]);
+			out.writeInt(this.z[count]);
 			out.writeShort((short) (chunkMask[count] & 65535));
 			out.writeShort((short) (extendedChunkMask[count] & 65535));
 		}

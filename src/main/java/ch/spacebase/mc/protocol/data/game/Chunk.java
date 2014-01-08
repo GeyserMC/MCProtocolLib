@@ -2,35 +2,22 @@ package ch.spacebase.mc.protocol.data.game;
 
 public class Chunk {
 
-	private int x;
-	private int z;
-	
 	private byte blocks[];
 	private NibbleArray metadata;
 	private NibbleArray blocklight;
 	private NibbleArray skylight;
 	private NibbleArray extendedBlocks;
 	
-	public Chunk(int x, int z, boolean extended) {
-		this(x, z, new byte[4096], new NibbleArray(4096), new NibbleArray(4096), new NibbleArray(4096), extended ? new NibbleArray(4096) : null);
+	public Chunk(boolean skylight, boolean extended) {
+		this(new byte[4096], new NibbleArray(4096), new NibbleArray(4096), skylight ? new NibbleArray(4096) : null, extended ? new NibbleArray(4096) : null);
 	}
 	
-	public Chunk(int x, int z, byte blocks[], NibbleArray metadata, NibbleArray blocklight, NibbleArray skylight, NibbleArray extendedBlocks) {
-		this.x = x;
-		this.z = z;
+	public Chunk(byte blocks[], NibbleArray metadata, NibbleArray blocklight, NibbleArray skylight, NibbleArray extendedBlocks) {
 		this.blocks = blocks;
 		this.metadata = metadata;
 		this.blocklight = blocklight;
 		this.skylight = skylight;
 		this.extendedBlocks = extendedBlocks;
-	}
-	
-	public int getX() {
-		return this.x;
-	}
-	
-	public int getZ() {
-		return this.z;
 	}
 	
 	public byte[] getBlocks() {

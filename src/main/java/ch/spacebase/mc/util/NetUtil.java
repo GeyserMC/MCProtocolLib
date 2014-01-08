@@ -158,7 +158,7 @@ public class NetUtil {
 			for(int ind = 0; ind < 16; ind++) {
 				if((data.getMask() & 1 << ind) != 0) {
 					if(pass == 0) {
-						chunks[ind] = new Chunk(data.getX(), data.getZ(), (data.getExtendedMask() & 1 << ind) != 0);
+						chunks[ind] = new Chunk(data.hasSkyLight(), (data.getExtendedMask() & 1 << ind) != 0);
 						byte[] blocks = chunks[ind].getBlocks();
 						System.arraycopy(data.getData(), pos, blocks, 0, blocks.length);
 						pos += blocks.length;
@@ -208,20 +208,10 @@ public class NetUtil {
 	}
 	
 	public static NetworkChunkData chunksToData(ParsedChunkData chunks) {
-		int x = 0;
-		int z = 0;
 		int chunkMask = 0;
 		int extendedChunkMask = 0;
 		boolean fullChunk = chunks.getBiomes() != null;
 		boolean sky = false;
-		// Determine chunk coordinates.
-		for(Chunk chunk : chunks.getChunks()) {
-			if(chunk != null) {
-				x = chunk.getX();
-				z = chunk.getZ();
-			}
-		}
-		
 		int length = fullChunk ? chunks.getBiomes().length : 0;
 		byte[] data = null;
 		int pos = 0;
@@ -297,7 +287,7 @@ public class NetUtil {
 			pos += chunks.getBiomes().length;
 		}
 		
-		return new NetworkChunkData(x, z, chunkMask, extendedChunkMask, fullChunk, sky, data);
+		return new NetworkChunkData(chunkMask, extendedChunkMask, fullChunk, sky, data);
 	}
 	
 }
