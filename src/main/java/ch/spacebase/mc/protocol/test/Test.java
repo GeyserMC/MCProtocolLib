@@ -49,7 +49,7 @@ public class Test {
 			server.setGlobalFlag(ProtocolConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
 				@Override
 				public ServerStatusInfo buildInfo() {
-					return new ServerStatusInfo(new VersionInfo("1.7.2", 4), new PlayerInfo(100, 0, new GameProfile[0]), new Message("Hello world!"), null);
+					return new ServerStatusInfo(new VersionInfo(ProtocolConstants.GAME_VERSION, ProtocolConstants.PROTOCOL_VERSION), new PlayerInfo(100, 0, new GameProfile[0]), new Message("Hello world!"), null);
 				}
 			});
 			
