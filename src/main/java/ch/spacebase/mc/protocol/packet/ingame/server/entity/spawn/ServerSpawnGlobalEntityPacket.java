@@ -49,7 +49,7 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
-		this.type = Type.values()[in.readByte()];
+		this.type = Type.values()[in.readByte() - 1];
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
@@ -58,7 +58,7 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeByte(this.type.ordinal());
+		out.writeByte(this.type.ordinal() + 1);
 		out.writeInt(this.x);
 		out.writeInt(this.y);
 		out.writeInt(this.z);
