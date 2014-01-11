@@ -99,6 +99,14 @@ public class UserAuthentication {
 		}
 	}
 	
+	public void setAccessToken(String accessToken) {
+		if(this.isLoggedIn() && this.canPlayOnline()) {
+			throw new IllegalStateException("Cannot change accessToken whilst logged in & online");
+		} else {
+			this.accessToken = accessToken;
+		}
+	}
+	
 	public void loadFromStorage(Map<String, String> credentials) {
 		this.logOut();
 		this.setUsername(credentials.get(STORAGE_KEY_USER_NAME));
