@@ -2,7 +2,7 @@ package ch.spacebase.mc.protocol.data.status;
 
 import java.awt.image.BufferedImage;
 
-import ch.spacebase.mc.util.message.Message;
+import ch.spacebase.mc.protocol.data.message.Message;
 
 public class ServerStatusInfo {
 

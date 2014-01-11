@@ -70,7 +70,7 @@ public class ClientListener extends SessionAdapter {
 				protocol.setMode(ProtocolMode.GAME, true, event.getSession());
 			} else if(event.getPacket() instanceof LoginDisconnectPacket) {
 				LoginDisconnectPacket packet = event.getPacket();
-				event.getSession().disconnect(packet.getReason().toString());
+				event.getSession().disconnect(packet.getReason().getFullText());
 			}
 		}
 		
@@ -98,7 +98,7 @@ public class ClientListener extends SessionAdapter {
 			if(event.getPacket() instanceof ServerKeepAlivePacket) {
 				event.getSession().send(new ClientKeepAlivePacket(event.<ServerKeepAlivePacket>getPacket().getPingId()));
 			} else if(event.getPacket() instanceof ServerDisconnectPacket) {
-				event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().toString());
+				event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().getFullText());
 			}
 		}
 	}

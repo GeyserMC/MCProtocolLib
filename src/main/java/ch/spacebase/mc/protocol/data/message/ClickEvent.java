@@ -1,6 +1,6 @@
-package ch.spacebase.mc.util.message;
+package ch.spacebase.mc.protocol.data.message;
 
-public class ClickEvent {
+public class ClickEvent implements Cloneable {
 
 	private ClickAction action;
 	private String value;
@@ -16,6 +16,11 @@ public class ClickEvent {
 	
 	public String getValue() {
 		return this.value;
+	}
+	
+	@Override
+	public ClickEvent clone() {
+		return new ClickEvent(this.action, this.value);
 	}
 	
 }

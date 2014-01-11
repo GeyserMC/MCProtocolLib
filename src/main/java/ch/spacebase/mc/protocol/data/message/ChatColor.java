@@ -1,4 +1,4 @@
-package ch.spacebase.mc.util.message;
+package ch.spacebase.mc.protocol.data.message;
 
 public enum ChatColor {
 
@@ -30,9 +30,9 @@ public enum ChatColor {
 		return this.color;
 	}
 
-	public static ChatColor byValue(String val) {
+	public static ChatColor byName(String name) {
 		for(ChatColor color : values()) {
-			if(color.toString().equals(val)) {
+			if(color.toString().equals(name)) {
 				return color;
 			}
 		}

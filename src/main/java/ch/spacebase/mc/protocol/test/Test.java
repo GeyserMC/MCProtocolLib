@@ -8,6 +8,11 @@ import ch.spacebase.mc.protocol.MinecraftProtocol;
 import ch.spacebase.mc.protocol.ProtocolConstants;
 import ch.spacebase.mc.protocol.ProtocolMode;
 import ch.spacebase.mc.protocol.ServerLoginHandler;
+import ch.spacebase.mc.protocol.data.message.ChatColor;
+import ch.spacebase.mc.protocol.data.message.ChatFormat;
+import ch.spacebase.mc.protocol.data.message.Message;
+import ch.spacebase.mc.protocol.data.message.MessageStyle;
+import ch.spacebase.mc.protocol.data.message.TextMessage;
 import ch.spacebase.mc.protocol.data.status.PlayerInfo;
 import ch.spacebase.mc.protocol.data.status.ServerStatusInfo;
 import ch.spacebase.mc.protocol.data.status.VersionInfo;
@@ -20,9 +25,6 @@ import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket.Difficulty;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket.GameMode;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerJoinGamePacket.WorldType;
-import ch.spacebase.mc.util.message.ChatColor;
-import ch.spacebase.mc.util.message.ChatFormat;
-import ch.spacebase.mc.util.message.Message;
 import ch.spacebase.packetlib.Client;
 import ch.spacebase.packetlib.Server;
 import ch.spacebase.packetlib.Session;
@@ -49,7 +51,7 @@ public class Test {
 			server.setGlobalFlag(ProtocolConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
 				@Override
 				public ServerStatusInfo buildInfo() {
-					return new ServerStatusInfo(new VersionInfo(ProtocolConstants.GAME_VERSION, ProtocolConstants.PROTOCOL_VERSION), new PlayerInfo(100, 0, new GameProfile[0]), new Message("Hello world!"), null);
+					return new ServerStatusInfo(new VersionInfo(ProtocolConstants.GAME_VERSION, ProtocolConstants.PROTOCOL_VERSION), new PlayerInfo(100, 0, new GameProfile[0]), new TextMessage("Hello world!"), null);
 				}
 			});
 			
@@ -70,14 +72,11 @@ public class Test {
 								ClientChatPacket packet = event.getPacket();
 								GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
 								System.out.println(profile.getName() + ": " + packet.getMessage());
-								Message msg = new Message("Hello, ");
-								msg.setColor(ChatColor.GREEN);
-								Message name = new Message(profile.getName());
-								name.setColor(ChatColor.AQUA);
-								name.setFormat(ChatFormat.UNDERLINED, true);
-								Message end = new Message("!");
-								msg.addSubMessage(name);
-								msg.addSubMessage(end);
+								Message msg = new TextMessage("Hello, ").setStyle(new MessageStyle().setColor(ChatColor.GREEN));
+								Message name = new TextMessage(profile.getName()).setStyle(new MessageStyle().setColor(ChatColor.AQUA).addFormat(ChatFormat.UNDERLINED));
+								Message end = new TextMessage("!");
+								msg.addExtra(name);
+								msg.addExtra(end);
 								event.getSession().send(new ServerChatPacket(msg));
 							}
 						}
@@ -101,7 +100,7 @@ public class Test {
 				System.out.println("Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
 				System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
 				System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
-				System.out.println("Description: " + info.getDescription().getRawText());
+				System.out.println("Description: " + info.getDescription().getFullText());
 				System.out.println("Icon: " + info.getIcon());
 			}
 		});
@@ -143,14 +142,14 @@ public class Test {
 				if(event.getPacket() instanceof ServerJoinGamePacket) {
 					event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
 				} else if(event.getPacket() instanceof ServerChatPacket) {
-					System.out.println(event.<ServerChatPacket>getPacket().getRawMessage());
+					System.out.println(event.<ServerChatPacket>getPacket().getMessage().getFullText());
 					event.getSession().disconnect("Finished");
 				}
 			}
 			
 			@Override
 			public void disconnected(DisconnectedEvent event) {
-				System.out.println("Disconnected: " + new Message(event.getReason(), true).getRawText());
+				System.out.println("Disconnected: " + Message.fromJsonString(event.getReason()).getFullText());
 			}
 		});
 		

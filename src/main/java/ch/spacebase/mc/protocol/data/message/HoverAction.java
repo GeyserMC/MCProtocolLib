@@ -1,4 +1,4 @@
-package ch.spacebase.mc.util.message;
+package ch.spacebase.mc.protocol.data.message;
 
 public enum HoverAction {
 
@@ -17,9 +17,9 @@ public enum HoverAction {
 		return this.type;
 	}
 	
-	public static HoverAction byValue(String val) {
+	public static HoverAction byName(String name) {
 		for(HoverAction action : values()) {
-			if(action.toString().equals(val)) {
+			if(action.toString().equals(name)) {
 				return action;
 			}
 		}

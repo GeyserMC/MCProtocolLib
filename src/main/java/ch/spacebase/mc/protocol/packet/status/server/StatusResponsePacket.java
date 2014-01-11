@@ -13,11 +13,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import ch.spacebase.mc.auth.GameProfile;
+import ch.spacebase.mc.protocol.data.message.Message;
 import ch.spacebase.mc.protocol.data.status.PlayerInfo;
 import ch.spacebase.mc.protocol.data.status.ServerStatusInfo;
 import ch.spacebase.mc.protocol.data.status.VersionInfo;
 import ch.spacebase.mc.util.Base64;
-import ch.spacebase.mc.util.message.Message;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -58,7 +58,7 @@ public class StatusResponsePacket implements Packet {
 		
 		PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
 		JsonElement desc = obj.get("description");
-		Message description = new Message(desc.isJsonObject() ? desc.getAsJsonObject().toString() : desc.getAsString(), desc.isJsonObject() ? true : false);
+		Message description = Message.fromJson(desc);
 		BufferedImage icon = null;
 		if(obj.has("favicon")) {
 			icon = this.stringToIcon(obj.get("favicon").getAsString());
@@ -90,7 +90,7 @@ public class StatusResponsePacket implements Packet {
 		
 		obj.add("version", ver);
 		obj.add("players", plrs);
-		obj.add("description", this.info.getDescription().getJson());
+		obj.add("description", this.info.getDescription().toJson());
 		if(this.info.getIcon() != null) {
 			obj.addProperty("favicon", this.iconToString(this.info.getIcon()));
 		}

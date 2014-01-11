@@ -1,4 +1,4 @@
-package ch.spacebase.mc.util.message;
+package ch.spacebase.mc.protocol.data.message;
 
 public enum ChatFormat {
 
@@ -17,6 +17,16 @@ public enum ChatFormat {
 	@Override
 	public String toString() {
 		return this.format;
+	}
+	
+	public static ChatFormat byName(String name) {
+		for(ChatFormat format : values()) {
+			if(format.toString().equals(name)) {
+				return format;
+			}
+		}
+		
+		return null;
 	}
 
 }

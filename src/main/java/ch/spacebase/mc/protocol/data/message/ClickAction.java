@@ -1,4 +1,4 @@
-package ch.spacebase.mc.util.message;
+package ch.spacebase.mc.protocol.data.message;
 
 public enum ClickAction {
 
@@ -18,9 +18,9 @@ public enum ClickAction {
 		return this.type;
 	}
 	
-	public static ClickAction byValue(String val) {
+	public static ClickAction byName(String name) {
 		for(ClickAction action : values()) {
-			if(action.toString().equals(val)) {
+			if(action.toString().equals(name)) {
 				return action;
 			}
 		}
