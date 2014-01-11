@@ -144,12 +144,17 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.clientListener = new ClientListener("");
 	}
 	
-	public MinecraftProtocol(String username, String password) throws AuthenticationException {
+	public MinecraftProtocol(String username, String using, boolean token) throws AuthenticationException {
 		this(ProtocolMode.LOGIN);
 		String clientToken = UUID.randomUUID().toString();
 		UserAuthentication auth = new UserAuthentication(clientToken);
 		auth.setUsername(username);
-		auth.setPassword(password);
+		if(token) {
+			auth.setAccessToken(using);
+		} else {
+			auth.setPassword(using);
+		}
+		
 		auth.login();
 		this.profile = auth.getSelectedProfile();
 		this.clientListener = new ClientListener(auth.getAccessToken());
