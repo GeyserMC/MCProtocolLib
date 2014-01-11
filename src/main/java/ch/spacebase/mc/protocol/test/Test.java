@@ -149,7 +149,7 @@ public class Test {
 			
 			@Override
 			public void disconnected(DisconnectedEvent event) {
-				System.out.println("Disconnected: " + Message.fromJsonString(event.getReason()).getFullText());
+				System.out.println("Disconnected: " + Message.fromString(event.getReason()).getFullText());
 			}
 		});
 		

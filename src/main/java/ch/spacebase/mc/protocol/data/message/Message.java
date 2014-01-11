@@ -116,11 +116,11 @@ public abstract class Message implements Cloneable {
 		return json;
 	}
 	
-	public static Message fromJsonString(String json) {
+	public static Message fromString(String str) {
 		try {
-			return fromJson(new Gson().fromJson(json, JsonObject.class));
+			return fromJson(new Gson().fromJson(str, JsonObject.class));
 		} catch(Exception e) {
-			return new TextMessage(json);
+			return new TextMessage(str);
 		}
 	}
 	

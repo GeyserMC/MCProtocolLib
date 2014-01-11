@@ -29,7 +29,7 @@ public class LoginDisconnectPacket implements Packet {
 	}
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.message = Message.fromJsonString(in.readString());
+		this.message = Message.fromString(in.readString());
 	}
 
 	@Override
