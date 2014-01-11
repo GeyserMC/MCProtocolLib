@@ -108,7 +108,7 @@ public class UserAuthentication {
 	}
 	
 	public void loadFromStorage(Map<String, String> credentials) {
-		this.logOut();
+		this.logout();
 		this.setUsername(credentials.get(STORAGE_KEY_USER_NAME));
 		if(credentials.containsKey(STORAGE_KEY_USER_ID)) {
 			this.userId = credentials.get(STORAGE_KEY_USER_ID);
@@ -150,13 +150,13 @@ public class UserAuthentication {
 			throw new InvalidCredentialsException("Invalid username");
 		} else {
 			if(this.accessToken != null && !this.accessToken.equals("")) {
-				this.logInWithToken();
+				this.loginWithToken();
 			} else {
 				if(this.password == null || this.password.equals("")) {
 					throw new InvalidCredentialsException("Invalid password");
 				}
 
-				this.logInWithPassword();
+				this.loginWithPassword();
 			}
 		}
 	}
