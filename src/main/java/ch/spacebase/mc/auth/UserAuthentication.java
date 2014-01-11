@@ -145,7 +145,7 @@ public class UserAuthentication {
 		return result;
 	}
 
-	public void logIn() throws AuthenticationException {
+	public void login() throws AuthenticationException {
 		if(this.username == null || this.username.equals("")) {
 			throw new InvalidCredentialsException("Invalid username");
 		} else {
@@ -161,7 +161,7 @@ public class UserAuthentication {
 		}
 	}
 
-	protected void logInWithPassword() throws AuthenticationException {
+	private void loginWithPassword() throws AuthenticationException {
 		if(this.username == null || this.username.equals("")) {
 			throw new InvalidCredentialsException("Invalid username");
 		} else if(this.password == null || this.password.equals("")) {
@@ -194,7 +194,7 @@ public class UserAuthentication {
 		}
 	}
 
-	protected void logInWithToken() throws AuthenticationException {
+	private void loginWithToken() throws AuthenticationException {
 		if(this.userId == null || this.userId.equals("")) {
 			if(this.username == null || this.username.equals("")) {
 				throw new InvalidCredentialsException("Invalid uuid & username");
@@ -234,7 +234,7 @@ public class UserAuthentication {
 		}
 	}
 
-	public void logOut() {
+	public void logout() {
 		this.password = null;
 		this.userId = null;
 		this.selectedProfile = null;
