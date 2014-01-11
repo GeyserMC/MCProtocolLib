@@ -5,23 +5,18 @@ import java.util.Arrays;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 public class TranslationMessage extends Message {
 
 	private String translationKey;
-	private Object translationParams[];
+	private Message translationParams[];
 	
-	public TranslationMessage(String translationKey, Object... translationParams) {
+	public TranslationMessage(String translationKey, Message... translationParams) {
 		this.translationKey = translationKey;
 		this.translationParams = translationParams;
 		this.translationParams = this.getTranslationParams();
-		for(Object param : this.translationParams) {
-			if(param instanceof Message) {
-				((Message) param).getStyle().setParent(this.getStyle());
-			} else if(!(param instanceof String)) {
-				throw new IllegalArgumentException("Translation params can only be messages or strings.");
-			}
+		for(Message param : this.translationParams) {
+			param.getStyle().setParent(this.getStyle());
 		}
 	}
 	
@@ -29,12 +24,10 @@ public class TranslationMessage extends Message {
 		return this.translationKey;
 	}
 	
-	public Object[] getTranslationParams() {
-		Object copy[] = Arrays.copyOf(this.translationParams, this.translationParams.length);
+	public Message[] getTranslationParams() {
+		Message copy[] = Arrays.copyOf(this.translationParams, this.translationParams.length);
 		for(int index = 0; index < copy.length; index++) {
-			if(copy[index] instanceof Message) {
-				copy[index] = ((Message) copy[index]).clone();
-			}
+			copy[index] = copy[index].clone();
 		}
 		
 		return copy;
@@ -43,10 +36,8 @@ public class TranslationMessage extends Message {
 	@Override
 	public Message setStyle(MessageStyle style) {
 		super.setStyle(style);
-		for(Object param : this.translationParams) {
-			if(param instanceof Message) {
-				((Message) param).getStyle().setParent(this.getStyle());
-			}
+		for(Message param : this.translationParams) {
+			param.getStyle().setParent(this.getStyle());
 		}
 		
 		return this;
@@ -69,13 +60,8 @@ public class TranslationMessage extends Message {
 			JsonObject json = e.getAsJsonObject();
 			json.addProperty("translate", this.translationKey);
 			JsonArray params = new JsonArray();
-			for(int index = 0; index < this.translationParams.length; index++) {
-				Object param = this.translationParams[index];
-				if(param instanceof Message) {
-					params.add(((Message) param).toJson());
-				} else if(param instanceof String) {
-					params.add(new JsonPrimitive((String) param));
-				}
+			for(Message param : this.translationParams) {
+				params.add(param.toJson());
 			}
 			
 			json.add("with", params);

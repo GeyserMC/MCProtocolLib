@@ -133,10 +133,10 @@ public abstract class Message implements Cloneable {
 			if(json.has("text")) {
 				msg = new TextMessage(json.get("text").getAsString());
 			} else if(json.has("translate")) {
-				Object with[] = new Object[0];
+				Message with[] = new Message[0];
 				if(json.has("with")) {
 					JsonArray withJson = json.get("with").getAsJsonArray();
-					with = new Object[withJson.size()];
+					with = new Message[withJson.size()];
 					for(int index = 0; index < withJson.size(); index++) {
 						JsonElement el = withJson.get(index);
 						if(el.isJsonPrimitive()) {
