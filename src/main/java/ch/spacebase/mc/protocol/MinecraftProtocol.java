@@ -150,7 +150,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		UserAuthentication auth = new UserAuthentication(clientToken);
 		auth.setUsername(username);
 		auth.setPassword(password);
-		auth.logIn();
+		auth.login();
 		this.profile = auth.getSelectedProfile();
 		this.clientListener = new ClientListener(auth.getAccessToken());
 	}
