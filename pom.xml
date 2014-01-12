@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.spacebase</groupId>
 	<artifactId>mcprotocollib</artifactId>
-	<version>1.7.4-SNAPSHOT</version>
+	<version>14w02b-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>MCProtocolLib</name>
