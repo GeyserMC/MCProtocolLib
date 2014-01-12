@@ -25,6 +25,11 @@ public class ServerOpenWindowPacket implements Packet {
 	
 	public ServerOpenWindowPacket(int windowId, Type type, String name, int slots, boolean useName, int ownerEntityId) {
 		this.windowId = windowId;
+		this.type = type;
+		this.name = name;
+		this.slots = slots;
+		this.useName = useName;
+		this.ownerEntityId = ownerEntityId;
 	}
 	
 	public int getWindowId() {
