@@ -2,24 +2,19 @@ package ch.spacebase.mc.protocol.data.message;
 
 public enum ChatFormat {
 
-	BOLD("bold"),
-	UNDERLINED("underlined"),
-	STRIKETHROUGH("strikethrough"),
-	ITALIC("italic"),
-	OBFUSCATED("obfuscated");
-	
-	private String format;
-
-	private ChatFormat(String format) {
-		this.format = format;
-	}
+	BOLD,
+	UNDERLINED,
+	STRIKETHROUGH,
+	ITALIC,
+	OBFUSCATED;
 
 	@Override
 	public String toString() {
-		return this.format;
+		return this.name().toLowerCase();
 	}
 	
 	public static ChatFormat byName(String name) {
+		name = name.toLowerCase();
 		for(ChatFormat format : values()) {
 			if(format.toString().equals(name)) {
 				return format;

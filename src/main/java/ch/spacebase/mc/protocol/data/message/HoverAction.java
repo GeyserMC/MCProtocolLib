@@ -2,22 +2,18 @@ package ch.spacebase.mc.protocol.data.message;
 
 public enum HoverAction {
 
-	SHOW_TEXT("show_text"),
-	SHOW_ITEM("show_item"),
-	SHOW_ACHIEVEMENT("show_achievement");
-	
-	private String type;
-
-	private HoverAction(String type) {
-		this.type = type;
-	}
+	SHOW_TEXT,
+	SHOW_ITEM,
+	SHOW_ACHIEVEMENT,
+	SHOW_ENTITY;
 
 	@Override
 	public String toString() {
-		return this.type;
+		return this.name().toLowerCase();
 	}
 	
 	public static HoverAction byName(String name) {
+		name = name.toLowerCase();
 		for(HoverAction action : values()) {
 			if(action.toString().equals(name)) {
 				return action;
