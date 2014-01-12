@@ -12,19 +12,17 @@ public class ClientSettingsPacket implements Packet {
 	private int renderDistance;
 	private ChatVisibility chatVisibility;
 	private boolean chatColors;
-	private Difficulty difficulty;
 	private boolean capes;
 	
 	@SuppressWarnings("unused")
 	private ClientSettingsPacket() {
 	}
 	
-	public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, Difficulty difficulty, boolean capes) {
+	public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, boolean capes) {
 		this.locale = locale;
 		this.renderDistance = renderDistance;
 		this.chatVisibility = chatVisibility;
 		this.chatColors = chatColors;
-		this.difficulty = difficulty;
 		this.capes = capes;
 	}
 	
@@ -44,10 +42,6 @@ public class ClientSettingsPacket implements Packet {
 		return this.chatColors;
 	}
 	
-	public Difficulty getDifficulty() {
-		return this.difficulty;
-	}
-	
 	public boolean getShowCapes() {
 		return this.capes;
 	}
@@ -58,7 +52,6 @@ public class ClientSettingsPacket implements Packet {
 		this.renderDistance = in.readByte();
 		this.chatVisibility = ChatVisibility.values()[in.readByte()];
 		this.chatColors = in.readBoolean();
-		this.difficulty = Difficulty.values()[in.readByte()];
 		this.capes = in.readBoolean();
 	}
 
@@ -68,7 +61,6 @@ public class ClientSettingsPacket implements Packet {
 		out.writeByte(this.renderDistance);
 		out.writeByte(this.chatVisibility.ordinal());
 		out.writeBoolean(this.chatColors);
-		out.writeByte(this.difficulty.ordinal());
 		out.writeBoolean(this.capes);
 	}
 	

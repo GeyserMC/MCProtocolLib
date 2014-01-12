@@ -1,6 +1,9 @@
 package ch.spacebase.mc.protocol.packet.ingame.server.entity.player;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
@@ -8,24 +11,28 @@ import ch.spacebase.packetlib.packet.Packet;
 
 public class ServerPlayerPositionRotationPacket implements Packet {
 	
-	protected double x;
-	protected double y;
-	protected double z;
-	protected float yaw;
-	protected float pitch;
-	protected boolean onGround;
+	private double x;
+	private double y;
+	private double z;
+	private float yaw;
+	private float pitch;
+	private List<Element> relative;
 	
 	@SuppressWarnings("unused")
 	private ServerPlayerPositionRotationPacket() {
 	}
 	
-	public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, boolean onGround) {
+	public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch) {
+		this(x, y, z, yaw, pitch, new Element[0]);
+	}
+	
+	public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, Element... relative) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.yaw = yaw;
 		this.pitch = pitch;
-		this.onGround = onGround;
+		this.relative = Arrays.asList(relative);
 	}
 	
 	public double getX() {
@@ -48,8 +55,8 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 		return this.pitch;
 	}
 	
-	public boolean isOnGround() {
-		return this.onGround;
+	public List<Element> getRelativeElements() {
+		return this.relative;
 	}
 
 	@Override
@@ -59,7 +66,14 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 		this.z = in.readDouble();
 		this.yaw = in.readFloat();
 		this.pitch = in.readFloat();
-		this.onGround = in.readBoolean();
+		this.relative = new ArrayList<Element>();
+		int flags = in.readUnsignedByte();
+		for(Element element : Element.values()) {
+			int bit = 1 << element.ordinal();
+			if((flags & bit) == bit) {
+				this.relative.add(element);
+			}
+		}
 	}
 
 	@Override
@@ -69,12 +83,25 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 		out.writeDouble(this.z);
 		out.writeFloat(this.yaw);
 		out.writeFloat(this.pitch);
-		out.writeBoolean(this.onGround);
+		int flags = 0;
+		for(Element element : this.relative) {
+			flags |= 1 << element.ordinal();
+		}
+		
+		out.writeByte(flags);
 	}
 	
 	@Override
 	public boolean isPriority() {
 		return false;
+	}
+	
+	public static enum Element {
+		X,
+		Y,
+		Z,
+		PITCH,
+		YAW;
 	}
 
 }
