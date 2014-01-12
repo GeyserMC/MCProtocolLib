@@ -8,28 +8,44 @@ import ch.spacebase.packetlib.packet.Packet;
 
 public class ServerSetExperiencePacket implements Packet {
 	
-	private int slot;
+	private float experience;
+	private int level;
+	private int totalExperience;
 	
 	@SuppressWarnings("unused")
 	private ServerSetExperiencePacket() {
 	}
 	
-	public ServerSetExperiencePacket(int slot) {
-		this.slot = slot;
+	public ServerSetExperiencePacket(float experience, int level, int totalExperience) {
+		this.experience = experience;
+		this.level = level;
+		this.totalExperience = totalExperience;
 	}
 	
-	public int getSlot() {
-		return this.slot;
+	public float getSlot() {
+		return this.experience;
+	}
+	
+	public int getLevel() {
+		return this.level;
+	}
+	
+	public int getTotalExperience() {
+		return this.totalExperience;
 	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.slot = in.readByte();
+		this.experience = in.readFloat();
+		this.level = in.readShort();
+		this.totalExperience = in.readShort();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeByte(this.slot);
+		out.writeFloat(this.experience);
+		out.writeShort(this.level);
+		out.writeShort(this.totalExperience);
 	}
 	
 	@Override
