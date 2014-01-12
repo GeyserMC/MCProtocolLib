@@ -2,22 +2,23 @@ package ch.spacebase.mc.protocol.data.message;
 
 public enum ChatColor {
 
-	WHITE,
-	YELLOW,
-	LIGHT_PURPLE,
-	RED,
-	AQUA,
-	GREEN,
-	BLUE,
-	DARK_GRAY,
-	GRAY,
-	GOLD,
-	DARK_PURPLE,
-	DARK_RED,
-	DARK_AQUA,
-	DARK_GREEN,
+	BLACK,
 	DARK_BLUE,
-	BLACK;
+	DARK_GREEN,
+	DARK_AQUA,
+	DARK_RED,
+	DARK_PURPLE,
+	GOLD,
+	GRAY,
+	DARK_GRAY,
+	BLUE,
+	GREEN,
+	AQUA,
+	RED,
+	LIGHT_PURPLE,
+	YELLOW,
+	WHITE,
+	RESET;
 
 	@Override
 	public String toString() {
