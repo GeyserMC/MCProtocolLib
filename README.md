@@ -20,7 +20,7 @@ See ch.spacebase.mc.protocol.test.Test.
 --------
 
 MCProtocolLib uses Maven to manage dependencies. Simply run 'mvn clean install' in the source's directory.
-You can also download a build <b>[here](http://build.spacebase.ch/job/MCProtocolLib14w02b/)</b>.
+You can also download a build <b>[here](http://build.spacebase.ch/job/MCProtocolLib14w03b/)</b>.
 
 
 <b>License</b>

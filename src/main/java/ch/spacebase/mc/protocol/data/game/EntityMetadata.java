@@ -31,7 +31,7 @@ public class EntityMetadata {
 		FLOAT,
 		STRING,
 		ITEM,
-		COORDINATES;
+		POSITION;
 	}
 	
 }

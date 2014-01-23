@@ -12,18 +12,18 @@ public class ClientSettingsPacket implements Packet {
 	private int renderDistance;
 	private ChatVisibility chatVisibility;
 	private boolean chatColors;
-	private boolean capes;
+	private int skinFlags;
 	
 	@SuppressWarnings("unused")
 	private ClientSettingsPacket() {
 	}
 	
-	public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, boolean capes) {
+	public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, int skinFlags) {
 		this.locale = locale;
 		this.renderDistance = renderDistance;
 		this.chatVisibility = chatVisibility;
 		this.chatColors = chatColors;
-		this.capes = capes;
+		this.skinFlags = skinFlags;
 	}
 	
 	public String getLocale() {
@@ -42,8 +42,8 @@ public class ClientSettingsPacket implements Packet {
 		return this.chatColors;
 	}
 	
-	public boolean getShowCapes() {
-		return this.capes;
+	public int getSkinFlags() {
+		return this.skinFlags;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ClientSettingsPacket implements Packet {
 		this.renderDistance = in.readByte();
 		this.chatVisibility = ChatVisibility.values()[in.readByte()];
 		this.chatColors = in.readBoolean();
-		this.capes = in.readBoolean();
+		this.skinFlags = in.readUnsignedByte();
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class ClientSettingsPacket implements Packet {
 		out.writeByte(this.renderDistance);
 		out.writeByte(this.chatVisibility.ordinal());
 		out.writeBoolean(this.chatColors);
-		out.writeBoolean(this.capes);
+		out.writeByte(this.skinFlags);
 	}
 	
 	@Override

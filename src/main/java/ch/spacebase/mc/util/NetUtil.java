@@ -11,7 +11,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import ch.spacebase.mc.protocol.data.game.Chunk;
-import ch.spacebase.mc.protocol.data.game.Coordinates;
+import ch.spacebase.mc.protocol.data.game.Position;
 import ch.spacebase.mc.protocol.data.game.EntityMetadata;
 import ch.spacebase.mc.protocol.data.game.ItemStack;
 import ch.spacebase.mc.protocol.data.game.NibbleArray;
@@ -47,6 +47,16 @@ public class NetUtil {
 			out.writeShort((short) bytes.length);
 			out.writeBytes(bytes);
 		}
+	}
+	
+	public static Position readPosition(NetInput in) throws IOException {
+		return new Position(in.readInt(), in.readUnsignedByte(), in.readInt());
+	}
+	
+	public static void writePosition(NetOutput out, Position pos) throws IOException {
+		out.writeInt(pos.getX());
+		out.writeByte(pos.getY());
+		out.writeInt(pos.getZ());
 	}
 	
 	public static ItemStack readItem(NetInput in) throws IOException {
@@ -96,8 +106,8 @@ public class NetUtil {
 				case ITEM:
 					value = readItem(in);
 					break;
-				case COORDINATES:
-					value = new Coordinates(in.readInt(), in.readInt(), in.readInt());
+				case POSITION:
+					value = new Position(in.readInt(), in.readInt(), in.readInt());
 					break;
 				default:
 					throw new IOException("Unknown metadata type id: " + typeId);
@@ -132,11 +142,11 @@ public class NetUtil {
 				case ITEM:
 					writeItem(out, (ItemStack) meta.getValue());
 					break;
-				case COORDINATES:
-					Coordinates coords = (Coordinates) meta.getValue();
-					out.writeInt(coords.getX());
-					out.writeInt(coords.getY());
-					out.writeInt(coords.getZ());
+				case POSITION:
+					Position pos = (Position) meta.getValue();
+					out.writeInt(pos.getX());
+					out.writeInt(pos.getY());
+					out.writeInt(pos.getZ());
 					break;
 				default:
 					throw new IOException("Unmapped metadata type: " + meta.getType());

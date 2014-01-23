@@ -7,13 +7,13 @@ public class ClientPlayerPositionRotationPacket extends ClientPlayerMovementPack
 		this.rot = true;
 	}
 	
-	public ClientPlayerPositionRotationPacket(boolean onGround, double x, double stance, double y, double z, float yaw, float pitch) {
+	public ClientPlayerPositionRotationPacket(boolean onGround, double x, double feetY, double headY, double z, float yaw, float pitch) {
 		super(onGround);
 		this.pos = true;
 		this.rot = true;
 		this.x = x;
-		this.stance = stance;
-		this.y = y;
+		this.feetY = feetY;
+		this.headY = headY;
 		this.z = z;
 		this.yaw = yaw;
 		this.pitch = pitch;

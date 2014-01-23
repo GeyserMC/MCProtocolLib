@@ -9,8 +9,8 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ClientPlayerMovementPacket implements Packet {
 	
 	protected double x;
-	protected double stance;
-	protected double y;
+	protected double feetY;
+	protected double headY;
 	protected double z;
 	protected float yaw;
 	protected float pitch;
@@ -30,12 +30,12 @@ public class ClientPlayerMovementPacket implements Packet {
 		return this.x;
 	}
 	
-	public double getStance() {
-		return this.stance;
+	public double getFeetY() {
+		return this.feetY;
 	}
 	
-	public double getY() {
-		return this.y;
+	public double getHeadY() {
+		return this.headY;
 	}
 	
 	public double getZ() {
@@ -58,8 +58,8 @@ public class ClientPlayerMovementPacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		if(this.pos) {
 			this.x = in.readDouble();
-			this.stance = in.readDouble();
-			this.y = in.readDouble();
+			this.feetY = in.readDouble();
+			this.headY = in.readDouble();
 			this.z = in.readDouble();
 		}
 		
@@ -75,8 +75,8 @@ public class ClientPlayerMovementPacket implements Packet {
 	public void write(NetOutput out) throws IOException {
 		if(this.pos) {
 			out.writeDouble(this.x);
-			out.writeDouble(this.stance);
-			out.writeDouble(this.y);
+			out.writeDouble(this.feetY);
+			out.writeDouble(this.headY);
 			out.writeDouble(this.z);
 		}
 		

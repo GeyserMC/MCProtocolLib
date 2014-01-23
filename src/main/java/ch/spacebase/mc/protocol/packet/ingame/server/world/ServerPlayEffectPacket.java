@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.world;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.Position;
+import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -9,9 +11,7 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerPlayEffectPacket implements Packet {
 
 	private Effect effect;
-	private int x;
-	private int y;
-	private int z;
+	private Position position;
 	private EffectData data;
 	private boolean broadcast;
 	
@@ -19,15 +19,13 @@ public class ServerPlayEffectPacket implements Packet {
 	private ServerPlayEffectPacket() {
 	}
 	
-	public ServerPlayEffectPacket(Effect effect, int x, int y, int z, EffectData data) {
-		this(effect, x, y, z, data, false);
+	public ServerPlayEffectPacket(Effect effect, Position position, EffectData data) {
+		this(effect, position, data, false);
 	}
 	
-	public ServerPlayEffectPacket(Effect effect, int x, int y, int z, EffectData data, boolean broadcast) {
+	public ServerPlayEffectPacket(Effect effect, Position position, EffectData data, boolean broadcast) {
 		this.effect = effect;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.position = position;
 		this.data = data;
 		this.broadcast = broadcast;
 	}
@@ -36,16 +34,8 @@ public class ServerPlayEffectPacket implements Packet {
 		return this.effect;
 	}
 	
-	public int getX() {
-		return this.x;
-	}
-	
-	public int getY() {
-		return this.y;
-	}
-	
-	public int getZ() {
-		return this.z;
+	public Position getPosition() {
+		return this.position;
 	}
 	
 	public EffectData getData() {
@@ -59,9 +49,7 @@ public class ServerPlayEffectPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.effect = this.idToEffect(in.readInt());
-		this.x = in.readInt();
-		this.y = in.readUnsignedByte();
-		this.z = in.readInt();
+		this.position = NetUtil.readPosition(in);
 		this.data = this.valueToData(in.readInt());
 		this.broadcast = in.readBoolean();
 	}
@@ -69,9 +57,7 @@ public class ServerPlayEffectPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.effectToId(this.effect));
-		out.writeInt(this.x);
-		out.writeByte(this.y);
-		out.writeInt(this.z);
+		NetUtil.writePosition(out, this.position);
 		out.writeInt(this.dataToValue(this.data));
 		out.writeBoolean(this.broadcast);
 	}

@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.client.entity.player;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.Position;
+import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -9,20 +11,16 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ClientPlayerDigPacket implements Packet {
 	
 	private Status status;
-	private int x;
-	private int y;
-	private int z;
+	private Position position;
 	private Face face;
 	
 	@SuppressWarnings("unused")
 	private ClientPlayerDigPacket() {
 	}
 	
-	public ClientPlayerDigPacket(Status status, int x, int y, int z, Face face) {
+	public ClientPlayerDigPacket(Status status, Position position, Face face) {
 		this.status = status;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.position = position;
 		this.face = face;
 	}
 	
@@ -30,16 +28,8 @@ public class ClientPlayerDigPacket implements Packet {
 		return this.status;
 	}
 	
-	public int getX() {
-		return this.x;
-	}
-	
-	public int getY() {
-		return this.y;
-	}
-	
-	public int getZ() {
-		return this.z;
+	public Position getPosition() {
+		return this.position;
 	}
 	
 	public Face getFace() {
@@ -49,18 +39,14 @@ public class ClientPlayerDigPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.status = Status.values()[in.readUnsignedByte()];
-		this.x = in.readInt();
-		this.y = in.readUnsignedByte();
-		this.z = in.readInt();
+		this.position = NetUtil.readPosition(in);
 		this.face = valueToFace(in.readUnsignedByte());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.status.ordinal());
-		out.writeInt(this.x);
-		out.writeByte(this.y);
-		out.writeInt(this.z);
+		NetUtil.writePosition(out, this.position);
 		out.writeByte(faceToValue(this.face));
 	}
 	

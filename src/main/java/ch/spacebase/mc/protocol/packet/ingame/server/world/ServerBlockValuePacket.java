@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.world;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.Position;
+import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -16,9 +18,7 @@ public class ServerBlockValuePacket implements Packet {
 	private static final int ENDER_CHEST = 130;
 	private static final int TRAPPED_CHEST = 146;
 	
-	private int x;
-	private int y;
-	private int z;
+	private Position position;
 	private ValueType type;
 	private Value value;
 	private int blockId;
@@ -27,25 +27,15 @@ public class ServerBlockValuePacket implements Packet {
 	private ServerBlockValuePacket() {
 	}
 	
-	public ServerBlockValuePacket(int x, int y, int z, ValueType type, Value value, int blockId) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public ServerBlockValuePacket(Position position, ValueType type, Value value, int blockId) {
+		this.position = position;
 		this.type = type;
 		this.value = value;
 		this.blockId = blockId;
 	}
 	
-	public int getX() {
-		return this.x;
-	}
-	
-	public int getY() {
-		return this.y;
-	}
-	
-	public int getZ() {
-		return this.z;
+	public Position getPosition() {
+		return this.position;
 	}
 	
 	public ValueType getType() {
@@ -62,9 +52,7 @@ public class ServerBlockValuePacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.x = in.readInt();
-		this.y = in.readShort();
-		this.z = in.readInt();
+		this.position = NetUtil.readPosition(in);
 		this.type = intToType(in.readUnsignedByte());
 		this.value = intToValue(in.readUnsignedByte());
 		this.blockId = in.readVarInt() & 4095;
@@ -72,9 +60,7 @@ public class ServerBlockValuePacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.x);
-		out.writeShort(this.y);
-		out.writeInt(this.z);
+		NetUtil.writePosition(out, this.position);
 		out.writeByte(typeToInt(this.type));
 		out.writeByte(valueToInt(this.value));
 		out.writeVarInt(this.blockId & 4095);

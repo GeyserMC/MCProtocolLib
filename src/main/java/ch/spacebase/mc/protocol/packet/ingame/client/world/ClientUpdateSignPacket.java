@@ -2,42 +2,32 @@ package ch.spacebase.mc.protocol.packet.ingame.client.world;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.Position;
+import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
 
 public class ClientUpdateSignPacket implements Packet {
 	
-	private int x;
-	private int y;
-	private int z;
+	private Position position;
 	private String lines[];
 	
 	@SuppressWarnings("unused")
 	private ClientUpdateSignPacket() {
 	}
 	
-	public ClientUpdateSignPacket(int x, int y, int z, String lines[]) {
+	public ClientUpdateSignPacket(Position position, String lines[]) {
 		if(lines.length != 4) {
 			throw new IllegalArgumentException("Lines must contain exactly 4 strings!");
 		}
 		
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.position = position;
 		this.lines = lines;
 	}
 	
-	public int getX() {
-		return this.x;
-	}
-	
-	public int getY() {
-		return this.y;
-	}
-	
-	public int getZ() {
-		return this.z;
+	public Position getPosition() {
+		return this.position;
 	}
 	
 	public String[] getLines() {
@@ -46,9 +36,7 @@ public class ClientUpdateSignPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.x = in.readInt();
-		this.y = in.readShort();
-		this.z = in.readInt();
+		this.position = NetUtil.readPosition(in);
 		this.lines = new String[4];
 		for(int count = 0; count < this.lines.length; count++) {
 			this.lines[count] = in.readString();
@@ -57,9 +45,7 @@ public class ClientUpdateSignPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.x);
-		out.writeShort(this.y);
-		out.writeInt(this.z);
+		NetUtil.writePosition(out, this.position);
 		for(String line : this.lines) {
 			out.writeString(line);
 		}

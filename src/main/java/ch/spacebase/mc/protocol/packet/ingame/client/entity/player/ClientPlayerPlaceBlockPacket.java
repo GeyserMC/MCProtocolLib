@@ -3,6 +3,7 @@ package ch.spacebase.mc.protocol.packet.ingame.client.entity.player;
 import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.ItemStack;
+import ch.spacebase.mc.protocol.data.game.Position;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
@@ -10,9 +11,7 @@ import ch.spacebase.packetlib.packet.Packet;
 
 public class ClientPlayerPlaceBlockPacket implements Packet {
 	
-	private int x;
-	private int y;
-	private int z;
+	private Position position;
 	private Face face;
 	private ItemStack held;
 	private float cursorX;
@@ -23,10 +22,8 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 	private ClientPlayerPlaceBlockPacket() {
 	}
 	
-	public ClientPlayerPlaceBlockPacket(int x, int y, int z, Face face, ItemStack held, float cursorX, float cursorY, float cursorZ) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public ClientPlayerPlaceBlockPacket(Position position, Face face, ItemStack held, float cursorX, float cursorY, float cursorZ) {
+		this.position = position;
 		this.face = face;
 		this.held = held;
 		this.cursorX = cursorX;
@@ -34,16 +31,8 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		this.cursorZ = cursorZ;
 	}
 	
-	public int getX() {
-		return this.x;
-	}
-	
-	public int getY() {
-		return this.y;
-	}
-	
-	public int getZ() {
-		return this.z;
+	public Position getPosition() {
+		return this.position;
 	}
 	
 	public Face getFace() {
@@ -68,9 +57,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.x = in.readInt();
-		this.y = in.readUnsignedByte();
-		this.z = in.readInt();
+		this.position = NetUtil.readPosition(in);
 		this.face = Face.values()[in.readUnsignedByte()];
 		this.held = NetUtil.readItem(in);
 		this.cursorX = in.readByte() / 16f;
@@ -80,9 +67,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.x);
-		out.writeByte(this.y);
-		out.writeInt(this.z);
+		NetUtil.writePosition(out, this.position);
 		out.writeByte(this.face.ordinal());
 		NetUtil.writeItem(out, this.held);
 		out.writeByte((int) (this.cursorX * 16));
