@@ -1,6 +1,6 @@
-package ch.spacebase.mc.auth.exceptions;
+package ch.spacebase.mc.auth.exception;
 
-import ch.spacebase.mc.auth.exceptions.InvalidCredentialsException;
+import ch.spacebase.mc.auth.exception.InvalidCredentialsException;
 
 public class UserMigratedException extends InvalidCredentialsException {
 

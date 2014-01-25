@@ -1,4 +1,4 @@
-package ch.spacebase.mc.auth.exceptions;
+package ch.spacebase.mc.auth.exception;
 
 public class AuthenticationException extends Exception {
 

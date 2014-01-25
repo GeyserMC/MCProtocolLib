@@ -6,9 +6,9 @@ import javax.crypto.SecretKey;
 
 import ch.spacebase.mc.auth.GameProfile;
 import ch.spacebase.mc.auth.SessionService;
-import ch.spacebase.mc.auth.exceptions.AuthenticationException;
-import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
-import ch.spacebase.mc.auth.exceptions.InvalidCredentialsException;
+import ch.spacebase.mc.auth.exception.AuthenticationException;
+import ch.spacebase.mc.auth.exception.AuthenticationUnavailableException;
+import ch.spacebase.mc.auth.exception.InvalidCredentialsException;
 import ch.spacebase.mc.protocol.data.status.ServerStatusInfo;
 import ch.spacebase.mc.protocol.data.status.handler.ServerInfoHandler;
 import ch.spacebase.mc.protocol.data.status.handler.ServerPingTimeHandler;

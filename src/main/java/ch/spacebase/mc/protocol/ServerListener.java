@@ -10,7 +10,7 @@ import javax.crypto.SecretKey;
 
 import ch.spacebase.mc.auth.GameProfile;
 import ch.spacebase.mc.auth.SessionService;
-import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
+import ch.spacebase.mc.auth.exception.AuthenticationUnavailableException;
 import ch.spacebase.mc.protocol.data.status.ServerStatusInfo;
 import ch.spacebase.mc.protocol.data.status.handler.ServerInfoBuilder;
 import ch.spacebase.mc.protocol.packet.handshake.client.HandshakePacket;

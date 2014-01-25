@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import ch.spacebase.mc.auth.GameProfile;
 import ch.spacebase.mc.auth.UserAuthentication;
-import ch.spacebase.mc.auth.exceptions.AuthenticationException;
+import ch.spacebase.mc.auth.exception.AuthenticationException;
 import ch.spacebase.mc.protocol.packet.handshake.client.HandshakePacket;
 import ch.spacebase.mc.protocol.packet.ingame.client.ClientChatPacket;
 import ch.spacebase.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
@@ -187,8 +187,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		try {
 			this.encrypt = new AESEncryption(key);
 		} catch(GeneralSecurityException e) {
-			System.err.println("Could not enable protocol encryption!");
-			e.printStackTrace();
+			throw new Error("Failed to enable protocol encryption.", e);
 		}
 	}
 	

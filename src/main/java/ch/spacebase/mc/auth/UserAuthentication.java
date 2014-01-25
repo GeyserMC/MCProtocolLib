@@ -1,7 +1,7 @@
 package ch.spacebase.mc.auth;
 
-import ch.spacebase.mc.auth.exceptions.AuthenticationException;
-import ch.spacebase.mc.auth.exceptions.InvalidCredentialsException;
+import ch.spacebase.mc.auth.exception.AuthenticationException;
+import ch.spacebase.mc.auth.exception.InvalidCredentialsException;
 import ch.spacebase.mc.auth.request.AuthenticationRequest;
 import ch.spacebase.mc.auth.request.RefreshRequest;
 import ch.spacebase.mc.auth.response.AuthenticationResponse;

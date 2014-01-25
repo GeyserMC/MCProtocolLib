@@ -1,6 +1,6 @@
-package ch.spacebase.mc.auth.exceptions;
+package ch.spacebase.mc.auth.exception;
 
-import ch.spacebase.mc.auth.exceptions.AuthenticationException;
+import ch.spacebase.mc.auth.exception.AuthenticationException;
 
 public class InvalidCredentialsException extends AuthenticationException {
 

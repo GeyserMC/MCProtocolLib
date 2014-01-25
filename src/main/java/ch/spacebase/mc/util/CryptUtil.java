@@ -26,9 +26,7 @@ public class CryptUtil {
 			gen.init(128);
 			return gen.generateKey();
 		} catch(NoSuchAlgorithmException e) {
-			System.err.println("Failed to generate shared key.");
-			e.printStackTrace();
-			return null;
+			throw new Error("Failed to generate shared key.", e);
 		}
 	}
 
@@ -38,9 +36,7 @@ public class CryptUtil {
 			gen.initialize(1024);
 			return gen.generateKeyPair();
 		} catch(NoSuchAlgorithmException e) {
-			System.err.println("Failed to generate key pair.");
-			e.printStackTrace();
-			return null;
+			throw new Error("Failed to generate key pair.", e);
 		}
 	}
 
@@ -70,9 +66,7 @@ public class CryptUtil {
 			cipher.init(mode, key);
 			return cipher.doFinal(data);
 		} catch(GeneralSecurityException e) {
-			System.err.println("Failed to run encryption.");
-			e.printStackTrace();
-			return new byte[0];
+			throw new Error("Failed to run encryption.", e);
 		}
 	}
 	
@@ -80,9 +74,7 @@ public class CryptUtil {
 		try {
 			return encrypt("SHA-1", new byte[][] { serverId.getBytes("ISO_8859_1"), secretKey.getEncoded(), publicKey.getEncoded() });
 		} catch(UnsupportedEncodingException e) {
-			System.err.println("Failed to generate server id hash.");
-			e.printStackTrace();
-			return new byte[0];
+			throw new Error("Failed to generate server id hash.", e);
 		}
 	}
 
@@ -95,9 +87,7 @@ public class CryptUtil {
 
 			return digest.digest();
 		} catch(NoSuchAlgorithmException e) {
-			System.err.println("Failed to encrypt data.");
-			e.printStackTrace();
-			return null;
+			throw new Error("Failed to encrypt data.", e);
 		}
 	}
 

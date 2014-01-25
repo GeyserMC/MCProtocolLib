@@ -1,7 +1,9 @@
 package ch.spacebase.mc.auth;
 
-import ch.spacebase.mc.auth.exceptions.AuthenticationException;
-import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
+import ch.spacebase.mc.auth.exception.AuthenticationException;
+import ch.spacebase.mc.auth.exception.AuthenticationUnavailableException;
+import ch.spacebase.mc.auth.exception.PropertyException;
+import ch.spacebase.mc.auth.exception.TextureDecodeException;
 import ch.spacebase.mc.auth.request.JoinServerRequest;
 import ch.spacebase.mc.auth.response.HasJoinedResponse;
 import ch.spacebase.mc.auth.response.MinecraftTexturesPayload;
@@ -68,39 +70,25 @@ public class SessionService {
 		}
 	}
 	
-	public Map<String, ProfileTexture> getTextures(GameProfile profile) {
+	public Map<String, ProfileTexture> getTextures(GameProfile profile) throws PropertyException {
 		ProfileProperty textures = profile.getProperties().get("textures");
-		if(textures == null) {
-			return new HashMap<String, ProfileTexture>();
-		} else if(!textures.hasSignature()) {
-			System.err.println("Signature is missing from textures payload.");
-			return new HashMap<String, ProfileTexture>();
-		} else if(!textures.isSignatureValid(SIGNATURE_KEY)) {
-			System.err.println("Textures payload has been tampered with. (signature invalid)");
-			return new HashMap<String, ProfileTexture>();
-		} else {
+		if(textures != null && textures.hasSignature() && textures.isSignatureValid(SIGNATURE_KEY)) {
 			MinecraftTexturesPayload result;
 			try {
 				String e = new String(Base64.decode(textures.getValue().getBytes("UTF-8")));
 				result = new Gson().fromJson(e, MinecraftTexturesPayload.class);
 			} catch(Exception e) {
-				System.err.println("Could not decode textures payload.");
-				e.printStackTrace();
-				return new HashMap<String, ProfileTexture>();
+				throw new TextureDecodeException("Could not decode texture payload.", e);
 			}
 
 			if(result.getProfileId() != null && result.getProfileId().equals(profile.getId())) {
 				if(result.getProfileName() != null && result.getProfileName().equals(profile.getName())) {
 					return result.getTextures() == null ? new HashMap<String, ProfileTexture>() : result.getTextures();
-				} else {
-					System.err.println("Decrypted textures payload was for another user. (expected name " + profile.getName() + " but was for " + result.getProfileName() + ")");
-					return new HashMap<String, ProfileTexture>();
 				}
-			} else {
-				System.err.println("Decrypted textures payload was for another user. (expected id " + profile.getId() + " but was for " + result.getProfileId() + ")");
-				return new HashMap<String, ProfileTexture>();
 			}
 		}
+		
+		return new HashMap<String, ProfileTexture>();
 	}
 
 	@Override

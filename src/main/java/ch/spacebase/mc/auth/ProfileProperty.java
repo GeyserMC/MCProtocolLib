@@ -3,6 +3,7 @@ package ch.spacebase.mc.auth;
 import java.security.PublicKey;
 import java.security.Signature;
 
+import ch.spacebase.mc.auth.exception.SignatureValidateException;
 import ch.spacebase.mc.util.Base64;
 
 public class ProfileProperty {
@@ -37,18 +38,15 @@ public class ProfileProperty {
 		return this.signature != null;
 	}
 
-	public boolean isSignatureValid(PublicKey key) {
+	public boolean isSignatureValid(PublicKey key) throws SignatureValidateException {
 		try {
 			Signature sig = Signature.getInstance("SHA1withRSA");
 			sig.initVerify(key);
 			sig.update(this.value.getBytes());
 			return sig.verify(Base64.decode(this.signature.getBytes("UTF-8")));
 		} catch(Exception e) {
-			System.err.println("Failed to check profile property signature validity.");
-			e.printStackTrace();
+			throw new SignatureValidateException("Could not validate property signature.", e);
 		}
-
-		return false;
 	}
 	
 }

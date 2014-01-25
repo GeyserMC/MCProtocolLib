@@ -3,7 +3,7 @@ package ch.spacebase.mc.protocol.test;
 import java.util.Arrays;
 
 import ch.spacebase.mc.auth.GameProfile;
-import ch.spacebase.mc.auth.exceptions.AuthenticationException;
+import ch.spacebase.mc.auth.exception.AuthenticationException;
 import ch.spacebase.mc.protocol.MinecraftProtocol;
 import ch.spacebase.mc.protocol.ProtocolConstants;
 import ch.spacebase.mc.protocol.ProtocolMode;

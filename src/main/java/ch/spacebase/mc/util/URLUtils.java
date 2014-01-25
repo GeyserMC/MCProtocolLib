@@ -14,10 +14,10 @@ import java.util.Map.Entry;
 
 import com.google.gson.Gson;
 
-import ch.spacebase.mc.auth.exceptions.AuthenticationException;
-import ch.spacebase.mc.auth.exceptions.AuthenticationUnavailableException;
-import ch.spacebase.mc.auth.exceptions.InvalidCredentialsException;
-import ch.spacebase.mc.auth.exceptions.UserMigratedException;
+import ch.spacebase.mc.auth.exception.AuthenticationException;
+import ch.spacebase.mc.auth.exception.AuthenticationUnavailableException;
+import ch.spacebase.mc.auth.exception.InvalidCredentialsException;
+import ch.spacebase.mc.auth.exception.UserMigratedException;
 import ch.spacebase.mc.auth.response.Response;
 
 public class URLUtils {
