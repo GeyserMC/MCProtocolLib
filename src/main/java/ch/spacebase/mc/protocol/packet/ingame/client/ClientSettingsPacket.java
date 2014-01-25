@@ -1,6 +1,8 @@
 package ch.spacebase.mc.protocol.packet.ingame.client;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
@@ -12,18 +14,18 @@ public class ClientSettingsPacket implements Packet {
 	private int renderDistance;
 	private ChatVisibility chatVisibility;
 	private boolean chatColors;
-	private int skinFlags;
+	private List<SkinPart> visibleParts;
 	
 	@SuppressWarnings("unused")
 	private ClientSettingsPacket() {
 	}
 	
-	public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, int skinFlags) {
+	public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, SkinPart... visibleParts) {
 		this.locale = locale;
 		this.renderDistance = renderDistance;
 		this.chatVisibility = chatVisibility;
 		this.chatColors = chatColors;
-		this.skinFlags = skinFlags;
+		this.visibleParts = Arrays.asList(visibleParts);
 	}
 	
 	public String getLocale() {
@@ -42,8 +44,8 @@ public class ClientSettingsPacket implements Packet {
 		return this.chatColors;
 	}
 	
-	public int getSkinFlags() {
-		return this.skinFlags;
+	public List<SkinPart> getVisibleParts() {
+		return this.visibleParts;
 	}
 
 	@Override
@@ -52,7 +54,13 @@ public class ClientSettingsPacket implements Packet {
 		this.renderDistance = in.readByte();
 		this.chatVisibility = ChatVisibility.values()[in.readByte()];
 		this.chatColors = in.readBoolean();
-		this.skinFlags = in.readUnsignedByte();
+		int flags = in.readUnsignedByte();
+		for(SkinPart part : SkinPart.values()) {
+			int bit = 1 << part.ordinal();
+			if((flags & bit) == bit) {
+				this.visibleParts.add(part);
+			}
+		}
 	}
 
 	@Override
@@ -61,7 +69,12 @@ public class ClientSettingsPacket implements Packet {
 		out.writeByte(this.renderDistance);
 		out.writeByte(this.chatVisibility.ordinal());
 		out.writeBoolean(this.chatColors);
-		out.writeByte(this.skinFlags);
+		int flags = 0;
+		for(SkinPart part : this.visibleParts) {
+			flags |= 1 << part.ordinal();
+		}
+		
+		out.writeByte(flags);
 	}
 	
 	@Override
@@ -80,6 +93,16 @@ public class ClientSettingsPacket implements Packet {
 		EASY,
 		NORMAL,
 		HARD;
+	}
+	
+	public static enum SkinPart {
+		CAPE,
+		JACKET,
+		LEFT_SLEEVE,
+		RIGHT_SLEEVE,
+		LEFT_PANTS_LEG,
+		RIGHT_PANTS_LEG,
+		HAT;
 	}
 
 }
