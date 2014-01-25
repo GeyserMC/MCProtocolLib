@@ -1,9 +1,14 @@
 package ch.spacebase.mc.auth;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GameProfile {
 
 	private String id;
 	private String name;
+	private Map<String, ProfileProperty> properties = new HashMap<String, ProfileProperty>();
+	private boolean legacy;
 
 	public GameProfile(String id, String name) {
 		if((id == null || id.equals("")) && (name == null || name.equals(""))) {
@@ -20,6 +25,14 @@ public class GameProfile {
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public Map<String, ProfileProperty> getProperties() {
+		return this.properties;
+	}
+	
+	public boolean isLegacy() {
+		return this.legacy;
 	}
 
 	public boolean isComplete() {

@@ -24,17 +24,17 @@ public class ServerDestroyEntitiesPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityIds = new int[in.readByte()];
+		this.entityIds = new int[in.readVarInt()];
 		for(int index = 0; index < this.entityIds.length; index++) {
-			this.entityIds[index] = in.readInt();
+			this.entityIds[index] = in.readVarInt();
 		}
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeByte(this.entityIds.length);
+		out.writeVarInt(this.entityIds.length);
 		for(int entityId : this.entityIds) {
-			out.writeInt(entityId);
+			out.writeVarInt(entityId);
 		}
 	}
 	

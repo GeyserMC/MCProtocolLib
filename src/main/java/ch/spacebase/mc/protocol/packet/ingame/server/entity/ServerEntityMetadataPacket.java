@@ -32,13 +32,13 @@ public class ServerEntityMetadataPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityId = in.readInt();
+		this.entityId = in.readVarInt();
 		this.metadata = NetUtil.readEntityMetadata(in);
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.entityId);
+		out.writeVarInt(this.entityId);
 		NetUtil.writeEntityMetadata(out, this.metadata);
 	}
 	

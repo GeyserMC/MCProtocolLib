@@ -22,10 +22,44 @@ import ch.spacebase.packetlib.io.NetOutput;
 
 public class NetUtil {
 
+	private static final int[] EXPONENTS_OF_TWO = new int[] { 0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9 };
+	
+	private static final int POSITION_X_SIZE = 1 + lastExponentOfTwo(nextPowerOfTwo(30000000));
+	private static final int POSITION_Z_SIZE = POSITION_X_SIZE;
+	private static final int POSITION_Y_SIZE = 64 - POSITION_X_SIZE - POSITION_Z_SIZE;
+	private static final int POSITION_Y_SHIFT = POSITION_Z_SIZE;
+	private static final int POSITION_X_SHIFT = POSITION_Y_SHIFT + POSITION_Y_SIZE;
+	private static final long POSITION_X_MASK = (1L << POSITION_X_SIZE) - 1;
+	private static final long POSITION_Y_MASK = (1L << POSITION_Y_SIZE) - 1;
+	private static final long POSITION_Z_MASK = (1L << POSITION_Z_SIZE) - 1;
+
 	/**
 	 * An unfortunately necessary hack value for chunk data packet checks as to whether a packet contains skylight values or not.
 	 */
 	public static boolean hasSky = true;
+	
+	private static int nextPowerOfTwo(int i) {
+		int minusOne = i - 1;
+		minusOne |= minusOne >> 1;
+		minusOne |= minusOne >> 2;
+		minusOne |= minusOne >> 4;
+		minusOne |= minusOne >> 8;
+		minusOne |= minusOne >> 16;
+		return minusOne + 1;
+	}
+
+	private static boolean isPowerOfTwo(int i) {
+		return i != 0 && (i & i - 1) == 0;
+	}
+
+	private static int nextExponentOfTwo(int i) {
+		int power = isPowerOfTwo(i) ? i : nextPowerOfTwo(i);
+		return EXPONENTS_OF_TWO[(int) (power * 125613361L >> 27) & 31];
+	}
+
+	public static int lastExponentOfTwo(int i) {
+		return nextExponentOfTwo(i) - (isPowerOfTwo(i) ? 0 : 1);
+	}
 
 	public static CompoundTag readNBT(NetInput in) throws IOException {
 		short length = in.readShort();
@@ -50,13 +84,15 @@ public class NetUtil {
 	}
 	
 	public static Position readPosition(NetInput in) throws IOException {
-		return new Position(in.readInt(), in.readUnsignedByte(), in.readInt());
+		long val = in.readLong();
+		int x = (int) (val << 64 - POSITION_X_SHIFT - POSITION_X_SIZE >> 64 - POSITION_X_SIZE);
+		int y = (int) (val << 64 - POSITION_Y_SHIFT - POSITION_Y_SIZE >> 64 - POSITION_Y_SIZE);
+		int z = (int) (val << 64 - POSITION_Z_SIZE >> 64 - POSITION_Z_SIZE);
+		return new Position(x, y, z);
 	}
-	
+
 	public static void writePosition(NetOutput out, Position pos) throws IOException {
-		out.writeInt(pos.getX());
-		out.writeByte(pos.getY());
-		out.writeInt(pos.getZ());
+		out.writeLong((pos.getX() & POSITION_X_MASK) << POSITION_X_SHIFT | (pos.getY() & POSITION_Y_MASK) << POSITION_Y_SHIFT | (pos.getZ() & POSITION_Z_MASK));
 	}
 	
 	public static ItemStack readItem(NetInput in) throws IOException {

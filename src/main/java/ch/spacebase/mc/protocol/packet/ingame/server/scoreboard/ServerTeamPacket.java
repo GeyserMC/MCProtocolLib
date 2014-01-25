@@ -95,7 +95,7 @@ public class ServerTeamPacket implements Packet {
 		}
 		
 		if(this.action == Action.CREATE || this.action == Action.ADD_PLAYER || this.action == Action.REMOVE_PLAYER) {
-			this.players = new String[in.readShort()];
+			this.players = new String[in.readVarInt()];
 			for(int index = 0; index < this.players.length; index++) {
 				this.players[index] = in.readString();
 			}
@@ -114,7 +114,7 @@ public class ServerTeamPacket implements Packet {
 		}
 		
 		if(this.action == Action.CREATE || this.action == Action.ADD_PLAYER || this.action == Action.REMOVE_PLAYER) {
-			out.writeShort(this.players.length);
+			out.writeVarInt(this.players.length);
 			for(String player : this.players) {
 				out.writeString(player);
 			}

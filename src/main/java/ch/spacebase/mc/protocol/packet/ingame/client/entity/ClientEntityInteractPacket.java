@@ -30,13 +30,13 @@ public class ClientEntityInteractPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityId = in.readInt();
-		this.action = Action.values()[in.readByte()];
+		this.entityId = in.readVarInt();
+		this.action = Action.values()[in.readUnsignedByte()];
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.entityId);
+		out.writeVarInt(this.entityId);
 		out.writeByte(this.action.ordinal());
 	}
 	

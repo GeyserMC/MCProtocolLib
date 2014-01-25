@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.spacebase</groupId>
 	<artifactId>mcprotocollib</artifactId>
-	<version>14w03b-SNAPSHOT</version>
+	<version>14w04b-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>MCProtocolLib</name>
@@ -85,6 +85,13 @@
 	<build>
 		<defaultGoal>clean install</defaultGoal>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<!-- Resources -->
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

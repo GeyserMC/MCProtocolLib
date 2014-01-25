@@ -3,8 +3,8 @@ package ch.spacebase.mc.protocol;
 public class ProtocolConstants {
 
 	// General Constants
-	public static final String GAME_VERSION = "14w03b";
-	public static final int PROTOCOL_VERSION = 6;
+	public static final String GAME_VERSION = "14w04b";
+	public static final int PROTOCOL_VERSION = 8;
 	
 	// General Key Constants
 	public static final String PROFILE_KEY = "profile";

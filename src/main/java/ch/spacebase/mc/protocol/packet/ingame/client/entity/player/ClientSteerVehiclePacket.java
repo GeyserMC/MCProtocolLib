@@ -44,16 +44,25 @@ public class ClientSteerVehiclePacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		this.sideways = in.readFloat();
 		this.forward = in.readFloat();
-		this.jump = in.readBoolean();
-		this.dismount = in.readBoolean();
+		int flags = in.readUnsignedByte();
+		this.jump = (flags & 1) > 0;
+		this.dismount = (flags & 2) > 0;
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeFloat(this.sideways);
 		out.writeFloat(this.forward);
-		out.writeBoolean(this.jump);
-		out.writeBoolean(this.dismount);
+		byte flags = 0;
+		if(this.jump) {
+			flags = (byte) (flags | 1);
+		}
+
+		if(this.dismount) {
+			flags = (byte) (flags | 2);
+		}
+
+		out.writeByte(flags);
 	}
 	
 	@Override

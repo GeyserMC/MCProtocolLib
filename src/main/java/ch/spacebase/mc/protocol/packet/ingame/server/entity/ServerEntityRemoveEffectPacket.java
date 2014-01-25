@@ -10,18 +10,14 @@ public class ServerEntityRemoveEffectPacket implements Packet {
 	
 	private int entityId;
 	private Effect effect;
-	private int amplifier;
-	private int duration;
 	
 	@SuppressWarnings("unused")
 	private ServerEntityRemoveEffectPacket() {
 	}
 	
-	public ServerEntityRemoveEffectPacket(int entityId, Effect effect, int amplifier, int duration) {
+	public ServerEntityRemoveEffectPacket(int entityId, Effect effect) {
 		this.entityId = entityId;
 		this.effect = effect;
-		this.amplifier = amplifier;
-		this.duration = duration;
 	}
 	
 	public int getEntityId() {
@@ -31,29 +27,17 @@ public class ServerEntityRemoveEffectPacket implements Packet {
 	public Effect getEffect() {
 		return this.effect;
 	}
-	
-	public int getAmplifier() {
-		return this.amplifier;
-	}
-	
-	public int getDuration() {
-		return this.duration;
-	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityId = in.readInt();
+		this.entityId = in.readVarInt();
 		this.effect = Effect.values()[in.readByte()];
-		this.amplifier = in.readByte();
-		this.duration = in.readShort();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.entityId);
+		out.writeVarInt(this.entityId);
 		out.writeByte(this.effect.ordinal());
-		out.writeByte(this.amplifier);
-		out.writeShort(this.duration);
 	}
 	
 	@Override

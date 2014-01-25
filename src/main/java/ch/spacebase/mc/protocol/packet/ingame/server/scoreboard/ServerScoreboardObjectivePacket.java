@@ -9,16 +9,16 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerScoreboardObjectivePacket implements Packet {
 	
 	private String name;
-	private String value;
+	private String displayName;
 	private Action action;
 	
 	@SuppressWarnings("unused")
 	private ServerScoreboardObjectivePacket() {
 	}
 	
-	public ServerScoreboardObjectivePacket(String name, String value, Action action) {
+	public ServerScoreboardObjectivePacket(String name, String displayName, Action action) {
 		this.name = name;
-		this.value = value;
+		this.displayName = displayName;
 		this.action = action;
 	}
 	
@@ -26,8 +26,8 @@ public class ServerScoreboardObjectivePacket implements Packet {
 		return this.name;
 	}
 	
-	public String getValue() {
-		return this.value;
+	public String getDisplayName() {
+		return this.displayName;
 	}
 	
 	public Action getAction() {
@@ -37,14 +37,14 @@ public class ServerScoreboardObjectivePacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.name = in.readString();
-		this.value = in.readString();
+		this.displayName = in.readString();
 		this.action = Action.values()[in.readByte()];
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.name);
-		out.writeString(this.value);
+		out.writeString(this.displayName);
 		out.writeByte(this.action.ordinal());
 	}
 	

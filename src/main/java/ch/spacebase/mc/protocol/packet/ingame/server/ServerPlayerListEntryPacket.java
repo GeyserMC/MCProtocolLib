@@ -38,14 +38,14 @@ public class ServerPlayerListEntryPacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		this.name = in.readString();
 		this.online = in.readBoolean();
-		this.ping = in.readShort();
+		this.ping = in.readVarInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.name);
 		out.writeBoolean(this.online);
-		out.writeShort(this.ping);
+		out.writeVarInt(this.ping);
 	}
 	
 	@Override

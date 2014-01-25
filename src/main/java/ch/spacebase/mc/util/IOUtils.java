@@ -1,5 +1,6 @@
 package ch.spacebase.mc.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,19 @@ public class IOUtils {
 
 		in.close();
 		return writer.toString();
+	}
+	
+	public static byte[] toByteArray(InputStream in) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		byte buffer[] = new byte[DEFAULT_BUFFER_SIZE];
+		int n = 0;
+		while(-1 != (n = in.read(buffer))) {
+			out.write(buffer, 0, n);
+		}
+
+		in.close();
+		out.close();
+		return out.toByteArray();
 	}
 
 }

@@ -8,60 +8,60 @@ import ch.spacebase.packetlib.packet.Packet;
 
 public class ServerUpdateScorePacket implements Packet {
 	
-	private String name;
+	private String entry;
 	private Action action;
-	private String scoreName;
-	private int scoreValue;
+	private String objective;
+	private int value;
 	
 	@SuppressWarnings("unused")
 	private ServerUpdateScorePacket() {
 	}
 	
-	public ServerUpdateScorePacket(String name) {
-		this.name = name;
+	public ServerUpdateScorePacket(String entry) {
+		this.entry = entry;
 		this.action = Action.REMOVE;
 	}
 	
-	public ServerUpdateScorePacket(String name, String scoreName, int scoreValue) {
-		this.name = name;
-		this.scoreName = scoreName;
-		this.scoreValue = scoreValue;
+	public ServerUpdateScorePacket(String entry, String objective, int value) {
+		this.entry = entry;
+		this.objective = objective;
+		this.value = value;
 		this.action = Action.ADD_OR_UPDATE;
 	}
 	
-	public String getScoreboardName() {
-		return this.name;
+	public String getEntry() {
+		return this.entry;
 	}
 	
 	public Action getAction() {
 		return this.action;
 	}
 	
-	public String getScoreName() {
-		return this.scoreName;
+	public String getObjective() {
+		return this.objective;
 	}
 	
-	public int getScoreValue() {
-		return this.scoreValue;
+	public int getValue() {
+		return this.value;
 	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.name = in.readString();
+		this.entry = in.readString();
 		this.action = Action.values()[in.readByte()];
 		if(this.action == Action.ADD_OR_UPDATE) {
-			this.scoreName = in.readString();
-			this.scoreValue = in.readInt();
+			this.objective = in.readString();
+			this.value = in.readVarInt();
 		}
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeString(this.name);
+		out.writeString(this.entry);
 		out.writeByte(this.action.ordinal());
 		if(this.action == Action.ADD_OR_UPDATE) {
-			out.writeString(this.scoreName);
-			out.writeInt(this.scoreValue);
+			out.writeString(this.objective);
+			out.writeVarInt(this.value);
 		}
 	}
 	

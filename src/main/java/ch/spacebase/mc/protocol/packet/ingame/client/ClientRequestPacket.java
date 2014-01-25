@@ -24,7 +24,7 @@ public class ClientRequestPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.request = Request.values()[in.readByte()];
+		this.request = Request.values()[in.readUnsignedByte()];
 	}
 
 	@Override

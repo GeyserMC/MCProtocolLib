@@ -37,14 +37,14 @@ public class ServerUpdateHealthPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.health = in.readFloat();
-		this.food = in.readShort();
+		this.food = in.readVarInt();
 		this.saturation = in.readFloat();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeFloat(this.health);
-		out.writeShort(this.food);
+		out.writeVarInt(this.food);
 		out.writeFloat(this.saturation);
 	}
 	

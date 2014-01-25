@@ -32,13 +32,13 @@ public class ServerPlayerUseBedPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityId = in.readInt();
+		this.entityId = in.readVarInt();
 		this.position = NetUtil.readPosition(in);
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.entityId);
+		out.writeVarInt(this.entityId);
 		NetUtil.writePosition(out, this.position);
 	}
 	

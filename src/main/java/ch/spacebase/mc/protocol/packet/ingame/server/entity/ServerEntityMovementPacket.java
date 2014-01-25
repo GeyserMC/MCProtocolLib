@@ -51,7 +51,7 @@ public class ServerEntityMovementPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityId = in.readInt();
+		this.entityId = in.readVarInt();
 		if(this.pos) {
 			this.moveX = in.readByte() / 32D;
 			this.moveY = in.readByte() / 32D;
@@ -66,7 +66,7 @@ public class ServerEntityMovementPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.entityId);
+		out.writeVarInt(this.entityId);
 		if(this.pos) {
 			out.writeByte((int) (this.moveX * 32));
 			out.writeByte((int) (this.moveY * 32));

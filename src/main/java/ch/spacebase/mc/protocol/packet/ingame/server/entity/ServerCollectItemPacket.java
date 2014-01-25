@@ -30,14 +30,14 @@ public class ServerCollectItemPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.collectedEntityId = in.readInt();
-		this.collectorEntityId = in.readInt();
+		this.collectedEntityId = in.readVarInt();
+		this.collectorEntityId = in.readVarInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.collectedEntityId);
-		out.writeInt(this.collectorEntityId);
+		out.writeVarInt(this.collectedEntityId);
+		out.writeVarInt(this.collectorEntityId);
 	}
 	
 	@Override

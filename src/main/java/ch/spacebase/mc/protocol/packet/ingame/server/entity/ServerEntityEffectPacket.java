@@ -42,18 +42,18 @@ public class ServerEntityEffectPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityId = in.readInt();
+		this.entityId = in.readVarInt();
 		this.effect = Effect.values()[in.readByte()];
 		this.amplifier = in.readByte();
-		this.duration = in.readShort();
+		this.duration = in.readVarInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.entityId);
+		out.writeVarInt(this.entityId);
 		out.writeByte(this.effect.ordinal());
 		out.writeByte(this.amplifier);
-		out.writeShort(this.duration);
+		out.writeVarInt(this.duration);
 	}
 	
 	@Override

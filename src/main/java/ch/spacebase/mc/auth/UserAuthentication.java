@@ -7,6 +7,7 @@ import ch.spacebase.mc.auth.request.RefreshRequest;
 import ch.spacebase.mc.auth.response.AuthenticationResponse;
 import ch.spacebase.mc.auth.response.RefreshResponse;
 import ch.spacebase.mc.auth.response.User;
+import ch.spacebase.mc.auth.response.User.Property;
 import ch.spacebase.mc.util.URLUtils;
 
 import java.net.URL;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ public class UserAuthentication {
 	private static final String STORAGE_KEY_ACCESS_TOKEN = "accessToken";
 	
 	private String clientToken;
-	private Map<String, String> userProperties = new HashMap<String, String>();
+	private Map<String, List<String>> userProperties = new HashMap<String, List<String>>();
 	private String userId;
 	private String username;
 	private String password;
@@ -38,6 +38,7 @@ public class UserAuthentication {
 	private boolean isOnline;
 	private List<GameProfile> profiles = new ArrayList<GameProfile>();
 	private GameProfile selectedProfile;
+	private UserType userType;
 
 	public UserAuthentication(String clientToken) {
 		if(clientToken == null) {
@@ -67,8 +68,12 @@ public class UserAuthentication {
 		return this.selectedProfile;
 	}
 	
-	public Map<String, String> getUserProperties() {
-		return this.isLoggedIn() ? Collections.unmodifiableMap(this.userProperties) : Collections.unmodifiableMap(new HashMap<String, String>());
+	public UserType getUserType() {
+		return this.isLoggedIn() ? (this.userType == null ? UserType.LEGACY : this.userType) : null;
+	}
+
+	public Map<String, List<String>> getUserProperties() {
+		return this.isLoggedIn() ? Collections.unmodifiableMap(this.userProperties) : Collections.unmodifiableMap(new HashMap<String, List<String>>());
 	}
 	
 	public boolean isLoggedIn() {
@@ -170,8 +175,14 @@ public class UserAuthentication {
 			AuthenticationRequest request = new AuthenticationRequest(this, this.username, this.password);
 			AuthenticationResponse response = URLUtils.makeRequest(ROUTE_AUTHENTICATE, request, AuthenticationResponse.class);
 			if(!response.getClientToken().equals(this.getClientToken())) {
-				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
+				throw new AuthenticationException("Server requested we change our client token. Don't know how to handle this!");
 			} else {
+				if(response.getSelectedProfile() != null) {
+					this.userType = response.getSelectedProfile().isLegacy() ? UserType.LEGACY : UserType.MOJANG;
+				} else if(response.getAvailableProfiles() != null && response.getAvailableProfiles().length != 0) {
+					this.userType = response.getAvailableProfiles()[0].isLegacy() ? UserType.LEGACY : UserType.MOJANG;
+				}
+
 				if(response.getUser() != null && response.getUser().getId() != null) {
 					this.userId = response.getUser().getId();
 				} else {
@@ -182,14 +193,7 @@ public class UserAuthentication {
 				this.accessToken = response.getAccessToken();
 				this.profiles = Arrays.asList(response.getAvailableProfiles());
 				this.selectedProfile = response.getSelectedProfile();
-				this.userProperties.clear();
-				if(response.getUser() != null && response.getUser().getProperties() != null) {
-					Iterator<User.Property> it = response.getUser().getProperties().iterator();
-					while(it.hasNext()) {
-						User.Property property = it.next();
-						this.userProperties.put(property.getKey(), property.getValue());
-					}
-				}
+				this.updateProperties(response.getUser());
 			}
 		}
 	}
@@ -209,8 +213,14 @@ public class UserAuthentication {
 			RefreshRequest request = new RefreshRequest(this);
 			RefreshResponse response = URLUtils.makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
 			if(!response.getClientToken().equals(this.getClientToken())) {
-				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
+				throw new AuthenticationException("Server requested we change our client token. Don't know how to handle this!");
 			} else {
+				if(response.getSelectedProfile() != null) {
+					this.userType = response.getSelectedProfile().isLegacy() ? UserType.LEGACY : UserType.MOJANG;
+				} else if(response.getAvailableProfiles() != null && response.getAvailableProfiles().length != 0) {
+					this.userType = response.getAvailableProfiles()[0].isLegacy() ? UserType.LEGACY : UserType.MOJANG;
+				}
+				
 				if(response.getUser() != null && response.getUser().getId() != null) {
 					this.userId = response.getUser().getId();
 				} else {
@@ -221,15 +231,7 @@ public class UserAuthentication {
 				this.accessToken = response.getAccessToken();
 				this.profiles = Arrays.asList(response.getAvailableProfiles());
 				this.selectedProfile = response.getSelectedProfile();
-				this.userProperties.clear();
-				if(response.getUser() != null && response.getUser().getProperties() != null) {
-					Iterator<User.Property> it = response.getUser().getProperties().iterator();
-					while(it.hasNext()) {
-						User.Property property = it.next();
-						this.userProperties.put(property.getKey(), property.getValue());
-					}
-				}
-
+				this.updateProperties(response.getUser());
 			}
 		}
 	}
@@ -242,6 +244,7 @@ public class UserAuthentication {
 		this.accessToken = null;
 		this.profiles = null;
 		this.isOnline = false;
+		this.userType = null;
 	}
 
 	public void selectGameProfile(GameProfile profile) throws AuthenticationException {
@@ -253,20 +256,33 @@ public class UserAuthentication {
 			RefreshRequest request = new RefreshRequest(this, profile);
 			RefreshResponse response = URLUtils.makeRequest(ROUTE_REFRESH, request, RefreshResponse.class);
 			if(!response.getClientToken().equals(this.getClientToken())) {
-				throw new AuthenticationException("Server requested we change our client token. Don\'t know how to handle this!");
+				throw new AuthenticationException("Server requested we change our client token. Don't know how to handle this!");
 			} else {
 				this.isOnline = true;
 				this.accessToken = response.getAccessToken();
 				this.selectedProfile = response.getSelectedProfile();
 			}
 		} else {
-			throw new IllegalArgumentException("Invalid profile \'" + profile + "\'");
+			throw new IllegalArgumentException("Invalid profile '" + profile + "'");
 		}
 	}
 
 	@Override
 	public String toString() {
 		return "UserAuthentication{profiles=" + this.profiles + ", selectedProfile=" + this.getSelectedProfile() + ", username=" + this.username + ", isLoggedIn=" + this.isLoggedIn() + ", canPlayOnline=" + this.canPlayOnline() + ", accessToken=" + this.accessToken + ", clientToken=" + this.getClientToken() + "}";
+	}
+	
+	private void updateProperties(User user) {
+		this.userProperties.clear();
+		if(user != null && user.getProperties() != null) {
+			for(Property property : user.getProperties()) {
+				if(this.userProperties.get(property.getKey()) == null) {
+					this.userProperties.put(property.getKey(), new ArrayList<String>());
+				}
+				
+				this.userProperties.get(property.getKey()).add(property.getValue());
+			}
+		}
 	}
 
 }

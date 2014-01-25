@@ -37,15 +37,15 @@ public class ServerSetExperiencePacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.experience = in.readFloat();
-		this.level = in.readShort();
-		this.totalExperience = in.readShort();
+		this.level = in.readVarInt();
+		this.totalExperience = in.readVarInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeFloat(this.experience);
-		out.writeShort(this.level);
-		out.writeShort(this.totalExperience);
+		out.writeVarInt(this.level);
+		out.writeVarInt(this.totalExperience);
 	}
 	
 	@Override
