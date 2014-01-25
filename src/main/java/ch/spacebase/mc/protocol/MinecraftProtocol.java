@@ -185,8 +185,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		try {
 			this.encrypt = new AESEncryption(key);
 		} catch(GeneralSecurityException e) {
-			System.err.println("Could not enable protocol encryption!");
-			e.printStackTrace();
+			throw new Error("Failed to enable protocol encryption.", e);
 		}
 	}
 	
