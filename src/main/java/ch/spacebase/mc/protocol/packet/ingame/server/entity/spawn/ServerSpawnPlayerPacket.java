@@ -2,6 +2,7 @@ package ch.spacebase.mc.protocol.packet.ingame.server.entity.spawn;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.auth.GameProfile;
 import ch.spacebase.mc.protocol.data.game.EntityMetadata;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
@@ -11,8 +12,7 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerSpawnPlayerPacket implements Packet {
 	
 	private int entityId;
-	private String uuid;
-	private String name;
+	private GameProfile profile;
 	private double x;
 	private double y;
 	private double z;
@@ -25,10 +25,9 @@ public class ServerSpawnPlayerPacket implements Packet {
 	private ServerSpawnPlayerPacket() {
 	}
 	
-	public ServerSpawnPlayerPacket(int entityId, String uuid, String name, double x, double y, double z, float yaw, float pitch, int currentItem, EntityMetadata metadata[]) {
+	public ServerSpawnPlayerPacket(int entityId, GameProfile profile, double x, double y, double z, float yaw, float pitch, int currentItem, EntityMetadata metadata[]) {
 		this.entityId = entityId;
-		this.uuid = uuid;
-		this.name = name;
+		this.profile = profile;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -42,12 +41,8 @@ public class ServerSpawnPlayerPacket implements Packet {
 		return this.entityId;
 	}
 	
-	public String getUUID() {
-		return this.uuid;
-	}
-	
-	public String getName() {
-		return this.name;
+	public GameProfile getProfile() {
+		return this.profile;
 	}
 	
 	public double getX() {
@@ -81,8 +76,7 @@ public class ServerSpawnPlayerPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
-		this.uuid = in.readString();
-		this.name = in.readString();
+		this.profile = new GameProfile(in.readString(), in.readString());
 		this.x = in.readInt() / 32D;
 		this.y = in.readInt() / 32D;
 		this.z = in.readInt() / 32D;
@@ -95,8 +89,8 @@ public class ServerSpawnPlayerPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeString(this.uuid);
-		out.writeString(this.name);
+		out.writeString(this.profile.getId());
+		out.writeString(this.profile.getName());
 		out.writeInt((int) (this.x * 32));
 		out.writeInt((int) (this.y * 32));
 		out.writeInt((int) (this.z * 32));
