@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.spacebase.mc.protocol.data.game.values.ChatVisibility;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.SkinPart;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -52,7 +55,7 @@ public class ClientSettingsPacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		this.locale = in.readString();
 		this.renderDistance = in.readByte();
-		this.chatVisibility = ChatVisibility.values()[in.readByte()];
+		this.chatVisibility = MagicValues.key(ChatVisibility.class, in.readByte());
 		this.chatColors = in.readBoolean();
 		int flags = in.readUnsignedByte();
 		for(SkinPart part : SkinPart.values()) {
@@ -67,7 +70,7 @@ public class ClientSettingsPacket implements Packet {
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.locale);
 		out.writeByte(this.renderDistance);
-		out.writeByte(this.chatVisibility.ordinal());
+		out.writeByte(MagicValues.value(Integer.class, this.chatVisibility));
 		out.writeBoolean(this.chatColors);
 		int flags = 0;
 		for(SkinPart part : this.visibleParts) {
@@ -80,29 +83,6 @@ public class ClientSettingsPacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum ChatVisibility {
-		FULL,
-		SYSTEM,
-		HIDDEN;
-	}
-	
-	public static enum Difficulty {
-		PEACEFUL,
-		EASY,
-		NORMAL,
-		HARD;
-	}
-	
-	public static enum SkinPart {
-		CAPE,
-		JACKET,
-		LEFT_SLEEVE,
-		RIGHT_SLEEVE,
-		LEFT_PANTS_LEG,
-		RIGHT_PANTS_LEG,
-		HAT;
 	}
 
 }

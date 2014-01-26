@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import ch.spacebase.mc.protocol.data.game.Attribute;
-import ch.spacebase.mc.protocol.data.game.AttributeModifier;
+import ch.spacebase.mc.protocol.data.game.attribute.Attribute;
+import ch.spacebase.mc.protocol.data.game.attribute.AttributeModifier;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.ModifierOperation;
+import ch.spacebase.mc.protocol.data.game.values.ModifierType;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -44,10 +47,10 @@ public class ServerEntityPropertiesPacket implements Packet {
 			List<AttributeModifier> modifiers = new ArrayList<AttributeModifier>();
 			short len = in.readShort();
 			for(int ind = 0; ind < len; ind++) {
-				modifiers.add(new AttributeModifier(new UUID(in.readLong(), in.readLong()), in.readDouble(), in.readByte()));
+				modifiers.add(new AttributeModifier(MagicValues.key(ModifierType.class, new UUID(in.readLong(), in.readLong())), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
 			}
 			
-			this.attributes.add(new Attribute(key, value, modifiers));
+			this.attributes.add(new Attribute(Attribute.Type.fromKey(key), value, modifiers));
 		}
 	}
 
@@ -56,14 +59,15 @@ public class ServerEntityPropertiesPacket implements Packet {
 		out.writeVarInt(this.entityId);
 		out.writeVarInt(this.attributes.size());
 		for(Attribute attribute : this.attributes) {
-			out.writeString(attribute.getKey());
+			out.writeString(attribute.getType().getKey());
 			out.writeDouble(attribute.getValue());
 			out.writeShort(attribute.getModifiers().size());
 			for(AttributeModifier modifier : attribute.getModifiers()) {
-				out.writeLong(modifier.getUUID().getMostSignificantBits());
-				out.writeLong(modifier.getUUID().getLeastSignificantBits());
+				UUID uuid = MagicValues.value(UUID.class, modifier.getType());
+				out.writeLong(uuid.getMostSignificantBits());
+				out.writeLong(uuid.getLeastSignificantBits());
 				out.writeDouble(modifier.getAmount());
-				out.writeByte(modifier.getOperation());
+				out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));
 			}
 		}
 	}

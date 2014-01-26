@@ -54,10 +54,10 @@ public class ServerListener extends SessionAdapter {
 			if(event.getPacket() instanceof HandshakePacket) {
 				HandshakePacket packet = event.getPacket();
 				switch(packet.getIntent()) {
-					case 1:
+					case STATUS:
 						protocol.setMode(ProtocolMode.STATUS, false, event.getSession());
 						break;
-					case 2:
+					case LOGIN:
 						protocol.setMode(ProtocolMode.LOGIN, false, event.getSession());
 						if(packet.getProtocolVersion() > ProtocolConstants.PROTOCOL_VERSION) {
 							event.getSession().disconnect("Outdated server! I'm still on " + ProtocolConstants.GAME_VERSION + ".");

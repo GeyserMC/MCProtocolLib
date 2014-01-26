@@ -1,28 +1,30 @@
-package ch.spacebase.mc.protocol.packet.ingame.client.entity;
+package ch.spacebase.mc.protocol.packet.ingame.client.entity.player;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.PlayerState;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
 
-public class ClientEntityActionPacket implements Packet {
+public class ClientPlayerStatePacket implements Packet {
 	
 	private int entityId;
-	private Action action;
+	private PlayerState state;
 	private int jumpBoost;
 	
 	@SuppressWarnings("unused")
-	private ClientEntityActionPacket() {
+	private ClientPlayerStatePacket() {
 	}
 	
-	public ClientEntityActionPacket(int entityId, Action action) {
-		this(entityId, action, 0);
+	public ClientPlayerStatePacket(int entityId, PlayerState state) {
+		this(entityId, state, 0);
 	}
 	
-	public ClientEntityActionPacket(int entityId, Action action, int jumpBoost) {
+	public ClientPlayerStatePacket(int entityId, PlayerState state, int jumpBoost) {
 		this.entityId = entityId;
-		this.action = action;
+		this.state = state;
 		this.jumpBoost = jumpBoost;
 	}
 	
@@ -30,8 +32,8 @@ public class ClientEntityActionPacket implements Packet {
 		return this.entityId;
 	}
 	
-	public Action getAction() {
-		return this.action;
+	public PlayerState getState() {
+		return this.state;
 	}
 	
 	public int getJumpBoost() {
@@ -41,28 +43,20 @@ public class ClientEntityActionPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
-		this.action = Action.values()[in.readUnsignedByte() - 1];
+		this.state = MagicValues.key(PlayerState.class, in.readUnsignedByte());
 		this.jumpBoost = in.readVarInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeByte(this.action.ordinal() + 1);
+		out.writeByte(MagicValues.value(Integer.class, this.state));
 		out.writeVarInt(this.jumpBoost);
 	}
 	
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum Action {
-		CROUCH,
-		UNCROUCH,
-		LEAVE_BED,
-		START_SPRINTING,
-		STOP_SPRINTING;
 	}
 
 }

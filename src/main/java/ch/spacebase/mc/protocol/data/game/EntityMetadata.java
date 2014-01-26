@@ -1,12 +1,14 @@
 package ch.spacebase.mc.protocol.data.game;
 
+import ch.spacebase.mc.protocol.data.game.values.MetadataType;
+
 public class EntityMetadata {
 
 	private int id;
-	private Type type;
+	private MetadataType type;
 	private Object value;
 	
-	public EntityMetadata(int id, Type type, Object value) {
+	public EntityMetadata(int id, MetadataType type, Object value) {
 		this.id = id;
 		this.type = type;
 		this.value = value;
@@ -16,22 +18,12 @@ public class EntityMetadata {
 		return this.id;
 	}
 	
-	public Type getType() {
+	public MetadataType getType() {
 		return this.type;
 	}
 	
 	public Object getValue() {
 		return this.value;
-	}
-	
-	public static enum Type {
-		BYTE,
-		SHORT,
-		INT,
-		FLOAT,
-		STRING,
-		ITEM,
-		POSITION;
 	}
 	
 }

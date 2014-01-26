@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.ItemStack;
 import ch.spacebase.mc.protocol.data.game.Position;
+import ch.spacebase.mc.protocol.data.game.values.Face;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
@@ -58,7 +60,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.position = NetUtil.readPosition(in);
-		this.face = Face.values()[in.readUnsignedByte()];
+		this.face = MagicValues.key(Face.class, in.readUnsignedByte());
 		this.held = NetUtil.readItem(in);
 		this.cursorX = in.readByte() / 16f;
 		this.cursorY = in.readByte() / 16f;
@@ -68,7 +70,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		NetUtil.writePosition(out, this.position);
-		out.writeByte(this.face.ordinal());
+		out.writeByte(MagicValues.value(Integer.class, this.face));
 		NetUtil.writeItem(out, this.held);
 		out.writeByte((int) (this.cursorX * 16));
 		out.writeByte((int) (this.cursorY * 16));
@@ -78,15 +80,6 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum Face {
-		BOTTOM,
-		TOP,
-		EAST,
-		WEST,
-		NORTH,
-		SOUTH;
 	}
 
 }

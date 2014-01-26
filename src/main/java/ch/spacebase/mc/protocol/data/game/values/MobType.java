@@ -1,0 +1,35 @@
+package ch.spacebase.mc.protocol.data.game.values;
+
+public enum MobType {
+
+	CREEPER,
+	SKELETON,
+	SPIDER,
+	GIANT_ZOMBIE,
+	ZOMBIE,
+	SLIME,
+	GHAST,
+	ZOMBIE_PIGMAN,
+	ENDERMAN,
+	CAVE_SPIDER,
+	SILVERFISH,
+	BLAZE,
+	MAGMA_CUBE,
+	ENDER_DRAGON,
+	WITHER,
+	BAT,
+	WITCH,
+	PIG,
+	SHEEP,
+	COW,
+	CHICKEN,
+	SQUID,
+	WOLF,
+	MOOSHROOM,
+	SNOWMAN,
+	OCELOT,
+	IRON_GOLEM,
+	HORSE,
+	VILLAGER;
+	
+}

@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.CombatState;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -53,7 +55,7 @@ public class ServerCombatPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-        this.state = CombatState.values()[in.readUnsignedByte()];
+        this.state = MagicValues.key(CombatState.class, in.readByte());
         if(this.state == CombatState.END_COMBAT) {
         	this.duration = in.readVarInt();
         	this.entityId = in.readInt();
@@ -66,7 +68,7 @@ public class ServerCombatPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeByte(this.state.ordinal());
+		out.writeByte(MagicValues.value(Integer.class, this.state));
         if(this.state == CombatState.END_COMBAT) {
         	out.writeVarInt(this.duration);
         	out.writeInt(this.entityId);
@@ -80,12 +82,6 @@ public class ServerCombatPacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-
-	public static enum CombatState {
-		ENTER_COMBAT,
-		END_COMBAT,
-		ENTITY_DEAD;
 	}
 
 }

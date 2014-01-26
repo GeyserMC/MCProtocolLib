@@ -2,8 +2,9 @@ package ch.spacebase.mc.protocol.packet.ingame.server;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.MessageType;
 import ch.spacebase.mc.protocol.data.message.Message;
-import ch.spacebase.mc.protocol.data.message.TextMessage;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -18,7 +19,7 @@ public class ServerChatPacket implements Packet {
 	}
 	
 	public ServerChatPacket(String text) {
-		this(new TextMessage(text));
+		this(Message.fromString(text));
 	}
 	
 	public ServerChatPacket(Message message) {
@@ -26,7 +27,7 @@ public class ServerChatPacket implements Packet {
 	}
 	
 	public ServerChatPacket(String text, MessageType type) {
-		this(new TextMessage(text), type);
+		this(Message.fromString(text), type);
 	}
 	
 	public ServerChatPacket(Message message, MessageType type) {
@@ -45,24 +46,18 @@ public class ServerChatPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.message = Message.fromString(in.readString());
-		this.type = MessageType.values()[in.readByte()];
+		this.type = MagicValues.key(MessageType.class, in.readByte());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.message.toJsonString());
-		out.writeByte(this.type.ordinal());
+		out.writeByte(MagicValues.value(Integer.class, this.type));
 	}
 	
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum MessageType {
-		CHAT,
-		SYSTEM,
-		NOTIFICATION;
 	}
 
 }

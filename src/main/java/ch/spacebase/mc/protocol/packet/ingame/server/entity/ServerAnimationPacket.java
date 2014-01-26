@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.entity;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.Animation;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -31,27 +33,18 @@ public class ServerAnimationPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
-		this.animation = Animation.values()[in.readByte()];
+		this.animation = MagicValues.key(Animation.class, in.readByte());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeByte(this.animation.ordinal());
+		out.writeByte(MagicValues.value(Integer.class, this.animation));
 	}
 	
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum Animation {
-		SWING_ARM,
-		DAMAGE,
-		LEAVE_BED,
-		EAT_FOOD,
-		CRITICAL_HIT,
-		ENCHANTMENT_CRITICAL_HIT;
 	}
 
 }

@@ -20,6 +20,10 @@ public class ServerEntityHeadLookPacket implements Packet {
 		this.headYaw = headYaw;
 	}
 	
+	public int getEntityId() {
+		return this.entityId;
+	}
+	
 	public float getHeadYaw() {
 		return this.headYaw;
 	}

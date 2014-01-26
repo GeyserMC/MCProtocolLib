@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.handshake.client;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.HandshakeIntent;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -11,17 +13,17 @@ public class HandshakePacket implements Packet {
 	private int protocolVersion;
 	private String hostname;
 	private int port;
-	private int intent;
+	private HandshakeIntent intent;
 	
 	@SuppressWarnings("unused")
 	private HandshakePacket() {
 	}
 	
-	public HandshakePacket(int protocolVersion, String hostname, int port, int nextState) {
+	public HandshakePacket(int protocolVersion, String hostname, int port, HandshakeIntent intent) {
 		this.protocolVersion = protocolVersion;
 		this.hostname = hostname;
 		this.port = port;
-		this.intent = nextState;
+		this.intent = intent;
 	}
 	
 	public int getProtocolVersion() {
@@ -36,7 +38,7 @@ public class HandshakePacket implements Packet {
 		return this.port;
 	}
 	
-	public int getIntent() {
+	public HandshakeIntent getIntent() {
 		return this.intent;
 	}
 
@@ -45,7 +47,7 @@ public class HandshakePacket implements Packet {
 		this.protocolVersion = in.readVarInt();
 		this.hostname = in.readString();
 		this.port = in.readUnsignedShort();
-		this.intent = in.readVarInt();
+		this.intent = MagicValues.key(HandshakeIntent.class, in.readVarInt());
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class HandshakePacket implements Packet {
 		out.writeVarInt(this.protocolVersion);
 		out.writeString(this.hostname);
 		out.writeShort(this.port);
-		out.writeVarInt(this.intent);
+		out.writeVarInt(MagicValues.value(Integer.class, this.intent));
 	}
 	
 	@Override

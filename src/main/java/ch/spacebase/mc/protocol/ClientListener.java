@@ -9,6 +9,7 @@ import ch.spacebase.mc.auth.SessionService;
 import ch.spacebase.mc.auth.exception.AuthenticationException;
 import ch.spacebase.mc.auth.exception.AuthenticationUnavailableException;
 import ch.spacebase.mc.auth.exception.InvalidCredentialsException;
+import ch.spacebase.mc.protocol.data.game.values.HandshakeIntent;
 import ch.spacebase.mc.protocol.data.status.ServerStatusInfo;
 import ch.spacebase.mc.protocol.data.status.handler.ServerInfoHandler;
 import ch.spacebase.mc.protocol.data.status.handler.ServerPingTimeHandler;
@@ -117,12 +118,12 @@ public class ClientListener extends SessionAdapter {
 		if(protocol.getMode() == ProtocolMode.LOGIN) {
 			GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
 			protocol.setMode(ProtocolMode.HANDSHAKE, true, event.getSession());
-			event.getSession().send(new HandshakePacket(ProtocolConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), 2));
+			event.getSession().send(new HandshakePacket(ProtocolConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
 			protocol.setMode(ProtocolMode.LOGIN, true, event.getSession());
 			event.getSession().send(new LoginStartPacket(profile != null ? profile.getName() : ""));
 		} else if(protocol.getMode() == ProtocolMode.STATUS) {
 			protocol.setMode(ProtocolMode.HANDSHAKE, true, event.getSession());
-			event.getSession().send(new HandshakePacket(ProtocolConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), 1));
+			event.getSession().send(new HandshakePacket(ProtocolConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
 			protocol.setMode(ProtocolMode.STATUS, true, event.getSession());
 			event.getSession().send(new StatusQueryPacket());
 		}

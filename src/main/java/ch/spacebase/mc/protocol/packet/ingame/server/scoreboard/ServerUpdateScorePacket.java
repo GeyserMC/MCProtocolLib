@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.scoreboard;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.ScoreboardAction;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -9,7 +11,7 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerUpdateScorePacket implements Packet {
 	
 	private String entry;
-	private Action action;
+	private ScoreboardAction action;
 	private String objective;
 	private int value;
 	
@@ -19,21 +21,21 @@ public class ServerUpdateScorePacket implements Packet {
 	
 	public ServerUpdateScorePacket(String entry) {
 		this.entry = entry;
-		this.action = Action.REMOVE;
+		this.action = ScoreboardAction.REMOVE;
 	}
 	
 	public ServerUpdateScorePacket(String entry, String objective, int value) {
 		this.entry = entry;
 		this.objective = objective;
 		this.value = value;
-		this.action = Action.ADD_OR_UPDATE;
+		this.action = ScoreboardAction.ADD_OR_UPDATE;
 	}
 	
 	public String getEntry() {
 		return this.entry;
 	}
 	
-	public Action getAction() {
+	public ScoreboardAction getAction() {
 		return this.action;
 	}
 	
@@ -48,8 +50,8 @@ public class ServerUpdateScorePacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entry = in.readString();
-		this.action = Action.values()[in.readByte()];
-		if(this.action == Action.ADD_OR_UPDATE) {
+		this.action = MagicValues.key(ScoreboardAction.class, in.readByte());
+		if(this.action == ScoreboardAction.ADD_OR_UPDATE) {
 			this.objective = in.readString();
 			this.value = in.readVarInt();
 		}
@@ -58,8 +60,8 @@ public class ServerUpdateScorePacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.entry);
-		out.writeByte(this.action.ordinal());
-		if(this.action == Action.ADD_OR_UPDATE) {
+		out.writeByte(MagicValues.value(Integer.class, this.action));
+		if(this.action == ScoreboardAction.ADD_OR_UPDATE) {
 			out.writeString(this.objective);
 			out.writeVarInt(this.value);
 		}
@@ -68,11 +70,6 @@ public class ServerUpdateScorePacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum Action {
-		ADD_OR_UPDATE,
-		REMOVE;
 	}
 
 }

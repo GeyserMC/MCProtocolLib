@@ -99,7 +99,7 @@ public class MessageStyle implements Cloneable {
 	
 	@Override
 	public MessageStyle clone() {
-		return (this.parent != null ? new MessageStyle(this.parent) : new MessageStyle()).setColor(this.color).setFormats(this.formats).setClickEvent(this.click.clone()).setHoverEvent(this.hover.clone()).setInsertion(this.insertion);
+		return (this.parent != null ? new MessageStyle(this.parent) : new MessageStyle()).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : this.click).setHoverEvent(this.hover != null ? this.hover.clone() : this.hover).setInsertion(this.insertion);
 	}
 	
 }

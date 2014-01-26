@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.MapDataType;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -11,14 +13,14 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerMapDataPacket implements Packet {
 	
 	private int mapId;
-	private Type type;
+	private MapDataType type;
 	private MapData data; 
 	
 	@SuppressWarnings("unused")
 	private ServerMapDataPacket() {
 	}
 	
-	public ServerMapDataPacket(int mapId, Type type, MapData data) {
+	public ServerMapDataPacket(int mapId, MapDataType type, MapData data) {
 		this.mapId = mapId;
 		this.type = type;
 		this.data = data;
@@ -28,7 +30,7 @@ public class ServerMapDataPacket implements Packet {
 		return this.mapId;
 	}
 	
-	public Type getType() {
+	public MapDataType getType() {
 		return this.type;
 	}
 	
@@ -40,7 +42,7 @@ public class ServerMapDataPacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		this.mapId = in.readVarInt();
 		byte data[] = in.readBytes(in.readShort());
-		this.type = Type.values()[data[0]];
+		this.type = MagicValues.key(MapDataType.class, data[0]);
 		switch(this.type) {
 			case IMAGE:
 				byte x = data[1];
@@ -79,7 +81,7 @@ public class ServerMapDataPacket implements Packet {
 			case IMAGE:
 				MapColumnUpdate column = (MapColumnUpdate) this.data;
 				data = new byte[column.getHeight() + 4];
-				data[0] = 0;
+				data[0] = (byte) MagicValues.value(Integer.class, this.type).intValue();
 				data[1] = column.getX();
 				data[2] = column.getY();
 
@@ -91,7 +93,7 @@ public class ServerMapDataPacket implements Packet {
 			case PLAYERS:
 				MapPlayers players = (MapPlayers) this.data;
 				data = new byte[players.getPlayers().size() * 3 + 1];
-				data[0] = 1;
+				data[0] = (byte) MagicValues.value(Integer.class, this.type).intValue();
 				for(int index = 0; index < players.getPlayers().size(); index++) {
 					MapPlayer player = players.getPlayers().get(index);
 					data[index * 3 + 1] = (byte) (player.getIconSize() << 4 | player.getIconRotation() & 15);
@@ -103,7 +105,7 @@ public class ServerMapDataPacket implements Packet {
 			case SCALE:
 				MapScale scale = (MapScale) this.data;
 				data = new byte[2];
-				data[0] = 2;
+				data[0] = (byte) MagicValues.value(Integer.class, this.type).intValue();
 				data[1] = scale.getScale();
 				break;
 		}
@@ -115,12 +117,6 @@ public class ServerMapDataPacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum Type {
-		IMAGE,
-		PLAYERS,
-		SCALE;
 	}
 	
 	public static interface MapData {

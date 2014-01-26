@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.window;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.WindowProperty;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -9,14 +11,14 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerWindowPropertyPacket implements Packet {
 	
 	private int windowId;
-	private int property;
+	private WindowProperty property;
 	private int value;
 	
 	@SuppressWarnings("unused")
 	private ServerWindowPropertyPacket() {
 	}
 	
-	public ServerWindowPropertyPacket(int windowId, int property, int value) {
+	public ServerWindowPropertyPacket(int windowId, WindowProperty property, int value) {
 		this.windowId = windowId;
 		this.property = property;
 		this.value = value;
@@ -26,7 +28,7 @@ public class ServerWindowPropertyPacket implements Packet {
 		return this.windowId;
 	}
 	
-	public int getProperty() {
+	public WindowProperty getProperty() {
 		return this.property;
 	}
 	
@@ -37,29 +39,20 @@ public class ServerWindowPropertyPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readUnsignedByte();
-		this.property = in.readShort();
+		this.property = MagicValues.key(WindowProperty.class, in.readShort());
 		this.value = in.readShort();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
-		out.writeShort(this.property);
+		out.writeShort(MagicValues.value(Integer.class, this.property));
 		out.writeShort(this.value);
 	}
 	
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static class Property {
-		public static final int FURNACE_PROGRESS = 0;
-		public static final int FURNACE_FUEL = 1;
-		
-		public static final int ENCHANTMENT_SLOT_1 = 0;
-		public static final int ENCHANTMENT_SLOT_2 = 1;
-		public static final int ENCHANTMENT_SLOT_3 = 2;
 	}
 
 }

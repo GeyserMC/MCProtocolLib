@@ -15,6 +15,8 @@ import ch.spacebase.mc.protocol.data.game.Position;
 import ch.spacebase.mc.protocol.data.game.EntityMetadata;
 import ch.spacebase.mc.protocol.data.game.ItemStack;
 import ch.spacebase.mc.protocol.data.game.NibbleArray;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.MetadataType;
 import ch.spacebase.opennbt.NBTIO;
 import ch.spacebase.opennbt.tag.CompoundTag;
 import ch.spacebase.packetlib.io.NetInput;
@@ -120,7 +122,7 @@ public class NetUtil {
 		byte b;
 		while((b = in.readByte()) != 127) {
 			int typeId = (b & 224) >> 5;
-			EntityMetadata.Type type = EntityMetadata.Type.values()[typeId];
+			MetadataType type = MagicValues.key(MetadataType.class, typeId);
 			int id = b & 31;
 			Object value = null;
 			switch(type) {
@@ -157,7 +159,7 @@ public class NetUtil {
 	
 	public static void writeEntityMetadata(NetOutput out, EntityMetadata[] metadata) throws IOException {
 		for(EntityMetadata meta : metadata) {
-			int id = (meta.getType().ordinal() << 5 | meta.getId() & 31) & 255;
+			int id = (MagicValues.value(Integer.class, meta.getType()) << 5 | meta.getId() & 31) & 255;
 			out.writeByte(id);
 			switch(meta.getType()) {
 				case BYTE:

@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.entity.spawn;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.GlobalEntityType;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -9,7 +11,7 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerSpawnGlobalEntityPacket implements Packet {
 
 	private int entityId;
-	private Type type;
+	private GlobalEntityType type;
 	private int x;
 	private int y;
 	private int z;
@@ -18,7 +20,7 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 	private ServerSpawnGlobalEntityPacket() {
 	}
 	
-	public ServerSpawnGlobalEntityPacket(int entityId, Type type, int x, int y, int z) {
+	public ServerSpawnGlobalEntityPacket(int entityId, GlobalEntityType type, int x, int y, int z) {
 		this.entityId = entityId;
 		this.type = type;
 		this.x = x;
@@ -30,7 +32,7 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 		return this.entityId;
 	}
 	
-	public Type getType() {
+	public GlobalEntityType getType() {
 		return this.type;
 	}
 	
@@ -49,7 +51,7 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
-		this.type = Type.values()[in.readByte() - 1];
+		this.type = MagicValues.key(GlobalEntityType.class, in.readByte());
 		this.x = in.readInt();
 		this.y = in.readInt();
 		this.z = in.readInt();
@@ -58,7 +60,7 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeByte(this.type.ordinal() + 1);
+		out.writeByte(MagicValues.value(Integer.class, this.type));
 		out.writeInt(this.x);
 		out.writeInt(this.y);
 		out.writeInt(this.z);
@@ -67,10 +69,6 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static enum Type {
-		LIGHTNING_BOLT;
 	}
 	
 }

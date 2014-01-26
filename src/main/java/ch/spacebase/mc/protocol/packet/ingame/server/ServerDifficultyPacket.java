@@ -2,6 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server;
 
 import java.io.IOException;
 
+import ch.spacebase.mc.protocol.data.game.values.Difficulty;
+import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -24,24 +26,17 @@ public class ServerDifficultyPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-        this.difficulty = Difficulty.values()[in.readUnsignedByte()];
+        this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeByte(this.difficulty.ordinal());
+		out.writeByte(MagicValues.value(Integer.class, this.difficulty));
 	}
 	
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-
-	public static enum Difficulty {
-		PEACEFUL,
-		EASY,
-		NORMAL,
-		HARD;
 	}
 
 }
