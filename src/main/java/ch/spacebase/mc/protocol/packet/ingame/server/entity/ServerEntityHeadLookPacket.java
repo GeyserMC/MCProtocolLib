@@ -23,6 +23,10 @@ public class ServerEntityHeadLookPacket implements Packet {
 	public float getHeadYaw() {
 		return this.headYaw;
 	}
+        
+        public int getEntityId(){
+            return this.entityId;
+        }
 
 	@Override
 	public void read(NetInput in) throws IOException {
