@@ -31,13 +31,13 @@ public class ServerEntityRemoveEffectPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
-		this.effect = Effect.values()[in.readByte()];
+		this.effect = Effect.values()[in.readByte() - 1];
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
-		out.writeByte(this.effect.ordinal());
+		out.writeByte(this.effect.ordinal() + 1);
 	}
 	
 	@Override
