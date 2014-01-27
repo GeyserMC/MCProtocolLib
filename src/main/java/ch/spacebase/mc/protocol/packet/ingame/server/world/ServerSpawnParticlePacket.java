@@ -79,9 +79,9 @@ public class ServerSpawnParticlePacket implements Packet {
 		this.offsetX = in.readFloat();
 		this.offsetY = in.readFloat();
 		this.offsetZ = in.readFloat();
-		this.offsetZ = in.readFloat();
 		this.velocityOffset = in.readFloat();
-		this.amount = in.readInt();
+                this.amount = in.readInt();
+                
 	}
 
 	@Override
