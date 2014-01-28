@@ -1,14 +1,14 @@
 package ch.spacebase.mc.protocol.data.game;
 
-public class NibbleArray {
+public class NibbleArray3d {
 
 	private byte[] data;
 
-	public NibbleArray(int size) {
+	public NibbleArray3d(int size) {
 		this.data = new byte[size >> 1];
 	}
 
-	public NibbleArray(byte[] array) {
+	public NibbleArray3d(byte[] array) {
 		this.data = array;
 	}
 	

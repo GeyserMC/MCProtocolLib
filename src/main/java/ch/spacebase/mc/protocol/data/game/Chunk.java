@@ -2,17 +2,17 @@ package ch.spacebase.mc.protocol.data.game;
 
 public class Chunk {
 
-	private byte blocks[];
-	private NibbleArray metadata;
-	private NibbleArray blocklight;
-	private NibbleArray skylight;
-	private NibbleArray extendedBlocks;
+	private ByteArray3d blocks;
+	private NibbleArray3d metadata;
+	private NibbleArray3d blocklight;
+	private NibbleArray3d skylight;
+	private NibbleArray3d extendedBlocks;
 	
 	public Chunk(boolean skylight, boolean extended) {
-		this(new byte[4096], new NibbleArray(4096), new NibbleArray(4096), skylight ? new NibbleArray(4096) : null, extended ? new NibbleArray(4096) : null);
+		this(new ByteArray3d(4096), new NibbleArray3d(4096), new NibbleArray3d(4096), skylight ? new NibbleArray3d(4096) : null, extended ? new NibbleArray3d(4096) : null);
 	}
 	
-	public Chunk(byte blocks[], NibbleArray metadata, NibbleArray blocklight, NibbleArray skylight, NibbleArray extendedBlocks) {
+	public Chunk(ByteArray3d blocks, NibbleArray3d metadata, NibbleArray3d blocklight, NibbleArray3d skylight, NibbleArray3d extendedBlocks) {
 		this.blocks = blocks;
 		this.metadata = metadata;
 		this.blocklight = blocklight;
@@ -20,23 +20,23 @@ public class Chunk {
 		this.extendedBlocks = extendedBlocks;
 	}
 	
-	public byte[] getBlocks() {
+	public ByteArray3d getBlocks() {
 		return this.blocks;
 	}
 	
-	public NibbleArray getMetadata() {
+	public NibbleArray3d getMetadata() {
 		return this.metadata;
 	}
 	
-	public NibbleArray getBlockLight() {
+	public NibbleArray3d getBlockLight() {
 		return this.blocklight;
 	}
 	
-	public NibbleArray getSkyLight() {
+	public NibbleArray3d getSkyLight() {
 		return this.skylight;
 	}
 	
-	public NibbleArray getExtendedBlocks() {
+	public NibbleArray3d getExtendedBlocks() {
 		return this.extendedBlocks;
 	}
 
@@ -45,7 +45,7 @@ public class Chunk {
 	}
 
 	public boolean isEmpty() {
-		for(byte block : this.blocks) {
+		for(byte block : this.blocks.getData()) {
 			if(block != 0) {
 				return false;
 			}
