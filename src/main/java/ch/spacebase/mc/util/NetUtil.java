@@ -10,11 +10,12 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import ch.spacebase.mc.protocol.data.game.ByteArray3d;
 import ch.spacebase.mc.protocol.data.game.Chunk;
 import ch.spacebase.mc.protocol.data.game.Coordinates;
 import ch.spacebase.mc.protocol.data.game.EntityMetadata;
 import ch.spacebase.mc.protocol.data.game.ItemStack;
-import ch.spacebase.mc.protocol.data.game.NibbleArray;
+import ch.spacebase.mc.protocol.data.game.NibbleArray3d;
 import ch.spacebase.opennbt.NBTIO;
 import ch.spacebase.opennbt.tag.CompoundTag;
 import ch.spacebase.packetlib.io.NetInput;
@@ -159,25 +160,25 @@ public class NetUtil {
 				if((data.getMask() & 1 << ind) != 0) {
 					if(pass == 0) {
 						chunks[ind] = new Chunk(data.hasSkyLight(), (data.getExtendedMask() & 1 << ind) != 0);
-						byte[] blocks = chunks[ind].getBlocks();
-						System.arraycopy(data.getData(), pos, blocks, 0, blocks.length);
-						pos += blocks.length;
+						ByteArray3d blocks = chunks[ind].getBlocks();
+						System.arraycopy(data.getData(), pos, blocks.getData(), 0, blocks.getData().length);
+						pos += blocks.getData().length;
 					}
 					
 					if(pass == 1) {
-						NibbleArray metadata = chunks[ind].getMetadata();
+						NibbleArray3d metadata = chunks[ind].getMetadata();
 						System.arraycopy(data.getData(), pos, metadata.getData(), 0, metadata.getData().length);
 						pos += metadata.getData().length;
 					}
 					
 					if(pass == 2) {
-						NibbleArray blocklight = chunks[ind].getBlockLight();
+						NibbleArray3d blocklight = chunks[ind].getBlockLight();
 						System.arraycopy(data.getData(), pos, blocklight.getData(), 0, blocklight.getData().length);
 						pos += blocklight.getData().length;
 					}
 					
 					if(pass == 3 && data.hasSkyLight()) {
-						NibbleArray skylight = chunks[ind].getSkyLight();
+						NibbleArray3d skylight = chunks[ind].getSkyLight();
 						System.arraycopy(data.getData(), pos, skylight.getData(), 0, skylight.getData().length);
 						pos += skylight.getData().length;
 					}
@@ -188,7 +189,7 @@ public class NetUtil {
 						if(chunks[ind] == null) {
 							pos += 2048;
 						} else {
-							NibbleArray extended = chunks[ind].getExtendedBlocks();
+							NibbleArray3d extended = chunks[ind].getExtendedBlocks();
 							System.arraycopy(data.getData(), pos, extended.getData(), 0, extended.getData().length);
 							pos += extended.getData().length;
 						}
@@ -231,7 +232,7 @@ public class NetUtil {
 							extendedChunkMask |= 1 << ind;
 						}
 						
-						length += chunk.getBlocks().length;
+						length += chunk.getBlocks().getData().length;
 						length += chunk.getMetadata().getData().length;
 						length += chunk.getBlockLight().getData().length;
 						if(chunk.getSkyLight() != null) {
@@ -244,9 +245,9 @@ public class NetUtil {
 					}
 
 					if(pass == 1) {
-						byte[] blocks = chunk.getBlocks();
-						System.arraycopy(blocks, 0, data, pos, blocks.length);
-						pos += blocks.length;
+						ByteArray3d blocks = chunk.getBlocks();
+						System.arraycopy(blocks.getData(), 0, data, pos, blocks.getData().length);
+						pos += blocks.getData().length;
 					}
 
 					if(pass == 2) {
