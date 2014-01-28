@@ -15,8 +15,12 @@ public class ServerNotifyClientPacket implements Packet {
 	private ServerNotifyClientPacket() {
 	}
 	
-	public ServerNotifyClientPacket(NotificationValue value) {
+	public ServerNotifyClientPacket(Notification notification, NotificationValue value) {
 		this.value = value;
+	}
+	
+	public Notification getNotification() {
+		return this.notification;
 	}
 	
 	public NotificationValue getValue() {

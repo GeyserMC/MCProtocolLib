@@ -3,7 +3,6 @@ package ch.spacebase.mc.protocol.packet.ingame.server;
 import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.message.Message;
-import ch.spacebase.mc.protocol.data.message.TextMessage;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -17,7 +16,7 @@ public class ServerDisconnectPacket implements Packet {
 	}
 	
 	public ServerDisconnectPacket(String text) {
-		this(new TextMessage(text));
+		this(Message.fromString(text));
 	}
 	
 	public ServerDisconnectPacket(Message message) {

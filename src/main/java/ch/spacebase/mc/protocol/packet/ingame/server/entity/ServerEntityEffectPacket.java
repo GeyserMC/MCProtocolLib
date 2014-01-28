@@ -43,7 +43,7 @@ public class ServerEntityEffectPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
-		this.effect = Effect.values()[in.readByte()];
+		this.effect = Effect.values()[in.readByte() - 1];
 		this.amplifier = in.readByte();
 		this.duration = in.readShort();
 	}
@@ -51,7 +51,7 @@ public class ServerEntityEffectPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
-		out.writeByte(this.effect.ordinal());
+		out.writeByte(this.effect.ordinal() + 1);
 		out.writeByte(this.amplifier);
 		out.writeShort(this.duration);
 	}

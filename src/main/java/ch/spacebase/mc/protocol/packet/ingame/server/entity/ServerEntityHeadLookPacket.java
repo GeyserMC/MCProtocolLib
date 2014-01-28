@@ -7,26 +7,26 @@ import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
 
 public class ServerEntityHeadLookPacket implements Packet {
-	
+
 	protected int entityId;
 	protected float headYaw;
-	
+
 	@SuppressWarnings("unused")
 	private ServerEntityHeadLookPacket() {
 	}
-	
+
 	public ServerEntityHeadLookPacket(int entityId, float headYaw) {
 		this.entityId = entityId;
 		this.headYaw = headYaw;
 	}
-	
+
+	public int getEntityId() {
+		return this.entityId;
+	}
+
 	public float getHeadYaw() {
 		return this.headYaw;
 	}
-        
-        public int getEntityId(){
-            return this.entityId;
-        }
 
 	@Override
 	public void read(NetInput in) throws IOException {
@@ -39,7 +39,7 @@ public class ServerEntityHeadLookPacket implements Packet {
 		out.writeInt(this.entityId);
 		out.writeByte((byte) (this.headYaw * 256 / 360));
 	}
-	
+
 	@Override
 	public boolean isPriority() {
 		return false;

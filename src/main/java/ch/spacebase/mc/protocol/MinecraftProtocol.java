@@ -57,7 +57,7 @@ import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerEntityRotation
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerEntityStatusPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerEntityTeleportPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerEntityVelocityPacket;
-import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerRemoveEffectPacket;
+import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerEntityRemoveEffectPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.player.ServerChangeHeldItemPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.player.ServerPlayerAbilitiesPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
@@ -290,7 +290,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerIncoming(27, ServerEntityAttachPacket.class);
 		this.registerIncoming(28, ServerEntityMetadataPacket.class);
 		this.registerIncoming(29, ServerEntityEffectPacket.class);
-		this.registerIncoming(30, ServerRemoveEffectPacket.class);
+		this.registerIncoming(30, ServerEntityRemoveEffectPacket.class);
 		this.registerIncoming(31, ServerSetExperiencePacket.class);
 		this.registerIncoming(32, ServerEntityPropertiesPacket.class);
 		this.registerIncoming(33, ServerChunkDataPacket.class);
@@ -408,7 +408,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerOutgoing(27, ServerEntityAttachPacket.class);
 		this.registerOutgoing(28, ServerEntityMetadataPacket.class);
 		this.registerOutgoing(29, ServerEntityEffectPacket.class);
-		this.registerOutgoing(30, ServerRemoveEffectPacket.class);
+		this.registerOutgoing(30, ServerEntityRemoveEffectPacket.class);
 		this.registerOutgoing(31, ServerSetExperiencePacket.class);
 		this.registerOutgoing(32, ServerEntityPropertiesPacket.class);
 		this.registerOutgoing(33, ServerChunkDataPacket.class);
