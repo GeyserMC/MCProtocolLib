@@ -7,7 +7,7 @@ public class ByteArray3d {
 	private byte[] data;
 
 	public ByteArray3d(int size) {
-		this.data = new byte[size >> 1];
+		this.data = new byte[size];
 	}
 
 	public ByteArray3d(byte[] array) {
