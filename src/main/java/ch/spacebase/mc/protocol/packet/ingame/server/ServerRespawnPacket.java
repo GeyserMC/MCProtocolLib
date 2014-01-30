@@ -2,7 +2,6 @@ package ch.spacebase.mc.protocol.packet.ingame.server;
 
 import java.io.IOException;
 
-import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -47,8 +46,6 @@ public class ServerRespawnPacket implements Packet {
         this.difficulty = Difficulty.values()[in.readUnsignedByte()];
         this.gamemode = GameMode.values()[in.readUnsignedByte()];
         this.worldType = nameToType(in.readString());
-        // Unfortunately this is needed to check whether to read skylight values in chunk data packets.
-        NetUtil.hasSky = this.dimension != -1 && this.dimension != 1;
 	}
 
 	@Override

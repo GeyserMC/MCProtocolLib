@@ -23,11 +23,6 @@ import ch.spacebase.packetlib.io.NetOutput;
 
 public class NetUtil {
 
-	/**
-	 * An unfortunately necessary hack value for chunk data packet checks as to whether a packet contains skylight values or not.
-	 */
-	public static boolean hasSky = true;
-
 	public static CompoundTag readNBT(NetInput in) throws IOException {
 		short length = in.readShort();
 		if(length < 0) {
@@ -150,41 +145,51 @@ public class NetUtil {
 	public static ParsedChunkData dataToChunks(NetworkChunkData data) {
 		Chunk chunks[] = new Chunk[16];
 		int pos = 0;
-		// 0 = Create chunks from mask and get blocks.
-		// 1 = Get metadata.
-		// 2 = Get block light.
-		// 3 = Get sky light.
-		// 4 = Get extended block data.
+		int expected = 0;
+		boolean sky = false;
+		// 0 = Calculate expected length and determine if the packet has skylight.
+		// 1 = Create chunks from mask and get blocks.
+		// 2 = Get metadata.
+		// 3 = Get block light.
+		// 4 = Get sky light.
+		// 5 = Get extended block data.
 		for(int pass = 0; pass < 5; pass++) {
 			for(int ind = 0; ind < 16; ind++) {
 				if((data.getMask() & 1 << ind) != 0) {
 					if(pass == 0) {
+						expected += 10240;
+						if((data.getExtendedMask() & 1 << ind) != 0) {
+							expected += 2048;
+						}
+					}
+					
+					if(pass == 1) {
 						chunks[ind] = new Chunk(data.hasSkyLight(), (data.getExtendedMask() & 1 << ind) != 0);
 						ByteArray3d blocks = chunks[ind].getBlocks();
 						System.arraycopy(data.getData(), pos, blocks.getData(), 0, blocks.getData().length);
 						pos += blocks.getData().length;
 					}
 					
-					if(pass == 1) {
+					if(pass == 2) {
 						NibbleArray3d metadata = chunks[ind].getMetadata();
 						System.arraycopy(data.getData(), pos, metadata.getData(), 0, metadata.getData().length);
 						pos += metadata.getData().length;
 					}
 					
-					if(pass == 2) {
+					if(pass == 3) {
 						NibbleArray3d blocklight = chunks[ind].getBlockLight();
 						System.arraycopy(data.getData(), pos, blocklight.getData(), 0, blocklight.getData().length);
 						pos += blocklight.getData().length;
 					}
 					
-					if(pass == 3 && data.hasSkyLight()) {
+					if(pass == 4 && (sky || data.hasSkyLight())) {
 						NibbleArray3d skylight = chunks[ind].getSkyLight();
 						System.arraycopy(data.getData(), pos, skylight.getData(), 0, skylight.getData().length);
 						pos += skylight.getData().length;
 					}
 				}
 				
-				if(pass == 4) {
+				if(pass == 5) {
 					if((data.getExtendedMask() & 1 << ind) != 0) {
 						if(chunks[ind] == null) {
 							pos += 2048;
@@ -194,6 +199,12 @@ public class NetUtil {
 							pos += extended.getData().length;
 						}
 					}
+				}
+			}
+			
+			if(pass == 0) {
+				if(data.getData().length >= expected) {
+					sky = true;
 				}
 			}
 		}
