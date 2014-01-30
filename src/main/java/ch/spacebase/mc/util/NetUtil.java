@@ -17,7 +17,7 @@ import ch.spacebase.mc.protocol.data.game.EntityMetadata;
 import ch.spacebase.mc.protocol.data.game.ItemStack;
 import ch.spacebase.mc.protocol.data.game.NibbleArray3d;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.MetadataType;
+import ch.spacebase.mc.protocol.data.game.values.entity.MetadataType;
 import ch.spacebase.opennbt.NBTIO;
 import ch.spacebase.opennbt.tag.CompoundTag;
 import ch.spacebase.packetlib.io.NetInput;

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.Position;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.UpdatedTileType;
+import ch.spacebase.mc.protocol.data.game.values.world.block.UpdatedTileType;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.opennbt.tag.CompoundTag;
 import ch.spacebase.packetlib.io.NetInput;

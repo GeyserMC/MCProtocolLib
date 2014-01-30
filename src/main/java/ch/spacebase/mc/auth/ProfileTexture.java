@@ -22,10 +22,5 @@ public class ProfileTexture {
 	public String toString() {
 		return "ProfileTexture{url=" + this.url + ", hash=" + this.getHash() + "}";
 	}
-
-	public static enum Type {
-		SKIN,
-		CAPE;
-	}
 	
 }

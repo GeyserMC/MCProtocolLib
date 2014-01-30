@@ -1,7 +1,7 @@
 package ch.spacebase.mc.protocol.data.game.attribute;
 
-import ch.spacebase.mc.protocol.data.game.values.ModifierOperation;
-import ch.spacebase.mc.protocol.data.game.values.ModifierType;
+import ch.spacebase.mc.protocol.data.game.values.entity.ModifierOperation;
+import ch.spacebase.mc.protocol.data.game.values.entity.ModifierType;
 
 public class AttributeModifier {
 

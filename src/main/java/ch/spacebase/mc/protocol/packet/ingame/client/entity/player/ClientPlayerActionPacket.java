@@ -5,7 +5,7 @@ import java.io.IOException;
 import ch.spacebase.mc.protocol.data.game.Position;
 import ch.spacebase.mc.protocol.data.game.values.Face;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.PlayerAction;
+import ch.spacebase.mc.protocol.data.game.values.entity.player.PlayerAction;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;

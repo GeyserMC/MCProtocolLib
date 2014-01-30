@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.spacebase.mc.protocol.data.game.values.world.block.ExplodedBlockRecord;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -104,30 +105,6 @@ public class ServerExplosionPacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-
-	public static class ExplodedBlockRecord {
-		private int x;
-		private int y;
-		private int z;
-		
-		public ExplodedBlockRecord(int x, int y, int z) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-		
-		public int getX() {
-			return this.x;
-		}
-		
-		public int getY() {
-			return this.y;
-		}
-		
-		public int getZ() {
-			return this.z;
-		}
 	}
 	
 }

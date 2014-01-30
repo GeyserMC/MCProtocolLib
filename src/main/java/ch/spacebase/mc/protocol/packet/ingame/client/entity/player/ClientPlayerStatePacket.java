@@ -2,8 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.client.entity.player;
 
 import java.io.IOException;
 
-import ch.spacebase.mc.protocol.data.game.values.PlayerState;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.entity.player.PlayerState;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;

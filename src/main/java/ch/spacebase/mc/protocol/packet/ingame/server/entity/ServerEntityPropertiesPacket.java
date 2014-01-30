@@ -8,8 +8,9 @@ import java.util.UUID;
 import ch.spacebase.mc.protocol.data.game.attribute.Attribute;
 import ch.spacebase.mc.protocol.data.game.attribute.AttributeModifier;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.ModifierOperation;
-import ch.spacebase.mc.protocol.data.game.values.ModifierType;
+import ch.spacebase.mc.protocol.data.game.values.entity.AttributeType;
+import ch.spacebase.mc.protocol.data.game.values.entity.ModifierOperation;
+import ch.spacebase.mc.protocol.data.game.values.entity.ModifierType;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -50,7 +51,7 @@ public class ServerEntityPropertiesPacket implements Packet {
 				modifiers.add(new AttributeModifier(MagicValues.key(ModifierType.class, new UUID(in.readLong(), in.readLong())), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
 			}
 			
-			this.attributes.add(new Attribute(Attribute.Type.fromKey(key), value, modifiers));
+			this.attributes.add(new Attribute(MagicValues.key(AttributeType.class, key), value, modifiers));
 		}
 	}
 
@@ -59,7 +60,7 @@ public class ServerEntityPropertiesPacket implements Packet {
 		out.writeVarInt(this.entityId);
 		out.writeVarInt(this.attributes.size());
 		for(Attribute attribute : this.attributes) {
-			out.writeString(attribute.getType().getKey());
+			out.writeString(MagicValues.value(String.class, attribute.getType()));
 			out.writeDouble(attribute.getValue());
 			out.writeShort(attribute.getModifiers().size());
 			for(AttributeModifier modifier : attribute.getModifiers()) {

@@ -1,6 +1,6 @@
 package ch.spacebase.mc.protocol.data.game;
 
-import ch.spacebase.mc.protocol.data.game.values.MetadataType;
+import ch.spacebase.mc.protocol.data.game.values.entity.MetadataType;
 
 public class EntityMetadata {
 

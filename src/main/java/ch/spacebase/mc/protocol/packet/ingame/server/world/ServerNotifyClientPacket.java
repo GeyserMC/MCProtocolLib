@@ -2,13 +2,13 @@ package ch.spacebase.mc.protocol.packet.ingame.server.world;
 
 import java.io.IOException;
 
-import ch.spacebase.mc.protocol.data.game.values.ClientNotification;
-import ch.spacebase.mc.protocol.data.game.values.ClientNotificationValue;
-import ch.spacebase.mc.protocol.data.game.values.DemoMessageValue;
-import ch.spacebase.mc.protocol.data.game.values.GameMode;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.RainStrengthValue;
-import ch.spacebase.mc.protocol.data.game.values.ThunderStrengthValue;
+import ch.spacebase.mc.protocol.data.game.values.entity.player.GameMode;
+import ch.spacebase.mc.protocol.data.game.values.world.notify.ClientNotification;
+import ch.spacebase.mc.protocol.data.game.values.world.notify.ClientNotificationValue;
+import ch.spacebase.mc.protocol.data.game.values.world.notify.DemoMessageValue;
+import ch.spacebase.mc.protocol.data.game.values.world.notify.RainStrengthValue;
+import ch.spacebase.mc.protocol.data.game.values.world.notify.ThunderStrengthValue;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;

@@ -3,8 +3,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.world;
 import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.Position;
-import ch.spacebase.mc.protocol.data.game.values.BlockBreakStage;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.entity.player.BlockBreakStage;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;

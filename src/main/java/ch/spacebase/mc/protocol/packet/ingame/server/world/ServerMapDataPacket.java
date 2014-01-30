@@ -5,7 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.MapDataType;
+import ch.spacebase.mc.protocol.data.game.values.world.map.MapColumnUpdate;
+import ch.spacebase.mc.protocol.data.game.values.world.map.MapData;
+import ch.spacebase.mc.protocol.data.game.values.world.map.MapDataType;
+import ch.spacebase.mc.protocol.data.game.values.world.map.MapPlayer;
+import ch.spacebase.mc.protocol.data.game.values.world.map.MapPlayers;
+import ch.spacebase.mc.protocol.data.game.values.world.map.MapScale;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -117,100 +122,6 @@ public class ServerMapDataPacket implements Packet {
 	@Override
 	public boolean isPriority() {
 		return false;
-	}
-	
-	public static interface MapData {
-	}
-	
-	public static class MapColumnUpdate implements MapData {
-		private byte x;
-		private byte y;
-		private byte height;
-		private byte colors[];
-		
-		/**
-		 * Creates a new map column update instance.
-		 * @param x X of the map column.
-		 * @param y Y of the data's update range.
-		 * @param height Height of the data's update range.
-		 * @param fullMapColors The full array of map color data, arranged in order of ascending Y value relative to the given Y value.
-		 */
-		public MapColumnUpdate(int x, int y, int height, byte colors[]) {
-			this.x = (byte) x;
-			this.y = (byte) y;
-			this.height = (byte) height;
-			this.colors = colors;
-		}
-		
-		public byte getX() {
-			return this.x;
-		}
-		
-		public byte getY() {
-			return this.y;
-		}
-		
-		public byte getHeight() {
-			return this.height;
-		}
-		
-		public byte[] getColors() {
-			return this.colors;
-		}
-	}
-	
-	public static class MapPlayers implements MapData {
-		private List<MapPlayer> players = new ArrayList<MapPlayer>();
-		
-		public MapPlayers(List<MapPlayer> players) {
-			this.players = players;
-		}
-		
-		public List<MapPlayer> getPlayers() {
-			return new ArrayList<MapPlayer>(this.players);
-		}
-	}
-	
-	public static class MapPlayer {
-		private byte iconSize;
-		private byte iconRotation;
-		private byte centerX;
-		private byte centerZ;
-		
-		public MapPlayer(int iconSize, int iconRotation, int centerX, int centerZ) {
-			this.iconSize = (byte) iconSize;
-			this.iconRotation = (byte) iconRotation;
-			this.centerX = (byte) centerX;
-			this.centerZ = (byte) centerZ;
-		}
-		
-		public byte getIconSize() {
-			return this.iconSize;
-		}
-		
-		public byte getIconRotation() {
-			return this.iconRotation;
-		}
-		
-		public byte getCenterX() {
-			return this.centerX;
-		}
-		
-		public byte getCenterZ() {
-			return this.centerZ;
-		}
-	}
-	
-	public static class MapScale implements MapData {
-		private byte scale;
-		
-		public MapScale(int scale) {
-			this.scale = (byte) scale;
-		}
-		
-		public byte getScale() {
-			return this.scale;
-		}
 	}
 
 }

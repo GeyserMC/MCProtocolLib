@@ -2,14 +2,14 @@ package ch.spacebase.mc.protocol.packet.ingame.server.entity.spawn;
 
 import java.io.IOException;
 
-import ch.spacebase.mc.protocol.data.game.values.FallingBlockData;
-import ch.spacebase.mc.protocol.data.game.values.HangingDirection;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.MinecartType;
-import ch.spacebase.mc.protocol.data.game.values.ObjectData;
-import ch.spacebase.mc.protocol.data.game.values.ObjectType;
-import ch.spacebase.mc.protocol.data.game.values.ProjectileData;
-import ch.spacebase.mc.protocol.data.game.values.SplashPotionData;
+import ch.spacebase.mc.protocol.data.game.values.entity.FallingBlockData;
+import ch.spacebase.mc.protocol.data.game.values.entity.HangingDirection;
+import ch.spacebase.mc.protocol.data.game.values.entity.MinecartType;
+import ch.spacebase.mc.protocol.data.game.values.entity.ObjectData;
+import ch.spacebase.mc.protocol.data.game.values.entity.ObjectType;
+import ch.spacebase.mc.protocol.data.game.values.entity.ProjectileData;
+import ch.spacebase.mc.protocol.data.game.values.entity.SplashPotionData;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;

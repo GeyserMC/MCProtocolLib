@@ -3,7 +3,7 @@ package ch.spacebase.mc.protocol.packet.ingame.server.scoreboard;
 import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.ScoreboardAction;
+import ch.spacebase.mc.protocol.data.game.values.scoreboard.ScoreboardAction;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;

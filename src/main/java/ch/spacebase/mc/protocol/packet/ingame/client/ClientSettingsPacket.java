@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import ch.spacebase.mc.protocol.data.game.values.ChatVisibility;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.SkinPart;
+import ch.spacebase.mc.protocol.data.game.values.setting.ChatVisibility;
+import ch.spacebase.mc.protocol.data.game.values.setting.SkinPart;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;

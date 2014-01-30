@@ -2,8 +2,8 @@ package ch.spacebase.mc.protocol.packet.ingame.server.world;
 
 import java.io.IOException;
 
-import ch.spacebase.mc.protocol.data.game.BlockChangeRecord;
 import ch.spacebase.mc.protocol.data.game.Position;
+import ch.spacebase.mc.protocol.data.game.values.world.block.BlockChangeRecord;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;

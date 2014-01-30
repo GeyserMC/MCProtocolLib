@@ -2,10 +2,10 @@ package ch.spacebase.mc.protocol.packet.ingame.server;
 
 import java.io.IOException;
 
-import ch.spacebase.mc.protocol.data.game.values.Difficulty;
-import ch.spacebase.mc.protocol.data.game.values.GameMode;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.WorldType;
+import ch.spacebase.mc.protocol.data.game.values.entity.player.GameMode;
+import ch.spacebase.mc.protocol.data.game.values.setting.Difficulty;
+import ch.spacebase.mc.protocol.data.game.values.world.WorldType;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;

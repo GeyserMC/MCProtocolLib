@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.EntityMetadata;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
-import ch.spacebase.mc.protocol.data.game.values.MobType;
+import ch.spacebase.mc.protocol.data.game.values.entity.MobType;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;

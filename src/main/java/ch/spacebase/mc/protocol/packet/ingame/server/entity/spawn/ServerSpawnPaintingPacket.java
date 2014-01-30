@@ -3,9 +3,9 @@ package ch.spacebase.mc.protocol.packet.ingame.server.entity.spawn;
 import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.Position;
-import ch.spacebase.mc.protocol.data.game.values.Art;
-import ch.spacebase.mc.protocol.data.game.values.HangingDirection;
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
+import ch.spacebase.mc.protocol.data.game.values.entity.Art;
+import ch.spacebase.mc.protocol.data.game.values.entity.HangingDirection;
 import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
