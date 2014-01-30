@@ -782,26 +782,17 @@ public class MagicValues {
 		values.put(key, value);
 	}
 
-	@SuppressWarnings({ "unchecked", "cast" })
+	@SuppressWarnings({ "unchecked" })
 	public static <T extends Enum<?>> T key(Class<T> keyType, Object value) {
 		for(Enum<?> key : values.keySet()) {
 			Object val = values.get(key);
 			if(keyType.isAssignableFrom(key.getClass())) {
 				if(val == value || val.equals(value)) {
 					return (T) key;
-				} else if(Number.class.isAssignableFrom(val.getClass())) {
+				} else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
 					Number num = (Number) val;
-					if(val.getClass() == Byte.class && (Object) num.byteValue() == value) {
-						return (T) key;
-					} else if(val.getClass() == Short.class && (Object) num.shortValue() == value) {
-						return (T) key;
-					} else if(val.getClass() == Integer.class && (Object) num.intValue() == value) {
-						return (T) key;
-					} else if(val.getClass() == Long.class && (Object) num.longValue() == value) {
-						return (T) key;
-					} else if(val.getClass() == Float.class && (Object) num.floatValue() == value) {
-						return (T) key;
-					} else if(val.getClass() == Double.class && (Object) num.doubleValue() == value) {
+					Number num2 = (Number) value;
+					if(num.doubleValue() == num2.doubleValue()) {
 						return (T) key;
 					}
 				}

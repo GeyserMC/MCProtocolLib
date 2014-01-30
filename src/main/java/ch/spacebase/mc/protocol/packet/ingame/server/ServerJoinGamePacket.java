@@ -6,7 +6,6 @@ import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.mc.protocol.data.game.values.entity.player.GameMode;
 import ch.spacebase.mc.protocol.data.game.values.setting.Difficulty;
 import ch.spacebase.mc.protocol.data.game.values.world.WorldType;
-import ch.spacebase.mc.util.NetUtil;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -74,8 +73,6 @@ public class ServerJoinGamePacket implements Packet {
         this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
         this.maxPlayers = in.readUnsignedByte();
         this.worldType = MagicValues.key(WorldType.class, in.readString());
-        // Unfortunately this is needed to check whether to read skylight values in chunk data packets.
-        NetUtil.hasSky = this.dimension != -1 && this.dimension != 1;
 	}
 
 	@Override

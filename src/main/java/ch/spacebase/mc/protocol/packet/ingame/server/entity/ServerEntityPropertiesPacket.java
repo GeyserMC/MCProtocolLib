@@ -41,12 +41,12 @@ public class ServerEntityPropertiesPacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.attributes = new ArrayList<Attribute>();
-		int length = in.readVarInt();
+		int length = in.readInt();
 		for(int index = 0; index < length; index++) {
 			String key = in.readString();
 			double value = in.readDouble();
 			List<AttributeModifier> modifiers = new ArrayList<AttributeModifier>();
-			short len = in.readShort();
+			int len = in.readVarInt();
 			for(int ind = 0; ind < len; ind++) {
 				modifiers.add(new AttributeModifier(MagicValues.key(ModifierType.class, new UUID(in.readLong(), in.readLong())), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
 			}

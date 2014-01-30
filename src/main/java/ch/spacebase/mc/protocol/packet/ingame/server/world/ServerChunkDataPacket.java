@@ -132,7 +132,7 @@ public class ServerChunkDataPacket implements Packet {
 		}
 
 		// Parse data into chunks and biome data.
-		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, extendedChunkMask, fullChunk, NetUtil.hasSky, data));
+		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, extendedChunkMask, fullChunk, false, data));
 		this.chunks = chunkData.getChunks();
 		this.biomeData = chunkData.getBiomes();
 	}
