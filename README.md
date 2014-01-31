@@ -13,7 +13,7 @@ The library is split into two packages, ch.spacebase.mc.auth and ch.spacebase.mc
 <b>Example Code</b>
 --------
 
-See ch.spacebase.mc.protocol.test.Test.
+See example/ch/spacebase/mc/protocol/test/Test.java
 
 
 <b>Building the Source</b>
