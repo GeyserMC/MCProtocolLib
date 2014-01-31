@@ -42,6 +42,7 @@ import ch.spacebase.mc.protocol.packet.ingame.server.ServerPlayerListEntryPacket
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerRespawnPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerStatisticsPacket;
+import ch.spacebase.mc.protocol.packet.ingame.server.ServerSwitchCameraPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.ServerTabCompletePacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerAnimationPacket;
 import ch.spacebase.mc.protocol.packet.ingame.server.entity.ServerCollectItemPacket;
@@ -329,6 +330,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerIncoming(64, ServerDisconnectPacket.class);
 		this.registerIncoming(65, ServerDifficultyPacket.class);
 		this.registerIncoming(66, ServerCombatPacket.class);
+		this.registerIncoming(67, ServerSwitchCameraPacket.class);
 		
 		this.registerOutgoing(0, ClientKeepAlivePacket.class);
 		this.registerOutgoing(1, ClientChatPacket.class);
@@ -449,6 +451,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerOutgoing(64, ServerDisconnectPacket.class);
 		this.registerOutgoing(65, ServerDifficultyPacket.class);
 		this.registerOutgoing(66, ServerCombatPacket.class);
+		this.registerOutgoing(67, ServerSwitchCameraPacket.class);
 	}
 	
 	private void initClientStatus(Session session) {
