@@ -11,7 +11,7 @@ PacketLib is a library for networking between clients and servers with packets. 
 <b>Test Example</b>
 --------
 
-See ch.spacebase.packetlib.test.PingServerTest
+See examples/ch/spacebase/packetlib/test/PingServerTest.java
 
 
 <b>Building the Source</b>
