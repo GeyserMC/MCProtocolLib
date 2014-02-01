@@ -20,9 +20,12 @@ public abstract class Message implements Cloneable {
 		for(Message msg : this.extra) {
 			build.append(msg.getFullText());
 		}
-		
 		return build.toString();
 	}
+        
+        public String getLANText(){
+            return this.toJson().getAsJsonObject().get("with").getAsJsonArray().get(1).getAsString();
+        }
 	
 	public MessageStyle getStyle() {
 		return this.style;
