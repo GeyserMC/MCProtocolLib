@@ -14,16 +14,18 @@ public class ServerEntityEffectPacket implements Packet {
 	private Effect effect;
 	private int amplifier;
 	private int duration;
+	private boolean hideParticles;
 	
 	@SuppressWarnings("unused")
 	private ServerEntityEffectPacket() {
 	}
 	
-	public ServerEntityEffectPacket(int entityId, Effect effect, int amplifier, int duration) {
+	public ServerEntityEffectPacket(int entityId, Effect effect, int amplifier, int duration, boolean hideParticles) {
 		this.entityId = entityId;
 		this.effect = effect;
 		this.amplifier = amplifier;
 		this.duration = duration;
+		this.hideParticles = hideParticles;
 	}
 	
 	public int getEntityId() {
@@ -41,6 +43,10 @@ public class ServerEntityEffectPacket implements Packet {
 	public int getDuration() {
 		return this.duration;
 	}
+	
+	public boolean getHideParticles() {
+		return this.hideParticles;
+	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
@@ -48,6 +54,7 @@ public class ServerEntityEffectPacket implements Packet {
 		this.effect = MagicValues.key(Effect.class, in.readByte());
 		this.amplifier = in.readByte();
 		this.duration = in.readVarInt();
+		this.hideParticles = in.readBoolean();
 	}
 
 	@Override
@@ -56,6 +63,7 @@ public class ServerEntityEffectPacket implements Packet {
 		out.writeByte(MagicValues.value(Integer.class, this.effect));
 		out.writeByte(this.amplifier);
 		out.writeVarInt(this.duration);
+		out.writeBoolean(this.hideParticles);
 	}
 	
 	@Override
