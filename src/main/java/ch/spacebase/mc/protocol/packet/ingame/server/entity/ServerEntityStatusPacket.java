@@ -22,6 +22,10 @@ public class ServerEntityStatusPacket implements Packet {
 		this.status = status;
 	}
 	
+	public int getEntityId() {
+		return this.entityId;
+	}
+	
 	public EntityStatus getStatus() {
 		return this.status;
 	}
