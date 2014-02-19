@@ -25,10 +25,12 @@ import ch.spacebase.mc.protocol.data.game.values.entity.player.PlayerAction;
 import ch.spacebase.mc.protocol.data.game.values.entity.player.PlayerState;
 import ch.spacebase.mc.protocol.data.game.values.entity.player.PositionElement;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.FriendlyFire;
+import ch.spacebase.mc.protocol.data.game.values.scoreboard.NameTagVisibility;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.ObjectiveAction;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.ScoreboardAction;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.ScoreboardPosition;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.TeamAction;
+import ch.spacebase.mc.protocol.data.game.values.scoreboard.TeamColor;
 import ch.spacebase.mc.protocol.data.game.values.setting.ChatVisibility;
 import ch.spacebase.mc.protocol.data.game.values.setting.Difficulty;
 import ch.spacebase.mc.protocol.data.game.values.statistic.Achievement;
@@ -776,6 +778,29 @@ public class MagicValues {
 		register(SmokeEffectData.NORTH_EAST, 6);
 		register(SmokeEffectData.NORTH, 7);
 		register(SmokeEffectData.NORTH_WEST, 8);
+		
+		register(NameTagVisibility.ALWAYS, "always");
+		register(NameTagVisibility.NEVER, "never");
+		register(NameTagVisibility.HIDE_FOR_OTHER_TEAMS, "hideForOtherTeams");
+		register(NameTagVisibility.HIDE_FOR_OWN_TEAM, "hideForOwnTeam");
+		
+		register(TeamColor.NONE, -1);
+		register(TeamColor.BLACK, 0);
+		register(TeamColor.DARK_BLUE, 1);
+		register(TeamColor.DARK_GREEN, 2);
+		register(TeamColor.DARK_AQUA, 3);
+		register(TeamColor.DARK_RED, 4);
+		register(TeamColor.DARK_PURPLE, 5);
+		register(TeamColor.GOLD, 6);
+		register(TeamColor.GRAY, 7);
+		register(TeamColor.DARK_GRAY, 8);
+		register(TeamColor.BLUE, 9);
+		register(TeamColor.GREEN, 10);
+		register(TeamColor.AQUA, 11);
+		register(TeamColor.RED, 12);
+		register(TeamColor.LIGHT_PURPLE, 13);
+		register(TeamColor.YELLOW, 14);
+		register(TeamColor.WHITE, 15);
 	}
 
 	private static void register(Enum<?> key, Object value) {

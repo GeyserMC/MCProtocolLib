@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.FriendlyFire;
+import ch.spacebase.mc.protocol.data.game.values.scoreboard.NameTagVisibility;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.TeamAction;
+import ch.spacebase.mc.protocol.data.game.values.scoreboard.TeamColor;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -17,6 +19,8 @@ public class ServerTeamPacket implements Packet {
 	private String prefix;
 	private String suffix;
 	private FriendlyFire friendlyFire;
+	private NameTagVisibility nameTagVisibility;
+	private TeamColor color;
 	private String players[];
 	
 	@SuppressWarnings("unused")
@@ -38,21 +42,25 @@ public class ServerTeamPacket implements Packet {
 		this.players = players;
 	}
 	
-	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire) {
+	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire, NameTagVisibility nameTagVisibility, TeamColor color) {
 		this.name = name;
 		this.displayName = displayName;
 		this.prefix = prefix;
 		this.suffix = suffix;
 		this.friendlyFire = friendlyFire;
+		this.nameTagVisibility = nameTagVisibility;
+		this.color = color;
 		this.action = TeamAction.UPDATE;
 	}
 	
-	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire, String players[]) {
+	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire, NameTagVisibility nameTagVisibility, TeamColor color, String players[]) {
 		this.name = name;
 		this.displayName = displayName;
 		this.prefix = prefix;
 		this.suffix = suffix;
 		this.friendlyFire = friendlyFire;
+		this.nameTagVisibility = nameTagVisibility;
+		this.color = color;
 		this.players = players;
 		this.action = TeamAction.CREATE;
 	}
@@ -81,6 +89,14 @@ public class ServerTeamPacket implements Packet {
 		return this.friendlyFire;
 	}
 	
+	public NameTagVisibility getNameTagVisibility() {
+		return this.nameTagVisibility;
+	}
+	
+	public TeamColor getColor() {
+		return this.color;
+	}
+	
 	public String[] getPlayers() {
 		return this.players;
 	}
@@ -94,6 +110,8 @@ public class ServerTeamPacket implements Packet {
 			this.prefix = in.readString();
 			this.suffix = in.readString();
 			this.friendlyFire = MagicValues.key(FriendlyFire.class, in.readByte());
+			this.nameTagVisibility = MagicValues.key(NameTagVisibility.class, in.readString());
+			this.color = MagicValues.key(TeamColor.class, in.readByte());
 		}
 		
 		if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
@@ -113,6 +131,8 @@ public class ServerTeamPacket implements Packet {
 			out.writeString(this.prefix);
 			out.writeString(this.suffix);
 			out.writeByte(MagicValues.value(Integer.class, this.friendlyFire));
+			out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
+			out.writeByte(MagicValues.value(Integer.class, this.color));
 		}
 		
 		if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
