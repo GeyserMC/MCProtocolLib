@@ -27,6 +27,7 @@ import ch.spacebase.mc.protocol.data.game.values.entity.player.PositionElement;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.FriendlyFire;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.NameTagVisibility;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.ObjectiveAction;
+import ch.spacebase.mc.protocol.data.game.values.scoreboard.ScoreType;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.ScoreboardAction;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.ScoreboardPosition;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.TeamAction;
@@ -801,6 +802,9 @@ public class MagicValues {
 		register(TeamColor.LIGHT_PURPLE, 13);
 		register(TeamColor.YELLOW, 14);
 		register(TeamColor.WHITE, 15);
+		
+		register(ScoreType.INTEGER, "integer");
+		register(ScoreType.HEARTS, "hearts");
 	}
 
 	private static void register(Enum<?> key, Object value) {

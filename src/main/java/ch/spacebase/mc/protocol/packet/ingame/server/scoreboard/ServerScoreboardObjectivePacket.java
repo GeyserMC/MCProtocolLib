@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ch.spacebase.mc.protocol.data.game.values.MagicValues;
 import ch.spacebase.mc.protocol.data.game.values.scoreboard.ObjectiveAction;
+import ch.spacebase.mc.protocol.data.game.values.scoreboard.ScoreType;
 import ch.spacebase.packetlib.io.NetInput;
 import ch.spacebase.packetlib.io.NetOutput;
 import ch.spacebase.packetlib.packet.Packet;
@@ -11,43 +12,60 @@ import ch.spacebase.packetlib.packet.Packet;
 public class ServerScoreboardObjectivePacket implements Packet {
 	
 	private String name;
-	private String displayName;
 	private ObjectiveAction action;
+	private String displayName;
+	private ScoreType type;
 	
 	@SuppressWarnings("unused")
 	private ServerScoreboardObjectivePacket() {
 	}
 	
-	public ServerScoreboardObjectivePacket(String name, String displayName, ObjectiveAction action) {
+	public ServerScoreboardObjectivePacket(String name) {
 		this.name = name;
-		this.displayName = displayName;
+		this.action = ObjectiveAction.REMOVE;
+	}
+	
+	public ServerScoreboardObjectivePacket(String name, ObjectiveAction action, String displayName, ScoreType type) {
+		if(action != ObjectiveAction.ADD && action != ObjectiveAction.UPDATE) {
+			throw new IllegalArgumentException("(name, action, displayName) constructor only valid for adding and updating objectives.");
+		}
+		
+		this.name = name;
 		this.action = action;
+		this.displayName = displayName;
+		this.type = type;
 	}
 	
 	public String getName() {
 		return this.name;
 	}
 	
-	public String getDisplayName() {
-		return this.displayName;
-	}
-	
 	public ObjectiveAction getAction() {
 		return this.action;
+	}
+	
+	public String getDisplayName() {
+		return this.displayName;
 	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.name = in.readString();
-		this.displayName = in.readString();
 		this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
+		if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
+			this.displayName = in.readString();
+			this.type = MagicValues.key(ScoreType.class, in.readString());
+		}
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.name);
-		out.writeString(this.displayName);
 		out.writeByte(MagicValues.value(Integer.class, this.action));
+		if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
+			out.writeString(this.displayName);
+			out.writeString(MagicValues.value(String.class, this.type));
+		}
 	}
 	
 	@Override
