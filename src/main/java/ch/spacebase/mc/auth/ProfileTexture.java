@@ -19,6 +19,7 @@ public class ProfileTexture {
 		return url.substring(slash + 1, dot != -1 ? dot : url.length());
 	}
 
+	@Override
 	public String toString() {
 		return "ProfileTexture{url=" + this.url + ", hash=" + this.getHash() + "}";
 	}
