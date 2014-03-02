@@ -11,14 +11,14 @@ PacketLib is a library for networking between clients and servers with packets. 
 <b>Test Example</b>
 --------
 
-See examples/ch/spacebase/packetlib/test/PingServerTest.java
+See examples/org/spacehq/packetlib/test/PingServerTest.java
 
 
 <b>Building the Source</b>
 --------
 
 PacketLib uses Maven to manage dependencies. Simply run 'mvn clean install' in the source's directory.
-You can also download a build <b>[here](http://build.spacebase.ch/job/PacketLib/)</b>.
+You can also download a build <b>[here](http://build.spacehq.org/job/PacketLib/)</b>.
 
 
 <b>License</b>

@@ -1,8 +1,12 @@
 bin
 lib
+
 .settings
 .classpath
 .project
-.git
+
+*.iml
+.idea
+
 target
 
