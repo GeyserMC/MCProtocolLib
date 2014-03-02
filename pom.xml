@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ch.spacebase</groupId>
+	<groupId>ch.spacehq</groupId>
 	<artifactId>mcprotocollib</artifactId>
 	<version>1.7.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -27,14 +27,14 @@
 
 	<distributionManagement>
 		<repository>
-			<id>spacebase</id>
-			<name>spacebase-releases</name>
-			<url>http://repo.spacebase.ch/content/repositories/release/</url>
+			<id>spacehq</id>
+			<name>spacehq-releases</name>
+			<url>http://repo.spacehq.org/content/repositories/release/</url>
 		</repository>
 		<snapshotRepository>
-			<id>spacebase</id>
-			<name>spacebase-snapshots</name>
-			<url>http://repo.spacebase.ch/content/repositories/snapshots/</url>
+			<id>spacehq</id>
+			<name>spacehq-snapshots</name>
+			<url>http://repo.spacehq.org/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -48,12 +48,12 @@
 
 	<repositories>
 		<repository>
-			<id>spacebase-releases</id>
-			<url>http://repo.spacebase.ch/content/repositories/release/</url>
+			<id>spacehq-releases</id>
+			<url>http://repo.spacehq.org/content/repositories/release/</url>
 		</repository>
 		<repository>
-			<id>spacebase-snapshots</id>
-			<url>http://repo.spacebase.ch/content/repositories/snapshots/</url>
+			<id>spacehq-snapshots</id>
+			<url>http://repo.spacehq.org/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 
@@ -64,13 +64,13 @@
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>ch.spacebase</groupId>
+			<groupId>ch.spacehq</groupId>
 			<artifactId>opennbt</artifactId>
 			<version>1.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>ch.spacebase</groupId>
+			<groupId>ch.spacehq</groupId>
 			<artifactId>packetlib</artifactId>
 			<version>1.0-SNAPSHOT</version>
 			<scope>compile</scope>
