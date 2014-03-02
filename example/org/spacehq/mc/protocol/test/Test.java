@@ -1,18 +1,12 @@
 package org.spacehq.mc.protocol.test;
 
-import java.util.Arrays;
-
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.exceptions.AuthenticationException;
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.ProtocolConstants;
 import org.spacehq.mc.protocol.ProtocolMode;
 import org.spacehq.mc.protocol.ServerLoginHandler;
-import org.spacehq.mc.protocol.data.message.ChatColor;
-import org.spacehq.mc.protocol.data.message.ChatFormat;
-import org.spacehq.mc.protocol.data.message.Message;
-import org.spacehq.mc.protocol.data.message.MessageStyle;
-import org.spacehq.mc.protocol.data.message.TextMessage;
+import org.spacehq.mc.protocol.data.message.*;
 import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.VersionInfo;
@@ -25,15 +19,17 @@ import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket.Difficulty;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket.GameMode;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket.WorldType;
-import ch.spacehq.packetlib.Client;
-import ch.spacehq.packetlib.Server;
-import ch.spacehq.packetlib.Session;
-import ch.spacehq.packetlib.event.server.ServerAdapter;
-import ch.spacehq.packetlib.event.server.SessionAddedEvent;
-import ch.spacehq.packetlib.event.session.DisconnectedEvent;
-import ch.spacehq.packetlib.event.session.PacketReceivedEvent;
-import ch.spacehq.packetlib.event.session.SessionAdapter;
-import ch.spacehq.packetlib.tcp.TcpSessionFactory;
+import org.spacehq.packetlib.Client;
+import org.spacehq.packetlib.Server;
+import org.spacehq.packetlib.Session;
+import org.spacehq.packetlib.event.server.ServerAdapter;
+import org.spacehq.packetlib.event.server.SessionAddedEvent;
+import org.spacehq.packetlib.event.session.DisconnectedEvent;
+import org.spacehq.packetlib.event.session.PacketReceivedEvent;
+import org.spacehq.packetlib.event.session.SessionAdapter;
+import org.spacehq.packetlib.tcp.TcpSessionFactory;
+
+import java.util.Arrays;
 
 public class Test {
 	
