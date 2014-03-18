@@ -203,7 +203,7 @@ public class NetUtil {
 					}
 
 					if(pass == 1) {
-						chunks[ind] = new Chunk(data.hasSkyLight(), (data.getExtendedMask() & 1 << ind) != 0);
+						chunks[ind] = new Chunk(sky || data.hasSkyLight(), (data.getExtendedMask() & 1 << ind) != 0);
 						ByteArray3d blocks = chunks[ind].getBlocks();
 						System.arraycopy(data.getData(), pos, blocks.getData(), 0, blocks.getData().length);
 						pos += blocks.getData().length;
