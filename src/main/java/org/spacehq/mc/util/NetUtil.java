@@ -1,25 +1,16 @@
 package org.spacehq.mc.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import org.spacehq.mc.protocol.data.game.ByteArray3d;
-import org.spacehq.mc.protocol.data.game.Chunk;
-import org.spacehq.mc.protocol.data.game.Coordinates;
-import org.spacehq.mc.protocol.data.game.EntityMetadata;
-import org.spacehq.mc.protocol.data.game.ItemStack;
-import org.spacehq.mc.protocol.data.game.NibbleArray3d;
+import org.spacehq.mc.protocol.data.game.*;
 import org.spacehq.opennbt.NBTIO;
 import org.spacehq.opennbt.tag.CompoundTag;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public class NetUtil {
 
@@ -164,7 +155,7 @@ public class NetUtil {
 					}
 					
 					if(pass == 1) {
-						chunks[ind] = new Chunk(data.hasSkyLight(), (data.getExtendedMask() & 1 << ind) != 0);
+						chunks[ind] = new Chunk(sky || data.hasSkyLight(), (data.getExtendedMask() & 1 << ind) != 0);
 						ByteArray3d blocks = chunks[ind].getBlocks();
 						System.arraycopy(data.getData(), pos, blocks.getData(), 0, blocks.getData().length);
 						pos += blocks.getData().length;
