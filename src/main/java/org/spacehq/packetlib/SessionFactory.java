@@ -8,16 +8,16 @@ public interface SessionFactory {
 	/**
 	 * Creates a client session.
 	 *
-	 * @param host Host to connect to.
-	 * @param port Port to connect to.
+	 * @param client Client to create the session for.
 	 * @return The created session.
 	 */
 	public Session createClientSession(Client client);
 
 	/**
-	 * Initializes the factory for creating server sessions.
+	 * Creates a server network listener.
 	 *
-	 * @param server Server to initialize for.
+	 * @param server Server to create the listener for.
+	 * @return The created listener.
 	 */
 	public ConnectionListener createServerListener(Server server);
 

@@ -106,7 +106,7 @@ public interface NetInput {
 	/**
 	 * Reads the next byte array.
 	 *
-	 * @param The length of the byte array.
+	 * @param length The length of the byte array.
 	 * @return The next byte array.
 	 * @throws java.io.IOException If an I/O error occurs.
 	 */
