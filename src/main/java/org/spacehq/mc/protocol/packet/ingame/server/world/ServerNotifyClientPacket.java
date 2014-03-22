@@ -19,6 +19,7 @@ public class ServerNotifyClientPacket implements Packet {
 	}
 
 	public ServerNotifyClientPacket(ClientNotification notification, ClientNotificationValue value) {
+		this.notification = notification;
 		this.value = value;
 	}
 

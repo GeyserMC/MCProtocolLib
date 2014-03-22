@@ -8,6 +8,7 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class ClientSettingsPacket implements Packet {
 		this.renderDistance = in.readByte();
 		this.chatVisibility = MagicValues.key(ChatVisibility.class, in.readByte());
 		this.chatColors = in.readBoolean();
+		this.visibleParts = new ArrayList<SkinPart>();
 		int flags = in.readUnsignedByte();
 		for(SkinPart part : SkinPart.values()) {
 			int bit = 1 << part.ordinal();

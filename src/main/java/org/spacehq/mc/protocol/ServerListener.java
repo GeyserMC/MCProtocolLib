@@ -82,11 +82,12 @@ public class ServerListener extends SessionAdapter {
 					event.getSession().send(new LoginSuccessPacket(new GameProfile((UUID) null, this.username)));
 					event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, new GameProfile((UUID) null, this.username));
 					protocol.setMode(ProtocolMode.GAME, false, event.getSession());
-					new KeepAliveThread(event.getSession()).start();
 					ServerLoginHandler handler = event.getSession().getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(event.getSession());
 					}
+
+					new KeepAliveThread(event.getSession()).start();
 				}
 			} else if(event.getPacket() instanceof EncryptionResponsePacket) {
 				EncryptionResponsePacket packet = event.getPacket();
@@ -156,11 +157,12 @@ public class ServerListener extends SessionAdapter {
 					this.session.send(new LoginSuccessPacket(profile));
 					this.session.setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, this.session);
-					new KeepAliveThread(this.session).start();
 					ServerLoginHandler handler = this.session.getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(this.session);
 					}
+
+					new KeepAliveThread(this.session).start();
 				} else {
 					this.session.disconnect("Failed to verify username!");
 				}

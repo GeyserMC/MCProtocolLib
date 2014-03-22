@@ -42,14 +42,12 @@ public class ServerMultiChunkDataPacket implements Packet {
 			}
 
 			for(int y = 0; y < column.length; y++) {
-				if(column[y] == null) {
-					throw new IllegalArgumentException("Chunk column must contain all 16 chunks.");
-				}
-
-				if(column[y].getSkyLight() == null) {
-					noSkylight = true;
-				} else {
-					skylight = true;
+				if(column[y] != null) {
+					if(column[y].getSkyLight() == null) {
+						noSkylight = true;
+					} else {
+						skylight = true;
+					}
 				}
 			}
 		}
