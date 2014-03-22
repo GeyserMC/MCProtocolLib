@@ -107,7 +107,7 @@ public class ServerListener extends SessionAdapter {
 					event.getSession().disconnect("No server info builder set.");
 				}
 
-				ServerStatusInfo info = builder.buildInfo();
+				ServerStatusInfo info = builder.buildInfo(event.getSession());
 				event.getSession().send(new StatusResponsePacket(info));
 			} else if(event.getPacket() instanceof StatusPingPacket) {
 				event.getSession().send(new StatusPongPacket(event.<StatusPingPacket>getPacket().getPingTime()));
