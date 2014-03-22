@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.client.entity;
+package org.spacehq.mc.protocol.packet.ingame.client.player;
 
 import java.io.IOException;
 
@@ -6,16 +6,16 @@ import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
-public class ClientAnimationPacket implements Packet {
+public class ClientPlayerAnimationPacket implements Packet {
 	
 	private int entityId;
 	private Animation animation;
 	
 	@SuppressWarnings("unused")
-	private ClientAnimationPacket() {
+	private ClientPlayerAnimationPacket() {
 	}
 	
-	public ClientAnimationPacket(int entityId, Animation animation) {
+	public ClientPlayerAnimationPacket(int entityId, Animation animation) {
 		this.entityId = entityId;
 		this.animation = animation;
 	}

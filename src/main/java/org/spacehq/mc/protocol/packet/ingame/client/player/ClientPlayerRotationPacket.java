@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.client.entity.player;
+package org.spacehq.mc.protocol.packet.ingame.client.player;
 
 public class ClientPlayerRotationPacket extends ClientPlayerMovementPacket {
 

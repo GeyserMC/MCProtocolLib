@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.client.entity.player;
+package org.spacehq.mc.protocol.packet.ingame.client.player;
 
 import java.io.IOException;
 

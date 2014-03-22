@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.client.entity;
+package org.spacehq.mc.protocol.packet.ingame.client.player;
 
 import java.io.IOException;
 
@@ -6,18 +6,24 @@ import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
-public class ClientEntityInteractPacket implements Packet {
+public class ClientPlayerActionPacket implements Packet {
 	
 	private int entityId;
 	private Action action;
+	private int jumpBoost;
 	
 	@SuppressWarnings("unused")
-	private ClientEntityInteractPacket() {
+	private ClientPlayerActionPacket() {
 	}
 	
-	public ClientEntityInteractPacket(int entityId, Action action) {
+	public ClientPlayerActionPacket(int entityId, Action action) {
+		this(entityId, action, 0);
+	}
+	
+	public ClientPlayerActionPacket(int entityId, Action action, int jumpBoost) {
 		this.entityId = entityId;
 		this.action = action;
+		this.jumpBoost = jumpBoost;
 	}
 	
 	public int getEntityId() {
@@ -27,17 +33,23 @@ public class ClientEntityInteractPacket implements Packet {
 	public Action getAction() {
 		return this.action;
 	}
+	
+	public int getJumpBoost() {
+		return this.jumpBoost;
+	}
 
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
-		this.action = Action.values()[in.readByte()];
+		this.action = Action.values()[in.readByte() - 1];
+		this.jumpBoost = in.readInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
-		out.writeByte(this.action.ordinal());
+		out.writeByte(this.action.ordinal() + 1);
+		out.writeInt(this.jumpBoost);
 	}
 	
 	@Override
@@ -46,8 +58,11 @@ public class ClientEntityInteractPacket implements Packet {
 	}
 	
 	public static enum Action {
-		INTERACT,
-		ATTACK;
+		CROUCH,
+		UNCROUCH,
+		LEAVE_BED,
+		START_SPRINTING,
+		STOP_SPRINTING;
 	}
 
 }
