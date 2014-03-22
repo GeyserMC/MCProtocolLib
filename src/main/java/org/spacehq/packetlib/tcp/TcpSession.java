@@ -147,12 +147,12 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 		this.channel.writeAndFlush(packet).addListener(new ChannelFutureListener() {
 			@Override
 			public void operationComplete(ChannelFuture future) throws Exception {
+				writing = false;
 				if(!future.isSuccess()) {
 					exceptionCaught(null, future.cause());
+				} else {
+					callEvent(new PacketSentEvent(TcpSession.this, packet));
 				}
-
-				writing = false;
-				callEvent(new PacketSentEvent(TcpSession.this, packet));
 			}
 		});
 
