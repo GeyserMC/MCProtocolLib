@@ -5,7 +5,7 @@ import org.spacehq.mc.auth.UserAuthentication;
 import org.spacehq.mc.auth.exception.AuthenticationException;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.*;
-import org.spacehq.mc.protocol.packet.ingame.client.entity.ClientAnimationPacket;
+import org.spacehq.mc.protocol.packet.ingame.client.entity.player.ClientSwingArmPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.entity.ClientEntityInteractPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.entity.player.*;
 import org.spacehq.mc.protocol.packet.ingame.client.window.*;
@@ -266,7 +266,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerOutgoing(7, ClientPlayerActionPacket.class);
 		this.registerOutgoing(8, ClientPlayerPlaceBlockPacket.class);
 		this.registerOutgoing(9, ClientChangeHeldItemPacket.class);
-		this.registerOutgoing(10, ClientAnimationPacket.class);
+		this.registerOutgoing(10, ClientSwingArmPacket.class);
 		this.registerOutgoing(11, ClientPlayerStatePacket.class);
 		this.registerOutgoing(12, ClientSteerVehiclePacket.class);
 		this.registerOutgoing(13, ClientCloseWindowPacket.class);
@@ -293,7 +293,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerIncoming(7, ClientPlayerActionPacket.class);
 		this.registerIncoming(8, ClientPlayerPlaceBlockPacket.class);
 		this.registerIncoming(9, ClientChangeHeldItemPacket.class);
-		this.registerIncoming(10, ClientAnimationPacket.class);
+		this.registerIncoming(10, ClientSwingArmPacket.class);
 		this.registerIncoming(11, ClientPlayerStatePacket.class);
 		this.registerIncoming(12, ClientSteerVehiclePacket.class);
 		this.registerIncoming(13, ClientCloseWindowPacket.class);

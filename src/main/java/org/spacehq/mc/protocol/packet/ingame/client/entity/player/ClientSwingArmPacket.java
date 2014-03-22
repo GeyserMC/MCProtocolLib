@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.client.entity;
+package org.spacehq.mc.protocol.packet.ingame.client.entity.player;
 
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
@@ -6,9 +6,9 @@ import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientAnimationPacket implements Packet {
+public class ClientSwingArmPacket implements Packet {
 
-	public ClientAnimationPacket() {
+	public ClientSwingArmPacket() {
 	}
 
 	@Override
