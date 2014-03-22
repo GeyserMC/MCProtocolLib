@@ -1,10 +1,10 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import java.io.IOException;
-
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
+
+import java.io.IOException;
 
 public class ServerNotifyClientPacket implements Packet {
 	
@@ -16,6 +16,7 @@ public class ServerNotifyClientPacket implements Packet {
 	}
 	
 	public ServerNotifyClientPacket(Notification notification, NotificationValue value) {
+		this.notification = notification;
 		this.value = value;
 	}
 	

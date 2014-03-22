@@ -1,17 +1,17 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
+import org.spacehq.mc.protocol.data.game.Chunk;
+import org.spacehq.mc.util.NetUtil;
+import org.spacehq.mc.util.NetworkChunkData;
+import org.spacehq.mc.util.ParsedChunkData;
+import org.spacehq.packetlib.io.NetInput;
+import org.spacehq.packetlib.io.NetOutput;
+import org.spacehq.packetlib.packet.Packet;
+
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-
-import org.spacehq.mc.protocol.data.game.Chunk;
-import org.spacehq.mc.util.ParsedChunkData;
-import org.spacehq.mc.util.NetworkChunkData;
-import org.spacehq.mc.util.NetUtil;
-import org.spacehq.packetlib.io.NetInput;
-import org.spacehq.packetlib.io.NetOutput;
-import org.spacehq.packetlib.packet.Packet;
 
 public class ServerMultiChunkDataPacket implements Packet {
 
@@ -42,14 +42,12 @@ public class ServerMultiChunkDataPacket implements Packet {
 			}
 
 			for(int y = 0; y < column.length; y++) {
-				if(column[y] == null) {
-					throw new IllegalArgumentException("Chunk column must contain all 16 chunks.");
-				}
-				
-				if(column[y].getSkyLight() == null) {
-					noSkylight = true;
-				} else {
-					skylight = true;
+				if(column[y] != null) {
+					if(column[y].getSkyLight() == null) {
+						noSkylight = true;
+					} else {
+						skylight = true;
+					}
 				}
 			}
 		}
