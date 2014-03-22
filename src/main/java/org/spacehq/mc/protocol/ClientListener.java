@@ -33,11 +33,6 @@ import java.math.BigInteger;
 public class ClientListener extends SessionAdapter {
 
 	private SecretKey key;
-	private String accessToken;
-	
-	public ClientListener(String accessToken) {
-		this.accessToken = accessToken;
-	}
 
 	@Override
 	public void packetReceived(PacketReceivedEvent event) {
@@ -49,8 +44,9 @@ public class ClientListener extends SessionAdapter {
 				
 				GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
 				String serverHash = new BigInteger(CryptUtil.getServerIdHash(packet.getServerId(), packet.getPublicKey(), this.key)).toString(16);
+				String accessToken = event.getSession().getFlag(ProtocolConstants.ACCESS_TOKEN_KEY);
 				try {
-					new SessionService().joinServer(profile, this.accessToken, serverHash);
+					new SessionService().joinServer(profile, accessToken, serverHash);
 				} catch(AuthenticationUnavailableException e) {
 					event.getSession().disconnect("Login failed: Authentication service unavailable.");
 					return;

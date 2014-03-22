@@ -1,102 +1,23 @@
 package org.spacehq.mc.protocol;
 
-import java.security.GeneralSecurityException;
-import java.security.Key;
-import java.util.UUID;
-
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.UserAuthentication;
 import org.spacehq.mc.auth.exceptions.AuthenticationException;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientRequestPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientSettingsPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerActionPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerAnimationPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerInteractEntityPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientChangeHeldItemPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerAbilitiesPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerDigPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerMovementPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerPlaceBlockPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerPositionPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerPositionRotationPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerRotationPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.player.ClientSteerVehiclePacket;
-import org.spacehq.mc.protocol.packet.ingame.client.window.ClientCloseWindowPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.window.ClientConfirmTransactionPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.window.ClientCreativeInventoryActionPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.window.ClientEnchantItemPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
+import org.spacehq.mc.protocol.packet.ingame.client.*;
+import org.spacehq.mc.protocol.packet.ingame.client.player.*;
+import org.spacehq.mc.protocol.packet.ingame.client.window.*;
 import org.spacehq.mc.protocol.packet.ingame.client.world.ClientUpdateSignPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerPlayerListEntryPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerRespawnPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerStatisticsPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerTabCompletePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerAnimationPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerCollectItemPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerDestroyEntitiesPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityAttachPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityEffectPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityEquipmentPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityHeadLookPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityMetadataPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityMovementPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPropertiesPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityRotationPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityStatusPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityTeleportPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityVelocityPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityRemoveEffectPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerChangeHeldItemPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerPlayerAbilitiesPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerPlayerUseBedPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerSetExperiencePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.player.ServerUpdateHealthPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnExpOrbPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnGlobalEntityPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnMobPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnObjectPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPaintingPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.*;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.*;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.player.*;
+import org.spacehq.mc.protocol.packet.ingame.server.entity.spawn.*;
 import org.spacehq.mc.protocol.packet.ingame.server.scoreboard.ServerDisplayScoreboardPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.scoreboard.ServerScoreboardObjectivePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.scoreboard.ServerTeamPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.scoreboard.ServerUpdateScorePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.window.ServerCloseWindowPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.window.ServerConfirmTransactionPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.window.ServerOpenWindowPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.window.ServerWindowPropertyPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerBlockBreakAnimPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerBlockValuePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerExplosionPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerMapDataPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerMultiChunkDataPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerNotifyClientPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerOpenTileEntityEditorPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateSignPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnParticlePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.window.*;
+import org.spacehq.mc.protocol.packet.ingame.server.world.*;
 import org.spacehq.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import org.spacehq.mc.protocol.packet.login.client.LoginStartPacket;
 import org.spacehq.mc.protocol.packet.login.server.EncryptionRequestPacket;
@@ -113,12 +34,17 @@ import org.spacehq.packetlib.crypt.AESEncryption;
 import org.spacehq.packetlib.crypt.PacketEncryption;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.util.UUID;
+
 public class MinecraftProtocol extends PacketProtocol {
 	
 	private ProtocolMode mode = ProtocolMode.HANDSHAKE;
 	private AESEncryption encrypt = null;
 	
 	private GameProfile profile = null;
+	private String accessToken = "";
 	private ClientListener clientListener = null;
 	
 	@SuppressWarnings("unused")
@@ -135,13 +61,13 @@ public class MinecraftProtocol extends PacketProtocol {
 			this.profile = new GameProfile("", "Player");
 		}
 		
-		this.clientListener = new ClientListener("");
+		this.clientListener = new ClientListener();
 	}
 	
 	public MinecraftProtocol(String username) {
 		this(ProtocolMode.LOGIN);
 		this.profile = new GameProfile("", username);
-		this.clientListener = new ClientListener("");
+		this.clientListener = new ClientListener();
 	}
 	
 	public MinecraftProtocol(String username, String using, boolean token) throws AuthenticationException {
@@ -157,7 +83,8 @@ public class MinecraftProtocol extends PacketProtocol {
 		
 		auth.login();
 		this.profile = auth.getSelectedProfile();
-		this.clientListener = new ClientListener(auth.getAccessToken());
+		this.accessToken = auth.getAccessToken();
+		this.clientListener = new ClientListener();
 	}
 	
 	@Override
@@ -169,6 +96,7 @@ public class MinecraftProtocol extends PacketProtocol {
 	public void newClientSession(Client client, Session session) {
 		if(this.profile != null) {
 			session.setFlag(ProtocolConstants.PROFILE_KEY, this.profile);
+			session.setFlag(ProtocolConstants.ACCESS_TOKEN_KEY, this.accessToken);
 		}
 		
 		this.setMode(this.mode, true, session);

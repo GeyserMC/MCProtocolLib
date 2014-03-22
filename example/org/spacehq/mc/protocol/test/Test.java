@@ -46,7 +46,7 @@ public class Test {
 			server.setGlobalFlag(ProtocolConstants.VERIFY_USERS_KEY, VERIFY_USERS);
 			server.setGlobalFlag(ProtocolConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
 				@Override
-				public ServerStatusInfo buildInfo() {
+				public ServerStatusInfo buildInfo(Session session) {
 					return new ServerStatusInfo(new VersionInfo(ProtocolConstants.GAME_VERSION, ProtocolConstants.PROTOCOL_VERSION), new PlayerInfo(100, 0, new GameProfile[0]), new TextMessage("Hello world!"), null);
 				}
 			});
@@ -92,7 +92,7 @@ public class Test {
 		Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory());
 		client.getSession().setFlag(ProtocolConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
 			@Override
-			public void handle(ServerStatusInfo info) {
+			public void handle(Session session, ServerStatusInfo info) {
 				System.out.println("Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
 				System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
 				System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
@@ -103,7 +103,7 @@ public class Test {
 		
 		client.getSession().setFlag(ProtocolConstants.SERVER_PING_TIME_HANDLER_KEY, new ServerPingTimeHandler() {
 			@Override
-			public void handle(long pingTime) {
+			public void handle(Session session, long pingTime) {
 				System.out.println("Server ping took " + pingTime + "ms");
 			}
 		});
