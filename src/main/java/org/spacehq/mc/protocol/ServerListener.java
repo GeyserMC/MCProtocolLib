@@ -74,7 +74,7 @@ public class ServerListener extends SessionAdapter {
 		if(protocol.getMode() == ProtocolMode.LOGIN) {
 			if(event.getPacket() instanceof LoginStartPacket) {
 				this.username = event.<LoginStartPacket>getPacket().getUsername();
-				boolean verify = event.getSession().getFlag(ProtocolConstants.VERIFY_USERS_KEY);
+				boolean verify = event.getSession().hasFlag(ProtocolConstants.VERIFY_USERS_KEY) ? event.getSession().<Boolean>getFlag(ProtocolConstants.VERIFY_USERS_KEY) : true;
 				if(verify) {
 					event.getSession().send(new EncryptionRequestPacket(this.serverId, pair.getPublic(), this.verifyToken));
 				} else {
