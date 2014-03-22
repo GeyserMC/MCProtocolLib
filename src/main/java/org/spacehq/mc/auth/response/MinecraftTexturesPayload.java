@@ -1,21 +1,24 @@
 package org.spacehq.mc.auth.response;
 
 import org.spacehq.mc.auth.ProfileTexture;
+import org.spacehq.mc.auth.ProfileTextureType;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class MinecraftTexturesPayload {
 
 	private long timestamp;
-	private String profileId;
+	private UUID profileId;
 	private String profileName;
-	private Map<String, ProfileTexture> textures;
+	private boolean isPublic;
+	private Map<ProfileTextureType, ProfileTexture> textures;
 
 	public long getTimestamp() {
 		return this.timestamp;
 	}
 
-	public String getProfileId() {
+	public UUID getProfileId() {
 		return this.profileId;
 	}
 
@@ -23,7 +26,11 @@ public class MinecraftTexturesPayload {
 		return this.profileName;
 	}
 
-	public Map<String, ProfileTexture> getTextures() {
+	public boolean isPublic() {
+		return this.isPublic;
+	}
+
+	public Map<ProfileTextureType, ProfileTexture> getTextures() {
 		return this.textures;
 	}
 

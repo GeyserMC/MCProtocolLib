@@ -1,17 +1,22 @@
 package org.spacehq.mc.auth;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.spacehq.mc.auth.properties.PropertyMap;
+
+import java.util.UUID;
 
 public class GameProfile {
 
-	private String id;
+	private UUID id;
 	private String name;
-	private Map<String, ProfileProperty> properties = new HashMap<String, ProfileProperty>();
+	private PropertyMap properties = new PropertyMap();
 	private boolean legacy;
 
 	public GameProfile(String id, String name) {
-		if((id == null || id.equals("")) && (name == null || name.equals(""))) {
+		this(id == null || id.equals("") ? null : UUID.fromString(id), name);
+	}
+
+	public GameProfile(UUID id, String name) {
+		if(id == null && (name == null || name.equals(""))) {
 			throw new IllegalArgumentException("Name and ID cannot both be blank");
 		} else {
 			this.id = id;
@@ -19,15 +24,19 @@ public class GameProfile {
 		}
 	}
 
-	public String getId() {
+	public UUID getId() {
 		return this.id;
+	}
+
+	public String getIdAsString() {
+		return this.id != null ? this.id.toString() : "";
 	}
 
 	public String getName() {
 		return this.name;
 	}
 
-	public Map<String, ProfileProperty> getProperties() {
+	public PropertyMap getProperties() {
 		return this.properties;
 	}
 
@@ -36,7 +45,7 @@ public class GameProfile {
 	}
 
 	public boolean isComplete() {
-		return this.id != null && !this.id.equals("") && this.name != null && !this.name.equals("");
+		return this.id != null && this.name != null && !this.name.equals("");
 	}
 
 	@Override
@@ -45,7 +54,7 @@ public class GameProfile {
 			return true;
 		} else if(o != null && this.getClass() == o.getClass()) {
 			GameProfile that = (GameProfile) o;
-			return !this.id.equals(that.id) ? false : this.name.equals(that.name);
+			return (this.id != null ? this.id.equals(that.id) : that.id == null) && (this.name != null ? this.name.equals(that.name) : that.name == null);
 		} else {
 			return false;
 		}
@@ -53,14 +62,14 @@ public class GameProfile {
 
 	@Override
 	public int hashCode() {
-		int result = this.id.hashCode();
-		result = 31 * result + this.name.hashCode();
+		int result = this.id != null ? this.id.hashCode() : 0;
+		result = 31 * result + (this.name != null ? this.name.hashCode() : 0);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "GameProfile{id=" + this.id + ", name=" + this.name + "}";
+		return "GameProfile{id=" + this.id + ", name=" + this.name + ", properties=" + this.properties + ", legacy=" + this.legacy + "}";
 	}
 
 }

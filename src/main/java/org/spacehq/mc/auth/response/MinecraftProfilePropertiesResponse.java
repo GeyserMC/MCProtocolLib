@@ -2,13 +2,20 @@ package org.spacehq.mc.auth.response;
 
 import org.spacehq.mc.auth.properties.PropertyMap;
 
-public class User {
+import java.util.UUID;
 
-	private String id;
+public class MinecraftProfilePropertiesResponse extends Response {
+
+	private UUID id;
+	private String name;
 	private PropertyMap properties;
 
-	public String getId() {
+	public UUID getId() {
 		return this.id;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 	public PropertyMap getProperties() {

@@ -2,13 +2,16 @@ package org.spacehq.mc.auth;
 
 import org.spacehq.mc.auth.exception.AuthenticationException;
 import org.spacehq.mc.auth.exception.InvalidCredentialsException;
+import org.spacehq.mc.auth.exception.PropertyDeserializeException;
+import org.spacehq.mc.auth.properties.Property;
+import org.spacehq.mc.auth.properties.PropertyMap;
 import org.spacehq.mc.auth.request.AuthenticationRequest;
 import org.spacehq.mc.auth.request.RefreshRequest;
 import org.spacehq.mc.auth.response.AuthenticationResponse;
 import org.spacehq.mc.auth.response.RefreshResponse;
 import org.spacehq.mc.auth.response.User;
-import org.spacehq.mc.auth.response.User.Property;
 import org.spacehq.mc.util.URLUtils;
+import org.spacehq.mc.auth.serialize.UUIDSerializer;
 
 import java.net.URL;
 import java.util.*;
@@ -20,12 +23,14 @@ public class UserAuthentication {
 	private static final URL ROUTE_REFRESH = URLUtils.constantURL(BASE_URL + "refresh");
 	private static final String STORAGE_KEY_PROFILE_NAME = "displayName";
 	private static final String STORAGE_KEY_PROFILE_ID = "uuid";
+	private static final String STORAGE_KEY_PROFILE_PROPERTIES = "profileProperties";
 	private static final String STORAGE_KEY_USER_NAME = "username";
 	private static final String STORAGE_KEY_USER_ID = "userid";
+	private static final String STORAGE_KEY_USER_PROPERTIES = "userProperties";
 	private static final String STORAGE_KEY_ACCESS_TOKEN = "accessToken";
 
 	private String clientToken;
-	private Map<String, List<String>> userProperties = new HashMap<String, List<String>>();
+	private PropertyMap userProperties = new PropertyMap();
 	private String userId;
 	private String username;
 	private String password;
@@ -67,8 +72,8 @@ public class UserAuthentication {
 		return this.isLoggedIn() ? (this.userType == null ? UserType.LEGACY : this.userType) : null;
 	}
 
-	public Map<String, List<String>> getUserProperties() {
-		return this.isLoggedIn() ? Collections.unmodifiableMap(this.userProperties) : Collections.unmodifiableMap(new HashMap<String, List<String>>());
+	public PropertyMap getUserProperties() {
+		return this.isLoggedIn() ? new PropertyMap(this.userProperties) : new PropertyMap();
 	}
 
 	public boolean isLoggedIn() {
@@ -107,24 +112,61 @@ public class UserAuthentication {
 		}
 	}
 
-	public void loadFromStorage(Map<String, String> credentials) {
+	public void loadFromStorage(Map<String, Object> credentials) throws PropertyDeserializeException {
 		this.logout();
-		this.setUsername(credentials.get(STORAGE_KEY_USER_NAME));
+		this.setUsername((String) credentials.get(STORAGE_KEY_USER_NAME));
 		if(credentials.containsKey(STORAGE_KEY_USER_ID)) {
-			this.userId = credentials.get(STORAGE_KEY_USER_ID);
+			this.userId = (String) credentials.get(STORAGE_KEY_USER_ID);
 		} else {
 			this.userId = this.username;
 		}
 
-		if(credentials.containsKey(STORAGE_KEY_PROFILE_NAME) && credentials.containsKey(STORAGE_KEY_PROFILE_ID)) {
-			this.selectedProfile = new GameProfile(credentials.get(STORAGE_KEY_PROFILE_ID), credentials.get(STORAGE_KEY_PROFILE_NAME));
+		if(credentials.containsKey(STORAGE_KEY_USER_PROPERTIES)) {
+			try {
+				List<Map<String, String>> list = (List<Map<String, String>>) credentials.get(STORAGE_KEY_USER_PROPERTIES);
+				for(Map<String, String> propertyMap : list) {
+					String name = propertyMap.get("name");
+					String value = propertyMap.get("value");
+					String signature = propertyMap.get("signature");
+					if(signature == null) {
+						this.userProperties.put(name, new Property(name, value));
+					} else {
+						this.userProperties.put(name, new Property(name, value, signature));
+					}
+				}
+			} catch(Throwable t) {
+				throw new PropertyDeserializeException("Couldn't deserialize user properties", t);
+			}
 		}
 
-		this.accessToken = credentials.get(STORAGE_KEY_ACCESS_TOKEN);
+		if(credentials.containsKey(STORAGE_KEY_PROFILE_NAME) && credentials.containsKey(STORAGE_KEY_PROFILE_ID)) {
+			GameProfile profile = new GameProfile(UUIDSerializer.fromString((String) credentials.get(STORAGE_KEY_PROFILE_ID)), (String) credentials.get(STORAGE_KEY_PROFILE_NAME));
+			if(credentials.containsKey(STORAGE_KEY_PROFILE_PROPERTIES)) {
+				try {
+					List<Map<String, String>> list = (List<Map<String, String>>) credentials.get(STORAGE_KEY_PROFILE_PROPERTIES);
+					for(Map<String, String> propertyMap : list) {
+						String name = propertyMap.get("name");
+						String value = propertyMap.get("value");
+						String signature = propertyMap.get("signature");
+						if(signature == null) {
+							profile.getProperties().put(name, new Property(name, value));
+						} else {
+							profile.getProperties().put(name, new Property(name, value, signature));
+						}
+					}
+				} catch(Throwable t) {
+					throw new PropertyDeserializeException("Couldn't deserialize profile properties", t);
+				}
+			}
+
+			this.selectedProfile = profile;
+		}
+
+		this.accessToken = (String) credentials.get(STORAGE_KEY_ACCESS_TOKEN);
 	}
 
-	public Map<String, String> saveForStorage() {
-		Map<String, String> result = new HashMap<String, String>();
+	public Map<String, Object> saveForStorage() {
+		Map<String, Object> result = new HashMap<String, Object>();
 		if(this.username != null) {
 			result.put(STORAGE_KEY_USER_NAME, this.username);
 		}
@@ -133,9 +175,35 @@ public class UserAuthentication {
 			result.put(STORAGE_KEY_USER_ID, this.userId);
 		}
 
-		if(this.selectedProfile != null) {
-			result.put(STORAGE_KEY_PROFILE_NAME, this.selectedProfile.getName());
-			result.put(STORAGE_KEY_PROFILE_ID, this.selectedProfile.getId());
+		if(!this.getUserProperties().isEmpty()) {
+			List<Map<String, String>> properties = new ArrayList<Map<String, String>>();
+			for(Property userProperty : this.getUserProperties().values()) {
+				Map<String, String> property = new HashMap<String, String>();
+				property.put("name", userProperty.getName());
+				property.put("value", userProperty.getValue());
+				property.put("signature", userProperty.getSignature());
+				properties.add(property);
+			}
+
+			result.put(STORAGE_KEY_USER_PROPERTIES, properties);
+		}
+
+		GameProfile selectedProfile = this.getSelectedProfile();
+		if(selectedProfile != null) {
+			result.put(STORAGE_KEY_PROFILE_NAME, selectedProfile.getName());
+			result.put(STORAGE_KEY_PROFILE_ID, selectedProfile.getId());
+			List<Map<String, String>> properties = new ArrayList<Map<String, String>>();
+			for(Property profileProperty : selectedProfile.getProperties().values()) {
+				Map<String, String> property = new HashMap<String, String>();
+				property.put("name", profileProperty.getName());
+				property.put("value", profileProperty.getValue());
+				property.put("signature", profileProperty.getSignature());
+				properties.add(property);
+			}
+
+			if(!properties.isEmpty()) {
+				result.put(STORAGE_KEY_PROFILE_PROPERTIES, properties);
+			}
 		}
 
 		if(this.accessToken != null && !this.accessToken.equals("")) {
@@ -270,13 +338,7 @@ public class UserAuthentication {
 	private void updateProperties(User user) {
 		this.userProperties.clear();
 		if(user != null && user.getProperties() != null) {
-			for(Property property : user.getProperties()) {
-				if(this.userProperties.get(property.getKey()) == null) {
-					this.userProperties.put(property.getKey(), new ArrayList<String>());
-				}
-
-				this.userProperties.get(property.getKey()).add(property.getValue());
-			}
+			this.userProperties.putAll(user.getProperties());
 		}
 	}
 

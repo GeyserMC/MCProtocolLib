@@ -1,11 +1,17 @@
 package org.spacehq.mc.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.exception.AuthenticationException;
 import org.spacehq.mc.auth.exception.AuthenticationUnavailableException;
 import org.spacehq.mc.auth.exception.InvalidCredentialsException;
 import org.spacehq.mc.auth.exception.UserMigratedException;
+import org.spacehq.mc.auth.properties.PropertyMap;
 import org.spacehq.mc.auth.response.Response;
+import org.spacehq.mc.auth.serialize.GameProfileSerializer;
+import org.spacehq.mc.auth.serialize.PropertyMapSerializer;
+import org.spacehq.mc.auth.serialize.UUIDSerializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +24,19 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 public class URLUtils {
 
-	private static Gson gson = new Gson();
+	private static final Gson GSON;
+
+	static {
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(GameProfile.class, new GameProfileSerializer());
+		builder.registerTypeAdapter(PropertyMap.class, new PropertyMapSerializer());
+		builder.registerTypeAdapter(UUID.class, new UUIDSerializer());
+		GSON = builder.create();
+	}
 
 	public static URL constantURL(String url) {
 		try {
@@ -71,8 +86,8 @@ public class URLUtils {
 
 	public static <T extends Response> T makeRequest(URL url, Object input, Class<T> clazz) throws AuthenticationException {
 		try {
-			String jsonString = input == null ? performGetRequest(url) : performPostRequest(url, gson.toJson(input), "application/json");
-			T result = gson.fromJson(jsonString, clazz);
+			String jsonString = input == null ? performGetRequest(url) : performPostRequest(url, GSON.toJson(input), "application/json");
+			T result = GSON.fromJson(jsonString, clazz);
 			if(result == null) {
 				return null;
 			} else if(result.getError() != null && !result.getError().equals("")) {

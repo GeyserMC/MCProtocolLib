@@ -79,7 +79,7 @@ public class StatusResponsePacket implements Packet {
 			for(GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
 				JsonObject o = new JsonObject();
 				o.addProperty("name", profile.getName());
-				o.addProperty("id", profile.getId());
+				o.addProperty("id", profile.getIdAsString());
 				array.add(o);
 			}
 

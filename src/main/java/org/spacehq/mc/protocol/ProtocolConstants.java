@@ -3,13 +3,12 @@ package org.spacehq.mc.protocol;
 public class ProtocolConstants {
 
 	// General Constants
-	public static final String GAME_VERSION = "14w08a";
-	public static final int PROTOCOL_VERSION = 12;
-
-	// General Key Constants
-	public static final String PROFILE_KEY = "profile";
+	public static final String GAME_VERSION = "14w11b";
+	public static final int PROTOCOL_VERSION = 14;
 
 	// Client Key Constants
+	public static final String PROFILE_KEY = "profile";
+	public static final String ACCESS_TOKEN_KEY = "access-token";
 	public static final String PING_KEY = "ping";
 	public static final String SERVER_INFO_HANDLER_KEY = "server-info-handler";
 	public static final String SERVER_PING_TIME_HANDLER_KEY = "server-ping-time-handler";

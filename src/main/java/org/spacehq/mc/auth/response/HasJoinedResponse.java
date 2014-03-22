@@ -1,19 +1,19 @@
 package org.spacehq.mc.auth.response;
 
-import org.spacehq.mc.auth.ProfileProperty;
+import org.spacehq.mc.auth.properties.PropertyMap;
 
-import java.util.List;
+import java.util.UUID;
 
 public class HasJoinedResponse extends Response {
 
-	private String id;
-	private List<ProfileProperty> properties;
+	private UUID id;
+	private PropertyMap properties;
 
-	public String getId() {
+	public UUID getId() {
 		return this.id;
 	}
 
-	public List<ProfileProperty> getProperties() {
+	public PropertyMap getProperties() {
 		return this.properties;
 	}
 
