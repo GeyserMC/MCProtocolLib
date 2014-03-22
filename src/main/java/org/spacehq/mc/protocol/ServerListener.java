@@ -1,13 +1,5 @@
 package org.spacehq.mc.protocol;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.util.Arrays;
-import java.util.Random;
-
-import javax.crypto.SecretKey;
-
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.SessionService;
 import org.spacehq.mc.auth.exceptions.AuthenticationUnavailableException;
@@ -31,6 +23,13 @@ import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.DisconnectingEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
 import org.spacehq.packetlib.event.session.SessionAdapter;
+
+import javax.crypto.SecretKey;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.util.Arrays;
+import java.util.Random;
 
 public class ServerListener extends SessionAdapter {
 
@@ -108,7 +107,7 @@ public class ServerListener extends SessionAdapter {
 					event.getSession().disconnect("No server info builder set.");
 				}
 				
-				ServerStatusInfo info = builder.buildInfo();
+				ServerStatusInfo info = builder.buildInfo(event.getSession());
 				event.getSession().send(new StatusResponsePacket(info));
 			} else if(event.getPacket() instanceof StatusPingPacket) {
 				event.getSession().send(new StatusPongPacket(event.<StatusPingPacket>getPacket().getPingTime()));
