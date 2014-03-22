@@ -5,9 +5,9 @@ import org.spacehq.mc.auth.UserAuthentication;
 import org.spacehq.mc.auth.exception.AuthenticationException;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.*;
-import org.spacehq.mc.protocol.packet.ingame.client.entity.player.ClientSwingArmPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.entity.ClientEntityInteractPacket;
-import org.spacehq.mc.protocol.packet.ingame.client.entity.player.*;
+import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerInteractEntityPacket;
+import org.spacehq.mc.protocol.packet.ingame.client.player.ClientSwingArmPacket;
+import org.spacehq.mc.protocol.packet.ingame.client.player.*;
 import org.spacehq.mc.protocol.packet.ingame.client.window.*;
 import org.spacehq.mc.protocol.packet.ingame.client.world.ClientUpdateSignPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.*;
@@ -258,7 +258,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
 		this.registerOutgoing(0, ClientKeepAlivePacket.class);
 		this.registerOutgoing(1, ClientChatPacket.class);
-		this.registerOutgoing(2, ClientEntityInteractPacket.class);
+		this.registerOutgoing(2, ClientPlayerInteractEntityPacket.class);
 		this.registerOutgoing(3, ClientPlayerMovementPacket.class);
 		this.registerOutgoing(4, ClientPlayerPositionPacket.class);
 		this.registerOutgoing(5, ClientPlayerRotationPacket.class);
@@ -285,7 +285,7 @@ public class MinecraftProtocol extends PacketProtocol {
 	private void initServerGame(Session session) {
 		this.registerIncoming(0, ClientKeepAlivePacket.class);
 		this.registerIncoming(1, ClientChatPacket.class);
-		this.registerIncoming(2, ClientEntityInteractPacket.class);
+		this.registerIncoming(2, ClientPlayerInteractEntityPacket.class);
 		this.registerIncoming(3, ClientPlayerMovementPacket.class);
 		this.registerIncoming(4, ClientPlayerPositionPacket.class);
 		this.registerIncoming(5, ClientPlayerRotationPacket.class);

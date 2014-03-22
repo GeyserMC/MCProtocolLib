@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.client.entity.player;
+package org.spacehq.mc.protocol.packet.ingame.client.player;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.player.PlayerState;

@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.client.entity;
+package org.spacehq.mc.protocol.packet.ingame.client.player;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.player.InteractAction;
@@ -8,16 +8,16 @@ import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientEntityInteractPacket implements Packet {
+public class ClientPlayerInteractEntityPacket implements Packet {
 
 	private int entityId;
 	private InteractAction action;
 
 	@SuppressWarnings("unused")
-	private ClientEntityInteractPacket() {
+	private ClientPlayerInteractEntityPacket() {
 	}
 
-	public ClientEntityInteractPacket(int entityId, InteractAction action) {
+	public ClientPlayerInteractEntityPacket(int entityId, InteractAction action) {
 		this.entityId = entityId;
 		this.action = action;
 	}
