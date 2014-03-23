@@ -73,13 +73,13 @@ public class MagicValues {
 		register(ChatVisibility.SYSTEM, 1);
 		register(ChatVisibility.HIDDEN, 2);
 
-		register(PlayerState.START_SNEAKING, 1);
-		register(PlayerState.STOP_SNEAKING, 2);
-		register(PlayerState.LEAVE_BED, 3);
-		register(PlayerState.START_SPRINTING, 4);
-		register(PlayerState.STOP_SPRINTING, 5);
-		register(PlayerState.RIDING_JUMP, 6);
-		register(PlayerState.OPEN_INVENTORY, 7);
+		register(PlayerState.START_SNEAKING, 0);
+		register(PlayerState.STOP_SNEAKING, 1);
+		register(PlayerState.LEAVE_BED, 2);
+		register(PlayerState.START_SPRINTING, 3);
+		register(PlayerState.STOP_SPRINTING, 4);
+		register(PlayerState.RIDING_JUMP, 5);
+		register(PlayerState.OPEN_INVENTORY, 6);
 
 		register(InteractAction.INTERACT, 0);
 		register(InteractAction.ATTACK, 1);
@@ -775,6 +775,7 @@ public class MagicValues {
 
 	@SuppressWarnings({ "unchecked" })
 	public static <T extends Enum<?>> T key(Class<T> keyType, Object value) {
+		System.out.println(keyType + ", " + value);
 		for(Enum<?> key : values.keySet()) {
 			Object val = values.get(key);
 			if(keyType.isAssignableFrom(key.getClass())) {
