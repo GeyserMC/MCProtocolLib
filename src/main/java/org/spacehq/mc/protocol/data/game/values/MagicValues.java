@@ -238,6 +238,7 @@ public class MagicValues {
 		register(MobType.WITHER, 64);
 		register(MobType.BAT, 65);
 		register(MobType.WITCH, 66);
+		register(MobType.ENDERMITE, 67);
 		register(MobType.PIG, 90);
 		register(MobType.SHEEP, 91);
 		register(MobType.COW, 92);
