@@ -776,7 +776,6 @@ public class MagicValues {
 
 	@SuppressWarnings({ "unchecked" })
 	public static <T extends Enum<?>> T key(Class<T> keyType, Object value) {
-		System.out.println(keyType + ", " + value);
 		for(Enum<?> key : values.keySet()) {
 			Object val = values.get(key);
 			if(keyType.isAssignableFrom(key.getClass())) {

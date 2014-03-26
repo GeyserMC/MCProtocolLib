@@ -4,7 +4,7 @@ import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.world.block.UpdatedTileType;
 import org.spacehq.mc.util.NetUtil;
-import org.spacehq.opennbt.tag.CompoundTag;
+import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
