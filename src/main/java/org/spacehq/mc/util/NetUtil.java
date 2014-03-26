@@ -2,7 +2,7 @@ package org.spacehq.mc.util;
 
 import org.spacehq.mc.protocol.data.game.*;
 import org.spacehq.opennbt.NBTIO;
-import org.spacehq.opennbt.tag.CompoundTag;
+import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 
