@@ -1,26 +1,25 @@
 package org.spacehq.mc.protocol.packet.status.server;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.auth.serialize.UUIDSerializer;
+import org.spacehq.mc.auth.util.Base64;
 import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.VersionInfo;
-import org.spacehq.mc.util.Base64;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class StatusResponsePacket implements Packet {
 	
@@ -51,7 +50,7 @@ public class StatusResponsePacket implements Packet {
 				profiles = new GameProfile[prof.size()];
 				for(int index = 0; index < prof.size(); index++) {
 					JsonObject o = prof.get(index).getAsJsonObject();
-					profiles[index] = new GameProfile(o.get("id").getAsString(), o.get("name").getAsString());
+					profiles[index] = new GameProfile(UUIDSerializer.fromString(o.get("id").getAsString()), o.get("name").getAsString());
 				}
 			}
 		}
@@ -81,7 +80,7 @@ public class StatusResponsePacket implements Packet {
 			for(GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
 				JsonObject o = new JsonObject();
 				o.addProperty("name", profile.getName());
-				o.addProperty("id", profile.getId());
+				o.addProperty("id", UUIDSerializer.fromUUID(profile.getId()));
 				array.add(o);
 			}
 			

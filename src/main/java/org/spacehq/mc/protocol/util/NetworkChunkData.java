@@ -1,4 +1,4 @@
-package org.spacehq.mc.util;
+package org.spacehq.mc.protocol.util;
 
 public class NetworkChunkData {
 	

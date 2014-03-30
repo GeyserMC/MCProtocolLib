@@ -1,12 +1,16 @@
 package org.spacehq.mc.protocol.test;
 
 import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.exceptions.AuthenticationException;
+import org.spacehq.mc.auth.exception.AuthenticationException;
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.ProtocolConstants;
 import org.spacehq.mc.protocol.ProtocolMode;
 import org.spacehq.mc.protocol.ServerLoginHandler;
-import org.spacehq.mc.protocol.data.message.*;
+import org.spacehq.mc.protocol.data.message.ChatColor;
+import org.spacehq.mc.protocol.data.message.ChatFormat;
+import org.spacehq.mc.protocol.data.message.Message;
+import org.spacehq.mc.protocol.data.message.MessageStyle;
+import org.spacehq.mc.protocol.data.message.TextMessage;
 import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.VersionInfo;
@@ -24,6 +28,7 @@ import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.server.ServerAdapter;
 import org.spacehq.packetlib.event.server.SessionAddedEvent;
+import org.spacehq.packetlib.event.server.SessionRemovedEvent;
 import org.spacehq.packetlib.event.session.DisconnectedEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
 import org.spacehq.packetlib.event.session.SessionAdapter;
@@ -77,6 +82,15 @@ public class Test {
 							}
 						}
 					});
+				}
+
+				@Override
+				public void sessionRemoved(SessionRemovedEvent event) {
+					MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
+					if(protocol.getMode() == ProtocolMode.GAME) {
+						System.out.println("Closing server.");
+						event.getServer().close();
+					}
 				}
 			});
 			

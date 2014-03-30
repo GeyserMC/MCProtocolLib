@@ -2,7 +2,7 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.UserAuthentication;
-import org.spacehq.mc.auth.exceptions.AuthenticationException;
+import org.spacehq.mc.auth.exception.AuthenticationException;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.*;
 import org.spacehq.mc.protocol.packet.ingame.client.player.*;
@@ -58,7 +58,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		
 		this.mode = mode;
 		if(mode == ProtocolMode.LOGIN) {
-			this.profile = new GameProfile("", "Player");
+			this.profile = new GameProfile((UUID) null, "Player");
 		}
 		
 		this.clientListener = new ClientListener();
@@ -66,7 +66,7 @@ public class MinecraftProtocol extends PacketProtocol {
 	
 	public MinecraftProtocol(String username) {
 		this(ProtocolMode.LOGIN);
-		this.profile = new GameProfile("", username);
+		this.profile = new GameProfile((UUID) null, username);
 		this.clientListener = new ClientListener();
 	}
 	

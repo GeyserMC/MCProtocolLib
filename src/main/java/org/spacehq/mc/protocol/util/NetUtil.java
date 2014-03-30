@@ -1,4 +1,4 @@
-package org.spacehq.mc.util;
+package org.spacehq.mc.protocol.util;
 
 import org.spacehq.mc.protocol.data.game.*;
 import org.spacehq.opennbt.NBTIO;

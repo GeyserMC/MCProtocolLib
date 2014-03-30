@@ -2,9 +2,9 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.SessionService;
-import org.spacehq.mc.auth.exceptions.AuthenticationException;
-import org.spacehq.mc.auth.exceptions.AuthenticationUnavailableException;
-import org.spacehq.mc.auth.exceptions.InvalidCredentialsException;
+import org.spacehq.mc.auth.exception.AuthenticationException;
+import org.spacehq.mc.auth.exception.AuthenticationUnavailableException;
+import org.spacehq.mc.auth.exception.InvalidCredentialsException;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoHandler;
 import org.spacehq.mc.protocol.data.status.handler.ServerPingTimeHandler;
@@ -21,7 +21,7 @@ import org.spacehq.mc.protocol.packet.status.client.StatusPingPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusQueryPacket;
 import org.spacehq.mc.protocol.packet.status.server.StatusPongPacket;
 import org.spacehq.mc.protocol.packet.status.server.StatusResponsePacket;
-import org.spacehq.mc.util.CryptUtil;
+import org.spacehq.mc.protocol.util.CryptUtil;
 import org.spacehq.packetlib.event.session.ConnectedEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
 import org.spacehq.packetlib.event.session.PacketSentEvent;
@@ -61,7 +61,7 @@ public class ClientListener extends SessionAdapter {
 				event.getSession().send(new EncryptionResponsePacket(this.key, packet.getPublicKey(), packet.getVerifyToken()));
 			} else if(event.getPacket() instanceof LoginSuccessPacket) {
 				LoginSuccessPacket packet = event.getPacket();
-				event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, new GameProfile(packet.getPlayerId(), packet.getUsername()));
+				event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, packet.getProfile());
 				protocol.setMode(ProtocolMode.GAME, true, event.getSession());
 			} else if(event.getPacket() instanceof LoginDisconnectPacket) {
 				LoginDisconnectPacket packet = event.getPacket();

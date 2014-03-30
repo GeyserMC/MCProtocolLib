@@ -6,9 +6,9 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 import org.spacehq.mc.protocol.data.game.Chunk;
-import org.spacehq.mc.util.ParsedChunkData;
-import org.spacehq.mc.util.NetworkChunkData;
-import org.spacehq.mc.util.NetUtil;
+import org.spacehq.mc.protocol.util.ParsedChunkData;
+import org.spacehq.mc.protocol.util.NetworkChunkData;
+import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

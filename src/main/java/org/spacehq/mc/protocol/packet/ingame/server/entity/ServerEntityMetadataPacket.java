@@ -3,7 +3,7 @@ package org.spacehq.mc.protocol.packet.ingame.server.entity;
 import java.io.IOException;
 
 import org.spacehq.mc.protocol.data.game.EntityMetadata;
-import org.spacehq.mc.util.NetUtil;
+import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

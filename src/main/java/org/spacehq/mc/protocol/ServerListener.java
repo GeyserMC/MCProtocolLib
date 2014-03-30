@@ -2,7 +2,7 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.SessionService;
-import org.spacehq.mc.auth.exceptions.AuthenticationUnavailableException;
+import org.spacehq.mc.auth.exception.AuthenticationUnavailableException;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
@@ -18,7 +18,7 @@ import org.spacehq.mc.protocol.packet.status.client.StatusPingPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusQueryPacket;
 import org.spacehq.mc.protocol.packet.status.server.StatusPongPacket;
 import org.spacehq.mc.protocol.packet.status.server.StatusResponsePacket;
-import org.spacehq.mc.util.CryptUtil;
+import org.spacehq.mc.protocol.util.CryptUtil;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.DisconnectingEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
@@ -30,6 +30,7 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.UUID;
 
 public class ServerListener extends SessionAdapter {
 
@@ -78,8 +79,9 @@ public class ServerListener extends SessionAdapter {
 				if(verify) {
 					event.getSession().send(new EncryptionRequestPacket(this.serverId, pair.getPublic(), this.verifyToken));
 				} else {
-					event.getSession().send(new LoginSuccessPacket("", this.username));
-					event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, new GameProfile("", this.username));
+					GameProfile profile = new GameProfile((UUID) null, this.username);
+					event.getSession().send(new LoginSuccessPacket(profile));
+					event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, event.getSession());
 					ServerLoginHandler handler = event.getSession().getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
@@ -151,9 +153,9 @@ public class ServerListener extends SessionAdapter {
 			try {
 				String serverHash = new BigInteger(CryptUtil.getServerIdHash(serverId, pair.getPublic(), this.key)).toString(16);
 				SessionService service = new SessionService();
-				GameProfile profile = service.hasJoinedServer(new GameProfile(null, username), serverHash);
+				GameProfile profile = service.hasJoinedServer(new GameProfile((UUID) null, username), serverHash);
 				if(profile != null) {
-					this.session.send(new LoginSuccessPacket(profile.getId(), profile.getName()));
+					this.session.send(new LoginSuccessPacket(profile));
 					this.session.setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, this.session);
 					ServerLoginHandler handler = this.session.getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);

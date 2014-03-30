@@ -6,7 +6,7 @@ import java.security.PublicKey;
 
 import javax.crypto.SecretKey;
 
-import org.spacehq.mc.util.CryptUtil;
+import org.spacehq.mc.protocol.util.CryptUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
