@@ -18,7 +18,7 @@ import org.spacehq.mc.protocol.packet.status.client.StatusPingPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusQueryPacket;
 import org.spacehq.mc.protocol.packet.status.server.StatusPongPacket;
 import org.spacehq.mc.protocol.packet.status.server.StatusResponsePacket;
-import org.spacehq.mc.util.CryptUtil;
+import org.spacehq.mc.protocol.util.CryptUtil;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.event.session.DisconnectingEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;

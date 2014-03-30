@@ -1,4 +1,4 @@
-package org.spacehq.mc.util;
+package org.spacehq.mc.protocol.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;

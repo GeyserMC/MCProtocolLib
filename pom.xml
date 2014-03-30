@@ -76,22 +76,15 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.4</version>
+            <groupId>org.spacehq</groupId>
+            <artifactId>mcauthlib</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
     <build>
         <defaultGoal>clean install</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-        <!-- Resources -->
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

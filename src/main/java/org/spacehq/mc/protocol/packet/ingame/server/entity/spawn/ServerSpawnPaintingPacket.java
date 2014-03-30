@@ -4,7 +4,7 @@ import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.Art;
 import org.spacehq.mc.protocol.data.game.values.entity.HangingDirection;
-import org.spacehq.mc.util.NetUtil;
+import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
