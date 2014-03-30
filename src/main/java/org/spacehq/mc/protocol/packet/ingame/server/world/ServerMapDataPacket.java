@@ -1,12 +1,12 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerMapDataPacket implements Packet {
 	
@@ -43,9 +43,9 @@ public class ServerMapDataPacket implements Packet {
 		this.type = Type.values()[data[0]];
 		switch(this.type) {
 			case IMAGE:
-				byte x = data[1];
-				byte y = data[2];
-				byte height = (byte) (data.length - 3);
+				int x = data[1] & 0xFF;
+				int y = data[2] & 0xFF;
+				int height = data.length - 3;
 				byte colors[] = new byte[height];
 				for(int index = 0; index < height; index++) {
 					colors[index] = data[index + 3];
@@ -56,17 +56,18 @@ public class ServerMapDataPacket implements Packet {
 			case PLAYERS:
 				List<MapPlayer> players = new ArrayList<MapPlayer>();
 				for(int index = 0; index < (data.length - 1) / 3; index++) {
-					byte iconSize = (byte) (data[index * 3 + 1] >> 4);
-					byte iconRotation = (byte) (data[index * 3 + 1] & 15);
-					byte centerX = data[index * 3 + 2];
-					byte centerY = data[index * 3 + 3];
+					int sizeRot = data[index * 3 + 1] & 0xFF;
+					int iconSize = (sizeRot >> 4) & 0xFF;
+					int iconRotation = (sizeRot & 15) & 0xFF;
+					int centerX = data[index * 3 + 2] & 0xFF;
+					int centerY = data[index * 3 + 3] & 0xFF;
 					players.add(new MapPlayer(iconSize, iconRotation, centerX, centerY));
 				}
 				
 				this.data = new MapPlayers(players);
 				break;
 			case SCALE:
-				this.data = new MapScale(data[1]);
+				this.data = new MapScale(data[1] & 0xFF);
 				break;
 		}
 	}
@@ -78,13 +79,12 @@ public class ServerMapDataPacket implements Packet {
 		switch(this.type) {
 			case IMAGE:
 				MapColumnUpdate column = (MapColumnUpdate) this.data;
-				data = new byte[column.getHeight() + 4];
+				data = new byte[column.getHeight() + 3];
 				data[0] = 0;
-				data[1] = column.getX();
-				data[2] = column.getY();
-
-				for(int index = 0; index < data.length - 3; index++) {
-					data[index + 3] = column.getColors()[index];
+				data[1] = (byte) column.getX();
+				data[2] = (byte) column.getY();
+				for(int index = 3; index < data.length; index++) {
+					data[index] = column.getColors()[index - 3];
 				}
 
 				break;
@@ -94,9 +94,9 @@ public class ServerMapDataPacket implements Packet {
 				data[0] = 1;
 				for(int index = 0; index < players.getPlayers().size(); index++) {
 					MapPlayer player = players.getPlayers().get(index);
-					data[index * 3 + 1] = (byte) (player.getIconSize() << 4 | player.getIconRotation() & 15);
-					data[index * 3 + 2] = player.getCenterX();
-					data[index * 3 + 3] = player.getCenterZ();
+					data[index * 3 + 1] = (byte) (((byte) player.getIconSize()) << 4 | ((byte) player.getIconRotation()) & 15);
+					data[index * 3 + 2] = (byte) player.getCenterX();
+					data[index * 3 + 3] = (byte) player.getCenterZ();
 				}
 				
 				break;
@@ -104,7 +104,7 @@ public class ServerMapDataPacket implements Packet {
 				MapScale scale = (MapScale) this.data;
 				data = new byte[2];
 				data[0] = 2;
-				data[1] = scale.getScale();
+				data[1] = (byte) scale.getScale();
 				break;
 		}
 		
@@ -127,9 +127,9 @@ public class ServerMapDataPacket implements Packet {
 	}
 	
 	public static class MapColumnUpdate implements MapData {
-		private byte x;
-		private byte y;
-		private byte height;
+		private int x;
+		private int y;
+		private int height;
 		private byte colors[];
 		
 		/**
@@ -137,24 +137,24 @@ public class ServerMapDataPacket implements Packet {
 		 * @param x X of the map column.
 		 * @param y Y of the data's update range.
 		 * @param height Height of the data's update range.
-		 * @param fullMapColors The full array of map color data, arranged in order of ascending Y value relative to the given Y value.
+		 * @param colors The array of map color data, arranged in order of ascending Y value relative to the given Y value.
 		 */
 		public MapColumnUpdate(int x, int y, int height, byte colors[]) {
-			this.x = (byte) x;
-			this.y = (byte) y;
-			this.height = (byte) height;
+			this.x = x;
+			this.y = y;
+			this.height = height;
 			this.colors = colors;
 		}
 		
-		public byte getX() {
+		public int getX() {
 			return this.x;
 		}
 		
-		public byte getY() {
+		public int getY() {
 			return this.y;
 		}
 		
-		public byte getHeight() {
+		public int getHeight() {
 			return this.height;
 		}
 		
@@ -176,43 +176,43 @@ public class ServerMapDataPacket implements Packet {
 	}
 	
 	public static class MapPlayer {
-		private byte iconSize;
-		private byte iconRotation;
-		private byte centerX;
-		private byte centerZ;
+		private int iconSize;
+		private int iconRotation;
+		private int centerX;
+		private int centerZ;
 		
 		public MapPlayer(int iconSize, int iconRotation, int centerX, int centerZ) {
-			this.iconSize = (byte) iconSize;
-			this.iconRotation = (byte) iconRotation;
-			this.centerX = (byte) centerX;
-			this.centerZ = (byte) centerZ;
+			this.iconSize = iconSize;
+			this.iconRotation = iconRotation;
+			this.centerX = centerX;
+			this.centerZ = centerZ;
 		}
 		
-		public byte getIconSize() {
+		public int getIconSize() {
 			return this.iconSize;
 		}
 		
-		public byte getIconRotation() {
+		public int getIconRotation() {
 			return this.iconRotation;
 		}
 		
-		public byte getCenterX() {
+		public int getCenterX() {
 			return this.centerX;
 		}
 		
-		public byte getCenterZ() {
+		public int getCenterZ() {
 			return this.centerZ;
 		}
 	}
 	
 	public static class MapScale implements MapData {
-		private byte scale;
+		private int scale;
 		
 		public MapScale(int scale) {
-			this.scale = (byte) scale;
+			this.scale = scale;
 		}
 		
-		public byte getScale() {
+		public int getScale() {
 			return this.scale;
 		}
 	}
