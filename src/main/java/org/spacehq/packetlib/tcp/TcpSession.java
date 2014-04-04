@@ -191,17 +191,26 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 			reason = "Connection closed.";
 		}
 
-		if(this.channel != null) {
-			if(this.channel.isOpen()) {
-				this.callEvent(new DisconnectingEvent(this, reason));
+		try {
+			if(this.channel != null) {
+				if(this.channel.isOpen()) {
+					this.callEvent(new DisconnectingEvent(this, reason));
+				}
+
+				this.channel.close().syncUninterruptibly();
 			}
 
-			this.channel.close().syncUninterruptibly();
+			this.callEvent(new DisconnectedEvent(this, reason));
+		} catch(Throwable t) {
+			System.err.println("[WARNING] Throwable caught while firing disconnect events.");
+			t.printStackTrace();
 		}
 
-		this.callEvent(new DisconnectedEvent(this, reason));
 		if(this.group != null) {
-			this.group.shutdownGracefully();
+			try {
+				this.group.shutdownGracefully();
+			} catch(Exception e) {
+			}
 		}
 
 		this.channel = null;
