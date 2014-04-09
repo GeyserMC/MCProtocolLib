@@ -3,8 +3,8 @@ package org.spacehq.mc.protocol;
 public class ProtocolConstants {
 
 	// General Constants
-	public static final String GAME_VERSION = "1.7.4";
-	public static final int PROTOCOL_VERSION = 4;
+	public static final String GAME_VERSION = "1.7.7";
+	public static final int PROTOCOL_VERSION = 5;
 	
 	// Client Key Constants
 	public static final String PROFILE_KEY = "profile";

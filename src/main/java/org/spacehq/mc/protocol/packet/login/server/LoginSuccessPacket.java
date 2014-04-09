@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.packet.login.server;
 
 import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.serialize.UUIDSerializer;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -26,12 +25,12 @@ public class LoginSuccessPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.profile = new GameProfile(UUIDSerializer.fromString(in.readString()), in.readString());
+		this.profile = new GameProfile(in.readString(), in.readString());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeString(UUIDSerializer.fromUUID(this.profile.getId()));
+		out.writeString(this.profile.getIdAsString());
 		out.writeString(this.profile.getName());
 	}
 	

@@ -19,7 +19,7 @@ See example/org/spacehq/mc/protocol/test/Test.java
 --------
 
 MCProtocolLib uses Maven to manage dependencies. Simply run 'mvn clean install' in the source's directory.
-You can also download a build <b>[here](http://build.spacehq.org/browse/MCPROTOCOLLIB-B174)</b>.
+You can also download a build <b>[here](http://build.spacehq.org/browse/MCPROTOCOLLIB-B177)</b>.
 
 
 <b>License</b>
