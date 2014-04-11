@@ -1,10 +1,10 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import java.io.IOException;
-
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
+
+import java.io.IOException;
 
 public class ServerSpawnParticlePacket implements Packet {
 
@@ -146,7 +146,7 @@ public class ServerSpawnParticlePacket implements Packet {
 		}
 		
 		public static final String ITEM_BREAK_PARTICLES(int id, int data) {
-			return ITEM_BREAK_PREFIX + id + (id != -1 ? "_" + data : "");
+			return ITEM_BREAK_PREFIX + id + (data != -1 ? "_" + data : "");
 		}
 		
 		public static final String BLOCK_BREAK_PARTICLES(int id) {
@@ -154,7 +154,7 @@ public class ServerSpawnParticlePacket implements Packet {
 		}
 		
 		public static final String BLOCK_BREAK_PARTICLES(int id, int data) {
-			return BLOCK_BREAK_PREFIX + id + (id != -1 ? "_" + data : "");
+			return BLOCK_BREAK_PREFIX + id + (data != -1 ? "_" + data : "");
 		}
 		
 		public static final String BLOCK_IMPACT_PARTICLES(int id) {
@@ -162,7 +162,7 @@ public class ServerSpawnParticlePacket implements Packet {
 		}
 		
 		public static final String BLOCK_IMPACT_PARTICLES(int id, int data) {
-			return BLOCK_IMPACT_PREFIX + id + (id != -1 ? "_" + data : "");
+			return BLOCK_IMPACT_PREFIX + id + (data != -1 ? "_" + data : "");
 		}
 	}
 	
