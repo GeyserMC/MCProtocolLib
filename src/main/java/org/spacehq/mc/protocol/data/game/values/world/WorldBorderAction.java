@@ -1,0 +1,7 @@
+package org.spacehq.mc.protocol.data.game.values.world;
+
+public enum WorldBorderAction {
+	SET_SIZE,
+	LERP_SIZE,
+	SET_CENTER;
+}

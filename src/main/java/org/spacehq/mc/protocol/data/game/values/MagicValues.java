@@ -9,6 +9,7 @@ import org.spacehq.mc.protocol.data.game.values.statistic.Achievement;
 import org.spacehq.mc.protocol.data.game.values.statistic.GenericStatistic;
 import org.spacehq.mc.protocol.data.game.values.window.*;
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
+import org.spacehq.mc.protocol.data.game.values.world.WorldBorderAction;
 import org.spacehq.mc.protocol.data.game.values.world.WorldType;
 import org.spacehq.mc.protocol.data.game.values.world.block.UpdatedTileType;
 import org.spacehq.mc.protocol.data.game.values.world.block.value.*;
@@ -768,6 +769,10 @@ public class MagicValues {
 
 		register(ScoreType.INTEGER, "integer");
 		register(ScoreType.HEARTS, "hearts");
+
+		register(WorldBorderAction.SET_SIZE, 1);
+		register(WorldBorderAction.LERP_SIZE, 2);
+		register(WorldBorderAction.SET_CENTER, 3);
 	}
 
 	private static void register(Enum<?> key, Object value) {
