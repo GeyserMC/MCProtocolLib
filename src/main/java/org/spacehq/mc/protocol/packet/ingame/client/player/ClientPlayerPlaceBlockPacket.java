@@ -71,7 +71,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		this.x = in.readInt();
 		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
-		this.face = Face.values()[in.readUnsignedByte()];
+		this.face = face == 255 ? Face.UNKNOWN : Face.values()[face];
 		this.held = NetUtil.readItem(in);
 		this.cursorX = in.readByte() / 16f;
 		this.cursorY = in.readByte() / 16f;
@@ -83,7 +83,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		out.writeInt(this.x);
 		out.writeByte(this.y);
 		out.writeInt(this.z);
-		out.writeByte(this.face.ordinal());
+		out.writeByte(this.face == Face.UNKNOWN ? 255 : this.face.ordinal());
 		NetUtil.writeItem(out, this.held);
 		out.writeByte((int) (this.cursorX * 16));
 		out.writeByte((int) (this.cursorY * 16));
@@ -101,7 +101,8 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		EAST,
 		WEST,
 		NORTH,
-		SOUTH;
+		SOUTH,
+		UNKNOWN;
 	}
 
 }
