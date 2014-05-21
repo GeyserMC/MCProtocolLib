@@ -28,10 +28,10 @@ public class NetUtil {
 			out.writeShort(-1);
 		} else {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			GZIPOutputStream gzip;
-			NBTIO.writeTag(new DataOutputStream(gzip = new GZIPOutputStream(output)), tag);
-			output.close();
+			GZIPOutputStream gzip = new GZIPOutputStream(output);
+			NBTIO.writeTag(new DataOutputStream(gzip), tag);
 			gzip.close();
+			output.close();
 			byte bytes[] = output.toByteArray();
 			out.writeShort((short) bytes.length);
 			out.writeBytes(bytes);
