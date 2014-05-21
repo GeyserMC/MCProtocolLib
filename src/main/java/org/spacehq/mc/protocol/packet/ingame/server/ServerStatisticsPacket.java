@@ -34,6 +34,7 @@ public class ServerStatisticsPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
+		out.writeVarInt(statistics.size());
 		for(String statistic : this.statistics.keySet()) {
 			out.writeString(statistic);
 			out.writeVarInt(this.statistics.get(statistic));
