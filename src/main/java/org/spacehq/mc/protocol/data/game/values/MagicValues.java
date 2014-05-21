@@ -92,7 +92,6 @@ public class MagicValues {
 		register(PlayerAction.DROP_ITEM, 4);
 		register(PlayerAction.RELEASE_USE_ITEM, 5);
 
-		register(Face.INVALID, -1);
 		register(Face.BOTTOM, 0);
 		register(Face.TOP, 1);
 		register(Face.EAST, 2);
@@ -802,21 +801,23 @@ public class MagicValues {
 	@SuppressWarnings("unchecked")
 	public static <T> T value(Class<T> valueType, Enum<?> key) {
 		Object val = values.get(key);
-		if(valueType.isAssignableFrom(val.getClass())) {
-			return (T) val;
-		} else if(Number.class.isAssignableFrom(val.getClass())) {
-			if(valueType == Byte.class) {
-				return (T) (Object) ((Number) val).byteValue();
-			} else if(valueType == Short.class) {
-				return (T) (Object) ((Number) val).shortValue();
-			} else if(valueType == Integer.class) {
-				return (T) (Object) ((Number) val).intValue();
-			} else if(valueType == Long.class) {
-				return (T) (Object) ((Number) val).longValue();
-			} else if(valueType == Float.class) {
-				return (T) (Object) ((Number) val).floatValue();
-			} else if(valueType == Double.class) {
-				return (T) (Object) ((Number) val).doubleValue();
+		if(val != null) {
+			if(valueType.isAssignableFrom(val.getClass())) {
+				return (T) val;
+			} else if(Number.class.isAssignableFrom(val.getClass())) {
+				if(valueType == Byte.class) {
+					return (T) (Object) ((Number) val).byteValue();
+				} else if(valueType == Short.class) {
+					return (T) (Object) ((Number) val).shortValue();
+				} else if(valueType == Integer.class) {
+					return (T) (Object) ((Number) val).intValue();
+				} else if(valueType == Long.class) {
+					return (T) (Object) ((Number) val).longValue();
+				} else if(valueType == Float.class) {
+					return (T) (Object) ((Number) val).floatValue();
+				} else if(valueType == Double.class) {
+					return (T) (Object) ((Number) val).doubleValue();
+				}
 			}
 		}
 
