@@ -1,12 +1,12 @@
 package org.spacehq.mc.protocol.packet.ingame.client.player;
 
-import java.io.IOException;
-
 import org.spacehq.mc.protocol.data.game.ItemStack;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
+
+import java.io.IOException;
 
 public class ClientPlayerPlaceBlockPacket implements Packet {
 	
@@ -71,6 +71,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		this.x = in.readInt();
 		this.y = in.readUnsignedByte();
 		this.z = in.readInt();
+		int face = in.readUnsignedByte();
 		this.face = face == 255 ? Face.UNKNOWN : Face.values()[face];
 		this.held = NetUtil.readItem(in);
 		this.cursorX = in.readByte() / 16f;

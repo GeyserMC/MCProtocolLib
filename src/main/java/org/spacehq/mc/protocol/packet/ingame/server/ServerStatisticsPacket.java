@@ -1,12 +1,12 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServerStatisticsPacket implements Packet {
 	
@@ -34,7 +34,7 @@ public class ServerStatisticsPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeVarInt(statistics.size());
+		out.writeVarInt(this.statistics.size());
 		for(String statistic : this.statistics.keySet()) {
 			out.writeString(statistic);
 			out.writeVarInt(this.statistics.get(statistic));
