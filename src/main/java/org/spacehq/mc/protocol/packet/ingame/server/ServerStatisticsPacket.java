@@ -57,6 +57,7 @@ public class ServerStatisticsPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
+		out.writeVarInt(this.statistics.size());
 		for(Statistic statistic : this.statistics.keySet()) {
 			String value = "";
 			if(statistic instanceof Achievement) {
