@@ -79,7 +79,7 @@ public class ServerListener extends SessionAdapter {
 				if(verify) {
 					event.getSession().send(new EncryptionRequestPacket(this.serverId, pair.getPublic(), this.verifyToken));
 				} else {
-					GameProfile profile = new GameProfile((UUID) null, this.username);
+					GameProfile profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes()), this.username);
 					event.getSession().send(new LoginSuccessPacket(profile));
 					event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, event.getSession());
