@@ -108,15 +108,15 @@ public class ServerJoinGamePacket implements Packet {
 	}
 	
 	private static WorldType nameToType(String name) throws IOException {
-		if(name.equals("default")) {
+		if(name.equalsIgnoreCase("default")) {
 			return WorldType.DEFAULT;
-		} else if(name.equals("flat")) {
+		} else if(name.equalsIgnoreCase("flat")) {
 			return WorldType.FLAT;
-		} else if(name.equals("largeBiomes")) {
+		} else if(name.equalsIgnoreCase("largeBiomes")) {
 			return WorldType.LARGE_BIOMES;
-		} else if(name.equals("amplified")) {
+		} else if(name.equalsIgnoreCase("amplified")) {
 			return WorldType.AMPLIFIED;
-		} else if(name.equals("default_1_1")) {
+		} else if(name.equalsIgnoreCase("default_1_1")) {
 			return WorldType.DEFAULT_1_1;
 		} else {
 			throw new IOException("Unknown world type: " + name);
