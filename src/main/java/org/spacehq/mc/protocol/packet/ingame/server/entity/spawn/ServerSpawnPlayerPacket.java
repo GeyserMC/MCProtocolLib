@@ -78,7 +78,8 @@ public class ServerSpawnPlayerPacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.profile = new GameProfile(in.readString(), in.readString());
-		for(int count = 0; count < in.readVarInt(); count++) {
+		int numProperties = in.readVarInt();
+		for(int count = 0; count < numProperties; count++) {
 			String name = in.readString();
 			String value = in.readString();
 			String signature = in.readString();
