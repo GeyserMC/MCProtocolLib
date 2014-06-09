@@ -49,7 +49,7 @@ public class ServerRespawnPacket implements Packet {
 		this.dimension = in.readInt();
 		this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
 		this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-		this.worldType = MagicValues.key(WorldType.class, in.readString());
+		this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
 	}
 
 	@Override

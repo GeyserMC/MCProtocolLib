@@ -72,7 +72,7 @@ public class ServerJoinGamePacket implements Packet {
 		this.dimension = in.readByte();
 		this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
 		this.maxPlayers = in.readUnsignedByte();
-		this.worldType = MagicValues.key(WorldType.class, in.readString());
+		this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
 	}
 
 	@Override
