@@ -20,6 +20,7 @@ public enum MobType {
 	BAT,
 	WITCH,
 	ENDERMITE,
+	GUARDIAN,
 	PIG,
 	SHEEP,
 	COW,
