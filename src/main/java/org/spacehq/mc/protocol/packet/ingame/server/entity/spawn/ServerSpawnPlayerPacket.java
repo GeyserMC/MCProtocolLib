@@ -1,7 +1,5 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity.spawn;
 
-import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.properties.Property;
 import org.spacehq.mc.protocol.data.game.EntityMetadata;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
@@ -9,11 +7,12 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class ServerSpawnPlayerPacket implements Packet {
 
 	private int entityId;
-	private GameProfile profile;
+	private UUID uuid;
 	private double x;
 	private double y;
 	private double z;
@@ -26,9 +25,9 @@ public class ServerSpawnPlayerPacket implements Packet {
 	private ServerSpawnPlayerPacket() {
 	}
 
-	public ServerSpawnPlayerPacket(int entityId, GameProfile profile, double x, double y, double z, float yaw, float pitch, int currentItem, EntityMetadata metadata[]) {
+	public ServerSpawnPlayerPacket(int entityId, UUID uuid, double x, double y, double z, float yaw, float pitch, int currentItem, EntityMetadata metadata[]) {
 		this.entityId = entityId;
-		this.profile = profile;
+		this.uuid = uuid;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -42,8 +41,8 @@ public class ServerSpawnPlayerPacket implements Packet {
 		return this.entityId;
 	}
 
-	public GameProfile getProfile() {
-		return this.profile;
+	public UUID getUUID() {
+		return this.uuid;
 	}
 
 	public double getX() {
@@ -77,15 +76,7 @@ public class ServerSpawnPlayerPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
-		this.profile = new GameProfile(in.readString(), in.readString());
-		int numProperties = in.readVarInt();
-		for(int count = 0; count < numProperties; count++) {
-			String name = in.readString();
-			String value = in.readString();
-			String signature = in.readString();
-			this.profile.getProperties().put(name, new Property(name, value, signature));
-		}
-
+		this.uuid = UUID.fromString(in.readString());
 		this.x = in.readInt() / 32D;
 		this.y = in.readInt() / 32D;
 		this.z = in.readInt() / 32D;
@@ -98,15 +89,7 @@ public class ServerSpawnPlayerPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeString(this.profile.getIdAsString());
-		out.writeString(this.profile.getName());
-		out.writeVarInt(this.profile.getProperties().size());
-		for(Property property : this.profile.getProperties().values()) {
-			out.writeString(property.getName());
-			out.writeString(property.getValue());
-			out.writeString(property.getSignature());
-		}
-
+		out.writeString(this.uuid.toString());
 		out.writeInt((int) (this.x * 32));
 		out.writeInt((int) (this.y * 32));
 		out.writeInt((int) (this.z * 32));

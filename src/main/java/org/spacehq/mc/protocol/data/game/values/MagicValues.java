@@ -19,7 +19,7 @@ import org.spacehq.mc.protocol.data.game.values.world.effect.SoundEffect;
 import org.spacehq.mc.protocol.data.game.values.world.map.MapDataType;
 import org.spacehq.mc.protocol.data.game.values.world.notify.ClientNotification;
 import org.spacehq.mc.protocol.data.game.values.world.notify.DemoMessageValue;
-import org.spacehq.mc.protocol.data.game.values.world.particle.GenericParticle;
+import org.spacehq.mc.protocol.data.game.values.world.Particle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -447,40 +447,48 @@ public class MagicValues {
 		register(GenericStatistic.JUNK_FISHED, "stat.junkFished");
 		register(GenericStatistic.TREASURE_FISHED, "stat.treasureFished");
 
-		register(GenericParticle.HUGE_EXPLOSION, "hugeexplosion");
-		register(GenericParticle.LARGE_EXPLOSION, "largeexplode");
-		register(GenericParticle.FIREWORKS_SPARK, "fireworksSpark");
-		register(GenericParticle.LIQUID_PARTICLES, "suspended");
-		register(GenericParticle.DEPTH_PARTICLES, "depthsuspend");
-		register(GenericParticle.MYCELIUM_PARTICLES, "townaura");
-		register(GenericParticle.CRITICAL_HIT, "crit");
-		register(GenericParticle.ENCHANTED_CRITICAL_HIT, "magicCrit");
-		register(GenericParticle.SMOKE, "smoke");
-		register(GenericParticle.MOB_POTION_EFFECT, "mobSpell");
-		register(GenericParticle.MOB_POTION_EFFECT_AMBIENT, "mobSpellAmbient");
-		register(GenericParticle.POTION_EFFECT, "spell");
-		register(GenericParticle.INSTANT_POTION_EFFECT, "instantSpell");
-		register(GenericParticle.WITCH_PARTICLES, "witchMagic");
-		register(GenericParticle.NOTE, "note");
-		register(GenericParticle.PORTAL, "portal");
-		register(GenericParticle.ENCHANTMENT_TABLE_LETTERS, "enchantmenttable");
-		register(GenericParticle.EXPLOSION, "explode");
-		register(GenericParticle.FLAME, "flame");
-		register(GenericParticle.LAVA_PARTICLES, "lava");
-		register(GenericParticle.FOOTSTEP_PARTICLES, "footstep");
-		register(GenericParticle.SPLASH, "splash");
-		register(GenericParticle.FISH_HOOK_WAKE, "wake");
-		register(GenericParticle.LARGE_SMOKE, "largesmoke");
-		register(GenericParticle.CLOUD, "cloud");
-		register(GenericParticle.REDSTONE_PARTICLES, "reddust");
-		register(GenericParticle.BREAKING_SNOWBALL, "snowballpoof");
-		register(GenericParticle.DRIP_WATER, "dripWater");
-		register(GenericParticle.DRIP_LAVA, "dripLava");
-		register(GenericParticle.SHOVEL_SNOW, "snowshovel");
-		register(GenericParticle.SLIME, "slime");
-		register(GenericParticle.HEART, "heart");
-		register(GenericParticle.ANGRY_VILLAGER, "angryVillager");
-		register(GenericParticle.HAPPY_VILLAGER, "happyVillager");
+		register(Particle.EXPLOSION_NORMAL, 0);
+		register(Particle.EXPLOSION_LARGE, 1);
+		register(Particle.EXPLOSION_HUGE, 2);
+		register(Particle.FIREWORKS_SPARK, 3);
+		register(Particle.WATER_BUBBLE, 4);
+		register(Particle.WATER_SPLASH, 5);
+		register(Particle.WATER_WAKE, 6);
+		register(Particle.SUSPENDED, 7);
+		register(Particle.SUSPENDED_DEPTH, 8);
+		register(Particle.CRIT, 9);
+		register(Particle.CRIT_MAGIC, 10);
+		register(Particle.SMOKE_NORMAL, 11);
+		register(Particle.SMOKE_LARGE, 12);
+		register(Particle.SPELL, 13);
+		register(Particle.SPELL_INSTANT, 14);
+		register(Particle.SPELL_MOB, 15);
+		register(Particle.SPELL_MOB_AMBIENT, 16);
+		register(Particle.SPELL_WITCH, 17);
+		register(Particle.DRIP_WATER, 18);
+		register(Particle.DRIP_LAVA, 19);
+		register(Particle.VILLAGER_ANGRY, 20);
+		register(Particle.VILLAGER_HAPPY, 21);
+		register(Particle.TOWN_AURA, 22);
+		register(Particle.NOTE, 23);
+		register(Particle.PORTAL, 24);
+		register(Particle.ENCHANTMENT_TABLE, 25);
+		register(Particle.FLAME, 26);
+		register(Particle.LAVA, 27);
+		register(Particle.FOOTSTEP, 28);
+		register(Particle.CLOUD, 29);
+		register(Particle.REDSTONE, 30);
+		register(Particle.SNOWBALL, 31);
+		register(Particle.SNOW_SHOVEL, 32);
+		register(Particle.SLIME, 33);
+		register(Particle.HEART, 34);
+		register(Particle.BARRIER, 35);
+		register(Particle.ICON_CRACK, 36);
+		register(Particle.BLOCK_CRACK, 37);
+		register(Particle.BLOCK_DUST, 38);
+		register(Particle.WATER_DROP, 39);
+		register(Particle.ITEM_TAKE, 40);
+		register(Particle.MOB_APPEARANCE, 41);
 
 		register(GenericSound.CLICK, "random.click");
 		register(GenericSound.FIZZ, "random.fizz");
@@ -769,9 +777,23 @@ public class MagicValues {
 		register(ScoreType.INTEGER, "integer");
 		register(ScoreType.HEARTS, "hearts");
 
-		register(WorldBorderAction.SET_SIZE, 1);
-		register(WorldBorderAction.LERP_SIZE, 2);
-		register(WorldBorderAction.SET_CENTER, 3);
+		register(WorldBorderAction.SET_SIZE, 0);
+		register(WorldBorderAction.LERP_SIZE, 1);
+		register(WorldBorderAction.SET_CENTER, 2);
+		register(WorldBorderAction.INITIALIZE, 3);
+		register(WorldBorderAction.SET_WARNING_TIME, 4);
+		register(WorldBorderAction.SET_WARNING_BLOCKS, 5);
+
+		register(PlayerListEntryAction.ADD_PLAYER, 0);
+		register(PlayerListEntryAction.UPDATE_GAMEMODE, 1);
+		register(PlayerListEntryAction.UPDATE_LATENCY, 2);
+		register(PlayerListEntryAction.REMOVE_PLAYER, 3);
+
+		register(TitleAction.TITLE, 0);
+		register(TitleAction.SUBTITLE, 1);
+		register(TitleAction.TIMES, 2);
+		register(TitleAction.CLEAR, 3);
+		register(TitleAction.RESET, 4);
 	}
 
 	private static void register(Enum<?> key, Object value) {

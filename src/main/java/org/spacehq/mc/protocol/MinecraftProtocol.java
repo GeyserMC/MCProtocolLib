@@ -284,6 +284,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerOutgoing(21, ClientSettingsPacket.class);
 		this.registerOutgoing(22, ClientRequestPacket.class);
 		this.registerOutgoing(23, ClientPluginMessagePacket.class);
+		this.registerOutgoing(24, ClientSpectatePacket.class);
 	}
 
 	private void initServerGame(Session session) {
@@ -311,6 +312,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerIncoming(21, ClientSettingsPacket.class);
 		this.registerIncoming(22, ClientRequestPacket.class);
 		this.registerIncoming(23, ClientPluginMessagePacket.class);
+		this.registerIncoming(24, ClientSpectatePacket.class);
 
 		this.registerOutgoing(0, ServerKeepAlivePacket.class);
 		this.registerOutgoing(1, ServerJoinGamePacket.class);

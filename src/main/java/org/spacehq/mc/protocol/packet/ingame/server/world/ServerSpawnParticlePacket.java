@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.world.particle.*;
+import org.spacehq.mc.protocol.data.game.values.world.Particle;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -9,11 +9,6 @@ import org.spacehq.packetlib.packet.Packet;
 import java.io.IOException;
 
 public class ServerSpawnParticlePacket implements Packet {
-
-	private static final String ITEM_BREAK_PREFIX = "iconcrack_";
-	private static final String BLOCK_BREAK_PREFIX = "blockcrack_";
-	private static final String BLOCK_IMPACT_PREFIX = "blockdust_";
-
 	private Particle particle;
 	private float x;
 	private float y;
@@ -23,12 +18,13 @@ public class ServerSpawnParticlePacket implements Packet {
 	private float offsetZ;
 	private float velocityOffset;
 	private int amount;
+	private int data[];
 
 	@SuppressWarnings("unused")
 	private ServerSpawnParticlePacket() {
 	}
 
-	public ServerSpawnParticlePacket(Particle particle, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount) {
+	public ServerSpawnParticlePacket(Particle particle, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount, int... data) {
 		this.particle = particle;
 		this.x = x;
 		this.y = y;
@@ -38,6 +34,10 @@ public class ServerSpawnParticlePacket implements Packet {
 		this.offsetZ = offsetZ;
 		this.velocityOffset = velocityOffset;
 		this.amount = amount;
+		this.data = data;
+		if(this.data.length != particle.getDataLength()) {
+			throw new IllegalArgumentException("Data array length must be equal to particle's data length.");
+		}
 	}
 
 	public Particle getParticle() {
@@ -76,28 +76,13 @@ public class ServerSpawnParticlePacket implements Packet {
 		return this.amount;
 	}
 
+	public int[] getData() {
+		return this.data;
+	}
+
 	@Override
 	public void read(NetInput in) throws IOException {
-		String value = in.readString();
-		if(value.startsWith(ITEM_BREAK_PREFIX)) {
-			String parts[] = value.split("_");
-			int id = Integer.parseInt(parts[1]);
-			int data = parts.length > 2 ? Integer.parseInt(parts[2]) : -1;
-			this.particle = new ItemBreakParticle(id, data);
-		} else if(value.startsWith(BLOCK_BREAK_PREFIX)) {
-			String parts[] = value.split("_");
-			int id = Integer.parseInt(parts[1]);
-			int data = parts.length > 2 ? Integer.parseInt(parts[2]) : -1;
-			this.particle = new BlockBreakParticle(id, data);
-		} else if(value.startsWith(BLOCK_IMPACT_PREFIX)) {
-			String parts[] = value.split("_");
-			int id = Integer.parseInt(parts[1]);
-			int data = parts.length > 2 ? Integer.parseInt(parts[2]) : -1;
-			this.particle = new BlockImpactParticle(id, data);
-		} else {
-			this.particle = MagicValues.key(GenericParticle.class, value);
-		}
-
+		this.particle = MagicValues.key(Particle.class, in.readInt());
 		this.x = in.readFloat();
 		this.y = in.readFloat();
 		this.z = in.readFloat();
@@ -106,25 +91,15 @@ public class ServerSpawnParticlePacket implements Packet {
 		this.offsetZ = in.readFloat();
 		this.velocityOffset = in.readFloat();
 		this.amount = in.readInt();
+		this.data = new int[this.particle.getDataLength()];
+		for(int index = 0; index < this.data.length; index++) {
+			this.data[index] = in.readVarInt();
+		}
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		String value = "";
-		if(this.particle instanceof ItemBreakParticle) {
-			ItemBreakParticle particle = (ItemBreakParticle) this.particle;
-			value = ITEM_BREAK_PREFIX + particle.getId() + (particle.getData() != -1 ? "_" + particle.getData() : "");
-		} else if(this.particle instanceof BlockBreakParticle) {
-			BlockBreakParticle particle = (BlockBreakParticle) this.particle;
-			value = BLOCK_BREAK_PREFIX + particle.getId() + (particle.getData() != -1 ? "_" + particle.getData() : "");
-		} else if(this.particle instanceof BlockImpactParticle) {
-			BlockImpactParticle particle = (BlockImpactParticle) this.particle;
-			value = BLOCK_IMPACT_PREFIX + particle.getId() + (particle.getData() != -1 ? "_" + particle.getData() : "");
-		} else if(this.particle instanceof GenericParticle) {
-			value = MagicValues.value(String.class, (GenericParticle) this.particle);
-		}
-
-		out.writeString(value);
+		out.writeInt(MagicValues.value(Integer.class, this.particle));
 		out.writeFloat(this.x);
 		out.writeFloat(this.y);
 		out.writeFloat(this.z);
@@ -133,11 +108,13 @@ public class ServerSpawnParticlePacket implements Packet {
 		out.writeFloat(this.offsetZ);
 		out.writeFloat(this.velocityOffset);
 		out.writeInt(this.amount);
+		for(int index = 0; index < this.particle.getDataLength(); index++) {
+			out.writeVarInt(this.data[index]);
+		}
 	}
 
 	@Override
 	public boolean isPriority() {
 		return false;
 	}
-
 }

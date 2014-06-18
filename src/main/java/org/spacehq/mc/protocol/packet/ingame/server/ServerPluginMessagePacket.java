@@ -31,7 +31,7 @@ public class ServerPluginMessagePacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.channel = in.readString();
-		this.data = in.readBytes(in.readShort());
+		this.data = in.readBytes(in.readUnsignedShort());
 	}
 
 	@Override
