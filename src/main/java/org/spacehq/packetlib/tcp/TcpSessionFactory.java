@@ -50,7 +50,7 @@ public class TcpSessionFactory implements SessionFactory {
 				ch.pipeline()
 						.addLast("timer", new ReadTimeoutHandler(30))
 						.addLast("encryption", new TcpPacketEncryptor(session))
-						.addLast("sizer", new TcpPacketSizer())
+						.addLast("sizer", new TcpPacketSizer(session))
 						.addLast("codec", new TcpPacketCodec(session))
 						.addLast("manager", session);
 			}
@@ -73,7 +73,7 @@ public class TcpSessionFactory implements SessionFactory {
 				ch.pipeline()
 						.addLast("timer", new ReadTimeoutHandler(30))
 						.addLast("encryption", new TcpPacketEncryptor(session))
-						.addLast("sizer", new TcpPacketSizer())
+						.addLast("sizer", new TcpPacketSizer(session))
 						.addLast("codec", new TcpPacketCodec(session))
 						.addLast("manager", session);
 				server.addSession(session);

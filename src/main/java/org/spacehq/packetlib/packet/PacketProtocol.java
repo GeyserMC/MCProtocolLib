@@ -19,6 +19,13 @@ public abstract class PacketProtocol {
 	private final Map<Class<? extends Packet>, Integer> outgoing = new HashMap<Class<? extends Packet>, Integer>();
 
 	/**
+	 * Gets the packet header of this protocol.
+	 *
+	 * @return The protocol's packet header.
+	 */
+	public abstract PacketHeader getPacketHeader();
+
+	/**
 	 * Called when a client is created with this protocol.
 	 *
 	 * @param client  The client that the session belongs to.

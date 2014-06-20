@@ -24,14 +24,14 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 	@Override
 	public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) throws Exception {
 		NetOutput out = new ByteBufNetOutput(buf);
-		out.writeVarInt(this.session.getPacketProtocol().getOutgoingId(packet.getClass()));
+		this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet.getClass()));
 		packet.write(out);
 	}
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
 		NetInput in = new ByteBufNetInput(buf);
-		int id = in.readVarInt();
+		int id = this.session.getPacketProtocol().getPacketHeader().readPacketId(in);
 		Packet packet = this.session.getPacketProtocol().createIncomingPacket(id);
 		packet.read(in);
 		if(packet.isPriority()) {

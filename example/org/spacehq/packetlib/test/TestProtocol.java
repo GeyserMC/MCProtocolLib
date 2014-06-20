@@ -5,6 +5,8 @@ import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.Session;
 import org.spacehq.packetlib.crypt.AESEncryption;
 import org.spacehq.packetlib.crypt.PacketEncryption;
+import org.spacehq.packetlib.packet.DefaultPacketHeader;
+import org.spacehq.packetlib.packet.PacketHeader;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
 import javax.crypto.SecretKey;
@@ -12,6 +14,7 @@ import java.security.GeneralSecurityException;
 
 public class TestProtocol extends PacketProtocol {
 
+	private PacketHeader header = new DefaultPacketHeader();
 	private AESEncryption encrypt;
 
 	@SuppressWarnings("unused")
@@ -34,6 +37,11 @@ public class TestProtocol extends PacketProtocol {
 	@Override
 	public PacketEncryption getEncryption() {
 		return this.encrypt;
+	}
+
+	@Override
+	public PacketHeader getPacketHeader() {
+		return this.header;
 	}
 
 	@Override
