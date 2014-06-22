@@ -30,8 +30,14 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+		int initial = buf.readerIndex();
 		NetInput in = new ByteBufNetInput(buf);
 		int id = this.session.getPacketProtocol().getPacketHeader().readPacketId(in);
+		if(id == -1) {
+			buf.readerIndex(initial);
+			return;
+		}
+		
 		Packet packet = this.session.getPacketProtocol().createIncomingPacket(id);
 		packet.read(in);
 		if(packet.isPriority()) {

@@ -55,7 +55,7 @@ public interface PacketHeader {
 	 * Reads the ID of a packet from the given input.
 	 *
 	 * @param in Input to read from.
-	 * @return The resulting packet ID.
+	 * @return The resulting packet ID, or -1 if the packet should not be read yet.
 	 * @throws java.io.IOException If an I/O error occurs.
 	 */
 	public int readPacketId(NetInput in) throws IOException;
