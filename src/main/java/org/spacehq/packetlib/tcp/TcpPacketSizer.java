@@ -54,7 +54,7 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
 
 			throw new CorruptedFrameException("Length is too long.");
 		} else {
-			out.add(buf);
+			out.add(buf.readBytes(buf.readableBytes()));
 		}
 	}
 
