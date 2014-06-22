@@ -19,11 +19,32 @@ public abstract class PacketProtocol {
 	private final Map<Class<? extends Packet>, Integer> outgoing = new HashMap<Class<? extends Packet>, Integer>();
 
 	/**
+	 * Gets whether this protocol will ever need a packet sizer.
+	 *
+	 * @return Whether this protocol will ever need a packet sizer.
+	 */
+	public abstract boolean needsPacketSizer();
+
+	/**
+	 * Gets whether this protocol will ever need a packet encryptor.
+	 *
+	 * @return Whether this protocol will ever need a packet encryptor.
+	 */
+	public abstract boolean needsPacketEncryptor();
+
+	/**
 	 * Gets the packet header of this protocol.
 	 *
 	 * @return The protocol's packet header.
 	 */
 	public abstract PacketHeader getPacketHeader();
+
+	/**
+	 * Gets this protocol's active packet encryption.
+	 *
+	 * @return The protocol's packet encryption, or null if packets should not be encrypted.
+	 */
+	public abstract PacketEncryption getEncryption();
 
 	/**
 	 * Called when a client is created with this protocol.
@@ -40,15 +61,6 @@ public abstract class PacketProtocol {
 	 * @param session The created session.
 	 */
 	public abstract void newServerSession(Server server, Session session);
-
-	/**
-	 * Gets this protocol's active packet encryption.
-	 *
-	 * @return The protocol's packet encryption, or null if packets should not be encrypted.
-	 */
-	public PacketEncryption getEncryption() {
-		return null;
-	}
 
 	/**
 	 * Clears all currently registered packets.

@@ -2,10 +2,7 @@ package org.spacehq.packetlib.tcp;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -47,12 +44,18 @@ public class TcpSessionFactory implements SessionFactory {
 				session.getPacketProtocol().newClientSession(client, session);
 				ch.config().setOption(ChannelOption.IP_TOS, 0x18);
 				ch.config().setOption(ChannelOption.TCP_NODELAY, false);
-				ch.pipeline()
-						.addLast("timer", new ReadTimeoutHandler(30))
-						.addLast("encryption", new TcpPacketEncryptor(session))
-						.addLast("sizer", new TcpPacketSizer(session))
-						.addLast("codec", new TcpPacketCodec(session))
-						.addLast("manager", session);
+				ChannelPipeline pipeline = ch.pipeline();
+				pipeline.addLast("timer", new ReadTimeoutHandler(30));
+				if(session.getPacketProtocol().needsPacketEncryptor()) {
+					pipeline.addLast("encryption", new TcpPacketEncryptor(session));
+				}
+
+				if(session.getPacketProtocol().needsPacketSizer()) {
+					pipeline.addLast("sizer", new TcpPacketSizer(session));
+				}
+
+				pipeline.addLast("codec", new TcpPacketCodec(session));
+				pipeline.addLast("manager", session);
 			}
 		}).group(group).remoteAddress(client.getHost(), client.getPort());
 		return session;
@@ -70,12 +73,18 @@ public class TcpSessionFactory implements SessionFactory {
 				session.getPacketProtocol().newServerSession(server, session);
 				ch.config().setOption(ChannelOption.IP_TOS, 0x18);
 				ch.config().setOption(ChannelOption.TCP_NODELAY, false);
-				ch.pipeline()
-						.addLast("timer", new ReadTimeoutHandler(30))
-						.addLast("encryption", new TcpPacketEncryptor(session))
-						.addLast("sizer", new TcpPacketSizer(session))
-						.addLast("codec", new TcpPacketCodec(session))
-						.addLast("manager", session);
+				ChannelPipeline pipeline = ch.pipeline();
+				pipeline.addLast("timer", new ReadTimeoutHandler(30));
+				if(session.getPacketProtocol().needsPacketEncryptor()) {
+					pipeline.addLast("encryption", new TcpPacketEncryptor(session));
+				}
+
+				if(session.getPacketProtocol().needsPacketSizer()) {
+					pipeline.addLast("sizer", new TcpPacketSizer(session));
+				}
+
+				pipeline.addLast("codec", new TcpPacketCodec(session));
+				pipeline.addLast("manager", session);
 				server.addSession(session);
 			}
 		}).group(group).localAddress(server.getHost(), server.getPort()).bind().syncUninterruptibly().channel());
