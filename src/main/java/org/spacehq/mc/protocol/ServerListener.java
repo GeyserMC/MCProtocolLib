@@ -182,6 +182,7 @@ public class ServerListener extends SessionAdapter {
 
 		@Override
 		public void run() {
+			lastPingTime = System.nanoTime() / 1000000L;
 			while(this.session.isConnected()) {
 				long curr = System.nanoTime() / 1000000L;
 				long time = curr - lastPingTime;
