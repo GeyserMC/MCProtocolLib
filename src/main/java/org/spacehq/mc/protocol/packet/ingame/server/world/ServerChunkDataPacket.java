@@ -9,9 +9,6 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 public class ServerChunkDataPacket implements Packet {
 
@@ -104,66 +101,25 @@ public class ServerChunkDataPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		// Read column data.
 		this.x = in.readInt();
 		this.z = in.readInt();
 		boolean fullChunk = in.readBoolean();
-		int chunkMask = in.readShort();
-		int extendedChunkMask = in.readShort();
-		byte deflated[] = in.readBytes(in.readInt());
-		// Determine inflated data length.
-		int chunkCount = 0;
-		for(int count = 0; count < 16; count++) {
-			chunkCount += chunkMask >> count & 1;
-		}
-
-		int len = 12288 * chunkCount;
-		if(fullChunk) {
-			len += 256;
-		}
-
-		byte data[] = new byte[len];
-		// Inflate chunk data.
-		Inflater inflater = new Inflater();
-		inflater.setInput(deflated, 0, deflated.length);
-		try {
-			inflater.inflate(data);
-		} catch(DataFormatException e) {
-			throw new IOException("Bad compressed data format");
-		} finally {
-			inflater.end();
-		}
-
-		// Parse data into chunks and biome data.
-		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, extendedChunkMask, fullChunk, false, data));
+		int chunkMask = in.readUnsignedShort();
+		byte data[] = in.readBytes(in.readVarInt());
+		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, fullChunk, false, data));
 		this.chunks = chunkData.getChunks();
 		this.biomeData = chunkData.getBiomes();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		// Parse chunks into data.
 		NetworkChunkData data = NetUtil.chunksToData(new ParsedChunkData(this.chunks, this.biomeData));
-		// Deflate chunk data.
-		Deflater deflater = new Deflater(-1);
-		byte deflated[] = new byte[data.getData().length];
-		int len = data.getData().length;
-		try {
-			deflater.setInput(data.getData(), 0, data.getData().length);
-			deflater.finish();
-			len = deflater.deflate(deflated);
-		} finally {
-			deflater.end();
-		}
-
-		// Write data to the network.
 		out.writeInt(this.x);
 		out.writeInt(this.z);
 		out.writeBoolean(data.isFullChunk());
 		out.writeShort(data.getMask());
-		out.writeShort(data.getExtendedMask());
-		out.writeInt(len);
-		out.writeBytes(deflated, len);
+		out.writeVarInt(data.getData().length);
+		out.writeBytes(data.getData(), data.getData().length);
 	}
 
 	@Override

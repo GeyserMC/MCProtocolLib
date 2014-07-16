@@ -13,6 +13,7 @@ import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerSetCompressionPacket;
 import org.spacehq.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import org.spacehq.mc.protocol.packet.login.client.LoginStartPacket;
 import org.spacehq.mc.protocol.packet.login.server.EncryptionRequestPacket;
@@ -68,9 +69,7 @@ public class ClientListener extends SessionAdapter {
 				LoginDisconnectPacket packet = event.getPacket();
 				event.getSession().disconnect(packet.getReason().getFullText());
 			}
-		}
-
-		if(protocol.getMode() == ProtocolMode.STATUS) {
+		} else if(protocol.getMode() == ProtocolMode.STATUS) {
 			if(event.getPacket() instanceof StatusResponsePacket) {
 				ServerStatusInfo info = event.<StatusResponsePacket>getPacket().getInfo();
 				ServerInfoHandler handler = event.getSession().getFlag(ProtocolConstants.SERVER_INFO_HANDLER_KEY);
@@ -88,13 +87,13 @@ public class ClientListener extends SessionAdapter {
 
 				event.getSession().disconnect("Finished");
 			}
-		}
-
-		if(protocol.getMode() == ProtocolMode.GAME) {
+		} else if(protocol.getMode() == ProtocolMode.GAME) {
 			if(event.getPacket() instanceof ServerKeepAlivePacket) {
 				event.getSession().send(new ClientKeepAlivePacket(event.<ServerKeepAlivePacket>getPacket().getPingId()));
 			} else if(event.getPacket() instanceof ServerDisconnectPacket) {
 				event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().getFullText());
+			} else if(event.getPacket() instanceof ServerSetCompressionPacket) {
+				event.getSession().setCompressionThreshold(event.<ServerSetCompressionPacket>getPacket().getThreshold());
 			}
 		}
 	}

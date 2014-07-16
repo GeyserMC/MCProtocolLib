@@ -2,24 +2,16 @@ package org.spacehq.mc.protocol.data.game.values.world.map;
 
 public class MapPlayer {
 
-	private int iconSize;
-	private int iconRotation;
 	private int centerX;
 	private int centerZ;
+	private int iconSize;
+	private int iconRotation;
 
-	public MapPlayer(int iconSize, int iconRotation, int centerX, int centerZ) {
-		this.iconSize = iconSize;
-		this.iconRotation = iconRotation;
+	public MapPlayer(int centerX, int centerZ, int iconSize, int iconRotation) {
 		this.centerX = centerX;
 		this.centerZ = centerZ;
-	}
-
-	public int getIconSize() {
-		return this.iconSize;
-	}
-
-	public int getIconRotation() {
-		return this.iconRotation;
+		this.iconSize = iconSize;
+		this.iconRotation = iconRotation;
 	}
 
 	public int getCenterX() {
@@ -28,6 +20,14 @@ public class MapPlayer {
 
 	public int getCenterZ() {
 		return this.centerZ;
+	}
+
+	public int getIconSize() {
+		return this.iconSize;
+	}
+
+	public int getIconRotation() {
+		return this.iconRotation;
 	}
 
 }

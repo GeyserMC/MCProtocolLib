@@ -6,8 +6,8 @@ public class ServerEntityRotationPacket extends ServerEntityMovementPacket {
 		this.rot = true;
 	}
 
-	public ServerEntityRotationPacket(int entityId, float yaw, float pitch) {
-		super(entityId);
+	public ServerEntityRotationPacket(int entityId, float yaw, float pitch, boolean onGround) {
+		super(entityId, onGround);
 		this.rot = true;
 		this.yaw = yaw;
 		this.pitch = pitch;

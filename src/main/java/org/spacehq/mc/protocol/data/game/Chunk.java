@@ -2,30 +2,22 @@ package org.spacehq.mc.protocol.data.game;
 
 public class Chunk {
 
-	private ByteArray3d blocks;
-	private NibbleArray3d metadata;
+	private ShortArray3d blocks;
 	private NibbleArray3d blocklight;
 	private NibbleArray3d skylight;
-	private NibbleArray3d extendedBlocks;
 
-	public Chunk(boolean skylight, boolean extended) {
-		this(new ByteArray3d(4096), new NibbleArray3d(4096), new NibbleArray3d(4096), skylight ? new NibbleArray3d(4096) : null, extended ? new NibbleArray3d(4096) : null);
+	public Chunk(boolean skylight) {
+		this(new ShortArray3d(4096), new NibbleArray3d(4096), skylight ? new NibbleArray3d(4096) : null);
 	}
 
-	public Chunk(ByteArray3d blocks, NibbleArray3d metadata, NibbleArray3d blocklight, NibbleArray3d skylight, NibbleArray3d extendedBlocks) {
+	public Chunk(ShortArray3d blocks, NibbleArray3d blocklight, NibbleArray3d skylight) {
 		this.blocks = blocks;
-		this.metadata = metadata;
 		this.blocklight = blocklight;
 		this.skylight = skylight;
-		this.extendedBlocks = extendedBlocks;
 	}
 
-	public ByteArray3d getBlocks() {
+	public ShortArray3d getBlocks() {
 		return this.blocks;
-	}
-
-	public NibbleArray3d getMetadata() {
-		return this.metadata;
 	}
 
 	public NibbleArray3d getBlockLight() {
@@ -36,16 +28,8 @@ public class Chunk {
 		return this.skylight;
 	}
 
-	public NibbleArray3d getExtendedBlocks() {
-		return this.extendedBlocks;
-	}
-
-	public void deleteExtendedBlocks() {
-		this.extendedBlocks = null;
-	}
-
 	public boolean isEmpty() {
-		for(byte block : this.blocks.getData()) {
+		for(short block : this.blocks.getData()) {
 			if(block != 0) {
 				return false;
 			}

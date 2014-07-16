@@ -5,6 +5,7 @@ import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.PlayerListEntry;
 import org.spacehq.mc.protocol.data.game.values.PlayerListEntryAction;
 import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
+import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -57,7 +58,12 @@ public class ServerPlayerListEntryPacket implements Packet {
 
 					GameMode gameMode = MagicValues.key(GameMode.class, in.readVarInt());
 					int ping = in.readVarInt();
-					entry = new PlayerListEntry(uuid, name, properties, gameMode, ping);
+					Message displayName = null;
+					if(in.readBoolean()) {
+						displayName = Message.fromString(in.readString());
+					}
+
+					entry = new PlayerListEntry(uuid, name, properties, gameMode, ping, displayName);
 					break;
 				case UPDATE_GAMEMODE:
 					GameMode mode = MagicValues.key(GameMode.class, in.readVarInt());
@@ -67,6 +73,13 @@ public class ServerPlayerListEntryPacket implements Packet {
 					int png = in.readVarInt();
 					entry = new PlayerListEntry(uuid, png);
 					break;
+				case UPDATE_DISPLAY_NAME:
+					Message disp = null;
+					if(in.readBoolean()) {
+						disp = Message.fromString(in.readString());
+					}
+
+					entry = new PlayerListEntry(uuid, disp);
 				case REMOVE_PLAYER:
 					entry = new PlayerListEntry(uuid);
 					break;

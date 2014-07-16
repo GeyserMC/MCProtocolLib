@@ -6,8 +6,8 @@ public class ServerEntityPositionPacket extends ServerEntityMovementPacket {
 		this.pos = true;
 	}
 
-	public ServerEntityPositionPacket(int entityId, double moveX, double moveY, double moveZ) {
-		super(entityId);
+	public ServerEntityPositionPacket(int entityId, double moveX, double moveY, double moveZ, boolean onGround) {
+		super(entityId, onGround);
 		this.pos = true;
 		this.moveX = moveX;
 		this.moveY = moveY;

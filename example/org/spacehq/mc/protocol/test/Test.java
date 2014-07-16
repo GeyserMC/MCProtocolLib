@@ -59,10 +59,11 @@ public class Test {
 			server.setGlobalFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY, new ServerLoginHandler() {
 				@Override
 				public void loggedIn(Session session) {
-					session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, Difficulty.PEACEFUL, 10, WorldType.DEFAULT));
+					session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, Difficulty.PEACEFUL, 10, WorldType.DEFAULT, false));
 				}
 			});
 
+			server.setGlobalFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD, 100);
 			server.addListener(new ServerAdapter() {
 				@Override
 				public void sessionAdded(SessionAddedEvent event) {

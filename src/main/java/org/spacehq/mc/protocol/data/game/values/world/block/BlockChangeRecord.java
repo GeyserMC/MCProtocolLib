@@ -5,24 +5,19 @@ import org.spacehq.mc.protocol.data.game.Position;
 public class BlockChangeRecord {
 
 	private Position position;
-	private int id;
-	private int metadata;
+	private int block;
 
-	public BlockChangeRecord(Position position, int id, int metadata) {
+	public BlockChangeRecord(Position position, int block) {
 		this.position = position;
-		this.metadata = metadata;
+		this.block = block;
 	}
 
 	public Position getPosition() {
 		return this.position;
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
-	public int getMetadata() {
-		return this.metadata;
+	public int getBlock() {
+		return this.block;
 	}
 
 }

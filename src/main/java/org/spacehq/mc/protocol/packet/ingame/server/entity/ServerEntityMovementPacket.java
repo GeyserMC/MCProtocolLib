@@ -14,6 +14,7 @@ public class ServerEntityMovementPacket implements Packet {
 	protected double moveZ;
 	protected float yaw;
 	protected float pitch;
+	private boolean onGround;
 
 	protected boolean pos = false;
 	protected boolean rot = false;
@@ -21,8 +22,9 @@ public class ServerEntityMovementPacket implements Packet {
 	protected ServerEntityMovementPacket() {
 	}
 
-	public ServerEntityMovementPacket(int entityId) {
+	public ServerEntityMovementPacket(int entityId, boolean onGround) {
 		this.entityId = entityId;
+		this.onGround = onGround;
 	}
 
 	public int getEntityId() {
@@ -49,6 +51,10 @@ public class ServerEntityMovementPacket implements Packet {
 		return this.pitch;
 	}
 
+	public boolean isOnGround() {
+		return this.onGround;
+	}
+
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
@@ -62,6 +68,8 @@ public class ServerEntityMovementPacket implements Packet {
 			this.yaw = in.readByte() * 360 / 256f;
 			this.pitch = in.readByte() * 360 / 256f;
 		}
+
+		this.onGround = in.readBoolean();
 	}
 
 	@Override
@@ -77,6 +85,8 @@ public class ServerEntityMovementPacket implements Packet {
 			out.writeByte((byte) (this.yaw * 256 / 360));
 			out.writeByte((byte) (this.pitch * 256 / 360));
 		}
+
+		out.writeBoolean(this.onGround);
 	}
 
 	@Override

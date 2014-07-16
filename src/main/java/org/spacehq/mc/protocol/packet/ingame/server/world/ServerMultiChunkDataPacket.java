@@ -9,9 +9,6 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 public class ServerMultiChunkDataPacket implements Packet {
 
@@ -84,114 +81,52 @@ public class ServerMultiChunkDataPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		// Read packet base data.
-		short columns = in.readShort();
-		int deflatedLength = in.readInt();
 		boolean skylight = in.readBoolean();
-		byte deflatedBytes[] = in.readBytes(deflatedLength);
-		// Inflate chunk data.
-		byte[] inflated = new byte[196864 * columns];
-		Inflater inflater = new Inflater();
-		inflater.setInput(deflatedBytes, 0, deflatedLength);
-		try {
-			inflater.inflate(inflated);
-		} catch(DataFormatException e) {
-			throw new IOException("Bad compressed data format");
-		} finally {
-			inflater.end();
-		}
-
+		int columns = in.readVarInt();
 		this.x = new int[columns];
 		this.z = new int[columns];
 		this.chunks = new Chunk[columns][];
 		this.biomeData = new byte[columns][];
-		// Cycle through and read all columns.
-		int pos = 0;
-		for(int count = 0; count < columns; count++) {
-			// Read column-specific data.
-			int x = in.readInt();
-			int z = in.readInt();
-			int chunkMask = in.readShort();
-			int extendedChunkMask = in.readShort();
-			// Determine column data length.
-			int chunks = 0;
-			int extended = 0;
-			for(int ch = 0; ch < 16; ch++) {
-				chunks += chunkMask >> ch & 1;
-				extended += extendedChunkMask >> ch & 1;
-			}
-
-			int length = (8192 * chunks + 256) + (2048 * extended);
-			if(skylight) {
-				length += 2048 * chunks;
-			}
-
-			// Copy column data into a new array.
+		NetworkChunkData[] data = new NetworkChunkData[columns];
+		for(int column = 0; column < columns; column++) {
+			this.x[column] = in.readInt();
+			this.z[column] = in.readInt();
+			int mask = in.readUnsignedShort();
+			int chunks = Integer.bitCount(mask);
+			int length = (chunks * ((4096 * 2) + 2048)) + (skylight ? chunks * 2048 : 0) + 256;
 			byte dat[] = new byte[length];
-			System.arraycopy(inflated, pos, dat, 0, length);
-			// Read data into chunks and biome data.
-			ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, extendedChunkMask, true, skylight, dat));
-			this.x[count] = x;
-			this.z[count] = z;
-			this.chunks[count] = chunkData.getChunks();
-			this.biomeData[count] = chunkData.getBiomes();
-			pos += length;
+			data[column] = new NetworkChunkData(mask, true, skylight, dat);
+		}
+
+		for(int column = 0; column < columns; column++) {
+			in.readBytes(data[column].getData());
+			ParsedChunkData chunkData = NetUtil.dataToChunks(data[column]);
+			this.chunks[column] = chunkData.getChunks();
+			this.biomeData[column] = chunkData.getBiomes();
 		}
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		// Prepare chunk data arrays.
-		int chunkMask[] = new int[this.chunks.length];
-		int extendedChunkMask[] = new int[this.chunks.length];
-		// Determine values to be written by cycling through columns.
-		int pos = 0;
-		byte bytes[] = new byte[0];
 		boolean skylight = false;
-		for(int count = 0; count < this.chunks.length; ++count) {
-			Chunk column[] = this.chunks[count];
-			// Convert chunks into network data.
-			NetworkChunkData netData = NetUtil.chunksToData(new ParsedChunkData(column, this.biomeData[count]));
-			if(bytes.length < pos + netData.getData().length) {
-				byte[] newArray = new byte[pos + netData.getData().length];
-				System.arraycopy(bytes, 0, newArray, 0, bytes.length);
-				bytes = newArray;
-			}
-
-			if(netData.hasSkyLight()) {
+		NetworkChunkData data[] = new NetworkChunkData[this.chunks.length];
+		for(int column = 0; column < this.chunks.length; column++) {
+			data[column] = NetUtil.chunksToData(new ParsedChunkData(this.chunks[column], this.biomeData[column]));
+			if(data[column].hasSkyLight()) {
 				skylight = true;
 			}
-
-			// Copy column data into data array.
-			System.arraycopy(netData.getData(), 0, bytes, pos, netData.getData().length);
-			pos += netData.getData().length;
-			// Set column-specific values.
-			chunkMask[count] = netData.getMask();
-			extendedChunkMask[count] = netData.getExtendedMask();
 		}
 
-		// Deflate chunk data.
-		Deflater deflater = new Deflater(-1);
-		byte deflatedData[] = new byte[pos];
-		int deflatedLength = pos;
-		try {
-			deflater.setInput(bytes, 0, pos);
-			deflater.finish();
-			deflatedLength = deflater.deflate(deflatedData);
-		} finally {
-			deflater.end();
-		}
-
-		// Write data to the network.
-		out.writeShort(this.chunks.length);
-		out.writeInt(deflatedLength);
 		out.writeBoolean(skylight);
-		out.writeBytes(deflatedData, deflatedLength);
-		for(int count = 0; count < this.chunks.length; ++count) {
-			out.writeInt(this.x[count]);
-			out.writeInt(this.z[count]);
-			out.writeShort((short) (chunkMask[count] & 65535));
-			out.writeShort((short) (extendedChunkMask[count] & 65535));
+		out.writeVarInt(this.chunks.length);
+		for(int column = 0; column < this.x.length; column++) {
+			out.writeInt(this.x[column]);
+			out.writeInt(this.z[column]);
+			out.writeShort(data[column].getMask());
+		}
+
+		for(int column = 0; column < this.x.length; column++) {
+			out.writeBytes(data[column].getData());
 		}
 	}
 

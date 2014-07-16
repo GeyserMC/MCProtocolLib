@@ -2,6 +2,7 @@ package org.spacehq.mc.protocol.data.game.values;
 
 import org.spacehq.mc.auth.properties.Property;
 import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
+import org.spacehq.mc.protocol.data.message.Message;
 
 import java.util.UUID;
 
@@ -12,13 +13,15 @@ public class PlayerListEntry {
 	private Property properties[];
 	private GameMode gameMode;
 	private int ping;
+	private Message displayName;
 
-	public PlayerListEntry(UUID uuid, String name, Property properties[], GameMode gameMode, int ping) {
+	public PlayerListEntry(UUID uuid, String name, Property properties[], GameMode gameMode, int ping, Message displayName) {
 		this.uuid = uuid;
 		this.name = name;
 		this.properties = properties;
 		this.gameMode = gameMode;
 		this.ping = ping;
+		this.displayName = displayName;
 	}
 
 	public PlayerListEntry(UUID uuid, GameMode gameMode) {
@@ -29,6 +32,11 @@ public class PlayerListEntry {
 	public PlayerListEntry(UUID uuid, int ping) {
 		this.uuid = uuid;
 		this.ping = ping;
+	}
+
+	public PlayerListEntry(UUID uuid, Message displayName) {
+		this.uuid = uuid;
+		this.displayName = displayName;
 	}
 
 	public PlayerListEntry(UUID uuid) {
@@ -53,5 +61,9 @@ public class PlayerListEntry {
 
 	public int getPing() {
 		return this.ping;
+	}
+
+	public Message getDisplayName() {
+		return this.displayName;
 	}
 }

@@ -16,7 +16,6 @@ import org.spacehq.mc.protocol.data.game.values.world.block.value.*;
 import org.spacehq.mc.protocol.data.game.values.world.effect.ParticleEffect;
 import org.spacehq.mc.protocol.data.game.values.world.effect.SmokeEffectData;
 import org.spacehq.mc.protocol.data.game.values.world.effect.SoundEffect;
-import org.spacehq.mc.protocol.data.game.values.world.map.MapDataType;
 import org.spacehq.mc.protocol.data.game.values.world.notify.ClientNotification;
 import org.spacehq.mc.protocol.data.game.values.world.notify.DemoMessageValue;
 import org.spacehq.mc.protocol.data.game.values.world.Particle;
@@ -365,10 +364,6 @@ public class MagicValues {
 		register(BlockBreakStage.STAGE_9, 8);
 		register(BlockBreakStage.STAGE_10, 9);
 		register(BlockBreakStage.RESET, 255);
-
-		register(MapDataType.IMAGE, 0);
-		register(MapDataType.PLAYERS, 1);
-		register(MapDataType.SCALE, 2);
 
 		register(UpdatedTileType.MOB_SPAWNER, 1);
 		register(UpdatedTileType.COMMAND_BLOCK, 2);
@@ -788,7 +783,8 @@ public class MagicValues {
 		register(PlayerListEntryAction.ADD_PLAYER, 0);
 		register(PlayerListEntryAction.UPDATE_GAMEMODE, 1);
 		register(PlayerListEntryAction.UPDATE_LATENCY, 2);
-		register(PlayerListEntryAction.REMOVE_PLAYER, 3);
+		register(PlayerListEntryAction.UPDATE_DISPLAY_NAME, 3);
+		register(PlayerListEntryAction.REMOVE_PLAYER, 4);
 
 		register(TitleAction.TITLE, 0);
 		register(TitleAction.SUBTITLE, 1);

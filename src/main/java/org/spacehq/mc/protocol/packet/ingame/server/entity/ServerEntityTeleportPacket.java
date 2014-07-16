@@ -8,24 +8,26 @@ import java.io.IOException;
 
 public class ServerEntityTeleportPacket implements Packet {
 
-	protected int entityId;
-	protected double x;
-	protected double y;
-	protected double z;
-	protected float yaw;
-	protected float pitch;
+	private int entityId;
+	private double x;
+	private double y;
+	private double z;
+	private float yaw;
+	private float pitch;
+	private boolean onGround;
 
 	@SuppressWarnings("unused")
 	private ServerEntityTeleportPacket() {
 	}
 
-	public ServerEntityTeleportPacket(int entityId, double x, double y, double z, float yaw, float pitch) {
+	public ServerEntityTeleportPacket(int entityId, double x, double y, double z, float yaw, float pitch, boolean onGround) {
 		this.entityId = entityId;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.yaw = yaw;
 		this.pitch = pitch;
+		this.onGround = onGround;
 	}
 
 	public int getEntityId() {
@@ -52,6 +54,10 @@ public class ServerEntityTeleportPacket implements Packet {
 		return this.pitch;
 	}
 
+	public boolean isOnGround() {
+		return this.onGround;
+	}
+
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
@@ -60,6 +66,7 @@ public class ServerEntityTeleportPacket implements Packet {
 		this.z = in.readInt() / 32D;
 		this.yaw = in.readByte() * 360 / 256f;
 		this.pitch = in.readByte() * 360 / 256f;
+		this.onGround = in.readBoolean();
 	}
 
 	@Override
@@ -70,6 +77,7 @@ public class ServerEntityTeleportPacket implements Packet {
 		out.writeInt((int) (this.z * 32));
 		out.writeByte((byte) (this.yaw * 256 / 360));
 		out.writeByte((byte) (this.pitch * 256 / 360));
+		out.writeBoolean(this.onGround);
 	}
 
 	@Override

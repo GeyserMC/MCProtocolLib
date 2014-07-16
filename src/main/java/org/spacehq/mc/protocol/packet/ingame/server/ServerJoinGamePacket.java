@@ -19,12 +19,13 @@ public class ServerJoinGamePacket implements Packet {
 	private Difficulty difficulty;
 	private int maxPlayers;
 	private WorldType worldType;
+	private boolean reducedDebugInfo;
 
 	@SuppressWarnings("unused")
 	private ServerJoinGamePacket() {
 	}
 
-	public ServerJoinGamePacket(int entityId, boolean hardcore, GameMode gamemode, int dimension, Difficulty difficulty, int maxPlayers, WorldType worldType) {
+	public ServerJoinGamePacket(int entityId, boolean hardcore, GameMode gamemode, int dimension, Difficulty difficulty, int maxPlayers, WorldType worldType, boolean reducedDebugInfo) {
 		this.entityId = entityId;
 		this.hardcore = hardcore;
 		this.gamemode = gamemode;
@@ -32,6 +33,7 @@ public class ServerJoinGamePacket implements Packet {
 		this.difficulty = difficulty;
 		this.maxPlayers = maxPlayers;
 		this.worldType = worldType;
+		this.reducedDebugInfo = reducedDebugInfo;
 	}
 
 	public int getEntityId() {
@@ -62,17 +64,22 @@ public class ServerJoinGamePacket implements Packet {
 		return this.worldType;
 	}
 
+	public boolean getReducedDebugInfo() {
+		return this.reducedDebugInfo;
+	}
+
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
 		int gamemode = in.readUnsignedByte();
 		this.hardcore = (gamemode & 8) == 8;
-		gamemode = gamemode & -9;
+		gamemode &= -9;
 		this.gamemode = MagicValues.key(GameMode.class, gamemode);
 		this.dimension = in.readByte();
 		this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
 		this.maxPlayers = in.readUnsignedByte();
 		this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
+		this.reducedDebugInfo = in.readBoolean();
 	}
 
 	@Override
@@ -88,6 +95,7 @@ public class ServerJoinGamePacket implements Packet {
 		out.writeByte(MagicValues.value(Integer.class, this.difficulty));
 		out.writeByte(this.maxPlayers);
 		out.writeString(MagicValues.value(String.class, this.worldType));
+		out.writeBoolean(this.reducedDebugInfo);
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerSetCompressionPacket;
 import org.spacehq.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import org.spacehq.mc.protocol.packet.login.client.LoginStartPacket;
 import org.spacehq.mc.protocol.packet.login.server.EncryptionRequestPacket;
@@ -83,6 +84,9 @@ public class ServerListener extends SessionAdapter {
 					event.getSession().send(new LoginSuccessPacket(profile));
 					event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, event.getSession());
+					int threshold = event.getSession().getFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD);
+					event.getSession().send(new ServerSetCompressionPacket(threshold));
+					event.getSession().setCompressionThreshold(threshold);
 					ServerLoginHandler handler = event.getSession().getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(event.getSession());
@@ -158,6 +162,9 @@ public class ServerListener extends SessionAdapter {
 					this.session.send(new LoginSuccessPacket(profile));
 					this.session.setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, this.session);
+					int threshold = this.session.getFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD);
+					this.session.send(new ServerSetCompressionPacket(threshold));
+					this.session.setCompressionThreshold(threshold);
 					ServerLoginHandler handler = this.session.getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(this.session);

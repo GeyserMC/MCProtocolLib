@@ -10,6 +10,7 @@ import java.io.IOException;
 
 public class ServerSpawnParticlePacket implements Packet {
 	private Particle particle;
+	private boolean longDistance;
 	private float x;
 	private float y;
 	private float z;
@@ -24,8 +25,9 @@ public class ServerSpawnParticlePacket implements Packet {
 	private ServerSpawnParticlePacket() {
 	}
 
-	public ServerSpawnParticlePacket(Particle particle, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount, int... data) {
+	public ServerSpawnParticlePacket(Particle particle, boolean longDistance, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount, int... data) {
 		this.particle = particle;
+		this.longDistance = longDistance;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -42,6 +44,10 @@ public class ServerSpawnParticlePacket implements Packet {
 
 	public Particle getParticle() {
 		return this.particle;
+	}
+
+	public boolean isLongDistance() {
+		return this.longDistance;
 	}
 
 	public float getX() {
@@ -83,6 +89,7 @@ public class ServerSpawnParticlePacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.particle = MagicValues.key(Particle.class, in.readInt());
+		this.longDistance = in.readBoolean();
 		this.x = in.readFloat();
 		this.y = in.readFloat();
 		this.z = in.readFloat();
@@ -100,6 +107,7 @@ public class ServerSpawnParticlePacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(MagicValues.value(Integer.class, this.particle));
+		out.writeBoolean(this.longDistance);
 		out.writeFloat(this.x);
 		out.writeFloat(this.y);
 		out.writeFloat(this.z);
