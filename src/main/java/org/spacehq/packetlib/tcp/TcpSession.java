@@ -23,6 +23,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	private Channel channel;
 	private boolean disconnected = false;
 	private boolean writing = false;
+	private int compressionThreshold = -1;
 	private List<Packet> packets = new ArrayList<Packet>();
 
 	private Map<String, Object> flags = new HashMap<String, Object>();
@@ -128,6 +129,25 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	public void callEvent(SessionEvent event) {
 		for(SessionListener listener : this.listeners) {
 			event.call(listener);
+		}
+	}
+
+	@Override
+	public int getCompressionThreshold() {
+		return this.compressionThreshold;
+	}
+
+	@Override
+	public void setCompressionThreshold(int threshold) {
+		this.compressionThreshold = threshold;
+		if(this.channel != null) {
+			if(this.compressionThreshold >= 0) {
+				if(this.channel.pipeline().get("compression") == null) {
+					this.channel.pipeline().addBefore("codec", "compression", new TcpPacketCompression(this));
+				}
+			} else if(this.channel.pipeline().get("compression") != null) {
+				this.channel.pipeline().remove("compression");
+			}
 		}
 	}
 

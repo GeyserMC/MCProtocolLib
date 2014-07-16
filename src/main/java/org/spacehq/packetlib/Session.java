@@ -112,6 +112,20 @@ public interface Session {
 	public void callEvent(SessionEvent event);
 
 	/**
+	 * Gets the compression packet length threshold for this session (-1 = disabled).
+	 *
+	 * @return This session's compression threshold.
+	 */
+	public int getCompressionThreshold();
+
+	/**
+	 * Sets the compression packet length threshold for this session (-1 = disabled).
+	 *
+	 * @param threshold The new compression threshold.
+	 */
+	public void setCompressionThreshold(int threshold);
+
+	/**
 	 * Returns true if the session is connected.
 	 *
 	 * @return True if the session is connected.

@@ -100,6 +100,26 @@ public class ByteBufNetInput implements NetInput {
 	}
 
 	@Override
+	public int readBytes(byte[] b) throws IOException {
+		return this.readBytes(b, 0, b.length);
+	}
+
+	@Override
+	public int readBytes(byte[] b, int offset, int length) throws IOException {
+		int readable = this.buf.readableBytes();
+		if(readable <= 0) {
+			return -1;
+		}
+
+		if(readable < length) {
+			length = readable;
+		}
+
+		this.buf.readBytes(b, offset, length);
+		return length;
+	}
+
+	@Override
 	public String readString() throws IOException {
 		int length = this.readVarInt();
 		byte bytes[] = this.readBytes(length);

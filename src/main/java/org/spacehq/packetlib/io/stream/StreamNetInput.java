@@ -123,6 +123,16 @@ public class StreamNetInput implements NetInput {
 	}
 
 	@Override
+	public int readBytes(byte[] b) throws IOException {
+		return this.in.read(b);
+	}
+
+	@Override
+	public int readBytes(byte[] b, int offset, int length) throws IOException {
+		return this.in.read(b, offset, length);
+	}
+
+	@Override
 	public String readString() throws IOException {
 		int length = this.readVarInt();
 		byte bytes[] = this.readBytes(length);

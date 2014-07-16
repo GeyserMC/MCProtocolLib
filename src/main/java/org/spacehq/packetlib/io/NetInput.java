@@ -113,6 +113,26 @@ public interface NetInput {
 	public byte[] readBytes(int length) throws IOException;
 
 	/**
+	 * Reads as much data as possible into the given byte array.
+	 *
+	 * @param b Byte array to read to.
+	 * @return The amount of bytes read, or -1 if no bytes could be read.
+	 * @throws java.io.IOException If an I/O error occurs.
+	 */
+	public int readBytes(byte b[]) throws IOException;
+
+	/**
+	 * Reads the given amount of bytes into the given array at the given offset.
+	 *
+	 * @param b Byte array to read to.
+	 * @param offset Offset of the array to read to.
+	 * @param length Length of bytes to read.
+	 * @return The amount of bytes read, or -1 if no bytes could be read.
+	 * @throws java.io.IOException If an I/O error occurs.
+	 */
+	public int readBytes(byte b[], int offset, int length) throws IOException;
+
+	/**
 	 * Reads the next string.
 	 *
 	 * @return The next string.
