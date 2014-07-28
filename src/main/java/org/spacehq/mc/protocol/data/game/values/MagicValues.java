@@ -720,6 +720,7 @@ public class MagicValues {
 		register(SoundEffect.POUND_WOODEN_DOOR, 1010);
 		register(SoundEffect.POUND_METAL_DOOR, 1011);
 		register(SoundEffect.BREAK_WOODEN_DOOR, 1012);
+		register(SoundEffect.WITHER_SPAWN, 1013);
 		register(SoundEffect.WITHER_SHOOT, 1014);
 		register(SoundEffect.BAT_TAKE_OFF, 1015);
 		register(SoundEffect.INFECT_VILLAGER, 1016);
