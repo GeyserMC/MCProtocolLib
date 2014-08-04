@@ -64,6 +64,14 @@ public interface NetOutput {
 	public void writeLong(long l) throws IOException;
 
 	/**
+	 * Writes a varlong. A varlong is a form of long where only necessary bytes are written. This is done to save bandwidth.
+	 *
+	 * @return l Varlong to write.
+	 * @throws java.io.IOException If an I/O error occurs.
+	 */
+	public void writeVarLong(long l) throws IOException;
+
+	/**
 	 * Writes a float.
 	 *
 	 * @param f Float to write.

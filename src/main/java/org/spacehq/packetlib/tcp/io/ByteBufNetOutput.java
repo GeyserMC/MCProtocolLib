@@ -43,17 +43,27 @@ public class ByteBufNetOutput implements NetOutput {
 
 	@Override
 	public void writeVarInt(int i) throws IOException {
-		while((i & 0xFFFFFF80) != 0L) {
+		while((i & ~0x7F) != 0) {
 			this.writeByte((i & 0x7F) | 0x80);
 			i >>>= 7;
 		}
 
-		this.writeByte(i & 0x7F);
+		this.writeByte(i);
 	}
 
 	@Override
 	public void writeLong(long l) throws IOException {
 		this.buf.writeLong(l);
+	}
+
+	@Override
+	public void writeVarLong(long l) throws IOException {
+		while((l & ~0x7F) != 0) {
+			this.writeByte((int) (l & 0x7F) | 0x80);
+			l >>>= 7;
+		}
+
+		this.writeByte((int) l);
 	}
 
 	@Override

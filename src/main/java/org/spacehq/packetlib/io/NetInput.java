@@ -80,6 +80,14 @@ public interface NetInput {
 	public long readLong() throws IOException;
 
 	/**
+	 * Reads the next varlong. A varlong is a form of long where only necessary bytes are written. This is done to save bandwidth.
+	 *
+	 * @return The next varlong.
+	 * @throws java.io.IOException If an I/O error occurs.
+	 */
+	public long readVarLong() throws IOException;
+
+	/**
 	 * Reads the next float.
 	 *
 	 * @return The next float.

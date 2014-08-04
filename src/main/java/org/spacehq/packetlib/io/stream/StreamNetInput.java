@@ -67,23 +67,38 @@ public class StreamNetInput implements NetInput {
 
 	@Override
 	public int readVarInt() throws IOException {
-		int ret = 0;
+		int value = 0;
 		int size = 0;
-		byte b;
-		while(((b = this.readByte()) & 128) == 128) {
-			ret |= (b & 127) << size++ * 7;
+		int b;
+		while(((b = this.readByte()) & 0x80) == 0x80) {
+			value |= (b & 0x7F) << (size++ * 7);
 			if(size > 5) {
-				throw new IOException("Varint too big");
+				throw new IOException("VarInt too long (length must be <= 5)");
 			}
 		}
 
-		return ret;
+		return value | ((b & 0x7F) << (size * 7));
 	}
 
 	@Override
 	public long readLong() throws IOException {
 		byte read[] = this.readBytes(8);
 		return ((long) read[0] << 56) + ((long) (read[1] & 255) << 48) + ((long) (read[2] & 255) << 40) + ((long) (read[3] & 255) << 32) + ((long) (read[4] & 255) << 24) + ((read[5] & 255) << 16) + ((read[6] & 255) << 8) + ((read[7] & 255) << 0);
+	}
+
+	@Override
+	public long readVarLong() throws IOException {
+		int value = 0;
+		int size = 0;
+		int b;
+		while(((b = this.readByte()) & 0x80) == 0x80) {
+			value |= (b & 0x7F) << (size++ * 7);
+			if(size > 10) {
+				throw new IOException("VarLong too long (length must be <= 10)");
+			}
+		}
+
+		return value | ((b & 0x7F) << (size * 7));
 	}
 
 	@Override

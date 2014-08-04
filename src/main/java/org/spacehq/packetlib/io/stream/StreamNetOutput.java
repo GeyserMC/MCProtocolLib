@@ -48,8 +48,8 @@ public class StreamNetOutput implements NetOutput {
 
 	@Override
 	public void writeVarInt(int i) throws IOException {
-		while((i & -128) != 0) {
-			this.writeByte(i & 127 | 128);
+		while((i & ~0x7F) != 0) {
+			this.writeByte((i & 0x7F) | 0x80);
 			i >>>= 7;
 		}
 
@@ -66,6 +66,16 @@ public class StreamNetOutput implements NetOutput {
 		this.writeByte((byte) (l >>> 16));
 		this.writeByte((byte) (l >>> 8));
 		this.writeByte((byte) (l >>> 0));
+	}
+
+	@Override
+	public void writeVarLong(long l) throws IOException {
+		while((l & ~0x7F) != 0) {
+			this.writeByte((int) (l & 0x7F) | 0x80);
+			l >>>= 7;
+		}
+
+		this.writeByte((int) l);
 	}
 
 	@Override

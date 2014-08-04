@@ -53,7 +53,7 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
 			ByteBufNetInput in = new ByteBufNetInput(buf);
 			int size = in.readVarInt();
 			if(size == 0) {
-				out.add(in.readBytes(buf.readableBytes()));
+				out.add(buf.readBytes(buf.readableBytes()));
 			} else {
 				if(size < this.session.getCompressionThreshold()) {
 					throw new DecoderException("Badly compressed packet: size of " + size + " is below threshold of " + this.session.getCompressionThreshold() + ".");
