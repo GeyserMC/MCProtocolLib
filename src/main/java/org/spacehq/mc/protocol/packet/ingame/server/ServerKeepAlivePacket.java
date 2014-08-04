@@ -24,12 +24,12 @@ public class ServerKeepAlivePacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.id = in.readInt();
+		this.id = in.readVarInt();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.id);
+		out.writeVarInt(this.id);
 	}
 
 	@Override

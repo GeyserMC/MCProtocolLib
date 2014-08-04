@@ -31,13 +31,12 @@ public class ClientPluginMessagePacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.channel = in.readString();
-		this.data = in.readBytes(in.readVarInt());
+		this.data = in.readBytes(in.available());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.channel);
-		out.writeVarInt(this.data.length);
 		out.writeBytes(this.data);
 	}
 

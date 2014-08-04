@@ -16,7 +16,7 @@ public class ServerWorldBorderPacket implements Packet {
 
 	private double oldRadius;
 	private double newRadius;
-	private int speed;
+	private long speed;
 
 	private double centerX;
 	private double centerY;
@@ -36,7 +36,7 @@ public class ServerWorldBorderPacket implements Packet {
 		this.radius = radius;
 	}
 
-	public ServerWorldBorderPacket(double oldRadius, double newRadius, int speed) {
+	public ServerWorldBorderPacket(double oldRadius, double newRadius, long speed) {
 		this.action = WorldBorderAction.LERP_SIZE;
 		this.oldRadius = oldRadius;
 		this.newRadius = newRadius;
@@ -49,7 +49,7 @@ public class ServerWorldBorderPacket implements Packet {
 		this.centerY = centerY;
 	}
 
-	public ServerWorldBorderPacket(double centerX, double centerY, double oldRadius, double newRadius, int speed, int portalTeleportBoundary, int warningTime, int warningBlocks) {
+	public ServerWorldBorderPacket(double centerX, double centerY, double oldRadius, double newRadius, long speed, int portalTeleportBoundary, int warningTime, int warningBlocks) {
 		this.action = WorldBorderAction.INITIALIZE;
 		this.centerX = centerX;
 		this.centerY = centerY;
@@ -87,7 +87,7 @@ public class ServerWorldBorderPacket implements Packet {
 		return this.newRadius;
 	}
 
-	public int getSpeed() {
+	public long getSpeed() {
 		return this.speed;
 	}
 
@@ -119,7 +119,7 @@ public class ServerWorldBorderPacket implements Packet {
 		} else if(this.action == WorldBorderAction.LERP_SIZE) {
 			this.oldRadius = in.readDouble();
 			this.newRadius = in.readDouble();
-			this.speed = in.readVarInt();
+			this.speed = in.readVarLong();
 		} else if(this.action == WorldBorderAction.SET_CENTER) {
 			this.centerX = in.readDouble();
 			this.centerY = in.readDouble();
@@ -128,7 +128,7 @@ public class ServerWorldBorderPacket implements Packet {
 			this.centerY = in.readDouble();
 			this.oldRadius = in.readDouble();
 			this.newRadius = in.readDouble();
-			this.speed = in.readVarInt();
+			this.speed = in.readVarLong();
 			this.portalTeleportBoundary = in.readVarInt();
 			this.warningTime = in.readVarInt();
 			this.warningBlocks = in.readVarInt();
@@ -147,7 +147,7 @@ public class ServerWorldBorderPacket implements Packet {
 		} else if(this.action == WorldBorderAction.LERP_SIZE) {
 			out.writeDouble(this.oldRadius);
 			out.writeDouble(this.newRadius);
-			out.writeVarInt(this.speed);
+			out.writeVarLong(this.speed);
 		} else if(this.action == WorldBorderAction.SET_CENTER) {
 			out.writeDouble(this.centerX);
 			out.writeDouble(this.centerY);
@@ -156,7 +156,7 @@ public class ServerWorldBorderPacket implements Packet {
 			out.writeDouble(this.centerY);
 			out.writeDouble(this.oldRadius);
 			out.writeDouble(this.newRadius);
-			out.writeVarInt(this.speed);
+			out.writeVarLong(this.speed);
 			out.writeVarInt(this.portalTeleportBoundary);
 			out.writeVarInt(this.warningTime);
 			out.writeVarInt(this.warningBlocks);

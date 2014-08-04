@@ -9,6 +9,7 @@ import org.spacehq.mc.protocol.data.game.values.statistic.Achievement;
 import org.spacehq.mc.protocol.data.game.values.statistic.GenericStatistic;
 import org.spacehq.mc.protocol.data.game.values.window.*;
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
+import org.spacehq.mc.protocol.data.game.values.world.Particle;
 import org.spacehq.mc.protocol.data.game.values.world.WorldBorderAction;
 import org.spacehq.mc.protocol.data.game.values.world.WorldType;
 import org.spacehq.mc.protocol.data.game.values.world.block.UpdatedTileType;
@@ -18,7 +19,6 @@ import org.spacehq.mc.protocol.data.game.values.world.effect.SmokeEffectData;
 import org.spacehq.mc.protocol.data.game.values.world.effect.SoundEffect;
 import org.spacehq.mc.protocol.data.game.values.world.notify.ClientNotification;
 import org.spacehq.mc.protocol.data.game.values.world.notify.DemoMessageValue;
-import org.spacehq.mc.protocol.data.game.values.world.Particle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -792,6 +792,11 @@ public class MagicValues {
 		register(TitleAction.TIMES, 2);
 		register(TitleAction.CLEAR, 3);
 		register(TitleAction.RESET, 4);
+
+		register(ResourcePackStatus.SUCCESSFULLY_LOADED, 0);
+		register(ResourcePackStatus.DECLINED, 1);
+		register(ResourcePackStatus.FAILED_DOWNLOAD, 2);
+		register(ResourcePackStatus.ACCEPTED, 3);
 	}
 
 	private static void register(Enum<?> key, Object value) {
