@@ -83,6 +83,7 @@ public class MagicValues {
 
 		register(InteractAction.INTERACT, 0);
 		register(InteractAction.ATTACK, 1);
+		register(InteractAction.INTERACT_AT, 2);
 
 		register(PlayerAction.START_DIGGING, 0);
 		register(PlayerAction.CANCEL_DIGGING, 1);

@@ -280,6 +280,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerIncoming(69, ServerSetCompressionPacket.class);
 		this.registerIncoming(70, ServerPlayerListDataPacket.class);
 		this.registerIncoming(71, ServerResourcePackSendPacket.class);
+		this.registerIncoming(72, ServerEntityNBTUpdatePacket.class);
 
 		this.registerOutgoing(0, ClientKeepAlivePacket.class);
 		this.registerOutgoing(1, ClientChatPacket.class);
@@ -409,6 +410,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerOutgoing(69, ServerSetCompressionPacket.class);
 		this.registerOutgoing(70, ServerPlayerListDataPacket.class);
 		this.registerOutgoing(71, ServerResourcePackSendPacket.class);
+		this.registerOutgoing(72, ServerEntityNBTUpdatePacket.class);
 	}
 
 	private void initClientStatus(Session session) {
