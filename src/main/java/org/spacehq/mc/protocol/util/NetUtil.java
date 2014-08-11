@@ -312,7 +312,7 @@ public class NetUtil {
 				this.readFirst = true;
 				return this.firstByte;
 			} else {
-				return this.in.readByte();
+				return this.in.readUnsignedByte();
 			}
 		}
 	}
