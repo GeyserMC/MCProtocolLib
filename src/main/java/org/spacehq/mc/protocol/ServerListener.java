@@ -74,6 +74,7 @@ public class ServerListener extends SessionAdapter {
 		}
 
 		if(protocol.getMode() == ProtocolMode.LOGIN) {
+			// TODO: send LoginSetCompressionPacket somewhere
 			if(event.getPacket() instanceof LoginStartPacket) {
 				this.username = event.<LoginStartPacket>getPacket().getUsername();
 				boolean verify = event.getSession().hasFlag(ProtocolConstants.VERIFY_USERS_KEY) ? event.getSession().<Boolean>getFlag(ProtocolConstants.VERIFY_USERS_KEY) : true;
