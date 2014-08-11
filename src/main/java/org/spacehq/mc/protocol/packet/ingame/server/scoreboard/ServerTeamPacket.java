@@ -22,7 +22,7 @@ public class ServerTeamPacket implements Packet {
 	private FriendlyFire friendlyFire;
 	private NameTagVisibility nameTagVisibility;
 	private TeamColor color;
-	private UUID players[];
+	private String players[];
 
 	@SuppressWarnings("unused")
 	private ServerTeamPacket() {
@@ -33,7 +33,7 @@ public class ServerTeamPacket implements Packet {
 		this.action = TeamAction.REMOVE;
 	}
 
-	public ServerTeamPacket(String name, TeamAction action, UUID players[]) {
+	public ServerTeamPacket(String name, TeamAction action, String players[]) {
 		if(action != TeamAction.ADD_PLAYER && action != TeamAction.REMOVE_PLAYER) {
 			throw new IllegalArgumentException("(name, action, players) constructor only valid for adding and removing players.");
 		}
@@ -54,7 +54,7 @@ public class ServerTeamPacket implements Packet {
 		this.action = TeamAction.UPDATE;
 	}
 
-	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire, NameTagVisibility nameTagVisibility, TeamColor color, UUID players[]) {
+	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire, NameTagVisibility nameTagVisibility, TeamColor color, String players[]) {
 		this.name = name;
 		this.displayName = displayName;
 		this.prefix = prefix;
@@ -98,7 +98,7 @@ public class ServerTeamPacket implements Packet {
 		return this.color;
 	}
 
-	public UUID[] getPlayers() {
+	public String[] getPlayers() {
 		return this.players;
 	}
 
@@ -116,10 +116,9 @@ public class ServerTeamPacket implements Packet {
 		}
 
 		if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
-			this.players = new UUID[in.readVarInt()];
+			this.players = new String[in.readVarInt()];
 			for(int index = 0; index < this.players.length; index++) {
-				String uuid = in.readString();
-				this.players[index] = !uuid.equals("") ? UUID.fromString(uuid) : null;
+				this.players[index] = in.readString();
 			}
 		}
 	}
@@ -139,9 +138,9 @@ public class ServerTeamPacket implements Packet {
 
 		if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
 			out.writeVarInt(this.players.length);
-			for(UUID uuid : this.players) {
-				if(uuid != null) {
-					out.writeString(uuid.toString());
+			for(String player : this.players) {
+				if(player != null) {
+					out.writeString(player);
 				}
 			}
 		}

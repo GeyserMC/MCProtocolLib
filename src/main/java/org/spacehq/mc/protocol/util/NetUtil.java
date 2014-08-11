@@ -51,24 +51,19 @@ public class NetUtil {
 	}
 
 	public static CompoundTag readNBT(NetInput in) throws IOException {
-		short length = in.readShort();
-		if(length < 0) {
+		byte b = in.readByte();
+		if(b == 0) {
 			return null;
 		} else {
-			return (CompoundTag) NBTIO.readTag(new DataInputStream(new ByteArrayInputStream(in.readBytes(length))));
+			return (CompoundTag) NBTIO.readTag(new DataInputStream(new NetInputStream(in, b)));
 		}
 	}
 
 	public static void writeNBT(NetOutput out, CompoundTag tag) throws IOException {
 		if(tag == null) {
-			out.writeShort(-1);
+			out.writeByte(0);
 		} else {
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			NBTIO.writeTag(new DataOutputStream(output), tag);
-			output.close();
-			byte bytes[] = output.toByteArray();
-			out.writeShort((short) bytes.length);
-			out.writeBytes(bytes);
+			NBTIO.writeTag(new DataOutputStream(new NetOutputStream(out)), tag);
 		}
 	}
 
@@ -299,6 +294,40 @@ public class NetUtil {
 		}
 
 		return new NetworkChunkData(chunkMask, fullChunk, sky, data);
+	}
+
+	private static class NetInputStream extends InputStream {
+		private NetInput in;
+		private boolean readFirst;
+		private byte firstByte;
+
+		public NetInputStream(NetInput in, byte firstByte) {
+			this.in = in;
+			this.firstByte = firstByte;
+		}
+
+		@Override
+		public int read() throws IOException {
+			if(!this.readFirst) {
+				this.readFirst = true;
+				return this.firstByte;
+			} else {
+				return this.in.readByte();
+			}
+		}
+	}
+
+	private static class NetOutputStream extends OutputStream {
+		private NetOutput out;
+
+		public NetOutputStream(NetOutput out) {
+			this.out = out;
+		}
+
+		@Override
+		public void write(int b) throws IOException {
+			this.out.writeByte(b);
+		}
 	}
 
 }

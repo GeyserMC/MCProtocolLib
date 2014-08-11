@@ -70,7 +70,7 @@ public class ClientListener extends SessionAdapter {
 				LoginDisconnectPacket packet = event.getPacket();
 				event.getSession().disconnect(packet.getReason().getFullText());
 			} else if(event.getPacket() instanceof LoginSetCompressionPacket) {
-				event.getSession().setCompressionThreshold(event.<ServerSetCompressionPacket>getPacket().getThreshold());
+				event.getSession().setCompressionThreshold(event.<LoginSetCompressionPacket>getPacket().getThreshold());
 			}
 		} else if(protocol.getMode() == ProtocolMode.STATUS) {
 			if(event.getPacket() instanceof StatusResponsePacket) {

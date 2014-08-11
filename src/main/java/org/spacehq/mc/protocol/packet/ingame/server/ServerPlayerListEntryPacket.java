@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
+import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.properties.Property;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.PlayerListEntry;
@@ -39,11 +40,17 @@ public class ServerPlayerListEntryPacket implements Packet {
 		this.action = MagicValues.key(PlayerListEntryAction.class, in.readVarInt());
 		this.entries = new PlayerListEntry[in.readVarInt()];
 		for(int count = 0; count < this.entries.length; count++) {
-			UUID uuid = UUID.fromString(in.readString());
+			UUID uuid = in.readUUID();
+			GameProfile profile;
+			if(this.action == PlayerListEntryAction.ADD_PLAYER) {
+				profile = new GameProfile(uuid, in.readString());
+			} else {
+				profile = new GameProfile(uuid, null);
+			}
+
 			PlayerListEntry entry = null;
 			switch(this.action) {
 				case ADD_PLAYER:
-					String name = in.readString();
 					Property properties[] = new Property[in.readVarInt()];
 					for(int index = 0; index < properties.length; index++) {
 						String propertyName = in.readString();
@@ -63,15 +70,15 @@ public class ServerPlayerListEntryPacket implements Packet {
 						displayName = Message.fromString(in.readString());
 					}
 
-					entry = new PlayerListEntry(uuid, name, properties, gameMode, ping, displayName);
+					entry = new PlayerListEntry(profile, properties, gameMode, ping, displayName);
 					break;
 				case UPDATE_GAMEMODE:
 					GameMode mode = MagicValues.key(GameMode.class, in.readVarInt());
-					entry = new PlayerListEntry(uuid, mode);
+					entry = new PlayerListEntry(profile, mode);
 					break;
 				case UPDATE_LATENCY:
 					int png = in.readVarInt();
-					entry = new PlayerListEntry(uuid, png);
+					entry = new PlayerListEntry(profile, png);
 					break;
 				case UPDATE_DISPLAY_NAME:
 					Message disp = null;
@@ -79,9 +86,9 @@ public class ServerPlayerListEntryPacket implements Packet {
 						disp = Message.fromString(in.readString());
 					}
 
-					entry = new PlayerListEntry(uuid, disp);
+					entry = new PlayerListEntry(profile, disp);
 				case REMOVE_PLAYER:
-					entry = new PlayerListEntry(uuid);
+					entry = new PlayerListEntry(profile);
 					break;
 			}
 
@@ -94,10 +101,10 @@ public class ServerPlayerListEntryPacket implements Packet {
 		out.writeVarInt(MagicValues.value(Integer.class, this.action));
 		out.writeVarInt(this.entries.length);
 		for(PlayerListEntry entry : this.entries) {
-			out.writeString(entry.getUUID().toString());
+			out.writeUUID(entry.getProfile().getId());
 			switch(this.action) {
 				case ADD_PLAYER:
-					out.writeString(entry.getName());
+					out.writeString(entry.getProfile().getName());
 					out.writeVarInt(entry.getProperties().length);
 					for(Property property : entry.getProperties()) {
 						out.writeString(property.getName());

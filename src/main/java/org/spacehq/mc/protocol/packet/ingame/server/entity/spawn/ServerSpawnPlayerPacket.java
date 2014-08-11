@@ -76,7 +76,7 @@ public class ServerSpawnPlayerPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
-		this.uuid = UUID.fromString(in.readString());
+		this.uuid = in.readUUID();
 		this.x = in.readInt() / 32D;
 		this.y = in.readInt() / 32D;
 		this.z = in.readInt() / 32D;
@@ -89,7 +89,7 @@ public class ServerSpawnPlayerPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeString(this.uuid.toString());
+		out.writeUUID(this.uuid);
 		out.writeInt((int) (this.x * 32));
 		out.writeInt((int) (this.y * 32));
 		out.writeInt((int) (this.z * 32));

@@ -24,12 +24,12 @@ public class ClientSpectatePacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.target = UUID.fromString(in.readString());
+		this.target = in.readUUID();
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeString(this.target.toString());
+		out.writeUUID(this.target);
 	}
 
 	@Override

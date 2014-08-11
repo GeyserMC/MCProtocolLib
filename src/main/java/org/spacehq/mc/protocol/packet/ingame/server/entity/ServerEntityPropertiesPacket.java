@@ -48,7 +48,7 @@ public class ServerEntityPropertiesPacket implements Packet {
 			List<AttributeModifier> modifiers = new ArrayList<AttributeModifier>();
 			int len = in.readVarInt();
 			for(int ind = 0; ind < len; ind++) {
-				modifiers.add(new AttributeModifier(MagicValues.key(ModifierType.class, new UUID(in.readLong(), in.readLong())), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
+				modifiers.add(new AttributeModifier(MagicValues.key(ModifierType.class, in.readUUID()), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
 			}
 
 			this.attributes.add(new Attribute(MagicValues.key(AttributeType.class, key), value, modifiers));
@@ -65,8 +65,7 @@ public class ServerEntityPropertiesPacket implements Packet {
 			out.writeShort(attribute.getModifiers().size());
 			for(AttributeModifier modifier : attribute.getModifiers()) {
 				UUID uuid = MagicValues.value(UUID.class, modifier.getType());
-				out.writeLong(uuid.getMostSignificantBits());
-				out.writeLong(uuid.getLeastSignificantBits());
+				out.writeUUID(uuid);
 				out.writeDouble(modifier.getAmount());
 				out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));
 			}

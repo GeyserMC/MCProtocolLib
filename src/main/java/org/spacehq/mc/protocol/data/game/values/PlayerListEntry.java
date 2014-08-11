@@ -1,54 +1,47 @@
 package org.spacehq.mc.protocol.data.game.values;
 
+import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.properties.Property;
 import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
 import org.spacehq.mc.protocol.data.message.Message;
 
-import java.util.UUID;
-
 public class PlayerListEntry {
-	private UUID uuid;
+	private GameProfile profile;
 
-	private String name;
 	private Property properties[];
 	private GameMode gameMode;
 	private int ping;
 	private Message displayName;
 
-	public PlayerListEntry(UUID uuid, String name, Property properties[], GameMode gameMode, int ping, Message displayName) {
-		this.uuid = uuid;
-		this.name = name;
+	public PlayerListEntry(GameProfile profile, Property properties[], GameMode gameMode, int ping, Message displayName) {
+		this.profile = profile;
 		this.properties = properties;
 		this.gameMode = gameMode;
 		this.ping = ping;
 		this.displayName = displayName;
 	}
 
-	public PlayerListEntry(UUID uuid, GameMode gameMode) {
-		this.uuid = uuid;
+	public PlayerListEntry(GameProfile profile, GameMode gameMode) {
+		this.profile = profile;
 		this.gameMode = gameMode;
 	}
 
-	public PlayerListEntry(UUID uuid, int ping) {
-		this.uuid = uuid;
+	public PlayerListEntry(GameProfile profile, int ping) {
+		this.profile = profile;
 		this.ping = ping;
 	}
 
-	public PlayerListEntry(UUID uuid, Message displayName) {
-		this.uuid = uuid;
+	public PlayerListEntry(GameProfile profile, Message displayName) {
+		this.profile = profile;
 		this.displayName = displayName;
 	}
 
-	public PlayerListEntry(UUID uuid) {
-		this.uuid = uuid;
+	public PlayerListEntry(GameProfile profile) {
+		this.profile = profile;
 	}
 
-	public UUID getUUID() {
-		return this.uuid;
-	}
-
-	public String getName() {
-		return this.name;
+	public GameProfile getProfile() {
+		return this.profile;
 	}
 
 	public Property[] getProperties() {
