@@ -39,15 +39,18 @@ public class EncryptionRequestPacket implements Packet {
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.serverId = in.readString();
-		this.publicKey = CryptUtil.decodePublicKey(in.readPrefixedBytes());
-		this.verifyToken = in.readPrefixedBytes();
+		this.publicKey = CryptUtil.decodePublicKey(in.readBytes(in.readVarInt()));
+		this.verifyToken = in.readBytes(in.readVarInt());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.serverId);
-		out.writePrefixedBytes(this.publicKey.getEncoded());
-		out.writePrefixedBytes(this.verifyToken);
+		byte encoded[] = this.publicKey.getEncoded();
+		out.writeVarInt(encoded.length);
+		out.writeBytes(encoded);
+		out.writeVarInt(this.verifyToken.length);
+		out.writeBytes(this.verifyToken);
 	}
 
 	@Override

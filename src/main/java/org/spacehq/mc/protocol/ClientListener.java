@@ -18,6 +18,7 @@ import org.spacehq.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import org.spacehq.mc.protocol.packet.login.client.LoginStartPacket;
 import org.spacehq.mc.protocol.packet.login.server.EncryptionRequestPacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginDisconnectPacket;
+import org.spacehq.mc.protocol.packet.login.server.LoginSetCompressionPacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginSuccessPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusPingPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusQueryPacket;
@@ -68,6 +69,8 @@ public class ClientListener extends SessionAdapter {
 			} else if(event.getPacket() instanceof LoginDisconnectPacket) {
 				LoginDisconnectPacket packet = event.getPacket();
 				event.getSession().disconnect(packet.getReason().getFullText());
+			} else if(event.getPacket() instanceof LoginSetCompressionPacket) {
+				event.getSession().setCompressionThreshold(event.<ServerSetCompressionPacket>getPacket().getThreshold());
 			}
 		} else if(protocol.getMode() == ProtocolMode.STATUS) {
 			if(event.getPacket() instanceof StatusResponsePacket) {

@@ -24,6 +24,7 @@ import org.spacehq.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import org.spacehq.mc.protocol.packet.login.client.LoginStartPacket;
 import org.spacehq.mc.protocol.packet.login.server.EncryptionRequestPacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginDisconnectPacket;
+import org.spacehq.mc.protocol.packet.login.server.LoginSetCompressionPacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginSuccessPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusPingPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusQueryPacket;
@@ -193,6 +194,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerIncoming(0, LoginDisconnectPacket.class);
 		this.registerIncoming(1, EncryptionRequestPacket.class);
 		this.registerIncoming(2, LoginSuccessPacket.class);
+		this.registerIncoming(3, LoginSetCompressionPacket.class);
 
 		this.registerOutgoing(0, LoginStartPacket.class);
 		this.registerOutgoing(1, EncryptionResponsePacket.class);
@@ -205,6 +207,7 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.registerOutgoing(0, LoginDisconnectPacket.class);
 		this.registerOutgoing(1, EncryptionRequestPacket.class);
 		this.registerOutgoing(2, LoginSuccessPacket.class);
+		this.registerOutgoing(3, LoginSetCompressionPacket.class);
 	}
 
 	private void initClientGame(Session session) {

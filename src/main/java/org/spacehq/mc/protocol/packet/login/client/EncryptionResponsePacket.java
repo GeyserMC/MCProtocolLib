@@ -34,14 +34,16 @@ public class EncryptionResponsePacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.sharedKey = in.readPrefixedBytes();
-		this.verifyToken = in.readPrefixedBytes();
+		this.sharedKey = in.readBytes(in.readVarInt());
+		this.verifyToken = in.readBytes(in.readVarInt());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writePrefixedBytes(this.sharedKey);
-		out.writePrefixedBytes(this.verifyToken);
+		out.writeVarInt(this.sharedKey.length);
+		out.writeBytes(this.sharedKey);
+		out.writeVarInt(this.verifyToken.length);
+		out.writeBytes(this.verifyToken);
 	}
 
 	@Override
