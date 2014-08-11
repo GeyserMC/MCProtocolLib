@@ -1,6 +1,7 @@
 package org.spacehq.packetlib.io;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * An interface for writing network data.
@@ -119,6 +120,14 @@ public interface NetOutput {
 	 * @throws java.io.IOException If an I/O error occurs.
 	 */
 	public void writeString(String s) throws IOException;
+
+	/**
+	 * Writes a UUID.
+	 *
+	 * @param uuid UUID to write.
+	 * @throws java.io.IOException If an I/O error occurs.
+	 */
+	public void writeUUID(UUID uuid) throws IOException;
 
 	/**
 	 * Flushes the output.

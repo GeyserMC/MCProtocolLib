@@ -1,6 +1,7 @@
 package org.spacehq.packetlib.io;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * An interface for reading network data.
@@ -147,6 +148,14 @@ public interface NetInput {
 	 * @throws java.io.IOException If an I/O error occurs.
 	 */
 	public String readString() throws IOException;
+
+	/**
+	 * Reads the next UUID.
+	 *
+	 * @return The next UUID.
+	 * @throws java.io.IOException If an I/O error occurs.
+	 */
+	public UUID readUUID() throws IOException;
 
 	/**
 	 * Gets the number of available bytes.

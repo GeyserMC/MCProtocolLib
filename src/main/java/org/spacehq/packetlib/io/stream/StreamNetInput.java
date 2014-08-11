@@ -5,6 +5,7 @@ import org.spacehq.packetlib.io.NetInput;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 /**
  * A NetInput implementation using an InputStream as a backend.
@@ -152,6 +153,11 @@ public class StreamNetInput implements NetInput {
 		int length = this.readVarInt();
 		byte bytes[] = this.readBytes(length);
 		return new String(bytes, "UTF-8");
+	}
+
+	@Override
+	public UUID readUUID() throws IOException {
+		return new UUID(this.readLong(), this.readLong());
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import org.spacehq.packetlib.io.NetOutput;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * A NetOutput implementation using a ByteBuf as a backend.
@@ -105,6 +106,12 @@ public class ByteBufNetOutput implements NetOutput {
 			this.writeVarInt(bytes.length);
 			this.writeBytes(bytes);
 		}
+	}
+
+	@Override
+	public void writeUUID(UUID uuid) throws IOException {
+		this.writeLong(uuid.getMostSignificantBits());
+		this.writeLong(uuid.getLeastSignificantBits());
 	}
 
 	@Override

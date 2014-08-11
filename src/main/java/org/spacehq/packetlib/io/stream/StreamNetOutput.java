@@ -4,6 +4,7 @@ import org.spacehq.packetlib.io.NetOutput;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.UUID;
 
 /**
  * A NetOutput implementation using an OutputStream as a backend.
@@ -117,6 +118,12 @@ public class StreamNetOutput implements NetOutput {
 			this.writeVarInt(bytes.length);
 			this.writeBytes(bytes);
 		}
+	}
+
+	@Override
+	public void writeUUID(UUID uuid) throws IOException {
+		this.writeLong(uuid.getMostSignificantBits());
+		this.writeLong(uuid.getLeastSignificantBits());
 	}
 
 	@Override

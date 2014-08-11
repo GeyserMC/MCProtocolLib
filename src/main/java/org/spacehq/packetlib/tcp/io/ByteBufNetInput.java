@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import org.spacehq.packetlib.io.NetInput;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * A NetInput implementation using a ByteBuf as a backend.
@@ -138,6 +139,11 @@ public class ByteBufNetInput implements NetInput {
 		int length = this.readVarInt();
 		byte bytes[] = this.readBytes(length);
 		return new String(bytes, "UTF-8");
+	}
+
+	@Override
+	public UUID readUUID() throws IOException {
+		return new UUID(this.readLong(), this.readLong());
 	}
 
 	@Override
