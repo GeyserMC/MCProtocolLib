@@ -9,11 +9,11 @@ import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerSetCompressionPacket;
 import org.spacehq.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import org.spacehq.mc.protocol.packet.login.client.LoginStartPacket;
 import org.spacehq.mc.protocol.packet.login.server.EncryptionRequestPacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginDisconnectPacket;
+import org.spacehq.mc.protocol.packet.login.server.LoginSetCompressionPacket;
 import org.spacehq.mc.protocol.packet.login.server.LoginSuccessPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusPingPacket;
 import org.spacehq.mc.protocol.packet.status.client.StatusQueryPacket;
@@ -74,7 +74,6 @@ public class ServerListener extends SessionAdapter {
 		}
 
 		if(protocol.getMode() == ProtocolMode.LOGIN) {
-			// TODO: send LoginSetCompressionPacket somewhere
 			if(event.getPacket() instanceof LoginStartPacket) {
 				this.username = event.<LoginStartPacket>getPacket().getUsername();
 				boolean verify = event.getSession().hasFlag(ProtocolConstants.VERIFY_USERS_KEY) ? event.getSession().<Boolean>getFlag(ProtocolConstants.VERIFY_USERS_KEY) : true;
@@ -82,12 +81,12 @@ public class ServerListener extends SessionAdapter {
 					event.getSession().send(new EncryptionRequestPacket(this.serverId, pair.getPublic(), this.verifyToken));
 				} else {
 					GameProfile profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes()), this.username);
+					int threshold = event.getSession().getFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD);
+					event.getSession().send(new LoginSetCompressionPacket(threshold));
+					event.getSession().setCompressionThreshold(threshold);
 					event.getSession().send(new LoginSuccessPacket(profile));
 					event.getSession().setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, event.getSession());
-					int threshold = event.getSession().getFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD);
-					event.getSession().send(new ServerSetCompressionPacket(threshold));
-					event.getSession().setCompressionThreshold(threshold);
 					ServerLoginHandler handler = event.getSession().getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(event.getSession());
@@ -160,12 +159,12 @@ public class ServerListener extends SessionAdapter {
 				SessionService service = new SessionService();
 				GameProfile profile = service.hasJoinedServer(new GameProfile((UUID) null, username), serverHash);
 				if(profile != null) {
+					int threshold = this.session.getFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD);
+					this.session.send(new LoginSetCompressionPacket(threshold));
+					this.session.setCompressionThreshold(threshold);
 					this.session.send(new LoginSuccessPacket(profile));
 					this.session.setFlag(ProtocolConstants.PROFILE_KEY, profile);
 					protocol.setMode(ProtocolMode.GAME, false, this.session);
-					int threshold = this.session.getFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD);
-					this.session.send(new ServerSetCompressionPacket(threshold));
-					this.session.setCompressionThreshold(threshold);
 					ServerLoginHandler handler = this.session.getFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY);
 					if(handler != null) {
 						handler.loggedIn(this.session);
