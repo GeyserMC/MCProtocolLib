@@ -106,7 +106,7 @@ public class ServerChunkDataPacket implements Packet {
 		boolean fullChunk = in.readBoolean();
 		int chunkMask = in.readUnsignedShort();
 		byte data[] = in.readBytes(in.readVarInt());
-		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, fullChunk, false, data));
+		ParsedChunkData chunkData = NetUtil.dataToChunks(new NetworkChunkData(chunkMask, fullChunk, false, data), true);
 		this.chunks = chunkData.getChunks();
 		this.biomeData = chunkData.getBiomes();
 	}

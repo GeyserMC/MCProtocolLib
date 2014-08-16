@@ -176,7 +176,7 @@ public class NetUtil {
 		out.writeByte(127);
 	}
 
-	public static ParsedChunkData dataToChunks(NetworkChunkData data) {
+	public static ParsedChunkData dataToChunks(NetworkChunkData data, boolean checkForSky) {
 		Chunk chunks[] = new Chunk[16];
 		int pos = 0;
 		int expected = 0;
@@ -219,7 +219,7 @@ public class NetUtil {
 			if(pass == 0) {
 				// If we have more data than blocks and blocklight combined, there must be skylight data as well.
 				if(data.getData().length >= expected) {
-					sky = true;
+					sky = checkForSky;
 				}
 			}
 		}

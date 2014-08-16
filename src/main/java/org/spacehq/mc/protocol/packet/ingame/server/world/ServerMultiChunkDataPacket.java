@@ -100,7 +100,7 @@ public class ServerMultiChunkDataPacket implements Packet {
 
 		for(int column = 0; column < columns; column++) {
 			in.readBytes(data[column].getData());
-			ParsedChunkData chunkData = NetUtil.dataToChunks(data[column]);
+			ParsedChunkData chunkData = NetUtil.dataToChunks(data[column], false);
 			this.chunks[column] = chunkData.getChunks();
 			this.biomeData[column] = chunkData.getBiomes();
 		}
