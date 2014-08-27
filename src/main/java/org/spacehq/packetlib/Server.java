@@ -18,6 +18,8 @@ public class Server {
 	private int port;
 	private Class<? extends PacketProtocol> protocol;
 	private SessionFactory factory;
+	private int timeout = 30;
+	private TimeoutHandler timeoutHandler;
 	private ConnectionListener listener;
 	private List<Session> sessions = new ArrayList<Session>();
 
@@ -58,6 +60,42 @@ public class Server {
 	 */
 	public int getPort() {
 		return this.port;
+	}
+
+	/**
+	 * Gets the session timeout for this server in seconds.
+	 *
+	 * @return The client's session timeout.
+	 */
+	public int getTimeout() {
+		return this.timeout;
+	}
+
+	/**
+	 * Sets the session timeout for this server in seconds. Note: This will only be applied to sessions created after the timeout is set.
+	 *
+	 * @param timeout Timeout to set in seconds.
+	 */
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	/**
+	 * Gets the session timeout handler for this server.
+	 *
+	 * @return The client's session timeout handler.
+	 */
+	public TimeoutHandler getTimeoutHandler() {
+		return this.timeoutHandler;
+	}
+
+	/**
+	 * Sets the session timeout handler for this server. Note: This will only be applied to sessions created after the timeout is set.
+	 *
+	 * @param timeout Timeout handler to set.
+	 */
+	public void setTimeoutHandler(TimeoutHandler timeout) {
+		this.timeoutHandler = timeout;
 	}
 
 	/**

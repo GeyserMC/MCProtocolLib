@@ -11,6 +11,8 @@ public class Client {
 	private int port;
 	private PacketProtocol protocol;
 	private Session session;
+	private int timeout = 30;
+	private TimeoutHandler timeoutHandler;
 
 	public Client(String host, int port, PacketProtocol protocol, SessionFactory factory) {
 		this.host = host;
@@ -53,6 +55,42 @@ public class Client {
 	 */
 	public Session getSession() {
 		return this.session;
+	}
+
+	/**
+	 * Gets the session timeout for this client in seconds.
+	 *
+	 * @return The client's session timeout.
+	 */
+	public int getTimeout() {
+		return this.timeout;
+	}
+
+	/**
+	 * Sets the session timeout for this client in seconds. Note: This will only be applied to sessions created after the timeout is set.
+	 *
+	 * @param timeout Timeout to set in seconds.
+	 */
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	/**
+	 * Gets the session timeout handler for this client.
+	 *
+	 * @return The client's session timeout handler.
+	 */
+	public TimeoutHandler getTimeoutHandler() {
+		return this.timeoutHandler;
+	}
+
+	/**
+	 * Sets the session timeout handler for this client. Note: This will only be applied to sessions created after the timeout is set.
+	 *
+	 * @param timeout Timeout handler to set.
+	 */
+	public void setTimeoutHandler(TimeoutHandler timeout) {
+		this.timeoutHandler = timeout;
 	}
 
 }

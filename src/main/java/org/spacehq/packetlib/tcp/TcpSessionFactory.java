@@ -7,7 +7,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.spacehq.packetlib.*;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
@@ -45,7 +44,7 @@ public class TcpSessionFactory implements SessionFactory {
 				ch.config().setOption(ChannelOption.IP_TOS, 0x18);
 				ch.config().setOption(ChannelOption.TCP_NODELAY, false);
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast("timer", new ReadTimeoutHandler(30));
+				pipeline.addLast("timer", new TcpTimeoutHandler(session, client.getTimeout(), client.getTimeoutHandler()));
 				if(session.getPacketProtocol().needsPacketEncryptor()) {
 					pipeline.addLast("encryption", new TcpPacketEncryptor(session));
 				}
@@ -74,7 +73,7 @@ public class TcpSessionFactory implements SessionFactory {
 				ch.config().setOption(ChannelOption.IP_TOS, 0x18);
 				ch.config().setOption(ChannelOption.TCP_NODELAY, false);
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast("timer", new ReadTimeoutHandler(30));
+				pipeline.addLast("timer", new TcpTimeoutHandler(session, server.getTimeout(), server.getTimeoutHandler()));
 				if(session.getPacketProtocol().needsPacketEncryptor()) {
 					pipeline.addLast("encryption", new TcpPacketEncryptor(session));
 				}
