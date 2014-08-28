@@ -126,6 +126,48 @@ public interface Session {
 	public void setCompressionThreshold(int threshold);
 
 	/**
+	 * Gets the read timeout for this session in seconds.
+	 *
+	 * @return The session's read timeout.
+	 */
+	public int getReadTimeout();
+
+	/**
+	 * Sets the read timeout for this session in seconds.
+	 *
+	 * @param timeout Read timeout to set in seconds.
+	 */
+	public void setReadTimeout(int timeout);
+
+	/**
+	 * Gets the write timeout for this session in seconds.
+	 *
+	 * @return The session's write timeout.
+	 */
+	public int getWriteTimeout();
+
+	/**
+	 * Sets the write timeout for this session in seconds.
+	 *
+	 * @param timeout Write timeout to set in seconds.
+	 */
+	public void setWriteTimeout(int timeout);
+
+	/**
+	 * Gets the timeout handler for this session.
+	 *
+	 * @return The session's timeout handler.
+	 */
+	public TimeoutHandler getTimeoutHandler();
+
+	/**
+	 * Sets the timeout handler for this session.
+	 *
+	 * @param timeout Timeout handler to set.
+	 */
+	public void setTimeoutHandler(TimeoutHandler timeout);
+
+	/**
 	 * Returns true if the session is connected.
 	 *
 	 * @return True if the session is connected.

@@ -36,7 +36,7 @@ public class TcpSessionFactory implements SessionFactory {
 			bootstrap.channel(NioSocketChannel.class);
 		}
 
-		final TcpSession session = new TcpSession(client.getHost(), client.getPort(), client.getPacketProtocol(), group, bootstrap);
+		final TcpSession session = new TcpSession(client.getHost(), client.getPort(), client.getPacketProtocol(), group, bootstrap, client.getConnectTimeoutHandler());
 		bootstrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			public void initChannel(Channel ch) throws Exception {
@@ -44,7 +44,8 @@ public class TcpSessionFactory implements SessionFactory {
 				ch.config().setOption(ChannelOption.IP_TOS, 0x18);
 				ch.config().setOption(ChannelOption.TCP_NODELAY, false);
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast("timer", new TcpTimeoutHandler(session, client.getTimeout(), client.getTimeoutHandler()));
+				session.refreshReadTimeoutHandler(ch);
+				session.refreshWriteTimeoutHandler(ch);
 				if(session.getPacketProtocol().needsPacketEncryptor()) {
 					pipeline.addLast("encryption", new TcpPacketEncryptor(session));
 				}
@@ -56,7 +57,7 @@ public class TcpSessionFactory implements SessionFactory {
 				pipeline.addLast("codec", new TcpPacketCodec(session));
 				pipeline.addLast("manager", session);
 			}
-		}).group(group).remoteAddress(client.getHost(), client.getPort());
+		}).group(group).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, client.getConnectTimeout() * 1000).remoteAddress(client.getHost(), client.getPort());
 		return session;
 	}
 
@@ -68,12 +69,13 @@ public class TcpSessionFactory implements SessionFactory {
 			public void initChannel(Channel ch) throws Exception {
 				InetSocketAddress address = (InetSocketAddress) ch.remoteAddress();
 				PacketProtocol protocol = server.createPacketProtocol();
-				TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, null, null, server);
+				TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, null, null, server, server.getConnectTimeoutHandler());
 				session.getPacketProtocol().newServerSession(server, session);
 				ch.config().setOption(ChannelOption.IP_TOS, 0x18);
 				ch.config().setOption(ChannelOption.TCP_NODELAY, false);
 				ChannelPipeline pipeline = ch.pipeline();
-				pipeline.addLast("timer", new TcpTimeoutHandler(session, server.getTimeout(), server.getTimeoutHandler()));
+				session.refreshReadTimeoutHandler(ch);
+				session.refreshWriteTimeoutHandler(ch);
 				if(session.getPacketProtocol().needsPacketEncryptor()) {
 					pipeline.addLast("encryption", new TcpPacketEncryptor(session));
 				}
@@ -86,7 +88,7 @@ public class TcpSessionFactory implements SessionFactory {
 				pipeline.addLast("manager", session);
 				server.addSession(session);
 			}
-		}).group(group).localAddress(server.getHost(), server.getPort()).bind().syncUninterruptibly().channel());
+		}).group(group).localAddress(server.getHost(), server.getPort()).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, server.getConnectTimeout() * 1000).bind().syncUninterruptibly().channel());
 	}
 
 }

@@ -63,39 +63,39 @@ public class Server {
 	}
 
 	/**
-	 * Gets the session timeout for this server in seconds.
+	 * Gets the connect timeout for this server in seconds.
 	 *
-	 * @return The client's session timeout.
+	 * @return The client's connect timeout.
 	 */
-	public int getTimeout() {
+	public int getConnectTimeout() {
 		return this.timeout;
 	}
 
 	/**
-	 * Sets the session timeout for this server in seconds. Note: This will only be applied to sessions created after the timeout is set.
+	 * Sets the connect timeout for this server in seconds.
 	 *
-	 * @param timeout Timeout to set in seconds.
+	 * @param timeout Connect timeout to set in seconds.
 	 */
-	public void setTimeout(int timeout) {
+	public void setConnectTimeout(int timeout) {
 		this.timeout = timeout;
 	}
 
 	/**
-	 * Gets the session timeout handler for this server.
+	 * Gets the connect timeout handler for this server.
 	 *
-	 * @return The client's session timeout handler.
+	 * @return The client's connect timeout handler.
 	 */
-	public TimeoutHandler getTimeoutHandler() {
+	public TimeoutHandler getConnectTimeoutHandler() {
 		return this.timeoutHandler;
 	}
 
 	/**
-	 * Sets the session timeout handler for this server. Note: This will only be applied to sessions created after the timeout is set.
+	 * Sets the connect timeout handler for this server.
 	 *
-	 * @param timeout Timeout handler to set.
+	 * @param timeoutHandler Connect timeout handler to set.
 	 */
-	public void setTimeoutHandler(TimeoutHandler timeout) {
-		this.timeoutHandler = timeout;
+	public void setConnectTimeoutHandler(TimeoutHandler timeoutHandler) {
+		this.timeoutHandler = timeoutHandler;
 	}
 
 	/**

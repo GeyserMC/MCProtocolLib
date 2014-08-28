@@ -3,7 +3,12 @@ package org.spacehq.packetlib.tcp;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.TimeoutException;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.spacehq.packetlib.Session;
+import org.spacehq.packetlib.TimeoutHandler;
+import org.spacehq.packetlib.TimeoutType;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
@@ -24,17 +29,22 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	private boolean disconnected = false;
 	private boolean writing = false;
 	private int compressionThreshold = -1;
+	private int readTimeout = 30;
+	private int writeTimeout = 0;
+	private TimeoutHandler timeoutHandler = null;
+	private TimeoutHandler connectTimeoutHandler = null;
 	private List<Packet> packets = new ArrayList<Packet>();
 
 	private Map<String, Object> flags = new HashMap<String, Object>();
 	private List<SessionListener> listeners = new ArrayList<SessionListener>();
 
-	public TcpSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap) {
+	public TcpSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap, TimeoutHandler connectTimeoutHandler) {
 		this.host = host;
 		this.port = port;
 		this.protocol = protocol;
 		this.group = group;
 		this.bootstrap = bootstrap;
+		this.connectTimeoutHandler = connectTimeoutHandler;
 	}
 
 	@Override
@@ -128,7 +138,12 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	@Override
 	public void callEvent(SessionEvent event) {
 		for(SessionListener listener : this.listeners) {
-			event.call(listener);
+			try {
+				event.call(listener);
+			} catch(Throwable t) {
+				System.err.println("[WARNING] Throwable caught while firing event.");
+				t.printStackTrace();
+			}
 		}
 	}
 
@@ -149,6 +164,38 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 				this.channel.pipeline().remove("compression");
 			}
 		}
+	}
+
+	@Override
+	public int getReadTimeout() {
+		return this.readTimeout;
+	}
+
+	@Override
+	public void setReadTimeout(int timeout) {
+		this.readTimeout = timeout;
+		this.refreshReadTimeoutHandler();
+	}
+
+	@Override
+	public int getWriteTimeout() {
+		return this.readTimeout;
+	}
+
+	@Override
+	public void setWriteTimeout(int timeout) {
+		this.writeTimeout = timeout;
+		this.refreshWriteTimeoutHandler();
+	}
+
+	@Override
+	public TimeoutHandler getTimeoutHandler() {
+		return this.timeoutHandler;
+	}
+
+	@Override
+	public void setTimeoutHandler(TimeoutHandler timeoutHandler) {
+		this.timeoutHandler = timeoutHandler;
 	}
 
 	@Override
@@ -211,29 +258,66 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 			reason = "Connection closed.";
 		}
 
-		try {
-			if(this.channel != null) {
-				if(this.channel.isOpen()) {
-					this.callEvent(new DisconnectingEvent(this, reason));
-				}
-
-				this.channel.close().syncUninterruptibly();
+		if(this.channel != null) {
+			if(this.channel.isOpen()) {
+				this.callEvent(new DisconnectingEvent(this, reason));
 			}
 
-			this.callEvent(new DisconnectedEvent(this, reason));
-		} catch(Throwable t) {
-			System.err.println("[WARNING] Throwable caught while firing disconnect events.");
-			t.printStackTrace();
+			try {
+				this.channel.close().syncUninterruptibly();
+			} catch(Throwable t) {
+			}
 		}
 
+		this.callEvent(new DisconnectedEvent(this, reason));
 		if(this.group != null) {
 			try {
 				this.group.shutdownGracefully();
-			} catch(Exception e) {
+			} catch(Throwable t) {
 			}
 		}
 
 		this.channel = null;
+	}
+
+	protected void refreshReadTimeoutHandler() {
+		this.refreshReadTimeoutHandler(this.channel);
+	}
+
+	protected void refreshReadTimeoutHandler(Channel channel) {
+		if(channel != null) {
+			if(this.readTimeout <= 0) {
+				if(channel.pipeline().get("readTimeout") != null) {
+					channel.pipeline().remove("readTimeout");
+				}
+			} else {
+				if(channel.pipeline().get("readTimeout") == null) {
+					channel.pipeline().addFirst("readTimeout", new ReadTimeoutHandler(this.readTimeout));
+				} else {
+					channel.pipeline().replace("readTimeout", "readTimeout", new ReadTimeoutHandler(this.readTimeout));
+				}
+			}
+		}
+	}
+
+	protected void refreshWriteTimeoutHandler() {
+		this.refreshWriteTimeoutHandler(this.channel);
+	}
+
+	protected void refreshWriteTimeoutHandler(Channel channel) {
+		if(channel != null) {
+			if(this.writeTimeout <= 0) {
+				if(channel.pipeline().get("writeTimeout") != null) {
+					channel.pipeline().remove("writeTimeout");
+				}
+			} else {
+				if(channel.pipeline().get("writeTimeout") == null) {
+					channel.pipeline().addFirst("writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
+				} else {
+					channel.pipeline().replace("writeTimeout", "writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
+				}
+			}
+		}
 	}
 
 	@Override
@@ -258,7 +342,17 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		this.writing = false;
 		if(!this.disconnected) {
-			if(cause instanceof ReadTimeoutException) {
+			if(cause instanceof TimeoutException) {
+				if(this.timeoutHandler != null) {
+					this.timeoutHandler.onTimeout(this, cause instanceof ReadTimeoutException ? TimeoutType.READ : TimeoutType.WRITE);
+				}
+
+				this.disconnect("Connection timed out.");
+			} else if(cause instanceof ConnectTimeoutException) {
+				if(this.connectTimeoutHandler != null) {
+					this.connectTimeoutHandler.onTimeout(this, TimeoutType.CONNECT);
+				}
+
 				this.disconnect("Connection timed out.");
 			} else {
 				this.disconnect("Internal network exception: " + cause.toString());
