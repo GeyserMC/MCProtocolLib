@@ -129,6 +129,9 @@ public class NetUtil {
 				case POSITION:
 					value = new Position(in.readInt(), in.readInt(), in.readInt());
 					break;
+				case ROTATION:
+					value = new Rotation(in.readFloat(), in.readFloat(), in.readFloat());
+					break;
 				default:
 					throw new IOException("Unknown metadata type id: " + typeId);
 			}
@@ -168,6 +171,11 @@ public class NetUtil {
 					out.writeInt(pos.getY());
 					out.writeInt(pos.getZ());
 					break;
+				case ROTATION:
+					Rotation rot = (Rotation) meta.getValue();
+					out.writeFloat(rot.getPitch());
+					out.writeFloat(rot.getYaw());
+					out.writeFloat(rot.getRoll());
 				default:
 					throw new IOException("Unmapped metadata type: " + meta.getType());
 			}

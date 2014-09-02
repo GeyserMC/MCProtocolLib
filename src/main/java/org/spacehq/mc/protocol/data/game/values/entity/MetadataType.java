@@ -8,6 +8,7 @@ public enum MetadataType {
 	FLOAT,
 	STRING,
 	ITEM,
-	POSITION;
+	POSITION,
+	ROTATION;
 
 }

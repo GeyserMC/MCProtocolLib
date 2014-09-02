@@ -61,6 +61,7 @@ public class MagicValues {
 		register(MetadataType.STRING, 4);
 		register(MetadataType.ITEM, 5);
 		register(MetadataType.POSITION, 6);
+		register(MetadataType.ROTATION, 7);
 
 		register(HandshakeIntent.STATUS, 1);
 		register(HandshakeIntent.LOGIN, 2);
