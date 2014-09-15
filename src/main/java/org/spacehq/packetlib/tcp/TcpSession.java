@@ -63,7 +63,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 
 		final AtomicBoolean calledTimeout = new AtomicBoolean(false);
 		try {
-			this.bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, this.container.getConnectTimeout());
+			this.bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, this.container.getConnectTimeout() * 1000);
 			ChannelFuture future = this.bootstrap.connect();
 			this.bootstrap = null;
 			if(wait) {
@@ -78,16 +78,16 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 					@Override
 					public void operationComplete(ChannelFuture channelFuture) throws Exception {
 						if(channelFuture.cause() instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
-							container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
 							calledTimeout.set(true);
+							container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
 						}
 					}
 				});
 			}
 		} catch(Exception e) {
 			if(e instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
-				container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
 				calledTimeout.set(true);
+				container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
 			} else {
 				System.err.println("Failed to establish connection.");
 				e.printStackTrace();
