@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * A server that listens on a given host and port.
  */
-public class Server {
+public class Server implements ConnectTimeoutHandlerContainer {
 
 	private String host;
 	private int port;

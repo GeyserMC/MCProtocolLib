@@ -4,7 +4,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 import org.spacehq.packetlib.Server;
-import org.spacehq.packetlib.TimeoutHandler;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
 import java.util.Map;
@@ -13,8 +12,8 @@ public class TcpServerSession extends TcpSession {
 
 	private Server server;
 
-	public TcpServerSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap, Server server, TimeoutHandler connectTimeoutHandler) {
-		super(host, port, protocol, group, bootstrap, connectTimeoutHandler);
+	public TcpServerSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap, Server server) {
+		super(host, port, protocol, group, bootstrap, server);
 		this.server = server;
 	}
 

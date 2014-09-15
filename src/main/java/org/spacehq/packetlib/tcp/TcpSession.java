@@ -6,9 +6,7 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.TimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import org.spacehq.packetlib.Session;
-import org.spacehq.packetlib.TimeoutHandler;
-import org.spacehq.packetlib.TimeoutType;
+import org.spacehq.packetlib.*;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
@@ -33,19 +31,19 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	private int readTimeout = 30;
 	private int writeTimeout = 0;
 	private TimeoutHandler timeoutHandler = null;
-	private TimeoutHandler connectTimeoutHandler = null;
+	private ConnectTimeoutHandlerContainer container;
 	private List<Packet> packets = new ArrayList<Packet>();
 
 	private Map<String, Object> flags = new HashMap<String, Object>();
 	private List<SessionListener> listeners = new ArrayList<SessionListener>();
 
-	public TcpSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap, TimeoutHandler connectTimeoutHandler) {
+	public TcpSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap, ConnectTimeoutHandlerContainer container) {
 		this.host = host;
 		this.port = port;
 		this.protocol = protocol;
 		this.group = group;
 		this.bootstrap = bootstrap;
-		this.connectTimeoutHandler = connectTimeoutHandler;
+		this.container = container;
 	}
 
 	@Override
@@ -65,6 +63,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 
 		final AtomicBoolean calledTimeout = new AtomicBoolean(false);
 		try {
+			this.bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, this.container.getConnectTimeout());
 			ChannelFuture future = this.bootstrap.connect();
 			this.bootstrap = null;
 			if(wait) {
@@ -78,16 +77,16 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 				future.addListener(new ChannelFutureListener() {
 					@Override
 					public void operationComplete(ChannelFuture channelFuture) throws Exception {
-						if(channelFuture.cause() instanceof ConnectTimeoutException && connectTimeoutHandler != null && !calledTimeout.get()) {
-							connectTimeoutHandler.onTimeout(TcpSession.this, TimeoutType.CONNECT);
+						if(channelFuture.cause() instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
+							container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
 							calledTimeout.set(true);
 						}
 					}
 				});
 			}
 		} catch(Exception e) {
-			if(e instanceof ConnectTimeoutException && connectTimeoutHandler != null && !calledTimeout.get()) {
-				connectTimeoutHandler.onTimeout(TcpSession.this, TimeoutType.CONNECT);
+			if(e instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
+				container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
 				calledTimeout.set(true);
 			} else {
 				System.err.println("Failed to establish connection.");
@@ -370,8 +369,8 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 
 				this.disconnect((cause instanceof ReadTimeoutException ? "Read" : "Write") + " timed out.");
 			} else if(cause instanceof ConnectTimeoutException) {
-				if(this.connectTimeoutHandler != null) {
-					this.connectTimeoutHandler.onTimeout(this, TimeoutType.CONNECT);
+				if(this.container.getConnectTimeoutHandler() != null) {
+					this.container.getConnectTimeoutHandler().onTimeout(this, TimeoutType.CONNECT);
 				}
 
 				this.disconnect("Connection timed out.");

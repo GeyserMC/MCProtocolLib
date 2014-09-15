@@ -5,7 +5,7 @@ import org.spacehq.packetlib.packet.PacketProtocol;
 /**
  * A client that may connect to a server.
  */
-public class Client {
+public class Client implements ConnectTimeoutHandlerContainer {
 
 	private String host;
 	private int port;

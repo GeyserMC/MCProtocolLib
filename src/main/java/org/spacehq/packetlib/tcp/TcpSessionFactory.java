@@ -37,7 +37,7 @@ public class TcpSessionFactory implements SessionFactory {
 		}
 
 		bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, client.getConnectTimeout() * 1000);
-		final TcpSession session = new TcpSession(client.getHost(), client.getPort(), client.getPacketProtocol(), group, bootstrap, client.getConnectTimeoutHandler());
+		final TcpSession session = new TcpSession(client.getHost(), client.getPort(), client.getPacketProtocol(), group, bootstrap, client);
 		bootstrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			public void initChannel(Channel ch) throws Exception {
@@ -70,7 +70,7 @@ public class TcpSessionFactory implements SessionFactory {
 			public void initChannel(Channel ch) throws Exception {
 				InetSocketAddress address = (InetSocketAddress) ch.remoteAddress();
 				PacketProtocol protocol = server.createPacketProtocol();
-				TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, null, null, server, server.getConnectTimeoutHandler());
+				TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, null, null, server);
 				session.getPacketProtocol().newServerSession(server, session);
 				ch.config().setOption(ChannelOption.IP_TOS, 0x18);
 				ch.config().setOption(ChannelOption.TCP_NODELAY, false);
