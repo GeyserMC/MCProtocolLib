@@ -356,7 +356,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 					this.timeoutHandler.onTimeout(this, cause instanceof ReadTimeoutException ? TimeoutType.READ : TimeoutType.WRITE);
 				}
 
-				this.disconnect("Connection timed out.");
+				this.disconnect((cause instanceof ReadTimeoutException ? "Read" : "Write") + " timed out.");
 			} else if(cause instanceof ConnectTimeoutException) {
 				if(this.connectTimeoutHandler != null) {
 					this.connectTimeoutHandler.onTimeout(this, TimeoutType.CONNECT);
