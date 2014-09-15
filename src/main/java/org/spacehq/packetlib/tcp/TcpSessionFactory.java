@@ -36,6 +36,7 @@ public class TcpSessionFactory implements SessionFactory {
 			bootstrap.channel(NioSocketChannel.class);
 		}
 
+		bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, client.getConnectTimeout() * 1000);
 		final TcpSession session = new TcpSession(client.getHost(), client.getPort(), client.getPacketProtocol(), group, bootstrap, client.getConnectTimeoutHandler());
 		bootstrap.handler(new ChannelInitializer<Channel>() {
 			@Override
@@ -57,14 +58,14 @@ public class TcpSessionFactory implements SessionFactory {
 				pipeline.addLast("codec", new TcpPacketCodec(session));
 				pipeline.addLast("manager", session);
 			}
-		}).group(group).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, client.getConnectTimeout() * 1000).remoteAddress(client.getHost(), client.getPort());
+		}).group(group).remoteAddress(client.getHost(), client.getPort());
 		return session;
 	}
 
 	@Override
 	public ConnectionListener createServerListener(final Server server) {
 		final EventLoopGroup group = new NioEventLoopGroup();
-		return new TcpConnectionListener(server.getHost(), server.getPort(), group, new ServerBootstrap().channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<Channel>() {
+		return new TcpConnectionListener(server.getHost(), server.getPort(), group, new ServerBootstrap().option(ChannelOption.CONNECT_TIMEOUT_MILLIS, server.getConnectTimeout() * 1000).channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<Channel>() {
 			@Override
 			public void initChannel(Channel ch) throws Exception {
 				InetSocketAddress address = (InetSocketAddress) ch.remoteAddress();
@@ -88,7 +89,7 @@ public class TcpSessionFactory implements SessionFactory {
 				pipeline.addLast("manager", session);
 				server.addSession(session);
 			}
-		}).group(group).localAddress(server.getHost(), server.getPort()).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, server.getConnectTimeout() * 1000).bind().syncUninterruptibly().channel());
+		}).group(group).localAddress(server.getHost(), server.getPort()).bind().syncUninterruptibly().channel());
 	}
 
 }
