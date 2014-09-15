@@ -58,7 +58,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 			if(!this.disconnected) {
 				return;
 			} else {
-				throw new IllegalStateException("Session disconnected.");
+				throw new IllegalStateException("Session has already been disconnected.");
 			}
 		}
 
