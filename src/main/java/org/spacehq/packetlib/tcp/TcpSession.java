@@ -63,24 +63,34 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 		}
 
 		ChannelFuture future = this.bootstrap.connect();
-		future.addListener(new ChannelFutureListener() {
-			@Override
-			public void operationComplete(ChannelFuture channelFuture) throws Exception {
-				if(channelFuture.cause() instanceof ConnectTimeoutException && connectTimeoutHandler != null) {
-					connectTimeoutHandler.onTimeout(TcpSession.this, TimeoutType.CONNECT);
-				}
-			}
-		});
-
 		this.bootstrap = null;
 		if(wait) {
-			future.syncUninterruptibly();
+			try {
+				future.syncUninterruptibly();
+			} catch(Exception e) {
+				if(e instanceof ConnectTimeoutException && connectTimeoutHandler != null) {
+					connectTimeoutHandler.onTimeout(TcpSession.this, TimeoutType.CONNECT);
+				} else {
+					System.err.println("Failed to establish connection.");
+					e.printStackTrace();
+				}
+			}
+
 			while(this.channel == null && !this.disconnected) {
 				try {
 					Thread.sleep(5);
 				} catch(InterruptedException e) {
 				}
 			}
+		} else {
+			future.addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture channelFuture) throws Exception {
+					if(channelFuture.cause() instanceof ConnectTimeoutException && connectTimeoutHandler != null) {
+						connectTimeoutHandler.onTimeout(TcpSession.this, TimeoutType.CONNECT);
+					}
+				}
+			});
 		}
 	}
 
