@@ -63,6 +63,15 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 		}
 
 		ChannelFuture future = this.bootstrap.connect();
+		future.addListener(new ChannelFutureListener() {
+			@Override
+			public void operationComplete(ChannelFuture channelFuture) throws Exception {
+				if(channelFuture.cause() instanceof ConnectTimeoutException && connectTimeoutHandler != null) {
+					connectTimeoutHandler.onTimeout(TcpSession.this, TimeoutType.CONNECT);
+				}
+			}
+		});
+
 		this.bootstrap = null;
 		if(wait) {
 			future.syncUninterruptibly();
