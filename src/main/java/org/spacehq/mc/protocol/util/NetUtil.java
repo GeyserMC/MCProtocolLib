@@ -10,6 +10,7 @@ import org.spacehq.packetlib.io.NetOutput;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -189,7 +190,7 @@ public class NetUtil {
 		int pos = 0;
 		int expected = 0;
 		boolean sky = false;
-		ShortBuffer buf = ByteBuffer.wrap(data.getData()).asShortBuffer();
+		ShortBuffer buf = ByteBuffer.wrap(data.getData()).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
 		// 0 = Calculate expected length and determine if the packet has skylight.
 		// 1 = Create chunks from mask and get blocks.
 		// 2 = Get block light.
@@ -268,10 +269,10 @@ public class NetUtil {
 					}
 
 					if(pass == 1) {
-						ShortArray3d blocks = chunk.getBlocks();
+						short blocks[] = chunk.getBlocks().getData();
 						buf.position(pos / 2);
-						buf.put(blocks.getData(), 0, blocks.getData().length);
-						pos += blocks.getData().length * 2;
+						buf.put(blocks, 0, blocks.length);
+						pos += blocks.length * 2;
 					}
 
 					if(pass == 2) {
@@ -291,7 +292,7 @@ public class NetUtil {
 
 			if(pass == 0) {
 				data = new byte[length];
-				buf = ByteBuffer.wrap(data).asShortBuffer();
+				buf = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
 			}
 		}
 
