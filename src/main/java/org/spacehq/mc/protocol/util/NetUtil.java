@@ -104,7 +104,7 @@ public class NetUtil {
 		List<EntityMetadata> ret = new ArrayList<EntityMetadata>();
 		byte b;
 		while((b = in.readByte()) != 127) {
-			int typeId = (b & 224) >> 5;
+			int typeId = b & >> 5;
 			MetadataType type = MagicValues.key(MetadataType.class, typeId);
 			int id = b & 31;
 			Object value = null;
@@ -145,7 +145,7 @@ public class NetUtil {
 
 	public static void writeEntityMetadata(NetOutput out, EntityMetadata[] metadata) throws IOException {
 		for(EntityMetadata meta : metadata) {
-			int id = (MagicValues.value(Integer.class, meta.getType()) << 5 | meta.getId() & 31) & 255;
+			int id = (MagicValues.value(Integer.class, meta.getType()) << 5 | meta.getId() & 31);
 			out.writeByte(id);
 			switch(meta.getType()) {
 				case BYTE:
