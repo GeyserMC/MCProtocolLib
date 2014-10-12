@@ -145,7 +145,7 @@ public class NetUtil {
 
 	public static void writeEntityMetadata(NetOutput out, EntityMetadata[] metadata) throws IOException {
 		for(EntityMetadata meta : metadata) {
-			int id = meta.getType().ordinal() << 5 | meta.getId() & 0x1F;
+			int id = MagicValues.value(Integer.class, meta.getType()) << 5 | meta.getId() & 0x1F;
 			out.writeByte(id);
 			switch(meta.getType()) {
 				case BYTE:
