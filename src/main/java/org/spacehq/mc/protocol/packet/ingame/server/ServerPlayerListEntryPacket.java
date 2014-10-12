@@ -51,8 +51,8 @@ public class ServerPlayerListEntryPacket implements Packet {
 			PlayerListEntry entry = null;
 			switch(this.action) {
 				case ADD_PLAYER:
-					Property properties[] = new Property[in.readVarInt()];
-					for(int index = 0; index < properties.length; index++) {
+					int properties = in.readVarInt();
+					for(int index = 0; index < properties; index++) {
 						String propertyName = in.readString();
 						String value = in.readString();
 						String signature = null;
@@ -60,7 +60,7 @@ public class ServerPlayerListEntryPacket implements Packet {
 							signature = in.readString();
 						}
 
-						properties[index] = new Property(propertyName, value, signature);
+						profile.getProperties().put(propertyName, new Property(propertyName, value, signature));
 					}
 
 					GameMode gameMode = MagicValues.key(GameMode.class, in.readVarInt());
@@ -70,7 +70,7 @@ public class ServerPlayerListEntryPacket implements Packet {
 						displayName = Message.fromString(in.readString());
 					}
 
-					entry = new PlayerListEntry(profile, properties, gameMode, ping, displayName);
+					entry = new PlayerListEntry(profile, gameMode, ping, displayName);
 					break;
 				case UPDATE_GAMEMODE:
 					GameMode mode = MagicValues.key(GameMode.class, in.readVarInt());
@@ -105,8 +105,8 @@ public class ServerPlayerListEntryPacket implements Packet {
 			switch(this.action) {
 				case ADD_PLAYER:
 					out.writeString(entry.getProfile().getName());
-					out.writeVarInt(entry.getProperties().length);
-					for(Property property : entry.getProperties()) {
+					out.writeVarInt(entry.getProfile().getProperties().size());
+					for(Property property : entry.getProfile().getProperties().values()) {
 						out.writeString(property.getName());
 						out.writeString(property.getValue());
 						out.writeBoolean(property.hasSignature());
