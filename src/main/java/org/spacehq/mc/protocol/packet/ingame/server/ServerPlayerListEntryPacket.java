@@ -117,12 +117,24 @@ public class ServerPlayerListEntryPacket implements Packet {
 
 					out.writeVarInt(MagicValues.value(Integer.class, entry.getGameMode()));
 					out.writeVarInt(entry.getPing());
+					out.writeBoolean(entry.getDisplayName() != null);
+					if(entry.getDisplayName() != null) {
+						out.writeString(entry.getDisplayName().toJsonString());
+					}
+
 					break;
 				case UPDATE_GAMEMODE:
 					out.writeVarInt(MagicValues.value(Integer.class, entry.getGameMode()));
 					break;
 				case UPDATE_LATENCY:
 					out.writeVarInt(entry.getPing());
+					break;
+				case UPDATE_DISPLAY_NAME:
+					out.writeBoolean(entry.getDisplayName() != null);
+					if(entry.getDisplayName() != null) {
+						out.writeString(entry.getDisplayName().toJsonString());
+					}
+
 					break;
 				case REMOVE_PLAYER:
 					break;
