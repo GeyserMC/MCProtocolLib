@@ -21,6 +21,7 @@ import org.spacehq.mc.protocol.packet.status.server.StatusPongPacket;
 import org.spacehq.mc.protocol.packet.status.server.StatusResponsePacket;
 import org.spacehq.mc.protocol.util.CryptUtil;
 import org.spacehq.packetlib.Session;
+import org.spacehq.packetlib.event.session.ConnectedEvent;
 import org.spacehq.packetlib.event.session.DisconnectingEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
 import org.spacehq.packetlib.event.session.SessionAdapter;
@@ -46,6 +47,11 @@ public class ServerListener extends SessionAdapter {
 
 	public ServerListener() {
 		new Random().nextBytes(this.verifyToken);
+	}
+
+	@Override
+	public void connected(ConnectedEvent event) {
+		event.getSession().setFlag(ProtocolConstants.PING_KEY, 0);
 	}
 
 	@Override
