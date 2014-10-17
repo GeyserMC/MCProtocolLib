@@ -104,7 +104,7 @@ public class NetUtil {
 		List<EntityMetadata> ret = new ArrayList<EntityMetadata>();
 		byte b;
 		while((b = in.readByte()) != 127) {
-			int typeId = b >> 5;
+			int typeId = (b & 0xE0) >> 5;
 			int id = b & 0x1F;
 			MetadataType type = MagicValues.key(MetadataType.class, typeId);
 			Object value = null;
