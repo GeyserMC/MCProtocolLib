@@ -20,7 +20,7 @@ public class MessageStyle implements Cloneable {
 	}
 
 	public boolean isDefault() {
-		return this.color == ChatColor.WHITE && this.formats.isEmpty() && this.click == null && this.hover == null && this.insertion == null;
+		return (this.color == ChatColor.WHITE && (this.parent == null || this.parent.getColor() == ChatColor.WHITE)) && this.formats.isEmpty() && (this.parent == null || this.parent.getFormats().isEmpty()) && this.click == null && this.hover == null && this.insertion == null;
 	}
 
 	public ChatColor getColor() {
