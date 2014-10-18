@@ -10,7 +10,7 @@ public class MessageStyle implements Cloneable {
 	private ClickEvent click;
 	private HoverEvent hover;
 	private String insertion;
-	private MessageStyle parent;
+	private MessageStyle parent = new MessageStyle();
 
 	public MessageStyle() {
 	}
@@ -20,7 +20,7 @@ public class MessageStyle implements Cloneable {
 	}
 
 	public boolean isDefault() {
-		return (this.color == ChatColor.WHITE && (this.parent == null || this.parent.getColor() == ChatColor.WHITE)) && this.formats.isEmpty() && (this.parent == null || this.parent.getFormats().isEmpty()) && this.click == null && this.hover == null && this.insertion == null;
+		return this.color == this.parent.getColor() && this.formatListsEqual(this.formats, this.parent.getFormats()) && this.click == null && this.hover == null && this.insertion == null;
 	}
 
 	public ChatColor getColor() {
@@ -44,7 +44,7 @@ public class MessageStyle implements Cloneable {
 	}
 
 	public MessageStyle getParent() {
-		return this.parent != null ? this.parent : new MessageStyle();
+		return this.parent;
 	}
 
 	public MessageStyle setColor(ChatColor color) {
@@ -88,6 +88,10 @@ public class MessageStyle implements Cloneable {
 	}
 
 	protected MessageStyle setParent(MessageStyle parent) {
+		if(parent == null) {
+			parent = new MessageStyle();
+		}
+
 		this.parent = parent;
 		return this;
 	}
@@ -99,7 +103,21 @@ public class MessageStyle implements Cloneable {
 
 	@Override
 	public MessageStyle clone() {
-		return (this.parent != null ? new MessageStyle(this.parent) : new MessageStyle()).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : this.click).setHoverEvent(this.hover != null ? this.hover.clone() : this.hover).setInsertion(this.insertion);
+		return new MessageStyle(this.parent).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : this.click).setHoverEvent(this.hover != null ? this.hover.clone() : this.hover).setInsertion(this.insertion);
+	}
+
+	private boolean formatListsEqual(List<ChatFormat> l1, List<ChatFormat> l2) {
+		if(l1.size() != l2.size()) {
+			return false;
+		}
+
+		for(ChatFormat format : l1) {
+			if(!l2.contains(format)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }
