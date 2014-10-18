@@ -12,13 +12,6 @@ public class MessageStyle implements Cloneable {
 	private String insertion;
 	private MessageStyle parent = new MessageStyle();
 
-	public MessageStyle() {
-	}
-
-	public MessageStyle(MessageStyle parent) {
-		this.parent = parent;
-	}
-
 	public boolean isDefault() {
 		return this.color == this.parent.getColor() && this.formatListsEqual(this.formats, this.parent.getFormats()) && this.click == null && this.hover == null && this.insertion == null;
 	}
@@ -103,7 +96,7 @@ public class MessageStyle implements Cloneable {
 
 	@Override
 	public MessageStyle clone() {
-		return new MessageStyle(this.parent).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : this.click).setHoverEvent(this.hover != null ? this.hover.clone() : this.hover).setInsertion(this.insertion);
+		return new MessageStyle().setParent(this.parent).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : this.click).setHoverEvent(this.hover != null ? this.hover.clone() : this.hover).setInsertion(this.insertion);
 	}
 
 	private boolean formatListsEqual(List<ChatFormat> l1, List<ChatFormat> l2) {
