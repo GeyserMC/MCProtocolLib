@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageStyle implements Cloneable {
+	public static final MessageStyle DEFAULT = new MessageStyle();
 
 	private ChatColor color = ChatColor.WHITE;
 	private List<ChatFormat> formats = new ArrayList<ChatFormat>();
 	private ClickEvent click;
 	private HoverEvent hover;
 	private String insertion;
-	private MessageStyle parent = new MessageStyle();
+	private MessageStyle parent = MessageStyle.DEFAULT;
 
 	public boolean isDefault() {
 		return this.color == this.parent.getColor() && this.formatListsEqual(this.formats, this.parent.getFormats()) && this.click == null && this.hover == null && this.insertion == null;
