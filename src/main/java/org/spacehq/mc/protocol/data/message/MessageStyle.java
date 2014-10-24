@@ -5,15 +5,17 @@ import java.util.List;
 
 public class MessageStyle implements Cloneable {
 
+	private static final MessageStyle DEFAULT = new MessageStyle();
+
 	private ChatColor color = ChatColor.WHITE;
 	private List<ChatFormat> formats = new ArrayList<ChatFormat>();
 	private ClickEvent click;
 	private HoverEvent hover;
 	private String insertion;
-	private MessageStyle parent = new MessageStyle();
+	private MessageStyle parent;
 
 	public boolean isDefault() {
-		return this.color == this.parent.getColor() && this.formatListsEqual(this.formats, this.parent.getFormats()) && this.click == null && this.hover == null && this.insertion == null;
+		return this.color == this.getParent().getColor() && this.formatListsEqual(this.formats, this.getParent().getFormats()) && this.click == null && this.hover == null && this.insertion == null;
 	}
 
 	public ChatColor getColor() {
@@ -37,7 +39,7 @@ public class MessageStyle implements Cloneable {
 	}
 
 	public MessageStyle getParent() {
-		return this.parent;
+		return this.parent != null ? this.parent : DEFAULT;
 	}
 
 	public MessageStyle setColor(ChatColor color) {
@@ -82,7 +84,7 @@ public class MessageStyle implements Cloneable {
 
 	protected MessageStyle setParent(MessageStyle parent) {
 		if(parent == null) {
-			parent = new MessageStyle();
+			parent = DEFAULT;
 		}
 
 		this.parent = parent;
@@ -96,7 +98,7 @@ public class MessageStyle implements Cloneable {
 
 	@Override
 	public MessageStyle clone() {
-		return new MessageStyle().setParent(this.parent).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : this.click).setHoverEvent(this.hover != null ? this.hover.clone() : this.hover).setInsertion(this.insertion);
+		return new MessageStyle().setParent(this.getParent()).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : null).setHoverEvent(this.hover != null ? this.hover.clone() : null).setInsertion(this.insertion);
 	}
 
 	private boolean formatListsEqual(List<ChatFormat> l1, List<ChatFormat> l2) {

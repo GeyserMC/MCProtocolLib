@@ -54,13 +54,13 @@ public abstract class Message implements Cloneable {
 
 	public Message removeExtra(Message message) {
 		this.extra.remove(message);
-		message.getStyle().setParent(new MessageStyle());
+		message.getStyle().setParent(null);
 		return this;
 	}
 
 	public Message clearExtra() {
 		for(Message msg : this.extra) {
-			msg.getStyle().setParent(new MessageStyle());
+			msg.getStyle().setParent(null);
 		}
 
 		this.extra.clear();
