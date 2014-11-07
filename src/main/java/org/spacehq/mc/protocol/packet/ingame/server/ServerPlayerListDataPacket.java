@@ -37,7 +37,7 @@ public class ServerPlayerListDataPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.header.toJsonString());
-		out.writeString(this.header.toJsonString());
+		out.writeString(this.footer.toJsonString());
 	}
 
 	@Override
