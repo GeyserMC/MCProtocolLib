@@ -199,7 +199,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 
 	@Override
 	public int getWriteTimeout() {
-		return this.readTimeout;
+		return this.writeTimeout;
 	}
 
 	@Override
