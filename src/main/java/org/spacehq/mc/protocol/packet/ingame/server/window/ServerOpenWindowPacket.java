@@ -14,23 +14,21 @@ public class ServerOpenWindowPacket implements Packet {
 	private WindowType type;
 	private String name;
 	private int slots;
-	private boolean useName;
 	private int ownerEntityId;
 
 	@SuppressWarnings("unused")
 	private ServerOpenWindowPacket() {
 	}
 
-	public ServerOpenWindowPacket(int windowId, WindowType type, String name, int slots, boolean useName) {
-		this(windowId, type, name, slots, useName, 0);
+	public ServerOpenWindowPacket(int windowId, WindowType type, String name, int slots) {
+		this(windowId, type, name, slots, 0);
 	}
 
-	public ServerOpenWindowPacket(int windowId, WindowType type, String name, int slots, boolean useName, int ownerEntityId) {
+	public ServerOpenWindowPacket(int windowId, WindowType type, String name, int slots, int ownerEntityId) {
 		this.windowId = windowId;
 		this.type = type;
 		this.name = name;
 		this.slots = slots;
-		this.useName = useName;
 		this.ownerEntityId = ownerEntityId;
 	}
 
@@ -50,10 +48,6 @@ public class ServerOpenWindowPacket implements Packet {
 		return this.slots;
 	}
 
-	public boolean getUseName() {
-		return this.useName;
-	}
-
 	public int getOwnerEntityId() {
 		return this.ownerEntityId;
 	}
@@ -64,7 +58,6 @@ public class ServerOpenWindowPacket implements Packet {
 		this.type = MagicValues.key(WindowType.class, in.readString());
 		this.name = in.readString();
 		this.slots = in.readUnsignedByte();
-		this.useName = in.readBoolean();
 		if(this.type == WindowType.HORSE) {
 			this.ownerEntityId = in.readInt();
 		}
@@ -76,7 +69,6 @@ public class ServerOpenWindowPacket implements Packet {
 		out.writeString(MagicValues.value(String.class, this.type));
 		out.writeString(this.name);
 		out.writeByte(this.slots);
-		out.writeBoolean(this.useName);
 		if(this.type == WindowType.HORSE) {
 			out.writeInt(this.ownerEntityId);
 		}

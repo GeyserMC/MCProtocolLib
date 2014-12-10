@@ -252,6 +252,7 @@ public class MagicValues {
 		register(MobType.OCELOT, 98);
 		register(MobType.IRON_GOLEM, 99);
 		register(MobType.HORSE, 100);
+		register(MobType.RABBIT, 101);
 		register(MobType.VILLAGER, 120);
 
 		register(ObjectType.BOAT, 1);
