@@ -32,13 +32,13 @@ public class ServerEntityRemoveEffectPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.entityId = in.readInt();
+		this.entityId = in.readVarInt();
 		this.effect = MagicValues.key(Effect.class, in.readByte());
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.entityId);
+		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.effect));
 	}
 
