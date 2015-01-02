@@ -55,7 +55,7 @@ public class ServerCombatPacket implements Packet {
 
 	@Override
 	public void read(NetInput in) throws IOException {
-		this.state = MagicValues.key(CombatState.class, in.readByte());
+		this.state = MagicValues.key(CombatState.class, in.readVarInt());
 		if(this.state == CombatState.END_COMBAT) {
 			this.duration = in.readVarInt();
 			this.entityId = in.readInt();
@@ -68,7 +68,7 @@ public class ServerCombatPacket implements Packet {
 
 	@Override
 	public void write(NetOutput out) throws IOException {
-		out.writeByte(MagicValues.value(Integer.class, this.state));
+		out.writeVarInt(MagicValues.value(Integer.class, this.state));
 		if(this.state == CombatState.END_COMBAT) {
 			out.writeVarInt(this.duration);
 			out.writeInt(this.entityId);
