@@ -150,7 +150,12 @@ public class Test {
 				if(event.getPacket() instanceof ServerJoinGamePacket) {
 					event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
 				} else if(event.getPacket() instanceof ServerChatPacket) {
-					System.out.println(event.<ServerChatPacket>getPacket().getMessage().getFullText());
+					Message message = event.<ServerChatPacket>getPacket().getMessage();
+					System.out.println("Received Message: " + message.getFullText());
+					if(message instanceof TranslationMessage) {
+						System.out.println("Received Translation Components: " + Arrays.toString(((TranslationMessage) message).getTranslationParams()));
+					}
+
 					event.getSession().disconnect("Finished");
 				}
 			}
