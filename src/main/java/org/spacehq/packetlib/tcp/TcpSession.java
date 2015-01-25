@@ -27,6 +27,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	private Channel channel;
 	private boolean disconnected = false;
 	private boolean writing = false;
+	private boolean exception = false;
 	private int compressionThreshold = -1;
 	private int readTimeout = 30;
 	private int writeTimeout = 0;
@@ -67,7 +68,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 			ChannelFuture future = this.bootstrap.connect();
 			this.bootstrap = null;
 			if(wait) {
-				while(this.channel == null && !this.disconnected) {
+				while(this.channel == null && !this.disconnected && !this.exception) {
 					try {
 						Thread.sleep(5);
 					} catch(InterruptedException e) {
@@ -244,7 +245,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 		});
 
 		if(packet.isPriority()) {
-			while(this.writing) {
+			while(this.writing && !this.exception) {
 				try {
 					Thread.sleep(2);
 				} catch(InterruptedException e) {
@@ -261,7 +262,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 
 		this.disconnected = true;
 		if(this.writing) {
-			while(this.writing) {
+			while(this.writing && !this.exception) {
 				try {
 					Thread.sleep(2);
 				} catch(InterruptedException e) {
@@ -361,6 +362,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		this.writing = false;
+		this.exception = true;
 		if(!this.disconnected) {
 			if(cause instanceof TimeoutException) {
 				if(this.timeoutHandler != null) {
@@ -394,7 +396,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 		@Override
 		public void run() {
 			try {
-				while(!disconnected) {
+				while(!disconnected && !exception) {
 					while(packets.size() > 0) {
 						callEvent(new PacketReceivedEvent(TcpSession.this, packets.remove(0)));
 					}
