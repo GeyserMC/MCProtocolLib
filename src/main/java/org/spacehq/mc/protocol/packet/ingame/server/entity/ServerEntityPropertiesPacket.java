@@ -58,11 +58,11 @@ public class ServerEntityPropertiesPacket implements Packet {
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
-		out.writeVarInt(this.attributes.size());
+		out.writeInt(this.attributes.size());
 		for(Attribute attribute : this.attributes) {
 			out.writeString(MagicValues.value(String.class, attribute.getType()));
 			out.writeDouble(attribute.getValue());
-			out.writeShort(attribute.getModifiers().size());
+			out.writeVarInt(attribute.getModifiers().size());
 			for(AttributeModifier modifier : attribute.getModifiers()) {
 				UUID uuid = MagicValues.value(UUID.class, modifier.getType());
 				out.writeUUID(uuid);
