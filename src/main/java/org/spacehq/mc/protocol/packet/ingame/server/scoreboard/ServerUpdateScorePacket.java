@@ -51,8 +51,8 @@ public class ServerUpdateScorePacket implements Packet {
 	public void read(NetInput in) throws IOException {
 		this.entry = in.readString();
 		this.action = MagicValues.key(ScoreboardAction.class, in.readByte());
+		this.objective = in.readString();
 		if(this.action == ScoreboardAction.ADD_OR_UPDATE) {
-			this.objective = in.readString();
 			this.value = in.readVarInt();
 		}
 	}
@@ -61,8 +61,8 @@ public class ServerUpdateScorePacket implements Packet {
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.entry);
 		out.writeByte(MagicValues.value(Integer.class, this.action));
+		out.writeString(this.objective);
 		if(this.action == ScoreboardAction.ADD_OR_UPDATE) {
-			out.writeString(this.objective);
 			out.writeVarInt(this.value);
 		}
 	}
