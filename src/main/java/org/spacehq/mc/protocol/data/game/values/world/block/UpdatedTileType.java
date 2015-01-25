@@ -6,6 +6,7 @@ public enum UpdatedTileType {
 	COMMAND_BLOCK,
 	BEACON,
 	SKULL,
-	FLOWER_POT;
+	FLOWER_POT,
+	BANNER;
 
 }

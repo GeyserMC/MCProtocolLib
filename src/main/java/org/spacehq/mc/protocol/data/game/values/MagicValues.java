@@ -33,9 +33,9 @@ public class MagicValues {
 		register(AttributeType.FOLLOW_RANGE, "generic.followRange");
 		register(AttributeType.KNOCKBACK_RESISTANCE, "generic.knockbackResistance");
 		register(AttributeType.MOVEMENT_SPEED, "generic.movementSpeed");
-		register(AttributeType.ATTACK_DAMAGE, "generic.attackStrength");
-		register(AttributeType.HORSE_JUMP_STRENGTH, "generic.maxHealth");
-		register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS_CHANCE, "generic.maxHealth");
+		register(AttributeType.ATTACK_DAMAGE, "generic.attackDamage");
+		register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jumpStrength");
+		register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS_CHANCE, "zombie.spawnReinforcements");
 
 		register(ModifierType.CREATURE_FLEE_SPEED_BONUS, UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A"));
 		register(ModifierType.ENDERMAN_ATTACK_SPEED_BOOST, UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0"));
@@ -271,9 +271,11 @@ public class MagicValues {
 		register(ObjectType.ITEM_FRAME, 71);
 		register(ObjectType.EYE_OF_ENDER, 72);
 		register(ObjectType.POTION, 73);
+		register(ObjectType.FALLING_DRAGON_EGG, 74);
 		register(ObjectType.EXP_BOTTLE, 75);
 		register(ObjectType.FIREWORK_ROCKET, 76);
 		register(ObjectType.LEASH_KNOT, 77);
+		register(ObjectType.ARMOR_STAND, 78);
 		register(ObjectType.FISH_HOOK, 90);
 
 		register(MinecartType.NORMAL, 0);
@@ -373,6 +375,7 @@ public class MagicValues {
 		register(UpdatedTileType.BEACON, 3);
 		register(UpdatedTileType.SKULL, 4);
 		register(UpdatedTileType.FLOWER_POT, 5);
+		register(UpdatedTileType.BANNER, 6);
 
 		register(ClientNotification.INVALID_BED, 0);
 		register(ClientNotification.START_RAIN, 1);
@@ -687,6 +690,10 @@ public class MagicValues {
 		register(GenericSound.CHICKEN_HURT, "mob.chicken.hurt");
 		register(GenericSound.BAT_HURT, "mob.bat.hurt");
 		register(GenericSound.BAT_DEATH, "mob.bat.death");
+		register(GenericSound.RABBIT_HURT, "mob.rabbit.hurt");
+		register(GenericSound.RABBIT_HOP, "mob.rabbit.hop");
+		register(GenericSound.RABBIT_IDLE, "mob.rabbit.idle");
+		register(GenericSound.RABBIT_DEATH, "mob.rabbit.death");
 		register(GenericSound.MOB_ATTACK, "mob.attack");
 
 		register(NoteBlockValueType.HARP, 0);
