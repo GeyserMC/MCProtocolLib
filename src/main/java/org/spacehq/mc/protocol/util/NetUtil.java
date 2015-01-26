@@ -177,6 +177,7 @@ public class NetUtil {
 					out.writeFloat(rot.getPitch());
 					out.writeFloat(rot.getYaw());
 					out.writeFloat(rot.getRoll());
+					break;
 				default:
 					throw new IOException("Unmapped metadata type: " + meta.getType());
 			}
