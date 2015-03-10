@@ -19,8 +19,9 @@ public class ServerUpdateScorePacket implements Packet {
 	private ServerUpdateScorePacket() {
 	}
 
-	public ServerUpdateScorePacket(String entry) {
+	public ServerUpdateScorePacket(String entry, String objective) {
 		this.entry = entry;
+		this.objective = objective;
 		this.action = ScoreboardAction.REMOVE;
 	}
 
