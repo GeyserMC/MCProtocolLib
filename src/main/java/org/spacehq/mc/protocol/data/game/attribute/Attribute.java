@@ -37,4 +37,27 @@ public class Attribute {
 		return new ArrayList<AttributeModifier>(this.modifiers);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Attribute attribute = (Attribute) o;
+
+		if (Double.compare(attribute.value, value) != 0) return false;
+		if (!modifiers.equals(attribute.modifiers)) return false;
+		if (type != attribute.type) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = type.hashCode();
+		long temp = Double.doubleToLongBits(value);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		result = 31 * result + modifiers.hashCode();
+		return result;
+	}
+
 }

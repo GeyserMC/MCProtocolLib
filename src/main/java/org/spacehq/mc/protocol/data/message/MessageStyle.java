@@ -12,10 +12,10 @@ public class MessageStyle implements Cloneable {
 	private ClickEvent click;
 	private HoverEvent hover;
 	private String insertion;
-	private MessageStyle parent;
+	private MessageStyle parent = DEFAULT;
 
 	public boolean isDefault() {
-		return this.color == this.getParent().getColor() && this.formatListsEqual(this.formats, this.getParent().getFormats()) && this.click == null && this.hover == null && this.insertion == null;
+		return this.equals(DEFAULT);
 	}
 
 	public ChatColor getColor() {
@@ -39,7 +39,7 @@ public class MessageStyle implements Cloneable {
 	}
 
 	public MessageStyle getParent() {
-		return this.parent != null ? this.parent : DEFAULT;
+		return this.parent;
 	}
 
 	public MessageStyle setColor(ChatColor color) {
@@ -98,21 +98,35 @@ public class MessageStyle implements Cloneable {
 
 	@Override
 	public MessageStyle clone() {
-		return new MessageStyle().setParent(this.getParent()).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : null).setHoverEvent(this.hover != null ? this.hover.clone() : null).setInsertion(this.insertion);
+		return new MessageStyle().setParent(this.parent).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : null).setHoverEvent(this.hover != null ? this.hover.clone() : null).setInsertion(this.insertion);
 	}
 
-	private boolean formatListsEqual(List<ChatFormat> l1, List<ChatFormat> l2) {
-		if(l1.size() != l2.size()) {
-			return false;
-		}
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
-		for(ChatFormat format : l1) {
-			if(!l2.contains(format)) {
-				return false;
-			}
-		}
+		MessageStyle style = (MessageStyle) o;
+
+		if (click != null ? !click.equals(style.click) : style.click != null) return false;
+		if (color != style.color) return false;
+		if (!formats.equals(style.formats)) return false;
+		if (hover != null ? !hover.equals(style.hover) : style.hover != null) return false;
+		if (insertion != null ? !insertion.equals(style.insertion) : style.insertion != null) return false;
+		if (!parent.equals(style.parent)) return false;
 
 		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = color != null ? color.hashCode() : 0;
+		result = 31 * result + formats.hashCode();
+		result = 31 * result + (click != null ? click.hashCode() : 0);
+		result = 31 * result + (hover != null ? hover.hashCode() : 0);
+		result = 31 * result + (insertion != null ? insertion.hashCode() : 0);
+		result = 31 * result + parent.hashCode();
+		return result;
 	}
 
 }

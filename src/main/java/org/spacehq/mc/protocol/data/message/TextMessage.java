@@ -38,4 +38,24 @@ public class TextMessage extends Message {
 		}
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+
+		TextMessage that = (TextMessage) o;
+
+		if (!text.equals(that.text)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + text.hashCode();
+		return result;
+	}
+
 }

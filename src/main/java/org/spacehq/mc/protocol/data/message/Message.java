@@ -75,6 +75,26 @@ public abstract class Message implements Cloneable {
 	@Override
 	public abstract Message clone();
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Message message = (Message) o;
+
+		if (!extra.equals(message.extra)) return false;
+		if (!style.equals(message.style)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = style.hashCode();
+		result = 31 * result + extra.hashCode();
+		return result;
+	}
+
 	public String toJsonString() {
 		return this.toJson().toString();
 	}

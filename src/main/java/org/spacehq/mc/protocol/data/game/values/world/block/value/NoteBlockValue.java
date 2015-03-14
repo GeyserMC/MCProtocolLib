@@ -16,4 +16,21 @@ public class NoteBlockValue implements BlockValue {
 		return this.pitch;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		NoteBlockValue that = (NoteBlockValue) o;
+
+		if (pitch != that.pitch) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return pitch;
+	}
+
 }

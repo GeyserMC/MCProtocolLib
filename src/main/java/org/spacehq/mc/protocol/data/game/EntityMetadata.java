@@ -26,4 +26,26 @@ public class EntityMetadata {
 		return this.value;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		EntityMetadata metadata = (EntityMetadata) o;
+
+		if (id != metadata.id) return false;
+		if (type != metadata.type) return false;
+		if (!value.equals(metadata.value)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id;
+		result = 31 * result + type.hashCode();
+		result = 31 * result + value.hashCode();
+		return result;
+	}
+
 }

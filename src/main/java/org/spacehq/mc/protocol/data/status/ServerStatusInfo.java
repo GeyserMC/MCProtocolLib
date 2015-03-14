@@ -34,4 +34,28 @@ public class ServerStatusInfo {
 		return this.icon;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ServerStatusInfo that = (ServerStatusInfo) o;
+
+		if (!description.equals(that.description)) return false;
+		if (icon != null ? !icon.equals(that.icon) : that.icon != null) return false;
+		if (!players.equals(that.players)) return false;
+		if (!version.equals(that.version)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = version.hashCode();
+		result = 31 * result + players.hashCode();
+		result = 31 * result + description.hashCode();
+		result = 31 * result + (icon != null ? icon.hashCode() : 0);
+		return result;
+	}
+
 }

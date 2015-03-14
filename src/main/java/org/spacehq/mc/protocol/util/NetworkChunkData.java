@@ -30,4 +30,26 @@ public class NetworkChunkData {
 		return this.data;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		NetworkChunkData that = (NetworkChunkData) o;
+
+		if (fullChunk != that.fullChunk) return false;
+		if (mask != that.mask) return false;
+		if (sky != that.sky) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = mask;
+		result = 31 * result + (fullChunk ? 1 : 0);
+		result = 31 * result + (sky ? 1 : 0);
+		return result;
+	}
+
 }

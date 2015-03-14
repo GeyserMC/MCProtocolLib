@@ -38,4 +38,26 @@ public class Chunk {
 		return true;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Chunk chunk = (Chunk) o;
+
+		if (!blocklight.equals(chunk.blocklight)) return false;
+		if (!blocks.equals(chunk.blocks)) return false;
+		if (skylight != null ? !skylight.equals(chunk.skylight) : chunk.skylight != null) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = blocks.hashCode();
+		result = 31 * result + blocklight.hashCode();
+		result = 31 * result + (skylight != null ? skylight.hashCode() : 0);
+		return result;
+	}
+
 }

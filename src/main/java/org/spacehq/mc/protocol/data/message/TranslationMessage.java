@@ -71,4 +71,26 @@ public class TranslationMessage extends Message {
 		}
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+
+		TranslationMessage that = (TranslationMessage) o;
+
+		if (!translationKey.equals(that.translationKey)) return false;
+		if (!Arrays.equals(translationParams, that.translationParams)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + translationKey.hashCode();
+		result = 31 * result + Arrays.hashCode(translationParams);
+		return result;
+	}
+
 }

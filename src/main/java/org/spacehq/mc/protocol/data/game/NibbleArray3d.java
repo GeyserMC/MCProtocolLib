@@ -1,5 +1,7 @@
 package org.spacehq.mc.protocol.data.game;
 
+import java.util.Arrays;
+
 public class NibbleArray3d {
 
 	private byte[] data;
@@ -44,6 +46,23 @@ public class NibbleArray3d {
 				this.data[ind] = (byte) (this.data[ind] & 15 | (val & 15) << 4);
 			}
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		NibbleArray3d that = (NibbleArray3d) o;
+
+		if (!Arrays.equals(data, that.data)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(data);
 	}
 
 }

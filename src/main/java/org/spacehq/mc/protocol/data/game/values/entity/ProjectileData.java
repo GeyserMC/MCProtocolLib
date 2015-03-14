@@ -12,4 +12,21 @@ public class ProjectileData implements ObjectData {
 		return this.ownerId;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ProjectileData that = (ProjectileData) o;
+
+		if (ownerId != that.ownerId) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return ownerId;
+	}
+
 }

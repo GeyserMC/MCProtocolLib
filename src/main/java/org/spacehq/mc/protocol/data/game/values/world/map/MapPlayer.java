@@ -30,4 +30,28 @@ public class MapPlayer {
 		return this.iconRotation;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		MapPlayer mapPlayer = (MapPlayer) o;
+
+		if (centerX != mapPlayer.centerX) return false;
+		if (centerZ != mapPlayer.centerZ) return false;
+		if (iconRotation != mapPlayer.iconRotation) return false;
+		if (iconSize != mapPlayer.iconSize) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = centerX;
+		result = 31 * result + centerZ;
+		result = 31 * result + iconSize;
+		result = 31 * result + iconRotation;
+		return result;
+	}
+
 }

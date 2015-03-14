@@ -52,4 +52,29 @@ public class PlayerListEntry {
 	public Message getDisplayName() {
 		return this.displayName;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		PlayerListEntry entry = (PlayerListEntry) o;
+
+		if (ping != entry.ping) return false;
+		if (displayName != null ? !displayName.equals(entry.displayName) : entry.displayName != null) return false;
+		if (gameMode != entry.gameMode) return false;
+		if (!profile.equals(entry.profile)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = profile.hashCode();
+		result = 31 * result + (gameMode != null ? gameMode.hashCode() : 0);
+		result = 31 * result + ping;
+		result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
+		return result;
+	}
+
 }
