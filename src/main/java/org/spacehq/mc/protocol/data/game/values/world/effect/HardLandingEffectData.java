@@ -12,4 +12,21 @@ public class HardLandingEffectData implements WorldEffectData {
 		return this.damagingDistance;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		HardLandingEffectData that = (HardLandingEffectData) o;
+
+		if (damagingDistance != that.damagingDistance) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return damagingDistance;
+	}
+
 }

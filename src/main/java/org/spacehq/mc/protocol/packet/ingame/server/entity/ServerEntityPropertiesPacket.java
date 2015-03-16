@@ -5,7 +5,6 @@ import org.spacehq.mc.protocol.data.game.attribute.AttributeModifier;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.AttributeType;
 import org.spacehq.mc.protocol.data.game.values.entity.ModifierOperation;
-import org.spacehq.mc.protocol.data.game.values.entity.ModifierType;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -13,7 +12,6 @@ import org.spacehq.packetlib.packet.Packet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class ServerEntityPropertiesPacket implements Packet {
 
@@ -48,7 +46,7 @@ public class ServerEntityPropertiesPacket implements Packet {
 			List<AttributeModifier> modifiers = new ArrayList<AttributeModifier>();
 			int len = in.readVarInt();
 			for(int ind = 0; ind < len; ind++) {
-				modifiers.add(new AttributeModifier(MagicValues.key(ModifierType.class, in.readUUID()), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
+				modifiers.add(new AttributeModifier(in.readUUID(), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
 			}
 
 			this.attributes.add(new Attribute(MagicValues.key(AttributeType.class, key), value, modifiers));
@@ -64,8 +62,7 @@ public class ServerEntityPropertiesPacket implements Packet {
 			out.writeDouble(attribute.getValue());
 			out.writeVarInt(attribute.getModifiers().size());
 			for(AttributeModifier modifier : attribute.getModifiers()) {
-				UUID uuid = MagicValues.value(UUID.class, modifier.getType());
-				out.writeUUID(uuid);
+				out.writeUUID(modifier.getUUID());
 				out.writeDouble(modifier.getAmount());
 				out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));
 			}

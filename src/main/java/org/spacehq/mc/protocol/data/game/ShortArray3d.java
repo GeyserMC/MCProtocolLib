@@ -50,4 +50,21 @@ public class ShortArray3d {
 		Arrays.fill(this.data, (short) val);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ShortArray3d that = (ShortArray3d) o;
+
+		if (!Arrays.equals(data, that.data)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(data);
+	}
+
 }

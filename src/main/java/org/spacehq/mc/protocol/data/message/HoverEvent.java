@@ -23,4 +23,24 @@ public class HoverEvent implements Cloneable {
 		return new HoverEvent(this.action, this.value.clone());
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		HoverEvent that = (HoverEvent) o;
+
+		if (action != that.action) return false;
+		if (!value.equals(that.value)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = action.hashCode();
+		result = 31 * result + value.hashCode();
+		return result;
+	}
+
 }

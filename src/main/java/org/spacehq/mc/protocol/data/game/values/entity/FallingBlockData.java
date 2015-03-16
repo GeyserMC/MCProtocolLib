@@ -18,4 +18,24 @@ public class FallingBlockData implements ObjectData {
 		return this.metadata;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		FallingBlockData that = (FallingBlockData) o;
+
+		if (id != that.id) return false;
+		if (metadata != that.metadata) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id;
+		result = 31 * result + metadata;
+		return result;
+	}
+
 }

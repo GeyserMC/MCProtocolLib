@@ -200,6 +200,10 @@ public enum GenericSound implements Sound {
 	CHICKEN_HURT,
 	BAT_HURT,
 	BAT_DEATH,
+	RABBIT_IDLE,
+	RABBIT_HOP,
+	RABBIT_HURT,
+	RABBIT_DEATH,
 	MOB_ATTACK;
 
 }

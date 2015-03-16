@@ -48,6 +48,10 @@ public class ServerScoreboardObjectivePacket implements Packet {
 		return this.displayName;
 	}
 
+	public ScoreType getType() {
+		return this.type;
+	}
+
 	@Override
 	public void read(NetInput in) throws IOException {
 		this.name = in.readString();

@@ -20,4 +20,24 @@ public class BlockChangeRecord {
 		return this.block;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		BlockChangeRecord record = (BlockChangeRecord) o;
+
+		if (block != record.block) return false;
+		if (!position.equals(record.position)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = position.hashCode();
+		result = 31 * result + block;
+		return result;
+	}
+
 }

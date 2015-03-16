@@ -12,4 +12,21 @@ public class CraftItemStatistic implements Statistic {
 		return this.id;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		CraftItemStatistic that = (CraftItemStatistic) o;
+
+		if (id != that.id) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return id;
+	}
+
 }
