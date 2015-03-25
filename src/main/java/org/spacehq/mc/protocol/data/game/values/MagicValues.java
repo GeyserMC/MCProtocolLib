@@ -332,10 +332,6 @@ public class MagicValues {
 		register(TeamAction.ADD_PLAYER, 3);
 		register(TeamAction.REMOVE_PLAYER, 4);
 
-		register(FriendlyFire.OFF, 0);
-		register(FriendlyFire.ON, 1);
-		register(FriendlyFire.FRIENDLY_INVISIBLES_VISIBLE, 3);
-
 		register(ScoreboardAction.ADD_OR_UPDATE, 0);
 		register(ScoreboardAction.REMOVE, 1);
 
