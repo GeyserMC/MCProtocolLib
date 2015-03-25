@@ -213,6 +213,11 @@ public class MagicValues {
 		register(EntityStatus.ZOMBIE_VILLAGER_SHAKING, 16);
 		register(EntityStatus.FIREWORK_EXPLODING, 17);
 		register(EntityStatus.ANIMAL_HEARTS, 18);
+		register(EntityStatus.RESET_SQUID_ROTATION, 19);
+		register(EntityStatus.EXPLOSION_PARTICLE, 20);
+		register(EntityStatus.GUARDIAN_SOUND, 21);
+		register(EntityStatus.ENABLE_REDUCED_DEBUG, 22);
+		register(EntityStatus.DISABLE_REDUCED_DEBUG, 23);
 
 		register(PositionElement.X, 0);
 		register(PositionElement.Y, 1);
