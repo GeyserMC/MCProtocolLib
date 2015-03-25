@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server.scoreboard;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.scoreboard.FriendlyFire;
 import org.spacehq.mc.protocol.data.game.values.scoreboard.NameTagVisibility;
 import org.spacehq.mc.protocol.data.game.values.scoreboard.TeamAction;
 import org.spacehq.mc.protocol.data.game.values.scoreboard.TeamColor;
@@ -10,7 +9,6 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class ServerTeamPacket implements Packet {
 
@@ -19,7 +17,8 @@ public class ServerTeamPacket implements Packet {
 	private String displayName;
 	private String prefix;
 	private String suffix;
-	private FriendlyFire friendlyFire;
+	private boolean friendlyFire;
+	private boolean seeFriendlyInvisibles;
 	private NameTagVisibility nameTagVisibility;
 	private TeamColor color;
 	private String players[];
@@ -43,23 +42,25 @@ public class ServerTeamPacket implements Packet {
 		this.players = players;
 	}
 
-	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire, NameTagVisibility nameTagVisibility, TeamColor color) {
+	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, TeamColor color) {
 		this.name = name;
 		this.displayName = displayName;
 		this.prefix = prefix;
 		this.suffix = suffix;
 		this.friendlyFire = friendlyFire;
+		this.seeFriendlyInvisibles = seeFriendlyInvisibles;
 		this.nameTagVisibility = nameTagVisibility;
 		this.color = color;
 		this.action = TeamAction.UPDATE;
 	}
 
-	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, FriendlyFire friendlyFire, NameTagVisibility nameTagVisibility, TeamColor color, String players[]) {
+	public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, TeamColor color, String players[]) {
 		this.name = name;
 		this.displayName = displayName;
 		this.prefix = prefix;
 		this.suffix = suffix;
 		this.friendlyFire = friendlyFire;
+		this.seeFriendlyInvisibles = seeFriendlyInvisibles;
 		this.nameTagVisibility = nameTagVisibility;
 		this.color = color;
 		this.players = players;
@@ -86,8 +87,12 @@ public class ServerTeamPacket implements Packet {
 		return this.suffix;
 	}
 
-	public FriendlyFire getFriendlyFire() {
+	public boolean getFriendlyFire() {
 		return this.friendlyFire;
+	}
+
+	public boolean getSeeFriendlyInvisibles() {
+		return seeFriendlyInvisibles;
 	}
 
 	public NameTagVisibility getNameTagVisibility() {
@@ -110,7 +115,9 @@ public class ServerTeamPacket implements Packet {
 			this.displayName = in.readString();
 			this.prefix = in.readString();
 			this.suffix = in.readString();
-			this.friendlyFire = MagicValues.key(FriendlyFire.class, in.readByte());
+			byte flags = in.readByte();
+			this.friendlyFire = (flags & 0x1) != 0;
+			this.seeFriendlyInvisibles = (flags & 0x2) != 0;
 			this.nameTagVisibility = MagicValues.key(NameTagVisibility.class, in.readString());
 			this.color = MagicValues.key(TeamColor.class, in.readByte());
 		}
@@ -131,7 +138,14 @@ public class ServerTeamPacket implements Packet {
 			out.writeString(this.displayName);
 			out.writeString(this.prefix);
 			out.writeString(this.suffix);
-			out.writeByte(MagicValues.value(Integer.class, this.friendlyFire));
+			byte flags = 0;
+			if (this.friendlyFire) {
+				flags |= 0x1;
+			}
+			if (this.seeFriendlyInvisibles) {
+				flags |= 0x2;
+			}
+			out.writeByte(flags);
 			out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
 			out.writeByte(MagicValues.value(Integer.class, this.color));
 		}
