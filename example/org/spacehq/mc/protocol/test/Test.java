@@ -1,34 +1,6 @@
 package org.spacehq.mc.protocol.test;
 
-import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.exception.AuthenticationException;
-import org.spacehq.mc.protocol.MinecraftProtocol;
-import org.spacehq.mc.protocol.ProtocolConstants;
-import org.spacehq.mc.protocol.ProtocolMode;
-import org.spacehq.mc.protocol.ServerLoginHandler;
-import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
-import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
-import org.spacehq.mc.protocol.data.game.values.world.WorldType;
-import org.spacehq.mc.protocol.data.message.*;
-import org.spacehq.mc.protocol.data.status.PlayerInfo;
-import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
-import org.spacehq.mc.protocol.data.status.VersionInfo;
-import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
-import org.spacehq.mc.protocol.data.status.handler.ServerInfoHandler;
-import org.spacehq.mc.protocol.data.status.handler.ServerPingTimeHandler;
-import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
-import org.spacehq.packetlib.Client;
-import org.spacehq.packetlib.Server;
-import org.spacehq.packetlib.Session;
-import org.spacehq.packetlib.event.server.ServerAdapter;
-import org.spacehq.packetlib.event.server.SessionAddedEvent;
-import org.spacehq.packetlib.event.server.SessionRemovedEvent;
-import org.spacehq.packetlib.event.session.DisconnectedEvent;
-import org.spacehq.packetlib.event.session.PacketReceivedEvent;
-import org.spacehq.packetlib.event.session.SessionAdapter;
-import org.spacehq.packetlib.tcp.TcpSessionFactory;
+import org.spacehq.*;
 
 import java.net.Proxy;
 import java.util.Arrays;
