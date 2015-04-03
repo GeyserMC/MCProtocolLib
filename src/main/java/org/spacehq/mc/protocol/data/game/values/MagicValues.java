@@ -227,6 +227,7 @@ public class MagicValues {
 
 		register(GlobalEntityType.LIGHTNING_BOLT, 1);
 
+		register(MobType.ARMOR_STAND, 30);
 		register(MobType.CREEPER, 50);
 		register(MobType.SKELETON, 51);
 		register(MobType.SPIDER, 52);
