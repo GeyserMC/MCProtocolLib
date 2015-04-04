@@ -327,6 +327,22 @@ public class MagicValues {
 		register(ScoreboardPosition.PLAYER_LIST, 0);
 		register(ScoreboardPosition.SIDEBAR, 1);
 		register(ScoreboardPosition.BELOW_NAME, 2);
+		register(ScoreboardPosition.SIDEBAR_TEAM_BLACK, 3);
+		register(ScoreboardPosition.SIDEBAR_TEAM_DARK_BLUE, 4);
+		register(ScoreboardPosition.SIDEBAR_TEAM_DARK_GREEN, 5);
+		register(ScoreboardPosition.SIDEBAR_TEAM_DARK_AQUA, 6);
+		register(ScoreboardPosition.SIDEBAR_TEAM_DARK_RED, 7);
+		register(ScoreboardPosition.SIDEBAR_TEAM_DARK_PURPLE, 8);
+		register(ScoreboardPosition.SIDEBAR_TEAM_GOLD, 9);
+		register(ScoreboardPosition.SIDEBAR_TEAM_GRAY, 10);
+		register(ScoreboardPosition.SIDEBAR_TEAM_DARK_GRAY, 11);
+		register(ScoreboardPosition.SIDEBAR_TEAM_BLUE, 12);
+		register(ScoreboardPosition.SIDEBAR_TEAM_GREEN, 13);
+		register(ScoreboardPosition.SIDEBAR_TEAM_AQUA, 14);
+		register(ScoreboardPosition.SIDEBAR_TEAM_RED, 15);
+		register(ScoreboardPosition.SIDEBAR_TEAM_LIGHT_PURPLE, 16);
+		register(ScoreboardPosition.SIDEBAR_TEAM_YELLOW, 17);
+		register(ScoreboardPosition.SIDEBAR_TEAM_WHITE, 18);
 
 		register(ObjectiveAction.ADD, 0);
 		register(ObjectiveAction.REMOVE, 1);
