@@ -8,6 +8,10 @@ import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
 import org.spacehq.mc.protocol.data.game.values.statistic.Achievement;
 import org.spacehq.mc.protocol.data.game.values.statistic.GenericStatistic;
 import org.spacehq.mc.protocol.data.game.values.window.*;
+import org.spacehq.mc.protocol.data.game.values.window.property.AnvilProperty;
+import org.spacehq.mc.protocol.data.game.values.window.property.BrewingStandProperty;
+import org.spacehq.mc.protocol.data.game.values.window.property.EnchantmentTableProperty;
+import org.spacehq.mc.protocol.data.game.values.window.property.FurnaceProperty;
 import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 import org.spacehq.mc.protocol.data.game.values.world.Particle;
 import org.spacehq.mc.protocol.data.game.values.world.WorldBorderAction;
@@ -373,9 +377,22 @@ public class MagicValues {
 		register(WindowType.VILLAGER, "minecraft:villager");
 		register(WindowType.HORSE, "EntityHorse");
 
-		register(WindowProperty.FURNACE_PROGRESS_OR_ENCHANT_1, 0);
-		register(WindowProperty.FURNACE_FUEL_OR_ENCHANT_2, 1);
-		register(WindowProperty.ENCHANT_3, 2);
+		register(BrewingStandProperty.BREW_TIME, 0);
+
+		register(EnchantmentTableProperty.LEVEL_SLOT_1, 0);
+		register(EnchantmentTableProperty.LEVEL_SLOT_2, 1);
+		register(EnchantmentTableProperty.LEVEL_SLOT_3, 2);
+		register(EnchantmentTableProperty.XP_SEED, 3);
+		register(EnchantmentTableProperty.ENCHANTMENT_SLOT_1, 4);
+		register(EnchantmentTableProperty.ENCHANTMENT_SLOT_2, 5);
+		register(EnchantmentTableProperty.ENCHANTMENT_SLOT_3, 6);
+
+		register(FurnaceProperty.BURN_TIME, 0);
+		register(FurnaceProperty.CURRENT_ITEM_BURN_TIME, 1);
+		register(FurnaceProperty.COOK_TIME, 2);
+		register(FurnaceProperty.TOTAL_COOK_TIME, 3);
+
+		register(AnvilProperty.MAXIMUM_COST, 0);
 
 		register(BlockBreakStage.RESET, -1);
 		register(BlockBreakStage.STAGE_1, 0);
