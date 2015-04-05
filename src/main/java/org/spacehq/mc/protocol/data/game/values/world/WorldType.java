@@ -6,6 +6,8 @@ public enum WorldType {
 	FLAT,
 	LARGE_BIOMES,
 	AMPLIFIED,
+	CUSTOMIZED,
+	DEBUG,
 	DEFAULT_1_1;
 
 }
