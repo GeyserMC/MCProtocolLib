@@ -161,8 +161,10 @@ public class MagicValues {
 
 		register(WorldType.DEFAULT, "default");
 		register(WorldType.FLAT, "flat");
-		register(WorldType.LARGE_BIOMES, "largeBiomes");
+		register(WorldType.LARGE_BIOMES, "largebiomes");
 		register(WorldType.AMPLIFIED, "amplified");
+		register(WorldType.CUSTOMIZED, "customized");
+		register(WorldType.DEBUG, "debug_all_block_states");
 		register(WorldType.DEFAULT_1_1, "default_1_1");
 
 		register(Animation.SWING_ARM, 0);
