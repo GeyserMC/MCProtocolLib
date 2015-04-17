@@ -66,24 +66,22 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 		try {
 			this.bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, this.container.getConnectTimeout() * 1000);
 			ChannelFuture future = this.bootstrap.connect();
-			this.bootstrap = null;
-			if(wait) {
-				while(this.channel == null && !this.disconnected && !this.exception) {
-					try {
-						Thread.sleep(5);
-					} catch(InterruptedException e) {
+			future.addListener(new ChannelFutureListener() {
+				@Override
+				public void operationComplete(ChannelFuture channelFuture) throws Exception {
+					if(channelFuture.cause() instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
+						calledTimeout.set(true);
+						container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
+					} else if(channelFuture.cause() != null) {
+						System.err.println("Failed to establish connection.");
+						channelFuture.cause().printStackTrace();
 					}
 				}
-			} else {
-				future.addListener(new ChannelFutureListener() {
-					@Override
-					public void operationComplete(ChannelFuture channelFuture) throws Exception {
-						if(channelFuture.cause() instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
-							calledTimeout.set(true);
-							container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
-						}
-					}
-				});
+			});
+
+			this.bootstrap = null;
+			if(wait) {
+				future.awaitUninterruptibly();
 			}
 		} catch(Exception e) {
 			if(e instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
