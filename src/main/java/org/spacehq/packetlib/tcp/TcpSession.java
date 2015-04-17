@@ -69,12 +69,8 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 			future.addListener(new ChannelFutureListener() {
 				@Override
 				public void operationComplete(ChannelFuture channelFuture) throws Exception {
-					if(channelFuture.cause() instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
-						calledTimeout.set(true);
-						container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
-					} else if(channelFuture.cause() != null) {
-						System.err.println("Failed to establish connection.");
-						channelFuture.cause().printStackTrace();
+					if(!channelFuture.isSuccess() && channelFuture.cause() != null) {
+						exceptionCaught(null, channelFuture.cause());
 					}
 				}
 			});
@@ -84,13 +80,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 				future.awaitUninterruptibly();
 			}
 		} catch(Exception e) {
-			if(e instanceof ConnectTimeoutException && container.getConnectTimeoutHandler() != null && !calledTimeout.get()) {
-				calledTimeout.set(true);
-				container.getConnectTimeoutHandler().onTimeout(TcpSession.this, TimeoutType.CONNECT);
-			} else {
-				System.err.println("Failed to establish connection.");
-				e.printStackTrace();
-			}
+			exceptionCaught(null, e);
 		}
 	}
 
@@ -358,26 +348,31 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
 		this.writing = false;
 		this.exception = true;
-		if(!this.disconnected) {
-			if(cause instanceof TimeoutException) {
-				if(this.timeoutHandler != null) {
-					this.timeoutHandler.onTimeout(this, cause instanceof ReadTimeoutException ? TimeoutType.READ : TimeoutType.WRITE);
-				}
-
-				this.disconnect((cause instanceof ReadTimeoutException ? "Read" : "Write") + " timed out.");
-			} else if(cause instanceof ConnectTimeoutException) {
-				if(this.container.getConnectTimeoutHandler() != null) {
-					this.container.getConnectTimeoutHandler().onTimeout(this, TimeoutType.CONNECT);
-				}
-
-				this.disconnect("Connection timed out.");
-			} else {
-				this.disconnect("Internal network exception: " + cause.toString());
-				cause.printStackTrace();
+		if(cause instanceof TimeoutException) {
+			if(this.timeoutHandler != null) {
+				this.timeoutHandler.onTimeout(this, cause instanceof ReadTimeoutException ? TimeoutType.READ : TimeoutType.WRITE);
 			}
+
+			if(!this.disconnected) {
+				this.disconnect((cause instanceof ReadTimeoutException ? "Read" : "Write") + " timed out.");
+			}
+		} else if(cause instanceof ConnectTimeoutException) {
+			if(this.container.getConnectTimeoutHandler() != null) {
+				this.container.getConnectTimeoutHandler().onTimeout(this, TimeoutType.CONNECT);
+			}
+
+			if(!this.disconnected) {
+				this.disconnect("Connection timed out.");
+			}
+		} else {
+			if(!this.disconnected) {
+				this.disconnect("Internal network exception: " + cause.toString());
+			}
+
+			cause.printStackTrace();
 		}
 
 		this.disconnected = true;
