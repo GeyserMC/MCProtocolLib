@@ -6,7 +6,10 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.TimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import org.spacehq.packetlib.*;
+import org.spacehq.packetlib.ConnectTimeoutHandlerContainer;
+import org.spacehq.packetlib.Session;
+import org.spacehq.packetlib.TimeoutHandler;
+import org.spacehq.packetlib.TimeoutType;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
@@ -36,7 +40,7 @@ public class TcpSession extends SimpleChannelInboundHandler<Packet> implements S
 	private List<Packet> packets = new ArrayList<Packet>();
 
 	private Map<String, Object> flags = new HashMap<String, Object>();
-	private List<SessionListener> listeners = new ArrayList<SessionListener>();
+	private List<SessionListener> listeners = new CopyOnWriteArrayList<SessionListener>();
 
 	public TcpSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap, ConnectTimeoutHandlerContainer container) {
 		this.host = host;
