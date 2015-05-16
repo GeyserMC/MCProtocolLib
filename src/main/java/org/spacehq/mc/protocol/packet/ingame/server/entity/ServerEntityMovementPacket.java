@@ -55,7 +55,6 @@ public class ServerEntityMovementPacket implements Packet {
 		return this.onGround;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		if(this.pos) {
@@ -72,7 +71,6 @@ public class ServerEntityMovementPacket implements Packet {
 		this.onGround = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		if(this.pos) {
@@ -89,7 +87,6 @@ public class ServerEntityMovementPacket implements Packet {
 		out.writeBoolean(this.onGround);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

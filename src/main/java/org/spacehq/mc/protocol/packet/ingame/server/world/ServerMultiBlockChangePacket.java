@@ -28,7 +28,6 @@ public class ServerMultiBlockChangePacket implements Packet {
 		return this.records;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		int chunkX = in.readInt();
 		int chunkZ = in.readInt();
@@ -43,7 +42,6 @@ public class ServerMultiBlockChangePacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		int chunkX = this.records[0].getPosition().getX() >> 4;
 		int chunkZ = this.records[0].getPosition().getZ() >> 4;
@@ -56,7 +54,6 @@ public class ServerMultiBlockChangePacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

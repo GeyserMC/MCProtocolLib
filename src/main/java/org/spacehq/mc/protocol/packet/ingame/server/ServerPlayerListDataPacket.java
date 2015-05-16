@@ -28,19 +28,16 @@ public class ServerPlayerListDataPacket implements Packet {
 		return this.footer;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.header = Message.fromString(in.readString());
 		this.footer = Message.fromString(in.readString());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.header.toJsonString());
 		out.writeString(this.footer.toJsonString());
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

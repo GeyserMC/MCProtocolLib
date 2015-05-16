@@ -39,21 +39,18 @@ public class ClientPlayerActionPacket implements Packet {
 		return this.face;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.action = MagicValues.key(PlayerAction.class, in.readUnsignedByte());
 		this.position = NetUtil.readPosition(in);
 		this.face = MagicValues.key(Face.class, in.readUnsignedByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(MagicValues.value(Integer.class, this.action));
 		NetUtil.writePosition(out, this.position);
 		out.writeByte(MagicValues.value(Integer.class, this.face));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

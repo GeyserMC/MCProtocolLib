@@ -30,19 +30,16 @@ public class ClientCreativeInventoryActionPacket implements Packet {
 		return this.clicked;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.slot = in.readShort();
 		this.clicked = NetUtil.readItem(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeShort(this.slot);
 		NetUtil.writeItem(out, this.clicked);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

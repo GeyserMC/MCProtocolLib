@@ -67,7 +67,6 @@ public class ServerExplosionPacket implements Packet {
 		return this.pushZ;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.x = in.readFloat();
 		this.y = in.readFloat();
@@ -84,7 +83,6 @@ public class ServerExplosionPacket implements Packet {
 		this.pushZ = in.readFloat();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeFloat(this.x);
 		out.writeFloat(this.y);
@@ -102,7 +100,6 @@ public class ServerExplosionPacket implements Packet {
 		out.writeFloat(this.pushZ);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

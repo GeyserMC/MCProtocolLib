@@ -30,13 +30,11 @@ public class ClientTabCompletePacket implements Packet {
 		return this.text;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.text = in.readString();
 		this.position = in.readBoolean() ? NetUtil.readPosition(in) : null;
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.text);
 		out.writeBoolean(this.position != null);
@@ -45,7 +43,6 @@ public class ClientTabCompletePacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

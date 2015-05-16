@@ -48,7 +48,6 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 		return this.z;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.type = MagicValues.key(GlobalEntityType.class, in.readByte());
@@ -57,7 +56,6 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 		this.z = in.readInt();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.type));
@@ -66,7 +64,6 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 		out.writeInt(this.z);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

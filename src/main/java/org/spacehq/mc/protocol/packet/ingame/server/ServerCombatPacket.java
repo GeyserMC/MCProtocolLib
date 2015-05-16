@@ -53,7 +53,6 @@ public class ServerCombatPacket implements Packet {
 		return this.message;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.state = MagicValues.key(CombatState.class, in.readVarInt());
 		if(this.state == CombatState.END_COMBAT) {
@@ -66,7 +65,6 @@ public class ServerCombatPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(MagicValues.value(Integer.class, this.state));
 		if(this.state == CombatState.END_COMBAT) {
@@ -79,7 +77,6 @@ public class ServerCombatPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

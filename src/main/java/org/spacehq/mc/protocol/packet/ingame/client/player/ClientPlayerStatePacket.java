@@ -40,21 +40,18 @@ public class ClientPlayerStatePacket implements Packet {
 		return this.jumpBoost;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.state = MagicValues.key(PlayerState.class, in.readUnsignedByte());
 		this.jumpBoost = in.readVarInt();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.state));
 		out.writeVarInt(this.jumpBoost);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

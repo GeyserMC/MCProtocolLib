@@ -35,7 +35,6 @@ public class ServerEntityPropertiesPacket implements Packet {
 		return this.attributes;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.attributes = new ArrayList<Attribute>();
@@ -53,7 +52,6 @@ public class ServerEntityPropertiesPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeInt(this.attributes.size());
@@ -69,7 +67,6 @@ public class ServerEntityPropertiesPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

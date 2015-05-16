@@ -77,7 +77,6 @@ public class ServerTitlePacket implements Packet {
 		return this.fadeOut;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.action = MagicValues.key(TitleAction.class, in.readVarInt());
 		switch(this.action) {
@@ -99,7 +98,6 @@ public class ServerTitlePacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(MagicValues.value(Integer.class, this.action));
 		switch(this.action) {
@@ -121,7 +119,6 @@ public class ServerTitlePacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

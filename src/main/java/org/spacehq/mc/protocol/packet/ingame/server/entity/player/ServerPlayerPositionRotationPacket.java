@@ -61,7 +61,6 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 		return this.relative;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.x = in.readDouble();
 		this.y = in.readDouble();
@@ -78,7 +77,6 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeDouble(this.x);
 		out.writeDouble(this.y);
@@ -93,7 +91,6 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 		out.writeByte(flags);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

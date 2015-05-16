@@ -52,7 +52,6 @@ public class ServerBlockValuePacket implements Packet {
 		return this.blockId;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.position = NetUtil.readPosition(in);
 		int type = in.readUnsignedByte();
@@ -84,7 +83,6 @@ public class ServerBlockValuePacket implements Packet {
 		this.blockId = in.readVarInt() & 4095;
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		NetUtil.writePosition(out, this.position);
 		int type = 0;
@@ -118,7 +116,6 @@ public class ServerBlockValuePacket implements Packet {
 		out.writeVarInt(this.blockId & 4095);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

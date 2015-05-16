@@ -29,19 +29,16 @@ public class ServerEntityNBTUpdatePacket implements Packet {
 		return this.tag;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.tag = NetUtil.readNBT(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		NetUtil.writeNBT(out, this.tag);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

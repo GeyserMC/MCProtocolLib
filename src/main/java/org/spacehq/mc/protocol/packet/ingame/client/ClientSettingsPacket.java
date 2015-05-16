@@ -52,7 +52,6 @@ public class ClientSettingsPacket implements Packet {
 		return this.visibleParts;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.locale = in.readString();
 		this.renderDistance = in.readByte();
@@ -68,7 +67,6 @@ public class ClientSettingsPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.locale);
 		out.writeByte(this.renderDistance);
@@ -82,7 +80,6 @@ public class ClientSettingsPacket implements Packet {
 		out.writeByte(flags);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

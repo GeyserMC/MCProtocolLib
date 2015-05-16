@@ -30,19 +30,16 @@ public class ServerEntityStatusPacket implements Packet {
 		return this.status;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
 		this.status = MagicValues.key(EntityStatus.class, in.readByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.status));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

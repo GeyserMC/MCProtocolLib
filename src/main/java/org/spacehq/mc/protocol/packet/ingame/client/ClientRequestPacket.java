@@ -24,17 +24,14 @@ public class ClientRequestPacket implements Packet {
 		return this.request;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.request = MagicValues.key(ClientRequest.class, in.readUnsignedByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(MagicValues.value(Integer.class, this.request));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

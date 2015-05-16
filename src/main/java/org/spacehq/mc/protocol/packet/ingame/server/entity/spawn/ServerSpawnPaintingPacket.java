@@ -45,7 +45,6 @@ public class ServerSpawnPaintingPacket implements Packet {
 		return this.direction;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.art = MagicValues.key(Art.class, in.readString());
@@ -53,7 +52,6 @@ public class ServerSpawnPaintingPacket implements Packet {
 		this.direction = MagicValues.key(HangingDirection.class, in.readUnsignedByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeString(MagicValues.value(String.class, this.art));
@@ -61,7 +59,6 @@ public class ServerSpawnPaintingPacket implements Packet {
 		out.writeByte(MagicValues.value(Integer.class, this.direction));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

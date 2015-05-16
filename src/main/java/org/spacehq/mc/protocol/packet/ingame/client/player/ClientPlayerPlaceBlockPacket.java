@@ -57,7 +57,6 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		return this.cursorZ;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.position = NetUtil.readPosition(in);
 		this.face = MagicValues.key(Face.class, in.readUnsignedByte());
@@ -67,7 +66,6 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		this.cursorZ = in.readByte() / 16f;
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		NetUtil.writePosition(out, this.position);
 		out.writeByte(MagicValues.value(Integer.class, this.face));
@@ -77,7 +75,6 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
 		out.writeByte((int) (this.cursorZ * 16));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -73,7 +73,6 @@ public class ServerSpawnPlayerPacket implements Packet {
 		return this.metadata;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.uuid = in.readUUID();
@@ -86,7 +85,6 @@ public class ServerSpawnPlayerPacket implements Packet {
 		this.metadata = NetUtil.readEntityMetadata(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeUUID(this.uuid);
@@ -99,7 +97,6 @@ public class ServerSpawnPlayerPacket implements Packet {
 		NetUtil.writeEntityMetadata(out, this.metadata);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

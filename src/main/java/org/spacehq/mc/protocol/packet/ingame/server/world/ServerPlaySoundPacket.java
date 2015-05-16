@@ -56,7 +56,6 @@ public class ServerPlaySoundPacket implements Packet {
 		return this.pitch;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		String value = in.readString();
 		this.sound = MagicValues.key(GenericSound.class, value);
@@ -71,7 +70,6 @@ public class ServerPlaySoundPacket implements Packet {
 		this.pitch = in.readUnsignedByte() / 63f;
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		String value = "";
 		if(this.sound instanceof CustomSound) {
@@ -97,7 +95,6 @@ public class ServerPlaySoundPacket implements Packet {
 		out.writeByte(pitch);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

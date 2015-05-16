@@ -79,7 +79,6 @@ public class ServerMultiChunkDataPacket implements Packet {
 		return this.biomeData[column];
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		boolean skylight = in.readBoolean();
 		int columns = in.readVarInt();
@@ -106,7 +105,6 @@ public class ServerMultiChunkDataPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		boolean skylight = false;
 		NetworkChunkData data[] = new NetworkChunkData[this.chunks.length];
@@ -130,7 +128,6 @@ public class ServerMultiChunkDataPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -43,19 +43,16 @@ public class ServerChatPacket implements Packet {
 		return this.type;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.message = Message.fromString(in.readString());
 		this.type = MagicValues.key(MessageType.class, in.readByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.message.toJsonString());
 		out.writeByte(MagicValues.value(Integer.class, this.type));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -107,7 +107,6 @@ public class ServerTeamPacket implements Packet {
 		return this.players;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.name = in.readString();
 		this.action = MagicValues.key(TeamAction.class, in.readByte());
@@ -130,7 +129,6 @@ public class ServerTeamPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.name);
 		out.writeByte(MagicValues.value(Integer.class, this.action));
@@ -160,7 +158,6 @@ public class ServerTeamPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -36,7 +36,6 @@ public class StatusResponsePacket implements Packet {
 		return this.info;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		JsonObject obj = new Gson().fromJson(in.readString(), JsonObject.class);
 		JsonObject ver = obj.get("version").getAsJsonObject();
@@ -65,7 +64,6 @@ public class StatusResponsePacket implements Packet {
 		this.info = new ServerStatusInfo(version, players, description, icon);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		JsonObject obj = new JsonObject();
 		JsonObject ver = new JsonObject();
@@ -124,7 +122,6 @@ public class StatusResponsePacket implements Packet {
 		return "data:image/png;base64," + new String(encoded, "UTF-8");
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

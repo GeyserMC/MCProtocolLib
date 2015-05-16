@@ -42,7 +42,6 @@ public class HandshakePacket implements Packet {
 		return this.intent;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.protocolVersion = in.readVarInt();
 		this.hostname = in.readString();
@@ -50,7 +49,6 @@ public class HandshakePacket implements Packet {
 		this.intent = MagicValues.key(HandshakeIntent.class, in.readVarInt());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.protocolVersion);
 		out.writeString(this.hostname);
@@ -58,7 +56,6 @@ public class HandshakePacket implements Packet {
 		out.writeVarInt(MagicValues.value(Integer.class, this.intent));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return true;
 	}

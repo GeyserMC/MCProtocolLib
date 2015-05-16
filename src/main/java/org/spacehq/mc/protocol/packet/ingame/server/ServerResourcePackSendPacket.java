@@ -27,19 +27,16 @@ public class ServerResourcePackSendPacket implements Packet {
 		return this.hash;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.url = in.readString();
 		this.hash = in.readString();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.url);
 		out.writeString(this.hash);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

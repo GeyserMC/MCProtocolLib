@@ -46,7 +46,6 @@ public class ServerSpawnExpOrbPacket implements Packet {
 		return this.exp;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.x = in.readInt() / 32D;
@@ -55,7 +54,6 @@ public class ServerSpawnExpOrbPacket implements Packet {
 		this.exp = in.readShort();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeInt((int) (this.x * 32));
@@ -64,7 +62,6 @@ public class ServerSpawnExpOrbPacket implements Packet {
 		out.writeShort(this.exp);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -52,7 +52,6 @@ public class ServerOpenWindowPacket implements Packet {
 		return this.ownerEntityId;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readUnsignedByte();
 		this.type = MagicValues.key(WindowType.class, in.readString());
@@ -63,7 +62,6 @@ public class ServerOpenWindowPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
 		out.writeString(MagicValues.value(String.class, this.type));
@@ -74,7 +72,6 @@ public class ServerOpenWindowPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

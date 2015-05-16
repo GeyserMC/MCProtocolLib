@@ -28,19 +28,16 @@ public class ServerUpdateTimePacket implements Packet {
 		return this.time;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.age = in.readLong();
 		this.time = in.readLong();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeLong(this.age);
 		out.writeLong(this.time);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

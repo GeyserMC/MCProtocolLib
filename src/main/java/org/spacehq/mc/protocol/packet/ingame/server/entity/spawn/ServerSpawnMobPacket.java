@@ -92,7 +92,6 @@ public class ServerSpawnMobPacket implements Packet {
 		return this.metadata;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.type = MagicValues.key(MobType.class, in.readByte());
@@ -108,7 +107,6 @@ public class ServerSpawnMobPacket implements Packet {
 		this.metadata = NetUtil.readEntityMetadata(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.type));
@@ -124,7 +122,6 @@ public class ServerSpawnMobPacket implements Packet {
 		NetUtil.writeEntityMetadata(out, this.metadata);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

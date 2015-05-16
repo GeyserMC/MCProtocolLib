@@ -46,21 +46,18 @@ public class ServerWindowPropertyPacket implements Packet {
 		return this.value;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readUnsignedByte();
 		this.property = in.readShort();
 		this.value = in.readShort();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
 		out.writeShort(this.property);
 		out.writeShort(this.value);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

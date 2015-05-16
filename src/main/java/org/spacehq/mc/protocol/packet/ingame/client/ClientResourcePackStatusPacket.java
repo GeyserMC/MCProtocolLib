@@ -29,19 +29,16 @@ public class ClientResourcePackStatusPacket implements Packet {
 		return this.status;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.hash = in.readString();
 		this.status = MagicValues.key(ResourcePackStatus.class, in.readVarInt());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.hash);
 		out.writeVarInt(MagicValues.value(Integer.class, this.status));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

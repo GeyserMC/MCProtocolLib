@@ -22,17 +22,14 @@ public class ClientCloseWindowPacket implements Packet {
 		return this.windowId;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readByte();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

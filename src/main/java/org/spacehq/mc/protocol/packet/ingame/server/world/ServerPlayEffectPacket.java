@@ -48,7 +48,6 @@ public class ServerPlayEffectPacket implements Packet {
 		return this.broadcast;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		int id = in.readInt();
 		if(id >= 2000) {
@@ -74,7 +73,6 @@ public class ServerPlayEffectPacket implements Packet {
 		this.broadcast = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		int id = 0;
 		if(this.effect instanceof ParticleEffect) {
@@ -102,7 +100,6 @@ public class ServerPlayEffectPacket implements Packet {
 		out.writeBoolean(this.broadcast);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

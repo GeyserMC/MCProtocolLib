@@ -34,21 +34,18 @@ public class ServerSetExperiencePacket implements Packet {
 		return this.totalExperience;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.experience = in.readFloat();
 		this.level = in.readVarInt();
 		this.totalExperience = in.readVarInt();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeFloat(this.experience);
 		out.writeVarInt(this.level);
 		out.writeVarInt(this.totalExperience);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

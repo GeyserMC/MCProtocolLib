@@ -30,19 +30,16 @@ public class ServerDisplayScoreboardPacket implements Packet {
 		return this.name;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.position = MagicValues.key(ScoreboardPosition.class, in.readByte());
 		this.name = in.readString();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(MagicValues.value(Integer.class, this.position));
 		out.writeString(this.name);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

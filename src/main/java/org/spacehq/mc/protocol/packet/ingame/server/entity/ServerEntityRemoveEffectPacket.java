@@ -30,19 +30,16 @@ public class ServerEntityRemoveEffectPacket implements Packet {
 		return this.effect;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.effect = MagicValues.key(Effect.class, in.readByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.effect));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

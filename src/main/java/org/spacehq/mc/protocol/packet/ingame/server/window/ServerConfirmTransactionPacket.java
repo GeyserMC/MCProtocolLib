@@ -34,21 +34,18 @@ public class ServerConfirmTransactionPacket implements Packet {
 		return this.accepted;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readUnsignedByte();
 		this.actionId = in.readShort();
 		this.accepted = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
 		out.writeShort(this.actionId);
 		out.writeBoolean(this.accepted);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

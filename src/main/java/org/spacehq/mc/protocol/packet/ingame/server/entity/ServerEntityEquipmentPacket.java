@@ -36,21 +36,18 @@ public class ServerEntityEquipmentPacket implements Packet {
 		return this.item;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.slot = in.readShort();
 		this.item = NetUtil.readItem(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeShort(this.slot);
 		NetUtil.writeItem(out, this.item);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

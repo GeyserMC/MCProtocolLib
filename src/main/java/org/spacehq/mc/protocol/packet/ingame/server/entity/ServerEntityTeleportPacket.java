@@ -58,7 +58,6 @@ public class ServerEntityTeleportPacket implements Packet {
 		return this.onGround;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.x = in.readInt() / 32D;
@@ -69,7 +68,6 @@ public class ServerEntityTeleportPacket implements Packet {
 		this.onGround = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeInt((int) (this.x * 32));
@@ -80,7 +78,6 @@ public class ServerEntityTeleportPacket implements Packet {
 		out.writeBoolean(this.onGround);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -30,19 +30,16 @@ public class ServerAnimationPacket implements Packet {
 		return this.animation;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.animation = MagicValues.key(Animation.class, in.readByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.animation));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -31,7 +31,6 @@ public class ServerNotifyClientPacket implements Packet {
 		return this.value;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.notification = MagicValues.key(ClientNotification.class, in.readUnsignedByte());
 		float value = in.readFloat();
@@ -46,7 +45,6 @@ public class ServerNotifyClientPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(MagicValues.value(Integer.class, this.notification));
 		float value = 0;
@@ -69,7 +67,6 @@ public class ServerNotifyClientPacket implements Packet {
 		out.writeFloat(value);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

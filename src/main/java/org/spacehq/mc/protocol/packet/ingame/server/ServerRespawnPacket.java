@@ -44,7 +44,6 @@ public class ServerRespawnPacket implements Packet {
 		return this.worldType;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.dimension = in.readInt();
 		this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
@@ -52,7 +51,6 @@ public class ServerRespawnPacket implements Packet {
 		this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.dimension);
 		out.writeByte(MagicValues.value(Integer.class, this.difficulty));
@@ -60,7 +58,6 @@ public class ServerRespawnPacket implements Packet {
 		out.writeString(MagicValues.value(String.class, this.worldType));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

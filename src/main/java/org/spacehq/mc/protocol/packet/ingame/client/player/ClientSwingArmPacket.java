@@ -11,15 +11,12 @@ public class ClientSwingArmPacket implements Packet {
 	public ClientSwingArmPacket() {
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -38,7 +38,6 @@ public class ServerUpdateSignPacket implements Packet {
 		return this.lines;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.position = NetUtil.readPosition(in);
 		this.lines = new Message[4];
@@ -47,7 +46,6 @@ public class ServerUpdateSignPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		NetUtil.writePosition(out, this.position);
 		for(Message line : this.lines) {
@@ -55,7 +53,6 @@ public class ServerUpdateSignPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -97,7 +97,6 @@ public class ServerSpawnObjectPacket implements Packet {
 		return this.motZ;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.type = MagicValues.key(ObjectType.class, in.readByte());
@@ -129,7 +128,6 @@ public class ServerSpawnObjectPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.type));
@@ -163,7 +161,6 @@ public class ServerSpawnObjectPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

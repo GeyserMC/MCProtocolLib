@@ -36,21 +36,18 @@ public class ServerSetSlotPacket implements Packet {
 		return this.item;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readUnsignedByte();
 		this.slot = in.readShort();
 		this.item = NetUtil.readItem(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
 		out.writeShort(this.slot);
 		NetUtil.writeItem(out, this.item);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}
