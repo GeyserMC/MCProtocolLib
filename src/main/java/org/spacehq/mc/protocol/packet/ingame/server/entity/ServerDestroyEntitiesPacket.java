@@ -22,7 +22,6 @@ public class ServerDestroyEntitiesPacket implements Packet {
 		return this.entityIds;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityIds = new int[in.readVarInt()];
 		for(int index = 0; index < this.entityIds.length; index++) {
@@ -30,7 +29,6 @@ public class ServerDestroyEntitiesPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityIds.length);
 		for(int entityId : this.entityIds) {
@@ -38,7 +36,6 @@ public class ServerDestroyEntitiesPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

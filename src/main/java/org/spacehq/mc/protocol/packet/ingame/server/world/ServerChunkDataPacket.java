@@ -99,7 +99,6 @@ public class ServerChunkDataPacket implements Packet {
 		return this.biomeData != null;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.x = in.readInt();
 		this.z = in.readInt();
@@ -111,7 +110,6 @@ public class ServerChunkDataPacket implements Packet {
 		this.biomeData = chunkData.getBiomes();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		NetworkChunkData data = NetUtil.chunksToData(new ParsedChunkData(this.chunks, this.biomeData));
 		out.writeInt(this.x);
@@ -122,7 +120,6 @@ public class ServerChunkDataPacket implements Packet {
 		out.writeBytes(data.getData(), data.getData().length);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

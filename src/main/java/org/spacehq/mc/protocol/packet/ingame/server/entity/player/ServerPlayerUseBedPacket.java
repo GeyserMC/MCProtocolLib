@@ -30,19 +30,16 @@ public class ServerPlayerUseBedPacket implements Packet {
 		return this.position;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.position = NetUtil.readPosition(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		NetUtil.writePosition(out, this.position);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -49,7 +49,6 @@ public class ClientPlayerMovementPacket implements Packet {
 		return this.onGround;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		if(this.pos) {
 			this.x = in.readDouble();
@@ -65,7 +64,6 @@ public class ClientPlayerMovementPacket implements Packet {
 		this.onGround = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		if(this.pos) {
 			out.writeDouble(this.x);
@@ -81,7 +79,6 @@ public class ClientPlayerMovementPacket implements Packet {
 		out.writeBoolean(this.onGround);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

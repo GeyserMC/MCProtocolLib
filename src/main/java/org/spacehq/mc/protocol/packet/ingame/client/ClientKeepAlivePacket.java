@@ -22,17 +22,14 @@ public class ClientKeepAlivePacket implements Packet {
 		return this.id;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.id = in.readVarInt();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.id);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

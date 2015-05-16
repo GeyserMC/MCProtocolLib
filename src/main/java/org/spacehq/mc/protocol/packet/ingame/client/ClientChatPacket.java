@@ -22,17 +22,14 @@ public class ClientChatPacket implements Packet {
 		return this.message;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.message = in.readString();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.message);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

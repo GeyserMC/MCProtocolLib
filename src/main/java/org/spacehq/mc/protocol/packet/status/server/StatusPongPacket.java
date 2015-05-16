@@ -22,17 +22,14 @@ public class StatusPongPacket implements Packet {
 		return this.time;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.time = in.readLong();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeLong(this.time);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

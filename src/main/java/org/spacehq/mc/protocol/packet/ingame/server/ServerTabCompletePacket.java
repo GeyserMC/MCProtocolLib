@@ -22,7 +22,6 @@ public class ServerTabCompletePacket implements Packet {
 		return this.matches;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.matches = new String[in.readVarInt()];
 		for(int index = 0; index < this.matches.length; index++) {
@@ -30,7 +29,6 @@ public class ServerTabCompletePacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.matches.length);
 		for(String match : this.matches) {
@@ -38,7 +36,6 @@ public class ServerTabCompletePacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -56,7 +56,6 @@ public class ClientWindowActionPacket implements Packet {
 		return this.param;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readByte();
 		this.slot = in.readShort();
@@ -81,7 +80,6 @@ public class ClientWindowActionPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
 		out.writeShort(this.slot);
@@ -108,7 +106,6 @@ public class ClientWindowActionPacket implements Packet {
 		NetUtil.writeItem(out, this.clicked);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -28,19 +28,16 @@ public class ServerEntityHeadLookPacket implements Packet {
 		return this.headYaw;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.headYaw = in.readByte() * 360 / 256f;
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte((byte) (this.headYaw * 256 / 360));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

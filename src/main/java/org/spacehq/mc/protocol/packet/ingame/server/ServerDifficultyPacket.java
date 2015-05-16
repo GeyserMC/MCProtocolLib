@@ -24,17 +24,14 @@ public class ServerDifficultyPacket implements Packet {
 		return this.difficulty;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(MagicValues.value(Integer.class, this.difficulty));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

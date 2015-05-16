@@ -39,21 +39,18 @@ public class ServerUpdateTileEntityPacket implements Packet {
 		return this.nbt;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.position = NetUtil.readPosition(in);
 		this.type = MagicValues.key(UpdatedTileType.class, in.readUnsignedByte());
 		this.nbt = NetUtil.readNBT(in);
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		NetUtil.writePosition(out, this.position);
 		out.writeByte(MagicValues.value(Integer.class, this.type));
 		NetUtil.writeNBT(out, this.nbt);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

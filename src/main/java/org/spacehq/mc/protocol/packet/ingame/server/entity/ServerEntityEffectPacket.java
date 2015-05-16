@@ -48,7 +48,6 @@ public class ServerEntityEffectPacket implements Packet {
 		return this.hideParticles;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.effect = MagicValues.key(Effect.class, in.readByte());
@@ -57,7 +56,6 @@ public class ServerEntityEffectPacket implements Packet {
 		this.hideParticles = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeByte(MagicValues.value(Integer.class, this.effect));
@@ -66,7 +64,6 @@ public class ServerEntityEffectPacket implements Packet {
 		out.writeBoolean(this.hideParticles);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

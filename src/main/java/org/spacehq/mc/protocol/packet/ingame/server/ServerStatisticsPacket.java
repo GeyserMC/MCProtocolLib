@@ -31,7 +31,6 @@ public class ServerStatisticsPacket implements Packet {
 		return this.statistics;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		int length = in.readVarInt();
 		for(int index = 0; index < length; index++) {
@@ -55,7 +54,6 @@ public class ServerStatisticsPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.statistics.size());
 		for(Statistic statistic : this.statistics.keySet()) {
@@ -79,7 +77,6 @@ public class ServerStatisticsPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

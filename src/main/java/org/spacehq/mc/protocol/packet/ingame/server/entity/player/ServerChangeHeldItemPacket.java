@@ -22,17 +22,14 @@ public class ServerChangeHeldItemPacket implements Packet {
 		return this.slot;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.slot = in.readByte();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.slot);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -35,7 +35,6 @@ public class ServerPlayerListEntryPacket implements Packet {
 		return this.entries;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.action = MagicValues.key(PlayerListEntryAction.class, in.readVarInt());
 		this.entries = new PlayerListEntry[in.readVarInt()];
@@ -96,7 +95,6 @@ public class ServerPlayerListEntryPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(MagicValues.value(Integer.class, this.action));
 		out.writeVarInt(this.entries.length);
@@ -142,7 +140,6 @@ public class ServerPlayerListEntryPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

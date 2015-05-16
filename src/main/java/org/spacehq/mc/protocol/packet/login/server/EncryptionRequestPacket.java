@@ -36,14 +36,12 @@ public class EncryptionRequestPacket implements Packet {
 		return this.verifyToken;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.serverId = in.readString();
 		this.publicKey = CryptUtil.decodePublicKey(in.readBytes(in.readVarInt()));
 		this.verifyToken = in.readBytes(in.readVarInt());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.serverId);
 		byte encoded[] = this.publicKey.getEncoded();
@@ -53,7 +51,6 @@ public class EncryptionRequestPacket implements Packet {
 		out.writeBytes(this.verifyToken);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return true;
 	}

@@ -111,7 +111,6 @@ public class ServerWorldBorderPacket implements Packet {
 		return this.warningBlocks;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.action = MagicValues.key(WorldBorderAction.class, in.readVarInt());
 		if(this.action == WorldBorderAction.SET_SIZE) {
@@ -139,7 +138,6 @@ public class ServerWorldBorderPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(MagicValues.value(Integer.class, this.action));
 		if(this.action == WorldBorderAction.SET_SIZE) {
@@ -167,7 +165,6 @@ public class ServerWorldBorderPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

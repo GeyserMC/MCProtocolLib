@@ -30,7 +30,6 @@ public class ServerWindowItemsPacket implements Packet {
 		return this.items;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.windowId = in.readUnsignedByte();
 		this.items = new ItemStack[in.readShort()];
@@ -39,7 +38,6 @@ public class ServerWindowItemsPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeByte(this.windowId);
 		out.writeShort(this.items.length);
@@ -48,7 +46,6 @@ public class ServerWindowItemsPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

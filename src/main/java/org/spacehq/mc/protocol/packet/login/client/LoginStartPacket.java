@@ -22,17 +22,14 @@ public class LoginStartPacket implements Packet {
 		return this.username;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.username = in.readString();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.username);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return true;
 	}

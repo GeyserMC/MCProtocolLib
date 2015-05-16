@@ -38,7 +38,6 @@ public class ServerBlockBreakAnimPacket implements Packet {
 		return this.stage;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.breakerEntityId = in.readVarInt();
 		this.position = NetUtil.readPosition(in);
@@ -48,14 +47,12 @@ public class ServerBlockBreakAnimPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.breakerEntityId);
 		NetUtil.writePosition(out, this.position);
 		out.writeByte(MagicValues.value(Integer.class, this.stage));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

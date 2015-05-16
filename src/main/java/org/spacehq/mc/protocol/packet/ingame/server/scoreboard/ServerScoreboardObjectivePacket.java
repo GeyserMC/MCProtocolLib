@@ -52,7 +52,6 @@ public class ServerScoreboardObjectivePacket implements Packet {
 		return this.type;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.name = in.readString();
 		this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
@@ -62,7 +61,6 @@ public class ServerScoreboardObjectivePacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(this.name);
 		out.writeByte(MagicValues.value(Integer.class, this.action));
@@ -72,7 +70,6 @@ public class ServerScoreboardObjectivePacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

@@ -46,7 +46,6 @@ public class ServerMapDataPacket implements Packet {
 		return this.data;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.mapId = in.readVarInt();
 		this.scale = in.readByte();
@@ -70,7 +69,6 @@ public class ServerMapDataPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.mapId);
 		out.writeByte(this.scale);
@@ -94,7 +92,6 @@ public class ServerMapDataPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

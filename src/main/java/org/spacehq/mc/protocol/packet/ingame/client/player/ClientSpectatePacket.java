@@ -22,17 +22,14 @@ public class ClientSpectatePacket implements Packet {
 		return this.target;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.target = in.readUUID();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeUUID(this.target);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

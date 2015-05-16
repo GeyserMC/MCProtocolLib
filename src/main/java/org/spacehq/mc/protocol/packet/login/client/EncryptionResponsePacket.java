@@ -32,13 +32,11 @@ public class EncryptionResponsePacket implements Packet {
 		return CryptUtil.decryptData(privateKey, this.verifyToken);
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.sharedKey = in.readBytes(in.readVarInt());
 		this.verifyToken = in.readBytes(in.readVarInt());
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.sharedKey.length);
 		out.writeBytes(this.sharedKey);
@@ -46,7 +44,6 @@ public class EncryptionResponsePacket implements Packet {
 		out.writeBytes(this.verifyToken);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return true;
 	}

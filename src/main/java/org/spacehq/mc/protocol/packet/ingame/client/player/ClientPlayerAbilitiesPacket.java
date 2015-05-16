@@ -52,7 +52,6 @@ public class ClientPlayerAbilitiesPacket implements Packet {
 		return this.walkSpeed;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		byte flags = in.readByte();
 		this.invincible = (flags & 1) > 0;
@@ -63,7 +62,6 @@ public class ClientPlayerAbilitiesPacket implements Packet {
 		this.walkSpeed = in.readFloat();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		byte flags = 0;
 		if(this.invincible) {
@@ -87,7 +85,6 @@ public class ClientPlayerAbilitiesPacket implements Packet {
 		out.writeFloat(this.walkSpeed);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

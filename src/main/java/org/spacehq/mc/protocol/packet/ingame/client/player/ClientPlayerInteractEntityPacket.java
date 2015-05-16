@@ -41,7 +41,6 @@ public class ClientPlayerInteractEntityPacket implements Packet {
 		return this.action;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.action = MagicValues.key(InteractAction.class, in.readVarInt());
@@ -52,7 +51,6 @@ public class ClientPlayerInteractEntityPacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeVarInt(MagicValues.value(Integer.class, this.action));
@@ -63,7 +61,6 @@ public class ClientPlayerInteractEntityPacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

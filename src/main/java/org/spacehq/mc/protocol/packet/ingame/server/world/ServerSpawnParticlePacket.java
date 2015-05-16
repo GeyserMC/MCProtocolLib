@@ -86,7 +86,6 @@ public class ServerSpawnParticlePacket implements Packet {
 		return this.data;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.particle = MagicValues.key(Particle.class, in.readInt());
 		this.longDistance = in.readBoolean();
@@ -104,7 +103,6 @@ public class ServerSpawnParticlePacket implements Packet {
 		}
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(MagicValues.value(Integer.class, this.particle));
 		out.writeBoolean(this.longDistance);
@@ -121,7 +119,6 @@ public class ServerSpawnParticlePacket implements Packet {
 		}
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

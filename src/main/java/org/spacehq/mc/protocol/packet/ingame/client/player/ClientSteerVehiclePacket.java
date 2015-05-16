@@ -40,7 +40,6 @@ public class ClientSteerVehiclePacket implements Packet {
 		return this.dismount;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.sideways = in.readFloat();
 		this.forward = in.readFloat();
@@ -49,7 +48,6 @@ public class ClientSteerVehiclePacket implements Packet {
 		this.dismount = (flags & 2) > 0;
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeFloat(this.sideways);
 		out.writeFloat(this.forward);
@@ -65,7 +63,6 @@ public class ClientSteerVehiclePacket implements Packet {
 		out.writeByte(flags);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

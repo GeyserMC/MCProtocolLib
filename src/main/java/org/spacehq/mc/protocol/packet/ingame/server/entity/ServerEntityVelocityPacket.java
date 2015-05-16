@@ -40,7 +40,6 @@ public class ServerEntityVelocityPacket implements Packet {
 		return this.motZ;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readVarInt();
 		this.motX = in.readShort() / 8000D;
@@ -48,7 +47,6 @@ public class ServerEntityVelocityPacket implements Packet {
 		this.motZ = in.readShort() / 8000D;
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeVarInt(this.entityId);
 		out.writeShort((int) (this.motX * 8000));
@@ -56,7 +54,6 @@ public class ServerEntityVelocityPacket implements Packet {
 		out.writeShort((int) (this.motZ * 8000));
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

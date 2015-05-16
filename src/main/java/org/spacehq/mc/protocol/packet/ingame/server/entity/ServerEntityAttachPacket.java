@@ -34,21 +34,18 @@ public class ServerEntityAttachPacket implements Packet {
 		return this.leash;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
 		this.attachedToId = in.readInt();
 		this.leash = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
 		out.writeInt(this.attachedToId);
 		out.writeBoolean(this.leash);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}

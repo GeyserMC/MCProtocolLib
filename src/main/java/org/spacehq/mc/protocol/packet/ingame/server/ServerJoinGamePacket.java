@@ -68,7 +68,6 @@ public class ServerJoinGamePacket implements Packet {
 		return this.reducedDebugInfo;
 	}
 
-	@Override
 	public void read(NetInput in) throws IOException {
 		this.entityId = in.readInt();
 		int gamemode = in.readUnsignedByte();
@@ -82,7 +81,6 @@ public class ServerJoinGamePacket implements Packet {
 		this.reducedDebugInfo = in.readBoolean();
 	}
 
-	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeInt(this.entityId);
 		int gamemode = MagicValues.value(Integer.class, this.gamemode);
@@ -98,7 +96,6 @@ public class ServerJoinGamePacket implements Packet {
 		out.writeBoolean(this.reducedDebugInfo);
 	}
 
-	@Override
 	public boolean isPriority() {
 		return false;
 	}
