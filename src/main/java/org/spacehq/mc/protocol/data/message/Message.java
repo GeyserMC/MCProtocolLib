@@ -1,9 +1,9 @@
 package org.spacehq.mc.protocol.data.message;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +138,7 @@ public abstract class Message implements Cloneable {
 
 	public static Message fromString(String str) {
 		try {
-			return fromJson(new Gson().fromJson(str, JsonObject.class));
+			return fromJson(new JsonParser().parse(str));
 		} catch(Exception e) {
 			return new TextMessage(str);
 		}
