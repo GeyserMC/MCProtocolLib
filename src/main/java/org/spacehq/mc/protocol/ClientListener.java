@@ -32,6 +32,7 @@ import org.spacehq.packetlib.event.session.SessionAdapter;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
+import java.net.Proxy;
 
 public class ClientListener extends SessionAdapter {
 
@@ -45,11 +46,16 @@ public class ClientListener extends SessionAdapter {
 				EncryptionRequestPacket packet = event.getPacket();
 				this.key = CryptUtil.generateSharedKey();
 
+				Proxy proxy = event.getSession().<Proxy>getFlag(ProtocolConstants.AUTH_PROXY_KEY);
+				if(proxy == null) {
+					proxy = Proxy.NO_PROXY;
+				}
+
 				GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
 				String serverHash = new BigInteger(CryptUtil.getServerIdHash(packet.getServerId(), packet.getPublicKey(), this.key)).toString(16);
 				String accessToken = event.getSession().getFlag(ProtocolConstants.ACCESS_TOKEN_KEY);
 				try {
-					new SessionService().joinServer(profile, accessToken, serverHash);
+					new SessionService(proxy).joinServer(profile, accessToken, serverHash);
 				} catch(AuthenticationUnavailableException e) {
 					event.getSession().disconnect("Login failed: Authentication service unavailable.");
 					return;

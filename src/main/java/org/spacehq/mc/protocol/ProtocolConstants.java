@@ -8,6 +8,7 @@ public class ProtocolConstants {
 
 	// General Key Constants
 	public static final String PROFILE_KEY = "profile";
+	public static final String AUTH_PROXY_KEY = "auth-proxy";
 
 	// Client Key Constants
 	public static final String ACCESS_TOKEN_KEY = "access-token";

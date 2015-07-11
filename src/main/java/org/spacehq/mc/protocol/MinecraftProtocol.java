@@ -39,6 +39,7 @@ import org.spacehq.packetlib.packet.DefaultPacketHeader;
 import org.spacehq.packetlib.packet.PacketHeader;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
+import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.UUID;
@@ -75,10 +76,18 @@ public class MinecraftProtocol extends PacketProtocol {
 		this.profile = new GameProfile((UUID) null, username);
 	}
 
+	public MinecraftProtocol(String username, String password) throws AuthenticationException {
+		this(username, password, false);
+	}
+
 	public MinecraftProtocol(String username, String using, boolean token) throws AuthenticationException {
+		this(username, using, token, Proxy.NO_PROXY);
+	}
+
+	public MinecraftProtocol(String username, String using, boolean token, Proxy authProxy) throws AuthenticationException {
 		this(ProtocolMode.LOGIN);
 		String clientToken = UUID.randomUUID().toString();
-		UserAuthentication auth = new UserAuthentication(clientToken);
+		UserAuthentication auth = new UserAuthentication(clientToken, authProxy);
 		auth.setUsername(username);
 		if(token) {
 			auth.setAccessToken(using);

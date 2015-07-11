@@ -40,12 +40,14 @@ public class Test {
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 25565;
 	private static final Proxy PROXY = Proxy.NO_PROXY;
+	private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
 	private static final String USERNAME = "Username";
 	private static final String PASSWORD = "Password";
 
 	public static void main(String[] args) {
 		if(SPAWN_SERVER) {
 			Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory(PROXY));
+			server.setGlobalFlag(ProtocolConstants.AUTH_PROXY_KEY, AUTH_PROXY);
 			server.setGlobalFlag(ProtocolConstants.VERIFY_USERS_KEY, VERIFY_USERS);
 			server.setGlobalFlag(ProtocolConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
 				@Override
@@ -103,6 +105,7 @@ public class Test {
 	private static void status() {
 		MinecraftProtocol protocol = new MinecraftProtocol(ProtocolMode.STATUS);
 		Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
+		client.getSession().setFlag(ProtocolConstants.AUTH_PROXY_KEY, AUTH_PROXY);
 		client.getSession().setFlag(ProtocolConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
 			@Override
 			public void handle(Session session, ServerStatusInfo info) {

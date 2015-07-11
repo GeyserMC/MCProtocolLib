@@ -28,6 +28,7 @@ import org.spacehq.packetlib.event.session.SessionAdapter;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
+import java.net.Proxy;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.Arrays;
@@ -161,8 +162,13 @@ public class ServerListener extends SessionAdapter {
 		public void run() {
 			MinecraftProtocol protocol = (MinecraftProtocol) this.session.getPacketProtocol();
 			try {
+				Proxy proxy = this.session.<Proxy>getFlag(ProtocolConstants.AUTH_PROXY_KEY);
+				if(proxy == null) {
+					proxy = Proxy.NO_PROXY;
+				}
+
 				String serverHash = new BigInteger(CryptUtil.getServerIdHash(serverId, pair.getPublic(), this.key)).toString(16);
-				SessionService service = new SessionService();
+				SessionService service = new SessionService(proxy);
 				GameProfile profile = service.hasJoinedServer(new GameProfile((UUID) null, username), serverHash);
 				if(profile != null) {
 					int threshold = this.session.getFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD);
