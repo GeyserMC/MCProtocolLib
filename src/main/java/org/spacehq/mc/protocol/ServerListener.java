@@ -99,7 +99,7 @@ public class ServerListener extends SessionAdapter {
 						handler.loggedIn(event.getSession());
 					}
 
-					new KeepAliveThread(event.getSession()).start();
+					new Thread(new KeepAlive(event.getSession())).start();
 				}
 			} else if(event.getPacket() instanceof EncryptionResponsePacket) {
 				EncryptionResponsePacket packet = event.getPacket();
@@ -182,7 +182,7 @@ public class ServerListener extends SessionAdapter {
 						handler.loggedIn(this.session);
 					}
 
-					new KeepAliveThread(this.session).start();
+					new Thread(new KeepAlive(this.session)).start();
 				} else {
 					this.session.disconnect("Failed to verify username!");
 				}
@@ -192,10 +192,10 @@ public class ServerListener extends SessionAdapter {
 		}
 	}
 
-	private class KeepAliveThread extends Thread {
+	private class KeepAlive implements Runnable {
 		private Session session;
 
-		public KeepAliveThread(Session session) {
+		public KeepAlive(Session session) {
 			this.session = session;
 		}
 
