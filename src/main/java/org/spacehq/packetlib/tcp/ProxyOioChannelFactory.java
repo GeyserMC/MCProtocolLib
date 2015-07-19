@@ -1,7 +1,6 @@
 package org.spacehq.packetlib.tcp;
 
-import io.netty.bootstrap.ChannelFactory;
-import io.netty.channel.EventLoop;
+import io.netty.channel.ChannelFactory;
 import io.netty.channel.socket.oio.OioSocketChannel;
 
 import java.net.Proxy;
@@ -16,8 +15,7 @@ public class ProxyOioChannelFactory implements ChannelFactory<OioSocketChannel> 
 	}
 
 	@Override
-	public OioSocketChannel newChannel(EventLoop eventLoop) {
-		return new OioSocketChannel(eventLoop, new Socket(this.proxy));
+	public OioSocketChannel newChannel() {
+		return new OioSocketChannel(new Socket(this.proxy));
 	}
-
 }
