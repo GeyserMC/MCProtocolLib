@@ -86,9 +86,9 @@ public class ClientListener extends SessionAdapter {
 					handler.handle(event.getSession(), info);
 				}
 
-				event.getSession().send(new StatusPingPacket(System.nanoTime() / 1000000));
+				event.getSession().send(new StatusPingPacket(System.currentTimeMillis()));
 			} else if(event.getPacket() instanceof StatusPongPacket) {
-				long time = System.nanoTime() / 1000000 - event.<StatusPongPacket>getPacket().getPingTime();
+				long time = System.currentTimeMillis() - event.<StatusPongPacket>getPacket().getPingTime();
 				ServerPingTimeHandler handler = event.getSession().getFlag(ProtocolConstants.SERVER_PING_TIME_HANDLER_KEY);
 				if(handler != null) {
 					handler.handle(event.getSession(), time);

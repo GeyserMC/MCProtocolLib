@@ -132,7 +132,7 @@ public class ServerListener extends SessionAdapter {
 			if(event.getPacket() instanceof ClientKeepAlivePacket) {
 				ClientKeepAlivePacket packet = event.getPacket();
 				if(packet.getPingId() == this.lastPingId) {
-					long time = (System.nanoTime() / 1000000L) - this.lastPingTime;
+					long time = System.currentTimeMillis() - this.lastPingTime;
 					event.getSession().setFlag(ProtocolConstants.PING_KEY, time);
 				}
 			}
@@ -201,20 +201,15 @@ public class ServerListener extends SessionAdapter {
 
 		@Override
 		public void run() {
-			lastPingTime = System.nanoTime() / 1000000L;
 			while(this.session.isConnected()) {
-				long curr = System.nanoTime() / 1000000L;
-				long time = curr - lastPingTime;
-				if(time > 2000) {
-					lastPingTime = curr;
-					lastPingId = (int) curr;
-					this.session.send(new ServerKeepAlivePacket(lastPingId));
-				}
+				lastPingTime = System.currentTimeMillis();
+				lastPingId = (int) lastPingTime;
+				this.session.send(new ServerKeepAlivePacket(lastPingId));
 
 				try {
-					Thread.sleep(10);
+					Thread.sleep(2000);
 				} catch(InterruptedException e) {
-					e.printStackTrace();
+					break;
 				}
 			}
 		}
