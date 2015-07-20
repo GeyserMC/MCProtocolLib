@@ -1,28 +1,13 @@
-<b><center><h1>PacketLib</h></center></b>
-==========
+# PacketLib
+PacketLib is a library for packet-based networking between clients and servers It was made as a basis for other projects involving packet networking.
 
+## Test Example
+See examples/org/spacehq/packetlib/test
 
-<b>About PacketLib</b>
---------
-
-PacketLib is a library for networking between clients and servers with packets. It was made as a basis for other projects involving packet networking.
-
-
-<b>Test Example</b>
---------
-
-See examples/org/spacehq/packetlib/test/PingServerTest.java
-
-
-<b>Building the Source</b>
---------
-
+## Building the Source
 PacketLib uses Maven to manage dependencies. Simply run 'mvn clean install' in the source's directory.
-Snapshots (if any exist) can be downloaded <b>[here](http://repo.spacehq.org/content/repositories/snapshots/org/spacehq/packetlib)</b>.
-Releases (if any exist) can be downloaded <b>[here](http://repo.spacehq.org/content/repositories/release/org/spacehq/packetlib)</b>.
 
+Builds can be downloaded **[here](http://build.spacehq.org/job/PacketLib)**.
 
-<b>License</b>
----------
-
-PacketLib is licensed under the <b>[MIT license](http://www.opensource.org/licenses/mit-license.html)</b>.
+## License
+PacketLib is licensed under the **[MIT license](http://www.opensource.org/licenses/mit-license.html)**.

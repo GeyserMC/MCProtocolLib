@@ -1,6 +1,12 @@
 package org.spacehq.packetlib;
 
-import org.spacehq.packetlib.event.server.*;
+import org.spacehq.packetlib.event.server.ServerBoundEvent;
+import org.spacehq.packetlib.event.server.ServerClosedEvent;
+import org.spacehq.packetlib.event.server.ServerClosingEvent;
+import org.spacehq.packetlib.event.server.ServerEvent;
+import org.spacehq.packetlib.event.server.ServerListener;
+import org.spacehq.packetlib.event.server.SessionAddedEvent;
+import org.spacehq.packetlib.event.server.SessionRemovedEvent;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
 import java.lang.reflect.Constructor;
@@ -10,276 +16,241 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A server that listens on a given host and port.
+ * A server that listens for connections.
  */
-public class Server implements ConnectTimeoutHandlerContainer {
+public class Server {
+    private String host;
+    private int port;
+    private Class<? extends PacketProtocol> protocol;
+    private SessionFactory factory;
+    private ConnectionListener listener;
+    private List<Session> sessions = new ArrayList<Session>();
 
-	private String host;
-	private int port;
-	private Class<? extends PacketProtocol> protocol;
-	private SessionFactory factory;
-	private int timeout = 30;
-	private TimeoutHandler timeoutHandler;
-	private ConnectionListener listener;
-	private List<Session> sessions = new ArrayList<Session>();
+    private Map<String, Object> flags = new HashMap<String, Object>();
+    private List<ServerListener> listeners = new ArrayList<ServerListener>();
 
-	private Map<String, Object> flags = new HashMap<String, Object>();
-	private List<ServerListener> listeners = new ArrayList<ServerListener>();
+    public Server(String host, int port, Class<? extends PacketProtocol> protocol, SessionFactory factory) {
+        this.host = host;
+        this.port = port;
+        this.protocol = protocol;
+        this.factory = factory;
+    }
 
-	public Server(String host, int port, Class<? extends PacketProtocol> protocol, SessionFactory factory) {
-		this.host = host;
-		this.port = port;
-		this.protocol = protocol;
-		this.factory = factory;
-	}
+    /**
+     * Binds and initializes the server.
+     *
+     * @return The server after being bound.
+     */
+    public Server bind() {
+        this.listener = this.factory.createServerListener(this);
+        this.listener.bind();
 
-	/**
-	 * Binds and initializes the server.
-	 *
-	 * @return The server after being bound.
-	 */
-	public Server bind() {
-		this.listener = this.factory.createServerListener(this);
-		this.callEvent(new ServerBoundEvent(this));
-		return this;
-	}
+        this.callEvent(new ServerBoundEvent(this));
+        return this;
+    }
 
-	/**
-	 * Gets the host this server is bound to.
-	 *
-	 * @return The server's host.
-	 */
-	public String getHost() {
-		return this.host;
-	}
+    /**
+     * Gets the host this server is bound to.
+     *
+     * @return The server's host.
+     */
+    public String getHost() {
+        return this.host;
+    }
 
-	/**
-	 * Gets the port this server is bound to.
-	 *
-	 * @return The server's port.
-	 */
-	public int getPort() {
-		return this.port;
-	}
+    /**
+     * Gets the port this server is bound to.
+     *
+     * @return The server's port.
+     */
+    public int getPort() {
+        return this.port;
+    }
 
-	/**
-	 * Gets the connect timeout for this server in seconds.
-	 *
-	 * @return The client's connect timeout.
-	 */
-	public int getConnectTimeout() {
-		return this.timeout;
-	}
+    /**
+     * Gets the packet protocol of the server.
+     *
+     * @return The server's packet protocol.
+     */
+    public Class<? extends PacketProtocol> getPacketProtocol() {
+        return this.protocol;
+    }
 
-	/**
-	 * Sets the connect timeout for this server in seconds.
-	 *
-	 * @param timeout Connect timeout to set in seconds.
-	 */
-	public void setConnectTimeout(int timeout) {
-		this.timeout = timeout;
-	}
+    /**
+     * Creates a new packet protocol instance from this server's protocol class.
+     *
+     * @return The created protocol instance.
+     * @throws IllegalStateException If the protocol does not have a no-params constructor or cannot be instantiated.
+     */
+    public PacketProtocol createPacketProtocol() {
+        try {
+            Constructor<? extends PacketProtocol> constructor = this.protocol.getDeclaredConstructor();
+            if(!constructor.isAccessible()) {
+                constructor.setAccessible(true);
+            }
 
-	/**
-	 * Gets the connect timeout handler for this server.
-	 *
-	 * @return The client's connect timeout handler.
-	 */
-	public TimeoutHandler getConnectTimeoutHandler() {
-		return this.timeoutHandler;
-	}
+            return constructor.newInstance();
+        } catch(NoSuchMethodError e) {
+            throw new IllegalStateException("PacketProtocol \"" + this.protocol.getName() + "\" does not have a no-params constructor for instantiation.");
+        } catch(Exception e) {
+            throw new IllegalStateException("Failed to instantiate PacketProtocol " + this.protocol.getName() + ".", e);
+        }
+    }
 
-	/**
-	 * Sets the connect timeout handler for this server.
-	 *
-	 * @param timeoutHandler Connect timeout handler to set.
-	 */
-	public void setConnectTimeoutHandler(TimeoutHandler timeoutHandler) {
-		this.timeoutHandler = timeoutHandler;
-	}
+    /**
+     * Gets this server's set flags.
+     *
+     * @return This server's flags.
+     */
+    public Map<String, Object> getGlobalFlags() {
+        return new HashMap<String, Object>(this.flags);
+    }
 
-	/**
-	 * Gets the packet protocol of the server.
-	 *
-	 * @return The server's packet protocol.
-	 */
-	public Class<? extends PacketProtocol> getPacketProtocol() {
-		return this.protocol;
-	}
+    /**
+     * Checks whether this server has a flag set.
+     *
+     * @param key Key of the flag to check for.
+     * @return Whether this server has a flag set.
+     */
+    public boolean hasGlobalFlag(String key) {
+        return this.flags.containsKey(key);
+    }
 
-	/**
-	 * Creates a new packet protocol instance from this server's protocol class.
-	 *
-	 * @return The created protocol instance.
-	 * @throws IllegalStateException If the protocol does not have a no-params constructor or cannot be instantiated.
-	 */
-	public PacketProtocol createPacketProtocol() {
-		try {
-			Constructor<? extends PacketProtocol> constructor = this.protocol.getDeclaredConstructor();
-			if(!constructor.isAccessible()) {
-				constructor.setAccessible(true);
-			}
+    /**
+     * Gets the value of the given flag as an instance of the given type. If this
+     * session belongs to a server, the server's flags will be checked for the flag
+     * as well.
+     *
+     * @param key Key of the flag.
+     * @return Value of the flag.
+     * @throws IllegalStateException If the flag's value isn't of the required type.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getGlobalFlag(String key) {
+        Object value = this.flags.get(key);
+        if(value == null) {
+            return null;
+        }
 
-			return constructor.newInstance();
-		} catch(NoSuchMethodError e) {
-			throw new IllegalStateException("PacketProtocol \"" + this.protocol.getName() + "\" does not have a no-params constructor for instantiation.");
-		} catch(Exception e) {
-			throw new IllegalStateException("Failed to instantiate PacketProtocol " + this.protocol.getName() + ".", e);
-		}
-	}
+        try {
+            return (T) value;
+        } catch(ClassCastException e) {
+            throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
+        }
+    }
 
-	/**
-	 * Gets this server's set flags.
-	 *
-	 * @return This server's flags.
-	 */
-	public Map<String, Object> getGlobalFlags() {
-		return new HashMap<String, Object>(this.flags);
-	}
+    /**
+     * Sets the value of a flag. The flag will be used in sessions if a session does
+     * not contain a value for the flag.
+     *
+     * @param key   Key of the flag.
+     * @param value Value to set the flag to.
+     */
+    public void setGlobalFlag(String key, Object value) {
+        this.flags.put(key, value);
+    }
 
-	/**
-	 * Checks whether this server has a flag set.
-	 *
-	 * @param key Key of the flag to check for.
-	 * @return Whether this server has a flag set.
-	 */
-	public boolean hasGlobalFlag(String key) {
-		return this.flags.containsKey(key);
-	}
+    /**
+     * Gets the listeners listening on this session.
+     *
+     * @return This server's listeners.
+     */
+    public List<ServerListener> getListeners() {
+        return new ArrayList<ServerListener>(this.listeners);
+    }
 
-	/**
-	 * Gets the value of the given flag as an instance of the given type. If this
-	 * session belongs to a server, the server's flags will be checked for the flag
-	 * as well.
-	 *
-	 * @param key Key of the flag.
-	 * @return Value of the flag.
-	 * @throws IllegalStateException If the flag's value isn't of the required type.
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getGlobalFlag(String key) {
-		Object value = this.flags.get(key);
-		if(value == null) {
-			return null;
-		}
+    /**
+     * Adds a listener to this server.
+     *
+     * @param listener Listener to add.
+     */
+    public void addListener(ServerListener listener) {
+        this.listeners.add(listener);
+    }
 
-		try {
-			return (T) value;
-		} catch(ClassCastException e) {
-			throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
-		}
-	}
+    /**
+     * Removes a listener from this server.
+     *
+     * @param listener Listener to remove.
+     */
+    public void removeListener(ServerListener listener) {
+        this.listeners.remove(listener);
+    }
 
-	/**
-	 * Sets the value of a flag. The flag will be used in sessions if a session does
-	 * not contain a value for the flag.
-	 *
-	 * @param key   Key of the flag.
-	 * @param value Value to set the flag to.
-	 */
-	public void setGlobalFlag(String key, Object value) {
-		this.flags.put(key, value);
-	}
+    /**
+     * Calls an event on the listeners of this server.
+     *
+     * @param event Event to call.
+     */
+    public void callEvent(ServerEvent event) {
+        for(ServerListener listener : this.listeners) {
+            event.call(listener);
+        }
+    }
 
-	/**
-	 * Gets the listeners listening on this session.
-	 *
-	 * @return This server's listeners.
-	 */
-	public List<ServerListener> getListeners() {
-		return new ArrayList<ServerListener>(this.listeners);
-	}
+    /**
+     * Gets all sessions belonging to this server.
+     *
+     * @return Sessions belonging to this server.
+     */
+    public List<Session> getSessions() {
+        return new ArrayList<Session>(this.sessions);
+    }
 
-	/**
-	 * Adds a listener to this server.
-	 *
-	 * @param listener Listener to add.
-	 */
-	public void addListener(ServerListener listener) {
-		this.listeners.add(listener);
-	}
+    /**
+     * Adds the given session to this server.
+     *
+     * @param session Session to add.
+     */
+    public void addSession(Session session) {
+        this.sessions.add(session);
+        this.callEvent(new SessionAddedEvent(this, session));
+    }
 
-	/**
-	 * Removes a listener from this server.
-	 *
-	 * @param listener Listener to remove.
-	 */
-	public void removeListener(ServerListener listener) {
-		this.listeners.remove(listener);
-	}
+    /**
+     * Removes the given session from this server.
+     *
+     * @param session Session to remove.
+     */
+    public void removeSession(Session session) {
+        this.sessions.remove(session);
+        if(session.isConnected()) {
+            session.disconnect("Connection closed.");
+        }
 
-	/**
-	 * Calls an event on the listeners of this server.
-	 *
-	 * @param event Event to call.
-	 */
-	public void callEvent(ServerEvent event) {
-		for(ServerListener listener : this.listeners) {
-			event.call(listener);
-		}
-	}
+        this.callEvent(new SessionRemovedEvent(this, session));
+    }
 
-	/**
-	 * Gets all sessions belonging to this server.
-	 *
-	 * @return Sessions belonging to this server.
-	 */
-	public List<Session> getSessions() {
-		return new ArrayList<Session>(this.sessions);
-	}
+    /**
+     * Gets whether the server is listening.
+     *
+     * @return Whether the server is listening.
+     */
+    public boolean isListening() {
+        return this.listener.isListening();
+    }
 
-	/**
-	 * Adds the given session to this server.
-	 *
-	 * @param session Session to add.
-	 */
-	public void addSession(Session session) {
-		this.sessions.add(session);
-		this.callEvent(new SessionAddedEvent(this, session));
-	}
+    /**
+     * Closes the server.
+     */
+    public void close() {
+        this.close(false);
+    }
 
-	/**
-	 * Removes the given session from this server.
-	 *
-	 * @param session Session to remove.
-	 */
-	public void removeSession(Session session) {
-		this.sessions.remove(session);
-		if(session.isConnected()) {
-			session.disconnect("Connection closed.");
-		}
+    /**
+     * Closes the server.
+     *
+     * @param wait Whether to wait for the server to finish closing.
+     */
+    public void close(boolean wait) {
+        this.callEvent(new ServerClosingEvent(this));
+        for(Session session : this.getSessions()) {
+            if(session.isConnected()) {
+                session.disconnect("Server closed.");
+            }
+        }
 
-		this.callEvent(new SessionRemovedEvent(this, session));
-	}
-
-	/**
-	 * Gets whether the server is listening.
-	 *
-	 * @return Whether the server is listening.
-	 */
-	public boolean isListening() {
-		return this.listener.isListening();
-	}
-
-	/**
-	 * Closes the server.
-	 */
-	public void close() {
-		// Close server in a separate thread to prevent stalling from closing a server inside an event or packet handling.
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				callEvent(new ServerClosingEvent(Server.this));
-				for(Session session : getSessions()) {
-					if(session.isConnected()) {
-						session.disconnect("Server closed.");
-					}
-				}
-
-				listener.close();
-				callEvent(new ServerClosedEvent(Server.this));
-			}
-		}, "CloseServer").start();
-	}
-
+        this.listener.close(wait);
+        this.callEvent(new ServerClosedEvent(this));
+    }
 }

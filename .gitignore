@@ -1,12 +1,13 @@
 bin
 lib
+target
+testing
 
 .settings
 .classpath
 .project
+.directory
 
 *.iml
 .idea
-
-target
 

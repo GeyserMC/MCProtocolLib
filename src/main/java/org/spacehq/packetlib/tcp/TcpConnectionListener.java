@@ -1,49 +1,116 @@
 package org.spacehq.packetlib.tcp;
 
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.Future;
 import org.spacehq.packetlib.ConnectionListener;
+import org.spacehq.packetlib.Server;
+import org.spacehq.packetlib.packet.PacketProtocol;
+
+import java.net.InetSocketAddress;
 
 public class TcpConnectionListener implements ConnectionListener {
+    private String host;
+    private int port;
+    private Server server;
 
-	private String host;
-	private int port;
-	private EventLoopGroup group;
-	private Channel channel;
+    private EventLoopGroup group;
+    private Channel channel;
 
-	public TcpConnectionListener(String host, int port, EventLoopGroup group, Channel channel) {
-		this.host = host;
-		this.port = port;
-		this.group = group;
-		this.channel = channel;
-	}
+    public TcpConnectionListener(String host, int port, Server server) {
+        this.host = host;
+        this.port = port;
+        this.server = server;
+    }
 
-	@Override
-	public String getHost() {
-		return this.host;
-	}
+    @Override
+    public String getHost() {
+        return this.host;
+    }
 
-	@Override
-	public int getPort() {
-		return this.port;
-	}
+    @Override
+    public int getPort() {
+        return this.port;
+    }
 
-	@Override
-	public boolean isListening() {
-		return this.channel.isOpen();
-	}
+    @Override
+    public boolean isListening() {
+        return this.channel != null && this.channel.isOpen();
+    }
 
-	@Override
-	public void close() {
-		if(this.channel.isOpen()) {
-			this.channel.close().syncUninterruptibly();
-		}
+    @Override
+    public void bind() {
+        this.group = new NioEventLoopGroup();
+        ChannelFuture future = new ServerBootstrap().channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<Channel>() {
+            @Override
+            public void initChannel(Channel channel) throws Exception {
+                InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
+                PacketProtocol protocol = server.createPacketProtocol();
 
-		try {
-			this.group.shutdownGracefully().sync();
-		} catch(InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+                TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, server);
+                session.getPacketProtocol().newServerSession(server, session);
 
+                channel.config().setOption(ChannelOption.IP_TOS, 0x18);
+                channel.config().setOption(ChannelOption.TCP_NODELAY, false);
+
+                ChannelPipeline pipeline = channel.pipeline();
+
+                session.refreshReadTimeoutHandler(channel);
+                session.refreshWriteTimeoutHandler(channel);
+
+                pipeline.addLast("encryption", new TcpPacketEncryptor(session));
+                pipeline.addLast("sizer", new TcpPacketSizer(session));
+                pipeline.addLast("codec", new TcpPacketCodec(session));
+                pipeline.addLast("manager", session);
+
+                server.addSession(session);
+            }
+        }).group(this.group).localAddress(this.host, this.port).bind();
+
+        try {
+            this.channel = future.await().channel();
+        } catch(InterruptedException e) {
+        }
+    }
+
+    @Override
+    public void close() {
+        this.close(false);
+    }
+
+    @Override
+    public void close(boolean wait) {
+        if(this.channel != null) {
+            if(this.channel.isOpen()) {
+                ChannelFuture future = this.channel.close();
+                if(wait) {
+                    try {
+                        future.await();
+                    } catch(InterruptedException e) {
+                    }
+                }
+            }
+
+            this.channel = null;
+        }
+
+        if(this.group != null) {
+            Future<?> future = this.group.shutdownGracefully();
+            if(wait) {
+                try {
+                    future.await();
+                } catch(InterruptedException e) {
+                }
+            }
+
+            this.group = null;
+        }
+    }
 }

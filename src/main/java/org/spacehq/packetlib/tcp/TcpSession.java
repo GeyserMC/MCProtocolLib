@@ -1,417 +1,365 @@
 package org.spacehq.packetlib.tcp;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ConnectTimeoutException;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.TimeoutException;
+import io.netty.handler.timeout.WriteTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import org.spacehq.packetlib.ConnectTimeoutHandlerContainer;
 import org.spacehq.packetlib.Session;
-import org.spacehq.packetlib.TimeoutHandler;
-import org.spacehq.packetlib.TimeoutType;
-import org.spacehq.packetlib.event.session.*;
+import org.spacehq.packetlib.event.session.ConnectedEvent;
+import org.spacehq.packetlib.event.session.DisconnectedEvent;
+import org.spacehq.packetlib.event.session.DisconnectingEvent;
+import org.spacehq.packetlib.event.session.PacketReceivedEvent;
+import org.spacehq.packetlib.event.session.PacketSentEvent;
+import org.spacehq.packetlib.event.session.SessionEvent;
+import org.spacehq.packetlib.event.session.SessionListener;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
+public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
+    private String host;
+    private int port;
+    private PacketProtocol protocol;
+    private Channel channel;
+    protected boolean disconnected = false;
+    private int compressionThreshold = -1;
+    private int connectTimeout = 30;
+    private int readTimeout = 30;
+    private int writeTimeout = 0;
+    private List<Packet> packets = new ArrayList<Packet>();
 
-	private String host;
-	private int port;
-	private PacketProtocol protocol;
-	private Bootstrap bootstrap;
-	private EventLoopGroup group;
-	private Channel channel;
-	private boolean disconnected = false;
-	private boolean writing = false;
-	private boolean exception = false;
-	private int compressionThreshold = -1;
-	private int readTimeout = 30;
-	private int writeTimeout = 0;
-	private TimeoutHandler timeoutHandler = null;
-	private ConnectTimeoutHandlerContainer container;
-	private List<Packet> packets = new ArrayList<Packet>();
+    private Map<String, Object> flags = new HashMap<String, Object>();
+    private List<SessionListener> listeners = new CopyOnWriteArrayList<SessionListener>();
 
-	private Map<String, Object> flags = new HashMap<String, Object>();
-	private List<SessionListener> listeners = new CopyOnWriteArrayList<SessionListener>();
+    public TcpSession(String host, int port, PacketProtocol protocol) {
+        this.host = host;
+        this.port = port;
+        this.protocol = protocol;
+    }
 
-	public TcpSession(String host, int port, PacketProtocol protocol, EventLoopGroup group, Bootstrap bootstrap, ConnectTimeoutHandlerContainer container) {
-		this.host = host;
-		this.port = port;
-		this.protocol = protocol;
-		this.group = group;
-		this.bootstrap = bootstrap;
-		this.container = container;
-	}
+    @Override
+    public void connect() {
+        this.connect(true);
+    }
 
-	@Override
-	public void connect() {
-		this.connect(true);
-	}
+    @Override
+    public void connect(boolean wait) {
+    }
 
-	@Override
-	public void connect(boolean wait) {
-		if(this.bootstrap == null) {
-			if(!this.disconnected) {
-				return;
-			} else {
-				throw new IllegalStateException("Session has already been disconnected.");
-			}
-		}
+    @Override
+    public String getHost() {
+        return this.host;
+    }
 
-		final AtomicBoolean calledTimeout = new AtomicBoolean(false);
-		try {
-			this.bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, this.container.getConnectTimeout() * 1000);
-			ChannelFuture future = this.bootstrap.connect();
-			future.addListener(new ChannelFutureListener() {
-				@Override
-				public void operationComplete(ChannelFuture channelFuture) throws Exception {
-					if(!channelFuture.isSuccess() && channelFuture.cause() != null) {
-						exceptionCaught(null, channelFuture.cause());
-					}
-				}
-			});
+    @Override
+    public int getPort() {
+        return this.port;
+    }
 
-			this.bootstrap = null;
-			if(wait) {
-				future.awaitUninterruptibly();
-			}
-		} catch(Exception e) {
-			exceptionCaught(null, e);
-		}
-	}
+    @Override
+    public PacketProtocol getPacketProtocol() {
+        return this.protocol;
+    }
 
-	@Override
-	public String getHost() {
-		return this.host;
-	}
+    @Override
+    public Map<String, Object> getFlags() {
+        return new HashMap<String, Object>(this.flags);
+    }
 
-	@Override
-	public int getPort() {
-		return this.port;
-	}
+    @Override
+    public boolean hasFlag(String key) {
+        return this.getFlags().containsKey(key);
+    }
 
-	@Override
-	public PacketProtocol getPacketProtocol() {
-		return this.protocol;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getFlag(String key) {
+        Object value = this.getFlags().get(key);
+        if(value == null) {
+            return null;
+        }
 
-	@Override
-	public Map<String, Object> getFlags() {
-		return new HashMap<String, Object>(this.flags);
-	}
+        try {
+            return (T) value;
+        } catch(ClassCastException e) {
+            throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
+        }
+    }
 
-	@Override
-	public boolean hasFlag(String key) {
-		return this.getFlags().containsKey(key);
-	}
+    @Override
+    public void setFlag(String key, Object value) {
+        this.flags.put(key, value);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getFlag(String key) {
-		Object value = this.getFlags().get(key);
-		if(value == null) {
-			return null;
-		}
+    @Override
+    public List<SessionListener> getListeners() {
+        return new ArrayList<SessionListener>(this.listeners);
+    }
 
-		try {
-			return (T) value;
-		} catch(ClassCastException e) {
-			throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
-		}
-	}
+    @Override
+    public void addListener(SessionListener listener) {
+        this.listeners.add(listener);
+    }
 
-	@Override
-	public void setFlag(String key, Object value) {
-		this.flags.put(key, value);
-	}
+    @Override
+    public void removeListener(SessionListener listener) {
+        this.listeners.remove(listener);
+    }
 
-	@Override
-	public List<SessionListener> getListeners() {
-		return new ArrayList<SessionListener>(this.listeners);
-	}
+    @Override
+    public void callEvent(SessionEvent event) {
+        for(SessionListener listener : this.listeners) {
+            try {
+                event.call(listener);
+            } catch(Throwable t) {
+                System.err.println("[WARNING] Throwable caught while firing " + event.getClass().getSimpleName() + ".");
+                t.printStackTrace();
+            }
+        }
+    }
 
-	@Override
-	public void addListener(SessionListener listener) {
-		this.listeners.add(listener);
-	}
+    @Override
+    public int getCompressionThreshold() {
+        return this.compressionThreshold;
+    }
 
-	@Override
-	public void removeListener(SessionListener listener) {
-		this.listeners.remove(listener);
-	}
+    @Override
+    public void setCompressionThreshold(int threshold) {
+        this.compressionThreshold = threshold;
+        if(this.channel != null) {
+            if(this.compressionThreshold >= 0) {
+                if(this.channel.pipeline().get("compression") == null) {
+                    this.channel.pipeline().addBefore("codec", "compression", new TcpPacketCompression(this));
+                }
+            } else if(this.channel.pipeline().get("compression") != null) {
+                this.channel.pipeline().remove("compression");
+            }
+        }
+    }
 
-	@Override
-	public void callEvent(SessionEvent event) {
-		for(SessionListener listener : this.listeners) {
-			try {
-				event.call(listener);
-			} catch(Throwable t) {
-				System.err.println("[WARNING] Throwable caught while firing event.");
-				t.printStackTrace();
-			}
-		}
-	}
+    @Override
+    public int getConnectTimeout() {
+        return this.connectTimeout;
+    }
 
-	@Override
-	public int getCompressionThreshold() {
-		return this.compressionThreshold;
-	}
+    @Override
+    public void setConnectTimeout(int timeout) {
+        this.connectTimeout = timeout;
+    }
 
-	@Override
-	public void setCompressionThreshold(int threshold) {
-		this.compressionThreshold = threshold;
-		if(this.channel != null) {
-			if(this.compressionThreshold >= 0) {
-				if(this.channel.pipeline().get("compression") == null) {
-					this.channel.pipeline().addBefore("codec", "compression", new TcpPacketCompression(this));
-				}
-			} else if(this.channel.pipeline().get("compression") != null) {
-				this.channel.pipeline().remove("compression");
-			}
-		}
-	}
+    @Override
+    public int getReadTimeout() {
+        return this.readTimeout;
+    }
 
-	@Override
-	public int getReadTimeout() {
-		return this.readTimeout;
-	}
+    @Override
+    public void setReadTimeout(int timeout) {
+        this.readTimeout = timeout;
+        this.refreshReadTimeoutHandler();
+    }
 
-	@Override
-	public void setReadTimeout(int timeout) {
-		this.readTimeout = timeout;
-		this.refreshReadTimeoutHandler();
-	}
+    @Override
+    public int getWriteTimeout() {
+        return this.writeTimeout;
+    }
 
-	@Override
-	public int getWriteTimeout() {
-		return this.writeTimeout;
-	}
+    @Override
+    public void setWriteTimeout(int timeout) {
+        this.writeTimeout = timeout;
+        this.refreshWriteTimeoutHandler();
+    }
 
-	@Override
-	public void setWriteTimeout(int timeout) {
-		this.writeTimeout = timeout;
-		this.refreshWriteTimeoutHandler();
-	}
+    @Override
+    public boolean isConnected() {
+        return this.channel != null && this.channel.isOpen() && !this.disconnected;
+    }
 
-	@Override
-	public TimeoutHandler getTimeoutHandler() {
-		return this.timeoutHandler;
-	}
+    @Override
+    public void send(final Packet packet) {
+        if(this.channel == null) {
+            return;
+        }
 
-	@Override
-	public void setTimeoutHandler(TimeoutHandler timeoutHandler) {
-		this.timeoutHandler = timeoutHandler;
-	}
+        ChannelFuture future = this.channel.writeAndFlush(packet).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if(!future.isSuccess()) {
+                    exceptionCaught(null, future.cause());
+                } else {
+                    callEvent(new PacketSentEvent(TcpSession.this, packet));
+                }
+            }
+        });
 
-	@Override
-	public boolean isConnected() {
-		return this.channel != null && this.channel.isOpen() && !this.disconnected;
-	}
+        if(packet.isPriority()) {
+            try {
+                future.await();
+            } catch(InterruptedException e) {
+            }
+        }
+    }
 
-	@Override
-	public void send(final Packet packet) {
-		this.writing = true;
-		if(this.channel == null) {
-			this.writing = false;
-			return;
-		}
+    @Override
+    public void disconnect(String reason) {
+        this.disconnect(reason, false);
+    }
 
-		this.channel.writeAndFlush(packet).addListener(new ChannelFutureListener() {
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				writing = false;
-				if(!future.isSuccess()) {
-					exceptionCaught(null, future.cause());
-				} else {
-					callEvent(new PacketSentEvent(TcpSession.this, packet));
-				}
-			}
-		});
+    @Override
+    public void disconnect(String reason, boolean wait) {
+        this.disconnect(reason, null, wait);
+    }
 
-		if(packet.isPriority()) {
-			while(this.writing && !this.exception) {
-				try {
-					Thread.sleep(2);
-				} catch(InterruptedException e) {
-				}
-			}
-		}
-	}
+    @Override
+    public void disconnect(final String reason, final Throwable cause) {
+        this.disconnect(reason, cause, false);
+    }
 
-	@Override
-	public void disconnect(String reason) {
-		if(this.disconnected) {
-			return;
-		}
+    @Override
+    public void disconnect(final String reason, final Throwable cause, boolean wait) {
+        if(this.disconnected) {
+            return;
+        }
 
-		this.disconnected = true;
-		if(this.writing) {
-			while(this.writing && !this.exception) {
-				try {
-					Thread.sleep(2);
-				} catch(InterruptedException e) {
-				}
-			}
+        this.disconnected = true;
+        if(this.channel != null) {
+            if(this.channel.isOpen()) {
+                this.callEvent(new DisconnectingEvent(this, reason, cause));
+                ChannelFuture future = this.channel.flush().close().addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        callEvent(new DisconnectedEvent(TcpSession.this, reason != null ? reason : "Connection closed.", cause));
+                    }
+                });
 
-			try {
-				Thread.sleep(250);
-			} catch(InterruptedException e) {
-			}
-		}
+                if(wait) {
+                    try {
+                        future.await();
+                    } catch(InterruptedException e) {
+                    }
+                }
+            } else {
+                this.callEvent(new DisconnectedEvent(this, reason != null ? reason : "Connection closed.", cause));
+            }
 
-		if(reason == null) {
-			reason = "Connection closed.";
-		}
+            this.channel = null;
+        }
+    }
 
-		if(this.channel != null) {
-			if(this.channel.isOpen()) {
-				this.callEvent(new DisconnectingEvent(this, reason));
-			}
+    protected void refreshReadTimeoutHandler() {
+        this.refreshReadTimeoutHandler(this.channel);
+    }
 
-			try {
-				this.channel.close().syncUninterruptibly();
-			} catch(Throwable t) {
-			}
-		}
+    protected void refreshReadTimeoutHandler(Channel channel) {
+        if(channel != null) {
+            if(this.readTimeout <= 0) {
+                if(channel.pipeline().get("readTimeout") != null) {
+                    channel.pipeline().remove("readTimeout");
+                }
+            } else {
+                if(channel.pipeline().get("readTimeout") == null) {
+                    channel.pipeline().addFirst("readTimeout", new ReadTimeoutHandler(this.readTimeout));
+                } else {
+                    channel.pipeline().replace("readTimeout", "readTimeout", new ReadTimeoutHandler(this.readTimeout));
+                }
+            }
+        }
+    }
 
-		this.callEvent(new DisconnectedEvent(this, reason));
-		if(this.group != null) {
-			try {
-				this.group.shutdownGracefully();
-			} catch(Throwable t) {
-			}
-		}
+    protected void refreshWriteTimeoutHandler() {
+        this.refreshWriteTimeoutHandler(this.channel);
+    }
 
-		this.channel = null;
-	}
+    protected void refreshWriteTimeoutHandler(Channel channel) {
+        if(channel != null) {
+            if(this.writeTimeout <= 0) {
+                if(channel.pipeline().get("writeTimeout") != null) {
+                    channel.pipeline().remove("writeTimeout");
+                }
+            } else {
+                if(channel.pipeline().get("writeTimeout") == null) {
+                    channel.pipeline().addFirst("writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
+                } else {
+                    channel.pipeline().replace("writeTimeout", "writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
+                }
+            }
+        }
+    }
 
-	protected void refreshReadTimeoutHandler() {
-		this.refreshReadTimeoutHandler(this.channel);
-	}
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        if(this.disconnected) {
+            ctx.channel().close();
+            return;
+        }
 
-	protected void refreshReadTimeoutHandler(Channel channel) {
-		if(channel != null) {
-			if(this.readTimeout <= 0) {
-				if(channel.pipeline().get("readTimeout") != null) {
-					channel.pipeline().remove("readTimeout");
-				}
-			} else {
-				if(channel.pipeline().get("readTimeout") == null) {
-					channel.pipeline().addFirst("readTimeout", new ReadTimeoutHandler(this.readTimeout));
-				} else {
-					channel.pipeline().replace("readTimeout", "readTimeout", new ReadTimeoutHandler(this.readTimeout));
-				}
-			}
-		}
-	}
+        this.channel = ctx.channel();
+        this.disconnected = false;
+        this.callEvent(new ConnectedEvent(this));
+        new PacketHandleThread().start();
+    }
 
-	protected void refreshWriteTimeoutHandler() {
-		this.refreshWriteTimeoutHandler(this.channel);
-	}
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        this.disconnect("Connection closed.");
+    }
 
-	protected void refreshWriteTimeoutHandler(Channel channel) {
-		if(channel != null) {
-			if(this.writeTimeout <= 0) {
-				if(channel.pipeline().get("writeTimeout") != null) {
-					channel.pipeline().remove("writeTimeout");
-				}
-			} else {
-				if(channel.pipeline().get("writeTimeout") == null) {
-					channel.pipeline().addFirst("writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
-				} else {
-					channel.pipeline().replace("writeTimeout", "writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
-				}
-			}
-		}
-	}
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        String message = null;
+        if(cause instanceof ConnectTimeoutException || (cause instanceof ConnectException && cause.getMessage().contains("connection timed out"))) {
+            message = "Connection timed out.";
+        } else if(cause instanceof ReadTimeoutException) {
+            message = "Read timed out.";
+        } else if(cause instanceof WriteTimeoutException) {
+            message = "Write timed out.";
+        } else {
+            message = "Internal network exception.";
+        }
 
-	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		if(this.disconnected) {
-			ctx.channel().close().syncUninterruptibly();
-			return;
-		}
+        this.disconnect(message, cause);
+    }
 
-		this.channel = ctx.channel();
-		this.disconnected = false;
-		this.callEvent(new ConnectedEvent(this));
-		new PacketHandleThread().start();
-	}
+    @Override
+    protected void messageReceived(ChannelHandlerContext ctx, Packet packet) throws Exception {
+        if(!packet.isPriority()) {
+            this.packets.add(packet);
+        }
+    }
 
-	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		this.disconnect("Connection closed.");
-	}
+    private class PacketHandleThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                while(!disconnected) {
+                    while(packets.size() > 0) {
+                        callEvent(new PacketReceivedEvent(TcpSession.this, packets.remove(0)));
+                    }
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		this.writing = false;
-		this.exception = true;
-		if(cause instanceof TimeoutException) {
-			if(this.timeoutHandler != null) {
-				this.timeoutHandler.onTimeout(this, cause instanceof ReadTimeoutException ? TimeoutType.READ : TimeoutType.WRITE);
-			}
-
-			if(!this.disconnected) {
-				this.disconnect((cause instanceof ReadTimeoutException ? "Read" : "Write") + " timed out.");
-			}
-		} else if(cause instanceof ConnectTimeoutException) {
-			if(this.container.getConnectTimeoutHandler() != null) {
-				this.container.getConnectTimeoutHandler().onTimeout(this, TimeoutType.CONNECT);
-			}
-
-			if(!this.disconnected) {
-				this.disconnect("Connection timed out.");
-			}
-		} else {
-			if(!this.disconnected) {
-				this.disconnect("Internal network exception: " + cause.toString());
-			}
-
-			cause.printStackTrace();
-		}
-
-		this.disconnected = true;
-	}
-
-	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, Packet packet) throws Exception {
-		if(!packet.isPriority()) {
-			this.packets.add(packet);
-		}
-	}
-
-	private class PacketHandleThread extends Thread {
-		@Override
-		public void run() {
-			try {
-				while(!disconnected && !exception) {
-					while(packets.size() > 0) {
-						callEvent(new PacketReceivedEvent(TcpSession.this, packets.remove(0)));
-					}
-
-					try {
-						Thread.sleep(5);
-					} catch(InterruptedException e) {
-					}
-				}
-			} catch(Throwable t) {
-				try {
-					exceptionCaught(null, t);
-				} catch(Exception e) {
-					System.err.println("Exception while handling exception!");
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
+                    try {
+                        Thread.sleep(5);
+                    } catch(InterruptedException e) {
+                    }
+                }
+            } catch(Throwable t) {
+                try {
+                    exceptionCaught(null, t);
+                } catch(Exception e) {
+                    System.err.println("Exception while handling exception!");
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
