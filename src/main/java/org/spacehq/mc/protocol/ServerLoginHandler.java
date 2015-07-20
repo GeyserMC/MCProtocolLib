@@ -4,6 +4,6 @@ import org.spacehq.packetlib.Session;
 
 public interface ServerLoginHandler {
 
-	public void loggedIn(Session session);
+    public void loggedIn(Session session);
 
 }

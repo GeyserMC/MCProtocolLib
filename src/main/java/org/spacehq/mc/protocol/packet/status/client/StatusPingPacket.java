@@ -8,33 +8,33 @@ import java.io.IOException;
 
 public class StatusPingPacket implements Packet {
 
-	private long time;
+    private long time;
 
-	@SuppressWarnings("unused")
-	private StatusPingPacket() {
-	}
+    @SuppressWarnings("unused")
+    private StatusPingPacket() {
+    }
 
-	public StatusPingPacket(long time) {
-		this.time = time;
-	}
+    public StatusPingPacket(long time) {
+        this.time = time;
+    }
 
-	public long getPingTime() {
-		return this.time;
-	}
+    public long getPingTime() {
+        return this.time;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.time = in.readLong();
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.time = in.readLong();
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeLong(this.time);
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeLong(this.time);
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

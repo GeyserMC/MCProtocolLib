@@ -10,41 +10,41 @@ import java.io.IOException;
 
 public class ServerAnimationPacket implements Packet {
 
-	private int entityId;
-	private Animation animation;
+    private int entityId;
+    private Animation animation;
 
-	@SuppressWarnings("unused")
-	private ServerAnimationPacket() {
-	}
+    @SuppressWarnings("unused")
+    private ServerAnimationPacket() {
+    }
 
-	public ServerAnimationPacket(int entityId, Animation animation) {
-		this.entityId = entityId;
-		this.animation = animation;
-	}
+    public ServerAnimationPacket(int entityId, Animation animation) {
+        this.entityId = entityId;
+        this.animation = animation;
+    }
 
-	public int getEntityId() {
-		return this.entityId;
-	}
+    public int getEntityId() {
+        return this.entityId;
+    }
 
-	public Animation getAnimation() {
-		return this.animation;
-	}
+    public Animation getAnimation() {
+        return this.animation;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.entityId = in.readVarInt();
-		this.animation = MagicValues.key(Animation.class, in.readByte());
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.entityId = in.readVarInt();
+        this.animation = MagicValues.key(Animation.class, in.readByte());
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeVarInt(this.entityId);
-		out.writeByte(MagicValues.value(Integer.class, this.animation));
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeVarInt(this.entityId);
+        out.writeByte(MagicValues.value(Integer.class, this.animation));
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

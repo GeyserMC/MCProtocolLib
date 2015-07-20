@@ -10,33 +10,33 @@ import java.io.IOException;
 
 public class ClientRequestPacket implements Packet {
 
-	private ClientRequest request;
+    private ClientRequest request;
 
-	@SuppressWarnings("unused")
-	private ClientRequestPacket() {
-	}
+    @SuppressWarnings("unused")
+    private ClientRequestPacket() {
+    }
 
-	public ClientRequestPacket(ClientRequest request) {
-		this.request = request;
-	}
+    public ClientRequestPacket(ClientRequest request) {
+        this.request = request;
+    }
 
-	public ClientRequest getRequest() {
-		return this.request;
-	}
+    public ClientRequest getRequest() {
+        return this.request;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.request = MagicValues.key(ClientRequest.class, in.readUnsignedByte());
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.request = MagicValues.key(ClientRequest.class, in.readUnsignedByte());
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeByte(MagicValues.value(Integer.class, this.request));
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeByte(MagicValues.value(Integer.class, this.request));
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

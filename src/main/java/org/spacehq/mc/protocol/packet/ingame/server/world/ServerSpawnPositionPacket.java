@@ -10,33 +10,33 @@ import java.io.IOException;
 
 public class ServerSpawnPositionPacket implements Packet {
 
-	private Position position;
+    private Position position;
 
-	@SuppressWarnings("unused")
-	private ServerSpawnPositionPacket() {
-	}
+    @SuppressWarnings("unused")
+    private ServerSpawnPositionPacket() {
+    }
 
-	public ServerSpawnPositionPacket(Position position) {
-		this.position = position;
-	}
+    public ServerSpawnPositionPacket(Position position) {
+        this.position = position;
+    }
 
-	public Position getPosition() {
-		return this.position;
-	}
+    public Position getPosition() {
+        return this.position;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.position = NetUtil.readPosition(in);
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.position = NetUtil.readPosition(in);
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		NetUtil.writePosition(out, this.position);
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        NetUtil.writePosition(out, this.position);
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

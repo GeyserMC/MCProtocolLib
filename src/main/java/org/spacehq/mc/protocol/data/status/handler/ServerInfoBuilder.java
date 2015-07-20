@@ -5,6 +5,6 @@ import org.spacehq.packetlib.Session;
 
 public interface ServerInfoBuilder {
 
-	public ServerStatusInfo buildInfo(Session session);
+    public ServerStatusInfo buildInfo(Session session);
 
 }

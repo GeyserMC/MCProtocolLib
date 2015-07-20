@@ -4,6 +4,6 @@ import org.spacehq.packetlib.Session;
 
 public interface ServerPingTimeHandler {
 
-	public void handle(Session session, long pingTime);
+    public void handle(Session session, long pingTime);
 
 }

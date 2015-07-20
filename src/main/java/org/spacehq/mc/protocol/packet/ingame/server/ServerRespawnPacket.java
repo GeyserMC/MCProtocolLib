@@ -12,57 +12,57 @@ import java.io.IOException;
 
 public class ServerRespawnPacket implements Packet {
 
-	private int dimension;
-	private Difficulty difficulty;
-	private GameMode gamemode;
-	private WorldType worldType;
+    private int dimension;
+    private Difficulty difficulty;
+    private GameMode gamemode;
+    private WorldType worldType;
 
-	@SuppressWarnings("unused")
-	private ServerRespawnPacket() {
-	}
+    @SuppressWarnings("unused")
+    private ServerRespawnPacket() {
+    }
 
-	public ServerRespawnPacket(int dimension, Difficulty difficulty, GameMode gamemode, WorldType worldType) {
-		this.dimension = dimension;
-		this.difficulty = difficulty;
-		this.gamemode = gamemode;
-		this.worldType = worldType;
-	}
+    public ServerRespawnPacket(int dimension, Difficulty difficulty, GameMode gamemode, WorldType worldType) {
+        this.dimension = dimension;
+        this.difficulty = difficulty;
+        this.gamemode = gamemode;
+        this.worldType = worldType;
+    }
 
-	public int getDimension() {
-		return this.dimension;
-	}
+    public int getDimension() {
+        return this.dimension;
+    }
 
-	public Difficulty getDifficulty() {
-		return this.difficulty;
-	}
+    public Difficulty getDifficulty() {
+        return this.difficulty;
+    }
 
-	public GameMode getGameMode() {
-		return this.gamemode;
-	}
+    public GameMode getGameMode() {
+        return this.gamemode;
+    }
 
-	public WorldType getWorldType() {
-		return this.worldType;
-	}
+    public WorldType getWorldType() {
+        return this.worldType;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.dimension = in.readInt();
-		this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
-		this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-		this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.dimension = in.readInt();
+        this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
+        this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
+        this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeInt(this.dimension);
-		out.writeByte(MagicValues.value(Integer.class, this.difficulty));
-		out.writeByte(MagicValues.value(Integer.class, this.gamemode));
-		out.writeString(MagicValues.value(String.class, this.worldType));
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeInt(this.dimension);
+        out.writeByte(MagicValues.value(Integer.class, this.difficulty));
+        out.writeByte(MagicValues.value(Integer.class, this.gamemode));
+        out.writeString(MagicValues.value(String.class, this.worldType));
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

@@ -8,20 +8,20 @@ import java.io.IOException;
 
 public class ClientSwingArmPacket implements Packet {
 
-	public ClientSwingArmPacket() {
-	}
+    public ClientSwingArmPacket() {
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

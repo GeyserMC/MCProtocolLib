@@ -8,90 +8,90 @@ import java.io.IOException;
 
 public class ServerEntityMovementPacket implements Packet {
 
-	protected int entityId;
-	protected double moveX;
-	protected double moveY;
-	protected double moveZ;
-	protected float yaw;
-	protected float pitch;
-	private boolean onGround;
+    protected int entityId;
+    protected double moveX;
+    protected double moveY;
+    protected double moveZ;
+    protected float yaw;
+    protected float pitch;
+    private boolean onGround;
 
-	protected boolean pos = false;
-	protected boolean rot = false;
+    protected boolean pos = false;
+    protected boolean rot = false;
 
-	protected ServerEntityMovementPacket() {
-	}
+    protected ServerEntityMovementPacket() {
+    }
 
-	public ServerEntityMovementPacket(int entityId, boolean onGround) {
-		this.entityId = entityId;
-		this.onGround = onGround;
-	}
+    public ServerEntityMovementPacket(int entityId, boolean onGround) {
+        this.entityId = entityId;
+        this.onGround = onGround;
+    }
 
-	public int getEntityId() {
-		return this.entityId;
-	}
+    public int getEntityId() {
+        return this.entityId;
+    }
 
-	public double getMovementX() {
-		return this.moveX;
-	}
+    public double getMovementX() {
+        return this.moveX;
+    }
 
-	public double getMovementY() {
-		return this.moveY;
-	}
+    public double getMovementY() {
+        return this.moveY;
+    }
 
-	public double getMovementZ() {
-		return this.moveZ;
-	}
+    public double getMovementZ() {
+        return this.moveZ;
+    }
 
-	public float getYaw() {
-		return this.yaw;
-	}
+    public float getYaw() {
+        return this.yaw;
+    }
 
-	public float getPitch() {
-		return this.pitch;
-	}
+    public float getPitch() {
+        return this.pitch;
+    }
 
-	public boolean isOnGround() {
-		return this.onGround;
-	}
+    public boolean isOnGround() {
+        return this.onGround;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.entityId = in.readVarInt();
-		if(this.pos) {
-			this.moveX = in.readByte() / 32D;
-			this.moveY = in.readByte() / 32D;
-			this.moveZ = in.readByte() / 32D;
-		}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.entityId = in.readVarInt();
+        if(this.pos) {
+            this.moveX = in.readByte() / 32D;
+            this.moveY = in.readByte() / 32D;
+            this.moveZ = in.readByte() / 32D;
+        }
 
-		if(this.rot) {
-			this.yaw = in.readByte() * 360 / 256f;
-			this.pitch = in.readByte() * 360 / 256f;
-		}
+        if(this.rot) {
+            this.yaw = in.readByte() * 360 / 256f;
+            this.pitch = in.readByte() * 360 / 256f;
+        }
 
-		this.onGround = in.readBoolean();
-	}
+        this.onGround = in.readBoolean();
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeVarInt(this.entityId);
-		if(this.pos) {
-			out.writeByte((int) (this.moveX * 32));
-			out.writeByte((int) (this.moveY * 32));
-			out.writeByte((int) (this.moveZ * 32));
-		}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeVarInt(this.entityId);
+        if(this.pos) {
+            out.writeByte((int) (this.moveX * 32));
+            out.writeByte((int) (this.moveY * 32));
+            out.writeByte((int) (this.moveZ * 32));
+        }
 
-		if(this.rot) {
-			out.writeByte((byte) (this.yaw * 256 / 360));
-			out.writeByte((byte) (this.pitch * 256 / 360));
-		}
+        if(this.rot) {
+            out.writeByte((byte) (this.yaw * 256 / 360));
+            out.writeByte((byte) (this.pitch * 256 / 360));
+        }
 
-		out.writeBoolean(this.onGround);
-	}
+        out.writeBoolean(this.onGround);
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

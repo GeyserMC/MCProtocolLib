@@ -12,52 +12,52 @@ import java.io.IOException;
 
 public class ServerBlockBreakAnimPacket implements Packet {
 
-	private int breakerEntityId;
-	private Position position;
-	private BlockBreakStage stage;
+    private int breakerEntityId;
+    private Position position;
+    private BlockBreakStage stage;
 
-	@SuppressWarnings("unused")
-	private ServerBlockBreakAnimPacket() {
-	}
+    @SuppressWarnings("unused")
+    private ServerBlockBreakAnimPacket() {
+    }
 
-	public ServerBlockBreakAnimPacket(int breakerEntityId, Position position, BlockBreakStage stage) {
-		this.breakerEntityId = breakerEntityId;
-		this.position = position;
-		this.stage = stage;
-	}
+    public ServerBlockBreakAnimPacket(int breakerEntityId, Position position, BlockBreakStage stage) {
+        this.breakerEntityId = breakerEntityId;
+        this.position = position;
+        this.stage = stage;
+    }
 
-	public int getBreakerEntityId() {
-		return this.breakerEntityId;
-	}
+    public int getBreakerEntityId() {
+        return this.breakerEntityId;
+    }
 
-	public Position getPosition() {
-		return this.position;
-	}
+    public Position getPosition() {
+        return this.position;
+    }
 
-	public BlockBreakStage getStage() {
-		return this.stage;
-	}
+    public BlockBreakStage getStage() {
+        return this.stage;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.breakerEntityId = in.readVarInt();
-		this.position = NetUtil.readPosition(in);
-		this.stage = MagicValues.key(BlockBreakStage.class, in.readUnsignedByte());
-		if (this.stage == null) {
-			this.stage = BlockBreakStage.RESET;
-		}
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.breakerEntityId = in.readVarInt();
+        this.position = NetUtil.readPosition(in);
+        this.stage = MagicValues.key(BlockBreakStage.class, in.readUnsignedByte());
+        if(this.stage == null) {
+            this.stage = BlockBreakStage.RESET;
+        }
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeVarInt(this.breakerEntityId);
-		NetUtil.writePosition(out, this.position);
-		out.writeByte(MagicValues.value(Integer.class, this.stage));
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeVarInt(this.breakerEntityId);
+        NetUtil.writePosition(out, this.position);
+        out.writeByte(MagicValues.value(Integer.class, this.stage));
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

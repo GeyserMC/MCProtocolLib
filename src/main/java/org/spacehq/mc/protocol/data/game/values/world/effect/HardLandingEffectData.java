@@ -2,31 +2,31 @@ package org.spacehq.mc.protocol.data.game.values.world.effect;
 
 public class HardLandingEffectData implements WorldEffectData {
 
-	private int damagingDistance;
+    private int damagingDistance;
 
-	public HardLandingEffectData(int damagingDistance) {
-		this.damagingDistance = damagingDistance;
-	}
+    public HardLandingEffectData(int damagingDistance) {
+        this.damagingDistance = damagingDistance;
+    }
 
-	public int getDamagingDistance() {
-		return this.damagingDistance;
-	}
+    public int getDamagingDistance() {
+        return this.damagingDistance;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
 
-		HardLandingEffectData that = (HardLandingEffectData) o;
+        HardLandingEffectData that = (HardLandingEffectData) o;
 
-		if (damagingDistance != that.damagingDistance) return false;
+        if(damagingDistance != that.damagingDistance) return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public int hashCode() {
-		return damagingDistance;
-	}
+    @Override
+    public int hashCode() {
+        return damagingDistance;
+    }
 
 }

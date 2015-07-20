@@ -10,33 +10,33 @@ import java.io.IOException;
 
 public class ServerDifficultyPacket implements Packet {
 
-	private Difficulty difficulty;
+    private Difficulty difficulty;
 
-	@SuppressWarnings("unused")
-	private ServerDifficultyPacket() {
-	}
+    @SuppressWarnings("unused")
+    private ServerDifficultyPacket() {
+    }
 
-	public ServerDifficultyPacket(Difficulty difficulty) {
-		this.difficulty = difficulty;
-	}
+    public ServerDifficultyPacket(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
 
-	public Difficulty getDifficulty() {
-		return this.difficulty;
-	}
+    public Difficulty getDifficulty() {
+        return this.difficulty;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeByte(MagicValues.value(Integer.class, this.difficulty));
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeByte(MagicValues.value(Integer.class, this.difficulty));
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

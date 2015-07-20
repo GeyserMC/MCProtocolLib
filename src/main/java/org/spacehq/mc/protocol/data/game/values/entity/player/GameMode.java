@@ -4,9 +4,9 @@ import org.spacehq.mc.protocol.data.game.values.world.notify.ClientNotificationV
 
 public enum GameMode implements ClientNotificationValue {
 
-	SURVIVAL,
-	CREATIVE,
-	ADVENTURE,
-	SPECTATOR;
+    SURVIVAL,
+    CREATIVE,
+    ADVENTURE,
+    SPECTATOR;
 
 }

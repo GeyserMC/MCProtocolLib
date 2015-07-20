@@ -8,33 +8,33 @@ import java.io.IOException;
 
 public class ServerKeepAlivePacket implements Packet {
 
-	private int id;
+    private int id;
 
-	@SuppressWarnings("unused")
-	private ServerKeepAlivePacket() {
-	}
+    @SuppressWarnings("unused")
+    private ServerKeepAlivePacket() {
+    }
 
-	public ServerKeepAlivePacket(int id) {
-		this.id = id;
-	}
+    public ServerKeepAlivePacket(int id) {
+        this.id = id;
+    }
 
-	public int getPingId() {
-		return this.id;
-	}
+    public int getPingId() {
+        return this.id;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.id = in.readVarInt();
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.id = in.readVarInt();
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeVarInt(this.id);
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeVarInt(this.id);
+    }
 
-	@Override
-	public boolean isPriority() {
-		return false;
-	}
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
 
 }

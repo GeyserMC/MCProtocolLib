@@ -7,32 +7,32 @@ import org.spacehq.packetlib.packet.Packet;
 import java.io.IOException;
 
 public class LoginSetCompressionPacket implements Packet {
-	private int threshold;
+    private int threshold;
 
-	@SuppressWarnings("unused")
-	private LoginSetCompressionPacket() {
-	}
+    @SuppressWarnings("unused")
+    private LoginSetCompressionPacket() {
+    }
 
-	public LoginSetCompressionPacket(int threshold) {
-		this.threshold = threshold;
-	}
+    public LoginSetCompressionPacket(int threshold) {
+        this.threshold = threshold;
+    }
 
-	public int getThreshold() {
-		return this.threshold;
-	}
+    public int getThreshold() {
+        return this.threshold;
+    }
 
-	@Override
-	public void read(NetInput in) throws IOException {
-		this.threshold = in.readVarInt();
-	}
+    @Override
+    public void read(NetInput in) throws IOException {
+        this.threshold = in.readVarInt();
+    }
 
-	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeVarInt(this.threshold);
-	}
+    @Override
+    public void write(NetOutput out) throws IOException {
+        out.writeVarInt(this.threshold);
+    }
 
-	@Override
-	public boolean isPriority() {
-		return true;
-	}
+    @Override
+    public boolean isPriority() {
+        return true;
+    }
 }
