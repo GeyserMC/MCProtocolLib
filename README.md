@@ -7,7 +7,8 @@ See example/org/spacehq/mc/protocol/test
 ## Building the Source
 MCProtocolLib uses Maven to manage dependencies. Simply run 'mvn clean install' in the source's directory.
 
-Builds can be downloaded **[here](http://build.spacehq.org/job/MCProtocolLib)**.
+Builds can be downloaded **[here](https://build.spacehq.org/job/MCProtocolLib)**.
+Javadocs can be found **[here](https://build.spacehq.org/job/MCProtocolLib/javadoc)**.
 
 ## License
 MCProtocolLib is licensed under the **[MIT license](http://www.opensource.org/licenses/mit-license.html)**.

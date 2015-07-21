@@ -41,23 +41,23 @@
         <repository>
             <id>spacehq</id>
             <name>spacehq-releases</name>
-            <url>http://repo.spacehq.org/content/repositories/releases/</url>
+            <url>https://repo.spacehq.org/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>spacehq</id>
             <name>spacehq-snapshots</name>
-            <url>http://repo.spacehq.org/content/repositories/snapshots/</url>
+            <url>https://repo.spacehq.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
     <repositories>
         <repository>
             <id>spacehq-releases</id>
-            <url>http://repo.spacehq.org/content/repositories/releases/</url>
+            <url>https://repo.spacehq.org/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>spacehq-snapshots</id>
-            <url>http://repo.spacehq.org/content/repositories/snapshots/</url>
+            <url>https://repo.spacehq.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
