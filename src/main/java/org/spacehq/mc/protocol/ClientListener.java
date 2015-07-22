@@ -58,13 +58,13 @@ public class ClientListener extends SessionAdapter {
                 try {
                     new SessionService(proxy).joinServer(profile, accessToken, serverHash);
                 } catch(AuthenticationUnavailableException e) {
-                    event.getSession().disconnect("Login failed: Authentication service unavailable.");
+                    event.getSession().disconnect("Login failed: Authentication service unavailable.", e);
                     return;
                 } catch(InvalidCredentialsException e) {
-                    event.getSession().disconnect("Login failed: Invalid login session.");
+                    event.getSession().disconnect("Login failed: Invalid login session.", e);
                     return;
                 } catch(AuthenticationException e) {
-                    event.getSession().disconnect("Login failed: Authentication error: " + e.getMessage());
+                    event.getSession().disconnect("Login failed: Authentication error: " + e.getMessage(), e);
                     return;
                 }
 
