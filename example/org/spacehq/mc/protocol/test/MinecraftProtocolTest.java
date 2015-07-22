@@ -3,8 +3,8 @@ package org.spacehq.mc.protocol.test;
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.exception.AuthenticationException;
 import org.spacehq.mc.protocol.MinecraftProtocol;
-import org.spacehq.mc.protocol.ProtocolConstants;
-import org.spacehq.mc.protocol.ProtocolMode;
+import org.spacehq.mc.protocol.MinecraftConstants;
+import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.ServerLoginHandler;
 import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
 import org.spacehq.mc.protocol.data.game.values.setting.Difficulty;
@@ -51,23 +51,23 @@ public class MinecraftProtocolTest {
     public static void main(String[] args) {
         if(SPAWN_SERVER) {
             Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory(PROXY));
-            server.setGlobalFlag(ProtocolConstants.AUTH_PROXY_KEY, AUTH_PROXY);
-            server.setGlobalFlag(ProtocolConstants.VERIFY_USERS_KEY, VERIFY_USERS);
-            server.setGlobalFlag(ProtocolConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
+            server.setGlobalFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+            server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
+            server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
                 @Override
                 public ServerStatusInfo buildInfo(Session session) {
-                    return new ServerStatusInfo(new VersionInfo(ProtocolConstants.GAME_VERSION, ProtocolConstants.PROTOCOL_VERSION), new PlayerInfo(100, 0, new GameProfile[0]), new TextMessage("Hello world!"), null);
+                    return new ServerStatusInfo(new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION), new PlayerInfo(100, 0, new GameProfile[0]), new TextMessage("Hello world!"), null);
                 }
             });
 
-            server.setGlobalFlag(ProtocolConstants.SERVER_LOGIN_HANDLER_KEY, new ServerLoginHandler() {
+            server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, new ServerLoginHandler() {
                 @Override
                 public void loggedIn(Session session) {
                     session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, Difficulty.PEACEFUL, 10, WorldType.DEFAULT, false));
                 }
             });
 
-            server.setGlobalFlag(ProtocolConstants.SERVER_COMPRESSION_THRESHOLD, 100);
+            server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 100);
             server.addListener(new ServerAdapter() {
                 @Override
                 public void sessionAdded(SessionAddedEvent event) {
@@ -76,7 +76,7 @@ public class MinecraftProtocolTest {
                         public void packetReceived(PacketReceivedEvent event) {
                             if(event.getPacket() instanceof ClientChatPacket) {
                                 ClientChatPacket packet = event.getPacket();
-                                GameProfile profile = event.getSession().getFlag(ProtocolConstants.PROFILE_KEY);
+                                GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                                 System.out.println(profile.getName() + ": " + packet.getMessage());
                                 Message msg = new TextMessage("Hello, ").setStyle(new MessageStyle().setColor(ChatColor.GREEN));
                                 Message name = new TextMessage(profile.getName()).setStyle(new MessageStyle().setColor(ChatColor.AQUA).addFormat(ChatFormat.UNDERLINED));
@@ -92,7 +92,7 @@ public class MinecraftProtocolTest {
                 @Override
                 public void sessionRemoved(SessionRemovedEvent event) {
                     MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-                    if(protocol.getMode() == ProtocolMode.GAME) {
+                    if(protocol.getSubProtocol() == SubProtocol.GAME) {
                         System.out.println("Closing server.");
                         event.getServer().close();
                     }
@@ -107,10 +107,10 @@ public class MinecraftProtocolTest {
     }
 
     private static void status() {
-        MinecraftProtocol protocol = new MinecraftProtocol(ProtocolMode.STATUS);
+        MinecraftProtocol protocol = new MinecraftProtocol(SubProtocol.STATUS);
         Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(ProtocolConstants.AUTH_PROXY_KEY, AUTH_PROXY);
-        client.getSession().setFlag(ProtocolConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
+        client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+        client.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
             @Override
             public void handle(Session session, ServerStatusInfo info) {
                 System.out.println("Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
@@ -121,7 +121,7 @@ public class MinecraftProtocolTest {
             }
         });
 
-        client.getSession().setFlag(ProtocolConstants.SERVER_PING_TIME_HANDLER_KEY, new ServerPingTimeHandler() {
+        client.getSession().setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, new ServerPingTimeHandler() {
             @Override
             public void handle(Session session, long pingTime) {
                 System.out.println("Server ping took " + pingTime + "ms");

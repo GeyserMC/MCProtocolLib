@@ -3,6 +3,7 @@ package org.spacehq.mc.protocol;
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.UserAuthentication;
 import org.spacehq.mc.auth.exception.AuthenticationException;
+import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
@@ -130,7 +131,7 @@ import java.util.UUID;
 
 public class MinecraftProtocol extends PacketProtocol {
 
-    private ProtocolMode mode = ProtocolMode.HANDSHAKE;
+    private SubProtocol subProtocol = SubProtocol.HANDSHAKE;
     private PacketHeader header = new DefaultPacketHeader();
     private AESEncryption encrypt;
 
@@ -142,13 +143,13 @@ public class MinecraftProtocol extends PacketProtocol {
     private MinecraftProtocol() {
     }
 
-    public MinecraftProtocol(ProtocolMode mode) {
-        if(mode != ProtocolMode.LOGIN && mode != ProtocolMode.STATUS) {
+    public MinecraftProtocol(SubProtocol subProtocol) {
+        if(subProtocol != SubProtocol.LOGIN && subProtocol != SubProtocol.STATUS) {
             throw new IllegalArgumentException("Only login and status modes are permitted.");
         }
 
-        this.mode = mode;
-        if(mode == ProtocolMode.LOGIN) {
+        this.subProtocol = subProtocol;
+        if(subProtocol == SubProtocol.LOGIN) {
             this.profile = new GameProfile((UUID) null, "Player");
         }
 
@@ -156,7 +157,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public MinecraftProtocol(String username) {
-        this(ProtocolMode.LOGIN);
+        this(SubProtocol.LOGIN);
         this.profile = new GameProfile((UUID) null, username);
     }
 
@@ -169,7 +170,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public MinecraftProtocol(String username, String using, boolean token, Proxy authProxy) throws AuthenticationException {
-        this(ProtocolMode.LOGIN);
+        this(SubProtocol.LOGIN);
         String clientToken = UUID.randomUUID().toString();
         UserAuthentication auth = new UserAuthentication(clientToken, authProxy);
         auth.setUsername(username);
@@ -185,7 +186,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public MinecraftProtocol(GameProfile profile, String accessToken) {
-        this(ProtocolMode.LOGIN);
+        this(SubProtocol.LOGIN);
         this.profile = profile;
         this.accessToken = accessToken;
 
@@ -217,17 +218,17 @@ public class MinecraftProtocol extends PacketProtocol {
     @Override
     public void newClientSession(Client client, Session session) {
         if(this.profile != null) {
-            session.setFlag(ProtocolConstants.PROFILE_KEY, this.profile);
-            session.setFlag(ProtocolConstants.ACCESS_TOKEN_KEY, this.accessToken);
+            session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
+            session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
         }
 
-        this.setMode(this.mode, true, session);
+        this.setSubProtocol(this.subProtocol, true, session);
         session.addListener(this.clientListener);
     }
 
     @Override
     public void newServerSession(Server server, Session session) {
-        this.setMode(ProtocolMode.HANDSHAKE, false, session);
+        this.setSubProtocol(SubProtocol.HANDSHAKE, false, session);
         session.addListener(new ServerListener());
     }
 
@@ -239,13 +240,13 @@ public class MinecraftProtocol extends PacketProtocol {
         }
     }
 
-    public ProtocolMode getMode() {
-        return this.mode;
+    public SubProtocol getSubProtocol() {
+        return this.subProtocol;
     }
 
-    protected void setMode(ProtocolMode mode, boolean client, Session session) {
+    protected void setSubProtocol(SubProtocol subProtocol, boolean client, Session session) {
         this.clearPackets();
-        switch(mode) {
+        switch(subProtocol) {
             case HANDSHAKE:
                 if(client) {
                     this.initClientHandshake(session);
@@ -280,7 +281,7 @@ public class MinecraftProtocol extends PacketProtocol {
                 break;
         }
 
-        this.mode = mode;
+        this.subProtocol = subProtocol;
     }
 
     private void initClientHandshake(Session session) {

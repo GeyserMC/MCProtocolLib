@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol;
 
-public class ProtocolConstants {
-
+public class MinecraftConstants {
     // General Constants
     public static final String GAME_VERSION = "1.8.7";
     public static final int PROTOCOL_VERSION = 47;
@@ -21,5 +20,4 @@ public class ProtocolConstants {
     public static final String SERVER_LOGIN_HANDLER_KEY = "login-handler";
     public static final String PING_KEY = "ping";
     public static final String SERVER_COMPRESSION_THRESHOLD = "compression-threshold";
-
 }
