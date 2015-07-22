@@ -2,7 +2,7 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.SessionService;
-import org.spacehq.mc.auth.exception.AuthenticationUnavailableException;
+import org.spacehq.mc.auth.exception.authentication.AuthenticationUnavailableException;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
@@ -170,7 +170,7 @@ public class ServerListener extends SessionAdapter {
 
                 String serverHash = new BigInteger(CryptUtil.getServerIdHash(serverId, pair.getPublic(), this.key)).toString(16);
                 SessionService service = new SessionService(proxy);
-                GameProfile profile = service.hasJoinedServer(new GameProfile((UUID) null, username), serverHash);
+                GameProfile profile = service.getProfileByServer(username, serverHash);
                 if(profile != null) {
                     int threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
                     this.session.send(new LoginSetCompressionPacket(threshold));

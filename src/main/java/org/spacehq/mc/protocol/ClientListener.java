@@ -2,9 +2,9 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.SessionService;
-import org.spacehq.mc.auth.exception.AuthenticationException;
-import org.spacehq.mc.auth.exception.AuthenticationUnavailableException;
-import org.spacehq.mc.auth.exception.InvalidCredentialsException;
+import org.spacehq.mc.auth.exception.authentication.AuthenticationException;
+import org.spacehq.mc.auth.exception.authentication.AuthenticationUnavailableException;
+import org.spacehq.mc.auth.exception.authentication.InvalidCredentialsException;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.data.game.values.HandshakeIntent;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;

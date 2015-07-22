@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
 import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.properties.Property;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.PlayerListEntry;
 import org.spacehq.mc.protocol.data.game.values.PlayerListEntryAction;
@@ -60,7 +59,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                             signature = in.readString();
                         }
 
-                        profile.getProperties().put(propertyName, new Property(propertyName, value, signature));
+                        profile.getProperties().add(new GameProfile.Property(propertyName, value, signature));
                     }
 
                     GameMode gameMode = MagicValues.key(GameMode.class, in.readVarInt());
@@ -106,7 +105,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                 case ADD_PLAYER:
                     out.writeString(entry.getProfile().getName());
                     out.writeVarInt(entry.getProfile().getProperties().size());
-                    for(Property property : entry.getProfile().getProperties().values()) {
+                    for(GameProfile.Property property : entry.getProfile().getProperties()) {
                         out.writeString(property.getName());
                         out.writeString(property.getValue());
                         out.writeBoolean(property.hasSignature());
