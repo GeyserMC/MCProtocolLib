@@ -153,6 +153,7 @@ public class MinecraftProtocolTest {
         }
 
         Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
+        client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
         client.getSession().addListener(new SessionAdapter() {
             @Override
             public void packetReceived(PacketReceivedEvent event) {
