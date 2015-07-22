@@ -2,7 +2,7 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.AuthenticationService;
-import org.spacehq.mc.auth.exception.authentication.AuthenticationException;
+import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
@@ -161,15 +161,15 @@ public class MinecraftProtocol extends PacketProtocol {
         this.profile = new GameProfile((UUID) null, username);
     }
 
-    public MinecraftProtocol(String username, String password) throws AuthenticationException {
+    public MinecraftProtocol(String username, String password) throws RequestException {
         this(username, password, false);
     }
 
-    public MinecraftProtocol(String username, String using, boolean token) throws AuthenticationException {
+    public MinecraftProtocol(String username, String using, boolean token) throws RequestException {
         this(username, using, token, Proxy.NO_PROXY);
     }
 
-    public MinecraftProtocol(String username, String using, boolean token, Proxy authProxy) throws AuthenticationException {
+    public MinecraftProtocol(String username, String using, boolean token, Proxy authProxy) throws RequestException {
         this(SubProtocol.LOGIN);
         String clientToken = UUID.randomUUID().toString();
         AuthenticationService auth = new AuthenticationService(clientToken, authProxy);

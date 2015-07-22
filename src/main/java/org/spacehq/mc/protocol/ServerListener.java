@@ -2,7 +2,7 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.SessionService;
-import org.spacehq.mc.auth.exception.authentication.AuthenticationUnavailableException;
+import org.spacehq.mc.auth.exception.request.ServiceUnavailableException;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
@@ -187,7 +187,7 @@ public class ServerListener extends SessionAdapter {
                 } else {
                     this.session.disconnect("Failed to verify username!");
                 }
-            } catch(AuthenticationUnavailableException e) {
+            } catch(ServiceUnavailableException e) {
                 this.session.disconnect("Authentication servers are down. Please try again later, sorry!");
             }
         }

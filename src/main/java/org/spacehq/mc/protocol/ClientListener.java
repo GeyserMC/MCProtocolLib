@@ -2,9 +2,9 @@ package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.GameProfile;
 import org.spacehq.mc.auth.SessionService;
-import org.spacehq.mc.auth.exception.authentication.AuthenticationException;
-import org.spacehq.mc.auth.exception.authentication.AuthenticationUnavailableException;
-import org.spacehq.mc.auth.exception.authentication.InvalidCredentialsException;
+import org.spacehq.mc.auth.exception.request.RequestException;
+import org.spacehq.mc.auth.exception.request.ServiceUnavailableException;
+import org.spacehq.mc.auth.exception.request.InvalidCredentialsException;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.data.game.values.HandshakeIntent;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
@@ -57,13 +57,13 @@ public class ClientListener extends SessionAdapter {
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
                 try {
                     new SessionService(proxy).joinServer(profile, accessToken, serverHash);
-                } catch(AuthenticationUnavailableException e) {
+                } catch(ServiceUnavailableException e) {
                     event.getSession().disconnect("Login failed: Authentication service unavailable.", e);
                     return;
                 } catch(InvalidCredentialsException e) {
                     event.getSession().disconnect("Login failed: Invalid login session.", e);
                     return;
-                } catch(AuthenticationException e) {
+                } catch(RequestException e) {
                     event.getSession().disconnect("Login failed: Authentication error: " + e.getMessage(), e);
                     return;
                 }

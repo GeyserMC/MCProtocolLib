@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.test;
 
 import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.exception.authentication.AuthenticationException;
+import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.MinecraftConstants;
 import org.spacehq.mc.protocol.data.SubProtocol;
@@ -144,7 +144,7 @@ public class MinecraftProtocolTest {
             try {
                 protocol = new MinecraftProtocol(USERNAME, PASSWORD, false);
                 System.out.println("Successfully authenticated user.");
-            } catch(AuthenticationException e) {
+            } catch(RequestException e) {
                 e.printStackTrace();
                 return;
             }
