@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.data.GameProfile;
+import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.auth.service.SessionService;
-import org.spacehq.mc.auth.exception.request.ServiceUnavailableException;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
@@ -120,6 +120,7 @@ public class ServerListener extends SessionAdapter {
                 ServerInfoBuilder builder = event.getSession().getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if(builder == null) {
                     event.getSession().disconnect("No server info builder set.");
+                    return;
                 }
 
                 ServerStatusInfo info = builder.buildInfo(event.getSession());
@@ -161,34 +162,34 @@ public class ServerListener extends SessionAdapter {
 
         @Override
         public void run() {
-            MinecraftProtocol protocol = (MinecraftProtocol) this.session.getPacketProtocol();
+            Proxy proxy = this.session.<Proxy>getFlag(MinecraftConstants.AUTH_PROXY_KEY);
+            if(proxy == null) {
+                proxy = Proxy.NO_PROXY;
+            }
+
+            GameProfile profile = null;
             try {
-                Proxy proxy = this.session.<Proxy>getFlag(MinecraftConstants.AUTH_PROXY_KEY);
-                if(proxy == null) {
-                    proxy = Proxy.NO_PROXY;
+                profile = new SessionService(proxy).getProfileByServer(username, new BigInteger(CryptUtil.getServerIdHash(serverId, pair.getPublic(), this.key)).toString(16));
+            } catch(RequestException e) {
+                this.session.disconnect("Failed to make session service request.", e);
+                return;
+            }
+
+            if(profile != null) {
+                int threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
+                this.session.send(new LoginSetCompressionPacket(threshold));
+                this.session.setCompressionThreshold(threshold);
+                this.session.send(new LoginSuccessPacket(profile));
+                this.session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
+                ((MinecraftProtocol) this.session.getPacketProtocol()).setSubProtocol(SubProtocol.GAME, false, this.session);
+                ServerLoginHandler handler = this.session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
+                if(handler != null) {
+                    handler.loggedIn(this.session);
                 }
 
-                String serverHash = new BigInteger(CryptUtil.getServerIdHash(serverId, pair.getPublic(), this.key)).toString(16);
-                SessionService service = new SessionService(proxy);
-                GameProfile profile = service.getProfileByServer(username, serverHash);
-                if(profile != null) {
-                    int threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
-                    this.session.send(new LoginSetCompressionPacket(threshold));
-                    this.session.setCompressionThreshold(threshold);
-                    this.session.send(new LoginSuccessPacket(profile));
-                    this.session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
-                    protocol.setSubProtocol(SubProtocol.GAME, false, this.session);
-                    ServerLoginHandler handler = this.session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
-                    if(handler != null) {
-                        handler.loggedIn(this.session);
-                    }
-
-                    new Thread(new KeepAlive(this.session)).start();
-                } else {
-                    this.session.disconnect("Failed to verify username!");
-                }
-            } catch(ServiceUnavailableException e) {
-                this.session.disconnect("Authentication servers are down. Please try again later, sorry!");
+                new Thread(new KeepAlive(this.session)).start();
+            } else {
+                this.session.disconnect("Failed to verify username.");
             }
         }
     }
