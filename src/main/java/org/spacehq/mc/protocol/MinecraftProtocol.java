@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol;
 
-import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.AuthenticationService;
+import org.spacehq.mc.auth.data.GameProfile;
+import org.spacehq.mc.auth.service.AuthenticationService;
 import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;

@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol;
 
-import org.spacehq.mc.auth.GameProfile;
-import org.spacehq.mc.auth.SessionService;
+import org.spacehq.mc.auth.data.GameProfile;
+import org.spacehq.mc.auth.service.SessionService;
 import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.auth.exception.request.ServiceUnavailableException;
 import org.spacehq.mc.auth.exception.request.InvalidCredentialsException;

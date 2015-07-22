@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.test;
 
-import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.MinecraftConstants;

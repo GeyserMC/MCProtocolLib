@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.packet.login.server;
 
-import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

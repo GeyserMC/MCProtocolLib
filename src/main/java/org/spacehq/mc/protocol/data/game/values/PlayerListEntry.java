@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.data.game.values;
 
-import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
 import org.spacehq.mc.protocol.data.message.Message;
 

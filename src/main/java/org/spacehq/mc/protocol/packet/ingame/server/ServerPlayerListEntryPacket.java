@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
-import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.PlayerListEntry;
 import org.spacehq.mc.protocol.data.game.values.PlayerListEntryAction;

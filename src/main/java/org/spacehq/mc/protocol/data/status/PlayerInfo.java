@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.data.status;
 
-import org.spacehq.mc.auth.GameProfile;
+import org.spacehq.mc.auth.data.GameProfile;
 
 import java.util.Arrays;
 
