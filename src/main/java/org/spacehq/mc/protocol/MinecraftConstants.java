@@ -2,7 +2,7 @@ package org.spacehq.mc.protocol;
 
 public class MinecraftConstants {
     // General Constants
-    public static final String GAME_VERSION = "1.8.7";
+    public static final String GAME_VERSION = "1.8.8";
     public static final int PROTOCOL_VERSION = 47;
 
     // General Key Constants
