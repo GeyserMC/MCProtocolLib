@@ -13,10 +13,12 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class ServerSpawnObjectPacket implements Packet {
 
     private int entityId;
+    private UUID uuid;
     private ObjectType type;
     private double x;
     private double y;
@@ -32,21 +34,21 @@ public class ServerSpawnObjectPacket implements Packet {
     private ServerSpawnObjectPacket() {
     }
 
-    public ServerSpawnObjectPacket(int entityId, ObjectType type, double x, double y, double z, float yaw, float pitch) {
-        this(entityId, type, null, x, y, z, yaw, pitch, 0, 0, 0);
+    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, double x, double y, double z, float yaw, float pitch) {
+        this(entityId, uuid, type, null, x, y, z, yaw, pitch, 0, 0, 0);
     }
 
-    public ServerSpawnObjectPacket(int entityId, ObjectType type, ObjectData data, double x, double y, double z, float yaw, float pitch) {
-        this(entityId, type, data, x, y, z, yaw, pitch, 0, 0, 0);
+    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, ObjectData data, double x, double y, double z, float yaw, float pitch) {
+        this(entityId, uuid, type, data, x, y, z, yaw, pitch, 0, 0, 0);
     }
 
-    public ServerSpawnObjectPacket(int entityId, ObjectType type, double x, double y, double z, float yaw, float pitch, double motX, double motY, double motZ) {
-        this(entityId, type, new ObjectData() {
-        }, x, y, z, yaw, pitch, motX, motY, motZ);
+    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, double x, double y, double z, float yaw, float pitch, double motX, double motY, double motZ) {
+        this(entityId, uuid, type, new ObjectData() {}, x, y, z, yaw, pitch, motX, motY, motZ);
     }
 
-    public ServerSpawnObjectPacket(int entityId, ObjectType type, ObjectData data, double x, double y, double z, float yaw, float pitch, double motX, double motY, double motZ) {
+    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, ObjectData data, double x, double y, double z, float yaw, float pitch, double motX, double motY, double motZ) {
         this.entityId = entityId;
+        this.uuid = uuid;
         this.type = type;
         this.data = data;
         this.x = x;
@@ -61,6 +63,10 @@ public class ServerSpawnObjectPacket implements Packet {
 
     public int getEntityId() {
         return this.entityId;
+    }
+
+    public UUID getUUID() {
+        return this.uuid;
     }
 
     public ObjectType getType() {
@@ -106,12 +112,14 @@ public class ServerSpawnObjectPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
+        this.uuid = in.readUUID();
         this.type = MagicValues.key(ObjectType.class, in.readByte());
         this.x = in.readInt() / 32D;
         this.y = in.readInt() / 32D;
         this.z = in.readInt() / 32D;
         this.pitch = in.readByte() * 360 / 256f;
         this.yaw = in.readByte() * 360 / 256f;
+
         int data = in.readInt();
         if(data > 0) {
             if(this.type == ObjectType.MINECART) {
@@ -128,22 +136,24 @@ public class ServerSpawnObjectPacket implements Packet {
                 this.data = new ObjectData() {
                 };
             }
-
-            this.motX = in.readShort() / 8000D;
-            this.motY = in.readShort() / 8000D;
-            this.motZ = in.readShort() / 8000D;
         }
+
+        this.motX = in.readShort() / 8000D;
+        this.motY = in.readShort() / 8000D;
+        this.motZ = in.readShort() / 8000D;
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
+        out.writeUUID(this.uuid);
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeInt((int) (this.x * 32));
         out.writeInt((int) (this.y * 32));
         out.writeInt((int) (this.z * 32));
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeByte((byte) (this.yaw * 256 / 360));
+
         int data = 0;
         if(this.data != null) {
             if(this.data instanceof MinecartType) {
@@ -162,11 +172,10 @@ public class ServerSpawnObjectPacket implements Packet {
         }
 
         out.writeInt(data);
-        if(data > 0) {
-            out.writeShort((int) (this.motX * 8000));
-            out.writeShort((int) (this.motY * 8000));
-            out.writeShort((int) (this.motZ * 8000));
-        }
+
+        out.writeShort((int) (this.motX * 8000));
+        out.writeShort((int) (this.motY * 8000));
+        out.writeShort((int) (this.motZ * 8000));
     }
 
     @Override

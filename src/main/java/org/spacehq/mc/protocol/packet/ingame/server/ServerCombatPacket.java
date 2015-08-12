@@ -2,6 +2,7 @@ package org.spacehq.mc.protocol.packet.ingame.server;
 
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.player.CombatState;
+import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -14,7 +15,7 @@ public class ServerCombatPacket implements Packet {
     private int entityId;
     private int duration;
     private int playerId;
-    private String message;
+    private Message message;
 
     public ServerCombatPacket() {
         this.state = CombatState.ENTER_COMBAT;
@@ -26,7 +27,7 @@ public class ServerCombatPacket implements Packet {
         this.duration = duration;
     }
 
-    public ServerCombatPacket(int entityId, int playerId, String message) {
+    public ServerCombatPacket(int entityId, int playerId, Message message) {
         this.state = CombatState.ENTITY_DEAD;
         this.entityId = entityId;
         this.playerId = playerId;
@@ -49,7 +50,7 @@ public class ServerCombatPacket implements Packet {
         return this.playerId;
     }
 
-    public String getMessage() {
+    public Message getMessage() {
         return this.message;
     }
 
@@ -62,7 +63,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.state == CombatState.ENTITY_DEAD) {
             this.playerId = in.readVarInt();
             this.entityId = in.readInt();
-            this.message = in.readString();
+            this.message = Message.fromString(in.readString());
         }
     }
 
@@ -75,7 +76,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.state == CombatState.ENTITY_DEAD) {
             out.writeVarInt(this.playerId);
             out.writeInt(this.entityId);
-            out.writeString(this.message);
+            out.writeString(this.message.toJsonString());
         }
     }
 

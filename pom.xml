@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.spacehq</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>1.8.8-SNAPSHOT</version>
+    <version>15w32c</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>

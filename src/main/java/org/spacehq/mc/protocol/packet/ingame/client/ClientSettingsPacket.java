@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.client;
 
+import org.spacehq.mc.protocol.data.game.values.Hand;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.setting.ChatVisibility;
 import org.spacehq.mc.protocol.data.game.values.setting.SkinPart;
@@ -19,17 +20,19 @@ public class ClientSettingsPacket implements Packet {
     private ChatVisibility chatVisibility;
     private boolean chatColors;
     private List<SkinPart> visibleParts;
+    private Hand mainHand;
 
     @SuppressWarnings("unused")
     private ClientSettingsPacket() {
     }
 
-    public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, SkinPart... visibleParts) {
+    public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, SkinPart[] visibleParts, Hand mainHand) {
         this.locale = locale;
         this.renderDistance = renderDistance;
         this.chatVisibility = chatVisibility;
         this.chatColors = chatColors;
         this.visibleParts = Arrays.asList(visibleParts);
+        this.mainHand = mainHand;
     }
 
     public String getLocale() {
@@ -52,13 +55,18 @@ public class ClientSettingsPacket implements Packet {
         return this.visibleParts;
     }
 
+    public Hand getMainHand() {
+        return this.mainHand;
+    }
+
     @Override
     public void read(NetInput in) throws IOException {
         this.locale = in.readString();
         this.renderDistance = in.readByte();
-        this.chatVisibility = MagicValues.key(ChatVisibility.class, in.readByte());
+        this.chatVisibility = MagicValues.key(ChatVisibility.class, in.readVarInt());
         this.chatColors = in.readBoolean();
         this.visibleParts = new ArrayList<SkinPart>();
+
         int flags = in.readUnsignedByte();
         for(SkinPart part : SkinPart.values()) {
             int bit = 1 << part.ordinal();
@@ -66,20 +74,25 @@ public class ClientSettingsPacket implements Packet {
                 this.visibleParts.add(part);
             }
         }
+
+        this.mainHand = MagicValues.key(Hand.class, in.readVarInt());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.locale);
         out.writeByte(this.renderDistance);
-        out.writeByte(MagicValues.value(Integer.class, this.chatVisibility));
+        out.writeVarInt(MagicValues.value(Integer.class, this.chatVisibility));
         out.writeBoolean(this.chatColors);
+
         int flags = 0;
         for(SkinPart part : this.visibleParts) {
             flags |= 1 << part.ordinal();
         }
 
         out.writeByte(flags);
+
+        out.writeVarInt(MagicValues.value(Integer.class, this.mainHand));
     }
 
     @Override

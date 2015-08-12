@@ -18,14 +18,13 @@ public class ServerSpawnPlayerPacket implements Packet {
     private double z;
     private float yaw;
     private float pitch;
-    private int currentItem;
     private EntityMetadata metadata[];
 
     @SuppressWarnings("unused")
     private ServerSpawnPlayerPacket() {
     }
 
-    public ServerSpawnPlayerPacket(int entityId, UUID uuid, double x, double y, double z, float yaw, float pitch, int currentItem, EntityMetadata metadata[]) {
+    public ServerSpawnPlayerPacket(int entityId, UUID uuid, double x, double y, double z, float yaw, float pitch, EntityMetadata metadata[]) {
         this.entityId = entityId;
         this.uuid = uuid;
         this.x = x;
@@ -33,7 +32,6 @@ public class ServerSpawnPlayerPacket implements Packet {
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
-        this.currentItem = currentItem;
         this.metadata = metadata;
     }
 
@@ -65,10 +63,6 @@ public class ServerSpawnPlayerPacket implements Packet {
         return this.pitch;
     }
 
-    public int getCurrentItem() {
-        return this.currentItem;
-    }
-
     public EntityMetadata[] getMetadata() {
         return this.metadata;
     }
@@ -82,7 +76,6 @@ public class ServerSpawnPlayerPacket implements Packet {
         this.z = in.readInt() / 32D;
         this.yaw = in.readByte() * 360 / 256f;
         this.pitch = in.readByte() * 360 / 256f;
-        this.currentItem = in.readShort();
         this.metadata = NetUtil.readEntityMetadata(in);
     }
 
@@ -95,7 +88,6 @@ public class ServerSpawnPlayerPacket implements Packet {
         out.writeInt((int) (this.z * 32));
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
-        out.writeShort(this.currentItem);
         NetUtil.writeEntityMetadata(out, this.metadata);
     }
 

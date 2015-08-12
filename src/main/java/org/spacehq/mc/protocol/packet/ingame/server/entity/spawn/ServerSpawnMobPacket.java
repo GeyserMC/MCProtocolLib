@@ -9,10 +9,12 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class ServerSpawnMobPacket implements Packet {
 
     private int entityId;
+    private UUID uuid;
     private MobType type;
     private double x;
     private double y;
@@ -29,8 +31,9 @@ public class ServerSpawnMobPacket implements Packet {
     private ServerSpawnMobPacket() {
     }
 
-    public ServerSpawnMobPacket(int entityId, MobType type, double x, double y, double z, float yaw, float pitch, float headYaw, double motX, double motY, double motZ, EntityMetadata metadata[]) {
+    public ServerSpawnMobPacket(int entityId, UUID uuid, MobType type, double x, double y, double z, float yaw, float pitch, float headYaw, double motX, double motY, double motZ, EntityMetadata metadata[]) {
         this.entityId = entityId;
+        this.uuid = uuid;
         this.type = type;
         this.x = x;
         this.y = y;
@@ -46,6 +49,10 @@ public class ServerSpawnMobPacket implements Packet {
 
     public int getEntityId() {
         return this.entityId;
+    }
+
+    public UUID getUUID() {
+        return this.uuid;
     }
 
     public MobType getType() {
@@ -95,6 +102,7 @@ public class ServerSpawnMobPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
+        this.uuid = in.readUUID();
         this.type = MagicValues.key(MobType.class, in.readByte());
         this.x = in.readInt() / 32D;
         this.y = in.readInt() / 32D;
@@ -111,6 +119,7 @@ public class ServerSpawnMobPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
+        out.writeUUID(this.uuid);
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeInt((int) (this.x * 32));
         out.writeInt((int) (this.y * 32));

@@ -8,14 +8,14 @@ import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientSwingArmPacket implements Packet {
+public class ClientPlayerUseItemPacket implements Packet {
     private Hand hand;
 
     @SuppressWarnings("unused")
-    private ClientSwingArmPacket() {
+    private ClientPlayerUseItemPacket() {
     }
 
-    public ClientSwingArmPacket(Hand hand) {
+    public ClientPlayerUseItemPacket(Hand hand) {
         this.hand = hand;
     }
 

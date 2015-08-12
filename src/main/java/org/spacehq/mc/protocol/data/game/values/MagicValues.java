@@ -109,7 +109,7 @@ public class MagicValues {
 
         register(ClientRequest.RESPAWN, 0);
         register(ClientRequest.STATS, 1);
-        register(ClientRequest.OPEN_INVENTORY_ACHIEVEMENT, 2);
+        register(ClientRequest.OPEN_INVENTORY, 2);
 
         register(ChatVisibility.FULL, 0);
         register(ChatVisibility.SYSTEM, 1);
@@ -121,7 +121,6 @@ public class MagicValues {
         register(PlayerState.START_SPRINTING, 3);
         register(PlayerState.STOP_SPRINTING, 4);
         register(PlayerState.RIDING_JUMP, 5);
-        register(PlayerState.OPEN_INVENTORY, 6);
 
         register(InteractAction.INTERACT, 0);
         register(InteractAction.ATTACK, 1);
@@ -133,6 +132,7 @@ public class MagicValues {
         register(PlayerAction.DROP_ITEM_STACK, 3);
         register(PlayerAction.DROP_ITEM, 4);
         register(PlayerAction.RELEASE_USE_ITEM, 5);
+        register(PlayerAction.SWAP_HANDS, 6);
 
         register(Face.BOTTOM, 0);
         register(Face.TOP, 1);
@@ -881,6 +881,24 @@ public class MagicValues {
         register(ResourcePackStatus.DECLINED, 1);
         register(ResourcePackStatus.FAILED_DOWNLOAD, 2);
         register(ResourcePackStatus.ACCEPTED, 3);
+
+        register(Hand.MAIN_HAND, 0);
+        register(Hand.OFF_HAND, 1);
+
+        register(BossBarAction.ADD, 0);
+        register(BossBarAction.REMOVE, 1);
+        register(BossBarAction.UPDATE_HEALTH, 2);
+        register(BossBarAction.UPDATE_TITLE, 3);
+        register(BossBarAction.UPDATE_STYLE, 4);
+        register(BossBarAction.UPDATE_FLAGS, 5);
+
+        register(BossBarColor.PINK, 0);
+        register(BossBarColor.CYAN, 1);
+        register(BossBarColor.RED, 2);
+        register(BossBarColor.LIME, 3);
+        register(BossBarColor.YELLOW, 4);
+        register(BossBarColor.PURPLE, 5);
+        register(BossBarColor.WHITE, 6);
     }
 
     private static void register(Enum<?> key, Object value) {

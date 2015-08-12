@@ -7,6 +7,7 @@ public enum PlayerAction {
     FINISH_DIGGING,
     DROP_ITEM_STACK,
     DROP_ITEM,
-    RELEASE_USE_ITEM;
+    RELEASE_USE_ITEM,
+    SWAP_HANDS;
 
 }
