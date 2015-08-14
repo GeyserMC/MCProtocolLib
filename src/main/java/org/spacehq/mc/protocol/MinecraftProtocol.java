@@ -138,7 +138,6 @@ public class MinecraftProtocol extends PacketProtocol {
 
     private GameProfile profile;
     private String accessToken = "";
-    private ClientListener clientListener;
 
     @SuppressWarnings("unused")
     private MinecraftProtocol() {
@@ -153,8 +152,6 @@ public class MinecraftProtocol extends PacketProtocol {
         if(subProtocol == SubProtocol.LOGIN) {
             this.profile = new GameProfile((UUID) null, "Player");
         }
-
-        this.clientListener = new ClientListener();
     }
 
     public MinecraftProtocol(String username) {
@@ -190,7 +187,6 @@ public class MinecraftProtocol extends PacketProtocol {
         this(SubProtocol.LOGIN);
         this.profile = profile;
         this.accessToken = accessToken;
-
     }
 
     public GameProfile getProfile() {
@@ -224,7 +220,7 @@ public class MinecraftProtocol extends PacketProtocol {
         }
 
         this.setSubProtocol(this.subProtocol, true, session);
-        session.addListener(this.clientListener);
+        session.addListener(new ClientListener());
     }
 
     @Override

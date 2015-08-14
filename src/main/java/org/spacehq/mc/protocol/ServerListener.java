@@ -37,8 +37,7 @@ import java.util.Random;
 import java.util.UUID;
 
 public class ServerListener extends SessionAdapter {
-
-    private static KeyPair pair = CryptUtil.generateKeyPair();
+    private static final KeyPair KEY_PAIR = CryptUtil.generateKeyPair();
 
     private byte verifyToken[] = new byte[4];
     private String serverId = "";
@@ -84,34 +83,24 @@ public class ServerListener extends SessionAdapter {
         if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
             if(event.getPacket() instanceof LoginStartPacket) {
                 this.username = event.<LoginStartPacket>getPacket().getUsername();
+
                 boolean verify = event.getSession().hasFlag(MinecraftConstants.VERIFY_USERS_KEY) ? event.getSession().<Boolean>getFlag(MinecraftConstants.VERIFY_USERS_KEY) : true;
                 if(verify) {
-                    event.getSession().send(new EncryptionRequestPacket(this.serverId, pair.getPublic(), this.verifyToken));
+                    event.getSession().send(new EncryptionRequestPacket(this.serverId, KEY_PAIR.getPublic(), this.verifyToken));
                 } else {
-                    GameProfile profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.username).getBytes()), this.username);
-                    int threshold = event.getSession().getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
-                    event.getSession().send(new LoginSetCompressionPacket(threshold));
-                    event.getSession().setCompressionThreshold(threshold);
-                    event.getSession().send(new LoginSuccessPacket(profile));
-                    event.getSession().setFlag(MinecraftConstants.PROFILE_KEY, profile);
-                    protocol.setSubProtocol(SubProtocol.GAME, false, event.getSession());
-                    ServerLoginHandler handler = event.getSession().getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
-                    if(handler != null) {
-                        handler.loggedIn(event.getSession());
-                    }
-
-                    new Thread(new KeepAlive(event.getSession())).start();
+                    new Thread(new UserAuthTask(event.getSession(), null)).start();
                 }
             } else if(event.getPacket() instanceof EncryptionResponsePacket) {
                 EncryptionResponsePacket packet = event.getPacket();
-                PrivateKey privateKey = pair.getPrivate();
+                PrivateKey privateKey = KEY_PAIR.getPrivate();
                 if(!Arrays.equals(this.verifyToken, packet.getVerifyToken(privateKey))) {
-                    throw new IllegalStateException("Invalid nonce!");
-                } else {
-                    SecretKey key = packet.getSecretKey(privateKey);
-                    protocol.enableEncryption(key);
-                    new UserAuthThread(event.getSession(), key).start();
+                    event.getSession().disconnect("Invalid nonce!");
+                    return;
                 }
+
+                SecretKey key = packet.getSecretKey(privateKey);
+                protocol.enableEncryption(key);
+                new Thread(new UserAuthTask(event.getSession(), key)).start();
             }
         }
 
@@ -151,53 +140,59 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
-    private class UserAuthThread extends Thread {
+    private class UserAuthTask implements Runnable {
         private Session session;
         private SecretKey key;
 
-        public UserAuthThread(Session session, SecretKey key) {
+        public UserAuthTask(Session session, SecretKey key) {
             this.key = key;
             this.session = session;
         }
 
         @Override
         public void run() {
-            Proxy proxy = this.session.<Proxy>getFlag(MinecraftConstants.AUTH_PROXY_KEY);
-            if(proxy == null) {
-                proxy = Proxy.NO_PROXY;
-            }
+            boolean verify = this.session.hasFlag(MinecraftConstants.VERIFY_USERS_KEY) ? this.session.<Boolean>getFlag(MinecraftConstants.VERIFY_USERS_KEY) : true;
 
             GameProfile profile = null;
-            try {
-                profile = new SessionService(proxy).getProfileByServer(username, new BigInteger(CryptUtil.getServerIdHash(serverId, pair.getPublic(), this.key)).toString(16));
-            } catch(RequestException e) {
-                this.session.disconnect("Failed to make session service request.", e);
-                return;
-            }
-
-            if(profile != null) {
-                int threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
-                this.session.send(new LoginSetCompressionPacket(threshold));
-                this.session.setCompressionThreshold(threshold);
-                this.session.send(new LoginSuccessPacket(profile));
-                this.session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
-                ((MinecraftProtocol) this.session.getPacketProtocol()).setSubProtocol(SubProtocol.GAME, false, this.session);
-                ServerLoginHandler handler = this.session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
-                if(handler != null) {
-                    handler.loggedIn(this.session);
+            if(verify && this.key != null) {
+                Proxy proxy = this.session.<Proxy>getFlag(MinecraftConstants.AUTH_PROXY_KEY);
+                if(proxy == null) {
+                    proxy = Proxy.NO_PROXY;
                 }
 
-                new Thread(new KeepAlive(this.session)).start();
+                try {
+                    profile = new SessionService(proxy).getProfileByServer(username, new BigInteger(CryptUtil.getServerIdHash(serverId, KEY_PAIR.getPublic(), this.key)).toString(16));
+                } catch(RequestException e) {
+                    this.session.disconnect("Failed to make session service request.", e);
+                    return;
+                }
+
+                if(profile == null) {
+                    this.session.disconnect("Failed to verify username.");
+                }
             } else {
-                this.session.disconnect("Failed to verify username.");
+                profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes()), username);
             }
+
+            int threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
+            this.session.send(new LoginSetCompressionPacket(threshold));
+            this.session.setCompressionThreshold(threshold);
+            this.session.send(new LoginSuccessPacket(profile));
+            this.session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
+            ((MinecraftProtocol) this.session.getPacketProtocol()).setSubProtocol(SubProtocol.GAME, false, this.session);
+            ServerLoginHandler handler = this.session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
+            if(handler != null) {
+                handler.loggedIn(this.session);
+            }
+
+            new Thread(new KeepAliveTask(this.session)).start();
         }
     }
 
-    private class KeepAlive implements Runnable {
+    private class KeepAliveTask implements Runnable {
         private Session session;
 
-        public KeepAlive(Session session) {
+        public KeepAliveTask(Session session) {
             this.session = session;
         }
 
@@ -216,5 +211,4 @@ public class ServerListener extends SessionAdapter {
             }
         }
     }
-
 }
