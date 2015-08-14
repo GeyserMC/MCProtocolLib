@@ -1,10 +1,10 @@
 package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.data.GameProfile;
-import org.spacehq.mc.auth.service.SessionService;
+import org.spacehq.mc.auth.exception.request.InvalidCredentialsException;
 import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.auth.exception.request.ServiceUnavailableException;
-import org.spacehq.mc.auth.exception.request.InvalidCredentialsException;
+import org.spacehq.mc.auth.service.SessionService;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.data.game.values.HandshakeIntent;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
@@ -28,7 +28,6 @@ import org.spacehq.mc.protocol.packet.status.server.StatusResponsePacket;
 import org.spacehq.mc.protocol.util.CryptUtil;
 import org.spacehq.packetlib.event.session.ConnectedEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
-import org.spacehq.packetlib.event.session.PacketSentEvent;
 import org.spacehq.packetlib.event.session.SessionAdapter;
 
 import javax.crypto.SecretKey;
@@ -36,16 +35,13 @@ import java.math.BigInteger;
 import java.net.Proxy;
 
 public class ClientListener extends SessionAdapter {
-
-    private SecretKey key;
-
     @Override
     public void packetReceived(PacketReceivedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
         if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
             if(event.getPacket() instanceof EncryptionRequestPacket) {
                 EncryptionRequestPacket packet = event.getPacket();
-                this.key = CryptUtil.generateSharedKey();
+                SecretKey key = CryptUtil.generateSharedKey();
 
                 Proxy proxy = event.getSession().<Proxy>getFlag(MinecraftConstants.AUTH_PROXY_KEY);
                 if(proxy == null) {
@@ -53,7 +49,7 @@ public class ClientListener extends SessionAdapter {
                 }
 
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
-                String serverHash = new BigInteger(CryptUtil.getServerIdHash(packet.getServerId(), packet.getPublicKey(), this.key)).toString(16);
+                String serverHash = new BigInteger(CryptUtil.getServerIdHash(packet.getServerId(), packet.getPublicKey(), key)).toString(16);
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
                 try {
                     new SessionService(proxy).joinServer(profile, accessToken, serverHash);
@@ -68,7 +64,8 @@ public class ClientListener extends SessionAdapter {
                     return;
                 }
 
-                event.getSession().send(new EncryptionResponsePacket(this.key, packet.getPublicKey(), packet.getVerifyToken()));
+                event.getSession().send(new EncryptionResponsePacket(key, packet.getPublicKey(), packet.getVerifyToken()));
+                protocol.enableEncryption(key);
             } else if(event.getPacket() instanceof LoginSuccessPacket) {
                 LoginSuccessPacket packet = event.getPacket();
                 event.getSession().setFlag(MinecraftConstants.PROFILE_KEY, packet.getProfile());
@@ -109,14 +106,6 @@ public class ClientListener extends SessionAdapter {
     }
 
     @Override
-    public void packetSent(PacketSentEvent event) {
-        MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-        if(protocol.getSubProtocol() == SubProtocol.LOGIN && event.getPacket() instanceof EncryptionResponsePacket) {
-            protocol.enableEncryption(this.key);
-        }
-    }
-
-    @Override
     public void connected(ConnectedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
         if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
@@ -132,5 +121,4 @@ public class ClientListener extends SessionAdapter {
             event.getSession().send(new StatusQueryPacket());
         }
     }
-
 }
