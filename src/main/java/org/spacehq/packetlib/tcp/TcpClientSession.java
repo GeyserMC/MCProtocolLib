@@ -104,6 +104,7 @@ public class TcpClientSession extends TcpSession {
                         });
                     } catch(Throwable t) {
                         complete.set(true);
+                        exceptionCaught(null, t);
                     }
                 }
             }).start();
