@@ -9,6 +9,8 @@ import org.spacehq.mc.protocol.data.game.Rotation;
 import org.spacehq.mc.protocol.data.game.ShortArray3d;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
+import org.spacehq.mc.protocol.data.game.values.world.block.BlockFace;
+import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.opennbt.NBTIO;
 import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.packetlib.io.NetInput;
@@ -24,6 +26,7 @@ import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class NetUtil {
 
@@ -112,21 +115,17 @@ public class NetUtil {
 
     public static EntityMetadata[] readEntityMetadata(NetInput in) throws IOException {
         List<EntityMetadata> ret = new ArrayList<EntityMetadata>();
-        byte b;
-        while((b = in.readByte()) != 127) {
-            int typeId = (b & 0xE0) >> 5;
-            int id = b & 0x1F;
+        int id;
+        while((id = in.readUnsignedByte()) != 255) {
+            int typeId = in.readVarInt();
             MetadataType type = MagicValues.key(MetadataType.class, typeId);
             Object value = null;
             switch(type) {
                 case BYTE:
                     value = in.readByte();
                     break;
-                case SHORT:
-                    value = in.readShort();
-                    break;
                 case INT:
-                    value = in.readInt();
+                    value = in.readVarInt();
                     break;
                 case FLOAT:
                     value = in.readFloat();
@@ -134,14 +133,37 @@ public class NetUtil {
                 case STRING:
                     value = in.readString();
                     break;
+                case CHAT:
+                    value = Message.fromString(in.readString());
+                    break;
                 case ITEM:
                     value = readItem(in);
                     break;
-                case POSITION:
-                    value = new Position(in.readInt(), in.readInt(), in.readInt());
+                case BOOLEAN:
+                    value = in.readBoolean();
                     break;
                 case ROTATION:
                     value = new Rotation(in.readFloat(), in.readFloat(), in.readFloat());
+                    break;
+                case POSITION:
+                    value = readPosition(in);
+                    break;
+                case OPTIONAL_POSITION:
+                    boolean positionPresent = in.readBoolean();
+                    if(positionPresent) {
+                        value = readPosition(in);
+                    }
+
+                    break;
+                case BLOCK_FACE:
+                    value = MagicValues.key(BlockFace.class, in.readVarInt());
+                    break;
+                case OPTIONAL_UUID:
+                    boolean uuidPresent = in.readBoolean();
+                    if(uuidPresent) {
+                        value = in.readUUID();
+                    }
+
                     break;
                 default:
                     throw new IOException("Unknown metadata type id: " + typeId);
@@ -155,17 +177,14 @@ public class NetUtil {
 
     public static void writeEntityMetadata(NetOutput out, EntityMetadata[] metadata) throws IOException {
         for(EntityMetadata meta : metadata) {
-            int id = MagicValues.value(Integer.class, meta.getType()) << 5 | meta.getId() & 0x1F;
-            out.writeByte(id);
+            out.writeByte(meta.getId());
+            out.writeVarInt(MagicValues.value(Integer.class, meta.getType()));
             switch(meta.getType()) {
                 case BYTE:
                     out.writeByte((Byte) meta.getValue());
                     break;
-                case SHORT:
-                    out.writeShort((Short) meta.getValue());
-                    break;
                 case INT:
-                    out.writeInt((Integer) meta.getValue());
+                    out.writeVarInt((Integer) meta.getValue());
                     break;
                 case FLOAT:
                     out.writeFloat((Float) meta.getValue());
@@ -173,14 +192,14 @@ public class NetUtil {
                 case STRING:
                     out.writeString((String) meta.getValue());
                     break;
+                case CHAT:
+                    out.writeString(((Message) meta.getValue()).toJsonString());
+                    break;
                 case ITEM:
                     writeItem(out, (ItemStack) meta.getValue());
                     break;
-                case POSITION:
-                    Position pos = (Position) meta.getValue();
-                    out.writeInt(pos.getX());
-                    out.writeInt(pos.getY());
-                    out.writeInt(pos.getZ());
+                case BOOLEAN:
+                    out.writeBoolean((Boolean) meta.getValue());
                     break;
                 case ROTATION:
                     Rotation rot = (Rotation) meta.getValue();
@@ -188,12 +207,32 @@ public class NetUtil {
                     out.writeFloat(rot.getYaw());
                     out.writeFloat(rot.getRoll());
                     break;
+                case POSITION:
+                    writePosition(out, (Position) meta.getValue());
+                    break;
+                case OPTIONAL_POSITION:
+                    out.writeBoolean(meta.getValue() != null);
+                    if(meta.getValue() != null) {
+                        writePosition(out, (Position) meta.getValue());
+                    }
+
+                    break;
+                case BLOCK_FACE:
+                    out.writeVarInt(MagicValues.value(Integer.class, (BlockFace) meta.getValue()));
+                    break;
+                case OPTIONAL_UUID:
+                    out.writeBoolean(meta.getValue() != null);
+                    if(meta.getValue() != null) {
+                        out.writeUUID((UUID) meta.getValue());
+                    }
+
+                    break;
                 default:
-                    throw new IOException("Unmapped metadata type: " + meta.getType());
+                    throw new IOException("Unknown metadata type: " + meta.getType());
             }
         }
 
-        out.writeByte(127);
+        out.writeByte(255);
     }
 
     public static ParsedChunkData dataToChunks(NetworkChunkData data, boolean checkForSky) {

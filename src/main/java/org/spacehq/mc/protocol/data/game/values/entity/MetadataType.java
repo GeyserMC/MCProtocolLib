@@ -1,14 +1,16 @@
 package org.spacehq.mc.protocol.data.game.values.entity;
 
 public enum MetadataType {
-
     BYTE,
-    SHORT,
     INT,
     FLOAT,
     STRING,
+    CHAT,
     ITEM,
+    BOOLEAN,
+    ROTATION,
     POSITION,
-    ROTATION;
-
+    OPTIONAL_POSITION,
+    BLOCK_FACE,
+    OPTIONAL_UUID;
 }

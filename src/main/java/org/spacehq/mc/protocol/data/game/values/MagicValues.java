@@ -48,6 +48,7 @@ import org.spacehq.mc.protocol.data.game.values.world.GenericSound;
 import org.spacehq.mc.protocol.data.game.values.world.Particle;
 import org.spacehq.mc.protocol.data.game.values.world.WorldBorderAction;
 import org.spacehq.mc.protocol.data.game.values.world.WorldType;
+import org.spacehq.mc.protocol.data.game.values.world.block.BlockFace;
 import org.spacehq.mc.protocol.data.game.values.world.block.UpdatedTileType;
 import org.spacehq.mc.protocol.data.game.values.world.block.value.ChestValueType;
 import org.spacehq.mc.protocol.data.game.values.world.block.value.GenericBlockValueType;
@@ -96,13 +97,17 @@ public class MagicValues {
         register(ModifierOperation.MULTIPLY, 2);
 
         register(MetadataType.BYTE, 0);
-        register(MetadataType.SHORT, 1);
-        register(MetadataType.INT, 2);
-        register(MetadataType.FLOAT, 3);
-        register(MetadataType.STRING, 4);
+        register(MetadataType.INT, 1);
+        register(MetadataType.FLOAT, 2);
+        register(MetadataType.STRING, 3);
+        register(MetadataType.CHAT, 4);
         register(MetadataType.ITEM, 5);
-        register(MetadataType.POSITION, 6);
+        register(MetadataType.BOOLEAN, 6);
         register(MetadataType.ROTATION, 7);
+        register(MetadataType.POSITION, 8);
+        register(MetadataType.OPTIONAL_POSITION, 9);
+        register(MetadataType.BLOCK_FACE, 10);
+        register(MetadataType.OPTIONAL_UUID, 11);
 
         register(HandshakeIntent.STATUS, 1);
         register(HandshakeIntent.LOGIN, 2);
@@ -899,6 +904,13 @@ public class MagicValues {
         register(BossBarColor.YELLOW, 4);
         register(BossBarColor.PURPLE, 5);
         register(BossBarColor.WHITE, 6);
+
+        register(BlockFace.DOWN, 0);
+        register(BlockFace.UP, 1);
+        register(BlockFace.NORTH, 2);
+        register(BlockFace.SOUTH, 3);
+        register(BlockFace.WEST, 4);
+        register(BlockFace.EAST, 5);
     }
 
     private static void register(Enum<?> key, Object value) {
