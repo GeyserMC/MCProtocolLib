@@ -96,15 +96,17 @@ public class TcpClientSession extends TcpSession {
                         future.addListener(new ChannelFutureListener() {
                             @Override
                             public void operationComplete(ChannelFuture future) throws Exception {
-                                complete.set(true);
                                 if(!future.isSuccess() && future.cause() != null) {
                                     exceptionCaught(null, future.cause());
                                 }
                             }
-                        });
-                    } catch(Throwable t) {
+                        }).await();
+
                         complete.set(true);
+                    } catch(Throwable t) {
                         exceptionCaught(null, t);
+
+                        complete.set(true);
                     }
                 }
             }).start();
