@@ -23,10 +23,7 @@ import org.spacehq.packetlib.tcp.TcpSessionFactory;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.spacehq.mc.protocol.MinecraftConstants.*;
 import static org.spacehq.mc.protocol.data.SubProtocol.STATUS;
 import static org.spacehq.mc.protocol.data.game.values.entity.player.GameMode.SURVIVAL;
