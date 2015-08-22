@@ -93,13 +93,20 @@ public class TcpClientSession extends TcpSession {
                         future.addListener(new ChannelFutureListener() {
                             @Override
                             public void operationComplete(ChannelFuture future) throws Exception {
-                                System.err.println("Future start.");
                                 if(!future.isSuccess()) {
                                     exceptionCaught(null, future.cause());
                                 }
-                                System.err.println("Future end.");
                             }
                         }).await();
+
+                        if(future.isSuccess()) {
+                            while(!isConnected()) {
+                                try {
+                                    Thread.sleep(5);
+                                } catch(InterruptedException e) {
+                                }
+                            }
+                        }
                     } catch(Throwable t) {
                         exceptionCaught(null, t);
                     }
@@ -108,7 +115,6 @@ public class TcpClientSession extends TcpSession {
 
             if(wait) {
                 connectTask.run();
-                System.err.println("Connect completed.");
             } else {
                 new Thread(connectTask).start();
             }

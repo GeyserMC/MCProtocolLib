@@ -308,17 +308,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.err.println("Channel active?");
         if(this.disconnected || this.channel != null) {
             ctx.channel().close();
             return;
         }
 
-        System.err.println("Channel active.");
-
         this.channel = ctx.channel();
-
-        System.err.println("Channel set.");
 
         this.packetHandleThread = new Thread(new Runnable() {
             @Override

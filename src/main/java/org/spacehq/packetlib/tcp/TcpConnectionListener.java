@@ -85,8 +85,6 @@ public class TcpConnectionListener implements ConnectionListener {
                 pipeline.addLast("sizer", new TcpPacketSizer(session));
                 pipeline.addLast("codec", new TcpPacketCodec(session));
                 pipeline.addLast("manager", session);
-
-                server.addSession(session);
             }
         }).group(this.group).localAddress(this.host, this.port).bind();
 
