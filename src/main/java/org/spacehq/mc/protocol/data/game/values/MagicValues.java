@@ -267,6 +267,11 @@ public class MagicValues {
         register(EntityStatus.GUARDIAN_SOUND, 21);
         register(EntityStatus.ENABLE_REDUCED_DEBUG, 22);
         register(EntityStatus.DISABLE_REDUCED_DEBUG, 23);
+        register(EntityStatus.OP_PERMISSION_LEVEL_0, 24);
+        register(EntityStatus.OP_PERMISSION_LEVEL_1, 25);
+        register(EntityStatus.OP_PERMISSION_LEVEL_2, 26);
+        register(EntityStatus.OP_PERMISSION_LEVEL_3, 27);
+        register(EntityStatus.OP_PERMISSION_LEVEL_4, 28);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);

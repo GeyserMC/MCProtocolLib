@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.values.entity;
 
 public enum EntityStatus {
-
     HURT_OR_MINECART_SPAWNER_DELAY_RESET,
     LIVING_HURT,
     DEAD,
@@ -23,6 +22,10 @@ public enum EntityStatus {
     EXPLOSION_PARTICLE,
     GUARDIAN_SOUND,
     ENABLE_REDUCED_DEBUG,
-    DISABLE_REDUCED_DEBUG;
-
+    DISABLE_REDUCED_DEBUG,
+    OP_PERMISSION_LEVEL_0,
+    OP_PERMISSION_LEVEL_1,
+    OP_PERMISSION_LEVEL_2,
+    OP_PERMISSION_LEVEL_3,
+    OP_PERMISSION_LEVEL_4;
 }
