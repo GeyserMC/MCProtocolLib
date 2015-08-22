@@ -4,6 +4,7 @@ import org.spacehq.mc.protocol.data.game.values.entity.Art;
 import org.spacehq.mc.protocol.data.game.values.entity.AttributeType;
 import org.spacehq.mc.protocol.data.game.values.entity.Effect;
 import org.spacehq.mc.protocol.data.game.values.entity.EntityStatus;
+import org.spacehq.mc.protocol.data.game.values.entity.EquipmentSlot;
 import org.spacehq.mc.protocol.data.game.values.entity.GlobalEntityType;
 import org.spacehq.mc.protocol.data.game.values.entity.HangingDirection;
 import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
@@ -911,6 +912,13 @@ public class MagicValues {
         register(BlockFace.SOUTH, 3);
         register(BlockFace.WEST, 4);
         register(BlockFace.EAST, 5);
+
+        register(EquipmentSlot.MAIN_HAND, 0);
+        register(EquipmentSlot.OFF_HAND, 1);
+        register(EquipmentSlot.BOOTS, 2);
+        register(EquipmentSlot.LEGGINGS, 3);
+        register(EquipmentSlot.CHESTPLATE, 4);
+        register(EquipmentSlot.HELMET, 5);
     }
 
     private static void register(Enum<?> key, Object value) {
@@ -934,7 +942,7 @@ public class MagicValues {
             }
         }
 
-        return null;
+        throw new IllegalArgumentException("Value " + value + " has no mapping for key class " + keyType + ".");
     }
 
     @SuppressWarnings("unchecked")
@@ -960,7 +968,7 @@ public class MagicValues {
             }
         }
 
-        return null;
+        throw new IllegalArgumentException("Key " + key + " has no mapping for value class " + valueType + ".");
     }
 
 }

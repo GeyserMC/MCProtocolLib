@@ -1,6 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity;
 
 import org.spacehq.mc.protocol.data.game.ItemStack;
+import org.spacehq.mc.protocol.data.game.values.MagicValues;
+import org.spacehq.mc.protocol.data.game.values.entity.EquipmentSlot;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
@@ -11,14 +13,14 @@ import java.io.IOException;
 public class ServerEntityEquipmentPacket implements Packet {
 
     private int entityId;
-    private int slot;
+    private EquipmentSlot slot;
     private ItemStack item;
 
     @SuppressWarnings("unused")
     private ServerEntityEquipmentPacket() {
     }
 
-    public ServerEntityEquipmentPacket(int entityId, int slot, ItemStack item) {
+    public ServerEntityEquipmentPacket(int entityId, EquipmentSlot slot, ItemStack item) {
         this.entityId = entityId;
         this.slot = slot;
         this.item = item;
@@ -28,7 +30,7 @@ public class ServerEntityEquipmentPacket implements Packet {
         return this.entityId;
     }
 
-    public int getSlot() {
+    public EquipmentSlot getSlot() {
         return this.slot;
     }
 
@@ -39,14 +41,14 @@ public class ServerEntityEquipmentPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.slot = in.readVarInt();
+        this.slot = MagicValues.key(EquipmentSlot.class, in.readVarInt());
         this.item = NetUtil.readItem(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        out.writeVarInt(this.slot);
+        out.writeVarInt(MagicValues.value(Integer.class, this.slot));
         NetUtil.writeItem(out, this.item);
     }
 

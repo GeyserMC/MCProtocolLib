@@ -12,6 +12,7 @@ public class ServerMapDataPacket implements Packet {
 
     private int mapId;
     private byte scale;
+    private boolean trackingPosition;
     private MapPlayer players[];
 
     private MapData data;
@@ -20,13 +21,14 @@ public class ServerMapDataPacket implements Packet {
     private ServerMapDataPacket() {
     }
 
-    public ServerMapDataPacket(int mapId, byte scale, MapPlayer players[]) {
-        this(mapId, scale, players, null);
+    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapPlayer players[]) {
+        this(mapId, scale, trackingPosition, players, null);
     }
 
-    public ServerMapDataPacket(int mapId, byte scale, MapPlayer players[], MapData data) {
+    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapPlayer players[], MapData data) {
         this.mapId = mapId;
         this.scale = scale;
+        this.trackingPosition = trackingPosition;
         this.players = players;
         this.data = data;
     }
@@ -37,6 +39,10 @@ public class ServerMapDataPacket implements Packet {
 
     public byte getScale() {
         return this.scale;
+    }
+
+    public boolean getTrackingPosition() {
+        return this.trackingPosition;
     }
 
     public MapPlayer[] getPlayers() {
@@ -51,6 +57,7 @@ public class ServerMapDataPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.mapId = in.readVarInt();
         this.scale = in.readByte();
+        this.trackingPosition = in.readBoolean();
         this.players = new MapPlayer[in.readVarInt()];
         for(int index = 0; index < this.players.length; index++) {
             int data = in.readUnsignedByte();
@@ -75,6 +82,7 @@ public class ServerMapDataPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.mapId);
         out.writeByte(this.scale);
+        out.writeBoolean(this.trackingPosition);
         out.writeVarInt(this.players.length);
         for(int index = 0; index < this.players.length; index++) {
             MapPlayer player = this.players[index];
