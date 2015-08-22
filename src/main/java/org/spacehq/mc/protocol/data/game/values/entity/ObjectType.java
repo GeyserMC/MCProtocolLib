@@ -1,9 +1,9 @@
 package org.spacehq.mc.protocol.data.game.values.entity;
 
 public enum ObjectType {
-
     BOAT,
     ITEM,
+    AREA_EFFECT_CLOUD,
     MINECART,
     PRIMED_TNT,
     ENDER_CRYSTAL,
@@ -14,6 +14,7 @@ public enum ObjectType {
     BLAZE_FIREBALL,
     ENDER_PEARL,
     WITHER_HEAD_PROJECTILE,
+    SHULKER_BULLET,
     FALLING_BLOCK,
     ITEM_FRAME,
     EYE_OF_ENDER,
@@ -23,6 +24,8 @@ public enum ObjectType {
     FIREWORK_ROCKET,
     LEASH_KNOT,
     ARMOR_STAND,
-    FISH_HOOK;
-
+    FISH_HOOK,
+    SPECTRAL_ARROW,
+    TIPPED_ARROW,
+    DRAGON_FIREBALL;
 }

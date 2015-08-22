@@ -1,8 +1,9 @@
 package org.spacehq.mc.protocol.data.game.values.entity;
 
 public enum MobType {
-
     ARMOR_STAND,
+    MOB,
+    MONSTER,
     CREEPER,
     SKELETON,
     SPIDER,
@@ -22,6 +23,7 @@ public enum MobType {
     WITCH,
     ENDERMITE,
     GUARDIAN,
+    SHULKER,
     PIG,
     SHEEP,
     COW,
@@ -35,5 +37,4 @@ public enum MobType {
     HORSE,
     RABBIT,
     VILLAGER;
-
 }

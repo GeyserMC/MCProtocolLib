@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.values.entity;
 
 public class ProjectileData implements ObjectData {
-
     private int ownerId;
 
     public ProjectileData(int ownerId) {
@@ -14,19 +13,11 @@ public class ProjectileData implements ObjectData {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        ProjectileData that = (ProjectileData) o;
-
-        if(ownerId != that.ownerId) return false;
-
-        return true;
+        return this == o || (o instanceof ProjectileData && this.ownerId == ((ProjectileData) o).ownerId);
     }
 
     @Override
     public int hashCode() {
-        return ownerId;
+        return this.ownerId;
     }
-
 }

@@ -282,6 +282,8 @@ public class MagicValues {
         register(GlobalEntityType.LIGHTNING_BOLT, 1);
 
         register(MobType.ARMOR_STAND, 30);
+        register(MobType.MOB, 48);
+        register(MobType.MONSTER, 49);
         register(MobType.CREEPER, 50);
         register(MobType.SKELETON, 51);
         register(MobType.SPIDER, 52);
@@ -301,6 +303,7 @@ public class MagicValues {
         register(MobType.WITCH, 66);
         register(MobType.ENDERMITE, 67);
         register(MobType.GUARDIAN, 68);
+        register(MobType.SHULKER, 69);
         register(MobType.PIG, 90);
         register(MobType.SHEEP, 91);
         register(MobType.COW, 92);
@@ -317,6 +320,7 @@ public class MagicValues {
 
         register(ObjectType.BOAT, 1);
         register(ObjectType.ITEM, 2);
+        register(ObjectType.AREA_EFFECT_CLOUD, 3);
         register(ObjectType.MINECART, 10);
         register(ObjectType.PRIMED_TNT, 50);
         register(ObjectType.ENDER_CRYSTAL, 51);
@@ -327,6 +331,7 @@ public class MagicValues {
         register(ObjectType.BLAZE_FIREBALL, 64);
         register(ObjectType.ENDER_PEARL, 65);
         register(ObjectType.WITHER_HEAD_PROJECTILE, 66);
+        register(ObjectType.SHULKER_BULLET, 67);
         register(ObjectType.FALLING_BLOCK, 70);
         register(ObjectType.ITEM_FRAME, 71);
         register(ObjectType.EYE_OF_ENDER, 72);
@@ -337,6 +342,9 @@ public class MagicValues {
         register(ObjectType.LEASH_KNOT, 77);
         register(ObjectType.ARMOR_STAND, 78);
         register(ObjectType.FISH_HOOK, 90);
+        register(ObjectType.SPECTRAL_ARROW, 91);
+        register(ObjectType.TIPPED_ARROW, 92);
+        register(ObjectType.DRAGON_FIREBALL, 93);
 
         register(MinecartType.NORMAL, 0);
         register(MinecartType.CHEST, 1);
