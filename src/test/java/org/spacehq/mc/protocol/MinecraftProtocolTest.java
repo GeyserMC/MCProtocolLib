@@ -31,7 +31,6 @@ import static org.spacehq.mc.protocol.data.game.values.setting.Difficulty.PEACEF
 import static org.spacehq.mc.protocol.data.game.values.world.WorldType.DEFAULT;
 
 public class MinecraftProtocolTest {
-
     private static final String HOST = "localhost";
     private static final int PORT = 25560;
 
@@ -58,7 +57,7 @@ public class MinecraftProtocolTest {
             }
         });
 
-        assertTrue(server.bind().isListening());
+        assertTrue("Could not bind server.", server.bind().isListening());
     }
 
     @Test
@@ -70,16 +69,17 @@ public class MinecraftProtocolTest {
         session.setFlag(SERVER_INFO_HANDLER_KEY, handler);
         session.connect();
 
+        assertTrue("Could not connect status session.", session.isConnected());
         handler.status.await(2, SECONDS);
 
         ServerStatusInfo info = handler.info;
-        assertNotNull("Failed get server info", info);
+        assertNotNull("Failed to get server info.", info);
 
-        assertEquals("Hello world!", info.getDescription().getFullText());
-        assertEquals(GAME_VERSION, info.getVersionInfo().getVersionName());
-        assertEquals(PROTOCOL_VERSION, info.getVersionInfo().getProtocolVersion());
-        assertEquals(0, info.getPlayerInfo().getOnlinePlayers());
-        assertEquals(100, info.getPlayerInfo().getMaxPlayers());
+        assertEquals("Received incorrect description.", "Hello world!", info.getDescription().getFullText());
+        assertEquals("Received incorrect game version.", GAME_VERSION, info.getVersionInfo().getVersionName());
+        assertEquals("Received incorrect protocol version.", PROTOCOL_VERSION, info.getVersionInfo().getProtocolVersion());
+        assertEquals("Received incorrect online players.", 0, info.getPlayerInfo().getOnlinePlayers());
+        assertEquals("Received incorrect max players.", 100, info.getPlayerInfo().getMaxPlayers());
     }
 
     @Test
@@ -91,26 +91,26 @@ public class MinecraftProtocolTest {
         session.addListener(listener);
         session.connect();
 
-        assertTrue(session.isConnected());
+        assertTrue("Could not connect login session.", session.isConnected());
         listener.login.await(4, SECONDS);
 
         ServerJoinGamePacket packet = listener.packet;
-        assertNotNull("Failed to login", packet);
+        assertNotNull("Failed to log in.", packet);
 
-        assertEquals(0, packet.getEntityId());
-        assertFalse(packet.getHardcore());
-        assertEquals(SURVIVAL, packet.getGameMode());
-        assertEquals(0, packet.getDimension());
-        assertEquals(PEACEFUL, packet.getDifficulty());
-        assertEquals(100, packet.getMaxPlayers());
-        assertEquals(DEFAULT, packet.getWorldType());
-        assertFalse(packet.getReducedDebugInfo());
+        assertEquals("Received incorrect entity ID.", 0, packet.getEntityId());
+        assertFalse("Received incorrect hardcore flag.", packet.getHardcore());
+        assertEquals("Received incorrect gamemode.", SURVIVAL, packet.getGameMode());
+        assertEquals("Received incorrect dimension.", 0, packet.getDimension());
+        assertEquals("Received incorrect difficulty.", PEACEFUL, packet.getDifficulty());
+        assertEquals("Received incorrect max players.", 100, packet.getMaxPlayers());
+        assertEquals("Received incorrect world type.", DEFAULT, packet.getWorldType());
+        assertFalse("Received incorrect reduced debug info flag.", packet.getReducedDebugInfo());
     }
 
     @After
     public void tearDownClient() {
-        if(client != null) {
-            client.getSession().disconnect("Bye!");
+        if(this.client != null) {
+            this.client.getSession().disconnect("Bye!");
         }
     }
 
@@ -119,18 +119,18 @@ public class MinecraftProtocolTest {
         server.close(true);
     }
 
-    public class ServerInfoHandlerTest implements ServerInfoHandler {
+    private static class ServerInfoHandlerTest implements ServerInfoHandler {
         public CountDownLatch status = new CountDownLatch(1);
         public ServerStatusInfo info;
 
         @Override
         public void handle(Session session, ServerStatusInfo info) {
             this.info = info;
-            status.countDown();
+            this.status.countDown();
         }
     }
 
-    public class LoginListenerTest extends SessionAdapter {
+    private static class LoginListenerTest extends SessionAdapter {
         public CountDownLatch login = new CountDownLatch(1);
         public ServerJoinGamePacket packet;
 
@@ -140,9 +140,8 @@ public class MinecraftProtocolTest {
 
             if(packet instanceof ServerJoinGamePacket) {
                 this.packet = (ServerJoinGamePacket) packet;
-                login.countDown();
+                this.login.countDown();
             }
         }
     }
-
 }
