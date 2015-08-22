@@ -15,6 +15,7 @@ import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import org.spacehq.packetlib.Client;
 import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.Session;
+import org.spacehq.packetlib.event.session.DisconnectedEvent;
 import org.spacehq.packetlib.event.session.PacketReceivedEvent;
 import org.spacehq.packetlib.event.session.SessionAdapter;
 import org.spacehq.packetlib.packet.Packet;
@@ -67,6 +68,7 @@ public class MinecraftProtocolTest {
 
         ServerInfoHandlerTest handler = new ServerInfoHandlerTest();
         session.setFlag(SERVER_INFO_HANDLER_KEY, handler);
+        session.addListener(new DisconnectListener());
         session.connect();
 
         assertTrue("Could not connect status session.", session.isConnected());
@@ -89,6 +91,7 @@ public class MinecraftProtocolTest {
 
         LoginListenerTest listener = new LoginListenerTest();
         session.addListener(listener);
+        session.addListener(new DisconnectListener());
         session.connect();
 
         assertTrue("Could not connect login session.", session.isConnected());
@@ -141,6 +144,16 @@ public class MinecraftProtocolTest {
             if(packet instanceof ServerJoinGamePacket) {
                 this.packet = (ServerJoinGamePacket) packet;
                 this.login.countDown();
+            }
+        }
+    }
+
+    private static class DisconnectListener extends SessionAdapter {
+        @Override
+        public void disconnected(DisconnectedEvent event) {
+            System.err.println("Disconnected: " + event.getReason());
+            if(event.getCause() != null) {
+                event.getCause().printStackTrace();
             }
         }
     }
