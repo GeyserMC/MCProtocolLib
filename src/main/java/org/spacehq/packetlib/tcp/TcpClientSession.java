@@ -3,7 +3,6 @@ package org.spacehq.packetlib.tcp;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -89,16 +88,7 @@ public class TcpClientSession extends TcpSession {
 
                         bootstrap.remoteAddress(host, port);
 
-                        ChannelFuture future = bootstrap.connect();
-                        future.addListener(new ChannelFutureListener() {
-                            @Override
-                            public void operationComplete(ChannelFuture future) throws Exception {
-                                if(!future.isSuccess()) {
-                                    exceptionCaught(null, future.cause());
-                                }
-                            }
-                        }).await();
-
+                        ChannelFuture future = bootstrap.connect().sync();
                         if(future.isSuccess()) {
                             while(!isConnected()) {
                                 try {
