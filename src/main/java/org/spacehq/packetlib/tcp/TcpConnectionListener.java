@@ -87,24 +87,29 @@ public class TcpConnectionListener implements ConnectionListener {
 
                 server.addSession(session);
             }
-        }).group(this.group).localAddress(this.host, this.port).bind().addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                if(channelFuture.isSuccess()) {
-                    channel = channelFuture.channel();
-                    callback.run();
-                } else if(channelFuture.cause() != null && !wait) {
-                    System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
-                    channelFuture.cause().printStackTrace();
-                }
-            }
-        });
+        }).group(this.group).localAddress(this.host, this.port).bind();
 
         if(wait) {
             try {
                 future.sync();
             } catch(InterruptedException e) {
             }
+
+            channel = future.channel();
+            callback.run();
+        } else {
+            future.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                    if(channelFuture.isSuccess()) {
+                        channel = channelFuture.channel();
+                        callback.run();
+                    } else if(channelFuture.cause() != null && !wait) {
+                        System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
+                        channelFuture.cause().printStackTrace();
+                    }
+                }
+            });
         }
     }
 
