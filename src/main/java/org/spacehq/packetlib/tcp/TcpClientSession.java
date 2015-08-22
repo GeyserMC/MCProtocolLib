@@ -90,7 +90,7 @@ public class TcpClientSession extends TcpSession {
 
                         ChannelFuture future = bootstrap.connect().sync();
                         if(future.isSuccess()) {
-                            while(!isConnected()) {
+                            while(!isConnected() && !disconnected) {
                                 try {
                                     Thread.sleep(5);
                                 } catch(InterruptedException e) {
