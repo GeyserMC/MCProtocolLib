@@ -42,10 +42,24 @@ public class Server {
      * @return The server after being bound.
      */
     public Server bind() {
-        this.listener = this.factory.createServerListener(this);
-        this.listener.bind();
+        return this.bind(true);
+    }
 
-        this.callEvent(new ServerBoundEvent(this));
+    /**
+     * Binds and initializes the server.
+     *
+     * @param wait Whether to wait for the server to finish binding.
+     * @return The server after being bound.
+     */
+    public Server bind(boolean wait) {
+        this.listener = this.factory.createServerListener(this);
+        this.listener.bind(wait, new Runnable() {
+            @Override
+            public void run() {
+                callEvent(new ServerBoundEvent(Server.this));
+            }
+        });
+
         return this;
     }
 

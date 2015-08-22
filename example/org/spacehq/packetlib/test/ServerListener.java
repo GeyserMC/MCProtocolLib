@@ -1,6 +1,7 @@
 package org.spacehq.packetlib.test;
 
 import org.spacehq.packetlib.event.server.ServerAdapter;
+import org.spacehq.packetlib.event.server.ServerBoundEvent;
 import org.spacehq.packetlib.event.server.ServerClosedEvent;
 import org.spacehq.packetlib.event.server.ServerClosingEvent;
 import org.spacehq.packetlib.event.server.SessionAddedEvent;
@@ -16,6 +17,11 @@ public class ServerListener extends ServerAdapter {
     }
 
     @Override
+    public void serverBound(ServerBoundEvent event) {
+        System.out.println("SERVER Bound: " + event.getServer().getHost() + ":" + event.getServer().getPort());
+    }
+
+    @Override
     public void serverClosing(ServerClosingEvent event) {
         System.out.println("CLOSING SERVER...");
     }
@@ -27,13 +33,13 @@ public class ServerListener extends ServerAdapter {
 
     @Override
     public void sessionAdded(SessionAddedEvent event) {
-        System.out.println("SESSION ADDED: " + event.getSession().getHost() + ":" + event.getSession().getPort());
+        System.out.println("SERVER Session Added: " + event.getSession().getHost() + ":" + event.getSession().getPort());
         ((TestProtocol) event.getSession().getPacketProtocol()).setSecretKey(this.key);
     }
 
     @Override
     public void sessionRemoved(SessionRemovedEvent event) {
-        System.out.println("SESSION REMOVED: " + event.getSession().getHost() + ":" + event.getSession().getPort());
+        System.out.println("SERVER Session Removed: " + event.getSession().getHost() + ":" + event.getSession().getPort());
         event.getServer().close();
     }
 }

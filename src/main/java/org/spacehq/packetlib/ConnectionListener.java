@@ -31,6 +31,21 @@ public interface ConnectionListener {
     public void bind();
 
     /**
+     * Binds the listener to its host and port.
+     *
+     * @param wait Whether to wait for the listener to finish binding.
+     */
+    public void bind(boolean wait);
+
+    /**
+     * Binds the listener to its host and port.
+     *
+     * @param wait Whether to wait for the listener to finish binding.
+     * @param callback Callback to call when the listener has finished binding.
+     */
+    public void bind(boolean wait, Runnable callback);
+
+    /**
      * Closes the listener.
      */
     public void close();

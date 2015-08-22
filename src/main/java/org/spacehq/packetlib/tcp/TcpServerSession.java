@@ -24,6 +24,7 @@ public class TcpServerSession extends TcpSession {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
+
         this.server.removeSession(this);
     }
 }

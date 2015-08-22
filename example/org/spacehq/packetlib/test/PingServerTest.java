@@ -20,8 +20,9 @@ public class PingServerTest {
             return;
         }
 
-        Server server = new Server("127.0.0.1", 25565, TestProtocol.class, new TcpSessionFactory()).bind();
+        Server server = new Server("127.0.0.1", 25565, TestProtocol.class, new TcpSessionFactory());
         server.addListener(new ServerListener(key));
+        server.bind();
 
         Client client = new Client("127.0.0.1", 25565, new TestProtocol(key), new TcpSessionFactory());
         client.getSession().connect();

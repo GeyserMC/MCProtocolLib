@@ -18,13 +18,11 @@ import org.spacehq.packetlib.packet.PacketProtocol;
 import javax.naming.directory.InitialDirContext;
 import java.net.Proxy;
 import java.util.Hashtable;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TcpClientSession extends TcpSession {
     private Client client;
     private Proxy proxy;
 
-    private boolean connected;
     private EventLoopGroup group;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol, Client client, Proxy proxy) {
@@ -37,11 +35,10 @@ public class TcpClientSession extends TcpSession {
     public void connect(boolean wait) {
         if(this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
-        } else if(this.connected) {
+        } else if(this.group != null) {
             return;
         }
 
-        this.connected = true;
         try {
             final Bootstrap bootstrap = new Bootstrap();
             if(this.proxy != null) {
@@ -72,8 +69,7 @@ public class TcpClientSession extends TcpSession {
                 }
             }).group(this.group).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
 
-            final AtomicBoolean complete = new AtomicBoolean(false);
-            new Thread(new Runnable() {
+            Runnable connectTask = new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -92,6 +88,7 @@ public class TcpClientSession extends TcpSession {
                         }
 
                         bootstrap.remoteAddress(host, port);
+
                         ChannelFuture future = bootstrap.connect();
                         future.addListener(new ChannelFutureListener() {
                             @Override
@@ -101,24 +98,16 @@ public class TcpClientSession extends TcpSession {
                                 }
                             }
                         }).await();
-
-                        complete.set(true);
                     } catch(Throwable t) {
                         exceptionCaught(null, t);
-
-                        complete.set(true);
                     }
                 }
-            }).start();
+            };
 
             if(wait) {
-                while(!complete.get()) {
-                    try {
-                        Thread.sleep(5);
-                    } catch(InterruptedException e) {
-                        break;
-                    }
-                }
+                connectTask.run();
+            } else {
+                new Thread(connectTask).start();
             }
         } catch(Throwable t) {
             exceptionCaught(null, t);

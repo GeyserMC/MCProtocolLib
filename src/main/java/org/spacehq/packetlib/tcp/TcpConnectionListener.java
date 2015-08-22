@@ -3,6 +3,7 @@ package org.spacehq.packetlib.tcp;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -47,6 +48,20 @@ public class TcpConnectionListener implements ConnectionListener {
 
     @Override
     public void bind() {
+        this.bind(true);
+    }
+
+    @Override
+    public void bind(boolean wait) {
+        this.bind(wait, null);
+    }
+
+    @Override
+    public void bind(final boolean wait, final Runnable callback) {
+        if(this.group != null || this.channel != null) {
+            return;
+        }
+
         this.group = new NioEventLoopGroup();
         ChannelFuture future = new ServerBootstrap().channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<Channel>() {
             @Override
@@ -72,11 +87,24 @@ public class TcpConnectionListener implements ConnectionListener {
 
                 server.addSession(session);
             }
-        }).group(this.group).localAddress(this.host, this.port).bind();
+        }).group(this.group).localAddress(this.host, this.port).bind().addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                if(channelFuture.isSuccess()) {
+                    channel = channelFuture.channel();
+                    callback.run();
+                } else if(channelFuture.cause() != null && !wait) {
+                    System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
+                    channelFuture.cause().printStackTrace();
+                }
+            }
+        });
 
-        try {
-            this.channel = future.await().channel();
-        } catch(InterruptedException e) {
+        if(wait) {
+            try {
+                future.sync();
+            } catch(InterruptedException e) {
+            }
         }
     }
 
