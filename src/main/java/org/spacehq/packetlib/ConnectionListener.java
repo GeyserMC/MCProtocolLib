@@ -56,4 +56,12 @@ public interface ConnectionListener {
      * @param wait Whether to wait for the listener to finish closing.
      */
     public void close(boolean wait);
+
+    /**
+     * Closes the listener.
+     *
+     * @param wait Whether to wait for the listener to finish closing.
+     * @param callback Callback to call when the listener has finished closing.
+     */
+    public void close(boolean wait, Runnable callback);
 }

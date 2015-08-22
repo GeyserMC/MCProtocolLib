@@ -11,6 +11,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.spacehq.packetlib.ConnectionListener;
 import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.packet.PacketProtocol;
@@ -57,7 +58,7 @@ public class TcpConnectionListener implements ConnectionListener {
     }
 
     @Override
-    public void bind(final boolean wait, final Runnable callback) {
+    public void bind(boolean wait, final Runnable callback) {
         if(this.group != null || this.channel != null) {
             return;
         }
@@ -96,17 +97,23 @@ public class TcpConnectionListener implements ConnectionListener {
             }
 
             channel = future.channel();
-            callback.run();
+            if(callback != null) {
+                callback.run();
+            }
         } else {
             future.addListener(new ChannelFutureListener() {
                 @Override
-                public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                    if(channelFuture.isSuccess()) {
-                        channel = channelFuture.channel();
-                        callback.run();
-                    } else if(channelFuture.cause() != null && !wait) {
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if(future.isSuccess()) {
+                        channel = future.channel();
+                        if(callback != null) {
+                            callback.run();
+                        }
+                    } else {
                         System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
-                        channelFuture.cause().printStackTrace();
+                        if(future.cause() != null) {
+                            future.cause().printStackTrace();
+                        }
                     }
                 }
             });
@@ -120,14 +127,39 @@ public class TcpConnectionListener implements ConnectionListener {
 
     @Override
     public void close(boolean wait) {
+        this.close(wait, null);
+    }
+
+    @Override
+    public void close(boolean wait, final Runnable callback) {
         if(this.channel != null) {
             if(this.channel.isOpen()) {
                 ChannelFuture future = this.channel.close();
                 if(wait) {
                     try {
-                        future.await();
+                        future.sync();
                     } catch(InterruptedException e) {
                     }
+
+                    if(callback != null) {
+                        callback.run();
+                    }
+                } else {
+                    future.addListener(new ChannelFutureListener() {
+                        @Override
+                        public void operationComplete(ChannelFuture future) throws Exception {
+                            if(future.isSuccess()) {
+                                if(callback != null) {
+                                    callback.run();
+                                }
+                            } else {
+                                System.err.println("[ERROR] Failed to asynchronously close connection listener.");
+                                if(future.cause() != null) {
+                                    future.cause().printStackTrace();
+                                }
+                            }
+                        }
+                    });
                 }
             }
 
@@ -138,9 +170,21 @@ public class TcpConnectionListener implements ConnectionListener {
             Future<?> future = this.group.shutdownGracefully();
             if(wait) {
                 try {
-                    future.await();
+                    future.sync();
                 } catch(InterruptedException e) {
                 }
+            } else {
+                future.addListener(new GenericFutureListener() {
+                    @Override
+                    public void operationComplete(Future future) throws Exception {
+                        if(!future.isSuccess()) {
+                            System.err.println("[ERROR] Failed to asynchronously close connection listener.");
+                            if(future.cause() != null) {
+                                future.cause().printStackTrace();
+                            }
+                        }
+                    }
+                });
             }
 
             this.group = null;

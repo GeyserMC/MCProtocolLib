@@ -200,10 +200,10 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         ChannelFuture future = this.channel.writeAndFlush(packet).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
-                if(!future.isSuccess()) {
-                    exceptionCaught(null, future.cause());
-                } else {
+                if(future.isSuccess()) {
                     callEvent(new PacketSentEvent(TcpSession.this, packet));
+                } else {
+                    exceptionCaught(null, future.cause());
                 }
             }
         });
@@ -248,7 +248,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             this.callEvent(new DisconnectingEvent(this, reason, cause));
             ChannelFuture future = this.channel.flush().close().addListener(new ChannelFutureListener() {
                 @Override
-                public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                public void operationComplete(ChannelFuture future) throws Exception {
                     callEvent(new DisconnectedEvent(TcpSession.this, reason != null ? reason : "Connection closed.", cause));
                 }
             });

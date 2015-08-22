@@ -248,7 +248,7 @@ public class Server {
      * Closes the server.
      */
     public void close() {
-        this.close(false);
+        this.close(true);
     }
 
     /**
@@ -264,7 +264,11 @@ public class Server {
             }
         }
 
-        this.listener.close(wait);
-        this.callEvent(new ServerClosedEvent(this));
+        this.listener.close(wait, new Runnable() {
+            @Override
+            public void run() {
+                callEvent(new ServerClosedEvent(Server.this));
+            }
+        });
     }
 }
