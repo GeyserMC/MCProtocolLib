@@ -133,6 +133,93 @@ public interface NetInput {
     public int readBytes(byte b[], int offset, int length) throws IOException;
 
     /**
+     * Reads the next short array.
+     *
+     * @param length The length of the short array.
+     * @return The next short array.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public short[] readShorts(int length) throws IOException;
+
+    /**
+     * Reads as much data as possible into the given short array.
+     *
+     * @param s Short array to read to.
+     * @return The amount of shorts read, or -1 if no shorts could be read.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public int readShorts(short s[]) throws IOException;
+
+    /**
+     * Reads the given amount of shorts into the given array at the given offset.
+     *
+     * @param s      Short array to read to.
+     * @param offset Offset of the array to read to.
+     * @param length Length of bytes to read.
+     * @return The amount of shorts read, or -1 if no shorts could be read.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public int readShorts(short s[], int offset, int length) throws IOException;
+
+    /**
+     * Reads the next int array.
+     *
+     * @param length The length of the int array.
+     * @return The next int array.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public int[] readInts(int length) throws IOException;
+
+    /**
+     * Reads as much data as possible into the given int array.
+     *
+     * @param i Int array to read to.
+     * @return The amount of ints read, or -1 if no ints could be read.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public int readInts(int i[]) throws IOException;
+
+    /**
+     * Reads the given amount of ints into the given array at the given offset.
+     *
+     * @param i      Int array to read to.
+     * @param offset Offset of the array to read to.
+     * @param length Length of bytes to read.
+     * @return The amount of ints read, or -1 if no ints could be read.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public int readInts(int i[], int offset, int length) throws IOException;
+
+    /**
+     * Reads the next long array.
+     *
+     * @param length The length of the long array.
+     * @return The next long array.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public long[] readLongs(int length) throws IOException;
+
+    /**
+     * Reads as much data as possible into the given long array.
+     *
+     * @param l Long array to read to.
+     * @return The amount of longs read, or -1 if no longs could be read.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public int readLongs(long l[]) throws IOException;
+
+    /**
+     * Reads the given amount of longs into the given array at the given offset.
+     *
+     * @param l      Long array to read to.
+     * @param offset Offset of the array to read to.
+     * @param length Length of bytes to read.
+     * @return The amount of longs read, or -1 if no longs could be read.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public int readLongs(long l[], int offset, int length) throws IOException;
+
+    /**
      * Reads the next string.
      *
      * @return The next string.

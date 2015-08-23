@@ -105,6 +105,57 @@ public interface NetOutput {
     public void writeBytes(byte b[], int length) throws IOException;
 
     /**
+     * Writes a short array.
+     *
+     * @param s Short array to write.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public void writeShorts(short s[]) throws IOException;
+
+    /**
+     * Writes a short array, using the given amount of bytes.
+     *
+     * @param s      Short array to write.
+     * @param length Shorts to write.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public void writeShorts(short s[], int length) throws IOException;
+
+    /**
+     * Writes an int array.
+     *
+     * @param i Int array to write.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public void writeInts(int i[]) throws IOException;
+
+    /**
+     * Writes an int array, using the given amount of bytes.
+     *
+     * @param i      Int array to write.
+     * @param length Ints to write.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public void writeInts(int i[], int length) throws IOException;
+
+    /**
+     * Writes a long array.
+     *
+     * @param l Long array to write.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public void writeLongs(long l[]) throws IOException;
+
+    /**
+     * Writes a long array, using the given amount of bytes.
+     *
+     * @param l      Long array to write.
+     * @param length Longs to write.
+     * @throws java.io.IOException If an I/O error occurs.
+     */
+    public void writeLongs(long l[], int length) throws IOException;
+
+    /**
      * Writes a string.
      *
      * @param s String to write.

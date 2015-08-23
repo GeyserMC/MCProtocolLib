@@ -1,73 +1,58 @@
-package org.spacehq.packetlib.io.stream;
+package org.spacehq.packetlib.io.buffer;
 
 import org.spacehq.packetlib.io.NetInput;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 /**
- * A NetInput implementation using an InputStream as a backend.
+ * A NetInput implementation using a ByteBuffer as a backend.
  */
-public class StreamNetInput implements NetInput {
-    private InputStream in;
+public class ByteBufferNetInput implements NetInput {
+    private ByteBuffer buffer;
 
-    /**
-     * Creates a new StreamNetInput instance.
-     *
-     * @param in InputStream to read from.
-     */
-    public StreamNetInput(InputStream in) {
-        this.in = in;
+    public ByteBufferNetInput(ByteBuffer buffer) {
+        this.buffer = buffer;
+    }
+
+    public ByteBuffer getByteBuffer() {
+        return this.buffer;
     }
 
     @Override
     public boolean readBoolean() throws IOException {
-        return this.readByte() == 1;
+        return this.buffer.get() == 1;
     }
 
     @Override
     public byte readByte() throws IOException {
-        return (byte) this.readUnsignedByte();
+        return this.buffer.get();
     }
 
     @Override
     public int readUnsignedByte() throws IOException {
-        int b = this.in.read();
-        if(b < 0) {
-            throw new EOFException();
-        }
-
-        return b;
+        return this.buffer.get() & 0xFF;
     }
 
     @Override
     public short readShort() throws IOException {
-        return (short) this.readUnsignedShort();
+        return this.buffer.getShort();
     }
 
     @Override
     public int readUnsignedShort() throws IOException {
-        int ch1 = this.readUnsignedByte();
-        int ch2 = this.readUnsignedByte();
-        return (ch1 << 8) + (ch2 << 0);
+        return this.buffer.getShort() & 0xFFFF;
     }
 
     @Override
     public char readChar() throws IOException {
-        int ch1 = this.readUnsignedByte();
-        int ch2 = this.readUnsignedByte();
-        return (char) ((ch1 << 8) + (ch2 << 0));
+        return this.buffer.getChar();
     }
 
     @Override
     public int readInt() throws IOException {
-        int ch1 = this.readUnsignedByte();
-        int ch2 = this.readUnsignedByte();
-        int ch3 = this.readUnsignedByte();
-        int ch4 = this.readUnsignedByte();
-        return (ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0);
+        return this.buffer.getInt();
     }
 
     @Override
@@ -87,8 +72,7 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public long readLong() throws IOException {
-        byte read[] = this.readBytes(8);
-        return ((long) read[0] << 56) + ((long) (read[1] & 255) << 48) + ((long) (read[2] & 255) << 40) + ((long) (read[3] & 255) << 32) + ((long) (read[4] & 255) << 24) + ((read[5] & 255) << 16) + ((read[6] & 255) << 8) + ((read[7] & 255) << 0);
+        return this.buffer.getLong();
     }
 
     @Override
@@ -108,12 +92,12 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public float readFloat() throws IOException {
-        return Float.intBitsToFloat(this.readInt());
+        return this.buffer.getFloat();
     }
 
     @Override
     public double readDouble() throws IOException {
-        return Double.longBitsToDouble(this.readLong());
+        return this.buffer.getDouble();
     }
 
     @Override
@@ -123,27 +107,28 @@ public class StreamNetInput implements NetInput {
         }
 
         byte b[] = new byte[length];
-        int n = 0;
-        while(n < length) {
-            int count = this.in.read(b, n, length - n);
-            if(count < 0) {
-                throw new EOFException();
-            }
-
-            n += count;
-        }
-
+        this.buffer.get(b);
         return b;
     }
 
     @Override
     public int readBytes(byte[] b) throws IOException {
-        return this.in.read(b);
+        return this.readBytes(b, 0, b.length);
     }
 
     @Override
     public int readBytes(byte[] b, int offset, int length) throws IOException {
-        return this.in.read(b, offset, length);
+        int readable = this.buffer.remaining();
+        if(readable <= 0) {
+            return -1;
+        }
+
+        if(readable < length) {
+            length = readable;
+        }
+
+        this.buffer.get(b, offset, length);
+        return length;
     }
 
     @Override
@@ -153,9 +138,8 @@ public class StreamNetInput implements NetInput {
         }
 
         short s[] = new short[length];
-        int read = this.readShorts(s);
-        if(read < length) {
-            throw new EOFException();
+        for(int index = 0; index < length; index++) {
+            s[index] = this.readShort();
         }
 
         return s;
@@ -168,12 +152,17 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public int readShorts(short[] s, int offset, int length) throws IOException {
+        int readable = this.buffer.remaining();
+        if(readable <= 0) {
+            return -1;
+        }
+
+        if(readable < length * 2) {
+            length = readable / 2;
+        }
+
         for(int index = offset; index < offset + length; index++) {
-            try {
-                s[index] = this.readShort();
-            } catch(EOFException e) {
-                return index - offset;
-            }
+            s[index] = this.readShort();
         }
 
         return length;
@@ -186,9 +175,8 @@ public class StreamNetInput implements NetInput {
         }
 
         int i[] = new int[length];
-        int read = this.readInts(i);
-        if(read < length) {
-            throw new EOFException();
+        for(int index = 0; index < length; index++) {
+            i[index] = this.readInt();
         }
 
         return i;
@@ -201,12 +189,17 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public int readInts(int[] i, int offset, int length) throws IOException {
+        int readable = this.buffer.remaining();
+        if(readable <= 0) {
+            return -1;
+        }
+
+        if(readable < length * 4) {
+            length = readable / 4;
+        }
+
         for(int index = offset; index < offset + length; index++) {
-            try {
-                i[index] = this.readInt();
-            } catch(EOFException e) {
-                return index - offset;
-            }
+            i[index] = this.readInt();
         }
 
         return length;
@@ -219,9 +212,8 @@ public class StreamNetInput implements NetInput {
         }
 
         long l[] = new long[length];
-        int read = this.readLongs(l);
-        if(read < length) {
-            throw new EOFException();
+        for(int index = 0; index < length; index++) {
+            l[index] = this.readLong();
         }
 
         return l;
@@ -234,12 +226,17 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public int readLongs(long[] l, int offset, int length) throws IOException {
+        int readable = this.buffer.remaining();
+        if(readable <= 0) {
+            return -1;
+        }
+
+        if(readable < length * 2) {
+            length = readable / 2;
+        }
+
         for(int index = offset; index < offset + length; index++) {
-            try {
-                l[index] = this.readLong();
-            } catch(EOFException e) {
-                return index - offset;
-            }
+            l[index] = this.readLong();
         }
 
         return length;
@@ -259,6 +256,6 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public int available() throws IOException {
-        return this.in.available();
+        return this.buffer.remaining();
     }
 }

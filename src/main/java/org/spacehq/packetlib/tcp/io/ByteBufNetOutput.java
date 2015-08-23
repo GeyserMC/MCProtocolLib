@@ -87,6 +87,42 @@ public class ByteBufNetOutput implements NetOutput {
     }
 
     @Override
+    public void writeShorts(short[] s) throws IOException {
+        this.writeShorts(s, s.length);
+    }
+
+    @Override
+    public void writeShorts(short[] s, int length) throws IOException {
+        for(int index = 0; index < length; index++) {
+            this.writeShort(s[index]);
+        }
+    }
+
+    @Override
+    public void writeInts(int[] i) throws IOException {
+        this.writeInts(i, i.length);
+    }
+
+    @Override
+    public void writeInts(int[] i, int length) throws IOException {
+        for(int index = 0; index < length; index++) {
+            this.writeInt(i[index]);
+        }
+    }
+
+    @Override
+    public void writeLongs(long[] l) throws IOException {
+        this.writeLongs(l, l.length);
+    }
+
+    @Override
+    public void writeLongs(long[] l, int length) throws IOException {
+        for(int index = 0; index < length; index++) {
+            this.writeLong(l[index]);
+        }
+    }
+
+    @Override
     public void writeString(String s) throws IOException {
         if(s == null) {
             throw new IllegalArgumentException("String cannot be null!");

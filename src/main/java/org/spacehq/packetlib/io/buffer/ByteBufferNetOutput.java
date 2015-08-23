@@ -1,54 +1,48 @@
-package org.spacehq.packetlib.io.stream;
+package org.spacehq.packetlib.io.buffer;
 
 import org.spacehq.packetlib.io.NetOutput;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 /**
- * A NetOutput implementation using an OutputStream as a backend.
+ * A NetOutput implementation using a ByteBuf as a backend.
  */
-public class StreamNetOutput implements NetOutput {
-    private OutputStream out;
+public class ByteBufferNetOutput implements NetOutput {
+    private ByteBuffer buffer;
 
-    /**
-     * Creates a new StreamNetOutput instance.
-     *
-     * @param out OutputStream to write to.
-     */
-    public StreamNetOutput(OutputStream out) {
-        this.out = out;
+    public ByteBufferNetOutput(ByteBuffer buffer) {
+        this.buffer = buffer;
+    }
+
+    public ByteBuffer getByteBuffer() {
+        return this.buffer;
     }
 
     @Override
     public void writeBoolean(boolean b) throws IOException {
-        this.writeByte(b ? 1 : 0);
+        this.buffer.put(b ? (byte) 1 : 0);
     }
 
     @Override
     public void writeByte(int b) throws IOException {
-        this.out.write(b);
+        this.buffer.put((byte) b);
     }
 
     @Override
     public void writeShort(int s) throws IOException {
-        this.writeByte((byte) ((s >>> 8) & 0xFF));
-        this.writeByte((byte) ((s >>> 0) & 0xFF));
+        this.buffer.putShort((short) s);
     }
 
     @Override
     public void writeChar(int c) throws IOException {
-        this.writeByte((byte) ((c >>> 8) & 0xFF));
-        this.writeByte((byte) ((c >>> 0) & 0xFF));
+        this.buffer.putChar((char) c);
     }
 
     @Override
     public void writeInt(int i) throws IOException {
-        this.writeByte((byte) ((i >>> 24) & 0xFF));
-        this.writeByte((byte) ((i >>> 16) & 0xFF));
-        this.writeByte((byte) ((i >>> 8) & 0xFF));
-        this.writeByte((byte) ((i >>> 0) & 0xFF));
+        this.buffer.putInt(i);
     }
 
     @Override
@@ -63,14 +57,7 @@ public class StreamNetOutput implements NetOutput {
 
     @Override
     public void writeLong(long l) throws IOException {
-        this.writeByte((byte) (l >>> 56));
-        this.writeByte((byte) (l >>> 48));
-        this.writeByte((byte) (l >>> 40));
-        this.writeByte((byte) (l >>> 32));
-        this.writeByte((byte) (l >>> 24));
-        this.writeByte((byte) (l >>> 16));
-        this.writeByte((byte) (l >>> 8));
-        this.writeByte((byte) (l >>> 0));
+        this.buffer.putLong(l);
     }
 
     @Override
@@ -85,22 +72,22 @@ public class StreamNetOutput implements NetOutput {
 
     @Override
     public void writeFloat(float f) throws IOException {
-        this.writeInt(Float.floatToIntBits(f));
+        this.buffer.putFloat(f);
     }
 
     @Override
     public void writeDouble(double d) throws IOException {
-        this.writeLong(Double.doubleToLongBits(d));
+        this.buffer.putDouble(d);
     }
 
     @Override
     public void writeBytes(byte b[]) throws IOException {
-        this.writeBytes(b, b.length);
+        this.buffer.put(b);
     }
 
     @Override
     public void writeBytes(byte b[], int length) throws IOException {
-        this.out.write(b, 0, length);
+        this.buffer.put(b, 0, length);
     }
 
     @Override
@@ -162,6 +149,5 @@ public class StreamNetOutput implements NetOutput {
 
     @Override
     public void flush() throws IOException {
-        this.out.flush();
     }
 }

@@ -128,6 +128,117 @@ public class ByteBufNetInput implements NetInput {
     }
 
     @Override
+    public short[] readShorts(int length) throws IOException {
+        if(length < 0) {
+            throw new IllegalArgumentException("Array cannot have length less than 0.");
+        }
+
+        short s[] = new short[length];
+        for(int index = 0; index < length; index++) {
+            s[index] = this.readShort();
+        }
+
+        return s;
+    }
+
+    @Override
+    public int readShorts(short[] s) throws IOException {
+        return this.readShorts(s, 0, s.length);
+    }
+
+    @Override
+    public int readShorts(short[] s, int offset, int length) throws IOException {
+        int readable = this.buf.readableBytes();
+        if(readable <= 0) {
+            return -1;
+        }
+
+        if(readable < length * 2) {
+            length = readable / 2;
+        }
+
+        for(int index = offset; index < offset + length; index++) {
+            s[index] = this.readShort();
+        }
+
+        return length;
+    }
+
+    @Override
+    public int[] readInts(int length) throws IOException {
+        if(length < 0) {
+            throw new IllegalArgumentException("Array cannot have length less than 0.");
+        }
+
+        int i[] = new int[length];
+        for(int index = 0; index < length; index++) {
+            i[index] = this.readInt();
+        }
+
+        return i;
+    }
+
+    @Override
+    public int readInts(int[] i) throws IOException {
+        return this.readInts(i, 0, i.length);
+    }
+
+    @Override
+    public int readInts(int[] i, int offset, int length) throws IOException {
+        int readable = this.buf.readableBytes();
+        if(readable <= 0) {
+            return -1;
+        }
+
+        if(readable < length * 4) {
+            length = readable / 4;
+        }
+
+        for(int index = offset; index < offset + length; index++) {
+            i[index] = this.readInt();
+        }
+
+        return length;
+    }
+
+    @Override
+    public long[] readLongs(int length) throws IOException {
+        if(length < 0) {
+            throw new IllegalArgumentException("Array cannot have length less than 0.");
+        }
+
+        long l[] = new long[length];
+        for(int index = 0; index < length; index++) {
+            l[index] = this.readLong();
+        }
+
+        return l;
+    }
+
+    @Override
+    public int readLongs(long[] l) throws IOException {
+        return this.readLongs(l, 0, l.length);
+    }
+
+    @Override
+    public int readLongs(long[] l, int offset, int length) throws IOException {
+        int readable = this.buf.readableBytes();
+        if(readable <= 0) {
+            return -1;
+        }
+
+        if(readable < length * 2) {
+            length = readable / 2;
+        }
+
+        for(int index = offset; index < offset + length; index++) {
+            l[index] = this.readLong();
+        }
+
+        return length;
+    }
+
+    @Override
     public String readString() throws IOException {
         int length = this.readVarInt();
         byte bytes[] = this.readBytes(length);
