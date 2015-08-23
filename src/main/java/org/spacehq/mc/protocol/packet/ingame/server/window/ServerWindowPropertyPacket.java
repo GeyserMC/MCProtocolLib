@@ -39,7 +39,7 @@ public class ServerWindowPropertyPacket implements Packet {
     }
 
     public <T extends Enum<T> & WindowProperty> T getProperty(Class<T> type) {
-        return MagicValues.key(type, value);
+        return MagicValues.key(type, this.value);
     }
 
     public int getValue() {

@@ -59,8 +59,9 @@ public class ServerPlaySoundPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         String value = in.readString();
-        this.sound = MagicValues.key(GenericSound.class, value);
-        if(this.sound == null) {
+        try {
+            this.sound = MagicValues.key(GenericSound.class, value);
+        } catch(IllegalArgumentException e) {
             this.sound = new CustomSound(value);
         }
 
