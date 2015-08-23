@@ -117,12 +117,6 @@ public class StreamNetInput implements NetInput {
     }
 
     @Override
-    public byte[] readPrefixedBytes() throws IOException {
-        short length = this.readShort();
-        return this.readBytes(length);
-    }
-
-    @Override
     public byte[] readBytes(int length) throws IOException {
         if(length < 0) {
             throw new IllegalArgumentException("Array cannot have length less than 0.");

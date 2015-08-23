@@ -94,12 +94,6 @@ public class StreamNetOutput implements NetOutput {
     }
 
     @Override
-    public void writePrefixedBytes(byte b[]) throws IOException {
-        this.writeShort(b.length);
-        this.writeBytes(b);
-    }
-
-    @Override
     public void writeBytes(byte b[]) throws IOException {
         this.writeBytes(b, b.length);
     }

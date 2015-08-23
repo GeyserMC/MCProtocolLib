@@ -104,14 +104,6 @@ public interface NetInput {
     public double readDouble() throws IOException;
 
     /**
-     * Reads the next byte array, getting the length from a prefixed length value.
-     *
-     * @return The next byte array.
-     * @throws java.io.IOException If an I/O error occurs.
-     */
-    public byte[] readPrefixedBytes() throws IOException;
-
-    /**
      * Reads the next byte array.
      *
      * @param length The length of the byte array.

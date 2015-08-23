@@ -77,12 +77,6 @@ public class ByteBufNetOutput implements NetOutput {
     }
 
     @Override
-    public void writePrefixedBytes(byte b[]) throws IOException {
-        this.buf.writeShort(b.length);
-        this.buf.writeBytes(b);
-    }
-
-    @Override
     public void writeBytes(byte b[]) throws IOException {
         this.buf.writeBytes(b);
     }

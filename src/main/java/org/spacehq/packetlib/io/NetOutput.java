@@ -88,14 +88,6 @@ public interface NetOutput {
     public void writeDouble(double d) throws IOException;
 
     /**
-     * Writes a byte array, prefixing the written data with the array's length.
-     *
-     * @param b Byte array to write.
-     * @throws java.io.IOException If an I/O error occurs.
-     */
-    public void writePrefixedBytes(byte b[]) throws IOException;
-
-    /**
      * Writes a byte array.
      *
      * @param b Byte array to write.
