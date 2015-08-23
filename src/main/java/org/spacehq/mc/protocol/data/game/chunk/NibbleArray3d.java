@@ -1,9 +1,12 @@
-package org.spacehq.mc.protocol.data.game;
+package org.spacehq.mc.protocol.data.game.chunk;
 
+import org.spacehq.packetlib.io.NetInput;
+import org.spacehq.packetlib.io.NetOutput;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 public class NibbleArray3d {
-
     private byte[] data;
 
     public NibbleArray3d(int size) {
@@ -12,6 +15,14 @@ public class NibbleArray3d {
 
     public NibbleArray3d(byte[] array) {
         this.data = array;
+    }
+
+    public NibbleArray3d(NetInput in, int size) throws IOException {
+        this.data = in.readBytes(size);
+    }
+
+    public void write(NetOutput out) throws IOException {
+        out.writeBytes(this.data);
     }
 
     public byte[] getData() {
@@ -50,19 +61,11 @@ public class NibbleArray3d {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        NibbleArray3d that = (NibbleArray3d) o;
-
-        if(!Arrays.equals(data, that.data)) return false;
-
-        return true;
+        return this == o || (o instanceof NibbleArray3d && Arrays.equals(this.data, ((NibbleArray3d) o).data));
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(data);
+        return Arrays.hashCode(this.data);
     }
-
 }

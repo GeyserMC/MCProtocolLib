@@ -1,12 +1,13 @@
 package org.spacehq.mc.protocol.util;
 
-import org.spacehq.mc.protocol.data.game.Chunk;
+import org.spacehq.mc.protocol.data.game.chunk.BlockStorage;
+import org.spacehq.mc.protocol.data.game.chunk.Chunk;
+import org.spacehq.mc.protocol.data.game.chunk.Column;
 import org.spacehq.mc.protocol.data.game.EntityMetadata;
 import org.spacehq.mc.protocol.data.game.ItemStack;
-import org.spacehq.mc.protocol.data.game.NibbleArray3d;
+import org.spacehq.mc.protocol.data.game.chunk.NibbleArray3d;
 import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.Rotation;
-import org.spacehq.mc.protocol.data.game.ShortArray3d;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
 import org.spacehq.mc.protocol.data.game.values.world.block.BlockFace;
@@ -15,6 +16,7 @@ import org.spacehq.opennbt.NBTIO;
 import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
+import org.spacehq.packetlib.io.buffer.ByteBufferNetInput;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,8 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -55,7 +55,7 @@ public class NetUtil {
         return i != 0 && (i & i - 1) == 0;
     }
 
-    private static int nextExponentOfTwo(int i) {
+    public static int nextExponentOfTwo(int i) {
         int power = isPowerOfTwo(i) ? i : nextPowerOfTwo(i);
         return EXPONENTS_OF_TWO[(int) (power * 125613361L >> 27) & 31];
     }
@@ -235,124 +235,61 @@ public class NetUtil {
         out.writeByte(255);
     }
 
-    public static ParsedChunkData dataToChunks(NetworkChunkData data, boolean checkForSky) {
-        Chunk chunks[] = new Chunk[16];
-        int pos = 0;
-        int expected = 0;
-        boolean sky = false;
-        ShortBuffer buf = ByteBuffer.wrap(data.getData()).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
-        // 0 = Calculate expected length and determine if the packet has skylight.
-        // 1 = Create chunks from mask and get blocks.
-        // 2 = Get block light.
-        // 3 = Get sky light.
-        for(int pass = 0; pass < 4; pass++) {
-            for(int ind = 0; ind < 16; ind++) {
-                if((data.getMask() & 1 << ind) != 0) {
-                    if(pass == 0) {
-                        // Block length + Blocklight length
-                        expected += (4096 * 2) + 2048;
-                    }
-
-                    if(pass == 1) {
-                        chunks[ind] = new Chunk(sky || data.hasSkyLight());
-                        ShortArray3d blocks = chunks[ind].getBlocks();
-                        buf.position(pos / 2);
-                        buf.get(blocks.getData(), 0, blocks.getData().length);
-                        pos += blocks.getData().length * 2;
-                    }
-
-                    if(pass == 2) {
-                        NibbleArray3d blocklight = chunks[ind].getBlockLight();
-                        System.arraycopy(data.getData(), pos, blocklight.getData(), 0, blocklight.getData().length);
-                        pos += blocklight.getData().length;
-                    }
-
-                    if(pass == 3 && (sky || data.hasSkyLight())) {
-                        NibbleArray3d skylight = chunks[ind].getSkyLight();
-                        System.arraycopy(data.getData(), pos, skylight.getData(), 0, skylight.getData().length);
-                        pos += skylight.getData().length;
-                    }
+    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask) throws IOException {
+        NetInput in = new ByteBufferNetInput(ByteBuffer.wrap(data));
+        Exception ex = null;
+        Column column = null;
+        try {
+            Chunk[] chunks = new Chunk[16];
+            for(int index = 0; index < chunks.length; index++) {
+                if((mask & (1 << index)) != 0) {
+                    BlockStorage blocks = new BlockStorage(in);
+                    NibbleArray3d blocklight = new NibbleArray3d(in, 2048);
+                    NibbleArray3d skylight = hasSkylight ? new NibbleArray3d(in, 2048) : null;
+                    chunks[index] = new Chunk(blocks, blocklight, skylight);
                 }
             }
 
-            if(pass == 0) {
-                // If we have more data than blocks and blocklight combined, there must be skylight data as well.
-                if(data.getData().length >= expected) {
-                    sky = checkForSky;
-                }
+            byte biomeData[] = null;
+            if(fullChunk) {
+                biomeData = in.readBytes(256);
             }
+
+            column = new Column(x, z, chunks, biomeData);
+        } catch(Exception e) {
+            ex = e;
         }
 
-        byte biomeData[] = null;
-        if(data.isFullChunk()) {
-            biomeData = new byte[256];
-            System.arraycopy(data.getData(), pos, biomeData, 0, biomeData.length);
-            pos += biomeData.length;
+        // Unfortunately, this is needed to detect whether the chunks contain skylight or not.
+        if((in.available() > 0 || ex != null) && !hasSkylight) {
+            return readColumn(data, x, z, fullChunk, true, mask);
+        } else if(ex != null) {
+            throw new IOException("Failed to read chunk data.", ex);
         }
 
-        return new ParsedChunkData(chunks, biomeData);
+        return column;
     }
 
-    public static NetworkChunkData chunksToData(ParsedChunkData chunks) {
-        int chunkMask = 0;
-        boolean fullChunk = chunks.getBiomes() != null;
-        boolean sky = false;
-        int length = fullChunk ? chunks.getBiomes().length : 0;
-        byte[] data = null;
-        int pos = 0;
-        ShortBuffer buf = null;
-        // 0 = Determine length and masks.
-        // 1 = Add blocks.
-        // 2 = Add block light.
-        // 3 = Add sky light.
-        for(int pass = 0; pass < 4; pass++) {
-            for(int ind = 0; ind < chunks.getChunks().length; ++ind) {
-                Chunk chunk = chunks.getChunks()[ind];
-                if(chunk != null && (!fullChunk || !chunk.isEmpty())) {
-                    if(pass == 0) {
-                        chunkMask |= 1 << ind;
-                        length += chunk.getBlocks().getData().length * 2;
-                        length += chunk.getBlockLight().getData().length;
-                        if(chunk.getSkyLight() != null) {
-                            length += chunk.getSkyLight().getData().length;
-                        }
-                    }
-
-                    if(pass == 1) {
-                        short blocks[] = chunk.getBlocks().getData();
-                        buf.position(pos / 2);
-                        buf.put(blocks, 0, blocks.length);
-                        pos += blocks.length * 2;
-                    }
-
-                    if(pass == 2) {
-                        byte blocklight[] = chunk.getBlockLight().getData();
-                        System.arraycopy(blocklight, 0, data, pos, blocklight.length);
-                        pos += blocklight.length;
-                    }
-
-                    if(pass == 3 && chunk.getSkyLight() != null) {
-                        byte skylight[] = chunk.getSkyLight().getData();
-                        System.arraycopy(skylight, 0, data, pos, skylight.length);
-                        pos += skylight.length;
-                        sky = true;
-                    }
+    public static int writeColumn(NetOutput out, Column column, boolean fullChunk, boolean hasSkylight) throws IOException {
+        int mask = 0;
+        Chunk chunks[] = column.getChunks();
+        for(int index = 0; index < chunks.length; index++) {
+            Chunk chunk = chunks[index];
+            if(chunk != null && (!fullChunk || !chunk.isEmpty())) {
+                mask |= 1 << index;
+                chunk.getBlocks().write(out);
+                chunk.getBlockLight().write(out);
+                if(hasSkylight) {
+                    chunk.getBlockLight().write(out);
                 }
             }
-
-            if(pass == 0) {
-                data = new byte[length];
-                buf = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
-            }
         }
 
-        // Add biomes.
         if(fullChunk) {
-            System.arraycopy(chunks.getBiomes(), 0, data, pos, chunks.getBiomes().length);
-            pos += chunks.getBiomes().length;
+            out.writeBytes(column.getBiomeData());
         }
 
-        return new NetworkChunkData(chunkMask, fullChunk, sky, data);
+        return mask;
     }
 
     private static class NetInputStream extends InputStream {

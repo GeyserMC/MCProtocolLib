@@ -3,7 +3,6 @@ package org.spacehq.mc.protocol.data.game;
 import org.spacehq.opennbt.tag.builtin.CompoundTag;
 
 public class ItemStack {
-
     private int id;
     private int amount;
     private int data;
@@ -46,26 +45,15 @@ public class ItemStack {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        ItemStack itemStack = (ItemStack) o;
-
-        if(amount != itemStack.amount) return false;
-        if(data != itemStack.data) return false;
-        if(id != itemStack.id) return false;
-        if(nbt != null ? !nbt.equals(itemStack.nbt) : itemStack.nbt != null) return false;
-
-        return true;
+        return this == o || (o instanceof ItemStack && this.id == ((ItemStack) o).id && this.amount == ((ItemStack) o).amount && this.data == ((ItemStack) o).data && ((this.nbt != null && ((ItemStack) o).nbt != null) || (this.nbt != null && this.nbt.equals(((ItemStack) o).nbt))));
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + amount;
-        result = 31 * result + data;
-        result = 31 * result + (nbt != null ? nbt.hashCode() : 0);
+        int result = this.id;
+        result = 31 * result + this.amount;
+        result = 31 * result + this.data;
+        result = 31 * result + (this.nbt != null ? this.nbt.hashCode() : 0);
         return result;
     }
-
 }

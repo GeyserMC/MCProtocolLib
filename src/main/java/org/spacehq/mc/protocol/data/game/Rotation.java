@@ -29,24 +29,14 @@ public class Rotation {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        Rotation rotation = (Rotation) o;
-
-        if(Float.compare(rotation.pitch, pitch) != 0) return false;
-        if(Float.compare(rotation.roll, roll) != 0) return false;
-        if(Float.compare(rotation.yaw, yaw) != 0) return false;
-
-        return true;
+        return this == o || (o instanceof Rotation && Float.compare(this.pitch, ((Rotation) o).pitch) == 0 && Float.compare(this.yaw, ((Rotation) o).yaw) == 0 && Float.compare(this.roll, ((Rotation) o).roll) == 0);
     }
 
     @Override
     public int hashCode() {
-        int result = (pitch != +0.0f ? Float.floatToIntBits(pitch) : 0);
-        result = 31 * result + (yaw != +0.0f ? Float.floatToIntBits(yaw) : 0);
-        result = 31 * result + (roll != +0.0f ? Float.floatToIntBits(roll) : 0);
+        int result = Float.hashCode(this.pitch);
+        result = 31 * result + Float.hashCode(this.yaw);
+        result = 31 * result + Float.hashCode(this.roll);
         return result;
     }
-
 }

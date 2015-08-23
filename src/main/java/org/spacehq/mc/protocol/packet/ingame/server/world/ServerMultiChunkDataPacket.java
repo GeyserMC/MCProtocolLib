@@ -1,133 +1,92 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.Chunk;
+import org.spacehq.mc.protocol.data.game.chunk.Column;
 import org.spacehq.mc.protocol.util.NetUtil;
-import org.spacehq.mc.protocol.util.NetworkChunkData;
-import org.spacehq.mc.protocol.util.ParsedChunkData;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
+import org.spacehq.packetlib.io.buffer.ByteBufferNetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class ServerMultiChunkDataPacket implements Packet {
 
-    private int x[];
-    private int z[];
-    private Chunk chunks[][];
-    private byte biomeData[][];
+    private Column columns[];
 
     @SuppressWarnings("unused")
     private ServerMultiChunkDataPacket() {
     }
 
-    public ServerMultiChunkDataPacket(int x[], int z[], Chunk chunks[][], byte biomeData[][]) {
-        if(biomeData == null) {
-            throw new IllegalArgumentException("BiomeData cannot be null.");
-        }
-
-        if(x.length != chunks.length || z.length != chunks.length) {
-            throw new IllegalArgumentException("X, Z, and Chunk arrays must be equal in length.");
-        }
-
+    public ServerMultiChunkDataPacket(Column columns[]) {
         boolean noSkylight = false;
         boolean skylight = false;
-        for(int index = 0; index < chunks.length; index++) {
-            Chunk column[] = chunks[index];
-            if(column.length != 16) {
-                throw new IllegalArgumentException("Chunk columns must contain 16 chunks each.");
-            }
-
-            for(int y = 0; y < column.length; y++) {
-                if(column[y] != null) {
-                    if(column[y].getSkyLight() == null) {
-                        noSkylight = true;
-                    } else {
-                        skylight = true;
-                    }
-                }
+        for(Column column : columns) {
+            if(!column.hasSkylight()) {
+                noSkylight = true;
+            } else {
+                skylight = true;
             }
         }
 
         if(noSkylight && skylight) {
-            throw new IllegalArgumentException("Either all chunks must have skylight values or none must have them.");
+            throw new IllegalArgumentException("Either all columns must have skylight values or none must have them.");
         }
 
-        this.x = x;
-        this.z = z;
-        this.chunks = chunks;
-        this.biomeData = biomeData;
+        this.columns = columns;
     }
 
-    public int getColumns() {
-        return this.chunks.length;
-    }
-
-    public int getX(int column) {
-        return this.x[column];
-    }
-
-    public int getZ(int column) {
-        return this.z[column];
-    }
-
-    public Chunk[] getChunks(int column) {
-        return this.chunks[column];
-    }
-
-    public byte[] getBiomeData(int column) {
-        return this.biomeData[column];
+    public Column[] getColumns() {
+        return this.columns;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
         boolean skylight = in.readBoolean();
-        int columns = in.readVarInt();
-        this.x = new int[columns];
-        this.z = new int[columns];
-        this.chunks = new Chunk[columns][];
-        this.biomeData = new byte[columns][];
-        NetworkChunkData[] data = new NetworkChunkData[columns];
-        for(int column = 0; column < columns; column++) {
-            this.x[column] = in.readInt();
-            this.z[column] = in.readInt();
-            int mask = in.readUnsignedShort();
-            int chunks = Integer.bitCount(mask);
-            int length = (chunks * ((4096 * 2) + 2048)) + (skylight ? chunks * 2048 : 0) + 256;
-            byte dat[] = new byte[length];
-            data[column] = new NetworkChunkData(mask, true, skylight, dat);
-        }
+        int x[] = in.readInts(in.readVarInt());
+        int z[] = in.readInts(in.readVarInt());
+        int masks[] = in.readInts(in.readVarInt());
+        byte data[] = in.readBytes(in.readVarInt());
 
-        for(int column = 0; column < columns; column++) {
-            in.readBytes(data[column].getData());
-            ParsedChunkData chunkData = NetUtil.dataToChunks(data[column], false);
-            this.chunks[column] = chunkData.getChunks();
-            this.biomeData[column] = chunkData.getBiomes();
+        Column columns[] = new Column[x.length];
+        for(int i = 0; i < columns.length; i++) {
+            columns[i] = NetUtil.readColumn(data, x[i], z[i], true, skylight, masks[i]);
         }
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
+        Column columns[] = new Column[1];
+
         boolean skylight = false;
-        NetworkChunkData data[] = new NetworkChunkData[this.chunks.length];
-        for(int column = 0; column < this.chunks.length; column++) {
-            data[column] = NetUtil.chunksToData(new ParsedChunkData(this.chunks[column], this.biomeData[column]));
-            if(data[column].hasSkyLight()) {
+        for(Column column : columns) {
+            if(column.hasSkylight()) {
                 skylight = true;
+                break;
             }
         }
 
+        ByteBufferNetOutput byteOut = new ByteBufferNetOutput(ByteBuffer.allocate(columns.length * 557312));
+
         out.writeBoolean(skylight);
-        out.writeVarInt(this.chunks.length);
-        for(int column = 0; column < this.x.length; column++) {
-            out.writeInt(this.x[column]);
-            out.writeInt(this.z[column]);
-            out.writeShort(data[column].getMask());
+
+        out.writeVarInt(columns.length);
+        for(Column column : columns) {
+            out.writeInt(column.getX());
         }
 
-        for(int column = 0; column < this.x.length; column++) {
-            out.writeBytes(data[column].getData());
+        out.writeVarInt(columns.length);
+        for(Column column : columns) {
+            out.writeInt(column.getZ());
         }
+
+        out.writeVarInt(columns.length);
+        for(Column column : columns) {
+            out.writeInt(NetUtil.writeColumn(byteOut, column, true, skylight));
+        }
+
+        out.writeVarInt(byteOut.getByteBuffer().arrayOffset());
+        out.writeBytes(byteOut.getByteBuffer().array(), byteOut.getByteBuffer().arrayOffset());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game;
 
 public class Position {
-
     private int x;
     private int y;
     private int z;
@@ -26,24 +25,14 @@ public class Position {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        Position position = (Position) o;
-
-        if(x != position.x) return false;
-        if(y != position.y) return false;
-        if(z != position.z) return false;
-
-        return true;
+        return this == o || (o instanceof Position && this.x == ((Position) o).x && this.y == ((Position) o).y && this.z == ((Position) o).z);
     }
 
     @Override
     public int hashCode() {
-        int result = x;
-        result = 31 * result + y;
-        result = 31 * result + z;
+        int result = this.x;
+        result = 31 * result + this.y;
+        result = 31 * result + this.z;
         return result;
     }
-
 }
