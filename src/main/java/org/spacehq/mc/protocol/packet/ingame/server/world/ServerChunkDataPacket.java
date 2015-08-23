@@ -5,11 +5,11 @@ import org.spacehq.mc.protocol.data.game.chunk.Column;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
-import org.spacehq.packetlib.io.buffer.ByteBufferNetOutput;
+import org.spacehq.packetlib.io.stream.StreamNetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public class ServerChunkDataPacket implements Packet {
 
@@ -55,15 +55,16 @@ public class ServerChunkDataPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        ByteBufferNetOutput byteOut = new ByteBufferNetOutput(ByteBuffer.allocate(557312));
-        int mask = NetUtil.writeColumn(byteOut, this.column, this.column.hasBiomeData(), this.column.hasSkylight());
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        NetOutput netOut = new StreamNetOutput(byteOut);
+        int mask = NetUtil.writeColumn(netOut, this.column, this.column.hasBiomeData(), this.column.hasSkylight());
 
         out.writeInt(this.column.getX());
         out.writeInt(this.column.getZ());
         out.writeBoolean(this.column.hasBiomeData());
         out.writeShort(mask);
-        out.writeVarInt(byteOut.getByteBuffer().arrayOffset());
-        out.writeBytes(byteOut.getByteBuffer().array(), byteOut.getByteBuffer().arrayOffset());
+        out.writeVarInt(byteOut.size());
+        out.writeBytes(byteOut.toByteArray(), byteOut.size());
     }
 
     @Override

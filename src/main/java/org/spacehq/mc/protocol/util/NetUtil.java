@@ -1,13 +1,13 @@
 package org.spacehq.mc.protocol.util;
 
+import org.spacehq.mc.protocol.data.game.EntityMetadata;
+import org.spacehq.mc.protocol.data.game.ItemStack;
+import org.spacehq.mc.protocol.data.game.Position;
+import org.spacehq.mc.protocol.data.game.Rotation;
 import org.spacehq.mc.protocol.data.game.chunk.BlockStorage;
 import org.spacehq.mc.protocol.data.game.chunk.Chunk;
 import org.spacehq.mc.protocol.data.game.chunk.Column;
-import org.spacehq.mc.protocol.data.game.EntityMetadata;
-import org.spacehq.mc.protocol.data.game.ItemStack;
 import org.spacehq.mc.protocol.data.game.chunk.NibbleArray3d;
-import org.spacehq.mc.protocol.data.game.Position;
-import org.spacehq.mc.protocol.data.game.Rotation;
 import org.spacehq.mc.protocol.data.game.values.MagicValues;
 import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
 import org.spacehq.mc.protocol.data.game.values.world.block.BlockFace;
@@ -16,14 +16,14 @@ import org.spacehq.opennbt.NBTIO;
 import org.spacehq.opennbt.tag.builtin.CompoundTag;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
-import org.spacehq.packetlib.io.buffer.ByteBufferNetInput;
+import org.spacehq.packetlib.io.stream.StreamNetInput;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -236,7 +236,7 @@ public class NetUtil {
     }
 
     public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask) throws IOException {
-        NetInput in = new ByteBufferNetInput(ByteBuffer.wrap(data));
+        NetInput in = new StreamNetInput(new ByteArrayInputStream(data));
         Exception ex = null;
         Column column = null;
         try {

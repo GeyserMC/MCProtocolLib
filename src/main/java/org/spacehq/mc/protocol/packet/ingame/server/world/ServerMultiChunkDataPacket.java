@@ -4,11 +4,11 @@ import org.spacehq.mc.protocol.data.game.chunk.Column;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
-import org.spacehq.packetlib.io.buffer.ByteBufferNetOutput;
+import org.spacehq.packetlib.io.stream.StreamNetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public class ServerMultiChunkDataPacket implements Packet {
 
@@ -66,8 +66,6 @@ public class ServerMultiChunkDataPacket implements Packet {
             }
         }
 
-        ByteBufferNetOutput byteOut = new ByteBufferNetOutput(ByteBuffer.allocate(columns.length * 557312));
-
         out.writeBoolean(skylight);
 
         out.writeVarInt(columns.length);
@@ -81,12 +79,15 @@ public class ServerMultiChunkDataPacket implements Packet {
         }
 
         out.writeVarInt(columns.length);
+
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        NetOutput netOut = new StreamNetOutput(byteOut);
         for(Column column : columns) {
-            out.writeInt(NetUtil.writeColumn(byteOut, column, true, skylight));
+            out.writeInt(NetUtil.writeColumn(netOut, column, true, skylight));
         }
 
-        out.writeVarInt(byteOut.getByteBuffer().arrayOffset());
-        out.writeBytes(byteOut.getByteBuffer().array(), byteOut.getByteBuffer().arrayOffset());
+        out.writeVarInt(byteOut.size());
+        out.writeBytes(byteOut.toByteArray(), byteOut.size());
     }
 
     @Override
