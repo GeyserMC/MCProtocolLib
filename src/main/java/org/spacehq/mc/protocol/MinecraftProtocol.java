@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol;
 
 import org.spacehq.mc.auth.data.GameProfile;
-import org.spacehq.mc.auth.service.AuthenticationService;
 import org.spacehq.mc.auth.exception.request.RequestException;
+import org.spacehq.mc.auth.service.AuthenticationService;
 import org.spacehq.mc.protocol.data.SubProtocol;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
@@ -32,6 +32,7 @@ import org.spacehq.mc.protocol.packet.ingame.client.window.ClientCreativeInvento
 import org.spacehq.mc.protocol.packet.ingame.client.window.ClientEnchantItemPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.world.ClientUpdateSignPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerBossBarPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerCombatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerDifficultyPacket;
@@ -44,6 +45,7 @@ import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerResourcePackSendPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerRespawnPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerSetCompressionPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerSetCooldownPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerStatisticsPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerSwitchCameraPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerTabCompletePacket;
@@ -57,7 +59,6 @@ import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityEquipment
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityHeadLookPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityMetadataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityMovementPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.ServerBossBarPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPositionRotationPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.entity.ServerEntityPropertiesPacket;
@@ -95,13 +96,13 @@ import org.spacehq.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerExplosionPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerMapDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerMultiChunkDataPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerNotifyClientPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerOpenTileEntityEditorPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnParticlePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUnloadChunkPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateSignPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
@@ -344,11 +345,11 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(31, ServerSetExperiencePacket.class);
         this.registerIncoming(32, ServerEntityPropertiesPacket.class);
         this.registerIncoming(33, ServerChunkDataPacket.class);
-        this.registerIncoming(34, ServerMultiBlockChangePacket.class);
-        this.registerIncoming(35, ServerBlockChangePacket.class);
-        this.registerIncoming(36, ServerBlockValuePacket.class);
-        this.registerIncoming(37, ServerBlockBreakAnimPacket.class);
-        this.registerIncoming(38, ServerMultiChunkDataPacket.class);
+        this.registerIncoming(34, ServerUnloadChunkPacket.class);
+        this.registerIncoming(35, ServerMultiBlockChangePacket.class);
+        this.registerIncoming(36, ServerBlockChangePacket.class);
+        this.registerIncoming(37, ServerBlockValuePacket.class);
+        this.registerIncoming(38, ServerBlockBreakAnimPacket.class);
         this.registerIncoming(39, ServerExplosionPacket.class);
         this.registerIncoming(40, ServerPlayEffectPacket.class);
         this.registerIncoming(41, ServerPlaySoundPacket.class);
@@ -384,6 +385,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(71, ServerPlayerListDataPacket.class);
         this.registerIncoming(72, ServerResourcePackSendPacket.class);
         this.registerIncoming(73, ServerBossBarPacket.class);
+        this.registerIncoming(74, ServerSetCooldownPacket.class);
 
         this.registerOutgoing(0, ClientKeepAlivePacket.class);
         this.registerOutgoing(1, ClientChatPacket.class);
@@ -476,11 +478,11 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(31, ServerSetExperiencePacket.class);
         this.registerOutgoing(32, ServerEntityPropertiesPacket.class);
         this.registerOutgoing(33, ServerChunkDataPacket.class);
-        this.registerOutgoing(34, ServerMultiBlockChangePacket.class);
-        this.registerOutgoing(35, ServerBlockChangePacket.class);
-        this.registerOutgoing(36, ServerBlockValuePacket.class);
-        this.registerOutgoing(37, ServerBlockBreakAnimPacket.class);
-        this.registerOutgoing(38, ServerMultiChunkDataPacket.class);
+        this.registerOutgoing(34, ServerUnloadChunkPacket.class);
+        this.registerOutgoing(35, ServerMultiBlockChangePacket.class);
+        this.registerOutgoing(36, ServerBlockChangePacket.class);
+        this.registerOutgoing(37, ServerBlockValuePacket.class);
+        this.registerOutgoing(38, ServerBlockBreakAnimPacket.class);
         this.registerOutgoing(39, ServerExplosionPacket.class);
         this.registerOutgoing(40, ServerPlayEffectPacket.class);
         this.registerOutgoing(41, ServerPlaySoundPacket.class);
@@ -516,6 +518,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(71, ServerPlayerListDataPacket.class);
         this.registerOutgoing(72, ServerResourcePackSendPacket.class);
         this.registerOutgoing(73, ServerBossBarPacket.class);
+        this.registerOutgoing(74, ServerSetCooldownPacket.class);
     }
 
     private void initClientStatus(Session session) {

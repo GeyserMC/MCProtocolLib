@@ -4,88 +4,77 @@ import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockStateMap {
     private static final int[] MAX_ID_PER_BYTES = { 15, 255, 4095 };
 
     private BlockStorage parent;
 
-    private Map<Integer, Integer> idToState = new HashMap<Integer, Integer>();
-    private Map<Integer, Integer> stateToId = new HashMap<Integer, Integer>();
-    private int stateCount = 0;
-
-    private int currentSize = 0;
+    private List<Integer> states = new ArrayList<Integer>();
+    private int currentMaxValue = 0;
 
     public BlockStateMap(BlockStorage parent) {
         this.parent = parent;
 
-        this.idToState.put(0, 0);
-        this.stateToId.put(0, 0);
-        this.stateCount++;
+        this.states.add(0);
     }
 
     public BlockStateMap(BlockStorage parent, NetInput in) throws IOException {
-        this.parent = parent;
-
-        this.stateCount = in.readVarInt();
-        for(int i = 0; i < this.stateCount; i++) {
-            int state = in.readVarInt();
-            int id = in.readVarInt();
-
-            this.idToState.put(id, state);
-            this.stateToId.put(state, id);
+        int stateCount = in.readVarInt();
+        for(int i = 0; i < stateCount; i++) {
+            this.addState(in.readVarInt());
         }
+
+        this.parent = parent;
     }
 
     public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.stateCount);
-        for(Map.Entry<Integer, Integer> entry : this.stateToId.entrySet()) {
-            out.writeVarInt(entry.getKey());
-            out.writeVarInt(entry.getValue());
+        out.writeVarInt(this.states.size());
+        for(int state : this.states) {
+            out.writeVarInt(state);
         }
     }
 
-    public Map<Integer, Integer> getIdsToStates() {
-        return new HashMap<Integer, Integer>(this.idToState);
-    }
-
-    public Map<Integer, Integer> getStatesToIds() {
-        return new HashMap<Integer, Integer>(this.stateToId);
+    public List<Integer> getStates() {
+        return new ArrayList<Integer>(this.states);
     }
 
     public int getState(int id) {
-        return this.idToState.containsKey(id) ? this.idToState.get(id) : 0;
+        return id >= 0 && id < this.states.size() ? this.states.get(id) : 0;
     }
 
     public int getId(int state) {
-        if(!this.stateToId.containsKey(state)) {
-            int id = this.stateCount;
-            this.idToState.put(id, state);
-            this.stateToId.put(state, id);
-
-            if(this.currentSize < MAX_ID_PER_BYTES.length - 1 && this.stateCount > MAX_ID_PER_BYTES[this.currentSize]) {
-                this.parent.resize(MAX_ID_PER_BYTES[++this.currentSize]);
-            }
-
-            this.stateCount++;
+        int id = this.states.indexOf(state);
+        if(id == -1) {
+            id = this.addState(state);
         }
 
-        return this.stateToId.get(state);
+        return id;
+    }
+
+    private int addState(int state) {
+        this.states.add(state);
+        if(this.currentMaxValue < MAX_ID_PER_BYTES.length - 1 && this.states.size() > MAX_ID_PER_BYTES[this.currentMaxValue]) {
+            this.currentMaxValue++;
+            if(this.parent != null) {
+                this.parent.resize(MAX_ID_PER_BYTES[this.currentMaxValue]);
+            }
+        }
+
+        return this.states.indexOf(state);
     }
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof BlockStateMap && this.idToState.equals(((BlockStateMap) o).idToState) && this.stateToId.equals(((BlockStateMap) o).stateToId) && this.stateCount == ((BlockStateMap) o).stateCount && this.currentSize == ((BlockStateMap) o).currentSize);
+        return this == o || (o instanceof BlockStateMap && this.states.equals(((BlockStateMap) o).states) && this.currentMaxValue == ((BlockStateMap) o).currentMaxValue);
     }
 
     @Override
     public int hashCode() {
-        int result = this.idToState.hashCode();
-        result = 31 * result + this.stateToId.hashCode();
-        result = 31 * result + this.stateCount;
-        result = 31 * result + this.currentSize;
+        int result = this.states.hashCode();
+        result = 31 * result + this.currentMaxValue;
         return result;
     }
 }
