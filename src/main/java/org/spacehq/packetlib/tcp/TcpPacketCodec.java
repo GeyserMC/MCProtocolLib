@@ -39,6 +39,11 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
         Packet packet = this.session.getPacketProtocol().createIncomingPacket(id);
         packet.read(in);
+
+        if(buf.readableBytes() > 0) {
+            throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");
+        }
+
         if(packet.isPriority()) {
             this.session.callEvent(new PacketReceivedEvent(this.session, packet));
         }
