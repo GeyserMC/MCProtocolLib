@@ -1,6 +1,5 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.chunk.Chunk;
 import org.spacehq.mc.protocol.data.game.chunk.Column;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
@@ -12,28 +11,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class ServerChunkDataPacket implements Packet {
-
     private Column column;
 
     @SuppressWarnings("unused")
     private ServerChunkDataPacket() {
     }
 
-    /**
-     * Convenience constructor for creating a packet to unload chunks.
-     *
-     * @param x X of the chunk column.
-     * @param z Z of the chunk column.
-     */
-    public ServerChunkDataPacket(int x, int z) {
-        this(new Column(x, z, new Chunk[16], new byte[256]));
-    }
-
-    /**
-     * Constructs a ServerChunkDataPacket for updating chunks.
-     *
-     * @param column Column to send.
-     */
     public ServerChunkDataPacket(Column column) {
         this.column = column;
     }
