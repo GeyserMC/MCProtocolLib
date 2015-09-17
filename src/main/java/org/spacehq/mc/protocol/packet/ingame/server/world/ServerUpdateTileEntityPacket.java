@@ -21,7 +21,7 @@ public class ServerUpdateTileEntityPacket implements Packet {
     private ServerUpdateTileEntityPacket() {
     }
 
-    public ServerUpdateTileEntityPacket(int breakerEntityId, Position position, UpdatedTileType type, CompoundTag nbt) {
+    public ServerUpdateTileEntityPacket(Position position, UpdatedTileType type, CompoundTag nbt) {
         this.position = position;
         this.type = type;
         this.nbt = nbt;
