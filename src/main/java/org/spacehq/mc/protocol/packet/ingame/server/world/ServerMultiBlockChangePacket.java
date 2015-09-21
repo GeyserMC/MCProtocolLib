@@ -52,7 +52,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         out.writeVarInt(this.records.length);
         for(BlockChangeRecord record : this.records) {
             out.writeShort((record.getPosition().getX() - (chunkX << 4)) << 12 | (record.getPosition().getZ() - (chunkZ << 4)) << 8 | record.getPosition().getY());
-            out.writeVarInt(record.getBlock());
+            out.writeVarInt(record.getId() << 4 | record.getData());
         }
     }
 
