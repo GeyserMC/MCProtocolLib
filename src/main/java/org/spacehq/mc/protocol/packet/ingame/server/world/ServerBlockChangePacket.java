@@ -32,7 +32,7 @@ public class ServerBlockChangePacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         NetUtil.writePosition(out, this.record.getPosition());
-        out.writeVarInt(this.record.getBlock());
+        out.writeVarInt(this.record.getId() << 4 | this.record.getData());
     }
 
     @Override
