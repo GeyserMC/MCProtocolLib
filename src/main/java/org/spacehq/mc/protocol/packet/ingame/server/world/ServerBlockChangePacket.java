@@ -26,13 +26,14 @@ public class ServerBlockChangePacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.record = new BlockChangeRecord(NetUtil.readPosition(in), in.readVarInt());
+        int block = in.readVarInt();
+        this.record = new BlockChangeRecord(NetUtil.readPosition(in), block >> 4, block & 0xF);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         NetUtil.writePosition(out, this.record.getPosition());
-        out.writeVarInt(this.record.getBlock());
+        out.writeVarInt(this.record.getId() << 4 | (this.record.getData() & 0xF));
     }
 
     @Override
