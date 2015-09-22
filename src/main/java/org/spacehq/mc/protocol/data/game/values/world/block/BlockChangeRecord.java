@@ -3,41 +3,38 @@ package org.spacehq.mc.protocol.data.game.values.world.block;
 import org.spacehq.mc.protocol.data.game.Position;
 
 public class BlockChangeRecord {
-
     private Position position;
-    private int block;
+    private int id;
+    private int data;
 
-    public BlockChangeRecord(Position position, int block) {
+    public BlockChangeRecord(Position position, int id, int data) {
         this.position = position;
-        this.block = block;
+        this.id = id;
+        this.data = data;
     }
 
     public Position getPosition() {
         return this.position;
     }
 
-    public int getBlock() {
-        return this.block;
+    public int getId() {
+        return this.id;
+    }
+
+    public int getData() {
+        return this.data;
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        BlockChangeRecord record = (BlockChangeRecord) o;
-
-        if(block != record.block) return false;
-        if(!position.equals(record.position)) return false;
-
-        return true;
+        return this == o || (o instanceof BlockChangeRecord && this.position.equals(((BlockChangeRecord) o).position) && this.id == ((BlockChangeRecord) o).id && this.data == ((BlockChangeRecord) o).data);
     }
 
     @Override
     public int hashCode() {
-        int result = position.hashCode();
-        result = 31 * result + block;
+        int result = this.position.hashCode();
+        result = 31 * result + this.id;
+        result = 31 * result + this.data;
         return result;
     }
-
 }

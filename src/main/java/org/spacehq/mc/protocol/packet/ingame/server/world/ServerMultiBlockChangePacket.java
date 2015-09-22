@@ -39,7 +39,7 @@ public class ServerMultiBlockChangePacket implements Packet {
             int x = (chunkX << 4) + (pos >> 12 & 15);
             int y = pos & 255;
             int z = (chunkZ << 4) + (pos >> 8 & 15);
-            this.records[index] = new BlockChangeRecord(new Position(x, y, z), block);
+            this.records[index] = new BlockChangeRecord(new Position(x, y, z), block >> 4, block & 0xF);
         }
     }
 
@@ -52,7 +52,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         out.writeVarInt(this.records.length);
         for(BlockChangeRecord record : this.records) {
             out.writeShort((record.getPosition().getX() - (chunkX << 4)) << 12 | (record.getPosition().getZ() - (chunkZ << 4)) << 8 | record.getPosition().getY());
-            out.writeVarInt(record.getBlock());
+            out.writeVarInt(record.getId() << 4 | (record.getData() & 0xF));
         }
     }
 
