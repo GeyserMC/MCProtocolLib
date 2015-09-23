@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
+import org.spacehq.mc.protocol.data.game.Position;
 import org.spacehq.mc.protocol.data.game.values.world.block.BlockChangeRecord;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
@@ -26,8 +27,10 @@ public class ServerBlockChangePacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
+        Position position = NetUtil.readPosition(in);
         int block = in.readVarInt();
-        this.record = new BlockChangeRecord(NetUtil.readPosition(in), block >> 4, block & 0xF);
+
+        this.record = new BlockChangeRecord(position, block >> 4, block & 0xF);
     }
 
     @Override
