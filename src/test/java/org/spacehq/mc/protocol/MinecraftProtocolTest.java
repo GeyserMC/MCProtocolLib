@@ -1,10 +1,14 @@
 package org.spacehq.mc.protocol;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.spacehq.mc.auth.data.GameProfile;
+import org.spacehq.mc.protocol.data.game.Position;
+import org.spacehq.mc.protocol.data.game.values.world.block.BlockChangeRecord;
 import org.spacehq.mc.protocol.data.message.TextMessage;
 import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
@@ -12,6 +16,7 @@ import org.spacehq.mc.protocol.data.status.VersionInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoHandler;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
 import org.spacehq.packetlib.Client;
 import org.spacehq.packetlib.Server;
 import org.spacehq.packetlib.Session;
@@ -20,7 +25,10 @@ import org.spacehq.packetlib.event.session.PacketReceivedEvent;
 import org.spacehq.packetlib.event.session.SessionAdapter;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
+import org.spacehq.packetlib.tcp.io.ByteBufNetInput;
+import org.spacehq.packetlib.tcp.io.ByteBufNetOutput;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -108,6 +116,31 @@ public class MinecraftProtocolTest {
         assertEquals("Received incorrect max players.", 100, packet.getMaxPlayers());
         assertEquals("Received incorrect world type.", DEFAULT, packet.getWorldType());
         assertFalse("Received incorrect reduced debug info flag.", packet.getReducedDebugInfo());
+    }
+
+    @Test
+    public void testBlockBreak() throws IOException {
+        ByteBuf buffer = Unpooled.buffer();
+
+        ByteBufNetOutput out = new ByteBufNetOutput(buffer);
+        ByteBufNetInput in = new ByteBufNetInput(buffer);
+
+        Position position = new Position(1, 61, -1);
+        BlockChangeRecord record = new BlockChangeRecord(position, 3, 2);
+
+        new ServerBlockChangePacket(record).write(out);
+        ServerBlockChangePacket packet = new ServerBlockChangePacket(record);
+        packet.read(in);
+
+        record = packet.getRecord();
+        position = record.getPosition();
+
+        assertFalse("Buffer is not empty", buffer.isReadable());
+        assertEquals("Received incorrect X position", 1, position.getX());
+        assertEquals("Received incorrect Y position", 61, position.getY());
+        assertEquals("Received incorrect Z position", -1, position.getZ());
+        assertEquals("Received incorrect block id", 3, record.getId());
+        assertEquals("Received incorrect block data", 2, record.getData());
     }
 
     @After
