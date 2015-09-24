@@ -30,39 +30,12 @@ import java.util.UUID;
 
 public class NetUtil {
 
-    private static final int[] EXPONENTS_OF_TWO = new int[] { 0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9 };
+    private static final int POSITION_X_SIZE = 38;
+    private static final int POSITION_Y_SIZE = 26;
+    private static final int POSITION_Z_SIZE = 38;
 
-    private static final int POSITION_X_SIZE = 1 + lastExponentOfTwo(nextPowerOfTwo(30000000));
-    private static final int POSITION_Z_SIZE = POSITION_X_SIZE;
-    private static final int POSITION_Y_SIZE = 64 - POSITION_X_SIZE - POSITION_Z_SIZE;
-    private static final int POSITION_Y_SHIFT = POSITION_Z_SIZE;
-    private static final int POSITION_X_SHIFT = POSITION_Y_SHIFT + POSITION_Y_SIZE;
-    private static final long POSITION_X_MASK = (1L << POSITION_X_SIZE) - 1;
-    private static final long POSITION_Y_MASK = (1L << POSITION_Y_SIZE) - 1;
-    private static final long POSITION_Z_MASK = (1L << POSITION_Z_SIZE) - 1;
-
-    private static int nextPowerOfTwo(int i) {
-        int minusOne = i - 1;
-        minusOne |= minusOne >> 1;
-        minusOne |= minusOne >> 2;
-        minusOne |= minusOne >> 4;
-        minusOne |= minusOne >> 8;
-        minusOne |= minusOne >> 16;
-        return minusOne + 1;
-    }
-
-    private static boolean isPowerOfTwo(int i) {
-        return i != 0 && (i & i - 1) == 0;
-    }
-
-    public static int nextExponentOfTwo(int i) {
-        int power = isPowerOfTwo(i) ? i : nextPowerOfTwo(i);
-        return EXPONENTS_OF_TWO[(int) (power * 125613361L >> 27) & 31];
-    }
-
-    public static int lastExponentOfTwo(int i) {
-        return nextExponentOfTwo(i) - (isPowerOfTwo(i) ? 0 : 1);
-    }
+    private static final int POSITION_Y_SHIFT = 0xFFF;
+    private static final int POSITION_WRITE_SHIFT = 0x3FFFFFF;
 
     public static CompoundTag readNBT(NetInput in) throws IOException {
         byte b = in.readByte();
@@ -83,14 +56,20 @@ public class NetUtil {
 
     public static Position readPosition(NetInput in) throws IOException {
         long val = in.readLong();
-        int x = (int) (val << 64 - POSITION_X_SHIFT - POSITION_X_SIZE >> 64 - POSITION_X_SIZE);
-        int y = (int) (val << 64 - POSITION_Y_SHIFT - POSITION_Y_SIZE >> 64 - POSITION_Y_SIZE);
-        int z = (int) (val << 64 - POSITION_Z_SIZE >> 64 - POSITION_Z_SIZE);
+
+        int x = (int) (val >> POSITION_X_SIZE);
+        int y = (int) ((val >> POSITION_Y_SIZE) & POSITION_Y_SHIFT);
+        int z = (int) ((val << POSITION_Z_SIZE) >> POSITION_Z_SIZE);
+
         return new Position(x, y, z);
     }
 
     public static void writePosition(NetOutput out, Position pos) throws IOException {
-        out.writeLong((pos.getX() & POSITION_X_MASK) << POSITION_X_SHIFT | (pos.getY() & POSITION_Y_MASK) << POSITION_Y_SHIFT | (pos.getZ() & POSITION_Z_MASK));
+        long x = pos.getX() & POSITION_WRITE_SHIFT;
+        long y = pos.getY() & POSITION_Y_SHIFT;
+        long z = pos.getZ() & POSITION_WRITE_SHIFT;
+
+        out.writeLong(x << POSITION_X_SIZE | y << POSITION_Y_SIZE | z);
     }
 
     public static ItemStack readItem(NetInput in) throws IOException {
