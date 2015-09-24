@@ -21,12 +21,10 @@ public class ByteBufHelper {
     public static final ByteBufNetInput in = new ByteBufNetInput(buffer);
 
     @SuppressWarnings("unchecked")
-    public static <T> T writeAndRead(Packet writable){
-        if(buffer.isReadable()) {
-            buffer.release();
-        }
-
+    public static <T> T writeAndRead(Packet writable) {
         try {
+            buffer.clear();
+
             writable.write(out);
 
             // Creating new fresh packet to reset fields.
@@ -41,8 +39,6 @@ public class ByteBufHelper {
             return (T) readable;
         } catch(Exception e) {
             throw new IllegalStateException("Failed parse packet", e);
-        } finally {
-            buffer.release();
         }
     }
 
