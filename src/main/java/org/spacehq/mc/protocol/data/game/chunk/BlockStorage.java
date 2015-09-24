@@ -1,6 +1,5 @@
 package org.spacehq.mc.protocol.data.game.chunk;
 
-import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 
@@ -54,7 +53,7 @@ public class BlockStorage {
 
     protected void resize(int size) {
         FlexibleStorage oldStorage = this.storage;
-        this.storage = new FlexibleStorage(NetUtil.nextExponentOfTwo(size), this.storage.getSize());
+        this.storage = new FlexibleStorage(size != 0 ? 32 - Integer.numberOfLeadingZeros(size - 1) : 0, this.storage.getSize());
         for(int index = 0; index < this.storage.getSize(); index++) {
             this.storage.set(index, oldStorage.get(index));
         }
