@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol;
+package org.spacehq.mc.protocol.util;
 
 import org.junit.Test;
 import org.spacehq.mc.protocol.data.game.Position;
