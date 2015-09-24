@@ -86,7 +86,7 @@ public class NetUtil {
             int typeId = (b & 0xE0) >> 5;
             int id = b & 0x1F;
             MetadataType type = MagicValues.key(MetadataType.class, typeId);
-            Object value = null;
+            Object value;
             switch(type) {
                 case BYTE:
                     value = in.readByte();
