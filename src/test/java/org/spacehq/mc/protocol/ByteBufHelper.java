@@ -17,8 +17,8 @@ public class ByteBufHelper {
 
     private static final ByteBuf buffer = Unpooled.buffer();
 
-    protected static final ByteBufNetOutput out = new ByteBufNetOutput(buffer);
-    protected static final ByteBufNetInput in = new ByteBufNetInput(buffer);
+    public static final ByteBufNetOutput out = new ByteBufNetOutput(buffer);
+    public static final ByteBufNetInput in = new ByteBufNetInput(buffer);
 
     @SuppressWarnings("unchecked")
     public static <T> T writeAndRead(Packet writable){
