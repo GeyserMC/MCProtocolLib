@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.client;
 
-import org.spacehq.mc.protocol.data.game.values.ClientRequest;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
+import org.spacehq.mc.protocol.data.game.ClientRequest;
+import org.spacehq.mc.protocol.data.game.MagicValues;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -26,12 +26,12 @@ public class ClientRequestPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.request = MagicValues.key(ClientRequest.class, in.readUnsignedByte());
+        this.request = MagicValues.key(ClientRequest.class, in.readVarInt());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeByte(MagicValues.value(Integer.class, this.request));
+        out.writeVarInt(MagicValues.value(Integer.class, this.request));
     }
 
     @Override

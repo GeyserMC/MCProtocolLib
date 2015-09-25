@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.server.scoreboard;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.scoreboard.ObjectiveAction;
-import org.spacehq.mc.protocol.data.game.values.scoreboard.ScoreType;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.scoreboard.ObjectiveAction;
+import org.spacehq.mc.protocol.data.game.scoreboard.ScoreType;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

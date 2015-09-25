@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.server.scoreboard;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.scoreboard.ScoreboardPosition;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.scoreboard.ScoreboardPosition;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

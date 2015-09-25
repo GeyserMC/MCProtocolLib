@@ -69,7 +69,9 @@ public class ServerEntityMovementPacket implements Packet {
             this.pitch = in.readByte() * 360 / 256f;
         }
 
-        this.onGround = in.readBoolean();
+        if(this.pos || this.rot) {
+            this.onGround = in.readBoolean();
+        }
     }
 
     @Override
@@ -86,7 +88,9 @@ public class ServerEntityMovementPacket implements Packet {
             out.writeByte((byte) (this.pitch * 256 / 360));
         }
 
-        out.writeBoolean(this.onGround);
+        if(this.pos || this.rot) {
+            out.writeBoolean(this.onGround);
+        }
     }
 
     @Override

@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity;
 
-import org.spacehq.mc.protocol.data.game.ItemStack;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.EquipmentSlot;
+import org.spacehq.mc.protocol.data.game.entity.metadata.ItemStack;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.EquipmentSlot;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;

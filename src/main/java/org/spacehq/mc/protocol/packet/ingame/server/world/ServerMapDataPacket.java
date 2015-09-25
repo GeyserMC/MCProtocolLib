@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.values.world.map.MapData;
-import org.spacehq.mc.protocol.data.game.values.world.map.MapPlayer;
+import org.spacehq.mc.protocol.data.game.world.map.MapData;
+import org.spacehq.mc.protocol.data.game.world.map.MapPlayer;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

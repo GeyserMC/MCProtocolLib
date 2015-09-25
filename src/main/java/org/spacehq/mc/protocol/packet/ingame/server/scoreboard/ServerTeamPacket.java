@@ -1,9 +1,10 @@
 package org.spacehq.mc.protocol.packet.ingame.server.scoreboard;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.scoreboard.NameTagVisibility;
-import org.spacehq.mc.protocol.data.game.values.scoreboard.TeamAction;
-import org.spacehq.mc.protocol.data.game.values.scoreboard.TeamColor;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.scoreboard.CollisionRule;
+import org.spacehq.mc.protocol.data.game.scoreboard.NameTagVisibility;
+import org.spacehq.mc.protocol.data.game.scoreboard.TeamAction;
+import org.spacehq.mc.protocol.data.game.scoreboard.TeamColor;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -20,6 +21,7 @@ public class ServerTeamPacket implements Packet {
     private boolean friendlyFire;
     private boolean seeFriendlyInvisibles;
     private NameTagVisibility nameTagVisibility;
+    private CollisionRule collisionRule;
     private TeamColor color;
     private String players[];
 
@@ -42,7 +44,7 @@ public class ServerTeamPacket implements Packet {
         this.players = players;
     }
 
-    public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, TeamColor color) {
+    public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, CollisionRule collisionRule, TeamColor color) {
         this.name = name;
         this.displayName = displayName;
         this.prefix = prefix;
@@ -50,11 +52,12 @@ public class ServerTeamPacket implements Packet {
         this.friendlyFire = friendlyFire;
         this.seeFriendlyInvisibles = seeFriendlyInvisibles;
         this.nameTagVisibility = nameTagVisibility;
+        this.collisionRule = collisionRule;
         this.color = color;
         this.action = TeamAction.UPDATE;
     }
 
-    public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, TeamColor color, String players[]) {
+    public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, CollisionRule collisionRule, TeamColor color, String players[]) {
         this.name = name;
         this.displayName = displayName;
         this.prefix = prefix;
@@ -62,6 +65,7 @@ public class ServerTeamPacket implements Packet {
         this.friendlyFire = friendlyFire;
         this.seeFriendlyInvisibles = seeFriendlyInvisibles;
         this.nameTagVisibility = nameTagVisibility;
+        this.collisionRule = collisionRule;
         this.color = color;
         this.players = players;
         this.action = TeamAction.CREATE;
@@ -99,6 +103,10 @@ public class ServerTeamPacket implements Packet {
         return this.nameTagVisibility;
     }
 
+    public CollisionRule getCollisionRule() {
+        return this.collisionRule;
+    }
+
     public TeamColor getColor() {
         return this.color;
     }
@@ -119,6 +127,7 @@ public class ServerTeamPacket implements Packet {
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
             this.nameTagVisibility = MagicValues.key(NameTagVisibility.class, in.readString());
+            this.collisionRule = MagicValues.key(CollisionRule.class, in.readString());
             this.color = MagicValues.key(TeamColor.class, in.readByte());
         }
 
@@ -138,15 +147,9 @@ public class ServerTeamPacket implements Packet {
             out.writeString(this.displayName);
             out.writeString(this.prefix);
             out.writeString(this.suffix);
-            byte flags = 0;
-            if(this.friendlyFire) {
-                flags |= 0x1;
-            }
-            if(this.seeFriendlyInvisibles) {
-                flags |= 0x2;
-            }
-            out.writeByte(flags);
+            out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
             out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
+            out.writeString(MagicValues.value(String.class, this.collisionRule));
             out.writeByte(MagicValues.value(Integer.class, this.color));
         }
 

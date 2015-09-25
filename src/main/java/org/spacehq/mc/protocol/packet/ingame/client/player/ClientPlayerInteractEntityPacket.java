@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.client.player;
 
-import org.spacehq.mc.protocol.data.game.values.Hand;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.player.InteractAction;
+import org.spacehq.mc.protocol.data.game.entity.player.Hand;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.player.InteractAction;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

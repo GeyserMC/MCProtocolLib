@@ -1,9 +1,9 @@
 package org.spacehq.mc.protocol.packet.ingame.client.player;
 
-import org.spacehq.mc.protocol.data.game.Position;
-import org.spacehq.mc.protocol.data.game.values.Face;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.player.PlayerAction;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
+import org.spacehq.mc.protocol.data.game.entity.player.PlayerAction;
+import org.spacehq.mc.protocol.data.game.world.block.BlockFace;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
@@ -15,13 +15,13 @@ public class ClientPlayerActionPacket implements Packet {
 
     private PlayerAction action;
     private Position position;
-    private Face face;
+    private BlockFace face;
 
     @SuppressWarnings("unused")
     private ClientPlayerActionPacket() {
     }
 
-    public ClientPlayerActionPacket(PlayerAction action, Position position, Face face) {
+    public ClientPlayerActionPacket(PlayerAction action, Position position, BlockFace face) {
         this.action = action;
         this.position = position;
         this.face = face;
@@ -35,20 +35,20 @@ public class ClientPlayerActionPacket implements Packet {
         return this.position;
     }
 
-    public Face getFace() {
+    public BlockFace getFace() {
         return this.face;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.action = MagicValues.key(PlayerAction.class, in.readUnsignedByte());
+        this.action = MagicValues.key(PlayerAction.class, in.readVarInt());
         this.position = NetUtil.readPosition(in);
-        this.face = MagicValues.key(Face.class, in.readUnsignedByte());
+        this.face = MagicValues.key(BlockFace.class, in.readUnsignedByte());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeByte(MagicValues.value(Integer.class, this.action));
+        out.writeVarInt(MagicValues.value(Integer.class, this.action));
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.face));
     }

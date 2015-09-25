@@ -1,12 +1,12 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.player.GameMode;
-import org.spacehq.mc.protocol.data.game.values.world.notify.ClientNotification;
-import org.spacehq.mc.protocol.data.game.values.world.notify.ClientNotificationValue;
-import org.spacehq.mc.protocol.data.game.values.world.notify.DemoMessageValue;
-import org.spacehq.mc.protocol.data.game.values.world.notify.RainStrengthValue;
-import org.spacehq.mc.protocol.data.game.values.world.notify.ThunderStrengthValue;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.player.GameMode;
+import org.spacehq.mc.protocol.data.game.world.notify.ClientNotification;
+import org.spacehq.mc.protocol.data.game.world.notify.ClientNotificationValue;
+import org.spacehq.mc.protocol.data.game.world.notify.DemoMessageValue;
+import org.spacehq.mc.protocol.data.game.world.notify.RainStrengthValue;
+import org.spacehq.mc.protocol.data.game.world.notify.ThunderStrengthValue;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

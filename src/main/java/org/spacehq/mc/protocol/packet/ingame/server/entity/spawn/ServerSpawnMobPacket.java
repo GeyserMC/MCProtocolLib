@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity.spawn;
 
-import org.spacehq.mc.protocol.data.game.EntityMetadata;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.MobType;
+import org.spacehq.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.type.MobType;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
@@ -103,7 +103,7 @@ public class ServerSpawnMobPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.type = MagicValues.key(MobType.class, in.readByte());
+        this.type = MagicValues.key(MobType.class, in.readUnsignedByte());
         this.x = in.readInt() / 32D;
         this.y = in.readInt() / 32D;
         this.z = in.readInt() / 32D;

@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.util;
 
 import org.junit.Test;
-import org.spacehq.mc.protocol.data.game.Position;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
 
 import java.io.IOException;
 

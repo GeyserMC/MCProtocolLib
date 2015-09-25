@@ -1,13 +1,13 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.statistic.Achievement;
-import org.spacehq.mc.protocol.data.game.values.statistic.BreakBlockStatistic;
-import org.spacehq.mc.protocol.data.game.values.statistic.BreakItemStatistic;
-import org.spacehq.mc.protocol.data.game.values.statistic.CraftItemStatistic;
-import org.spacehq.mc.protocol.data.game.values.statistic.GenericStatistic;
-import org.spacehq.mc.protocol.data.game.values.statistic.Statistic;
-import org.spacehq.mc.protocol.data.game.values.statistic.UseItemStatistic;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.statistic.Achievement;
+import org.spacehq.mc.protocol.data.game.statistic.BreakBlockStatistic;
+import org.spacehq.mc.protocol.data.game.statistic.BreakItemStatistic;
+import org.spacehq.mc.protocol.data.game.statistic.CraftItemStatistic;
+import org.spacehq.mc.protocol.data.game.statistic.GenericStatistic;
+import org.spacehq.mc.protocol.data.game.statistic.Statistic;
+import org.spacehq.mc.protocol.data.game.statistic.UseItemStatistic;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

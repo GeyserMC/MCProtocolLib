@@ -1,13 +1,13 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity.spawn;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.FallingBlockData;
-import org.spacehq.mc.protocol.data.game.values.entity.HangingDirection;
-import org.spacehq.mc.protocol.data.game.values.entity.MinecartType;
-import org.spacehq.mc.protocol.data.game.values.entity.ObjectData;
-import org.spacehq.mc.protocol.data.game.values.entity.ObjectType;
-import org.spacehq.mc.protocol.data.game.values.entity.ProjectileData;
-import org.spacehq.mc.protocol.data.game.values.entity.SplashPotionData;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.type.object.FallingBlockData;
+import org.spacehq.mc.protocol.data.game.entity.type.object.HangingDirection;
+import org.spacehq.mc.protocol.data.game.entity.type.object.MinecartType;
+import org.spacehq.mc.protocol.data.game.entity.type.object.ObjectData;
+import org.spacehq.mc.protocol.data.game.entity.type.object.ObjectType;
+import org.spacehq.mc.protocol.data.game.entity.type.object.ProjectileData;
+import org.spacehq.mc.protocol.data.game.entity.type.object.SplashPotionData;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

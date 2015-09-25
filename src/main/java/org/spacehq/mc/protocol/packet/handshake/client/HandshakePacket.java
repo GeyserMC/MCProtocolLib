@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.handshake.client;
 
-import org.spacehq.mc.protocol.data.game.values.HandshakeIntent;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
+import org.spacehq.mc.protocol.data.game.HandshakeIntent;
+import org.spacehq.mc.protocol.data.game.MagicValues;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

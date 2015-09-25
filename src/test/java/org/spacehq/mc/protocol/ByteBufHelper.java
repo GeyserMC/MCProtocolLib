@@ -2,8 +2,8 @@ package org.spacehq.mc.protocol;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.spacehq.mc.protocol.data.game.Position;
-import org.spacehq.mc.protocol.data.game.values.world.block.BlockChangeRecord;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
+import org.spacehq.mc.protocol.data.game.world.block.BlockChangeRecord;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.tcp.io.ByteBufNetInput;
 import org.spacehq.packetlib.tcp.io.ByteBufNetOutput;

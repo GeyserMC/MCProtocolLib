@@ -30,7 +30,7 @@ public class ServerChunkDataPacket implements Packet {
         int x = in.readInt();
         int z = in.readInt();
         boolean fullChunk = in.readBoolean();
-        int chunkMask = in.readInt();
+        int chunkMask = in.readVarInt();
         byte data[] = in.readBytes(in.readVarInt());
 
         this.column = NetUtil.readColumn(data, x, z, fullChunk, false, chunkMask);
@@ -45,7 +45,7 @@ public class ServerChunkDataPacket implements Packet {
         out.writeInt(this.column.getX());
         out.writeInt(this.column.getZ());
         out.writeBoolean(this.column.hasBiomeData());
-        out.writeShort(mask);
+        out.writeVarInt(mask);
         out.writeVarInt(byteOut.size());
         out.writeBytes(byteOut.toByteArray(), byteOut.size());
     }

@@ -5,8 +5,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.spacehq.mc.auth.data.GameProfile;
-import org.spacehq.mc.protocol.data.game.Position;
-import org.spacehq.mc.protocol.data.game.values.world.block.BlockChangeRecord;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
+import org.spacehq.mc.protocol.data.game.world.block.BlockChangeRecord;
 import org.spacehq.mc.protocol.data.message.TextMessage;
 import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
@@ -32,9 +32,9 @@ import static org.junit.Assert.*;
 import static org.spacehq.mc.protocol.ByteBufHelper.*;
 import static org.spacehq.mc.protocol.MinecraftConstants.*;
 import static org.spacehq.mc.protocol.data.SubProtocol.STATUS;
-import static org.spacehq.mc.protocol.data.game.values.entity.player.GameMode.SURVIVAL;
-import static org.spacehq.mc.protocol.data.game.values.setting.Difficulty.PEACEFUL;
-import static org.spacehq.mc.protocol.data.game.values.world.WorldType.DEFAULT;
+import static org.spacehq.mc.protocol.data.game.entity.player.GameMode.SURVIVAL;
+import static org.spacehq.mc.protocol.data.game.setting.Difficulty.PEACEFUL;
+import static org.spacehq.mc.protocol.data.game.world.WorldType.DEFAULT;
 
 public class MinecraftProtocolTest {
     private static final String HOST = "localhost";

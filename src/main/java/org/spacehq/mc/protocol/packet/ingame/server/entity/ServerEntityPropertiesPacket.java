@@ -1,10 +1,10 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity;
 
-import org.spacehq.mc.protocol.data.game.attribute.Attribute;
-import org.spacehq.mc.protocol.data.game.attribute.AttributeModifier;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.AttributeType;
-import org.spacehq.mc.protocol.data.game.values.entity.ModifierOperation;
+import org.spacehq.mc.protocol.data.game.entity.attribute.Attribute;
+import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeModifier;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeType;
+import org.spacehq.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;

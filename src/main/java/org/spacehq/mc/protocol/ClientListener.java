@@ -6,7 +6,7 @@ import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.auth.exception.request.ServiceUnavailableException;
 import org.spacehq.mc.auth.service.SessionService;
 import org.spacehq.mc.protocol.data.SubProtocol;
-import org.spacehq.mc.protocol.data.game.values.HandshakeIntent;
+import org.spacehq.mc.protocol.data.game.HandshakeIntent;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoHandler;
 import org.spacehq.mc.protocol.data.status.handler.ServerPingTimeHandler;

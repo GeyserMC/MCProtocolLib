@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.client.player;
 
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.player.PlayerState;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.player.PlayerState;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -43,14 +43,14 @@ public class ClientPlayerStatePacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.state = MagicValues.key(PlayerState.class, in.readUnsignedByte());
+        this.state = MagicValues.key(PlayerState.class, in.readVarInt());
         this.jumpBoost = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        out.writeByte(MagicValues.value(Integer.class, this.state));
+        out.writeVarInt(MagicValues.value(Integer.class, this.state));
         out.writeVarInt(this.jumpBoost);
     }
 

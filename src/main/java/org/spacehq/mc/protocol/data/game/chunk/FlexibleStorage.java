@@ -1,44 +1,27 @@
 package org.spacehq.mc.protocol.data.game.chunk;
 
-import org.spacehq.packetlib.io.NetInput;
-import org.spacehq.packetlib.io.NetOutput;
-
-import java.io.IOException;
 import java.util.Arrays;
 
 public class FlexibleStorage {
-    private final long data[];
+    private final long[] data;
     private final int bitsPerEntry;
     private final int size;
     private final long maxEntryValue;
 
     public FlexibleStorage(int bitsPerEntry, int size) {
+        this(bitsPerEntry, new long[roundToNearest(size * bitsPerEntry, 64) / 64]);
+    }
+
+    public FlexibleStorage(int bitsPerEntry, long[] data) {
         if(bitsPerEntry < 1 || bitsPerEntry > 32) {
             throw new IllegalArgumentException("BitsPerEntry cannot be outside of accepted range.");
         }
 
         this.bitsPerEntry = bitsPerEntry;
-        this.size = size;
+        this.data = data;
 
-        this.maxEntryValue = (1L << bitsPerEntry) - 1;
-        this.data = new long[roundToNearest(size * bitsPerEntry, 64) / 64];
-    }
-
-    public FlexibleStorage(NetInput in) throws IOException {
-        this.bitsPerEntry = in.readVarInt();
-        if(this.bitsPerEntry < 1 || this.bitsPerEntry > 32) {
-            throw new IllegalArgumentException("BitsPerEntry cannot be outside of accepted range.");
-        }
-
-        this.data = in.readLongs(in.readVarInt());
         this.size = this.data.length * 64 / this.bitsPerEntry;
         this.maxEntryValue = (1L << this.bitsPerEntry) - 1;
-    }
-
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.bitsPerEntry);
-        out.writeVarInt(this.data.length);
-        out.writeLongs(this.data);
     }
 
     public long[] getData() {

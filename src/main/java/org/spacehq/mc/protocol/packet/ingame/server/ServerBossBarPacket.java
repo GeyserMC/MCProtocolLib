@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
-import org.spacehq.mc.protocol.data.game.values.BossBarAction;
-import org.spacehq.mc.protocol.data.game.values.BossBarColor;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
+import org.spacehq.mc.protocol.data.game.BossBarAction;
+import org.spacehq.mc.protocol.data.game.BossBarColor;
+import org.spacehq.mc.protocol.data.game.MagicValues;
 import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;

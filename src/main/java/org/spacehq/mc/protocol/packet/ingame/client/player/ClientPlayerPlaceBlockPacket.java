@@ -1,9 +1,9 @@
 package org.spacehq.mc.protocol.packet.ingame.client.player;
 
-import org.spacehq.mc.protocol.data.game.Position;
-import org.spacehq.mc.protocol.data.game.values.Face;
-import org.spacehq.mc.protocol.data.game.values.Hand;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
+import org.spacehq.mc.protocol.data.game.entity.player.Hand;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.world.block.BlockFace;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class ClientPlayerPlaceBlockPacket implements Packet {
 
     private Position position;
-    private Face face;
+    private BlockFace face;
     private Hand hand;
     private float cursorX;
     private float cursorY;
@@ -24,7 +24,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
     private ClientPlayerPlaceBlockPacket() {
     }
 
-    public ClientPlayerPlaceBlockPacket(Position position, Face face, Hand hand, float cursorX, float cursorY, float cursorZ) {
+    public ClientPlayerPlaceBlockPacket(Position position, BlockFace face, Hand hand, float cursorX, float cursorY, float cursorZ) {
         this.position = position;
         this.face = face;
         this.hand = hand;
@@ -37,7 +37,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
         return this.position;
     }
 
-    public Face getFace() {
+    public BlockFace getFace() {
         return this.face;
     }
 
@@ -60,17 +60,17 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.position = NetUtil.readPosition(in);
-        this.face = MagicValues.key(Face.class, in.readUnsignedByte());
+        this.face = MagicValues.key(BlockFace.class, in.readVarInt());
         this.hand = MagicValues.key(Hand.class, in.readVarInt());
-        this.cursorX = in.readByte() / 16f;
-        this.cursorY = in.readByte() / 16f;
-        this.cursorZ = in.readByte() / 16f;
+        this.cursorX = in.readUnsignedByte() / 16f;
+        this.cursorY = in.readUnsignedByte() / 16f;
+        this.cursorZ = in.readUnsignedByte() / 16f;
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         NetUtil.writePosition(out, this.position);
-        out.writeByte(MagicValues.value(Integer.class, this.face));
+        out.writeVarInt(MagicValues.value(Integer.class, this.face));
         out.writeVarInt(MagicValues.value(Integer.class, this.hand));
         out.writeByte((int) (this.cursorX * 16));
         out.writeByte((int) (this.cursorY * 16));

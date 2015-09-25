@@ -1,16 +1,17 @@
 package org.spacehq.mc.protocol.util;
 
-import org.spacehq.mc.protocol.data.game.EntityMetadata;
-import org.spacehq.mc.protocol.data.game.ItemStack;
-import org.spacehq.mc.protocol.data.game.Position;
-import org.spacehq.mc.protocol.data.game.Rotation;
+import org.spacehq.mc.protocol.data.game.world.block.BlockState;
+import org.spacehq.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import org.spacehq.mc.protocol.data.game.entity.metadata.ItemStack;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Rotation;
 import org.spacehq.mc.protocol.data.game.chunk.BlockStorage;
 import org.spacehq.mc.protocol.data.game.chunk.Chunk;
 import org.spacehq.mc.protocol.data.game.chunk.Column;
 import org.spacehq.mc.protocol.data.game.chunk.NibbleArray3d;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.entity.MetadataType;
-import org.spacehq.mc.protocol.data.game.values.world.block.BlockFace;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.metadata.MetadataType;
+import org.spacehq.mc.protocol.data.game.world.block.BlockFace;
 import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.opennbt.NBTIO;
 import org.spacehq.opennbt.tag.builtin.CompoundTag;
@@ -54,22 +55,13 @@ public class NetUtil {
         }
     }
 
-    public static Position readPosition(NetInput in) throws IOException {
-        long val = in.readLong();
-
-        int x = (int) (val >> POSITION_X_SIZE);
-        int y = (int) ((val >> POSITION_Y_SIZE) & POSITION_Y_SHIFT);
-        int z = (int) ((val << POSITION_Z_SIZE) >> POSITION_Z_SIZE);
-
-        return new Position(x, y, z);
+    public static BlockState readBlockState(NetInput in) throws IOException {
+        int rawId = in.readVarInt();
+        return new BlockState(rawId >> 4, rawId & 0xF);
     }
 
-    public static void writePosition(NetOutput out, Position pos) throws IOException {
-        long x = pos.getX() & POSITION_WRITE_SHIFT;
-        long y = pos.getY() & POSITION_Y_SHIFT;
-        long z = pos.getZ() & POSITION_WRITE_SHIFT;
-
-        out.writeLong(x << POSITION_X_SIZE | y << POSITION_Y_SIZE | z);
+    public static void writeBlockState(NetOutput out, BlockState blockState) throws IOException {
+        out.writeVarInt((blockState.getId() << 4) | (blockState.getData() & 0xF));
     }
 
     public static ItemStack readItem(NetInput in) throws IOException {
@@ -90,6 +82,34 @@ public class NetUtil {
             out.writeShort(item.getData());
             writeNBT(out, item.getNBT());
         }
+    }
+
+    public static Position readPosition(NetInput in) throws IOException {
+        long val = in.readLong();
+
+        int x = (int) (val >> POSITION_X_SIZE);
+        int y = (int) ((val >> POSITION_Y_SIZE) & POSITION_Y_SHIFT);
+        int z = (int) ((val << POSITION_Z_SIZE) >> POSITION_Z_SIZE);
+
+        return new Position(x, y, z);
+    }
+
+    public static void writePosition(NetOutput out, Position pos) throws IOException {
+        long x = pos.getX() & POSITION_WRITE_SHIFT;
+        long y = pos.getY() & POSITION_Y_SHIFT;
+        long z = pos.getZ() & POSITION_WRITE_SHIFT;
+
+        out.writeLong(x << POSITION_X_SIZE | y << POSITION_Y_SIZE | z);
+    }
+
+    public static Rotation readRotation(NetInput in) throws IOException {
+        return new Rotation(in.readFloat(), in.readFloat(), in.readFloat());
+    }
+
+    public static void writeRotation(NetOutput out, Rotation rot) throws IOException {
+        out.writeFloat(rot.getPitch());
+        out.writeFloat(rot.getYaw());
+        out.writeFloat(rot.getRoll());
     }
 
     public static EntityMetadata[] readEntityMetadata(NetInput in) throws IOException {
@@ -122,7 +142,7 @@ public class NetUtil {
                     value = in.readBoolean();
                     break;
                 case ROTATION:
-                    value = new Rotation(in.readFloat(), in.readFloat(), in.readFloat());
+                    value = readRotation(in);
                     break;
                 case POSITION:
                     value = readPosition(in);
@@ -143,6 +163,9 @@ public class NetUtil {
                         value = in.readUUID();
                     }
 
+                    break;
+                case BLOCK_STATE:
+                    value = readBlockState(in);
                     break;
                 default:
                     throw new IOException("Unknown metadata type id: " + typeId);
@@ -181,10 +204,7 @@ public class NetUtil {
                     out.writeBoolean((Boolean) meta.getValue());
                     break;
                 case ROTATION:
-                    Rotation rot = (Rotation) meta.getValue();
-                    out.writeFloat(rot.getPitch());
-                    out.writeFloat(rot.getYaw());
-                    out.writeFloat(rot.getRoll());
+                    writeRotation(out, (Rotation) meta.getValue());
                     break;
                 case POSITION:
                     writePosition(out, (Position) meta.getValue());
@@ -205,6 +225,9 @@ public class NetUtil {
                         out.writeUUID((UUID) meta.getValue());
                     }
 
+                    break;
+                case BLOCK_STATE:
+                    writeBlockState(out, (BlockState) meta.getValue());
                     break;
                 default:
                     throw new IOException("Unknown metadata type: " + meta.getType());

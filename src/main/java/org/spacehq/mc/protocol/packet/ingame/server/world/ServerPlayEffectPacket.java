@@ -1,16 +1,16 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.Position;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.world.effect.BreakBlockEffectData;
-import org.spacehq.mc.protocol.data.game.values.world.effect.BreakPotionEffectData;
-import org.spacehq.mc.protocol.data.game.values.world.effect.HardLandingEffectData;
-import org.spacehq.mc.protocol.data.game.values.world.effect.ParticleEffect;
-import org.spacehq.mc.protocol.data.game.values.world.effect.RecordEffectData;
-import org.spacehq.mc.protocol.data.game.values.world.effect.SmokeEffectData;
-import org.spacehq.mc.protocol.data.game.values.world.effect.SoundEffect;
-import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffect;
-import org.spacehq.mc.protocol.data.game.values.world.effect.WorldEffectData;
+import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.world.effect.BreakBlockEffectData;
+import org.spacehq.mc.protocol.data.game.world.effect.BreakPotionEffectData;
+import org.spacehq.mc.protocol.data.game.world.effect.HardLandingEffectData;
+import org.spacehq.mc.protocol.data.game.world.effect.ParticleEffect;
+import org.spacehq.mc.protocol.data.game.world.effect.RecordEffectData;
+import org.spacehq.mc.protocol.data.game.world.effect.SmokeEffectData;
+import org.spacehq.mc.protocol.data.game.world.effect.SoundEffect;
+import org.spacehq.mc.protocol.data.game.world.effect.WorldEffect;
+import org.spacehq.mc.protocol.data.game.world.effect.WorldEffectData;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;

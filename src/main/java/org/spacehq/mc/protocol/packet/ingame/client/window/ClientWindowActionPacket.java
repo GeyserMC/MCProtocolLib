@@ -1,16 +1,16 @@
 package org.spacehq.mc.protocol.packet.ingame.client.window;
 
-import org.spacehq.mc.protocol.data.game.ItemStack;
-import org.spacehq.mc.protocol.data.game.values.MagicValues;
-import org.spacehq.mc.protocol.data.game.values.window.ClickItemParam;
-import org.spacehq.mc.protocol.data.game.values.window.CreativeGrabParam;
-import org.spacehq.mc.protocol.data.game.values.window.DropItemParam;
-import org.spacehq.mc.protocol.data.game.values.window.FillStackParam;
-import org.spacehq.mc.protocol.data.game.values.window.MoveToHotbarParam;
-import org.spacehq.mc.protocol.data.game.values.window.ShiftClickItemParam;
-import org.spacehq.mc.protocol.data.game.values.window.SpreadItemParam;
-import org.spacehq.mc.protocol.data.game.values.window.WindowAction;
-import org.spacehq.mc.protocol.data.game.values.window.WindowActionParam;
+import org.spacehq.mc.protocol.data.game.entity.metadata.ItemStack;
+import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.window.ClickItemParam;
+import org.spacehq.mc.protocol.data.game.window.CreativeGrabParam;
+import org.spacehq.mc.protocol.data.game.window.DropItemParam;
+import org.spacehq.mc.protocol.data.game.window.FillStackParam;
+import org.spacehq.mc.protocol.data.game.window.MoveToHotbarParam;
+import org.spacehq.mc.protocol.data.game.window.ShiftClickItemParam;
+import org.spacehq.mc.protocol.data.game.window.SpreadItemParam;
+import org.spacehq.mc.protocol.data.game.window.WindowAction;
+import org.spacehq.mc.protocol.data.game.window.WindowActionParam;
 import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
