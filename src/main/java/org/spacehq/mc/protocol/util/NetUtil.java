@@ -29,7 +29,9 @@ public class NetUtil {
         if(b == 0) {
             return null;
         } else {
-            return (CompoundTag) NBTIO.readTag(new DataInputStream(new NetInputStream(in, b)));
+            try(DataInputStream stream = new DataInputStream(new NetInputStream(in, b))) {
+                return (CompoundTag) NBTIO.readTag(stream);
+            }
         }
     }
 
@@ -37,7 +39,9 @@ public class NetUtil {
         if(tag == null) {
             out.writeByte(0);
         } else {
-            NBTIO.writeTag(new DataOutputStream(new NetOutputStream(out)), tag);
+            try(DataOutputStream stream = new DataOutputStream(new NetOutputStream(out))) {
+                NBTIO.writeTag(stream, tag);
+            }
         }
     }
 
