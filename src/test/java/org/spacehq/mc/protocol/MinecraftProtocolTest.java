@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
 import org.spacehq.mc.protocol.data.game.world.block.BlockChangeRecord;
+import org.spacehq.mc.protocol.data.game.world.block.BlockState;
 import org.spacehq.mc.protocol.data.message.TextMessage;
 import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
@@ -117,7 +118,7 @@ public class MinecraftProtocolTest {
 
     @Test
     public void testBlockBreak() throws IOException {
-        BlockChangeRecord record = new BlockChangeRecord(new Position(1, 61, -1), 3, 2);
+        BlockChangeRecord record = new BlockChangeRecord(new Position(1, 61, -1), new BlockState(3, 2));
         ServerBlockChangePacket packet = writeAndRead(new ServerBlockChangePacket(record));
 
         assertPosition(packet.getRecord().getPosition(), 1, 61, -1);
