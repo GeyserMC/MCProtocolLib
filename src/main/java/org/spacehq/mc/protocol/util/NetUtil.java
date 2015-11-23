@@ -179,8 +179,8 @@ public class NetUtil {
             for(int ind = 0; ind < 16; ind++) {
                 if((data.getMask() & 1 << ind) != 0) {
                     if(pass == 0) {
-                        // Block length + Blocklight length
-                        expected += (4096 * 2) + 2048;
+                        // Block length + Blocklight + Skylight length
+                        expected += (4096 * 2) + 2048 + 2048;
                     }
 
                     if(pass == 1) {
