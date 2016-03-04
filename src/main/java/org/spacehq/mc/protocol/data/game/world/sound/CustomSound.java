@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.data.game.world;
+package org.spacehq.mc.protocol.data.game.world.sound;
 
 public class CustomSound implements Sound {
 

@@ -14,18 +14,20 @@ public class ServerEntityEffectPacket implements Packet {
     private Effect effect;
     private int amplifier;
     private int duration;
-    private boolean hideParticles;
+    private boolean ambient;
+    private boolean showParticles;
 
     @SuppressWarnings("unused")
     private ServerEntityEffectPacket() {
     }
 
-    public ServerEntityEffectPacket(int entityId, Effect effect, int amplifier, int duration, boolean hideParticles) {
+    public ServerEntityEffectPacket(int entityId, Effect effect, int amplifier, int duration, boolean ambient, boolean showParticles) {
         this.entityId = entityId;
         this.effect = effect;
         this.amplifier = amplifier;
         this.duration = duration;
-        this.hideParticles = hideParticles;
+        this.ambient = ambient;
+        this.showParticles = showParticles;
     }
 
     public int getEntityId() {
@@ -44,8 +46,12 @@ public class ServerEntityEffectPacket implements Packet {
         return this.duration;
     }
 
-    public boolean getHideParticles() {
-        return this.hideParticles;
+    public boolean isAmbient() {
+        return this.ambient;
+    }
+
+    public boolean getShowParticles() {
+        return this.showParticles;
     }
 
     @Override
@@ -54,7 +60,10 @@ public class ServerEntityEffectPacket implements Packet {
         this.effect = MagicValues.key(Effect.class, in.readByte());
         this.amplifier = in.readByte();
         this.duration = in.readVarInt();
-        this.hideParticles = in.readBoolean();
+
+        int flags = in.readByte();
+        this.ambient = (flags & 0x1) == 0x1;
+        this.showParticles = (flags & 0x2) == 0x2;
     }
 
     @Override
@@ -63,7 +72,17 @@ public class ServerEntityEffectPacket implements Packet {
         out.writeByte(MagicValues.value(Integer.class, this.effect));
         out.writeByte(this.amplifier);
         out.writeVarInt(this.duration);
-        out.writeBoolean(this.hideParticles);
+
+        int flags = 0;
+        if(this.ambient) {
+            flags |= 0x1;
+        }
+
+        if(this.showParticles) {
+            flags |= 0x2;
+        }
+
+        out.writeByte(flags);
     }
 
     @Override

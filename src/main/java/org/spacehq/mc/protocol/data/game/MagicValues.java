@@ -1,27 +1,27 @@
 package org.spacehq.mc.protocol.data.game;
 
-import org.spacehq.mc.protocol.data.game.entity.player.Hand;
-import org.spacehq.mc.protocol.data.game.entity.type.PaintingType;
-import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeType;
 import org.spacehq.mc.protocol.data.game.entity.Effect;
 import org.spacehq.mc.protocol.data.game.entity.EntityStatus;
 import org.spacehq.mc.protocol.data.game.entity.EquipmentSlot;
-import org.spacehq.mc.protocol.data.game.entity.type.GlobalEntityType;
-import org.spacehq.mc.protocol.data.game.entity.type.object.HangingDirection;
-import org.spacehq.mc.protocol.data.game.entity.metadata.MetadataType;
-import org.spacehq.mc.protocol.data.game.entity.type.object.MinecartType;
-import org.spacehq.mc.protocol.data.game.entity.type.MobType;
+import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeType;
 import org.spacehq.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import org.spacehq.mc.protocol.data.game.entity.attribute.ModifierType;
-import org.spacehq.mc.protocol.data.game.entity.type.object.ObjectType;
+import org.spacehq.mc.protocol.data.game.entity.metadata.MetadataType;
 import org.spacehq.mc.protocol.data.game.entity.player.Animation;
 import org.spacehq.mc.protocol.data.game.entity.player.BlockBreakStage;
 import org.spacehq.mc.protocol.data.game.entity.player.CombatState;
 import org.spacehq.mc.protocol.data.game.entity.player.GameMode;
+import org.spacehq.mc.protocol.data.game.entity.player.Hand;
 import org.spacehq.mc.protocol.data.game.entity.player.InteractAction;
 import org.spacehq.mc.protocol.data.game.entity.player.PlayerAction;
 import org.spacehq.mc.protocol.data.game.entity.player.PlayerState;
 import org.spacehq.mc.protocol.data.game.entity.player.PositionElement;
+import org.spacehq.mc.protocol.data.game.entity.type.GlobalEntityType;
+import org.spacehq.mc.protocol.data.game.entity.type.MobType;
+import org.spacehq.mc.protocol.data.game.entity.type.PaintingType;
+import org.spacehq.mc.protocol.data.game.entity.type.object.HangingDirection;
+import org.spacehq.mc.protocol.data.game.entity.type.object.MinecartType;
+import org.spacehq.mc.protocol.data.game.entity.type.object.ObjectType;
 import org.spacehq.mc.protocol.data.game.scoreboard.CollisionRule;
 import org.spacehq.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import org.spacehq.mc.protocol.data.game.scoreboard.ObjectiveAction;
@@ -47,7 +47,6 @@ import org.spacehq.mc.protocol.data.game.window.property.AnvilProperty;
 import org.spacehq.mc.protocol.data.game.window.property.BrewingStandProperty;
 import org.spacehq.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import org.spacehq.mc.protocol.data.game.window.property.FurnaceProperty;
-import org.spacehq.mc.protocol.data.game.world.GenericSound;
 import org.spacehq.mc.protocol.data.game.world.Particle;
 import org.spacehq.mc.protocol.data.game.world.WorldBorderAction;
 import org.spacehq.mc.protocol.data.game.world.WorldType;
@@ -64,6 +63,9 @@ import org.spacehq.mc.protocol.data.game.world.effect.SmokeEffectData;
 import org.spacehq.mc.protocol.data.game.world.effect.SoundEffect;
 import org.spacehq.mc.protocol.data.game.world.notify.ClientNotification;
 import org.spacehq.mc.protocol.data.game.world.notify.DemoMessageValue;
+import org.spacehq.mc.protocol.data.game.world.sound.GenericSound;
+import org.spacehq.mc.protocol.data.game.world.sound.SoundCategory;
+import org.spacehq.mc.protocol.data.game.world.sound.SoundEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,6 +99,15 @@ public class MagicValues {
         register(ModifierType.SLOW_POTION_MODIFIER, UUID.fromString("7107DE5E-7CE8-4030-940E-514C1F160890"));
         register(ModifierType.STRENGTH_POTION_MODIFIER, UUID.fromString("648D7064-6A60-4F59-8ABE-C2C23A6DD7A9"));
         register(ModifierType.WEAKNESS_POTION_MODIFIER, UUID.fromString("22653B89-116E-49DC-9B6B-9971489B5BE5"));
+        register(ModifierType.HASTE_POTION_MODIFIER, UUID.fromString("AF8B6E3F-3328-4C0A-AA36-5BA2BB9DBEF3"));
+        register(ModifierType.MINING_FATIGUE_POTION_MODIFIER, UUID.fromString("55FCED67-E92A-486E-9800-B47F202C4386"));
+        register(ModifierType.LUCK_POTION_MODIFIER, UUID.fromString("03C3C89D-7037-4B42-869F-B146BCB64D2E"));
+        register(ModifierType.UNLUCK_POTION_MODIFIER, UUID.fromString("CC5AF142-2BD2-4215-B636-2605AED11727"));
+        register(ModifierType.BOOTS_MODIFIER, UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"));
+        register(ModifierType.LEGGINGS_MODIFIER, UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"));
+        register(ModifierType.CHESTPLATE_MODIFIER, UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"));
+        register(ModifierType.HELMET_MODIFIER, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
+        register(ModifierType.COVERED_ARMOR_BONUS, UUID.fromString("7E0292F2-9434-48D5-A29F-9583AF7DF27F"));
 
         register(ModifierOperation.ADD, 0);
         register(ModifierOperation.ADD_MULTIPLIED, 1);
@@ -926,6 +937,12 @@ public class MagicValues {
         register(BossBarColor.PURPLE, 5);
         register(BossBarColor.WHITE, 6);
 
+        register(BossBarDivision.NONE, 0);
+        register(BossBarDivision.NOTCHES_6, 1);
+        register(BossBarDivision.NOTCHES_10, 2);
+        register(BossBarDivision.NOTCHES_12, 3);
+        register(BossBarDivision.NOTCHES_20, 4);
+
         register(BlockFace.DOWN, 0);
         register(BlockFace.UP, 1);
         register(BlockFace.NORTH, 2);
@@ -939,6 +956,22 @@ public class MagicValues {
         register(EquipmentSlot.LEGGINGS, 3);
         register(EquipmentSlot.CHESTPLATE, 4);
         register(EquipmentSlot.HELMET, 5);
+
+        register(SoundCategory.MASTER, 0);
+        register(SoundCategory.MUSIC, 1);
+        register(SoundCategory.RECORD, 2);
+        register(SoundCategory.WEATHER, 3);
+        register(SoundCategory.BLOCK, 4);
+        register(SoundCategory.HOSTILE, 5);
+        register(SoundCategory.NEUTRAL, 6);
+        register(SoundCategory.PLAYER, 7);
+        register(SoundCategory.AMBIENT, 8);
+        register(SoundCategory.VOICE, 9);
+
+        int soundEventId = 0;
+        for(SoundEvent event : SoundEvent.values()) {
+            register(event, soundEventId++);
+        }
     }
 
     private static void register(Enum<?> key, Object value) {
@@ -962,7 +995,7 @@ public class MagicValues {
             }
         }
 
-        throw new IllegalArgumentException("Value " + value + " has no mapping for key class " + keyType + ".");
+        throw new IllegalArgumentException("Value " + value + " has no mapping for key class " + keyType.getName() + ".");
     }
 
     @SuppressWarnings("unchecked")
@@ -988,7 +1021,7 @@ public class MagicValues {
             }
         }
 
-        throw new IllegalArgumentException("Key " + key + " has no mapping for value class " + valueType + ".");
+        throw new IllegalArgumentException("Key " + key + " has no mapping for value class " + valueType.getName() + ".");
     }
 
 }

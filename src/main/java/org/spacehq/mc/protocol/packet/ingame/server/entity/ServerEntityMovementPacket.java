@@ -59,9 +59,9 @@ public class ServerEntityMovementPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         if(this.pos) {
-            this.moveX = in.readByte() / 32D;
-            this.moveY = in.readByte() / 32D;
-            this.moveZ = in.readByte() / 32D;
+            this.moveX = in.readShort() / 4096D;
+            this.moveY = in.readShort() / 4096D;
+            this.moveZ = in.readShort() / 4096D;
         }
 
         if(this.rot) {
@@ -78,9 +78,9 @@ public class ServerEntityMovementPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         if(this.pos) {
-            out.writeByte((int) (this.moveX * 32));
-            out.writeByte((int) (this.moveY * 32));
-            out.writeByte((int) (this.moveZ * 32));
+            out.writeShort((int) (this.moveX * 4096));
+            out.writeShort((int) (this.moveY * 4096));
+            out.writeShort((int) (this.moveZ * 4096));
         }
 
         if(this.rot) {

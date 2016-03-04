@@ -12,6 +12,10 @@ public class AttributeModifier {
     private ModifierOperation operation;
 
     public AttributeModifier(ModifierType type, double amount, ModifierOperation operation) {
+        if(type == ModifierType.DYNAMIC) {
+            throw new IllegalArgumentException("Cannot create a dynamic-typed modifier without a UUID.");
+        }
+
         this.type = type;
         this.uuid = MagicValues.value(UUID.class, type);
         this.amount = amount;
@@ -19,7 +23,12 @@ public class AttributeModifier {
     }
 
     public AttributeModifier(UUID uuid, double amount, ModifierOperation operation) {
-        this.type = MagicValues.key(ModifierType.class, uuid);
+        try {
+            this.type = MagicValues.key(ModifierType.class, uuid);
+        } catch(IllegalArgumentException e) {
+            this.type = ModifierType.DYNAMIC;
+        }
+
         this.uuid = uuid;
         this.amount = amount;
         this.operation = operation;
@@ -50,7 +59,7 @@ public class AttributeModifier {
 
         if(Double.compare(that.amount, amount) != 0) return false;
         if(operation != that.operation) return false;
-        if(type != that.type) return false;
+        if(!type.equals(that.type)) return false;
 
         return true;
     }

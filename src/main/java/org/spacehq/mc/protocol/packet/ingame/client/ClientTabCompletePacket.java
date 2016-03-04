@@ -11,37 +11,49 @@ import java.io.IOException;
 public class ClientTabCompletePacket implements Packet {
 
     private String text;
-    private Position position;
+    private boolean assumeCommand;
+    private Position lookingAt;
 
     @SuppressWarnings("unused")
     private ClientTabCompletePacket() {
     }
 
-    public ClientTabCompletePacket(String text) {
-        this(text, null);
+    public ClientTabCompletePacket(String text, boolean assumeCommand) {
+        this(text, assumeCommand, null);
     }
 
-    public ClientTabCompletePacket(String text, Position position) {
+    public ClientTabCompletePacket(String text, boolean assumeCommand, Position lookingAt) {
         this.text = text;
-        this.position = position;
+        this.assumeCommand = assumeCommand;
+        this.lookingAt = lookingAt;
     }
 
     public String getText() {
         return this.text;
     }
 
+    public boolean getAssumeCommand() {
+        return this.assumeCommand;
+    }
+
+    public Position getLookingAt() {
+        return this.lookingAt;
+    }
+
     @Override
     public void read(NetInput in) throws IOException {
         this.text = in.readString();
-        this.position = in.readBoolean() ? NetUtil.readPosition(in) : null;
+        this.assumeCommand = in.readBoolean();
+        this.lookingAt = in.readBoolean() ? NetUtil.readPosition(in) : null;
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.text);
-        out.writeBoolean(this.position != null);
-        if(this.position != null) {
-            NetUtil.writePosition(out, this.position);
+        out.writeBoolean(this.assumeCommand);
+        out.writeBoolean(this.lookingAt != null);
+        if(this.lookingAt != null) {
+            NetUtil.writePosition(out, this.lookingAt);
         }
     }
 

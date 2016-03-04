@@ -49,18 +49,18 @@ public class ServerSpawnExpOrbPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.x = in.readInt() / 32D;
-        this.y = in.readInt() / 32D;
-        this.z = in.readInt() / 32D;
+        this.x = in.readDouble();
+        this.y = in.readDouble();
+        this.z = in.readDouble();
         this.exp = in.readShort();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        out.writeInt((int) (this.x * 32));
-        out.writeInt((int) (this.y * 32));
-        out.writeInt((int) (this.z * 32));
+        out.writeDouble(this.x);
+        out.writeDouble(this.y);
+        out.writeDouble(this.z);
         out.writeShort(this.exp);
     }
 

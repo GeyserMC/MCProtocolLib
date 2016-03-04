@@ -12,15 +12,15 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
 
     private int entityId;
     private GlobalEntityType type;
-    private int x;
-    private int y;
-    private int z;
+    private double x;
+    private double y;
+    private double z;
 
     @SuppressWarnings("unused")
     private ServerSpawnGlobalEntityPacket() {
     }
 
-    public ServerSpawnGlobalEntityPacket(int entityId, GlobalEntityType type, int x, int y, int z) {
+    public ServerSpawnGlobalEntityPacket(int entityId, GlobalEntityType type, double x, double y, double z) {
         this.entityId = entityId;
         this.type = type;
         this.x = x;
@@ -36,15 +36,15 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
         return this.type;
     }
 
-    public int getX() {
+    public double getX() {
         return this.x;
     }
 
-    public int getY() {
+    public double getY() {
         return this.y;
     }
 
-    public int getZ() {
+    public double getZ() {
         return this.z;
     }
 
@@ -52,18 +52,18 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.type = MagicValues.key(GlobalEntityType.class, in.readByte());
-        this.x = in.readInt();
-        this.y = in.readInt();
-        this.z = in.readInt();
+        this.x = in.readDouble();
+        this.y = in.readDouble();
+        this.z = in.readDouble();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeByte(MagicValues.value(Integer.class, this.type));
-        out.writeInt(this.x);
-        out.writeInt(this.y);
-        out.writeInt(this.z);
+        out.writeDouble(this.x);
+        out.writeDouble(this.y);
+        out.writeDouble(this.z);
     }
 
     @Override

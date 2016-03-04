@@ -2,6 +2,7 @@ package org.spacehq.mc.protocol.packet.ingame.server;
 
 import org.spacehq.mc.protocol.data.game.BossBarAction;
 import org.spacehq.mc.protocol.data.game.BossBarColor;
+import org.spacehq.mc.protocol.data.game.BossBarDivision;
 import org.spacehq.mc.protocol.data.game.MagicValues;
 import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.packetlib.io.NetInput;
@@ -18,22 +19,24 @@ public class ServerBossBarPacket implements Packet {
     private Message title;
     private float health;
     private BossBarColor color;
-    private int dividers;
-    private int flags;
+    private BossBarDivision division;
+    private boolean darkenSky;
+    private boolean dragonBar;
 
     @SuppressWarnings("unused")
     private ServerBossBarPacket() {
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title, float health, BossBarColor color, int dividers, int flags) {
+    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title, float health, BossBarColor color, BossBarDivision division, boolean darkenSky, boolean dragonBar) {
         this.uuid = uuid;
         this.action = BossBarAction.ADD;
 
         this.title = title;
         this.health = health;
         this.color = color;
-        this.dividers = dividers;
-        this.flags = flags;
+        this.division = division;
+        this.darkenSky = darkenSky;
+        this.dragonBar = dragonBar;
     }
 
     public ServerBossBarPacket(UUID uuid) {
@@ -55,19 +58,20 @@ public class ServerBossBarPacket implements Packet {
         this.title = title;
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, BossBarColor color, int dividers) {
+    public ServerBossBarPacket(UUID uuid, BossBarAction action, BossBarColor color, BossBarDivision division) {
         this.uuid = uuid;
         this.action = BossBarAction.UPDATE_STYLE;
 
         this.color = color;
-        this.dividers = dividers;
+        this.division = division;
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, int flags) {
+    public ServerBossBarPacket(UUID uuid, BossBarAction action, boolean darkenSky, boolean dragonBar) {
         this.uuid = uuid;
         this.action = BossBarAction.UPDATE_FLAGS;
 
-        this.flags = flags;
+        this.darkenSky = darkenSky;
+        this.dragonBar = dragonBar;
     }
 
     public UUID getUUID() {
@@ -90,12 +94,16 @@ public class ServerBossBarPacket implements Packet {
         return this.color;
     }
 
-    public int getDividers() {
-        return this.dividers;
+    public BossBarDivision getDivision() {
+        return this.division;
     }
 
-    public int getFlags() {
-        return this.flags;
+    public boolean getDarkenSky() {
+        return this.darkenSky;
+    }
+
+    public boolean isDragonBar() {
+        return this.dragonBar;
     }
 
     @Override
@@ -113,11 +121,13 @@ public class ServerBossBarPacket implements Packet {
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
             this.color = MagicValues.key(BossBarColor.class, in.readVarInt());
-            this.dividers = in.readVarInt();
+            this.division = MagicValues.key(BossBarDivision.class, in.readVarInt());
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {
-            this.flags = in.readUnsignedByte();
+            int flags = in.readUnsignedByte();
+            this.darkenSky = (flags & 0x1) == 0x1;
+            this.dragonBar = (flags & 0x2) == 0x2;
         }
     }
 
@@ -136,11 +146,20 @@ public class ServerBossBarPacket implements Packet {
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
             out.writeVarInt(MagicValues.value(Integer.class, this.color));
-            out.writeVarInt(this.dividers);
+            out.writeVarInt(MagicValues.value(Integer.class, this.division));
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {
-            out.writeByte(this.flags);
+            int flags = 0;
+            if(this.darkenSky) {
+                flags |= 0x1;
+            }
+
+            if(this.dragonBar) {
+                flags |= 0x2;
+            }
+
+            out.writeByte(flags);
         }
     }
 

@@ -19,22 +19,20 @@ public class ServerPlayerPositionRotationPacket implements Packet {
     private float yaw;
     private float pitch;
     private List<PositionElement> relative;
+    private int teleportId;
 
     @SuppressWarnings("unused")
     private ServerPlayerPositionRotationPacket() {
     }
 
-    public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch) {
-        this(x, y, z, yaw, pitch, new PositionElement[0]);
-    }
-
-    public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, PositionElement... relative) {
+    public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, int teleportId, PositionElement... relative) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
-        this.relative = Arrays.asList(relative);
+        this.teleportId = teleportId;
+        this.relative = Arrays.asList(relative != null ? relative : new PositionElement[0]);
     }
 
     public double getX() {
@@ -61,6 +59,10 @@ public class ServerPlayerPositionRotationPacket implements Packet {
         return this.relative;
     }
 
+    public int getTeleportId() {
+        return this.teleportId;
+    }
+
     @Override
     public void read(NetInput in) throws IOException {
         this.x = in.readDouble();
@@ -76,6 +78,8 @@ public class ServerPlayerPositionRotationPacket implements Packet {
                 this.relative.add(element);
             }
         }
+
+        this.teleportId = in.readVarInt();
     }
 
     @Override
@@ -91,6 +95,7 @@ public class ServerPlayerPositionRotationPacket implements Packet {
         }
 
         out.writeByte(flags);
+        out.writeVarInt(this.teleportId);
     }
 
     @Override

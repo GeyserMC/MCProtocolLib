@@ -1,19 +1,17 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
 import org.spacehq.mc.protocol.data.game.MagicValues;
-import org.spacehq.mc.protocol.data.game.world.sound.CustomSound;
-import org.spacehq.mc.protocol.data.game.world.sound.GenericSound;
-import org.spacehq.mc.protocol.data.game.world.sound.Sound;
 import org.spacehq.mc.protocol.data.game.world.sound.SoundCategory;
+import org.spacehq.mc.protocol.data.game.world.sound.SoundEvent;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerPlaySoundPacket implements Packet {
+public class ServerPlaySoundEventPacket implements Packet {
 
-    private Sound sound;
+    private SoundEvent sound;
     private SoundCategory category;
     private double x;
     private double y;
@@ -22,10 +20,10 @@ public class ServerPlaySoundPacket implements Packet {
     private float pitch;
 
     @SuppressWarnings("unused")
-    private ServerPlaySoundPacket() {
+    private ServerPlaySoundEventPacket() {
     }
 
-    public ServerPlaySoundPacket(Sound sound, SoundCategory category, double x, double y, double z, float volume, float pitch) {
+    public ServerPlaySoundEventPacket(SoundEvent sound, SoundCategory category, double x, double y, double z, float volume, float pitch) {
         this.sound = sound;
         this.category = category;
         this.x = x;
@@ -35,7 +33,7 @@ public class ServerPlaySoundPacket implements Packet {
         this.pitch = pitch;
     }
 
-    public Sound getSound() {
+    public SoundEvent getSound() {
         return this.sound;
     }
 
@@ -65,37 +63,24 @@ public class ServerPlaySoundPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        String value = in.readString();
-        try {
-            this.sound = MagicValues.key(GenericSound.class, value);
-        } catch(IllegalArgumentException e) {
-            this.sound = new CustomSound(value);
-        }
-
+        this.sound = MagicValues.key(SoundEvent.class, in.readVarInt());
         this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
         this.x = in.readInt() / 8D;
         this.y = in.readInt() / 8D;
         this.z = in.readInt() / 8D;
         this.volume = in.readFloat();
-        this.pitch = in.readUnsignedByte() / 63f;
+        this.pitch = in.readUnsignedByte() / 63.5f;
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        String value = "";
-        if(this.sound instanceof CustomSound) {
-            value = ((CustomSound) this.sound).getName();
-        } else if(this.sound instanceof GenericSound) {
-            value = MagicValues.value(String.class, (GenericSound) this.sound);
-        }
-
-        out.writeString(value);
+        out.writeVarInt(MagicValues.value(Integer.class, this.sound));
         out.writeVarInt(MagicValues.value(Integer.class, this.category));
         out.writeInt((int) (this.x * 8));
         out.writeInt((int) (this.y * 8));
         out.writeInt((int) (this.z * 8));
         out.writeFloat(this.volume);
-        int pitch = (int) (this.pitch * 63);
+        int pitch = (int) (this.pitch * 63.5f);
         if(pitch > 255) {
             pitch = 255;
         }

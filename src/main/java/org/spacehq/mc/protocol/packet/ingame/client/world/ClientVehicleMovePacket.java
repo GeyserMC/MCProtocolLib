@@ -1,4 +1,4 @@
-package org.spacehq.mc.protocol.packet.ingame.server.entity;
+package org.spacehq.mc.protocol.packet.ingame.client.world;
 
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
@@ -6,32 +6,23 @@ import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerEntityTeleportPacket implements Packet {
-
-    private int entityId;
+public class ClientVehicleMovePacket implements Packet {
     private double x;
     private double y;
     private double z;
     private float yaw;
     private float pitch;
-    private boolean onGround;
 
     @SuppressWarnings("unused")
-    private ServerEntityTeleportPacket() {
+    private ClientVehicleMovePacket() {
     }
 
-    public ServerEntityTeleportPacket(int entityId, double x, double y, double z, float yaw, float pitch, boolean onGround) {
-        this.entityId = entityId;
+    public ClientVehicleMovePacket(double x, double y, double z, float yaw, float pitch) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
-        this.onGround = onGround;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
     }
 
     public double getX() {
@@ -54,35 +45,26 @@ public class ServerEntityTeleportPacket implements Packet {
         return this.pitch;
     }
 
-    public boolean isOnGround() {
-        return this.onGround;
-    }
-
     @Override
     public void read(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
-        this.yaw = in.readByte() * 360 / 256f;
-        this.pitch = in.readByte() * 360 / 256f;
-        this.onGround = in.readBoolean();
+        this.yaw = in.readFloat();
+        this.pitch = in.readFloat();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
-        out.writeByte((byte) (this.yaw * 256 / 360));
-        out.writeByte((byte) (this.pitch * 256 / 360));
-        out.writeBoolean(this.onGround);
+        out.writeFloat(this.yaw);
+        out.writeFloat(this.pitch);
     }
 
     @Override
     public boolean isPriority() {
         return false;
     }
-
 }

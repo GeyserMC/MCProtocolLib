@@ -71,9 +71,9 @@ public class ServerSpawnPlayerPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.x = in.readInt() / 32D;
-        this.y = in.readInt() / 32D;
-        this.z = in.readInt() / 32D;
+        this.x = in.readDouble();
+        this.y = in.readDouble();
+        this.z = in.readDouble();
         this.yaw = in.readByte() * 360 / 256f;
         this.pitch = in.readByte() * 360 / 256f;
         this.metadata = NetUtil.readEntityMetadata(in);
@@ -83,9 +83,9 @@ public class ServerSpawnPlayerPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeUUID(this.uuid);
-        out.writeInt((int) (this.x * 32));
-        out.writeInt((int) (this.y * 32));
-        out.writeInt((int) (this.z * 32));
+        out.writeDouble(this.x);
+        out.writeDouble(this.y);
+        out.writeDouble(this.z);
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         NetUtil.writeEntityMetadata(out, this.metadata);
