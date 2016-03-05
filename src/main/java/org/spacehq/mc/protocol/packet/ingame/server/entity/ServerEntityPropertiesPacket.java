@@ -2,7 +2,7 @@ package org.spacehq.mc.protocol.packet.ingame.server.entity;
 
 import org.spacehq.mc.protocol.data.game.entity.attribute.Attribute;
 import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeModifier;
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeType;
 import org.spacehq.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import org.spacehq.packetlib.io.NetInput;

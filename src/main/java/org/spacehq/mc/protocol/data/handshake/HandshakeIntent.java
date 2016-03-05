@@ -1,8 +1,6 @@
-package org.spacehq.mc.protocol.data.game;
+package org.spacehq.mc.protocol.data.handshake;
 
 public enum HandshakeIntent {
-
     STATUS,
     LOGIN;
-
 }

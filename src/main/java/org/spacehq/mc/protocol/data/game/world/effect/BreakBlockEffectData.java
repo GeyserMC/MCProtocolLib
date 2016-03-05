@@ -1,32 +1,25 @@
 package org.spacehq.mc.protocol.data.game.world.effect;
 
+import org.spacehq.mc.protocol.data.game.world.block.BlockState;
+
 public class BreakBlockEffectData implements WorldEffectData {
+    private BlockState blockState;
 
-    private int blockId;
-
-    public BreakBlockEffectData(int blockId) {
-        this.blockId = blockId;
+    public BreakBlockEffectData(BlockState blockState) {
+        this.blockState = blockState;
     }
 
-    public int getBlockId() {
-        return this.blockId;
+    public BlockState getBlockState() {
+        return this.blockState;
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        BreakBlockEffectData that = (BreakBlockEffectData) o;
-
-        if(blockId != that.blockId) return false;
-
-        return true;
+        return o instanceof BreakBlockEffectData && this.blockState.equals(((BreakBlockEffectData) o).blockState);
     }
 
     @Override
     public int hashCode() {
-        return blockId;
+        return this.blockState.hashCode();
     }
-
 }

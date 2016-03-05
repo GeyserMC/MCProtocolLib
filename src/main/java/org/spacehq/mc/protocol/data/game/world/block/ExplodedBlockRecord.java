@@ -25,7 +25,7 @@ public class ExplodedBlockRecord {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof ExplodedBlockRecord && this.x == ((ExplodedBlockRecord) o).x && this.y == ((ExplodedBlockRecord) o).y && this.z == ((ExplodedBlockRecord) o).z);
+        return o instanceof ExplodedBlockRecord && this.x == ((ExplodedBlockRecord) o).x && this.y == ((ExplodedBlockRecord) o).y && this.z == ((ExplodedBlockRecord) o).z;
     }
 
     @Override

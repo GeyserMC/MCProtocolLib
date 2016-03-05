@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageStyle implements Cloneable {
-
     private static final MessageStyle DEFAULT = new MessageStyle();
 
     private ChatColor color = ChatColor.WHITE;
@@ -103,30 +102,17 @@ public class MessageStyle implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        MessageStyle style = (MessageStyle) o;
-
-        if(click != null ? !click.equals(style.click) : style.click != null) return false;
-        if(color != style.color) return false;
-        if(!formats.equals(style.formats)) return false;
-        if(hover != null ? !hover.equals(style.hover) : style.hover != null) return false;
-        if(insertion != null ? !insertion.equals(style.insertion) : style.insertion != null) return false;
-        if(!parent.equals(style.parent)) return false;
-
-        return true;
+        return o instanceof MessageStyle && this.color == ((MessageStyle) o).color && this.formats.equals(((MessageStyle) o).formats) && (this.click != null ? this.click.equals(((MessageStyle) o).click) : ((MessageStyle) o).click == null) && (this.hover != null ? this.hover.equals(((MessageStyle) o).hover) : ((MessageStyle) o).hover == null) && (this.insertion != null ? this.insertion.equals(((MessageStyle) o).insertion) : ((MessageStyle) o).insertion == null) && this.parent.equals(((MessageStyle) o).parent);
     }
 
     @Override
     public int hashCode() {
-        int result = color != null ? color.hashCode() : 0;
-        result = 31 * result + formats.hashCode();
-        result = 31 * result + (click != null ? click.hashCode() : 0);
-        result = 31 * result + (hover != null ? hover.hashCode() : 0);
-        result = 31 * result + (insertion != null ? insertion.hashCode() : 0);
-        result = 31 * result + parent.hashCode();
+        int result = this.color.hashCode();
+        result = 31 * result + this.formats.hashCode();
+        result = 31 * result + (this.click != null ? this.click.hashCode() : 0);
+        result = 31 * result + (this.hover != null ? this.hover.hashCode() : 0);
+        result = 31 * result + (this.insertion != null ? this.insertion.hashCode() : 0);
+        result = 31 * result + this.parent.hashCode();
         return result;
     }
-
 }

@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import java.util.Arrays;
 
 public class TranslationMessage extends Message {
-
     private String translationKey;
     private Message translationParams[];
 
@@ -73,24 +72,14 @@ public class TranslationMessage extends Message {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-        if(!super.equals(o)) return false;
-
-        TranslationMessage that = (TranslationMessage) o;
-
-        if(!translationKey.equals(that.translationKey)) return false;
-        if(!Arrays.equals(translationParams, that.translationParams)) return false;
-
-        return true;
+        return o instanceof TranslationMessage && super.equals(o) && this.translationKey.equals(((TranslationMessage) o).translationKey) && Arrays.deepEquals(this.translationParams, ((TranslationMessage) o).translationParams);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + translationKey.hashCode();
-        result = 31 * result + Arrays.hashCode(translationParams);
+        result = 31 * result + this.translationKey.hashCode();
+        result = 31 * result + Arrays.deepHashCode(this.translationParams);
         return result;
     }
-
 }

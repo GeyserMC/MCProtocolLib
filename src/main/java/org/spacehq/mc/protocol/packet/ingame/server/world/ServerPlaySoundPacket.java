@@ -1,8 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
+import org.spacehq.mc.protocol.data.game.world.sound.BuiltinSound;
 import org.spacehq.mc.protocol.data.game.world.sound.CustomSound;
-import org.spacehq.mc.protocol.data.game.world.sound.GenericSound;
 import org.spacehq.mc.protocol.data.game.world.sound.Sound;
 import org.spacehq.mc.protocol.data.game.world.sound.SoundCategory;
 import org.spacehq.packetlib.io.NetInput;
@@ -67,7 +67,7 @@ public class ServerPlaySoundPacket implements Packet {
     public void read(NetInput in) throws IOException {
         String value = in.readString();
         try {
-            this.sound = MagicValues.key(GenericSound.class, value);
+            this.sound = MagicValues.key(BuiltinSound.class, value);
         } catch(IllegalArgumentException e) {
             this.sound = new CustomSound(value);
         }
@@ -85,8 +85,8 @@ public class ServerPlaySoundPacket implements Packet {
         String value = "";
         if(this.sound instanceof CustomSound) {
             value = ((CustomSound) this.sound).getName();
-        } else if(this.sound instanceof GenericSound) {
-            value = MagicValues.value(String.class, (GenericSound) this.sound);
+        } else if(this.sound instanceof BuiltinSound) {
+            value = MagicValues.value(String.class, (BuiltinSound) this.sound);
         }
 
         out.writeString(value);

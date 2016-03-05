@@ -1,17 +1,17 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.world.sound.SoundCategory;
-import org.spacehq.mc.protocol.data.game.world.sound.SoundEvent;
+import org.spacehq.mc.protocol.data.game.world.sound.BuiltinSound;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerPlaySoundEventPacket implements Packet {
+public class ServerPlayBuiltinSoundPacket implements Packet {
 
-    private SoundEvent sound;
+    private BuiltinSound sound;
     private SoundCategory category;
     private double x;
     private double y;
@@ -20,10 +20,10 @@ public class ServerPlaySoundEventPacket implements Packet {
     private float pitch;
 
     @SuppressWarnings("unused")
-    private ServerPlaySoundEventPacket() {
+    private ServerPlayBuiltinSoundPacket() {
     }
 
-    public ServerPlaySoundEventPacket(SoundEvent sound, SoundCategory category, double x, double y, double z, float volume, float pitch) {
+    public ServerPlayBuiltinSoundPacket(BuiltinSound sound, SoundCategory category, double x, double y, double z, float volume, float pitch) {
         this.sound = sound;
         this.category = category;
         this.x = x;
@@ -33,7 +33,7 @@ public class ServerPlaySoundEventPacket implements Packet {
         this.pitch = pitch;
     }
 
-    public SoundEvent getSound() {
+    public BuiltinSound getSound() {
         return this.sound;
     }
 
@@ -63,7 +63,7 @@ public class ServerPlaySoundEventPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.sound = MagicValues.key(SoundEvent.class, in.readVarInt());
+        this.sound = MagicValues.key(BuiltinSound.class, in.readVarInt());
         this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
         this.x = in.readInt() / 8D;
         this.y = in.readInt() / 8D;

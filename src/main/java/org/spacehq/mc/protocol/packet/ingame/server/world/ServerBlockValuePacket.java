@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
 import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.world.block.value.BlockValue;
 import org.spacehq.mc.protocol.data.game.world.block.value.BlockValueType;
 import org.spacehq.mc.protocol.data.game.world.block.value.ChestValue;

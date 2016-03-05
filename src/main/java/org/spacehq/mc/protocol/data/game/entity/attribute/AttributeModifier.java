@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.data.game.entity.attribute;
 
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 
 import java.util.UUID;
 

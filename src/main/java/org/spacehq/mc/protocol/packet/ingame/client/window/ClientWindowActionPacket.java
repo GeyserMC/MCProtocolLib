@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.client.window;
 
 import org.spacehq.mc.protocol.data.game.entity.metadata.ItemStack;
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.window.ClickItemParam;
 import org.spacehq.mc.protocol.data.game.window.CreativeGrabParam;
 import org.spacehq.mc.protocol.data.game.window.DropItemParam;

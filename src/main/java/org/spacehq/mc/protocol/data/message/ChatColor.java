@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.message;
 
 public enum ChatColor {
-
     BLACK,
     DARK_BLUE,
     DARK_GREEN,
@@ -35,5 +34,4 @@ public enum ChatColor {
 
         return null;
     }
-
 }

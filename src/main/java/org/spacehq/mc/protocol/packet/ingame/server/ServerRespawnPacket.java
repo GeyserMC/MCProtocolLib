@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.player.GameMode;
 import org.spacehq.mc.protocol.data.game.setting.Difficulty;
 import org.spacehq.mc.protocol.data.game.world.WorldType;

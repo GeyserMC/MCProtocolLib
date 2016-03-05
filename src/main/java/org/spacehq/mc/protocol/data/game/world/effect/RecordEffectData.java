@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.effect;
 
 public class RecordEffectData implements WorldEffectData {
-
     private int recordId;
 
     public RecordEffectData(int recordId) {
@@ -14,19 +13,11 @@ public class RecordEffectData implements WorldEffectData {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        RecordEffectData that = (RecordEffectData) o;
-
-        if(recordId != that.recordId) return false;
-
-        return true;
+        return o instanceof RecordEffectData && this.recordId == ((RecordEffectData) o).recordId;
     }
 
     @Override
     public int hashCode() {
-        return recordId;
+        return this.recordId;
     }
-
 }

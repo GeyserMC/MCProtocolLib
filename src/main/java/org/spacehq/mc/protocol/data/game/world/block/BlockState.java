@@ -19,7 +19,7 @@ public class BlockState {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof BlockState && this.id == ((BlockState) o).id && this.data == ((BlockState) o).data);
+        return o instanceof BlockState && this.id == ((BlockState) o).id && this.data == ((BlockState) o).data;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.message;
 
 public enum HoverAction {
-
     SHOW_TEXT,
     SHOW_ITEM,
     SHOW_ACHIEVEMENT,
@@ -22,5 +21,4 @@ public enum HoverAction {
 
         return null;
     }
-
 }

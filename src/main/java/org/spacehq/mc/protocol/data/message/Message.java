@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Message implements Cloneable {
-
     private MessageStyle style = new MessageStyle();
     private List<Message> extra = new ArrayList<Message>();
 
@@ -77,21 +76,13 @@ public abstract class Message implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        Message message = (Message) o;
-
-        if(!extra.equals(message.extra)) return false;
-        if(!style.equals(message.style)) return false;
-
-        return true;
+        return o instanceof Message && this.style.equals(((Message) o).style) && this.extra.equals(((Message) o).extra);
     }
 
     @Override
     public int hashCode() {
-        int result = style.hashCode();
-        result = 31 * result + extra.hashCode();
+        int result = this.style.hashCode();
+        result = 31 * result + this.extra.hashCode();
         return result;
     }
 
@@ -218,5 +209,4 @@ public abstract class Message implements Cloneable {
             throw new IllegalArgumentException("Cannot convert " + e.getClass().getSimpleName() + " to a message.");
         }
     }
-
 }

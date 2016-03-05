@@ -5,7 +5,6 @@ import org.spacehq.mc.auth.data.GameProfile;
 import java.util.Arrays;
 
 public class PlayerInfo {
-
     private int max;
     private int online;
     private GameProfile players[];
@@ -30,24 +29,14 @@ public class PlayerInfo {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        PlayerInfo that = (PlayerInfo) o;
-
-        if(max != that.max) return false;
-        if(online != that.online) return false;
-        if(!Arrays.equals(players, that.players)) return false;
-
-        return true;
+        return o instanceof PlayerInfo && this.max == ((PlayerInfo) o).max && this.online == ((PlayerInfo) o).online && Arrays.deepEquals(this.players, ((PlayerInfo) o).players);
     }
 
     @Override
     public int hashCode() {
-        int result = max;
-        result = 31 * result + online;
-        result = 31 * result + Arrays.hashCode(players);
+        int result = this.max;
+        result = 31 * result + this.online;
+        result = 31 * result + Arrays.deepHashCode(this.players);
         return result;
     }
-
 }

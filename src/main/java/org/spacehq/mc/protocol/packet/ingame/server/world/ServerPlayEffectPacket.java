@@ -1,10 +1,11 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.game.world.block.BlockState;
+import org.spacehq.mc.protocol.data.game.world.effect.BonemealGrowEffectData;
 import org.spacehq.mc.protocol.data.game.world.effect.BreakBlockEffectData;
 import org.spacehq.mc.protocol.data.game.world.effect.BreakPotionEffectData;
-import org.spacehq.mc.protocol.data.game.world.effect.HardLandingEffectData;
 import org.spacehq.mc.protocol.data.game.world.effect.ParticleEffect;
 import org.spacehq.mc.protocol.data.game.world.effect.RecordEffectData;
 import org.spacehq.mc.protocol.data.game.world.effect.SmokeEffectData;
@@ -67,16 +68,16 @@ public class ServerPlayEffectPacket implements Packet {
 
         this.position = NetUtil.readPosition(in);
         int value = in.readInt();
-        if(this.effect == SoundEffect.PLAY_RECORD) {
+        if(this.effect == SoundEffect.RECORD) {
             this.data = new RecordEffectData(value);
         } else if(this.effect == ParticleEffect.SMOKE) {
             this.data = MagicValues.key(SmokeEffectData.class, value);
         } else if(this.effect == ParticleEffect.BREAK_BLOCK) {
-            this.data = new BreakBlockEffectData(value);
+            this.data = new BreakBlockEffectData(new BlockState(value & 4095, (value >> 12) & 255));
         } else if(this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
             this.data = new BreakPotionEffectData(value);
-        } else if(this.effect == ParticleEffect.HARD_LANDING_DUST) {
-            this.data = new HardLandingEffectData(value);
+        } else if(this.effect == ParticleEffect.BONEMEAL_GROW) {
+            this.data = new BonemealGrowEffectData(value);
         }
 
         this.broadcast = in.readBoolean();
@@ -99,11 +100,11 @@ public class ServerPlayEffectPacket implements Packet {
         } else if(this.data instanceof SmokeEffectData) {
             value = MagicValues.value(Integer.class, (SmokeEffectData) this.data);
         } else if(this.data instanceof BreakBlockEffectData) {
-            value = ((BreakBlockEffectData) this.data).getBlockId();
+            value = (((BreakBlockEffectData) this.data).getBlockState().getId() & 4095) | ((((BreakBlockEffectData) this.data).getBlockState().getData() & 255) << 12);
         } else if(this.data instanceof BreakPotionEffectData) {
             value = ((BreakPotionEffectData) this.data).getPotionId();
-        } else if(this.data instanceof HardLandingEffectData) {
-            value = ((HardLandingEffectData) this.data).getDamagingDistance();
+        } else if(this.data instanceof BonemealGrowEffectData) {
+            value = ((BonemealGrowEffectData) this.data).getParticleCount();
         }
 
         out.writeInt(value);

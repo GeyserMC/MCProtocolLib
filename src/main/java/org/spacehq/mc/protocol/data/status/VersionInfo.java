@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.status;
 
 public class VersionInfo {
-
     private String name;
     private int protocol;
 
@@ -20,22 +19,13 @@ public class VersionInfo {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        VersionInfo that = (VersionInfo) o;
-
-        if(protocol != that.protocol) return false;
-        if(!name.equals(that.name)) return false;
-
-        return true;
+        return o instanceof VersionInfo && this.name.equals(((VersionInfo) o).name) && this.protocol == ((VersionInfo) o).protocol;
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + protocol;
+        int result = this.name.hashCode();
+        result = 31 * result + this.protocol;
         return result;
     }
-
 }

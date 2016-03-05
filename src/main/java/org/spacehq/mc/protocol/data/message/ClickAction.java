@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.message;
 
 public enum ClickAction {
-
     RUN_COMMAND,
     SUGGEST_COMMAND,
     OPEN_URL,
@@ -22,5 +21,4 @@ public enum ClickAction {
 
         return null;
     }
-
 }

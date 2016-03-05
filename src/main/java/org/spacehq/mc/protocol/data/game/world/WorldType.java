@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world;
 
 public enum WorldType {
-
     DEFAULT,
     FLAT,
     LARGE_BIOMES,
@@ -9,5 +8,4 @@ public enum WorldType {
     CUSTOMIZED,
     DEBUG,
     DEFAULT_1_1;
-
 }

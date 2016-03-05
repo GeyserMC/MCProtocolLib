@@ -1,5 +1,7 @@
 package org.spacehq.mc.protocol.data.game.chunk;
 
+import org.spacehq.mc.protocol.data.game.world.block.BlockState;
+import org.spacehq.mc.protocol.util.NetUtil;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 
@@ -9,16 +11,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class BlockStorage {
+    private static final BlockState AIR = new BlockState(0, 0);
+
     private int bitsPerEntry;
 
-    private List<Integer> states;
+    private List<BlockState> states;
     private FlexibleStorage storage;
 
     public BlockStorage() {
         this.bitsPerEntry = 4;
 
-        this.states = new ArrayList<Integer>();
-        this.states.add(0);
+        this.states = new ArrayList<BlockState>();
+        this.states.add(AIR);
 
         this.storage = new FlexibleStorage(this.bitsPerEntry, 4096);
     }
@@ -26,10 +30,10 @@ public class BlockStorage {
     public BlockStorage(NetInput in) throws IOException {
         this.bitsPerEntry = in.readUnsignedByte();
 
-        this.states = new ArrayList<Integer>();
+        this.states = new ArrayList<BlockState>();
         int stateCount = in.readVarInt();
         for(int i = 0; i < stateCount; i++) {
-            this.states.add(in.readVarInt());
+            this.states.add(NetUtil.readBlockState(in));
         }
 
         this.storage = new FlexibleStorage(this.bitsPerEntry, in.readLongs(in.readVarInt()));
@@ -39,8 +43,8 @@ public class BlockStorage {
         out.writeByte(this.bitsPerEntry);
 
         out.writeVarInt(this.states.size());
-        for(int state : this.states) {
-            out.writeVarInt(state);
+        for(BlockState state : this.states) {
+            NetUtil.writeBlockState(out, state);
         }
 
         long[] data = this.storage.getData();
@@ -52,7 +56,7 @@ public class BlockStorage {
         return this.bitsPerEntry;
     }
 
-    public List<Integer> getStates() {
+    public List<BlockState> getStates() {
         return Collections.unmodifiableList(this.states);
     }
 
@@ -60,21 +64,21 @@ public class BlockStorage {
         return this.storage;
     }
 
-    public int get(int x, int y, int z) {
+    public BlockState get(int x, int y, int z) {
         int id = this.storage.get(index(x, y, z));
-        return this.bitsPerEntry <= 8 ? (id >= 0 && id < this.states.size() ? this.states.get(id) : 0) : id;
+        return this.bitsPerEntry <= 8 ? (id >= 0 && id < this.states.size() ? this.states.get(id) : AIR) : rawToState(id);
     }
 
-    public void set(int x, int y, int z, int state) {
-        int id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : state;
+    public void set(int x, int y, int z, BlockState state) {
+        int id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : stateToRaw(state);
         if(id == -1) {
             this.states.add(state);
             if(this.states.size() > 1 << this.bitsPerEntry) {
                 this.bitsPerEntry++;
 
-                List<Integer> oldStates = this.states;
+                List<BlockState> oldStates = this.states;
                 if(this.bitsPerEntry > 8) {
-                    oldStates = new ArrayList<Integer>(this.states);
+                    oldStates = new ArrayList<BlockState>(this.states);
                     this.states.clear();
                     this.bitsPerEntry = 13;
                 }
@@ -82,12 +86,11 @@ public class BlockStorage {
                 FlexibleStorage oldStorage = this.storage;
                 this.storage = new FlexibleStorage(this.bitsPerEntry, this.storage.getSize());
                 for(int index = 0; index < this.storage.getSize(); index++) {
-                    int value = oldStorage.get(index);
-                    this.storage.set(index, this.bitsPerEntry <= 8 ? value : oldStates.get(value));
+                    this.storage.set(index, this.bitsPerEntry <= 8 ? oldStorage.get(index) : stateToRaw(oldStates.get(index)));
                 }
             }
 
-            id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : state;
+            id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : stateToRaw(state);
         }
 
         this.storage.set(index(x, y, z), id);
@@ -107,9 +110,17 @@ public class BlockStorage {
         return y << 8 | z << 4 | x;
     }
 
+    private static BlockState rawToState(int raw) {
+        return new BlockState(raw >> 4, raw & 0xF);
+    }
+
+    private static int stateToRaw(BlockState state) {
+        return (state.getId() << 4) | (state.getData() & 0xF);
+    }
+
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof BlockStorage && this.bitsPerEntry == ((BlockStorage) o).bitsPerEntry && this.states.equals(((BlockStorage) o).states) && this.storage.equals(((BlockStorage) o).storage));
+        return o instanceof BlockStorage && this.bitsPerEntry == ((BlockStorage) o).bitsPerEntry && this.states.equals(((BlockStorage) o).states) && this.storage.equals(((BlockStorage) o).storage);
     }
 
     @Override

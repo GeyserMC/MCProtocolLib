@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.map;
 
 public class MapPlayer {
-
     private int centerX;
     private int centerZ;
     private int iconSize;
@@ -32,26 +31,15 @@ public class MapPlayer {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        MapPlayer mapPlayer = (MapPlayer) o;
-
-        if(centerX != mapPlayer.centerX) return false;
-        if(centerZ != mapPlayer.centerZ) return false;
-        if(iconRotation != mapPlayer.iconRotation) return false;
-        if(iconSize != mapPlayer.iconSize) return false;
-
-        return true;
+        return o instanceof MapPlayer && this.centerX == ((MapPlayer) o).centerX && this.centerZ == ((MapPlayer) o).centerZ && this.iconSize == ((MapPlayer) o).iconSize && this.iconRotation == ((MapPlayer) o).iconRotation;
     }
 
     @Override
     public int hashCode() {
-        int result = centerX;
-        result = 31 * result + centerZ;
-        result = 31 * result + iconSize;
-        result = 31 * result + iconRotation;
+        int result = this.centerX;
+        result = 31 * result + this.centerZ;
+        result = 31 * result + this.iconRotation;
+        result = 31 * result + this.iconSize;
         return result;
     }
-
 }

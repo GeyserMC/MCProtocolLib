@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.message;
 
 public enum ChatFormat {
-
     BOLD,
     UNDERLINED,
     STRIKETHROUGH,
@@ -23,5 +22,4 @@ public enum ChatFormat {
 
         return null;
     }
-
 }

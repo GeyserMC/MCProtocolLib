@@ -1,6 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity.spawn;
 
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.type.GlobalEntityType;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;

@@ -18,7 +18,6 @@ import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
 public class CryptUtil {
-
     public static SecretKey generateSharedKey() {
         try {
             KeyGenerator gen = KeyGenerator.getInstance("AES");
@@ -89,5 +88,4 @@ public class CryptUtil {
             throw new Error("Failed to encrypt data.", e);
         }
     }
-
 }

@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.notify;
 
 public class ThunderStrengthValue implements ClientNotificationValue {
-
     private float strength;
 
     public ThunderStrengthValue(float strength) {
@@ -22,19 +21,11 @@ public class ThunderStrengthValue implements ClientNotificationValue {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        ThunderStrengthValue that = (ThunderStrengthValue) o;
-
-        if(Float.compare(that.strength, strength) != 0) return false;
-
-        return true;
+        return o instanceof ThunderStrengthValue && Float.compare(this.strength, ((ThunderStrengthValue) o).strength) == 0;
     }
 
     @Override
     public int hashCode() {
-        return (strength != +0.0f ? Float.floatToIntBits(strength) : 0);
+        return this.strength != +0.0f ? Float.floatToIntBits(this.strength) : 0;
     }
-
 }

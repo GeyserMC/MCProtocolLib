@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.client;
 
 import org.spacehq.mc.protocol.data.game.entity.player.Hand;
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.setting.ChatVisibility;
 import org.spacehq.mc.protocol.data.game.setting.SkinPart;
 import org.spacehq.packetlib.io.NetInput;

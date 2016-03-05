@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.block.value;
 
 public class ChestValue implements BlockValue {
-
     private int viewers;
 
     public ChestValue(int viewers) {
@@ -14,19 +13,11 @@ public class ChestValue implements BlockValue {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        ChestValue that = (ChestValue) o;
-
-        if(viewers != that.viewers) return false;
-
-        return true;
+        return o instanceof ChestValue && this.viewers == ((ChestValue) o).viewers;
     }
 
     @Override
     public int hashCode() {
-        return viewers;
+        return this.viewers;
     }
-
 }

@@ -55,26 +55,15 @@ public class PlayerListEntry {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        PlayerListEntry entry = (PlayerListEntry) o;
-
-        if(ping != entry.ping) return false;
-        if(displayName != null ? !displayName.equals(entry.displayName) : entry.displayName != null) return false;
-        if(gameMode != entry.gameMode) return false;
-        if(!profile.equals(entry.profile)) return false;
-
-        return true;
+        return o instanceof PlayerListEntry && this.profile.equals(((PlayerListEntry) o).profile) && this.gameMode == ((PlayerListEntry) o).gameMode && this.ping == ((PlayerListEntry) o).ping && (this.displayName != null ? this.displayName.equals(((PlayerListEntry) o).displayName) : ((PlayerListEntry) o).displayName == null);
     }
 
     @Override
     public int hashCode() {
-        int result = profile.hashCode();
-        result = 31 * result + (gameMode != null ? gameMode.hashCode() : 0);
-        result = 31 * result + ping;
-        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
+        int result = this.profile.hashCode();
+        result = 31 * result + (this.gameMode != null ? this.gameMode.hashCode() : 0);
+        result = 31 * result + this.ping;
+        result = 31 * result + (this.displayName != null ? this.displayName.hashCode() : 0);
         return result;
     }
-
 }

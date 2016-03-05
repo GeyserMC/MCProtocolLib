@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.sound;
 
 public class CustomSound implements Sound {
-
     private String name;
 
     public CustomSound(String name) {
@@ -14,19 +13,11 @@ public class CustomSound implements Sound {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        CustomSound that = (CustomSound) o;
-
-        if(!name.equals(that.name)) return false;
-
-        return true;
+        return o instanceof CustomSound && this.name.equals(((CustomSound) o).name);
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return this.name.hashCode();
     }
-
 }

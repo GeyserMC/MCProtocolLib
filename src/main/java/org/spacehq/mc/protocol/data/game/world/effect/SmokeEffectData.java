@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.effect;
 
 public enum SmokeEffectData implements WorldEffectData {
-
     SOUTH_EAST,
     SOUTH,
     SOUTH_WEST,
@@ -11,5 +10,4 @@ public enum SmokeEffectData implements WorldEffectData {
     NORTH_EAST,
     NORTH,
     NORTH_WEST;
-
 }

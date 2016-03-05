@@ -5,7 +5,5 @@ import org.spacehq.packetlib.Session;
 
 
 public interface ServerInfoHandler {
-
     public void handle(Session session, ServerStatusInfo info);
-
 }

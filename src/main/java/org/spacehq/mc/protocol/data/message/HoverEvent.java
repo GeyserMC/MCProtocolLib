@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.message;
 
 public class HoverEvent implements Cloneable {
-
     private HoverAction action;
     private Message value;
 
@@ -25,22 +24,13 @@ public class HoverEvent implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        HoverEvent that = (HoverEvent) o;
-
-        if(action != that.action) return false;
-        if(!value.equals(that.value)) return false;
-
-        return true;
+        return o instanceof HoverEvent && this.action == ((HoverEvent) o).action && this.value.equals(((HoverEvent) o).value);
     }
 
     @Override
     public int hashCode() {
-        int result = action.hashCode();
-        result = 31 * result + value.hashCode();
+        int result = this.action.hashCode();
+        result = 31 * result + this.value.hashCode();
         return result;
     }
-
 }

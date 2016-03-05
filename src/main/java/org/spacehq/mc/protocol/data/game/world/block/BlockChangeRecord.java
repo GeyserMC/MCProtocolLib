@@ -21,7 +21,7 @@ public class BlockChangeRecord {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof BlockChangeRecord && this.position.equals(((BlockChangeRecord) o).position) && this.block.equals(((BlockChangeRecord) o).block));
+        return o instanceof BlockChangeRecord && this.position.equals(((BlockChangeRecord) o).position) && this.block.equals(((BlockChangeRecord) o).block);
     }
 
     @Override

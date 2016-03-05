@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.notify;
 
 public class RainStrengthValue implements ClientNotificationValue {
-
     private float strength;
 
     public RainStrengthValue(float strength) {
@@ -22,19 +21,11 @@ public class RainStrengthValue implements ClientNotificationValue {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        RainStrengthValue that = (RainStrengthValue) o;
-
-        if(Float.compare(that.strength, strength) != 0) return false;
-
-        return true;
+        return o instanceof RainStrengthValue && Float.compare(this.strength, ((RainStrengthValue) o).strength) == 0;
     }
 
     @Override
     public int hashCode() {
-        return (strength != +0.0f ? Float.floatToIntBits(strength) : 0);
+        return this.strength != +0.0f ? Float.floatToIntBits(this.strength) : 0;
     }
-
 }

@@ -9,7 +9,7 @@ import org.spacehq.mc.protocol.data.game.chunk.BlockStorage;
 import org.spacehq.mc.protocol.data.game.chunk.Chunk;
 import org.spacehq.mc.protocol.data.game.chunk.Column;
 import org.spacehq.mc.protocol.data.game.chunk.NibbleArray3d;
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.metadata.MetadataType;
 import org.spacehq.mc.protocol.data.game.world.block.BlockFace;
 import org.spacehq.mc.protocol.data.message.Message;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class NetUtil {
-
     private static final int POSITION_X_SIZE = 38;
     private static final int POSITION_Y_SIZE = 26;
     private static final int POSITION_Z_SIZE = 38;
@@ -327,5 +326,4 @@ public class NetUtil {
             this.out.writeByte(b);
         }
     }
-
 }

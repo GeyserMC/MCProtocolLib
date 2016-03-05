@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.world.block.value;
 
 public class NoteBlockValue implements BlockValue {
-
     private int pitch;
 
     public NoteBlockValue(int pitch) {
@@ -18,19 +17,11 @@ public class NoteBlockValue implements BlockValue {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        NoteBlockValue that = (NoteBlockValue) o;
-
-        if(pitch != that.pitch) return false;
-
-        return true;
+        return o instanceof NoteBlockValue && this.pitch == ((NoteBlockValue) o).pitch;
     }
 
     @Override
     public int hashCode() {
-        return pitch;
+        return this.pitch;
     }
-
 }

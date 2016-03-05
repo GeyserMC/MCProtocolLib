@@ -5,7 +5,6 @@ import org.spacehq.mc.protocol.data.message.Message;
 import java.awt.image.BufferedImage;
 
 public class ServerStatusInfo {
-
     private VersionInfo version;
     private PlayerInfo players;
     private Message description;
@@ -36,26 +35,15 @@ public class ServerStatusInfo {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        ServerStatusInfo that = (ServerStatusInfo) o;
-
-        if(!description.equals(that.description)) return false;
-        if(icon != null ? !icon.equals(that.icon) : that.icon != null) return false;
-        if(!players.equals(that.players)) return false;
-        if(!version.equals(that.version)) return false;
-
-        return true;
+        return o instanceof ServerStatusInfo && this.version.equals(((ServerStatusInfo) o).version) && this.players.equals(((ServerStatusInfo) o).players) && this.description.equals(((ServerStatusInfo) o).description) && (this.icon != null ? this.icon.equals(((ServerStatusInfo) o).icon) : ((ServerStatusInfo) o).icon == null);
     }
 
     @Override
     public int hashCode() {
-        int result = version.hashCode();
-        result = 31 * result + players.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + (icon != null ? icon.hashCode() : 0);
+        int result = this.version.hashCode();
+        result = 31 * result + this.players.hashCode();
+        result = 31 * result + this.description.hashCode();
+        result = 31 * result + (this.icon != null ? this.icon.hashCode() : 0);
         return result;
     }
-
 }

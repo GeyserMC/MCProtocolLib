@@ -1,10 +1,11 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
-import org.spacehq.mc.protocol.data.game.MagicValues;
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.player.GameMode;
 import org.spacehq.mc.protocol.data.game.world.notify.ClientNotification;
 import org.spacehq.mc.protocol.data.game.world.notify.ClientNotificationValue;
 import org.spacehq.mc.protocol.data.game.world.notify.DemoMessageValue;
+import org.spacehq.mc.protocol.data.game.world.notify.EnterCreditsValue;
 import org.spacehq.mc.protocol.data.game.world.notify.RainStrengthValue;
 import org.spacehq.mc.protocol.data.game.world.notify.ThunderStrengthValue;
 import org.spacehq.packetlib.io.NetInput;
@@ -43,6 +44,8 @@ public class ServerNotifyClientPacket implements Packet {
             this.value = MagicValues.key(GameMode.class, (int) value);
         } else if(this.notification == ClientNotification.DEMO_MESSAGE) {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
+        } else if(this.notification == ClientNotification.ENTER_CREDITS) {
+            this.value = MagicValues.key(EnterCreditsValue.class, (int) value);
         } else if(this.notification == ClientNotification.RAIN_STRENGTH) {
             this.value = new RainStrengthValue(value);
         } else if(this.notification == ClientNotification.THUNDER_STRENGTH) {
@@ -54,19 +57,11 @@ public class ServerNotifyClientPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeByte(MagicValues.value(Integer.class, this.notification));
         float value = 0;
-        if(this.value instanceof GameMode) {
+        if(this.value instanceof Enum<?>) {
             value = MagicValues.value(Integer.class, (Enum<?>) this.value);
-        }
-
-        if(this.value instanceof DemoMessageValue) {
-            value = MagicValues.value(Integer.class, (Enum<?>) this.value);
-        }
-
-        if(this.value instanceof RainStrengthValue) {
+        } else if(this.value instanceof RainStrengthValue) {
             value = ((RainStrengthValue) this.value).getStrength();
-        }
-
-        if(this.value instanceof ThunderStrengthValue) {
+        } else if(this.value instanceof ThunderStrengthValue) {
             value = ((ThunderStrengthValue) this.value).getStrength();
         }
 

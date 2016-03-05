@@ -103,7 +103,7 @@ import org.spacehq.mc.protocol.packet.ingame.server.world.ServerMultiBlockChange
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerNotifyClientPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerOpenTileEntityEditorPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
-import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundEventPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlayBuiltinSoundPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnParticlePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
@@ -137,7 +137,6 @@ import java.security.Key;
 import java.util.UUID;
 
 public class MinecraftProtocol extends PacketProtocol {
-
     private SubProtocol subProtocol = SubProtocol.HANDSHAKE;
     private PacketHeader header = new DefaultPacketHeader();
     private AESEncryption encrypt;
@@ -387,7 +386,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(68, ServerUpdateTimePacket.class);
         this.registerIncoming(69, ServerTitlePacket.class);
         this.registerIncoming(70, ServerUpdateSignPacket.class);
-        this.registerIncoming(71, ServerPlaySoundEventPacket.class);
+        this.registerIncoming(71, ServerPlayBuiltinSoundPacket.class);
         this.registerIncoming(72, ServerPlayerListDataPacket.class);
         this.registerIncoming(73, ServerEntityCollectItemPacket.class);
         this.registerIncoming(74, ServerEntityTeleportPacket.class);
@@ -529,7 +528,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(68, ServerUpdateTimePacket.class);
         this.registerOutgoing(69, ServerTitlePacket.class);
         this.registerOutgoing(70, ServerUpdateSignPacket.class);
-        this.registerOutgoing(71, ServerPlaySoundEventPacket.class);
+        this.registerOutgoing(71, ServerPlayBuiltinSoundPacket.class);
         this.registerOutgoing(72, ServerPlayerListDataPacket.class);
         this.registerOutgoing(73, ServerEntityCollectItemPacket.class);
         this.registerOutgoing(74, ServerEntityTeleportPacket.class);
@@ -552,5 +551,4 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0, StatusResponsePacket.class);
         this.registerOutgoing(1, StatusPongPacket.class);
     }
-
 }

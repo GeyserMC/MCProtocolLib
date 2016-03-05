@@ -1,5 +1,13 @@
-package org.spacehq.mc.protocol.data.game;
+package org.spacehq.mc.protocol.data;
 
+import org.spacehq.mc.protocol.data.game.BossBarAction;
+import org.spacehq.mc.protocol.data.game.BossBarColor;
+import org.spacehq.mc.protocol.data.game.BossBarDivision;
+import org.spacehq.mc.protocol.data.game.ClientRequest;
+import org.spacehq.mc.protocol.data.game.MessageType;
+import org.spacehq.mc.protocol.data.game.PlayerListEntryAction;
+import org.spacehq.mc.protocol.data.game.ResourcePackStatus;
+import org.spacehq.mc.protocol.data.game.TitleAction;
 import org.spacehq.mc.protocol.data.game.entity.Effect;
 import org.spacehq.mc.protocol.data.game.entity.EntityStatus;
 import org.spacehq.mc.protocol.data.game.entity.EquipmentSlot;
@@ -63,17 +71,19 @@ import org.spacehq.mc.protocol.data.game.world.effect.SmokeEffectData;
 import org.spacehq.mc.protocol.data.game.world.effect.SoundEffect;
 import org.spacehq.mc.protocol.data.game.world.notify.ClientNotification;
 import org.spacehq.mc.protocol.data.game.world.notify.DemoMessageValue;
-import org.spacehq.mc.protocol.data.game.world.sound.GenericSound;
+import org.spacehq.mc.protocol.data.game.world.notify.EnterCreditsValue;
+import org.spacehq.mc.protocol.data.game.world.sound.BuiltinSound;
 import org.spacehq.mc.protocol.data.game.world.sound.SoundCategory;
-import org.spacehq.mc.protocol.data.game.world.sound.SoundEvent;
+import org.spacehq.mc.protocol.data.handshake.HandshakeIntent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class MagicValues {
-
-    private static final Map<Enum<?>, Object> values = new HashMap<Enum<?>, Object>();
+    private static final Map<Enum<?>, List<Object>> values = new HashMap<Enum<?>, List<Object>>();
 
     static {
         register(AttributeType.MAX_HEALTH, "generic.maxHealth");
@@ -83,6 +93,7 @@ public class MagicValues {
         register(AttributeType.ATTACK_DAMAGE, "generic.attackDamage");
         register(AttributeType.ATTACK_SPEED, "generic.attackSpeed");
         register(AttributeType.ARMOR, "generic.armor");
+        register(AttributeType.LUCK, "generic.luck");
         register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jumpStrength");
         register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS_CHANCE, "zombie.spawnReinforcements");
 
@@ -478,6 +489,8 @@ public class MagicValues {
         register(UpdatedTileType.SKULL, 4);
         register(UpdatedTileType.FLOWER_POT, 5);
         register(UpdatedTileType.BANNER, 6);
+        register(UpdatedTileType.STRUCTURE_BLOCK, 7);
+        register(UpdatedTileType.END_GATEWAY, 8);
 
         register(ClientNotification.INVALID_BED, 0);
         register(ClientNotification.START_RAIN, 1);
@@ -488,11 +501,15 @@ public class MagicValues {
         register(ClientNotification.ARROW_HIT_PLAYER, 6);
         register(ClientNotification.RAIN_STRENGTH, 7);
         register(ClientNotification.THUNDER_STRENGTH, 8);
+        register(ClientNotification.AFFECTED_BY_ELDER_GUARDIAN, 10);
 
         register(DemoMessageValue.WELCOME, 0);
         register(DemoMessageValue.MOVEMENT_CONTROLS, 101);
         register(DemoMessageValue.JUMP_CONTROL, 102);
         register(DemoMessageValue.INVENTORY_CONTROL, 103);
+
+        register(EnterCreditsValue.SEEN_BEFORE, 0);
+        register(EnterCreditsValue.FIRST_TIME, 1);
 
         register(Achievement.OPEN_INVENTORY, "achievement.openInventory");
         register(Achievement.GET_WOOD, "achievement.mineWood");
@@ -598,210 +615,6 @@ public class MagicValues {
         register(Particle.DAMAGE_INDICATOR, 44);
         register(Particle.SWEEP_ATTACK, 45);
 
-        register(GenericSound.CLICK, "random.click");
-        register(GenericSound.FIZZ, "random.fizz");
-        register(GenericSound.FIRE_AMBIENT, "fire.fire");
-        register(GenericSound.IGNITE_FIRE, "fire.ignite");
-        register(GenericSound.WATER_AMBIENT, "liquid.water");
-        register(GenericSound.LAVA_AMBIENT, "liquid.lava");
-        register(GenericSound.LAVA_POP, "liquid.lavapop");
-        register(GenericSound.HARP, "note.harp");
-        register(GenericSound.BASS_DRUM, "note.bd");
-        register(GenericSound.SNARE_DRUM, "note.snare");
-        register(GenericSound.HI_HAT, "note.hat");
-        register(GenericSound.DOUBLE_BASS, "note.bassattack");
-        register(GenericSound.PISTON_EXTEND, "tile.piston.out");
-        register(GenericSound.PISTON_RETRACT, "tile.piston.in");
-        register(GenericSound.PORTAL_AMBIENT, "portal.portal");
-        register(GenericSound.TNT_PRIMED, "game.tnt.primed");
-        register(GenericSound.BOW_HIT, "random.bowhit");
-        register(GenericSound.COLLECT_ITEM, "random.pop");
-        register(GenericSound.COLLECT_EXP, "random.orb");
-        register(GenericSound.SUCCESSFUL_HIT, "random.successful_hit");
-        register(GenericSound.FIREWORK_BLAST, "fireworks.blast");
-        register(GenericSound.FIREWORK_LARGE_BLAST, "fireworks.largeBlast");
-        register(GenericSound.FIREWORK_FAR_BLAST, "fireworks.blast_far");
-        register(GenericSound.FIREWORK_FAR_LARGE_BLAST, "fireworks.largeBlast_far");
-        register(GenericSound.FIREWORK_TWINKLE, "fireworks.twinkle");
-        register(GenericSound.FIREWORK_FAR_TWINKLE, "fireworks.twinkle_far");
-        register(GenericSound.RAIN_AMBIENT, "ambient.weather.rain");
-        register(GenericSound.WITHER_SPAWN, "mob.wither.spawn");
-        register(GenericSound.ENDER_DRAGON_DEATH, "mob.enderdragon.end");
-        register(GenericSound.FIRE_PROJECTILE, "random.bow");
-        register(GenericSound.DOOR_OPEN, "random.door_open");
-        register(GenericSound.DOOR_CLOSE, "random.door_close");
-        register(GenericSound.GHAST_CHARGE, "mob.ghast.charge");
-        register(GenericSound.GHAST_FIRE, "mob.ghast.fireball");
-        register(GenericSound.POUND_WOODEN_DOOR, "mob.zombie.wood");
-        register(GenericSound.POUND_METAL_DOOR, "mob.zombie.metal");
-        register(GenericSound.BREAK_WOODEN_DOOR, "mob.zombie.woodbreak");
-        register(GenericSound.WITHER_SHOOT, "mob.wither.shoot");
-        register(GenericSound.BAT_TAKE_OFF, "mob.bat.takeoff");
-        register(GenericSound.INFECT_VILLAGER, "mob.zombie.infect");
-        register(GenericSound.DISINFECT_VILLAGER, "mob.zombie.unfect");
-        register(GenericSound.ANVIL_BREAK, "random.anvil_break");
-        register(GenericSound.ANVIL_USE, "random.anvil_use");
-        register(GenericSound.ANVIL_LAND, "random.anvil_land");
-        register(GenericSound.BREAK_SPLASH_POTION, "game.potion.smash");
-        register(GenericSound.THORNS_DAMAGE, "damage.thorns");
-        register(GenericSound.EXPLOSION, "random.explode");
-        register(GenericSound.CAVE_AMBIENT, "ambient.cave.cave");
-        register(GenericSound.OPEN_CHEST, "random.chestopen");
-        register(GenericSound.CLOSE_CHEST, "random.chestclosed");
-        register(GenericSound.DIG_STONE, "dig.stone");
-        register(GenericSound.DIG_WOOD, "dig.wood");
-        register(GenericSound.DIG_GRAVEL, "dig.gravel");
-        register(GenericSound.DIG_GRASS, "dig.grass");
-        register(GenericSound.DIG_CLOTH, "dig.cloth");
-        register(GenericSound.DIG_SAND, "dig.sand");
-        register(GenericSound.DIG_SNOW, "dig.snow");
-        register(GenericSound.DIG_GLASS, "dig.glass");
-        register(GenericSound.ANVIL_STEP, "step.anvil");
-        register(GenericSound.LADDER_STEP, "step.ladder");
-        register(GenericSound.STONE_STEP, "step.stone");
-        register(GenericSound.WOOD_STEP, "step.wood");
-        register(GenericSound.GRAVEL_STEP, "step.gravel");
-        register(GenericSound.GRASS_STEP, "step.grass");
-        register(GenericSound.CLOTH_STEP, "step.cloth");
-        register(GenericSound.SAND_STEP, "step.sand");
-        register(GenericSound.SNOW_STEP, "step.snow");
-        register(GenericSound.BURP, "random.burp");
-        register(GenericSound.SADDLE_HORSE, "mob.horse.leather");
-        register(GenericSound.ENDER_DRAGON_FLAP_WINGS, "mob.enderdragon.wings");
-        register(GenericSound.THUNDER_AMBIENT, "ambient.weather.thunder");
-        register(GenericSound.LAUNCH_FIREWORKS, "fireworks.launch");
-        register(GenericSound.CREEPER_PRIMED, "creeper.primed");
-        register(GenericSound.ENDERMAN_STARE, "mob.endermen.stare");
-        register(GenericSound.ENDERMAN_TELEPORT, "mob.endermen.portal");
-        register(GenericSound.IRON_GOLEM_THROW, "mob.irongolem.throw");
-        register(GenericSound.IRON_GOLEM_WALK, "mob.irongolem.walk");
-        register(GenericSound.ZOMBIE_PIGMAN_ANGRY, "mob.zombiepig.zpigangry");
-        register(GenericSound.SILVERFISH_STEP, "mob.silverfish.step");
-        register(GenericSound.SKELETON_STEP, "mob.skeleton.step");
-        register(GenericSound.SPIDER_STEP, "mob.spider.step");
-        register(GenericSound.ZOMBIE_STEP, "mob.zombie.step");
-        register(GenericSound.ZOMBIE_CURE, "mob.zombie.remedy");
-        register(GenericSound.CHICKEN_LAY_EGG, "mob.chicken.plop");
-        register(GenericSound.CHICKEN_STEP, "mob.chicken.step");
-        register(GenericSound.COW_STEP, "mob.cow.step");
-        register(GenericSound.HORSE_EATING, "eating");
-        register(GenericSound.HORSE_LAND, "mob.horse.land");
-        register(GenericSound.HORSE_WEAR_ARMOR, "mob.horse.armor");
-        register(GenericSound.HORSE_GALLOP, "mob.horse.gallop");
-        register(GenericSound.HORSE_BREATHE, "mob.horse.breathe");
-        register(GenericSound.HORSE_WOOD_STEP, "mob.horse.wood");
-        register(GenericSound.HORSE_SOFT_STEP, "mob.horse.soft");
-        register(GenericSound.HORSE_JUMP, "mob.horse.jump");
-        register(GenericSound.SHEAR_SHEEP, "mob.sheep.shear");
-        register(GenericSound.PIG_STEP, "mob.pig.step");
-        register(GenericSound.SHEEP_STEP, "mob.sheep.step");
-        register(GenericSound.VILLAGER_YES, "mob.villager.yes");
-        register(GenericSound.VILLAGER_NO, "mob.villager.no");
-        register(GenericSound.WOLF_STEP, "mob.wolf.step");
-        register(GenericSound.WOLF_SHAKE, "mob.wolf.shake");
-        register(GenericSound.DRINK, "random.drink");
-        register(GenericSound.EAT, "random.eat");
-        register(GenericSound.LEVEL_UP, "random.levelup");
-        register(GenericSound.FISH_HOOK_SPLASH, "random.splash");
-        register(GenericSound.ITEM_BREAK, "random.break");
-        register(GenericSound.SWIM, "game.neutral.swim");
-        register(GenericSound.SPLASH, "game.neutral.swim.splash");
-        register(GenericSound.HURT, "game.neutral.hurt");
-        register(GenericSound.DEATH, "game.neutral.die");
-        register(GenericSound.BIG_FALL, "game.neutral.hurt.fall.big");
-        register(GenericSound.SMALL_FALL, "game.neutral.hurt.fall.small");
-        register(GenericSound.MOB_SWIM, "game.hostile.swim");
-        register(GenericSound.MOB_SPLASH, "game.hostile.swim.splash");
-        register(GenericSound.PLAYER_SWIM, "game.player.swim");
-        register(GenericSound.PLAYER_SPLASH, "game.player.swim.splash");
-        register(GenericSound.ENDER_DRAGON_GROWL, "mob.enderdragon.growl");
-        register(GenericSound.WITHER_IDLE, "mob.wither.idle");
-        register(GenericSound.BLAZE_BREATHE, "mob.blaze.breathe");
-        register(GenericSound.ENDERMAN_SCREAM, "mob.endermen.scream");
-        register(GenericSound.ENDERMAN_IDLE, "mob.endermen.idle");
-        register(GenericSound.GHAST_MOAN, "mob.ghast.moan");
-        register(GenericSound.ZOMBIE_PIGMAN_IDLE, "mob.zombiepig.zpig");
-        register(GenericSound.SILVERFISH_IDLE, "mob.silverfish.say");
-        register(GenericSound.SKELETON_IDLE, "mob.skeleton.say");
-        register(GenericSound.SPIDER_IDLE, "mob.spider.say");
-        register(GenericSound.WITCH_IDLE, "mob.witch.idle");
-        register(GenericSound.ZOMBIE_IDLE, "mob.zombie.say");
-        register(GenericSound.BAT_IDLE, "mob.bat.idle");
-        register(GenericSound.CHICKEN_IDLE, "mob.chicken.say");
-        register(GenericSound.COW_IDLE, "mob.cow.say");
-        register(GenericSound.HORSE_IDLE, "mob.horse.idle");
-        register(GenericSound.DONKEY_IDLE, "mob.horse.donkey.idle");
-        register(GenericSound.ZOMBIE_HORSE_IDLE, "mob.horse.zombie.idle");
-        register(GenericSound.SKELETON_HORSE_IDLE, "mob.horse.skeleton.idle");
-        register(GenericSound.OCELOT_PURR, "mob.cat.purr");
-        register(GenericSound.OCELOT_PURR_MEOW, "mob.cat.purreow");
-        register(GenericSound.OCELOT_MEOW, "mob.cat.meow");
-        register(GenericSound.PIG_IDLE, "mob.pig.say");
-        register(GenericSound.SHEEP_IDLE, "mob.sheep.say");
-        register(GenericSound.VILLAGER_HAGGLE, "mob.villager.haggle");
-        register(GenericSound.VILLAGER_IDLE, "mob.villager.idle");
-        register(GenericSound.WOLF_GROWL, "mob.wolf.growl");
-        register(GenericSound.WOLF_PANT, "mob.wolf.panting");
-        register(GenericSound.WOLF_WHINE, "mob.wolf.whine");
-        register(GenericSound.WOLF_BARK, "mob.wolf.bark");
-        register(GenericSound.MOB_BIG_FALL, "game.hostile.hurt.fall.big");
-        register(GenericSound.MOB_SMALL_FALL, "game.hostile.hurt.fall.small");
-        register(GenericSound.PLAYER_BIG_FALL, "game.player.hurt.fall.big");
-        register(GenericSound.PLAYER_SMALL_FALL, "game.player.hurt.fall.small");
-        register(GenericSound.ENDER_DRAGON_HURT, "mob.enderdragon.hit");
-        register(GenericSound.WITHER_HURT, "mob.wither.hurt");
-        register(GenericSound.WITHER_DEATH, "mob.wither.death");
-        register(GenericSound.BLAZE_HURT, "mob.blaze.hit");
-        register(GenericSound.BLAZE_DEATH, "mob.blaze.death");
-        register(GenericSound.CREEPER_HURT, "mob.creeper.say");
-        register(GenericSound.CREEPER_DEATH, "mob.creeper.death");
-        register(GenericSound.ENDERMAN_HURT, "mob.endermen.hit");
-        register(GenericSound.ENDERMAN_DEATH, "mob.endermen.death");
-        register(GenericSound.GHAST_HURT, "mob.ghast.scream");
-        register(GenericSound.GHAST_DEATH, "mob.ghast.death");
-        register(GenericSound.IRON_GOLEM_HURT, "mob.irongolem.hit");
-        register(GenericSound.IRON_GOLEM_DEATH, "mob.irongolem.death");
-        register(GenericSound.MOB_HURT, "game.hostile.hurt");
-        register(GenericSound.MOB_DEATH, "game.hostile.die");
-        register(GenericSound.ZOMBIE_PIGMAN_HURT, "mob.zombiepig.zpighurt");
-        register(GenericSound.ZOMBIE_PIGMAN_DEATH, "mob.zombiepig.zpigdeath");
-        register(GenericSound.SILVERFISH_HURT, "mob.silverfish.hit");
-        register(GenericSound.SILVERFISH_DEATH, "mob.silverfish.kill");
-        register(GenericSound.SKELETON_HURT, "mob.skeleton.hurt");
-        register(GenericSound.SKELETON_DEATH, "mob.skeleton.death");
-        register(GenericSound.SLIME, "mob.slime.small");
-        register(GenericSound.BIG_SLIME, "mob.slime.big");
-        register(GenericSound.SPIDER_DEATH, "mob.spider.death");
-        register(GenericSound.WITCH_HURT, "mob.witch.hurt");
-        register(GenericSound.WITCH_DEATH, "mob.witch.death");
-        register(GenericSound.ZOMBIE_HURT, "mob.zombie.hurt");
-        register(GenericSound.ZOMBIE_DEATH, "mob.zombie.death");
-        register(GenericSound.PLAYER_HURT, "game.player.hurt");
-        register(GenericSound.PLAYER_DEATH, "game.player.die");
-        register(GenericSound.WOLF_HURT, "mob.wolf.hurt");
-        register(GenericSound.WOLF_DEATH, "mob.wolf.death");
-        register(GenericSound.VILLAGER_HURT, "mob.villager.hit");
-        register(GenericSound.VILLAGER_DEATH, "mob.villager.death");
-        register(GenericSound.PIG_DEATH, "mob.pig.death");
-        register(GenericSound.OCELOT_HURT, "mob.cat.hitt");
-        register(GenericSound.HORSE_HURT, "mob.horse.hit");
-        register(GenericSound.DONKEY_HURT, "mob.horse.donkey.hit");
-        register(GenericSound.ZOMBIE_HORSE_HURT, "mob.horse.zombie.hit");
-        register(GenericSound.SKELETON_HORSE_HURT, "mob.horse.skeleton.hit");
-        register(GenericSound.HORSE_DEATH, "mob.horse.death");
-        register(GenericSound.DONKEY_DEATH, "mob.horse.donkey.death");
-        register(GenericSound.ZOMBIE_HORSE_DEATH, "mob.horse.zombie.death");
-        register(GenericSound.SKELETON_HORSE_DEATH, "mob.horse.skeleton.death");
-        register(GenericSound.COW_HURT, "mob.cow.hurt");
-        register(GenericSound.CHICKEN_HURT, "mob.chicken.hurt");
-        register(GenericSound.BAT_HURT, "mob.bat.hurt");
-        register(GenericSound.BAT_DEATH, "mob.bat.death");
-        register(GenericSound.RABBIT_HURT, "mob.rabbit.hurt");
-        register(GenericSound.RABBIT_HOP, "mob.rabbit.hop");
-        register(GenericSound.RABBIT_IDLE, "mob.rabbit.idle");
-        register(GenericSound.RABBIT_DEATH, "mob.rabbit.death");
-        register(GenericSound.MOB_ATTACK, "mob.attack");
-
         register(NoteBlockValueType.HARP, 0);
         register(NoteBlockValueType.DOUBLE_BASS, 1);
         register(NoteBlockValueType.SNARE_DRUM, 2);
@@ -824,27 +637,43 @@ public class MagicValues {
         register(PistonValue.NORTH, 4);
         register(PistonValue.EAST, 5);
 
-        register(SoundEffect.CLICK, 1000);
-        register(SoundEffect.EMPTY_DISPENSER_CLICK, 1001);
-        register(SoundEffect.FIRE_PROJECTILE, 1002);
-        register(SoundEffect.DOOR, 1003);
-        register(SoundEffect.FIZZLE, 1004);
-        register(SoundEffect.PLAY_RECORD, 1005);
-        register(SoundEffect.GHAST_CHARGE, 1007);
-        register(SoundEffect.GHAST_FIRE, 1008);
-        register(SoundEffect.BLAZE_FIRE, 1009);
-        register(SoundEffect.POUND_WOODEN_DOOR, 1010);
-        register(SoundEffect.POUND_METAL_DOOR, 1011);
-        register(SoundEffect.BREAK_WOODEN_DOOR, 1012);
-        register(SoundEffect.WITHER_SPAWN, 1013);
-        register(SoundEffect.WITHER_SHOOT, 1014);
-        register(SoundEffect.BAT_TAKE_OFF, 1015);
-        register(SoundEffect.INFECT_VILLAGER, 1016);
-        register(SoundEffect.DISINFECT_VILLAGER, 1017);
-        register(SoundEffect.ENDER_DRAGON_DEATH, 1018);
-        register(SoundEffect.ANVIL_BREAK, 1020);
-        register(SoundEffect.ANVIL_USE, 1021);
-        register(SoundEffect.ANVIL_LAND, 1022);
+        register(SoundEffect.BLOCK_DISPENSER_DISPENSE, 1000);
+        register(SoundEffect.BLOCK_DISPENSER_FAIL, 1001);
+        register(SoundEffect.BLOCK_DISPENSER_LAUNCH, 1002);
+        register(SoundEffect.ENTITY_ENDEREYE_LAUNCH, 1003);
+        register(SoundEffect.ENTITY_FIREWORK_SHOOT, 1004);
+        register(SoundEffect.BLOCK_IRON_DOOR_OPEN, 1005);
+        register(SoundEffect.BLOCK_WOODEN_DOOR_OPEN, 1006);
+        register(SoundEffect.BLOCK_WOODEN_TRAPDOOR_OPEN, 1007);
+        register(SoundEffect.BLOCK_FENCE_GATE_OPEN, 1008);
+        register(SoundEffect.BLOCK_FIRE_EXTINGUISH, 1009);
+        register(SoundEffect.RECORD, 1010);
+        register(SoundEffect.BLOCK_IRON_DOOR_CLOSE, 1011);
+        register(SoundEffect.BLOCK_WOODEN_DOOR_CLOSE, 1012);
+        register(SoundEffect.BLOCK_WOODEN_TRAPDOOR_CLOSE, 1013);
+        register(SoundEffect.BLOCK_FENCE_GATE_CLOSE, 1014);
+        register(SoundEffect.ENTITY_GHAST_WARN, 1015);
+        register(SoundEffect.ENTITY_GHAST_SHOOT, 1016);
+        register(SoundEffect.ENTITY_ENDERDRAGON_SHOOT, 1017);
+        register(SoundEffect.ENTITY_BLAZE_SHOOT, 1018);
+        register(SoundEffect.ENTITY_ZOMBIE_ATTACK_DOOR_WOOD, 1019);
+        register(SoundEffect.ENTITY_ZOMBIE_ATTACK_DOOR_IRON, 1020);
+        register(SoundEffect.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, 1021);
+        register(SoundEffect.ENTITY_WITHER_BREAK_BLOCK, 1022);
+        register(SoundEffect.ENTITY_WITHER_SHOOT, 1024);
+        register(SoundEffect.ENTITY_BAT_TAKEOFF, 1025);
+        register(SoundEffect.ENTITY_ZOMBIE_INFECT, 1026);
+        register(SoundEffect.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 1027);
+        register(SoundEffect.BLOCK_ANVIL_DESTROY, 1029);
+        register(SoundEffect.BLOCK_ANVIL_USE, 1030);
+        register(SoundEffect.BLOCK_ANVIL_LAND, 1031);
+        register(SoundEffect.BLOCK_PORTAL_TRAVEL, 1032);
+        register(SoundEffect.BLOCK_CHORUS_FLOWER_GROW, 1033);
+        register(SoundEffect.BLOCK_CHORUS_FLOWER_DEATH, 1034);
+        register(SoundEffect.BLOCK_BREWING_STAND_BREW, 1035);
+        register(SoundEffect.BLOCK_IRON_TRAPDOOR_CLOSE, 1036);
+        register(SoundEffect.BLOCK_IRON_TRAPDOOR_OPEN, 1037);
+        register(SoundEffect.ENTITY_ENDERDRAGON_GROWL, 3001);
 
         register(ParticleEffect.SMOKE, 2000);
         register(ParticleEffect.BREAK_BLOCK, 2001);
@@ -852,7 +681,8 @@ public class MagicValues {
         register(ParticleEffect.BREAK_EYE_OF_ENDER, 2003);
         register(ParticleEffect.MOB_SPAWN, 2004);
         register(ParticleEffect.BONEMEAL_GROW, 2005);
-        register(ParticleEffect.HARD_LANDING_DUST, 2006);
+        register(ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE, 2006);
+        register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
 
         register(SmokeEffectData.SOUTH_EAST, 0);
         register(SmokeEffectData.SOUTH, 1);
@@ -968,28 +798,33 @@ public class MagicValues {
         register(SoundCategory.AMBIENT, 8);
         register(SoundCategory.VOICE, 9);
 
-        int soundEventId = 0;
-        for(SoundEvent event : SoundEvent.values()) {
-            register(event, soundEventId++);
+        for(BuiltinSound sound : BuiltinSound.values()) {
+            register(sound, sound.ordinal());
+            register(sound, sound.name().toLowerCase().replace('_', '.'));
         }
     }
 
     private static void register(Enum<?> key, Object value) {
-        values.put(key, value);
+        if(!values.containsKey(key)) {
+            values.put(key, new ArrayList<Object>());
+        }
+
+        values.get(key).add(value);
     }
 
     @SuppressWarnings({ "unchecked" })
     public static <T extends Enum<?>> T key(Class<T> keyType, Object value) {
         for(Enum<?> key : values.keySet()) {
-            Object val = values.get(key);
             if(keyType.isAssignableFrom(key.getClass())) {
-                if(val == value || val.equals(value)) {
-                    return (T) key;
-                } else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
-                    Number num = (Number) val;
-                    Number num2 = (Number) value;
-                    if(num.doubleValue() == num2.doubleValue()) {
+                for(Object val : values.get(key)) {
+                    if(val == value || val.equals(value)) {
                         return (T) key;
+                    } else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
+                        Number num = (Number) val;
+                        Number num2 = (Number) value;
+                        if(num.doubleValue() == num2.doubleValue()) {
+                            return (T) key;
+                        }
                     }
                 }
             }
@@ -1000,28 +835,28 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T value(Class<T> valueType, Enum<?> key) {
-        Object val = values.get(key);
-        if(val != null) {
-            if(valueType.isAssignableFrom(val.getClass())) {
-                return (T) val;
-            } else if(Number.class.isAssignableFrom(val.getClass())) {
-                if(valueType == Byte.class) {
-                    return (T) (Object) ((Number) val).byteValue();
-                } else if(valueType == Short.class) {
-                    return (T) (Object) ((Number) val).shortValue();
-                } else if(valueType == Integer.class) {
-                    return (T) (Object) ((Number) val).intValue();
-                } else if(valueType == Long.class) {
-                    return (T) (Object) ((Number) val).longValue();
-                } else if(valueType == Float.class) {
-                    return (T) (Object) ((Number) val).floatValue();
-                } else if(valueType == Double.class) {
-                    return (T) (Object) ((Number) val).doubleValue();
+        if(values.containsKey(key)) {
+            for(Object val : values.get(key)) {
+                if(valueType.isAssignableFrom(val.getClass())) {
+                    return (T) val;
+                } else if(Number.class.isAssignableFrom(val.getClass())) {
+                    if(valueType == Byte.class) {
+                        return (T) (Object) ((Number) val).byteValue();
+                    } else if(valueType == Short.class) {
+                        return (T) (Object) ((Number) val).shortValue();
+                    } else if(valueType == Integer.class) {
+                        return (T) (Object) ((Number) val).intValue();
+                    } else if(valueType == Long.class) {
+                        return (T) (Object) ((Number) val).longValue();
+                    } else if(valueType == Float.class) {
+                        return (T) (Object) ((Number) val).floatValue();
+                    } else if(valueType == Double.class) {
+                        return (T) (Object) ((Number) val).doubleValue();
+                    }
                 }
             }
         }
 
         throw new IllegalArgumentException("Key " + key + " has no mapping for value class " + valueType.getName() + ".");
     }
-
 }
