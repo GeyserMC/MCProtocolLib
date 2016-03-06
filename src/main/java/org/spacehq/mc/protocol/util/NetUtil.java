@@ -281,7 +281,7 @@ public class NetUtil {
                 chunk.getBlocks().write(out);
                 chunk.getBlockLight().write(out);
                 if(hasSkylight) {
-                    chunk.getBlockLight().write(out);
+                    chunk.getSkyLight().write(out);
                 }
             }
         }
