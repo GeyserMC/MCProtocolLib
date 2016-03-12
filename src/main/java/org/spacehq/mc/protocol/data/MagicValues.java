@@ -543,6 +543,7 @@ public class MagicValues {
         register(Achievement.KILL_WITHER, "achievement.killWither");
         register(Achievement.MAKE_FULL_BEACON, "achievement.fullBeacon");
         register(Achievement.EXPLORE_ALL_BIOMES, "achievement.exploreAllBiomes");
+        register(Achievement.OVERPOWERED, "achievement.overpowered");
 
         register(GenericStatistic.TIMES_LEFT_GAME, "stat.leaveGame");
         register(GenericStatistic.MINUTES_PLAYED, "stat.playOneMinute");

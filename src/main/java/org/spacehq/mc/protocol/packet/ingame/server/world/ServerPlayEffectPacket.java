@@ -59,13 +59,7 @@ public class ServerPlayEffectPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        int id = in.readInt();
-        if(id >= 2000) {
-            this.effect = MagicValues.key(ParticleEffect.class, id);
-        } else {
-            this.effect = MagicValues.key(SoundEffect.class, id);
-        }
-
+        this.effect = MagicValues.key(WorldEffect.class, in.readInt());
         this.position = NetUtil.readPosition(in);
         int value = in.readInt();
         if(this.effect == SoundEffect.RECORD) {
