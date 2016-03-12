@@ -83,7 +83,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MagicValues {
-    private static final Map<Enum<?>, List<Object>> values = new HashMap<Enum<?>, List<Object>>();
+    private static final Map<Object, List<Object>> values = new HashMap<Object, List<Object>>();
 
     static {
         register(AttributeType.MAX_HEALTH, "generic.maxHealth");
@@ -814,8 +814,8 @@ public class MagicValues {
     }
 
     @SuppressWarnings({ "unchecked" })
-    public static <T extends Enum<?>> T key(Class<T> keyType, Object value) {
-        for(Enum<?> key : values.keySet()) {
+    public static <T> T key(Class<T> keyType, Object value) {
+        for(Object key : values.keySet()) {
             if(keyType.isAssignableFrom(key.getClass())) {
                 for(Object val : values.get(key)) {
                     if(val == value || val.equals(value)) {
@@ -835,7 +835,7 @@ public class MagicValues {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T value(Class<T> valueType, Enum<?> key) {
+    public static <T> T value(Class<T> valueType, Object key) {
         if(values.containsKey(key)) {
             for(Object val : values.get(key)) {
                 if(valueType.isAssignableFrom(val.getClass())) {

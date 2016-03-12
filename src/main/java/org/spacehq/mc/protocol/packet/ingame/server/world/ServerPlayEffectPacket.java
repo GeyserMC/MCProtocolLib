@@ -79,14 +79,7 @@ public class ServerPlayEffectPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        int id = 0;
-        if(this.effect instanceof ParticleEffect) {
-            id = MagicValues.value(Integer.class, (ParticleEffect) this.effect);
-        } else if(this.effect instanceof SoundEffect) {
-            id = MagicValues.value(Integer.class, (SoundEffect) this.effect);
-        }
-
-        out.writeInt(id);
+        out.writeInt(MagicValues.value(Integer.class, this.effect));
         NetUtil.writePosition(out, this.position);
         int value = 0;
         if(this.data instanceof RecordEffectData) {
