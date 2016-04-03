@@ -10,5 +10,5 @@ public enum SoundCategory {
     NEUTRAL,
     PLAYER,
     AMBIENT,
-    VOICE;
+    VOICE
 }
