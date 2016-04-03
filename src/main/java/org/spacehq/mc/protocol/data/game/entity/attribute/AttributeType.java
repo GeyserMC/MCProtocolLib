@@ -9,6 +9,7 @@ public enum AttributeType {
     ATTACK_DAMAGE(2, 0, 2048),
     ATTACK_SPEED(4, 0, 1024),
     ARMOR(0, 0, 30),
+    ARMOR_TOUGHNESS(0, 0, 20),
     LUCK(0, -1024, 1024),
     HORSE_JUMP_STRENGTH(0.7, 0, 2),
     ZOMBIE_SPAWN_REINFORCEMENTS_CHANCE(0, 0, 1);

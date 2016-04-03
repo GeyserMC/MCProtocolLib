@@ -93,6 +93,7 @@ public class MagicValues {
         register(AttributeType.ATTACK_DAMAGE, "generic.attackDamage");
         register(AttributeType.ATTACK_SPEED, "generic.attackSpeed");
         register(AttributeType.ARMOR, "generic.armor");
+        register(AttributeType.ARMOR_TOUGHNESS, "generic.armorToughness");
         register(AttributeType.LUCK, "generic.luck");
         register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jumpStrength");
         register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS_CHANCE, "zombie.spawnReinforcements");
