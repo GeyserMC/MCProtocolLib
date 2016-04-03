@@ -75,7 +75,7 @@ public class ServerJoinGamePacket implements Packet {
         this.hardcore = (gamemode & 8) == 8;
         gamemode &= -9;
         this.gamemode = MagicValues.key(GameMode.class, gamemode);
-        this.dimension = in.readByte();
+        this.dimension = in.readInt();
         this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
         this.maxPlayers = in.readUnsignedByte();
         this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
@@ -91,7 +91,7 @@ public class ServerJoinGamePacket implements Packet {
         }
 
         out.writeByte(gamemode);
-        out.writeByte(this.dimension);
+        out.writeInt(this.dimension);
         out.writeByte(MagicValues.value(Integer.class, this.difficulty));
         out.writeByte(this.maxPlayers);
         out.writeString(MagicValues.value(String.class, this.worldType));

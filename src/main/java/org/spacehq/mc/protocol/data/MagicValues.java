@@ -86,16 +86,17 @@ public class MagicValues {
     private static final Map<Object, List<Object>> values = new HashMap<Object, List<Object>>();
 
     static {
-        register(AttributeType.MAX_HEALTH, "generic.maxHealth");
-        register(AttributeType.FOLLOW_RANGE, "generic.followRange");
-        register(AttributeType.KNOCKBACK_RESISTANCE, "generic.knockbackResistance");
-        register(AttributeType.MOVEMENT_SPEED, "generic.movementSpeed");
-        register(AttributeType.ATTACK_DAMAGE, "generic.attackDamage");
-        register(AttributeType.ATTACK_SPEED, "generic.attackSpeed");
-        register(AttributeType.ARMOR, "generic.armor");
-        register(AttributeType.LUCK, "generic.luck");
+        register(AttributeType.GENERIC_MAX_HEALTH, "generic.maxHealth");
+        register(AttributeType.GENERIC_FOLLOW_RANGE, "generic.followRange");
+        register(AttributeType.GENERIC_KNOCKBACK_RESISTANCE, "generic.knockbackResistance");
+        register(AttributeType.GENERIC_MOVEMENT_SPEED, "generic.movementSpeed");
+        register(AttributeType.GENERIC_ATTACK_DAMAGE, "generic.attackDamage");
+        register(AttributeType.GENERIC_ATTACK_SPEED, "generic.attackSpeed");
+        register(AttributeType.GENERIC_ARMOR, "generic.armor");
+        register(AttributeType.GENERIC_ARMOR_TOUGHNESS, "generic.armorToughness");
+        register(AttributeType.GENERIC_LUCK, "generic.luck");
         register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jumpStrength");
-        register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS_CHANCE, "zombie.spawnReinforcements");
+        register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "zombie.spawnReinforcements");
 
         register(ModifierType.CREATURE_FLEE_SPEED_BONUS, UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A"));
         register(ModifierType.ENDERMAN_ATTACK_SPEED_BOOST, UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0"));
