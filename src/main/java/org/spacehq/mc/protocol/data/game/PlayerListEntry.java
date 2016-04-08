@@ -3,6 +3,7 @@ package org.spacehq.mc.protocol.data.game;
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.protocol.data.game.entity.player.GameMode;
 import org.spacehq.mc.protocol.data.message.Message;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 
 public class PlayerListEntry {
     private GameProfile profile;
@@ -65,5 +66,10 @@ public class PlayerListEntry {
         result = 31 * result + this.ping;
         result = 31 * result + (this.displayName != null ? this.displayName.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
     }
 }

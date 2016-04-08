@@ -4,17 +4,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import javax.imageio.ImageIO;
 import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.auth.util.Base64;
 import org.spacehq.mc.protocol.data.message.Message;
 import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
 import org.spacehq.mc.protocol.data.status.VersionInfo;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -129,4 +130,8 @@ public class StatusResponsePacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

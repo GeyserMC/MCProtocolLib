@@ -2,6 +2,7 @@ package org.spacehq.mc.protocol.packet.ingame.client.world;
 
 import org.spacehq.mc.protocol.data.game.entity.metadata.Position;
 import org.spacehq.mc.protocol.util.NetUtil;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -56,4 +57,8 @@ public class ClientUpdateSignPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

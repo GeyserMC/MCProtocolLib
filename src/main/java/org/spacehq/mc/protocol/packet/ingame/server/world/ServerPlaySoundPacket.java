@@ -5,6 +5,7 @@ import org.spacehq.mc.protocol.data.game.world.sound.BuiltinSound;
 import org.spacehq.mc.protocol.data.game.world.sound.CustomSound;
 import org.spacehq.mc.protocol.data.game.world.sound.Sound;
 import org.spacehq.mc.protocol.data.game.world.sound.SoundCategory;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -112,4 +113,8 @@ public class ServerPlaySoundPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

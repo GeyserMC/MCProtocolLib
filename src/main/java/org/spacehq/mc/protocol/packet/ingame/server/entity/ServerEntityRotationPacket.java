@@ -1,5 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
+
 public class ServerEntityRotationPacket extends ServerEntityMovementPacket {
 
     protected ServerEntityRotationPacket() {
@@ -13,4 +15,8 @@ public class ServerEntityRotationPacket extends ServerEntityMovementPacket {
         this.pitch = pitch;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

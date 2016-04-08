@@ -2,6 +2,7 @@ package org.spacehq.mc.protocol.packet.ingame.client;
 
 import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.ResourcePackStatus;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -44,5 +45,10 @@ public class ClientResourcePackStatusPacket implements Packet {
     @Override
     public boolean isPriority() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
     }
 }

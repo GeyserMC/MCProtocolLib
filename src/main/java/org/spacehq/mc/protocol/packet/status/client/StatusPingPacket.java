@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.packet.status.client;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -37,4 +38,8 @@ public class StatusPingPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

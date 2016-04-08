@@ -8,6 +8,7 @@ import org.spacehq.mc.protocol.data.game.entity.type.object.ObjectData;
 import org.spacehq.mc.protocol.data.game.entity.type.object.ObjectType;
 import org.spacehq.mc.protocol.data.game.entity.type.object.ProjectileData;
 import org.spacehq.mc.protocol.data.game.entity.type.object.SplashPotionData;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -183,4 +184,8 @@ public class ServerSpawnObjectPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

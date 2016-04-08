@@ -1,5 +1,7 @@
 package org.spacehq.mc.protocol.data.game.entity.attribute;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,4 +60,8 @@ public class Attribute {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

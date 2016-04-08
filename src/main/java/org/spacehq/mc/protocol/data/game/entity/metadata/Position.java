@@ -1,5 +1,7 @@
 package org.spacehq.mc.protocol.data.game.entity.metadata;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
+
 public class Position {
     private int x;
     private int y;
@@ -34,5 +36,10 @@ public class Position {
         result = 31 * result + this.y;
         result = 31 * result + this.z;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
     }
 }

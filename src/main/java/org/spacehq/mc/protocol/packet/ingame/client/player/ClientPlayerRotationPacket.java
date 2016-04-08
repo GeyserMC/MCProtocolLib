@@ -12,5 +12,4 @@ public class ClientPlayerRotationPacket extends ClientPlayerMovementPacket {
         this.yaw = yaw;
         this.pitch = pitch;
     }
-
 }
