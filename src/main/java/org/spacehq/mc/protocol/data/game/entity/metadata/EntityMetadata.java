@@ -1,5 +1,7 @@
 package org.spacehq.mc.protocol.data.game.entity.metadata;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
+
 public class EntityMetadata {
     private int id;
     private MetadataType type;
@@ -34,5 +36,10 @@ public class EntityMetadata {
         result = 31 * result + this.type.hashCode();
         result = 31 * result + this.value.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
     }
 }

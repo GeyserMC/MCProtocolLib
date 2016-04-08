@@ -1,11 +1,12 @@
 package org.spacehq.mc.protocol.packet.login.client;
 
+import javax.crypto.SecretKey;
 import org.spacehq.mc.protocol.util.CryptUtil;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -51,4 +52,8 @@ public class EncryptionResponsePacket implements Packet {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server.window;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -53,4 +54,8 @@ public class ServerConfirmTransactionPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

@@ -1,7 +1,7 @@
 package org.spacehq.mc.protocol.packet.ingame.client.window;
 
-import org.spacehq.mc.protocol.data.game.entity.metadata.ItemStack;
 import org.spacehq.mc.protocol.data.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.metadata.ItemStack;
 import org.spacehq.mc.protocol.data.game.window.ClickItemParam;
 import org.spacehq.mc.protocol.data.game.window.CreativeGrabParam;
 import org.spacehq.mc.protocol.data.game.window.DropItemParam;
@@ -12,6 +12,7 @@ import org.spacehq.mc.protocol.data.game.window.SpreadItemParam;
 import org.spacehq.mc.protocol.data.game.window.WindowAction;
 import org.spacehq.mc.protocol.data.game.window.WindowActionParam;
 import org.spacehq.mc.protocol.util.NetUtil;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -121,4 +122,8 @@ public class ClientWindowActionPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

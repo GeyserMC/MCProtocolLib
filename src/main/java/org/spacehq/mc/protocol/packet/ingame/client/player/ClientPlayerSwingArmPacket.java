@@ -1,7 +1,8 @@
 package org.spacehq.mc.protocol.packet.ingame.client.player;
 
-import org.spacehq.mc.protocol.data.game.entity.player.Hand;
 import org.spacehq.mc.protocol.data.MagicValues;
+import org.spacehq.mc.protocol.data.game.entity.player.Hand;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -36,5 +37,10 @@ public class ClientPlayerSwingArmPacket implements Packet {
     @Override
     public boolean isPriority() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
     }
 }

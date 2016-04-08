@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.server;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -34,5 +35,10 @@ public class ServerSetCompressionPacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
     }
 }

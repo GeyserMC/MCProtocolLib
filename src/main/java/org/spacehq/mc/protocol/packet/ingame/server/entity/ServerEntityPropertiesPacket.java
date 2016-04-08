@@ -1,10 +1,11 @@
 package org.spacehq.mc.protocol.packet.ingame.server.entity;
 
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.attribute.Attribute;
 import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeModifier;
-import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.entity.attribute.AttributeType;
 import org.spacehq.mc.protocol.data.game.entity.attribute.ModifierOperation;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -74,4 +75,8 @@ public class ServerEntityPropertiesPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

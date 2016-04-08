@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.packet.ingame.client.world;
 
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -35,5 +36,10 @@ public class ClientSpectatePacket implements Packet {
     @Override
     public boolean isPriority() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
     }
 }

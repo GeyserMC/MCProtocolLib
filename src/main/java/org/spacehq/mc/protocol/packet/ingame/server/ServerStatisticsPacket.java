@@ -8,6 +8,7 @@ import org.spacehq.mc.protocol.data.game.statistic.CraftItemStatistic;
 import org.spacehq.mc.protocol.data.game.statistic.GenericStatistic;
 import org.spacehq.mc.protocol.data.game.statistic.Statistic;
 import org.spacehq.mc.protocol.data.game.statistic.UseItemStatistic;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -90,4 +91,8 @@ public class ServerStatisticsPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

@@ -1,6 +1,7 @@
 package org.spacehq.mc.protocol.packet.login.server;
 
 import org.spacehq.mc.auth.data.GameProfile;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -39,4 +40,8 @@ public class LoginSuccessPacket implements Packet {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }

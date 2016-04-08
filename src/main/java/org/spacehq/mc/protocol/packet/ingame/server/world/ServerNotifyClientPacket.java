@@ -8,6 +8,7 @@ import org.spacehq.mc.protocol.data.game.world.notify.DemoMessageValue;
 import org.spacehq.mc.protocol.data.game.world.notify.EnterCreditsValue;
 import org.spacehq.mc.protocol.data.game.world.notify.RainStrengthValue;
 import org.spacehq.mc.protocol.data.game.world.notify.ThunderStrengthValue;
+import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.packet.Packet;
@@ -73,4 +74,8 @@ public class ServerNotifyClientPacket implements Packet {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToString.toString(this);
+    }
 }
