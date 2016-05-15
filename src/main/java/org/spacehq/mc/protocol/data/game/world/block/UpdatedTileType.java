@@ -8,5 +8,6 @@ public enum UpdatedTileType {
     FLOWER_POT,
     BANNER,
     STRUCTURE_BLOCK,
-    END_GATEWAY;
+    END_GATEWAY,
+    SIGN;
 }
