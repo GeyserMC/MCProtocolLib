@@ -1,5 +1,6 @@
 package org.spacehq.mc.protocol.data.game.chunk;
 
+//TODO: Chunk Data (0x20) now also sends all tile entities in the chunk (at the end of the packet)
 public class Column {
     private int x;
     private int z;
