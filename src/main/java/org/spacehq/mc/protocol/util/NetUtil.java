@@ -236,7 +236,7 @@ public class NetUtil {
         out.writeByte(255);
     }
 
-    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask) throws IOException {
+    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask, CompoundTag[] tileEntities) throws IOException {
         NetInput in = new StreamNetInput(new ByteArrayInputStream(data));
         Exception ex = null;
         Column column = null;
@@ -255,15 +255,14 @@ public class NetUtil {
             if(fullChunk) {
                 biomeData = in.readBytes(256);
             }
-
-            column = new Column(x, z, chunks, biomeData);
+            column = new Column(x, z, chunks, biomeData, tileEntities);
         } catch(Exception e) {
             ex = e;
         }
 
         // Unfortunately, this is needed to detect whether the chunks contain skylight or not.
         if((in.available() > 0 || ex != null) && !hasSkylight) {
-            return readColumn(data, x, z, fullChunk, true, mask);
+            return readColumn(data, x, z, fullChunk, true, mask, tileEntities);
         } else if(ex != null) {
             throw new IOException("Failed to read chunk data.", ex);
         }

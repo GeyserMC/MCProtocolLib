@@ -1,18 +1,21 @@
 package org.spacehq.mc.protocol.data.game.chunk;
 
+import org.spacehq.opennbt.tag.builtin.CompoundTag;
+
 public class Column {
     private int x;
     private int z;
     private Chunk chunks[];
     private byte biomeData[];
+    private CompoundTag tileEntities[];
 
     private boolean skylight;
 
-    public Column(int x, int z, Chunk chunks[]) {
-        this(x, z, chunks, null);
+    public Column(int x, int z, Chunk chunks[], CompoundTag tileEntities[]) {
+        this(x, z, chunks, null, tileEntities);
     }
 
-    public Column(int x, int z, Chunk chunks[], byte biomeData[]) {
+    public Column(int x, int z, Chunk chunks[], byte biomeData[], CompoundTag tileEntities[]) {
         if(chunks.length != 16) {
             throw new IllegalArgumentException("Chunk array length must be 16.");
         }
@@ -23,9 +26,9 @@ public class Column {
 
         this.skylight = false;
         boolean noSkylight = false;
-        for(int index = 0; index < chunks.length; index++) {
-            if(chunks[index] != null) {
-                if(chunks[index].getSkyLight() == null) {
+        for (Chunk chunk : chunks) {
+            if (chunk != null) {
+                if (chunk.getSkyLight() == null) {
                     noSkylight = true;
                 } else {
                     this.skylight = true;
@@ -41,6 +44,7 @@ public class Column {
         this.z = z;
         this.chunks = chunks;
         this.biomeData = biomeData;
+        this.tileEntities = tileEntities;
     }
 
     public int getX() {
@@ -61,6 +65,10 @@ public class Column {
 
     public byte[] getBiomeData() {
         return this.biomeData;
+    }
+
+    public CompoundTag[] getTileEntities() {
+        return this.tileEntities;
     }
 
     public boolean hasSkylight() {
