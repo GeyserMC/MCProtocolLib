@@ -265,6 +265,10 @@ public class MagicValues {
         register(Effect.HEALTH_BOOST, 21);
         register(Effect.ABSORPTION, 22);
         register(Effect.SATURATION, 23);
+        register(Effect.GLOWING, 24);
+        register(Effect.LEVITATION, 25);
+        register(Effect.LUCK, 26);
+        register(Effect.BAD_LUCK, 27);
 
         register(EntityStatus.HURT_OR_MINECART_SPAWNER_DELAY_RESET, 1);
         register(EntityStatus.LIVING_HURT, 2);

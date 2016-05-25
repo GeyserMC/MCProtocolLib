@@ -24,6 +24,10 @@ public enum Effect {
     WITHER_EFFECT,
     HEALTH_BOOST,
     ABSORPTION,
-    SATURATION;
+    SATURATION,
+    GLOWING,
+    LEVITATION,
+    LUCK,
+    BAD_LUCK;
 
 }
