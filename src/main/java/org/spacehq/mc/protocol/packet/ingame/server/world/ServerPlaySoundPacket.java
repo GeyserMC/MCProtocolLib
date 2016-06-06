@@ -78,7 +78,7 @@ public class ServerPlaySoundPacket implements Packet {
         this.y = in.readInt() / 8D;
         this.z = in.readInt() / 8D;
         this.volume = in.readFloat();
-        this.pitch = in.readUnsignedByte() / 63f;
+        this.pitch = in.readFloat();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ServerPlaySoundPacket implements Packet {
         if(this.sound instanceof CustomSound) {
             value = ((CustomSound) this.sound).getName();
         } else if(this.sound instanceof BuiltinSound) {
-            value = MagicValues.value(String.class, (BuiltinSound) this.sound);
+            value = MagicValues.value(String.class, this.sound);
         }
 
         out.writeString(value);
@@ -96,16 +96,7 @@ public class ServerPlaySoundPacket implements Packet {
         out.writeInt((int) (this.y * 8));
         out.writeInt((int) (this.z * 8));
         out.writeFloat(this.volume);
-        int pitch = (int) (this.pitch * 63);
-        if(pitch > 255) {
-            pitch = 255;
-        }
-
-        if(pitch < 0) {
-            pitch = 0;
-        }
-
-        out.writeByte(pitch);
+        out.writeFloat(this.pitch);
     }
 
     @Override

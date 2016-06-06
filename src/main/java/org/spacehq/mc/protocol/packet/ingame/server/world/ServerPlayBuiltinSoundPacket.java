@@ -70,7 +70,6 @@ public class ServerPlayBuiltinSoundPacket implements Packet {
         this.y = in.readInt() / 8D;
         this.z = in.readInt() / 8D;
         this.volume = in.readFloat();
-        this.pitch = in.readUnsignedByte() / 63.5f;
     }
 
     @Override
@@ -81,16 +80,7 @@ public class ServerPlayBuiltinSoundPacket implements Packet {
         out.writeInt((int) (this.y * 8));
         out.writeInt((int) (this.z * 8));
         out.writeFloat(this.volume);
-        int pitch = (int) (this.pitch * 63.5f);
-        if(pitch > 255) {
-            pitch = 255;
-        }
-
-        if(pitch < 0) {
-            pitch = 0;
-        }
-
-        out.writeByte(pitch);
+        out.writeFloat(this.pitch);
     }
 
     @Override
