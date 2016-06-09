@@ -807,7 +807,8 @@ public class MagicValues {
 
         for(BuiltinSound sound : BuiltinSound.values()) {
             register(sound, sound.ordinal());
-            register(sound, sound.name().toLowerCase().replace('_', '.'));
+            // TODO: Change this
+            register(sound, sound.name().toLowerCase().replace('_', '.').replace("enchantment.table", "enchantment_table").replace("polar.bear", "polar_bear").replace("wither.skeleton", "wither_skeleton"));
         }
     }
 
