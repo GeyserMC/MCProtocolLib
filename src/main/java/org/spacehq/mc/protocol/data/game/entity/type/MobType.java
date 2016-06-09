@@ -1,7 +1,6 @@
 package org.spacehq.mc.protocol.data.game.entity.type;
 
 public enum MobType {
-    ARMOR_STAND,
     MOB,
     MONSTER,
     CREEPER,
@@ -36,5 +35,6 @@ public enum MobType {
     IRON_GOLEM,
     HORSE,
     RABBIT,
+    POLAR_BEAR,
     VILLAGER;
 }
