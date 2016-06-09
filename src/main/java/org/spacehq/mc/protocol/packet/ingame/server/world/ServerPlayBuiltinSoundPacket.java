@@ -70,6 +70,7 @@ public class ServerPlayBuiltinSoundPacket implements Packet {
         this.y = in.readInt() / 8D;
         this.z = in.readInt() / 8D;
         this.volume = in.readFloat();
+        this.pitch = in.readFloat();
     }
 
     @Override
