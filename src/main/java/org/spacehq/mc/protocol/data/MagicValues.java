@@ -306,7 +306,6 @@ public class MagicValues {
 
         register(GlobalEntityType.LIGHTNING_BOLT, 1);
 
-        register(MobType.ARMOR_STAND, 30);
         register(MobType.MOB, 48);
         register(MobType.MONSTER, 49);
         register(MobType.CREEPER, 50);
@@ -341,6 +340,7 @@ public class MagicValues {
         register(MobType.IRON_GOLEM, 99);
         register(MobType.HORSE, 100);
         register(MobType.RABBIT, 101);
+        register(MobType.POLAR_BEAR, 102);
         register(MobType.VILLAGER, 120);
 
         register(ObjectType.BOAT, 1);
@@ -807,7 +807,8 @@ public class MagicValues {
 
         for(BuiltinSound sound : BuiltinSound.values()) {
             register(sound, sound.ordinal());
-            register(sound, sound.name().toLowerCase().replace('_', '.'));
+            // TODO: Change this
+            register(sound, sound.name().toLowerCase().replace('_', '.').replace("enchantment.table", "enchantment_table").replace("polar.bear", "polar_bear").replace("wither.skeleton", "wither_skeleton"));
         }
     }
 
