@@ -1,6 +1,11 @@
 package org.spacehq.mc.protocol.data.status;
 
+import org.spacehq.mc.protocol.MinecraftConstants;
+
 public class VersionInfo {
+
+    public static final VersionInfo CURRENT = new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION);
+
     private String name;
     private int protocol;
 

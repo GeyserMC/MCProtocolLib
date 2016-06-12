@@ -4,7 +4,11 @@ import org.spacehq.mc.auth.data.GameProfile;
 import org.spacehq.mc.auth.exception.request.RequestException;
 import org.spacehq.mc.auth.service.SessionService;
 import org.spacehq.mc.protocol.data.SubProtocol;
+import org.spacehq.mc.protocol.data.game.entity.type.object.MinecartType;
+import org.spacehq.mc.protocol.data.message.Message;
+import org.spacehq.mc.protocol.data.status.PlayerInfo;
 import org.spacehq.mc.protocol.data.status.ServerStatusInfo;
+import org.spacehq.mc.protocol.data.status.VersionInfo;
 import org.spacehq.mc.protocol.data.status.handler.ServerInfoBuilder;
 import org.spacehq.mc.protocol.packet.handshake.client.HandshakePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
@@ -108,8 +112,12 @@ public class ServerListener extends SessionAdapter {
             if(event.getPacket() instanceof StatusQueryPacket) {
                 ServerInfoBuilder builder = event.getSession().getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if(builder == null) {
-                    event.getSession().disconnect("No server info builder set.");
-                    return;
+                    builder = new ServerInfoBuilder() {
+                        @Override
+                        public ServerStatusInfo buildInfo(Session session) {
+                            return new ServerStatusInfo(VersionInfo.CURRENT, new PlayerInfo(0, 20, new GameProfile[]{}), Message.fromString("A Minecraft Server"), null);
+                        }
+                    };
                 }
 
                 ServerStatusInfo info = builder.buildInfo(event.getSession());
@@ -174,7 +182,13 @@ public class ServerListener extends SessionAdapter {
                 profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes()), username);
             }
 
-            int threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
+            int threshold;
+            if (this.session.hasFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD)) {
+                threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
+            } else {
+                threshold = 256;
+            }
+
             this.session.send(new LoginSetCompressionPacket(threshold));
             this.session.setCompressionThreshold(threshold);
             this.session.send(new LoginSuccessPacket(profile));
