@@ -786,6 +786,7 @@ public class MagicValues {
         register(BlockFace.SOUTH, 3);
         register(BlockFace.WEST, 4);
         register(BlockFace.EAST, 5);
+        register(BlockFace.SPECIAL, 255);
 
         register(EquipmentSlot.MAIN_HAND, 0);
         register(EquipmentSlot.OFF_HAND, 1);
