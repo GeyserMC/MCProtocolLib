@@ -708,8 +708,8 @@ public class MagicValues {
 
         register(CollisionRule.ALWAYS, "always");
         register(CollisionRule.NEVER, "never");
-        register(CollisionRule.HIDE_FOR_OTHER_TEAMS, "hideForOtherTeams");
-        register(CollisionRule.HIDE_FOR_OWN_TEAM, "hideForOwnTeam");
+        register(CollisionRule.PUSH_OTHER_TEAMS, "pushOtherTeams");
+        register(CollisionRule.PUSH_OWN_TEAM, "pushOwnTeam");
 
         register(TeamColor.NONE, -1);
         register(TeamColor.BLACK, 0);

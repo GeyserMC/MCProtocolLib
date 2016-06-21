@@ -1,10 +1,8 @@
 package org.spacehq.mc.protocol.data.game.scoreboard;
 
 public enum CollisionRule {
-
     ALWAYS,
     NEVER,
-    HIDE_FOR_OTHER_TEAMS,
-    HIDE_FOR_OWN_TEAM;
-
+    PUSH_OTHER_TEAMS,
+    PUSH_OWN_TEAM;
 }
