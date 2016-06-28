@@ -834,6 +834,12 @@ public class MagicValues {
                         if(num.doubleValue() == num2.doubleValue()) {
                             return (T) key;
                         }
+                    } else if(String.class.isAssignableFrom(val.getClass()) && String.class.isAssignableFrom(value.getClass())) {
+                        String str = (String) val;
+                        String str2 = (String) value;
+                        if(str.equalsIgnoreCase(str2)) {
+                            return (T) key;
+                        }
                     }
                 }
             }
