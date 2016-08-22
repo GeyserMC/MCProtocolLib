@@ -352,7 +352,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         } else if(cause instanceof WriteTimeoutException) {
             message = "Write timed out.";
         } else {
-            message = "Internal network exception.";
+            message = cause.toString();
         }
 
         this.disconnect(message, cause);
