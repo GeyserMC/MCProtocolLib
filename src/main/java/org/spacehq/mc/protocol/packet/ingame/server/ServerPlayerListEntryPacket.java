@@ -63,7 +63,8 @@ public class ServerPlayerListEntryPacket implements Packet {
                         profile.getProperties().add(new GameProfile.Property(propertyName, value, signature));
                     }
 
-                    GameMode gameMode = MagicValues.key(GameMode.class, in.readVarInt());
+                    int g = in.readVarInt();
+                    GameMode gameMode = MagicValues.key(GameMode.class, g < 0 ? 0 : g);
                     int ping = in.readVarInt();
                     Message displayName = null;
                     if(in.readBoolean()) {
@@ -73,7 +74,8 @@ public class ServerPlayerListEntryPacket implements Packet {
                     entry = new PlayerListEntry(profile, gameMode, ping, displayName);
                     break;
                 case UPDATE_GAMEMODE:
-                    GameMode mode = MagicValues.key(GameMode.class, in.readVarInt());
+                    g = in.readVarInt();
+                    GameMode mode = MagicValues.key(GameMode.class, g < 0 ? 0 : g);
                     entry = new PlayerListEntry(profile, mode);
                     break;
                 case UPDATE_LATENCY:
