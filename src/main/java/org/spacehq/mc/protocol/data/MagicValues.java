@@ -702,11 +702,13 @@ public class MagicValues {
         register(SmokeEffectData.NORTH, 7);
         register(SmokeEffectData.NORTH_WEST, 8);
 
+        register(NameTagVisibility.ALWAYS, "");
         register(NameTagVisibility.ALWAYS, "always");
         register(NameTagVisibility.NEVER, "never");
         register(NameTagVisibility.HIDE_FOR_OTHER_TEAMS, "hideForOtherTeams");
         register(NameTagVisibility.HIDE_FOR_OWN_TEAM, "hideForOwnTeam");
 
+        register(CollisionRule.ALWAYS, "");
         register(CollisionRule.ALWAYS, "always");
         register(CollisionRule.NEVER, "never");
         register(CollisionRule.PUSH_OTHER_TEAMS, "pushOtherTeams");
