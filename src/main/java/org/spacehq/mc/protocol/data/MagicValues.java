@@ -69,6 +69,7 @@ import org.spacehq.mc.protocol.data.game.world.block.value.PistonValueType;
 import org.spacehq.mc.protocol.data.game.world.effect.ParticleEffect;
 import org.spacehq.mc.protocol.data.game.world.effect.SmokeEffectData;
 import org.spacehq.mc.protocol.data.game.world.effect.SoundEffect;
+import org.spacehq.mc.protocol.data.game.world.map.MapIconType;
 import org.spacehq.mc.protocol.data.game.world.notify.ClientNotification;
 import org.spacehq.mc.protocol.data.game.world.notify.DemoMessageValue;
 import org.spacehq.mc.protocol.data.game.world.notify.EnterCreditsValue;
@@ -297,6 +298,8 @@ public class MagicValues {
         register(EntityStatus.OP_PERMISSION_LEVEL_2, 26);
         register(EntityStatus.OP_PERMISSION_LEVEL_3, 27);
         register(EntityStatus.OP_PERMISSION_LEVEL_4, 28);
+        register(EntityStatus.IRON_GOLEM_NO_ROSE, 34);
+        register(EntityStatus.TOTEM_OF_UNDYING, 35);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);
@@ -306,8 +309,18 @@ public class MagicValues {
 
         register(GlobalEntityType.LIGHTNING_BOLT, 1);
 
-        register(MobType.MOB, 48);
-        register(MobType.MONSTER, 49);
+        register(MobType.ELDER_GUARDIAN, 4);
+        register(MobType.WITHER_SKELETON, 5);
+        register(MobType.STRAY, 6);
+        register(MobType.HUSK, 23);
+        register(MobType.ZOMBIE_VILLAGER, 27);
+        register(MobType.SKELETON_HORSE, 28);
+        register(MobType.ZOMBIE_HORSE, 29);
+        register(MobType.DONKEY, 31);
+        register(MobType.MULE, 32);
+        register(MobType.EVOCATION_ILLAGER, 34);
+        register(MobType.VEX, 35);
+        register(MobType.VINDICATION_ILLAGER, 36);
         register(MobType.CREEPER, 50);
         register(MobType.SKELETON, 51);
         register(MobType.SPIDER, 52);
@@ -341,6 +354,7 @@ public class MagicValues {
         register(MobType.HORSE, 100);
         register(MobType.RABBIT, 101);
         register(MobType.POLAR_BEAR, 102);
+        register(MobType.LLAMA, 103);
         register(MobType.VILLAGER, 120);
 
         register(ObjectType.BOAT, 1);
@@ -349,7 +363,7 @@ public class MagicValues {
         register(ObjectType.MINECART, 10);
         register(ObjectType.PRIMED_TNT, 50);
         register(ObjectType.ENDER_CRYSTAL, 51);
-        register(ObjectType.ARROW, 60);
+        register(ObjectType.TIPPED_ARROW, 60);
         register(ObjectType.SNOWBALL, 61);
         register(ObjectType.EGG, 62);
         register(ObjectType.GHAST_FIREBALL, 63);
@@ -357,18 +371,18 @@ public class MagicValues {
         register(ObjectType.ENDER_PEARL, 65);
         register(ObjectType.WITHER_HEAD_PROJECTILE, 66);
         register(ObjectType.SHULKER_BULLET, 67);
+        register(ObjectType.LLAMA_SPIT, 68);
         register(ObjectType.FALLING_BLOCK, 70);
         register(ObjectType.ITEM_FRAME, 71);
         register(ObjectType.EYE_OF_ENDER, 72);
         register(ObjectType.POTION, 73);
-        register(ObjectType.FALLING_DRAGON_EGG, 74);
         register(ObjectType.EXP_BOTTLE, 75);
         register(ObjectType.FIREWORK_ROCKET, 76);
         register(ObjectType.LEASH_KNOT, 77);
         register(ObjectType.ARMOR_STAND, 78);
+        register(ObjectType.EVOCATION_FANGS, 79);
         register(ObjectType.FISH_HOOK, 90);
         register(ObjectType.SPECTRAL_ARROW, 91);
-        register(ObjectType.TIPPED_ARROW, 92);
         register(ObjectType.DRAGON_FIREBALL, 93);
 
         register(MinecartType.NORMAL, 0);
@@ -444,6 +458,23 @@ public class MagicValues {
         register(ScoreboardAction.ADD_OR_UPDATE, 0);
         register(ScoreboardAction.REMOVE, 1);
 
+        register(MapIconType.WHITE_ARROW, 0);
+        register(MapIconType.GREEN_ARROW, 1);
+        register(MapIconType.RED_ARROW, 2);
+        register(MapIconType.BLUE_ARROW, 3);
+        register(MapIconType.WHITE_CROSS, 4);
+        register(MapIconType.RED_POINTER, 5);
+        register(MapIconType.WHITE_CIRCLE, 6);
+        register(MapIconType.SMALL_WHITE_CIRCLE, 7);
+        register(MapIconType.MANSION, 8);
+        register(MapIconType.TEMPLE, 9);
+        register(MapIconType.UNUSED_10, 10);
+        register(MapIconType.UNUSED_11, 11);
+        register(MapIconType.UNUSED_12, 12);
+        register(MapIconType.UNUSED_13, 13);
+        register(MapIconType.UNUSED_14, 14);
+        register(MapIconType.UNUSED_15, 15);
+
         register(WindowType.GENERIC_INVENTORY, "minecraft:container");
         register(WindowType.ANVIL, "minecraft:anvil");
         register(WindowType.BEACON, "minecraft:beacon");
@@ -456,6 +487,7 @@ public class MagicValues {
         register(WindowType.FURNACE, "minecraft:furnace");
         register(WindowType.HOPPER, "minecraft:hopper");
         register(WindowType.VILLAGER, "minecraft:villager");
+        register(WindowType.SHULKER_BOX, "minecraft:shulker_box");
         register(WindowType.HORSE, "EntityHorse");
 
         register(BrewingStandProperty.BREW_TIME, 0);
@@ -750,9 +782,10 @@ public class MagicValues {
 
         register(TitleAction.TITLE, 0);
         register(TitleAction.SUBTITLE, 1);
-        register(TitleAction.TIMES, 2);
-        register(TitleAction.CLEAR, 3);
-        register(TitleAction.RESET, 4);
+        register(TitleAction.ACTION_BAR, 2);
+        register(TitleAction.TIMES, 3);
+        register(TitleAction.CLEAR, 4);
+        register(TitleAction.RESET, 5);
 
         register(ResourcePackStatus.SUCCESSFULLY_LOADED, 0);
         register(ResourcePackStatus.DECLINED, 1);

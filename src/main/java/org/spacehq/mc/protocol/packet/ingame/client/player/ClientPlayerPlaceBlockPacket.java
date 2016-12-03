@@ -63,9 +63,9 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
         this.position = NetUtil.readPosition(in);
         this.face = MagicValues.key(BlockFace.class, in.readVarInt());
         this.hand = MagicValues.key(Hand.class, in.readVarInt());
-        this.cursorX = in.readUnsignedByte() / 16f;
-        this.cursorY = in.readUnsignedByte() / 16f;
-        this.cursorZ = in.readUnsignedByte() / 16f;
+        this.cursorX = in.readFloat();
+        this.cursorY = in.readFloat();
+        this.cursorZ = in.readFloat();
     }
 
     @Override
@@ -73,9 +73,9 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
         NetUtil.writePosition(out, this.position);
         out.writeVarInt(MagicValues.value(Integer.class, this.face));
         out.writeVarInt(MagicValues.value(Integer.class, this.hand));
-        out.writeByte((int) (this.cursorX * 16));
-        out.writeByte((int) (this.cursorY * 16));
-        out.writeByte((int) (this.cursorZ * 16));
+        out.writeFloat(this.cursorX);
+        out.writeFloat(this.cursorY);
+        out.writeFloat(this.cursorZ);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package org.spacehq.mc.protocol.packet.ingame.server.world;
 
+import org.spacehq.mc.protocol.data.MagicValues;
 import org.spacehq.mc.protocol.data.game.world.map.MapData;
-import org.spacehq.mc.protocol.data.game.world.map.MapPlayer;
+import org.spacehq.mc.protocol.data.game.world.map.MapIcon;
+import org.spacehq.mc.protocol.data.game.world.map.MapIconType;
 import org.spacehq.mc.protocol.util.ReflectionToString;
 import org.spacehq.packetlib.io.NetInput;
 import org.spacehq.packetlib.io.NetOutput;
@@ -14,7 +16,7 @@ public class ServerMapDataPacket implements Packet {
     private int mapId;
     private byte scale;
     private boolean trackingPosition;
-    private MapPlayer players[];
+    private MapIcon icons[];
 
     private MapData data;
 
@@ -22,15 +24,15 @@ public class ServerMapDataPacket implements Packet {
     private ServerMapDataPacket() {
     }
 
-    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapPlayer players[]) {
-        this(mapId, scale, trackingPosition, players, null);
+    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapIcon icons[]) {
+        this(mapId, scale, trackingPosition, icons, null);
     }
 
-    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapPlayer players[], MapData data) {
+    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapIcon icons[], MapData data) {
         this.mapId = mapId;
         this.scale = scale;
         this.trackingPosition = trackingPosition;
-        this.players = players;
+        this.icons = icons;
         this.data = data;
     }
 
@@ -46,8 +48,8 @@ public class ServerMapDataPacket implements Packet {
         return this.trackingPosition;
     }
 
-    public MapPlayer[] getPlayers() {
-        return this.players;
+    public MapIcon[] getIcons() {
+        return this.icons;
     }
 
     public MapData getData() {
@@ -59,14 +61,14 @@ public class ServerMapDataPacket implements Packet {
         this.mapId = in.readVarInt();
         this.scale = in.readByte();
         this.trackingPosition = in.readBoolean();
-        this.players = new MapPlayer[in.readVarInt()];
-        for(int index = 0; index < this.players.length; index++) {
+        this.icons = new MapIcon[in.readVarInt()];
+        for(int index = 0; index < this.icons.length; index++) {
             int data = in.readUnsignedByte();
-            int size = (data >> 4) & 15;
+            int type = (data >> 4) & 15;
             int rotation = data & 15;
             int x = in.readUnsignedByte();
             int z = in.readUnsignedByte();
-            this.players[index] = new MapPlayer(x, z, size, rotation);
+            this.icons[index] = new MapIcon(x, z, MagicValues.value(MapIconType.class, type), rotation);
         }
 
         int columns = in.readUnsignedByte();
@@ -84,12 +86,13 @@ public class ServerMapDataPacket implements Packet {
         out.writeVarInt(this.mapId);
         out.writeByte(this.scale);
         out.writeBoolean(this.trackingPosition);
-        out.writeVarInt(this.players.length);
-        for(int index = 0; index < this.players.length; index++) {
-            MapPlayer player = this.players[index];
-            out.writeByte((player.getIconSize() & 15) << 4 | player.getIconRotation() & 15);
-            out.writeByte(player.getCenterX());
-            out.writeByte(player.getCenterZ());
+        out.writeVarInt(this.icons.length);
+        for(int index = 0; index < this.icons.length; index++) {
+            MapIcon icon = this.icons[index];
+            int type = MagicValues.key(Integer.class, icon.getIconType());
+            out.writeByte((type & 15) << 4 | icon.getIconRotation() & 15);
+            out.writeByte(icon.getCenterX());
+            out.writeByte(icon.getCenterZ());
         }
 
         if(this.data != null && this.data.getColumns() != 0) {
