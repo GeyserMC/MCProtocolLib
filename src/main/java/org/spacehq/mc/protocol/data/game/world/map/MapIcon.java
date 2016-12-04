@@ -1,15 +1,15 @@
 package org.spacehq.mc.protocol.data.game.world.map;
 
-public class MapPlayer {
+public class MapIcon {
     private int centerX;
     private int centerZ;
-    private int iconSize;
+    private MapIconType iconType;
     private int iconRotation;
 
-    public MapPlayer(int centerX, int centerZ, int iconSize, int iconRotation) {
+    public MapIcon(int centerX, int centerZ, MapIconType iconType, int iconRotation) {
         this.centerX = centerX;
         this.centerZ = centerZ;
-        this.iconSize = iconSize;
+        this.iconType = iconType;
         this.iconRotation = iconRotation;
     }
 
@@ -21,8 +21,8 @@ public class MapPlayer {
         return this.centerZ;
     }
 
-    public int getIconSize() {
-        return this.iconSize;
+    public MapIconType getIconType() {
+        return this.iconType;
     }
 
     public int getIconRotation() {
@@ -31,7 +31,7 @@ public class MapPlayer {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof MapPlayer && this.centerX == ((MapPlayer) o).centerX && this.centerZ == ((MapPlayer) o).centerZ && this.iconSize == ((MapPlayer) o).iconSize && this.iconRotation == ((MapPlayer) o).iconRotation;
+        return o instanceof MapIcon && this.centerX == ((MapIcon) o).centerX && this.centerZ == ((MapIcon) o).centerZ && this.iconType == ((MapIcon) o).iconType && this.iconRotation == ((MapIcon) o).iconRotation;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MapPlayer {
         int result = this.centerX;
         result = 31 * result + this.centerZ;
         result = 31 * result + this.iconRotation;
-        result = 31 * result + this.iconSize;
+        result = 31 * result + (this.iconType != null ? this.iconType.hashCode() : 0);
         return result;
     }
 }

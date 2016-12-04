@@ -17,6 +17,8 @@ public class ServerTitlePacket implements Packet {
 
     private Message subtitle;
 
+    private Message actionBar;
+
     private int fadeIn;
     private int stay;
     private int fadeOut;
@@ -30,12 +32,28 @@ public class ServerTitlePacket implements Packet {
     }
 
     public ServerTitlePacket(Message title, boolean sub) {
-        if(sub) {
-            this.action = TitleAction.SUBTITLE;
-            this.subtitle = title;
-        } else {
-            this.action = TitleAction.TITLE;
-            this.title = title;
+        this(sub ? TitleAction.SUBTITLE : TitleAction.TITLE, title);
+    }
+
+    public ServerTitlePacket(TitleAction action, String title) {
+        this(action, Message.fromString(title));
+    }
+
+    public ServerTitlePacket(TitleAction action, Message title) {
+        this.action = action;
+
+        switch (action) {
+            case TITLE:
+                this.title = title;
+                break;
+            case SUBTITLE:
+                this.subtitle = title;
+                break;
+            case ACTION_BAR:
+                this.actionBar = title;
+                break;
+            default:
+                throw new IllegalArgumentException("action must be one of TITLE, SUBTITLE, ACTION_BAR");
         }
     }
 
@@ -66,6 +84,10 @@ public class ServerTitlePacket implements Packet {
         return this.subtitle;
     }
 
+    public Message getActionBar() {
+        return this.actionBar;
+    }
+
     public int getFadeIn() {
         return this.fadeIn;
     }
@@ -88,6 +110,9 @@ public class ServerTitlePacket implements Packet {
             case SUBTITLE:
                 this.subtitle = Message.fromString(in.readString());
                 break;
+            case ACTION_BAR:
+                this.actionBar = Message.fromString(in.readString());
+                break;
             case TIMES:
                 this.fadeIn = in.readInt();
                 this.stay = in.readInt();
@@ -109,6 +134,9 @@ public class ServerTitlePacket implements Packet {
                 break;
             case SUBTITLE:
                 out.writeString(this.subtitle.toJsonString());
+                break;
+            case ACTION_BAR:
+                out.writeString(this.actionBar.toJsonString());
                 break;
             case TIMES:
                 out.writeInt(this.fadeIn);

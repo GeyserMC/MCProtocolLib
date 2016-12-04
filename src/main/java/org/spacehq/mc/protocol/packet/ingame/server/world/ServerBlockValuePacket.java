@@ -31,6 +31,8 @@ public class ServerBlockValuePacket implements Packet {
     private static final int CHEST = 54;
     private static final int ENDER_CHEST = 130;
     private static final int TRAPPED_CHEST = 146;
+    private static final int SHULKER_BOX_LOWER = 219;
+    private static final int SHULKER_BOX_HIGHER = 234;
 
     private Position position;
     private BlockValueType type;
@@ -80,7 +82,8 @@ public class ServerBlockValuePacket implements Packet {
         } else if(this.blockId == MOB_SPAWNER) {
             this.type = MagicValues.key(MobSpawnerValueType.class, type);
             this.value = new MobSpawnerValue();
-        } else if(this.blockId == CHEST || this.blockId == ENDER_CHEST || this.blockId == TRAPPED_CHEST) {
+        } else if(this.blockId == CHEST || this.blockId == ENDER_CHEST || this.blockId == TRAPPED_CHEST
+                || (this.blockId >= SHULKER_BOX_LOWER && this.blockId <= SHULKER_BOX_HIGHER)) {
             this.type = MagicValues.key(ChestValueType.class, type);
             this.value = new ChestValue(value);
         } else {

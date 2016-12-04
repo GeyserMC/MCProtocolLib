@@ -1,8 +1,18 @@
 package org.spacehq.mc.protocol.data.game.entity.type;
 
 public enum MobType {
-    MOB,
-    MONSTER,
+    ELDER_GUARDIAN,
+    WITHER_SKELETON,
+    STRAY,
+    HUSK,
+    ZOMBIE_VILLAGER,
+    SKELETON_HORSE,
+    ZOMBIE_HORSE,
+    DONKEY,
+    MULE,
+    EVOCATION_ILLAGER,
+    VEX,
+    VINDICATION_ILLAGER,
     CREEPER,
     SKELETON,
     SPIDER,
@@ -36,5 +46,6 @@ public enum MobType {
     HORSE,
     RABBIT,
     POLAR_BEAR,
+    LLAMA,
     VILLAGER;
 }
