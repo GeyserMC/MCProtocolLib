@@ -354,6 +354,7 @@ public class MagicValues {
         register(MobType.HORSE, 100);
         register(MobType.RABBIT, 101);
         register(MobType.POLAR_BEAR, 102);
+        register(MobType.ARMORSTAND , 30);
         register(MobType.LLAMA, 103);
         register(MobType.VILLAGER, 120);
 
