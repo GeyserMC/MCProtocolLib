@@ -316,6 +316,7 @@ public class MagicValues {
         register(MobType.ZOMBIE_VILLAGER, 27);
         register(MobType.SKELETON_HORSE, 28);
         register(MobType.ZOMBIE_HORSE, 29);
+        register(MobType.ARMOR_STAND, 30);
         register(MobType.DONKEY, 31);
         register(MobType.MULE, 32);
         register(MobType.EVOCATION_ILLAGER, 34);

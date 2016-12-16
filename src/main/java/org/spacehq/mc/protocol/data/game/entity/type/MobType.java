@@ -8,6 +8,7 @@ public enum MobType {
     ZOMBIE_VILLAGER,
     SKELETON_HORSE,
     ZOMBIE_HORSE,
+    ARMOR_STAND,
     DONKEY,
     MULE,
     EVOCATION_ILLAGER,
