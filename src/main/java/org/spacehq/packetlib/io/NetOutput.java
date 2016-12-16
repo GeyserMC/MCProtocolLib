@@ -50,7 +50,7 @@ public interface NetOutput {
     /**
      * Writes a varint. A varint is a form of integer where only necessary bytes are written. This is done to save bandwidth.
      *
-     * @return i Varint to write.
+     * @param i Varint to write.
      * @throws java.io.IOException If an I/O error occurs.
      */
     public void writeVarInt(int i) throws IOException;
@@ -66,7 +66,7 @@ public interface NetOutput {
     /**
      * Writes a varlong. A varlong is a form of long where only necessary bytes are written. This is done to save bandwidth.
      *
-     * @return l Varlong to write.
+     * @param l Varlong to write.
      * @throws java.io.IOException If an I/O error occurs.
      */
     public void writeVarLong(long l) throws IOException;

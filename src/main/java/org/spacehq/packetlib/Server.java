@@ -135,6 +135,7 @@ public class Server {
      * session belongs to a server, the server's flags will be checked for the flag
      * as well.
      *
+     * @param <T> Type of the flag.
      * @param key Key of the flag.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.

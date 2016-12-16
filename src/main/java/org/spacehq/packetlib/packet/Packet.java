@@ -13,6 +13,7 @@ public interface Packet {
      * Reads the packet from the given input buffer.
      *
      * @param in The input source to read from.
+     * @throws IOException If an I/O error occurs.
      */
     public void read(NetInput in) throws IOException;
 
@@ -20,6 +21,7 @@ public interface Packet {
      * Writes the packet to the given output buffer.
      *
      * @param out The output destination to write to.
+     * @throws IOException If an I/O error occurs.
      */
     public void write(NetOutput out) throws IOException;
 

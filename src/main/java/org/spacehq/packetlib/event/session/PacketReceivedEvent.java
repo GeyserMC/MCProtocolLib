@@ -33,6 +33,7 @@ public class PacketReceivedEvent implements SessionEvent {
     /**
      * Gets the packet involved in this event as the required type.
      *
+     * @param <T> Type of the packet.
      * @return The event's packet as the required type.
      * @throws IllegalStateException If the packet's value isn't of the required type.
      */

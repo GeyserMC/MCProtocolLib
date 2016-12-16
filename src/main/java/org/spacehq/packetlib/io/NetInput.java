@@ -239,6 +239,7 @@ public interface NetInput {
      * Gets the number of available bytes.
      *
      * @return The number of available bytes.
+     * @throws java.io.IOException If an I/O error occurs.
      */
     public int available() throws IOException;
 }
