@@ -22,6 +22,8 @@ import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
 import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,6 +74,16 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @Override
     public int getPort() {
         return this.port;
+    }
+
+    @Override
+    public SocketAddress getLocalAddress() {
+        return this.channel != null ? this.channel.localAddress() : null;
+    }
+
+    @Override
+    public SocketAddress getRemoteAddress() {
+        return this.channel != null ? this.channel.remoteAddress() : null;
     }
 
     @Override

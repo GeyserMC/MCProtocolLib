@@ -5,6 +5,8 @@ import org.spacehq.packetlib.event.session.SessionListener;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
+import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,20 @@ public interface Session {
      * @return The connected port.
      */
     public int getPort();
+
+    /**
+     * Gets the local address of the session.
+     *
+     * @return The local address, or null if the session is not connected.
+     */
+    public SocketAddress getLocalAddress();
+
+    /**
+     * Gets the remote address of the session.
+     *
+     * @return The remote address, or null if the session is not connected.
+     */
+    public SocketAddress getRemoteAddress();
 
     /**
      * Gets the packet protocol of the session.
