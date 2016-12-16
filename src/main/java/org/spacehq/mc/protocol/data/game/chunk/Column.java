@@ -11,11 +11,11 @@ public class Column {
 
     private boolean skylight;
 
-    public Column(int x, int z, Chunk chunks[], CompoundTag tileEntities[]) {
+    public Column(int x, int z, Chunk chunks[], CompoundTag[] tileEntities) {
         this(x, z, chunks, null, tileEntities);
     }
 
-    public Column(int x, int z, Chunk chunks[], byte biomeData[], CompoundTag tileEntities[]) {
+    public Column(int x, int z, Chunk chunks[], byte biomeData[], CompoundTag[] tileEntities) {
         if(chunks.length != 16) {
             throw new IllegalArgumentException("Chunk array length must be 16.");
         }
@@ -26,9 +26,9 @@ public class Column {
 
         this.skylight = false;
         boolean noSkylight = false;
-        for (Chunk chunk : chunks) {
-            if (chunk != null) {
-                if (chunk.getSkyLight() == null) {
+        for(Chunk chunk : chunks) {
+            if(chunk != null) {
+                if(chunk.getSkyLight() == null) {
                     noSkylight = true;
                 } else {
                     this.skylight = true;
@@ -44,7 +44,7 @@ public class Column {
         this.z = z;
         this.chunks = chunks;
         this.biomeData = biomeData;
-        this.tileEntities = tileEntities;
+        this.tileEntities = tileEntities != null ? tileEntities : new CompoundTag[0];
     }
 
     public int getX() {

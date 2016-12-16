@@ -255,6 +255,7 @@ public class NetUtil {
             if(fullChunk) {
                 biomeData = in.readBytes(256);
             }
+
             column = new Column(x, z, chunks, biomeData, tileEntities);
         } catch(Exception e) {
             ex = e;

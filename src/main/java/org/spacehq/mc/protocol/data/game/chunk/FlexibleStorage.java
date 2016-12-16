@@ -14,7 +14,7 @@ public class FlexibleStorage {
 
     public FlexibleStorage(int bitsPerEntry, long[] data) {
         if(bitsPerEntry < 1 || bitsPerEntry > 32) {
-            throw new IllegalArgumentException("BitsPerEntry cannot be outside of accepted range.");
+            throw new IllegalArgumentException("BitsPerEntry \"" + bitsPerEntry + "\" is outside of accepted range.");
         }
 
         this.bitsPerEntry = bitsPerEntry;
