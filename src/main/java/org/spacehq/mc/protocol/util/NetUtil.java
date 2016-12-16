@@ -20,8 +20,6 @@ import org.spacehq.packetlib.io.NetOutput;
 import org.spacehq.packetlib.io.stream.StreamNetInput;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -42,7 +40,7 @@ public class NetUtil {
         if(b == 0) {
             return null;
         } else {
-            return (CompoundTag) NBTIO.readTag(new DataInputStream(new NetInputStream(in, b)));
+            return (CompoundTag) NBTIO.readTag(new NetInputStream(in, b));
         }
     }
 
@@ -50,7 +48,7 @@ public class NetUtil {
         if(tag == null) {
             out.writeByte(0);
         } else {
-            NBTIO.writeTag(new DataOutputStream(new NetOutputStream(out)), tag);
+            NBTIO.writeTag(new NetOutputStream(out), tag);
         }
     }
 
