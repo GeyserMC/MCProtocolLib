@@ -701,10 +701,12 @@ public class MagicValues {
         register(SoundEffect.ENTITY_ZOMBIE_ATTACK_DOOR_IRON, 1020);
         register(SoundEffect.ENTITY_ZOMBIE_BREAK_DOOR_WOOD, 1021);
         register(SoundEffect.ENTITY_WITHER_BREAK_BLOCK, 1022);
+        register(SoundEffect.ENTITY_WITHER_SPAWN, 1023);
         register(SoundEffect.ENTITY_WITHER_SHOOT, 1024);
         register(SoundEffect.ENTITY_BAT_TAKEOFF, 1025);
         register(SoundEffect.ENTITY_ZOMBIE_INFECT, 1026);
         register(SoundEffect.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 1027);
+        register(SoundEffect.ENTITY_ENDERDRAGON_DEATH, 1028);
         register(SoundEffect.BLOCK_ANVIL_DESTROY, 1029);
         register(SoundEffect.BLOCK_ANVIL_USE, 1030);
         register(SoundEffect.BLOCK_ANVIL_LAND, 1031);
