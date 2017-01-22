@@ -536,6 +536,7 @@ public class MagicValues {
         register(UpdatedTileType.STRUCTURE_BLOCK, 7);
         register(UpdatedTileType.END_GATEWAY, 8);
         register(UpdatedTileType.SIGN, 9);
+        register(UpdatedTileType.SHULKER_BOX, 10);
 
         register(ClientNotification.INVALID_BED, 0);
         register(ClientNotification.START_RAIN, 2);
