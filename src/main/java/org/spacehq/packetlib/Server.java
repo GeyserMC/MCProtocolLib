@@ -242,7 +242,7 @@ public class Server {
      * @return Whether the server is listening.
      */
     public boolean isListening() {
-        return this.listener.isListening();
+        return this.listener != null && this.listener.isListening();
     }
 
     /**

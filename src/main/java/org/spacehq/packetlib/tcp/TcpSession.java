@@ -22,7 +22,6 @@ import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -371,7 +370,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, Packet packet) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
         if(!packet.isPriority()) {
             this.packets.add(packet);
         }

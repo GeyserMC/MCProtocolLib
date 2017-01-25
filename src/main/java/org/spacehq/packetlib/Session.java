@@ -5,7 +5,6 @@ import org.spacehq.packetlib.event.session.SessionListener;
 import org.spacehq.packetlib.packet.Packet;
 import org.spacehq.packetlib.packet.PacketProtocol;
 
-import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.Map;
