@@ -30,6 +30,7 @@ public enum MobType {
     ENDER_DRAGON,
     WITHER,
     BAT,
+    ARMORSTAND,
     WITCH,
     ENDERMITE,
     GUARDIAN,
