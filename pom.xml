@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.spacehq</groupId>
+    <groupId>com.github.steveice10</groupId>
     <artifactId>packetlib</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
@@ -36,30 +36,6 @@
             <email>Steveice10@gmail.com</email>
         </developer>
     </developers>
-
-    <distributionManagement>
-        <repository>
-            <id>spacehq</id>
-            <name>spacehq-releases</name>
-            <url>https://repo.spacehq.org/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>spacehq</id>
-            <name>spacehq-snapshots</name>
-            <url>https://repo.spacehq.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>spacehq-releases</id>
-            <url>https://repo.spacehq.org/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>spacehq-snapshots</id>
-            <url>https://repo.spacehq.org/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
