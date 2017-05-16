@@ -733,6 +733,7 @@ public class MagicValues {
         register(ParticleEffect.MOB_SPAWN, 2004);
         register(ParticleEffect.BONEMEAL_GROW, 2005);
         register(ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE, 2006);
+        register(ParticleEffect.BREAK_SPLASH_POTION, 2007);
         register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
 
         register(SmokeEffectData.SOUTH_EAST, 0);
