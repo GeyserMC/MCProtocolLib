@@ -68,7 +68,7 @@ public class ServerMapDataPacket implements Packet {
             int rotation = data & 15;
             int x = in.readUnsignedByte();
             int z = in.readUnsignedByte();
-            this.icons[index] = new MapIcon(x, z, MagicValues.value(MapIconType.class, type), rotation);
+            this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation);
         }
 
         int columns = in.readUnsignedByte();
@@ -89,7 +89,7 @@ public class ServerMapDataPacket implements Packet {
         out.writeVarInt(this.icons.length);
         for(int index = 0; index < this.icons.length; index++) {
             MapIcon icon = this.icons[index];
-            int type = MagicValues.key(Integer.class, icon.getIconType());
+            int type = MagicValues.value(Integer.class, icon.getIconType());
             out.writeByte((type & 15) << 4 | icon.getIconRotation() & 15);
             out.writeByte(icon.getCenterX());
             out.writeByte(icon.getCenterZ());
