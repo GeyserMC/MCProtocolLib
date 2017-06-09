@@ -164,6 +164,9 @@ public class NetUtil {
                 case BLOCK_STATE:
                     value = readBlockState(in);
                     break;
+                case NBT_TAG:
+                    value = readNBT(in);
+                    break;
                 default:
                     throw new IOException("Unknown metadata type id: " + typeId);
             }
@@ -226,6 +229,8 @@ public class NetUtil {
                 case BLOCK_STATE:
                     writeBlockState(out, (BlockState) meta.getValue());
                     break;
+                case NBT_TAG:
+                    writeNBT(out, (CompoundTag) meta.getValue());
                 default:
                     throw new IOException("Unknown metadata type: " + meta.getType());
             }

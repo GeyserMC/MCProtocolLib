@@ -13,5 +13,6 @@ public enum MetadataType {
     OPTIONAL_POSITION,
     BLOCK_FACE,
     OPTIONAL_UUID,
-    BLOCK_STATE;
+    BLOCK_STATE,
+    NBT_TAG;
 }

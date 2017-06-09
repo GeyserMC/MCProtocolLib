@@ -6,6 +6,8 @@ import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.game.ClientRequest;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
+import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
+import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
@@ -29,7 +31,9 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.statistic.Achievement;
 import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
+import com.github.steveice10.mc.protocol.data.game.window.AdvancementTabAction;
 import com.github.steveice10.mc.protocol.data.game.window.ClickItemParam;
+import com.github.steveice10.mc.protocol.data.game.window.CraftingBookDataType;
 import com.github.steveice10.mc.protocol.data.game.window.CreativeGrabParam;
 import com.github.steveice10.mc.protocol.data.game.window.ShiftClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
@@ -140,13 +144,13 @@ public class MagicValues {
         register(MetadataType.BLOCK_FACE, 10);
         register(MetadataType.OPTIONAL_UUID, 11);
         register(MetadataType.BLOCK_STATE, 12);
+        register(MetadataType.NBT_TAG, 13);
 
         register(HandshakeIntent.STATUS, 1);
         register(HandshakeIntent.LOGIN, 2);
 
         register(ClientRequest.RESPAWN, 0);
         register(ClientRequest.STATS, 1);
-        register(ClientRequest.OPEN_INVENTORY, 2);
 
         register(ChatVisibility.FULL, 0);
         register(ChatVisibility.SYSTEM, 1);
@@ -538,6 +542,7 @@ public class MagicValues {
         register(UpdatedTileType.END_GATEWAY, 8);
         register(UpdatedTileType.SIGN, 9);
         register(UpdatedTileType.SHULKER_BOX, 10);
+        register(UpdatedTileType.BED, 11);
 
         register(ClientNotification.INVALID_BED, 0);
         register(ClientNotification.START_RAIN, 2);
@@ -669,6 +674,11 @@ public class MagicValues {
         register(NoteBlockValueType.SNARE_DRUM, 2);
         register(NoteBlockValueType.HI_HAT, 3);
         register(NoteBlockValueType.BASS_DRUM, 4);
+        register(NoteBlockValueType.FLUTE, 5);
+        register(NoteBlockValueType.BELL, 6);
+        register(NoteBlockValueType.GUITAR, 7);
+        register(NoteBlockValueType.CHIME, 8);
+        register(NoteBlockValueType.XYLOPHONE, 9);
 
         register(PistonValueType.PUSHING, 0);
         register(PistonValueType.PULLING, 1);
@@ -779,6 +789,10 @@ public class MagicValues {
         register(ScoreType.INTEGER, "integer");
         register(ScoreType.HEARTS, "hearts");
 
+        register(Advancement.DisplayData.FrameType.TASK, 0);
+        register(Advancement.DisplayData.FrameType.CHALLENGE, 1);
+        register(Advancement.DisplayData.FrameType.GOAL, 2);
+
         register(WorldBorderAction.SET_SIZE, 0);
         register(WorldBorderAction.LERP_SIZE, 1);
         register(WorldBorderAction.SET_CENTER, 2);
@@ -798,6 +812,16 @@ public class MagicValues {
         register(TitleAction.TIMES, 3);
         register(TitleAction.CLEAR, 4);
         register(TitleAction.RESET, 5);
+
+        register(UnlockRecipesAction.INIT, 0);
+        register(UnlockRecipesAction.ADD, 1);
+        register(UnlockRecipesAction.REMOVE, 2);
+
+        register(CraftingBookDataType.DISPLAYED_RECIPE, 0);
+        register(CraftingBookDataType.CRAFTING_BOOK_STATUS, 1);
+
+        register(AdvancementTabAction.OPENED_TAB, 0);
+        register(AdvancementTabAction.CLOSED_SCREEN, 1);
 
         register(ResourcePackStatus.SUCCESSFULLY_LOADED, 0);
         register(ResourcePackStatus.DECLINED, 1);
