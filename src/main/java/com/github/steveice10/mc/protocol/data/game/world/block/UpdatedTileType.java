@@ -10,5 +10,6 @@ public enum UpdatedTileType {
     STRUCTURE_BLOCK,
     END_GATEWAY,
     SIGN,
-    SHULKER_BOX;
+    SHULKER_BOX,
+    BED;
 }

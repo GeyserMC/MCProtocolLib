@@ -159,6 +159,8 @@ public abstract class Message implements Cloneable {
                 }
 
                 msg = new TranslationMessage(json.get("translate").getAsString(), with);
+            } else if (json.has("keybind")) {
+                msg = new KeybindMessage(json.get("keybind").getAsString());
             } else {
                 throw new IllegalArgumentException("Unknown message type in json: " + json.toString());
             }

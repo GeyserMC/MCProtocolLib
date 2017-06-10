@@ -6,6 +6,8 @@ import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.game.ClientRequest;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
+import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
+import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
@@ -29,7 +31,9 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.statistic.Achievement;
 import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
+import com.github.steveice10.mc.protocol.data.game.window.AdvancementTabAction;
 import com.github.steveice10.mc.protocol.data.game.window.ClickItemParam;
+import com.github.steveice10.mc.protocol.data.game.window.CraftingBookDataType;
 import com.github.steveice10.mc.protocol.data.game.window.CreativeGrabParam;
 import com.github.steveice10.mc.protocol.data.game.window.ShiftClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
@@ -97,6 +101,7 @@ public class MagicValues {
         register(AttributeType.GENERIC_ARMOR, "generic.armor");
         register(AttributeType.GENERIC_ARMOR_TOUGHNESS, "generic.armorToughness");
         register(AttributeType.GENERIC_LUCK, "generic.luck");
+        register(AttributeType.GENERIC_FLYING_SPEED, "generic.flyingSpeed");
         register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jumpStrength");
         register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "zombie.spawnReinforcements");
 
@@ -140,13 +145,13 @@ public class MagicValues {
         register(MetadataType.BLOCK_FACE, 10);
         register(MetadataType.OPTIONAL_UUID, 11);
         register(MetadataType.BLOCK_STATE, 12);
+        register(MetadataType.NBT_TAG, 13);
 
         register(HandshakeIntent.STATUS, 1);
         register(HandshakeIntent.LOGIN, 2);
 
         register(ClientRequest.RESPAWN, 0);
         register(ClientRequest.STATS, 1);
-        register(ClientRequest.OPEN_INVENTORY, 2);
 
         register(ChatVisibility.FULL, 0);
         register(ChatVisibility.SYSTEM, 1);
@@ -307,6 +312,8 @@ public class MagicValues {
         register(EntityStatus.LIVING_HURT_THORNS, 33);
         register(EntityStatus.IRON_GOLEM_EMPTY_HAND, 34);
         register(EntityStatus.TOTEM_OF_UNDYING_MAKE_SOUND, 35);
+        register(EntityStatus.LIVING_DROWN, 36);
+        register(EntityStatus.LIVING_BURN, 37);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);
@@ -329,6 +336,7 @@ public class MagicValues {
         register(MobType.EVOCATION_ILLAGER, 34);
         register(MobType.VEX, 35);
         register(MobType.VINDICATION_ILLAGER, 36);
+        register(MobType.ILLUSION_ILLAGER, 37);
         register(MobType.CREEPER, 50);
         register(MobType.SKELETON, 51);
         register(MobType.SPIDER, 52);
@@ -363,6 +371,7 @@ public class MagicValues {
         register(MobType.RABBIT, 101);
         register(MobType.POLAR_BEAR, 102);
         register(MobType.LLAMA, 103);
+        register(MobType.PARROT, 105);
         register(MobType.VILLAGER, 120);
 
         register(ObjectType.BOAT, 1);
@@ -538,6 +547,7 @@ public class MagicValues {
         register(UpdatedTileType.END_GATEWAY, 8);
         register(UpdatedTileType.SIGN, 9);
         register(UpdatedTileType.SHULKER_BOX, 10);
+        register(UpdatedTileType.BED, 11);
 
         register(ClientNotification.INVALID_BED, 0);
         register(ClientNotification.START_RAIN, 2);
@@ -669,6 +679,11 @@ public class MagicValues {
         register(NoteBlockValueType.SNARE_DRUM, 2);
         register(NoteBlockValueType.HI_HAT, 3);
         register(NoteBlockValueType.BASS_DRUM, 4);
+        register(NoteBlockValueType.FLUTE, 5);
+        register(NoteBlockValueType.BELL, 6);
+        register(NoteBlockValueType.GUITAR, 7);
+        register(NoteBlockValueType.CHIME, 8);
+        register(NoteBlockValueType.XYLOPHONE, 9);
 
         register(PistonValueType.PUSHING, 0);
         register(PistonValueType.PULLING, 1);
@@ -779,6 +794,10 @@ public class MagicValues {
         register(ScoreType.INTEGER, "integer");
         register(ScoreType.HEARTS, "hearts");
 
+        register(Advancement.DisplayData.FrameType.TASK, 0);
+        register(Advancement.DisplayData.FrameType.CHALLENGE, 1);
+        register(Advancement.DisplayData.FrameType.GOAL, 2);
+
         register(WorldBorderAction.SET_SIZE, 0);
         register(WorldBorderAction.LERP_SIZE, 1);
         register(WorldBorderAction.SET_CENTER, 2);
@@ -798,6 +817,16 @@ public class MagicValues {
         register(TitleAction.TIMES, 3);
         register(TitleAction.CLEAR, 4);
         register(TitleAction.RESET, 5);
+
+        register(UnlockRecipesAction.INIT, 0);
+        register(UnlockRecipesAction.ADD, 1);
+        register(UnlockRecipesAction.REMOVE, 2);
+
+        register(CraftingBookDataType.DISPLAYED_RECIPE, 0);
+        register(CraftingBookDataType.CRAFTING_BOOK_STATUS, 1);
+
+        register(AdvancementTabAction.OPENED_TAB, 0);
+        register(AdvancementTabAction.CLOSED_SCREEN, 1);
 
         register(ResourcePackStatus.SUCCESSFULLY_LOADED, 0);
         register(ResourcePackStatus.DECLINED, 1);
@@ -865,6 +894,8 @@ public class MagicValues {
         register(BuiltinSound.BLOCK_CHORUS_FLOWER_GROW, "block.chorus_flower.grow", true);
         register(BuiltinSound.BLOCK_ENCHANTMENT_TABLE_USE, "block.enchantment_table.use", true);
         register(BuiltinSound.BLOCK_END_GATEWAY_SPAWN, "block.end_gateway.spawn", true);
+        register(BuiltinSound.BLOCK_END_PORTAL_SPAWN, "block.end_portal.spawn", true);
+        register(BuiltinSound.BLOCK_END_PORTAL_FRAME_FILL, "block.end_portal_frame.fill", true);
         register(BuiltinSound.BLOCK_FENCE_GATE_CLOSE, "block.fence_gate.close", true);
         register(BuiltinSound.BLOCK_FENCE_GATE_OPEN, "block.fence_gate.open", true);
         register(BuiltinSound.BLOCK_FURNACE_FIRE_CRACKLE, "block.furnace.fire_crackle", true);
@@ -892,6 +923,8 @@ public class MagicValues {
         register(BuiltinSound.BLOCK_WOODEN_TRAPDOOR_CLOSE, "block.wooden_trapdoor.close", true);
         register(BuiltinSound.BLOCK_WOODEN_TRAPDOOR_CLOSE, "block.wooden_trapdoor.open", true);
         register(BuiltinSound.ENTITY_ARROW_HIT_PLAYER, "entity.arrow.hit_player", true);
+        register(BuiltinSound.ENTITY_BOAT_PADDLE_LAND, "entity.boat.paddle_land", true);
+        register(BuiltinSound.ENTITY_BOAT_PADDLE_WATER, "entity.boat.paddle_water", true);
         register(BuiltinSound.ENTITY_ELDER_GUARDIAN_AMBIENT, "entity.elder_guardian.ambient", true);
         register(BuiltinSound.ENTITY_ELDER_GUARDIAN_AMBIENT_LAND, "entity.elder_guardian.ambient_land", true);
         register(BuiltinSound.ENTITY_ELDER_GUARDIAN_CURSE, "entity.elder_guardian.curse", true);
@@ -924,10 +957,27 @@ public class MagicValues {
         register(BuiltinSound.ENTITY_HORSE_STEP_WOOD, "entity.horse.step_wood", true);
         register(BuiltinSound.ENTITY_HOSTILE_BIG_FALL, "entity.hostile.big_fall", true);
         register(BuiltinSound.ENTITY_HOSTILE_SMALL_FALL, "entity.hostile.small_fall", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_AMBIENT, "entity.illusion_illager.ambient", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_CAST_SPELL, "entity.illusion_illager.cast_spell", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_DEATH, "entity.illusion_illager.death", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_HURT, "entity.illusion_illager.hury", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_MIRROR_MOVE, "entity.illusion_illager.mirror_move", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS, "entity.illusion_illager.prepare_blindness", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_PREPARE_MIRROR, "entity.illusion_illager.prepare_mirror", true);
         register(BuiltinSound.ENTITY_ITEMFRAME_ADD_ITEM, "entity.itemframe.add_item", true);
         register(BuiltinSound.ENTITY_ITEMFRAME_REMOVE_ITEM, "entity.itemframe.remove_item", true);
         register(BuiltinSound.ENTITY_ITEMFRAME_ROTATE_ITEM, "entity.itemframe.rotate_item", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ELDER_GUARDIAN, "entity.parrot.imitate.elder_guardian", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_EVOCATION_ILLAGER, "entity.parrot.imitate.evocation_illager", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ILLUSION_ILLAGER, "entity.parrot.imitate.illusion_illager", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_POLAR_BEAR, "entity.parrot.imitate.polar_bear", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_VINDICATION_ILLAGER, "entity.parrot.imitate.vindication_illager", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_WITHER_SKELETON, "entity.parrot.imitate.wither_skeleton", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ZOMBIE_PIGMAN, "entity.parrot.imitate.zombie_pigman", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ZOMBIE_VILLAGER, "entity.parrot.imitate.zombie_villager", true);
         register(BuiltinSound.ENTITY_PLAYER_BIG_FALL, "entity.player.big_fall", true);
+        register(BuiltinSound.ENTITY_PLAYER_HURT_DROWN, "entity.player.hurt_drown", true);
+        register(BuiltinSound.ENTITY_PLAYER_HURT_ON_FIRE, "entity.player.hurt_on_fire", true);
         register(BuiltinSound.ENTITY_PLAYER_SMALL_FALL, "entity.player.small_fall", true);
         register(BuiltinSound.ENTITY_POLAR_BEAR_AMBIENT, "entity.polar_bear.ambient", true);
         register(BuiltinSound.ENTITY_POLAR_BEAR_BABY_AMBIENT, "entity.polar_bear.baby_ambient", true);
@@ -985,6 +1035,7 @@ public class MagicValues {
         register(BuiltinSound.ITEM_BUCKET_EMPTY_LAVA, "item.bucket.empty_lava", true);
         register(BuiltinSound.ITEM_BUCKET_FILL_LAVA, "item.bucket.fill_lava", true);
         register(BuiltinSound.ITEM_CHORUS_FRUIT_TELEPORT, "item.chorus_fruit.teleport", true);
+        register(BuiltinSound.UI_TOAST_CHALLENGE_COMPLETE, "ui.toast.challenge_complete", true);
     }
 
     private static void register(Enum<?> key, Object value) {
