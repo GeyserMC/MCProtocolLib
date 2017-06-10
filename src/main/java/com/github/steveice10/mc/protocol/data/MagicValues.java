@@ -894,6 +894,8 @@ public class MagicValues {
         register(BuiltinSound.BLOCK_CHORUS_FLOWER_GROW, "block.chorus_flower.grow", true);
         register(BuiltinSound.BLOCK_ENCHANTMENT_TABLE_USE, "block.enchantment_table.use", true);
         register(BuiltinSound.BLOCK_END_GATEWAY_SPAWN, "block.end_gateway.spawn", true);
+        register(BuiltinSound.BLOCK_END_PORTAL_SPAWN, "block.end_portal.spawn", true);
+        register(BuiltinSound.BLOCK_END_PORTAL_FRAME_FILL, "block.end_portal_frame.fill", true);
         register(BuiltinSound.BLOCK_FENCE_GATE_CLOSE, "block.fence_gate.close", true);
         register(BuiltinSound.BLOCK_FENCE_GATE_OPEN, "block.fence_gate.open", true);
         register(BuiltinSound.BLOCK_FURNACE_FIRE_CRACKLE, "block.furnace.fire_crackle", true);
@@ -921,6 +923,8 @@ public class MagicValues {
         register(BuiltinSound.BLOCK_WOODEN_TRAPDOOR_CLOSE, "block.wooden_trapdoor.close", true);
         register(BuiltinSound.BLOCK_WOODEN_TRAPDOOR_CLOSE, "block.wooden_trapdoor.open", true);
         register(BuiltinSound.ENTITY_ARROW_HIT_PLAYER, "entity.arrow.hit_player", true);
+        register(BuiltinSound.ENTITY_BOAT_PADDLE_LAND, "entity.boat.paddle_land", true);
+        register(BuiltinSound.ENTITY_BOAT_PADDLE_WATER, "entity.boat.paddle_water", true);
         register(BuiltinSound.ENTITY_ELDER_GUARDIAN_AMBIENT, "entity.elder_guardian.ambient", true);
         register(BuiltinSound.ENTITY_ELDER_GUARDIAN_AMBIENT_LAND, "entity.elder_guardian.ambient_land", true);
         register(BuiltinSound.ENTITY_ELDER_GUARDIAN_CURSE, "entity.elder_guardian.curse", true);
@@ -953,10 +957,27 @@ public class MagicValues {
         register(BuiltinSound.ENTITY_HORSE_STEP_WOOD, "entity.horse.step_wood", true);
         register(BuiltinSound.ENTITY_HOSTILE_BIG_FALL, "entity.hostile.big_fall", true);
         register(BuiltinSound.ENTITY_HOSTILE_SMALL_FALL, "entity.hostile.small_fall", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_AMBIENT, "entity.illusion_illager.ambient", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_CAST_SPELL, "entity.illusion_illager.cast_spell", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_DEATH, "entity.illusion_illager.death", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_HURT, "entity.illusion_illager.hury", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_MIRROR_MOVE, "entity.illusion_illager.mirror_move", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_PREPARE_BLINDNESS, "entity.illusion_illager.prepare_blindness", true);
+        register(BuiltinSound.ENTITY_ILLUSION_ILLAGER_PREPARE_MIRROR, "entity.illusion_illager.prepare_mirror", true);
         register(BuiltinSound.ENTITY_ITEMFRAME_ADD_ITEM, "entity.itemframe.add_item", true);
         register(BuiltinSound.ENTITY_ITEMFRAME_REMOVE_ITEM, "entity.itemframe.remove_item", true);
         register(BuiltinSound.ENTITY_ITEMFRAME_ROTATE_ITEM, "entity.itemframe.rotate_item", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ELDER_GUARDIAN, "entity.parrot.imitate.elder_guardian", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_EVOCATION_ILLAGER, "entity.parrot.imitate.evocation_illager", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ILLUSION_ILLAGER, "entity.parrot.imitate.illusion_illager", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_POLAR_BEAR, "entity.parrot.imitate.polar_bear", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_VINDICATION_ILLAGER, "entity.parrot.imitate.vindication_illager", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_WITHER_SKELETON, "entity.parrot.imitate.wither_skeleton", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ZOMBIE_PIGMAN, "entity.parrot.imitate.zombie_pigman", true);
+        register(BuiltinSound.ENTITY_PARROT_IMITATE_ZOMBIE_VILLAGER, "entity.parrot.imitate.zombie_villager", true);
         register(BuiltinSound.ENTITY_PLAYER_BIG_FALL, "entity.player.big_fall", true);
+        register(BuiltinSound.ENTITY_PLAYER_HURT_DROWN, "entity.player.hurt_drown", true);
+        register(BuiltinSound.ENTITY_PLAYER_HURT_ON_FIRE, "entity.player.hurt_on_fire", true);
         register(BuiltinSound.ENTITY_PLAYER_SMALL_FALL, "entity.player.small_fall", true);
         register(BuiltinSound.ENTITY_POLAR_BEAR_AMBIENT, "entity.polar_bear.ambient", true);
         register(BuiltinSound.ENTITY_POLAR_BEAR_BABY_AMBIENT, "entity.polar_bear.baby_ambient", true);
@@ -1014,6 +1035,7 @@ public class MagicValues {
         register(BuiltinSound.ITEM_BUCKET_EMPTY_LAVA, "item.bucket.empty_lava", true);
         register(BuiltinSound.ITEM_BUCKET_FILL_LAVA, "item.bucket.fill_lava", true);
         register(BuiltinSound.ITEM_CHORUS_FRUIT_TELEPORT, "item.chorus_fruit.teleport", true);
+        register(BuiltinSound.UI_TOAST_CHALLENGE_COMPLETE, "ui.toast.challenge_complete", true);
     }
 
     private static void register(Enum<?> key, Object value) {
