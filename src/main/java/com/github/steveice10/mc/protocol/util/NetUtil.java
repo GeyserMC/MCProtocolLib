@@ -231,6 +231,7 @@ public class NetUtil {
                     break;
                 case NBT_TAG:
                     writeNBT(out, (CompoundTag) meta.getValue());
+                    break;
                 default:
                     throw new IOException("Unknown metadata type: " + meta.getType());
             }
