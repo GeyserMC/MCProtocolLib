@@ -7,35 +7,35 @@ import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerAdvancementProgressPacket implements Packet {
-    private String id;
+public class ServerAdvancementTabPacket implements Packet {
+    private String tabId;
 
     @SuppressWarnings("unused")
-    private ServerAdvancementProgressPacket() {
+    private ServerAdvancementTabPacket() {
     }
 
-    public ServerAdvancementProgressPacket(String id) {
-        this.id = id;
+    public ServerAdvancementTabPacket(String tabId) {
+        this.tabId = tabId;
     }
 
-    public String getId() {
-        return this.id;
+    public String getTabId() {
+        return this.tabId;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
         if (in.readBoolean()) {
-            this.id = in.readString();
+            this.tabId = in.readString();
         } else {
-            this.id = null;
+            this.tabId = null;
         }
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        if (this.id != null) {
+        if (this.tabId != null) {
             out.writeBoolean(true);
-            out.writeString(this.id);
+            out.writeString(this.tabId);
         } else {
             out.writeBoolean(false);
         }

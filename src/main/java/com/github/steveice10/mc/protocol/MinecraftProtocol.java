@@ -33,7 +33,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerV
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientTeleportConfirmPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientUpdateSignPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientVehicleMovePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancementProgressPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancementTabPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancementsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerBossBarPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
@@ -374,7 +374,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x33, ServerResourcePackSendPacket.class);
         this.registerIncoming(0x34, ServerRespawnPacket.class);
         this.registerIncoming(0x35, ServerEntityHeadLookPacket.class);
-        this.registerIncoming(0x36, ServerAdvancementProgressPacket.class);
+        this.registerIncoming(0x36, ServerAdvancementTabPacket.class);
         this.registerIncoming(0x37, ServerWorldBorderPacket.class);
         this.registerIncoming(0x38, ServerSwitchCameraPacket.class);
         this.registerIncoming(0x39, ServerPlayerChangeHeldItemPacket.class);
@@ -524,7 +524,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x33, ServerResourcePackSendPacket.class);
         this.registerOutgoing(0x34, ServerRespawnPacket.class);
         this.registerOutgoing(0x35, ServerEntityHeadLookPacket.class);
-        this.registerOutgoing(0x36, ServerAdvancementProgressPacket.class);
+        this.registerOutgoing(0x36, ServerAdvancementTabPacket.class);
         this.registerOutgoing(0x37, ServerWorldBorderPacket.class);
         this.registerOutgoing(0x38, ServerSwitchCameraPacket.class);
         this.registerOutgoing(0x39, ServerPlayerChangeHeldItemPacket.class);
