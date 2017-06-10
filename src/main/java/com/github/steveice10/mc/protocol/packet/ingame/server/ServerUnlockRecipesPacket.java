@@ -84,9 +84,9 @@ public class ServerUnlockRecipesPacket implements Packet {
         }
 
         int size = in.readVarInt();
-        this.alreadyKnownRecipes = new ArrayList<>(size);
+        this.recipes = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            this.alreadyKnownRecipes.add(in.readVarInt());
+            this.recipes.add(in.readVarInt());
         }
     }
 
