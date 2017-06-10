@@ -336,6 +336,7 @@ public class MagicValues {
         register(MobType.EVOCATION_ILLAGER, 34);
         register(MobType.VEX, 35);
         register(MobType.VINDICATION_ILLAGER, 36);
+        register(MobType.ILLUSION_ILLAGER, 37);
         register(MobType.CREEPER, 50);
         register(MobType.SKELETON, 51);
         register(MobType.SPIDER, 52);
@@ -370,6 +371,7 @@ public class MagicValues {
         register(MobType.RABBIT, 101);
         register(MobType.POLAR_BEAR, 102);
         register(MobType.LLAMA, 103);
+        register(MobType.PARROT, 105);
         register(MobType.VILLAGER, 120);
 
         register(ObjectType.BOAT, 1);

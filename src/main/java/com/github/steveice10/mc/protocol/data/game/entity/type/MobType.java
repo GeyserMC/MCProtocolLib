@@ -14,6 +14,7 @@ public enum MobType {
     EVOCATION_ILLAGER,
     VEX,
     VINDICATION_ILLAGER,
+    ILLUSION_ILLAGER,
     CREEPER,
     SKELETON,
     SPIDER,
@@ -48,5 +49,6 @@ public enum MobType {
     RABBIT,
     POLAR_BEAR,
     LLAMA,
+    PARROT,
     VILLAGER;
 }
