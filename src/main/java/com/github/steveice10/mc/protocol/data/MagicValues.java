@@ -673,6 +673,9 @@ public class MagicValues {
         register(Particle.END_ROD, 43);
         register(Particle.DAMAGE_INDICATOR, 44);
         register(Particle.SWEEP_ATTACK, 45);
+        register(Particle.FALLING_DUST, 46);
+        register(Particle.TOTEM, 47);
+        register(Particle.SPIT, 48);
 
         register(NoteBlockValueType.HARP, 0);
         register(NoteBlockValueType.DOUBLE_BASS, 1);

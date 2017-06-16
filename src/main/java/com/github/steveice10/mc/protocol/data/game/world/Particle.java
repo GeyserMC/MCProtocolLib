@@ -46,7 +46,10 @@ public enum Particle {
     DRAGON_BREATH,
     END_ROD,
     DAMAGE_INDICATOR,
-    SWEEP_ATTACK;
+    SWEEP_ATTACK,
+    FALLING_DUST,
+    SPIT,
+    TOTEM;
 
     private int dataLength;
 
