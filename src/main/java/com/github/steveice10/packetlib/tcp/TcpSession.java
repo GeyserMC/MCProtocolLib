@@ -2,6 +2,7 @@ package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
+import com.github.steveice10.packetlib.event.session.PacketSendingEvent;
 import com.github.steveice10.packetlib.event.session.SessionListener;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
@@ -203,26 +204,33 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void send(final Packet packet) {
+    public void send(Packet packet) {
         if(this.channel == null) {
             return;
         }
 
-        ChannelFuture future = this.channel.writeAndFlush(packet).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if(future.isSuccess()) {
-                    callEvent(new PacketSentEvent(TcpSession.this, packet));
-                } else {
-                    exceptionCaught(null, future.cause());
-                }
-            }
-        });
+        PacketSendingEvent sendingEvent = new PacketSendingEvent(this, packet);
+        this.callEvent(sendingEvent);
 
-        if(packet.isPriority()) {
-            try {
-                future.await();
-            } catch(InterruptedException e) {
+        if(!sendingEvent.isCancelled()) {
+            final Packet toSend = sendingEvent.getPacket();
+
+            ChannelFuture future = this.channel.writeAndFlush(toSend).addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if(future.isSuccess()) {
+                        callEvent(new PacketSentEvent(TcpSession.this, toSend));
+                    } else {
+                        exceptionCaught(null, future.cause());
+                    }
+                }
+            });
+
+            if(toSend.isPriority()) {
+                try {
+                    future.await();
+                } catch(InterruptedException e) {
+                }
             }
         }
     }

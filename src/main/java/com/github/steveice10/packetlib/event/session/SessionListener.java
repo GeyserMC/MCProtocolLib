@@ -12,6 +12,13 @@ public interface SessionListener {
     public void packetReceived(PacketReceivedEvent event);
 
     /**
+     * Called when a session is sending a packet.
+     *
+     * @param event Data relating to the event.
+     */
+    public void packetSending(PacketSendingEvent event);
+
+    /**
      * Called when a session sends a packet.
      *
      * @param event Data relating to the event.
