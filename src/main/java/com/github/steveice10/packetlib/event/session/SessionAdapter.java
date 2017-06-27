@@ -9,6 +9,10 @@ public class SessionAdapter implements SessionListener {
     }
 
     @Override
+    public void packetSending(PacketSendingEvent event) {
+    }
+
+    @Override
     public void packetSent(PacketSentEvent event) {
     }
 
