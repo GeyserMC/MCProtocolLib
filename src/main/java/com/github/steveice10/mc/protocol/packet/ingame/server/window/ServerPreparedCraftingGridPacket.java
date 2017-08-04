@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.packet.ingame.client.window;
+package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
 import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -7,20 +7,18 @@ import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientPrepareCraftingGridPacket implements Packet {
+public class ServerPreparedCraftingGridPacket implements Packet {
 
     private int windowId;
     private int recipeId;
-    private boolean makeAll;
 
     @SuppressWarnings("unused")
-    private ClientPrepareCraftingGridPacket() {
+    private ServerPreparedCraftingGridPacket() {
     }
 
-    public ClientPrepareCraftingGridPacket(int windowId, int recipeId, boolean makeAll) {
+    public ServerPreparedCraftingGridPacket(int windowId, int recipeId) {
         this.windowId = windowId;
         this.recipeId = recipeId;
-        this.makeAll = makeAll;
     }
 
     public int getWindowId() {
@@ -31,22 +29,16 @@ public class ClientPrepareCraftingGridPacket implements Packet {
         return this.recipeId;
     }
 
-    public boolean doesMakeAll() {
-        return makeAll;
-    }
-
     @Override
     public void read(NetInput in) throws IOException {
         this.windowId = in.readByte();
         this.recipeId = in.readVarInt();
-        this.makeAll = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
         out.writeVarInt(this.recipeId);
-        out.writeBoolean(this.makeAll);
     }
 
     @Override
