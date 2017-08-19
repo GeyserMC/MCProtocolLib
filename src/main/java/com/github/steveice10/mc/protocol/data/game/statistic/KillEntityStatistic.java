@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
-public class BreakItemStatistic implements Statistic {
+public class KillEntityStatistic implements Statistic {
 
     private String id;
 
-    public BreakItemStatistic(String id) {
+    public KillEntityStatistic(String id) {
         this.id = id;
     }
 
@@ -17,7 +17,7 @@ public class BreakItemStatistic implements Statistic {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
 
-        BreakItemStatistic that = (BreakItemStatistic) o;
+        KillEntityStatistic that = (KillEntityStatistic) o;
 
         if(!id.equals(that.id)) return false;
 
