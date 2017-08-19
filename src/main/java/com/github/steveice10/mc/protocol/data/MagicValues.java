@@ -606,13 +606,39 @@ public class MagicValues {
         register(Achievement.DIAMONDS_TO_YOU, "achievement.diamondsToYou");
         register(Achievement.OVERPOWERED, "achievement.overpowered");
 
+        register(GenericStatistic.CAKE_SLICES_EATEN, "stat.cakeSlicesEaten");
+        register(GenericStatistic.TIMES_CAULDRON_FILLED, "stat.cauldronFilled");
+        register(GenericStatistic.TIMES_CAULDRON_USED, "stat.cauldronUsed");
+        register(GenericStatistic.TIMES_ARMOR_CLEANED, "stat.armorCleaned");
+        register(GenericStatistic.TIMES_BANNER_CLEANED, "stat.bannerCleaned");
+        register(GenericStatistic.TIMES_BREWING_STAND_GUI_OPENED, "stat.brewingstandInteraction");
+        register(GenericStatistic.TIMES_BEACON_GUI_OPENED, "stat.beaconInteraction");
+        register(GenericStatistic.TIMES_CRAFTING_TABLE_GUI_OPENED, "stat.craftingTableInteraction");
+        register(GenericStatistic.TIMES_FURNACE_GUI_OPENED, "stat.furnaceInteraction");
+        register(GenericStatistic.TIMES_DISPENSER_GUI_OPENED, "stat.dispenserInteraction");
+        register(GenericStatistic.TIMES_DROPPER_GUI_OPENED, "stat.dropperInteraction");
+        register(GenericStatistic.TIMES_HOPPER_GUI_OPENED, "stat.hopperInteraction");
+        register(GenericStatistic.TIMES_CHEST_GUI_OPENED, "stat.chestInteraction");
+        register(GenericStatistic.TIMES_SHULKER_BOX_GUI_OPENED, "stat.shulkerBoxOpened");
+        register(GenericStatistic.TIMES_TRAPPED_CHEST_GUI_OPENED, "stat.trappedChestInteraction");
+        register(GenericStatistic.TIMES_ENDER_CHEST_GUI_OPENED, "stat.enderchestInteraction");
+        register(GenericStatistic.TIMES_NOTEBLOCK_PLAYED, "stat.noteblockPlayed");
+        register(GenericStatistic.TIMES_NOTEBLOCK_TUNED, "stat.noteblockTuned");
+        register(GenericStatistic.TIMES_PLANT_POTTED, "stat.flowerPotted");
+        register(GenericStatistic.TIMES_RECORD_PLAYED, "stat.recordPlayed");
+        register(GenericStatistic.TIMES_BED_ENTERED, "stat.sleepInBed");
         register(GenericStatistic.TIMES_LEFT_GAME, "stat.leaveGame");
         register(GenericStatistic.TICKS_PLAYED, "stat.playOneMinute");
+        register(GenericStatistic.TICKS_SINCE_DEATH, "stat.timeSinceDeath");
+        register(GenericStatistic.TICKS_SNEAKED, "stat.sneakTime");
         register(GenericStatistic.CENTIMETERS_WALKED, "stat.walkOneCm");
+        register(GenericStatistic.CENTIMETERS_CROUCHED, "stat.crouchOneCm");
+        register(GenericStatistic.CENTIMETERS_SPRINTED, "stat.sprintOneCm");
         register(GenericStatistic.CENTIMETERS_SWAM, "stat.swimOneCm");
         register(GenericStatistic.CENTIMETERS_FALLEN, "stat.fallOneCm");
         register(GenericStatistic.CENTIMETERS_CLIMBED, "stat.climbOneCm");
         register(GenericStatistic.CENTIMETERS_FLOWN, "stat.flyOneCm");
+        register(GenericStatistic.CENTIMETERS_FLOWN_WITH_ELYTRA, "stat.aviateOneCm");
         register(GenericStatistic.CENTIMETERS_DOVE, "stat.diveOneCm");
         register(GenericStatistic.CENTIMETERS_TRAVELLED_IN_MINECART, "stat.minecartOneCm");
         register(GenericStatistic.CENTIMETERS_TRAVELLED_IN_BOAT, "stat.boatOneCm");
@@ -620,6 +646,9 @@ public class MagicValues {
         register(GenericStatistic.CENTIMETERS_RODE_ON_HORSE, "stat.horseOneCm");
         register(GenericStatistic.TIMES_JUMPED, "stat.jump");
         register(GenericStatistic.TIMES_DROPPED_ITEMS, "stat.drop");
+        register(GenericStatistic.TIMES_ENCHANTED_ITEMS, "stat.itemEnchanted");
+        register(GenericStatistic.TIMES_TALKED_TO_VILLAGERS, "stat.talkedToVillager");
+        register(GenericStatistic.TIMES_TRADED_WITH_VILLAGERS, "stat.tradedWithVillager");
         register(GenericStatistic.DAMAGE_DEALT, "stat.damageDealt");
         register(GenericStatistic.DAMAGE_TAKEN, "stat.damageTaken");
         register(GenericStatistic.DEATHS, "stat.deaths");
@@ -627,8 +656,6 @@ public class MagicValues {
         register(GenericStatistic.ANIMALS_BRED, "stat.animalsBred");
         register(GenericStatistic.PLAYERS_KILLED, "stat.playerKills");
         register(GenericStatistic.FISH_CAUGHT, "stat.fishCaught");
-        register(GenericStatistic.JUNK_FISHED, "stat.junkFished");
-        register(GenericStatistic.TREASURE_FISHED, "stat.treasureFished");
 
         register(Particle.EXPLOSION_NORMAL, 0);
         register(Particle.EXPLOSION_LARGE, 1);
