@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.statistic.Achievement;
 import com.github.steveice10.mc.protocol.data.game.statistic.BreakBlockStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.BreakItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.CraftItemStatistic;
@@ -52,9 +51,7 @@ public class ServerStatisticsPacket implements Packet {
         for(int index = 0; index < length; index++) {
             String value = in.readString();
             Statistic statistic = null;
-            if(value.startsWith("achievement.")) {
-                statistic = MagicValues.key(Achievement.class, value);
-            } else if(value.startsWith(CRAFT_ITEM_PREFIX)) {
+            if(value.startsWith(CRAFT_ITEM_PREFIX)) {
                 statistic = new CraftItemStatistic(value.substring(CRAFT_ITEM_PREFIX.length()));
             } else if(value.startsWith(BREAK_BLOCK_PREFIX)) {
                 statistic = new BreakBlockStatistic(value.substring(BREAK_BLOCK_PREFIX.length()));
@@ -83,9 +80,7 @@ public class ServerStatisticsPacket implements Packet {
         out.writeVarInt(this.statistics.size());
         for(Statistic statistic : this.statistics.keySet()) {
             String value = "";
-            if(statistic instanceof Achievement) {
-                value = MagicValues.value(String.class, (Achievement) statistic);
-            } else if(statistic instanceof CraftItemStatistic) {
+            if(statistic instanceof CraftItemStatistic) {
                 value = CRAFT_ITEM_PREFIX + ((CraftItemStatistic) statistic).getId();
             } else if(statistic instanceof BreakBlockStatistic) {
                 value = BREAK_BLOCK_PREFIX + ((BreakBlockStatistic) statistic).getId();

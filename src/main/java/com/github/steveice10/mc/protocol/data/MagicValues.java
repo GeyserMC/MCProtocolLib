@@ -29,7 +29,6 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardPosition
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
-import com.github.steveice10.mc.protocol.data.game.statistic.Achievement;
 import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
 import com.github.steveice10.mc.protocol.data.game.window.AdvancementTabAction;
 import com.github.steveice10.mc.protocol.data.game.window.ClickItemParam;
@@ -570,41 +569,6 @@ public class MagicValues {
 
         register(EnterCreditsValue.SEEN_BEFORE, 0);
         register(EnterCreditsValue.FIRST_TIME, 1);
-
-        register(Achievement.TAKING_INVENTORY, "achievement.openInventory");
-        register(Achievement.GETTING_WOOD, "achievement.mineWood");
-        register(Achievement.BENCHMARKING, "achievement.buildWorkBench");
-        register(Achievement.TIME_TO_MINE, "achievement.buildPickaxe");
-        register(Achievement.HOT_TOPIC, "achievement.buildFurnace");
-        register(Achievement.ACQUIRE_HARDWARE, "achievement.acquireIron");
-        register(Achievement.TIME_TO_FARM, "achievement.buildHoe");
-        register(Achievement.BAKE_BREAD, "achievement.makeBread");
-        register(Achievement.THE_LIE, "achievement.bakeCake");
-        register(Achievement.GETTING_AN_UPGRADE, "achievement.buildBetterPickaxe");
-        register(Achievement.DELICIOUS_FISH, "achievement.cookFish");
-        register(Achievement.ON_A_RAIL, "achievement.onARail");
-        register(Achievement.TIME_TO_STRIKE, "achievement.buildSword");
-        register(Achievement.MONSTER_HUNTER, "achievement.killEnemy");
-        register(Achievement.COW_TIPPER, "achievement.killCow");
-        register(Achievement.WHEN_PIGS_FLY, "achievement.flyPig");
-        register(Achievement.SNIPER_DUEL, "achievement.snipeSkeleton");
-        register(Achievement.DIAMONDS, "achievement.diamonds");
-        register(Achievement.WE_NEED_TO_GO_DEEPER, "achievement.portal");
-        register(Achievement.RETURN_TO_SENDER, "achievement.ghast");
-        register(Achievement.INTO_FIRE, "achievement.blazeRod");
-        register(Achievement.LOCAL_BREWERY, "achievement.potion");
-        register(Achievement.THE_END_1, "achievement.theEnd");
-        register(Achievement.THE_END_2, "achievement.theEnd2");
-        register(Achievement.ENCHANTER, "achievement.enchantments");
-        register(Achievement.OVERKILL, "achievement.overkill");
-        register(Achievement.LIBRARIAN, "achievement.bookcase");
-        register(Achievement.ADVENTURING_TIME, "achievement.exploreAllBiomes");
-        register(Achievement.THE_BEGINNING_1, "achievement.spawnWither");
-        register(Achievement.THE_BEGINNING_2, "achievement.killWither");
-        register(Achievement.BEACONATOR, "achievement.fullBeacon");
-        register(Achievement.REPOPULATION, "achievement.breedCow");
-        register(Achievement.DIAMONDS_TO_YOU, "achievement.diamondsToYou");
-        register(Achievement.OVERPOWERED, "achievement.overpowered");
 
         register(GenericStatistic.CAKE_SLICES_EATEN, "stat.cakeSlicesEaten");
         register(GenericStatistic.TIMES_CAULDRON_FILLED, "stat.cauldronFilled");
