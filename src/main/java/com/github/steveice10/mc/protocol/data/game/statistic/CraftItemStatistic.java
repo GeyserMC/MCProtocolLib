@@ -2,13 +2,13 @@ package com.github.steveice10.mc.protocol.data.game.statistic;
 
 public class CraftItemStatistic implements Statistic {
 
-    private int id;
+    private String id;
 
-    public CraftItemStatistic(int id) {
+    public CraftItemStatistic(String id) {
         this.id = id;
     }
 
-    public int getId() {
+    public String getId() {
         return this.id;
     }
 
@@ -19,14 +19,14 @@ public class CraftItemStatistic implements Statistic {
 
         CraftItemStatistic that = (CraftItemStatistic) o;
 
-        if(id != that.id) return false;
+        if(!id.equals(that.id)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return id;
+        return id.hashCode();
     }
 
 }
