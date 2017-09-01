@@ -40,7 +40,7 @@ public interface ConnectionListener {
     /**
      * Binds the listener to its host and port.
      *
-     * @param wait Whether to wait for the listener to finish binding.
+     * @param wait     Whether to wait for the listener to finish binding.
      * @param callback Callback to call when the listener has finished binding.
      */
     public void bind(boolean wait, Runnable callback);
@@ -60,7 +60,7 @@ public interface ConnectionListener {
     /**
      * Closes the listener.
      *
-     * @param wait Whether to wait for the listener to finish closing.
+     * @param wait     Whether to wait for the listener to finish closing.
      * @param callback Callback to call when the listener has finished closing.
      */
     public void close(boolean wait, Runnable callback);

@@ -1,5 +1,6 @@
 package com.github.steveice10.packetlib.tcp;
 
+import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -12,7 +13,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
-import com.github.steveice10.packetlib.Client;
 
 import javax.naming.directory.InitialDirContext;
 import java.net.Proxy;
@@ -80,7 +80,7 @@ public class TcpClientSession extends TcpSession {
                             environment.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
                             environment.put("java.naming.provider.url", "dns:");
 
-                            String[] result = new InitialDirContext(environment).getAttributes(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, new String[] { "SRV" }).get("srv").get().toString().split(" ", 4);
+                            String[] result = new InitialDirContext(environment).getAttributes(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, new String[] {"SRV"}).get("srv").get().toString().split(" ", 4);
                             host = result[3];
                             port = Integer.parseInt(result[2]);
                         } catch(Throwable t) {

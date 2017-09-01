@@ -2,12 +2,12 @@ package com.github.steveice10.packetlib;
 
 import com.github.steveice10.packetlib.event.server.ServerBoundEvent;
 import com.github.steveice10.packetlib.event.server.ServerClosedEvent;
+import com.github.steveice10.packetlib.event.server.ServerClosingEvent;
 import com.github.steveice10.packetlib.event.server.ServerEvent;
 import com.github.steveice10.packetlib.event.server.ServerListener;
-import com.github.steveice10.packetlib.packet.PacketProtocol;
 import com.github.steveice10.packetlib.event.server.SessionAddedEvent;
 import com.github.steveice10.packetlib.event.server.SessionRemovedEvent;
-import com.github.steveice10.packetlib.event.server.ServerClosingEvent;
+import com.github.steveice10.packetlib.packet.PacketProtocol;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

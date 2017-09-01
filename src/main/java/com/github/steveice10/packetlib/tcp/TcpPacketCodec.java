@@ -1,10 +1,10 @@
 package com.github.steveice10.packetlib.tcp;
 
-import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.io.ByteBufNetInput;
 import com.github.steveice10.packetlib.tcp.io.ByteBufNetOutput;
 import io.netty.buffer.ByteBuf;

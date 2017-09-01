@@ -1,5 +1,6 @@
 package com.github.steveice10.packetlib.tcp;
 
+import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.tcp.io.ByteBufNetInput;
 import com.github.steveice10.packetlib.tcp.io.ByteBufNetOutput;
 import io.netty.buffer.ByteBuf;
@@ -7,7 +8,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.CorruptedFrameException;
-import com.github.steveice10.packetlib.Session;
 
 import java.util.List;
 

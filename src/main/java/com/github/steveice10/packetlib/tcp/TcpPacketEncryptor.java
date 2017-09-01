@@ -1,9 +1,9 @@
 package com.github.steveice10.packetlib.tcp;
 
+import com.github.steveice10.packetlib.Session;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
-import com.github.steveice10.packetlib.Session;
 
 import java.util.List;
 

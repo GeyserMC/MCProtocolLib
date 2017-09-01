@@ -1,7 +1,7 @@
 package com.github.steveice10.packetlib.tcp.io;
 
-import io.netty.buffer.ByteBuf;
 import com.github.steveice10.packetlib.io.NetOutput;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.UUID;
