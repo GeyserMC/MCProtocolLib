@@ -2,18 +2,16 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.entity.player;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ServerPlayerPositionRotationPacket implements Packet {
-
+public class ServerPlayerPositionRotationPacket extends MinecraftPacket {
     private double x;
     private double y;
     private double z;
@@ -97,15 +95,5 @@ public class ServerPlayerPositionRotationPacket implements Packet {
 
         out.writeByte(flags);
         out.writeVarInt(this.teleportId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

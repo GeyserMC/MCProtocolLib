@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.advancement;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,8 +48,9 @@ public class Advancement {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Advancement)) return false;
+        if(this == o) return true;
+        if(!(o instanceof Advancement)) return false;
+
         Advancement that = (Advancement) o;
         return Objects.equals(this.id, that.id) &&
                 Objects.equals(this.parentId, that.parentId) &&
@@ -60,21 +61,15 @@ public class Advancement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, parentId, displayData, criteria, requirements);
+        return Objects.hash(this.id, this.parentId, this.displayData, this.criteria, this.requirements);
     }
 
     @Override
     public String toString() {
-        return ReflectionToString.toString(this);
+        return ObjectUtil.toString(this);
     }
 
     public static class DisplayData {
-        public enum FrameType {
-            TASK,
-            CHALLENGE,
-            GOAL;
-        }
-
         private Message title;
         private Message description;
         private ItemStack icon;
@@ -83,7 +78,6 @@ public class Advancement {
         private boolean hidden;
         private String backgroundTexture;
         private float posX, posY;
-
         public DisplayData(Message title, Message description, ItemStack icon, FrameType frameType,
                            boolean showToast, boolean hidden, float posX, float posY) {
             this.title = title;
@@ -140,8 +134,9 @@ public class Advancement {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof DisplayData)) return false;
+            if(this == o) return true;
+            if(!(o instanceof DisplayData)) return false;
+
             DisplayData that = (DisplayData) o;
             return this.showToast == that.showToast &&
                     this.hidden == that.hidden &&
@@ -156,12 +151,18 @@ public class Advancement {
 
         @Override
         public int hashCode() {
-            return Objects.hash(title, description, icon, frameType, showToast, hidden, backgroundTexture, posX, posY);
+            return ObjectUtil.hashCode(this.title, this.description, this.icon, this.frameType, this.showToast, this.hidden, this.backgroundTexture, this.posX, this.posY);
         }
 
         @Override
         public String toString() {
-            return ReflectionToString.toString(this);
+            return ObjectUtil.toString(this);
+        }
+
+        public enum FrameType {
+            TASK,
+            CHALLENGE,
+            GOAL;
         }
     }
 }

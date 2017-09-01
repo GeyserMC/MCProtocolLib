@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.world.block.value;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 public class NoteBlockValue implements BlockValue {
     private int pitch;
 
@@ -17,11 +19,20 @@ public class NoteBlockValue implements BlockValue {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof NoteBlockValue && this.pitch == ((NoteBlockValue) o).pitch;
+        if(this == o) return true;
+        if(!(o instanceof NoteBlockValue)) return false;
+
+        NoteBlockValue that = (NoteBlockValue) o;
+        return this.pitch == that.pitch;
     }
 
     @Override
     public int hashCode() {
-        return this.pitch;
+        return ObjectUtil.hashCode(this.pitch);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

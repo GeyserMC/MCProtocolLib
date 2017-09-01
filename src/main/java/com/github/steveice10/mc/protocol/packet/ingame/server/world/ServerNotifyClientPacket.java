@@ -1,22 +1,20 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
-import com.github.steveice10.mc.protocol.data.game.world.notify.RainStrengthValue;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotificationValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
+import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
+import com.github.steveice10.mc.protocol.data.game.world.notify.RainStrengthValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ThunderStrengthValue;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerNotifyClientPacket implements Packet {
-
+public class ServerNotifyClientPacket extends MinecraftPacket {
     private ClientNotification notification;
     private ClientNotificationValue value;
 
@@ -67,15 +65,5 @@ public class ServerNotifyClientPacket implements Packet {
         }
 
         out.writeFloat(value);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

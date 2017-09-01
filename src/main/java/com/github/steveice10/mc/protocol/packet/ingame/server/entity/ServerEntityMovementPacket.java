@@ -1,24 +1,21 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerEntityMovementPacket implements Packet {
-
+public class ServerEntityMovementPacket extends MinecraftPacket {
     protected int entityId;
     protected double moveX;
     protected double moveY;
     protected double moveZ;
     protected float yaw;
     protected float pitch;
-    private boolean onGround;
-
     protected boolean pos = false;
     protected boolean rot = false;
+    private boolean onGround;
 
     protected ServerEntityMovementPacket() {
     }
@@ -92,15 +89,5 @@ public class ServerEntityMovementPacket implements Packet {
         if(this.pos || this.rot) {
             out.writeBoolean(this.onGround);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

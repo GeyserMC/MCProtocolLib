@@ -1,5 +1,10 @@
 package com.github.steveice10.mc.protocol;
 
+import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.exception.request.RequestException;
+import com.github.steveice10.mc.auth.service.AuthenticationService;
+import com.github.steveice10.mc.protocol.data.SubProtocol;
+import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
@@ -84,6 +89,10 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.Serve
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnObjectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPaintingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerDisplayScoreboardPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerScoreboardObjectivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerTeamPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerUpdateScorePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerCloseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerConfirmTransactionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenWindowPacket;
@@ -109,20 +118,11 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUnload
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerWorldBorderPacket;
+import com.github.steveice10.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import com.github.steveice10.mc.protocol.packet.login.client.LoginStartPacket;
+import com.github.steveice10.mc.protocol.packet.login.server.EncryptionRequestPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSetCompressionPacket;
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.exception.request.RequestException;
-import com.github.steveice10.mc.auth.service.AuthenticationService;
-import com.github.steveice10.mc.protocol.data.SubProtocol;
-import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerDisplayScoreboardPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerScoreboardObjectivePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerTeamPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerUpdateScorePacket;
-import com.github.steveice10.mc.protocol.packet.login.client.EncryptionResponsePacket;
-import com.github.steveice10.mc.protocol.packet.login.server.EncryptionRequestPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
 import com.github.steveice10.mc.protocol.packet.status.client.StatusPingPacket;
 import com.github.steveice10.mc.protocol.packet.status.client.StatusQueryPacket;
@@ -155,12 +155,12 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public MinecraftProtocol(SubProtocol subProtocol) {
-        if (subProtocol != SubProtocol.LOGIN && subProtocol != SubProtocol.STATUS) {
+        if(subProtocol != SubProtocol.LOGIN && subProtocol != SubProtocol.STATUS) {
             throw new IllegalArgumentException("Only login and status modes are permitted.");
         }
 
         this.subProtocol = subProtocol;
-        if (subProtocol == SubProtocol.LOGIN) {
+        if(subProtocol == SubProtocol.LOGIN) {
             this.profile = new GameProfile((UUID) null, "Player");
         }
     }
@@ -183,7 +183,7 @@ public class MinecraftProtocol extends PacketProtocol {
         String clientToken = UUID.randomUUID().toString();
         AuthenticationService auth = new AuthenticationService(clientToken, authProxy);
         auth.setUsername(username);
-        if (token) {
+        if(token) {
             auth.setAccessToken(using);
         } else {
             auth.setPassword(using);
@@ -225,7 +225,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
     @Override
     public void newClientSession(Client client, Session session) {
-        if (this.profile != null) {
+        if(this.profile != null) {
             session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
             session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
         }
@@ -243,7 +243,7 @@ public class MinecraftProtocol extends PacketProtocol {
     protected void enableEncryption(Key key) {
         try {
             this.encrypt = new AESEncryption(key);
-        } catch (GeneralSecurityException e) {
+        } catch(GeneralSecurityException e) {
             throw new Error("Failed to enable protocol encryption.", e);
         }
     }
@@ -254,9 +254,9 @@ public class MinecraftProtocol extends PacketProtocol {
 
     protected void setSubProtocol(SubProtocol subProtocol, boolean client, Session session) {
         this.clearPackets();
-        switch (subProtocol) {
+        switch(subProtocol) {
             case HANDSHAKE:
-                if (client) {
+                if(client) {
                     this.initClientHandshake(session);
                 } else {
                     this.initServerHandshake(session);
@@ -264,7 +264,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case LOGIN:
-                if (client) {
+                if(client) {
                     this.initClientLogin(session);
                 } else {
                     this.initServerLogin(session);
@@ -272,7 +272,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case GAME:
-                if (client) {
+                if(client) {
                     this.initClientGame(session);
                 } else {
                     this.initServerGame(session);
@@ -280,7 +280,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case STATUS:
-                if (client) {
+                if(client) {
                     this.initClientStatus(session);
                 } else {
                     this.initServerStatus(session);

@@ -1,18 +1,16 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.data.game.world.map.MapData;
-import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.world.map.MapData;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIcon;
+import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerMapDataPacket implements Packet {
-
+public class ServerMapDataPacket extends MinecraftPacket {
     private int mapId;
     private byte scale;
     private boolean trackingPosition;
@@ -105,15 +103,5 @@ public class ServerMapDataPacket implements Packet {
         } else {
             out.writeByte(0);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

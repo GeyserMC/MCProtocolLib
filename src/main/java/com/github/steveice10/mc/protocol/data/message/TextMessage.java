@@ -1,8 +1,11 @@
 package com.github.steveice10.mc.protocol.data.message;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
+import java.util.Objects;
 
 public class TextMessage extends Message {
     private String text;
@@ -39,13 +42,21 @@ public class TextMessage extends Message {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof TextMessage && super.equals(o) && this.text.equals(((TextMessage) o).text);
+        if(this == o) return true;
+        if(!(o instanceof TextMessage)) return false;
+
+        TextMessage that = (TextMessage) o;
+        return super.equals(o) &&
+                Objects.equals(this.text, that.text);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + this.text.hashCode();
-        return result;
+        return ObjectUtil.hashCode(super.hashCode(), this.text);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

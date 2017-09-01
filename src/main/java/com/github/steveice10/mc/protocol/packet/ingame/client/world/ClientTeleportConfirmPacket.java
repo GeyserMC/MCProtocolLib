@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.world;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientTeleportConfirmPacket implements Packet {
+public class ClientTeleportConfirmPacket extends MinecraftPacket {
     private int id;
 
     @SuppressWarnings("unused")
@@ -30,15 +29,5 @@ public class ClientTeleportConfirmPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.id);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

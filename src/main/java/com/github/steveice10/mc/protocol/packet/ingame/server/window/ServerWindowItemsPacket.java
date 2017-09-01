@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerWindowItemsPacket implements Packet {
-
+public class ServerWindowItemsPacket extends MinecraftPacket {
     private int windowId;
     private ItemStack items[];
 
@@ -47,15 +45,5 @@ public class ServerWindowItemsPacket implements Packet {
         for(ItemStack item : this.items) {
             NetUtil.writeItem(out, item);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

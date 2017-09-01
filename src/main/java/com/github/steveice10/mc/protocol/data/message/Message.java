@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.data.message;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -7,125 +8,11 @@ import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Message implements Cloneable {
     private MessageStyle style = new MessageStyle();
     private List<Message> extra = new ArrayList<Message>();
-
-    public abstract String getText();
-
-    public String getFullText() {
-        StringBuilder build = new StringBuilder(this.getText());
-        for(Message msg : this.extra) {
-            build.append(msg.getFullText());
-        }
-
-        return build.toString();
-    }
-
-    public MessageStyle getStyle() {
-        return this.style;
-    }
-
-    public List<Message> getExtra() {
-        return new ArrayList<Message>(this.extra);
-    }
-
-    public Message setStyle(MessageStyle style) {
-        this.style = style;
-        return this;
-    }
-
-    public Message setExtra(List<Message> extra) {
-        this.extra = new ArrayList<Message>(extra);
-        for(Message msg : this.extra) {
-            msg.getStyle().setParent(this.style);
-        }
-
-        return this;
-    }
-
-    public Message addExtra(Message message) {
-        this.extra.add(message);
-        message.getStyle().setParent(this.style);
-        return this;
-    }
-
-    public Message removeExtra(Message message) {
-        this.extra.remove(message);
-        message.getStyle().setParent(null);
-        return this;
-    }
-
-    public Message clearExtra() {
-        for(Message msg : this.extra) {
-            msg.getStyle().setParent(null);
-        }
-
-        this.extra.clear();
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return this.getFullText();
-    }
-
-    @Override
-    public abstract Message clone();
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Message && this.style.equals(((Message) o).style) && this.extra.equals(((Message) o).extra);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = this.style.hashCode();
-        result = 31 * result + this.extra.hashCode();
-        return result;
-    }
-
-    public String toJsonString() {
-        return this.toJson().toString();
-    }
-
-    public JsonElement toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("color", this.style.getColor().toString());
-        for(ChatFormat format : this.style.getFormats()) {
-            json.addProperty(format.toString(), true);
-        }
-
-        if(this.style.getClickEvent() != null) {
-            JsonObject click = new JsonObject();
-            click.addProperty("action", this.style.getClickEvent().getAction().toString());
-            click.addProperty("value", this.style.getClickEvent().getValue());
-            json.add("clickEvent", click);
-        }
-
-        if(this.style.getHoverEvent() != null) {
-            JsonObject hover = new JsonObject();
-            hover.addProperty("action", this.style.getHoverEvent().getAction().toString());
-            hover.add("value", this.style.getHoverEvent().getValue().toJson());
-            json.add("hoverEvent", hover);
-        }
-
-        if(this.style.getInsertion() != null) {
-            json.addProperty("insertion", this.style.getInsertion());
-        }
-
-        if(this.extra.size() > 0) {
-            JsonArray extra = new JsonArray();
-            for(Message msg : this.extra) {
-                extra.add(msg.toJson());
-            }
-
-            json.add("extra", extra);
-        }
-
-        return json;
-    }
 
     public static Message fromString(String str) {
         try {
@@ -159,7 +46,7 @@ public abstract class Message implements Cloneable {
                 }
 
                 msg = new TranslationMessage(json.get("translate").getAsString(), with);
-            } else if (json.has("keybind")) {
+            } else if(json.has("keybind")) {
                 msg = new KeybindMessage(json.get("keybind").getAsString());
             } else {
                 throw new IllegalArgumentException("Unknown message type in json: " + json.toString());
@@ -210,5 +97,123 @@ public abstract class Message implements Cloneable {
         } else {
             throw new IllegalArgumentException("Cannot convert " + e.getClass().getSimpleName() + " to a message.");
         }
+    }
+
+    public abstract String getText();
+
+    public String getFullText() {
+        StringBuilder build = new StringBuilder(this.getText());
+        for(Message msg : this.extra) {
+            build.append(msg.getFullText());
+        }
+
+        return build.toString();
+    }
+
+    public MessageStyle getStyle() {
+        return this.style;
+    }
+
+    public Message setStyle(MessageStyle style) {
+        this.style = style;
+        return this;
+    }
+
+    public List<Message> getExtra() {
+        return new ArrayList<Message>(this.extra);
+    }
+
+    public Message setExtra(List<Message> extra) {
+        this.extra = new ArrayList<Message>(extra);
+        for(Message msg : this.extra) {
+            msg.getStyle().setParent(this.style);
+        }
+
+        return this;
+    }
+
+    public Message addExtra(Message message) {
+        this.extra.add(message);
+        message.getStyle().setParent(this.style);
+        return this;
+    }
+
+    public Message removeExtra(Message message) {
+        this.extra.remove(message);
+        message.getStyle().setParent(null);
+        return this;
+    }
+
+    public Message clearExtra() {
+        for(Message msg : this.extra) {
+            msg.getStyle().setParent(null);
+        }
+
+        this.extra.clear();
+        return this;
+    }
+
+    @Override
+    public abstract Message clone();
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof Message)) return false;
+
+        Message that = (Message) o;
+        return Objects.equals(this.style, that.style) &&
+                Objects.equals(this.extra, that.extra);
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectUtil.hashCode(this.style, this.extra);
+    }
+
+    @Override
+    public String toString() {
+        return this.getFullText();
+    }
+
+    public String toJsonString() {
+        return this.toJson().toString();
+    }
+
+    public JsonElement toJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("color", this.style.getColor().toString());
+        for(ChatFormat format : this.style.getFormats()) {
+            json.addProperty(format.toString(), true);
+        }
+
+        if(this.style.getClickEvent() != null) {
+            JsonObject click = new JsonObject();
+            click.addProperty("action", this.style.getClickEvent().getAction().toString());
+            click.addProperty("value", this.style.getClickEvent().getValue());
+            json.add("clickEvent", click);
+        }
+
+        if(this.style.getHoverEvent() != null) {
+            JsonObject hover = new JsonObject();
+            hover.addProperty("action", this.style.getHoverEvent().getAction().toString());
+            hover.add("value", this.style.getHoverEvent().getValue().toJson());
+            json.add("hoverEvent", hover);
+        }
+
+        if(this.style.getInsertion() != null) {
+            json.addProperty("insertion", this.style.getInsertion());
+        }
+
+        if(this.extra.size() > 0) {
+            JsonArray extra = new JsonArray();
+            for(Message msg : this.extra) {
+                extra.add(msg.toJson());
+            }
+
+            json.add("extra", extra);
+        }
+
+        return json;
     }
 }

@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.scoreboard;
 
 public enum TeamColor {
-
     NONE,
     BLACK,
     DARK_BLUE,
@@ -19,5 +18,4 @@ public enum TeamColor {
     LIGHT_PURPLE,
     YELLOW,
     WHITE;
-
 }

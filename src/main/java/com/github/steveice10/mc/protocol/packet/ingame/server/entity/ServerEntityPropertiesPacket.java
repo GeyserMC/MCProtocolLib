@@ -1,21 +1,19 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeModifier;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerEntityPropertiesPacket implements Packet {
-
+public class ServerEntityPropertiesPacket extends MinecraftPacket {
     private int entityId;
     private List<Attribute> attributes;
 
@@ -68,15 +66,5 @@ public class ServerEntityPropertiesPacket implements Packet {
                 out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

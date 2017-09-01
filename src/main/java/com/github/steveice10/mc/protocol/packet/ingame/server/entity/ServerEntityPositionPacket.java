@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
 public class ServerEntityPositionPacket extends ServerEntityMovementPacket {
-
     protected ServerEntityPositionPacket() {
         this.pos = true;
     }
@@ -13,5 +12,4 @@ public class ServerEntityPositionPacket extends ServerEntityMovementPacket {
         this.moveY = moveY;
         this.moveZ = moveZ;
     }
-
 }

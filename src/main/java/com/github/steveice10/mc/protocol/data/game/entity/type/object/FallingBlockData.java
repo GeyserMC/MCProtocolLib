@@ -1,7 +1,8 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type.object;
 
-public class FallingBlockData implements ObjectData {
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
+public class FallingBlockData implements ObjectData {
     private int id;
     private int metadata;
 
@@ -21,21 +22,20 @@ public class FallingBlockData implements ObjectData {
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if(!(o instanceof FallingBlockData)) return false;
 
         FallingBlockData that = (FallingBlockData) o;
-
-        if(id != that.id) return false;
-        if(metadata != that.metadata) return false;
-
-        return true;
+        return this.id == that.id &&
+                this.metadata == that.metadata;
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + metadata;
-        return result;
+        return ObjectUtil.hashCode(this.id, this.metadata);
     }
 
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
+    }
 }

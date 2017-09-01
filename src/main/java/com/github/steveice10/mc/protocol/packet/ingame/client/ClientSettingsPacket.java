@@ -1,21 +1,19 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
-import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
-import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
+import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ClientSettingsPacket implements Packet {
-
+public class ClientSettingsPacket extends MinecraftPacket {
     private String locale;
     private int renderDistance;
     private ChatVisibility chatVisibility;
@@ -94,15 +92,5 @@ public class ClientSettingsPacket implements Packet {
         out.writeByte(flags);
 
         out.writeVarInt(MagicValues.value(Integer.class, this.mainHand));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.player;
 
 public enum BlockBreakStage {
-
     STAGE_1,
     STAGE_2,
     STAGE_3,
@@ -13,5 +12,4 @@ public enum BlockBreakStage {
     STAGE_9,
     STAGE_10,
     RESET;
-
 }

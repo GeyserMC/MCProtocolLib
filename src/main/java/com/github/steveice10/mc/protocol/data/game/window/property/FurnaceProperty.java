@@ -4,7 +4,6 @@ package com.github.steveice10.mc.protocol.data.game.window.property;
  * Window properties of a furnace.
  */
 public enum FurnaceProperty {
-
     /**
      * Number of ticks left before the current fuel runs out.
      */

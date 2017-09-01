@@ -3,17 +3,15 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.UpdatedTileType;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerUpdateTileEntityPacket implements Packet {
-
+public class ServerUpdateTileEntityPacket extends MinecraftPacket {
     private Position position;
     private UpdatedTileType type;
     private CompoundTag nbt;
@@ -52,15 +50,5 @@ public class ServerUpdateTileEntityPacket implements Packet {
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.type));
         NetUtil.writeNBT(out, this.nbt);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

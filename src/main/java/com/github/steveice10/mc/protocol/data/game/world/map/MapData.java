@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.world.map;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 import java.util.Arrays;
 
 public class MapData {
@@ -39,16 +41,24 @@ public class MapData {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof MapData && this.columns == ((MapData) o).columns && this.rows == ((MapData) o).rows && this.x == ((MapData) o).x && this.y == ((MapData) o).y && Arrays.equals(this.data, ((MapData) o).data);
+        if(this == o) return true;
+        if(!(o instanceof MapData)) return false;
+
+        MapData that = (MapData) o;
+        return this.columns == that.columns &&
+                this.rows == that.rows &&
+                this.x == that.x &&
+                this.y == that.y &&
+                Arrays.equals(this.data, that.data);
     }
 
     @Override
     public int hashCode() {
-        int result = this.columns;
-        result = 31 * result + this.rows;
-        result = 31 * result + this.x;
-        result = 31 * result + this.y;
-        result = 31 * result + Arrays.hashCode(this.data);
-        return result;
+        return ObjectUtil.hashCode(this.columns, this.rows, this.x, this.y, this.data);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

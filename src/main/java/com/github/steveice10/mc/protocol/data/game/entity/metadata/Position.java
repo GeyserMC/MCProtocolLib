@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 public class Position {
     private int x;
@@ -27,19 +27,22 @@ public class Position {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof Position && this.x == ((Position) o).x && this.y == ((Position) o).y && this.z == ((Position) o).z);
+        if(this == o) return true;
+        if(!(o instanceof Position)) return false;
+
+        Position that = (Position) o;
+        return this.x == that.x &&
+                this.y == that.y &&
+                this.z == that.z;
     }
 
     @Override
     public int hashCode() {
-        int result = this.x;
-        result = 31 * result + this.y;
-        result = 31 * result + this.z;
-        return result;
+        return ObjectUtil.hashCode(this.x, this.y, this.z);
     }
 
     @Override
     public String toString() {
-        return ReflectionToString.toString(this);
+        return ObjectUtil.toString(this);
     }
 }

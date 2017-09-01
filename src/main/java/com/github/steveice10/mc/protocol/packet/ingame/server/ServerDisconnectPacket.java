@@ -1,15 +1,13 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerDisconnectPacket implements Packet {
-
+public class ServerDisconnectPacket extends MinecraftPacket {
     private Message message;
 
     @SuppressWarnings("unused")
@@ -41,10 +39,5 @@ public class ServerDisconnectPacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

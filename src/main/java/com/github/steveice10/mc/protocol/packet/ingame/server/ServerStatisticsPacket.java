@@ -11,17 +11,15 @@ import com.github.steveice10.mc.protocol.data.game.statistic.KilledByEntityStati
 import com.github.steveice10.mc.protocol.data.game.statistic.PickupItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.Statistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.UseItemStatistic;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServerStatisticsPacket implements Packet {
-
+public class ServerStatisticsPacket extends MinecraftPacket {
     private static final String CRAFT_ITEM_PREFIX = "stat.craftItem.";
     private static final String BREAK_BLOCK_PREFIX = "stat.mineBlock.";
     private static final String USE_ITEM_PREFIX = "stat.useItem.";
@@ -103,15 +101,5 @@ public class ServerStatisticsPacket implements Packet {
             out.writeString(value);
             out.writeVarInt(this.statistics.get(statistic));
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

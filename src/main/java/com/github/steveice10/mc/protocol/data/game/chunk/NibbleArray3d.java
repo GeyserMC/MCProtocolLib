@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 
@@ -61,11 +62,20 @@ public class NibbleArray3d {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof NibbleArray3d && Arrays.equals(this.data, ((NibbleArray3d) o).data));
+        if(this == o) return true;
+        if(!(o instanceof NibbleArray3d)) return false;
+
+        NibbleArray3d that = (NibbleArray3d) o;
+        return Arrays.equals(this.data, that.data);
     }
 
     @Override
     public int hashCode() {
         return Arrays.hashCode(this.data);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

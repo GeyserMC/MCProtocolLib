@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.util.NetUtil;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class BlockStorage {
     private static final BlockState AIR = new BlockState(0, 0);
@@ -37,6 +39,18 @@ public class BlockStorage {
         }
 
         this.storage = new FlexibleStorage(this.bitsPerEntry, in.readLongs(in.readVarInt()));
+    }
+
+    private static int index(int x, int y, int z) {
+        return y << 8 | z << 4 | x;
+    }
+
+    private static BlockState rawToState(int raw) {
+        return new BlockState(raw >> 4, raw & 0xF);
+    }
+
+    private static int stateToRaw(BlockState state) {
+        return (state.getId() << 4) | (state.getData() & 0xF);
     }
 
     public void write(NetOutput out) throws IOException {
@@ -106,28 +120,24 @@ public class BlockStorage {
         return true;
     }
 
-    private static int index(int x, int y, int z) {
-        return y << 8 | z << 4 | x;
-    }
-
-    private static BlockState rawToState(int raw) {
-        return new BlockState(raw >> 4, raw & 0xF);
-    }
-
-    private static int stateToRaw(BlockState state) {
-        return (state.getId() << 4) | (state.getData() & 0xF);
-    }
-
     @Override
     public boolean equals(Object o) {
-        return o instanceof BlockStorage && this.bitsPerEntry == ((BlockStorage) o).bitsPerEntry && this.states.equals(((BlockStorage) o).states) && this.storage.equals(((BlockStorage) o).storage);
+        if(this == o) return true;
+        if(!(o instanceof BlockStorage)) return false;
+
+        BlockStorage that = (BlockStorage) o;
+        return this.bitsPerEntry == that.bitsPerEntry &&
+                Objects.equals(this.states, that.states) &&
+                Objects.equals(this.storage, that.storage);
     }
 
     @Override
     public int hashCode() {
-        int result = this.bitsPerEntry;
-        result = 31 * result + this.states.hashCode();
-        result = 31 * result + this.storage.hashCode();
-        return result;
+        return ObjectUtil.hashCode(this.bitsPerEntry, this.states, this.storage);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

@@ -3,15 +3,13 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerChatPacket implements Packet {
-
+public class ServerChatPacket extends MinecraftPacket {
     private Message message;
     private MessageType type;
 
@@ -54,15 +52,5 @@ public class ServerChatPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeString(this.message.toJsonString());
         out.writeByte(MagicValues.value(Integer.class, this.type));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

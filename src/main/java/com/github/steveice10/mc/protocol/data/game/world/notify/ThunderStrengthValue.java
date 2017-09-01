@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.world.notify;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 public class ThunderStrengthValue implements ClientNotificationValue {
     private float strength;
 
@@ -21,11 +23,20 @@ public class ThunderStrengthValue implements ClientNotificationValue {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof ThunderStrengthValue && Float.compare(this.strength, ((ThunderStrengthValue) o).strength) == 0;
+        if(this == o) return true;
+        if(!(o instanceof ThunderStrengthValue)) return false;
+
+        ThunderStrengthValue that = (ThunderStrengthValue) o;
+        return Float.compare(this.strength, that.strength) == 0;
     }
 
     @Override
     public int hashCode() {
-        return this.strength != +0.0f ? Float.floatToIntBits(this.strength) : 0;
+        return ObjectUtil.hashCode(this.strength);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type.object;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 public class ProjectileData implements ObjectData {
     private int ownerId;
 
@@ -13,11 +15,20 @@ public class ProjectileData implements ObjectData {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof ProjectileData && this.ownerId == ((ProjectileData) o).ownerId);
+        if(this == o) return true;
+        if(!(o instanceof ProjectileData)) return false;
+
+        ProjectileData that = (ProjectileData) o;
+        return this.ownerId == that.ownerId;
     }
 
     @Override
     public int hashCode() {
-        return this.ownerId;
+        return ObjectUtil.hashCode(this.ownerId);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

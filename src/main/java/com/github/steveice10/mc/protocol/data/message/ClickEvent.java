@@ -1,5 +1,9 @@
 package com.github.steveice10.mc.protocol.data.message;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
+import java.util.Objects;
+
 public class ClickEvent implements Cloneable {
     private ClickAction action;
     private String value;
@@ -24,13 +28,21 @@ public class ClickEvent implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof ClickEvent && this.action == ((ClickEvent) o).action && this.value.equals(((ClickEvent) o).value);
+        if(this == o) return true;
+        if(!(o instanceof ClickEvent)) return false;
+
+        ClickEvent that = (ClickEvent) o;
+        return this.action == that.action &&
+                Objects.equals(this.value, that.value);
     }
 
     @Override
     public int hashCode() {
-        int result = this.action.hashCode();
-        result = 31 * result + this.value.hashCode();
-        return result;
+        return ObjectUtil.hashCode(this.action, this.value);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

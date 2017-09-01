@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerUnloadChunkPacket implements Packet {
+public class ServerUnloadChunkPacket extends MinecraftPacket {
     private int x;
     private int z;
 
@@ -38,15 +37,5 @@ public class ServerUnloadChunkPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.x);
         out.writeInt(this.z);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

@@ -18,6 +18,9 @@ import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
 public class CryptUtil {
+    private CryptUtil() {
+    }
+
     public static SecretKey generateSharedKey() {
         try {
             KeyGenerator gen = KeyGenerator.getInstance("AES");
@@ -70,7 +73,7 @@ public class CryptUtil {
 
     public static byte[] getServerIdHash(String serverId, PublicKey publicKey, SecretKey secretKey) {
         try {
-            return encrypt("SHA-1", new byte[][] { serverId.getBytes("ISO_8859_1"), secretKey.getEncoded(), publicKey.getEncoded() });
+            return encrypt("SHA-1", new byte[][]{serverId.getBytes("ISO_8859_1"), secretKey.getEncoded(), publicKey.getEncoded()});
         } catch(UnsupportedEncodingException e) {
             throw new Error("Failed to generate server id hash.", e);
         }

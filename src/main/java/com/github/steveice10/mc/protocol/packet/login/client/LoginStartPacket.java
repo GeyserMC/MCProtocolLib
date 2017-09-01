@@ -1,14 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.login.client;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class LoginStartPacket implements Packet {
-
+public class LoginStartPacket extends MinecraftPacket {
     private String username;
 
     @SuppressWarnings("unused")
@@ -36,10 +34,5 @@ public class LoginStartPacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

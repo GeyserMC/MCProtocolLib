@@ -1,17 +1,15 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.game.world.block.ExplodedBlockRecord;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerExplosionPacket implements Packet {
-
+public class ServerExplosionPacket extends MinecraftPacket {
     private float x;
     private float y;
     private float z;
@@ -101,15 +99,5 @@ public class ServerExplosionPacket implements Packet {
         out.writeFloat(this.pushX);
         out.writeFloat(this.pushY);
         out.writeFloat(this.pushZ);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

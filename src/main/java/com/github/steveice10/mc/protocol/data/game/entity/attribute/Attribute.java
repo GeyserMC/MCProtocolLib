@@ -1,12 +1,12 @@
 package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Attribute {
-
     private AttributeType type;
     private double value;
     private List<AttributeModifier> modifiers;
@@ -40,28 +40,21 @@ public class Attribute {
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if(!(o instanceof Attribute)) return false;
 
-        Attribute attribute = (Attribute) o;
-
-        if(Double.compare(attribute.value, value) != 0) return false;
-        if(!modifiers.equals(attribute.modifiers)) return false;
-        if(type != attribute.type) return false;
-
-        return true;
+        Attribute that = (Attribute) o;
+        return this.type == that.type &&
+                this.value == that.value &&
+                Objects.equals(this.modifiers, that.modifiers);
     }
 
     @Override
     public int hashCode() {
-        int result = type.hashCode();
-        long temp = Double.doubleToLongBits(value);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + modifiers.hashCode();
-        return result;
+        return ObjectUtil.hashCode(this.type, this.value, this.modifiers);
     }
 
     @Override
     public String toString() {
-        return ReflectionToString.toString(this);
+        return ObjectUtil.toString(this);
     }
 }

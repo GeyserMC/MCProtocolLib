@@ -1,19 +1,17 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
+import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
-import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerTeamPacket implements Packet {
-
+public class ServerTeamPacket extends MinecraftPacket {
     private String name;
     private TeamAction action;
     private String displayName;
@@ -162,15 +160,5 @@ public class ServerTeamPacket implements Packet {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

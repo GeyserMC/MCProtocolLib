@@ -7,24 +7,16 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author yawkat
  */
-public class ReflectionToStringTest {
-    @Test
-    public void testSimple() {
-        assertEquals(
-                "Test1(field1=abc)",
-                ReflectionToString.toString(new Test1())
-        );
-    }
-
+public class ObjectUtilTest {
     private static class Test1 {
         String field1 = "abc";
     }
 
     @Test
-    public void testInherit() {
+    public void testSimple() {
         assertEquals(
-                "Test2(field1=abc, field2=def)",
-                ReflectionToString.toString(new Test2())
+                "Test1(field1=abc)",
+                ObjectUtil.toString(new Test1())
         );
     }
 
@@ -37,14 +29,22 @@ public class ReflectionToStringTest {
     }
 
     @Test
-    public void testArray() {
+    public void testInherit() {
         assertEquals(
-                "Test4(field1=[1, 2, 3])",
-                ReflectionToString.toString(new Test4())
+                "Test2(field1=abc, field2=def)",
+                ObjectUtil.toString(new Test2())
         );
     }
 
     private static class Test4 {
-        int[] field1 = new int[]{ 1, 2, 3 };
+        int[] field1 = {1, 2, 3};
+    }
+
+    @Test
+    public void testArray() {
+        assertEquals(
+                "Test4(field1=[1, 2, 3])",
+                ObjectUtil.toString(new Test4())
+        );
     }
 }

@@ -1,5 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
+import java.util.Objects;
+
 public class Chunk {
     private BlockStorage blocks;
     private NibbleArray3d blocklight;
@@ -33,14 +37,22 @@ public class Chunk {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof Chunk && this.blocks.equals(((Chunk) o).blocks) && this.blocklight.equals(((Chunk) o).blocklight) && ((this.skylight == null && (((Chunk) o).skylight == null)) || (this.skylight != null && this.skylight.equals(((Chunk) o).skylight))));
+        if(this == o) return true;
+        if(!(o instanceof Chunk)) return false;
+
+        Chunk that = (Chunk) o;
+        return Objects.equals(this.blocks, that.blocks) &&
+                Objects.equals(this.blocklight, that.blocklight) &&
+                Objects.equals(this.skylight, that.skylight);
     }
 
     @Override
     public int hashCode() {
-        int result = this.blocks.hashCode();
-        result = 31 * result + this.blocklight.hashCode();
-        result = 31 * result + (this.skylight != null ? this.skylight.hashCode() : 0);
-        return result;
+        return ObjectUtil.hashCode(this.blocks, this.blocklight, this.skylight);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

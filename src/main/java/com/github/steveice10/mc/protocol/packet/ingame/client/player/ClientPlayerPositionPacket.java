@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.player;
 
 public class ClientPlayerPositionPacket extends ClientPlayerMovementPacket {
-
     protected ClientPlayerPositionPacket() {
         this.pos = true;
     }
@@ -13,5 +12,4 @@ public class ClientPlayerPositionPacket extends ClientPlayerMovementPacket {
         this.y = y;
         this.z = z;
     }
-
 }

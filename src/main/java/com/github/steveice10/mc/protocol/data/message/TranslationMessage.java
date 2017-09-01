@@ -1,10 +1,12 @@
 package com.github.steveice10.mc.protocol.data.message;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class TranslationMessage extends Message {
     private String translationKey;
@@ -72,14 +74,22 @@ public class TranslationMessage extends Message {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof TranslationMessage && super.equals(o) && this.translationKey.equals(((TranslationMessage) o).translationKey) && Arrays.deepEquals(this.translationParams, ((TranslationMessage) o).translationParams);
+        if(this == o) return true;
+        if(!(o instanceof TranslationMessage)) return false;
+
+        TranslationMessage that = (TranslationMessage) o;
+        return super.equals(o) &&
+                Objects.equals(this.translationKey, that.translationKey) &&
+                Arrays.equals(this.translationParams, that.translationParams);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + this.translationKey.hashCode();
-        result = 31 * result + Arrays.deepHashCode(this.translationParams);
-        return result;
+        return ObjectUtil.hashCode(super.hashCode(), this.translationKey, this.translationParams);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

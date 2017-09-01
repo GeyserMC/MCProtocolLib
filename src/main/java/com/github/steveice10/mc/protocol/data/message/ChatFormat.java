@@ -7,11 +7,6 @@ public enum ChatFormat {
     ITALIC,
     OBFUSCATED;
 
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
-    }
-
     public static ChatFormat byName(String name) {
         name = name.toLowerCase();
         for(ChatFormat format : values()) {
@@ -21,5 +16,10 @@ public enum ChatFormat {
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
     }
 }

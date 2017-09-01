@@ -1,27 +1,25 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
-import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
-import com.github.steveice10.mc.protocol.data.game.world.effect.WorldEffectData;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BonemealGrowEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakBlockEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakPotionEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.RecordEffectData;
+import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
+import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.WorldEffect;
+import com.github.steveice10.mc.protocol.data.game.world.effect.WorldEffectData;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerPlayEffectPacket implements Packet {
-
+public class ServerPlayEffectPacket extends MinecraftPacket {
     private WorldEffect effect;
     private Position position;
     private WorldEffectData data;
@@ -97,15 +95,5 @@ public class ServerPlayEffectPacket implements Packet {
 
         out.writeInt(value);
         out.writeBoolean(this.broadcast);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

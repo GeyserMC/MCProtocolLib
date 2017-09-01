@@ -1,8 +1,10 @@
 package com.github.steveice10.mc.protocol.data.status;
 
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 public class ServerStatusInfo {
     private VersionInfo version;
@@ -35,15 +37,23 @@ public class ServerStatusInfo {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof ServerStatusInfo && this.version.equals(((ServerStatusInfo) o).version) && this.players.equals(((ServerStatusInfo) o).players) && this.description.equals(((ServerStatusInfo) o).description) && (this.icon != null ? this.icon.equals(((ServerStatusInfo) o).icon) : ((ServerStatusInfo) o).icon == null);
+        if(this == o) return true;
+        if(!(o instanceof ServerStatusInfo)) return false;
+
+        ServerStatusInfo that = (ServerStatusInfo) o;
+        return Objects.equals(this.version, that.version) &&
+                Objects.equals(this.players, that.players) &&
+                Objects.equals(this.description, that.description) &&
+                Objects.equals(this.icon, that.icon);
     }
 
     @Override
     public int hashCode() {
-        int result = this.version.hashCode();
-        result = 31 * result + this.players.hashCode();
-        result = 31 * result + this.description.hashCode();
-        result = 31 * result + (this.icon != null ? this.icon.hashCode() : 0);
-        return result;
+        return ObjectUtil.hashCode(this.version, this.players, this.description, this.icon);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

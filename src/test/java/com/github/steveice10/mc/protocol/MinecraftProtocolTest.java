@@ -1,16 +1,9 @@
 package com.github.steveice10.mc.protocol;
 
+import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.message.TextMessage;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
@@ -18,6 +11,8 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
@@ -26,17 +21,33 @@ import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.*;
-import static com.github.steveice10.mc.protocol.ByteBufHelper.*;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.*;
+import static com.github.steveice10.mc.protocol.ByteBufHelper.assertBlock;
+import static com.github.steveice10.mc.protocol.ByteBufHelper.assertPosition;
+import static com.github.steveice10.mc.protocol.ByteBufHelper.writeAndRead;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.GAME_VERSION;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.PROTOCOL_VERSION;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_COMPRESSION_THRESHOLD;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_BUILDER_KEY;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_HANDLER_KEY;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static com.github.steveice10.mc.protocol.data.SubProtocol.STATUS;
 import static com.github.steveice10.mc.protocol.data.game.setting.Difficulty.PEACEFUL;
 import static com.github.steveice10.mc.protocol.data.game.world.WorldType.DEFAULT;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class MinecraftProtocolTest {
     private static final String HOST = "localhost";
@@ -66,6 +77,11 @@ public class MinecraftProtocolTest {
         });
 
         assertTrue("Could not bind server.", server.bind().isListening());
+    }
+
+    @AfterClass
+    public static void tearDownServer() {
+        server.close(true);
     }
 
     @Test
@@ -131,11 +147,6 @@ public class MinecraftProtocolTest {
         if(this.client != null) {
             this.client.getSession().disconnect("Bye!");
         }
-    }
-
-    @AfterClass
-    public static void tearDownServer() {
-        server.close(true);
     }
 
     private static class ServerInfoHandlerTest implements ServerInfoHandler {

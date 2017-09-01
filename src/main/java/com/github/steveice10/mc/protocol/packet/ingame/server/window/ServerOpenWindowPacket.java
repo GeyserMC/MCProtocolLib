@@ -2,15 +2,13 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.window.WindowType;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerOpenWindowPacket implements Packet {
-
+public class ServerOpenWindowPacket extends MinecraftPacket {
     private int windowId;
     private WindowType type;
     private String name;
@@ -73,15 +71,5 @@ public class ServerOpenWindowPacket implements Packet {
         if(this.type == WindowType.HORSE) {
             out.writeInt(this.ownerEntityId);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

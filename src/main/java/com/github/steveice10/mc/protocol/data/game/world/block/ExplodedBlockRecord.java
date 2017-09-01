@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.world.block;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 public class ExplodedBlockRecord {
     private int x;
     private int y;
@@ -25,14 +27,22 @@ public class ExplodedBlockRecord {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof ExplodedBlockRecord && this.x == ((ExplodedBlockRecord) o).x && this.y == ((ExplodedBlockRecord) o).y && this.z == ((ExplodedBlockRecord) o).z;
+        if(this == o) return true;
+        if(!(o instanceof ExplodedBlockRecord)) return false;
+
+        ExplodedBlockRecord that = (ExplodedBlockRecord) o;
+        return this.x == that.x &&
+                this.y == that.y &&
+                this.z == that.z;
     }
 
     @Override
     public int hashCode() {
-        int result = this.x;
-        result = 31 * result + this.y;
-        result = 31 * result + this.z;
-        return result;
+        return ObjectUtil.hashCode(this.x, this.y, this.z);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

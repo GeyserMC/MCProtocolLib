@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.data.status;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 import java.util.Arrays;
 
@@ -29,14 +30,22 @@ public class PlayerInfo {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof PlayerInfo && this.max == ((PlayerInfo) o).max && this.online == ((PlayerInfo) o).online && Arrays.deepEquals(this.players, ((PlayerInfo) o).players);
+        if(this == o) return true;
+        if(!(o instanceof PlayerInfo)) return false;
+
+        PlayerInfo that = (PlayerInfo) o;
+        return this.max == that.max &&
+                this.online == that.online &&
+                Arrays.equals(this.players, that.players);
     }
 
     @Override
     public int hashCode() {
-        int result = this.max;
-        result = 31 * result + this.online;
-        result = 31 * result + Arrays.deepHashCode(this.players);
-        return result;
+        return ObjectUtil.hashCode(this.max, this.online, this.players);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

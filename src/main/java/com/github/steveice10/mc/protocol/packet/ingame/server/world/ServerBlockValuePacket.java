@@ -1,29 +1,27 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
+import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValueType;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
-import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerBlockValuePacket implements Packet {
-
+public class ServerBlockValuePacket extends MinecraftPacket {
     private static final int NOTE_BLOCK = 25;
     private static final int STICKY_PISTON = 29;
     private static final int PISTON = 33;
@@ -72,7 +70,7 @@ public class ServerBlockValuePacket implements Packet {
         int type = in.readUnsignedByte();
         int value = in.readUnsignedByte();
         this.blockId = in.readVarInt() & 0xFFF;
-        
+
         if(this.blockId == NOTE_BLOCK) {
             this.type = MagicValues.key(NoteBlockValueType.class, type);
             this.value = new NoteBlockValue(value);
@@ -124,15 +122,5 @@ public class ServerBlockValuePacket implements Packet {
 
         out.writeByte(val);
         out.writeVarInt(this.blockId & 4095);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

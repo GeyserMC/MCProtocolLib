@@ -1,14 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.world;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientSteerVehiclePacket implements Packet {
-
+public class ClientSteerVehiclePacket extends MinecraftPacket {
     private float sideways;
     private float forward;
     private boolean jump;
@@ -64,15 +62,5 @@ public class ClientSteerVehiclePacket implements Packet {
         }
 
         out.writeByte(flags);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

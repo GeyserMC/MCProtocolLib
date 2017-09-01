@@ -3,7 +3,9 @@ package com.github.steveice10.mc.protocol.data.game;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
+import java.util.Objects;
 
 public class PlayerListEntry {
     private GameProfile profile;
@@ -56,20 +58,23 @@ public class PlayerListEntry {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof PlayerListEntry && this.profile.equals(((PlayerListEntry) o).profile) && this.gameMode == ((PlayerListEntry) o).gameMode && this.ping == ((PlayerListEntry) o).ping && (this.displayName != null ? this.displayName.equals(((PlayerListEntry) o).displayName) : ((PlayerListEntry) o).displayName == null);
+        if(this == o) return true;
+        if(!(o instanceof PlayerListEntry)) return false;
+
+        PlayerListEntry that = (PlayerListEntry) o;
+        return Objects.equals(this.profile, that.profile) &&
+                this.gameMode == that.gameMode &&
+                this.ping == that.ping &&
+                Objects.equals(this.displayName, that.displayName);
     }
 
     @Override
     public int hashCode() {
-        int result = this.profile.hashCode();
-        result = 31 * result + (this.gameMode != null ? this.gameMode.hashCode() : 0);
-        result = 31 * result + this.ping;
-        result = 31 * result + (this.displayName != null ? this.displayName.hashCode() : 0);
-        return result;
+        return ObjectUtil.hashCode(this.profile, this.gameMode, this.ping, this.displayName);
     }
 
     @Override
     public String toString() {
-        return ReflectionToString.toString(this);
+        return ObjectUtil.toString(this);
     }
 }

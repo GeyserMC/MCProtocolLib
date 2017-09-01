@@ -1,18 +1,16 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
+import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerEntityEquipmentPacket implements Packet {
-
+public class ServerEntityEquipmentPacket extends MinecraftPacket {
     private int entityId;
     private EquipmentSlot slot;
     private ItemStack item;
@@ -51,15 +49,5 @@ public class ServerEntityEquipmentPacket implements Packet {
         out.writeVarInt(this.entityId);
         out.writeVarInt(MagicValues.value(Integer.class, this.slot));
         NetUtil.writeItem(out, this.item);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

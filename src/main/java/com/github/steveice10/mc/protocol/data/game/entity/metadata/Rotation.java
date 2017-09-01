@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 public class Rotation {
     private float pitch;
     private float yaw;
@@ -29,14 +31,22 @@ public class Rotation {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof Rotation && Float.compare(this.pitch, ((Rotation) o).pitch) == 0 && Float.compare(this.yaw, ((Rotation) o).yaw) == 0 && Float.compare(this.roll, ((Rotation) o).roll) == 0);
+        if(this == o) return true;
+        if(!(o instanceof Rotation)) return false;
+
+        Rotation that = (Rotation) o;
+        return this.pitch == that.pitch &&
+                this.yaw == that.yaw &&
+                this.roll == that.roll;
     }
 
     @Override
     public int hashCode() {
-        int result = Float.floatToIntBits(this.pitch);
-        result = 31 * result + Float.floatToIntBits(this.yaw);
-        result = 31 * result + Float.floatToIntBits(this.roll);
-        return result;
+        return ObjectUtil.hashCode(this.pitch, this.yaw, this.roll);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

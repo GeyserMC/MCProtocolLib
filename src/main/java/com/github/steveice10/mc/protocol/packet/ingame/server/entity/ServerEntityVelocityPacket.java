@@ -1,14 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerEntityVelocityPacket implements Packet {
-
+public class ServerEntityVelocityPacket extends MinecraftPacket {
     private int entityId;
     private double motX;
     private double motY;
@@ -55,15 +53,5 @@ public class ServerEntityVelocityPacket implements Packet {
         out.writeShort((int) (this.motX * 8000));
         out.writeShort((int) (this.motY * 8000));
         out.writeShort((int) (this.motZ * 8000));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

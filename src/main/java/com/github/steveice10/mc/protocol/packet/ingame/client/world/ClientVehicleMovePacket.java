@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.world;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientVehicleMovePacket implements Packet {
+public class ClientVehicleMovePacket extends MinecraftPacket {
     private double x;
     private double y;
     private double z;
@@ -62,15 +61,5 @@ public class ClientVehicleMovePacket implements Packet {
         out.writeDouble(this.z);
         out.writeFloat(this.yaw);
         out.writeFloat(this.pitch);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

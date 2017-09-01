@@ -4,16 +4,14 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientPlayerActionPacket implements Packet {
-
+public class ClientPlayerActionPacket extends MinecraftPacket {
     private PlayerAction action;
     private Position position;
     private BlockFace face;
@@ -52,15 +50,5 @@ public class ClientPlayerActionPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.face));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.type.GlobalEntityType;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerSpawnGlobalEntityPacket implements Packet {
-
+public class ServerSpawnGlobalEntityPacket extends MinecraftPacket {
     private int entityId;
     private GlobalEntityType type;
     private double x;
@@ -65,15 +63,5 @@ public class ServerSpawnGlobalEntityPacket implements Packet {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

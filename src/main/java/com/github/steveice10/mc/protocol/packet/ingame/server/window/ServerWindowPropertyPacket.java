@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
-import com.github.steveice10.mc.protocol.data.game.window.property.WindowProperty;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.window.property.WindowProperty;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerWindowPropertyPacket implements Packet {
-
+public class ServerWindowPropertyPacket extends MinecraftPacket {
     private int windowId;
     private int property;
     private int value;
@@ -59,15 +57,5 @@ public class ServerWindowPropertyPacket implements Packet {
         out.writeByte(this.windowId);
         out.writeShort(this.property);
         out.writeShort(this.value);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

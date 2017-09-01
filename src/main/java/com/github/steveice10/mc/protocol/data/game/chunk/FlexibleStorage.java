@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 import java.util.Arrays;
 
 public class FlexibleStorage {
@@ -22,6 +24,21 @@ public class FlexibleStorage {
 
         this.size = this.data.length * 64 / this.bitsPerEntry;
         this.maxEntryValue = (1L << this.bitsPerEntry) - 1;
+    }
+
+    private static int roundToNearest(int value, int roundTo) {
+        if(roundTo == 0) {
+            return 0;
+        } else if(value == 0) {
+            return roundTo;
+        } else {
+            if(value < 0) {
+                roundTo *= -1;
+            }
+
+            int remainder = value % roundTo;
+            return remainder != 0 ? value + roundTo - remainder : value;
+        }
     }
 
     public long[] getData() {
@@ -73,32 +90,25 @@ public class FlexibleStorage {
         }
     }
 
-    private static int roundToNearest(int value, int roundTo) {
-        if(roundTo == 0) {
-            return 0;
-        } else if(value == 0) {
-            return roundTo;
-        } else {
-            if(value < 0) {
-                roundTo *= -1;
-            }
-
-            int remainder = value % roundTo;
-            return remainder != 0 ? value + roundTo - remainder : value;
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof FlexibleStorage && Arrays.equals(this.data, ((FlexibleStorage) o).data) && this.bitsPerEntry == ((FlexibleStorage) o).bitsPerEntry && this.size == ((FlexibleStorage) o).size && this.maxEntryValue == ((FlexibleStorage) o).maxEntryValue);
+        if(this == o) return true;
+        if(!(o instanceof FlexibleStorage)) return false;
+
+        FlexibleStorage that = (FlexibleStorage) o;
+        return Arrays.equals(this.data, that.data) &&
+                this.bitsPerEntry == that.bitsPerEntry &&
+                this.size == that.size &&
+                this.maxEntryValue == that.maxEntryValue;
     }
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(this.data);
-        result = 31 * result + this.bitsPerEntry;
-        result = 31 * result + this.size;
-        result = 31 * result + (int) this.maxEntryValue;
-        return result;
+        return ObjectUtil.hashCode(this.data, this.bitsPerEntry, this.size, this.maxEntryValue);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

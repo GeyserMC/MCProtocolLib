@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerEntityAnimationPacket implements Packet {
-
+public class ServerEntityAnimationPacket extends MinecraftPacket {
     private int entityId;
     private Animation animation;
 
@@ -41,15 +39,5 @@ public class ServerEntityAnimationPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeByte(MagicValues.value(Integer.class, this.animation));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

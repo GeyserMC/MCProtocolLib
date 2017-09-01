@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.scoreboard;
 
 public enum ScoreboardPosition {
-
     PLAYER_LIST,
     SIDEBAR,
     BELOW_NAME,
@@ -22,5 +21,4 @@ public enum ScoreboardPosition {
     SIDEBAR_TEAM_LIGHT_PURPLE,
     SIDEBAR_TEAM_YELLOW,
     SIDEBAR_TEAM_WHITE;
-
 }

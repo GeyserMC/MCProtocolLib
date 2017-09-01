@@ -1,19 +1,16 @@
 package com.github.steveice10.mc.protocol.packet.login.client;
 
-import javax.crypto.SecretKey;
-
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.CryptUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-public class EncryptionResponsePacket implements Packet {
-
+public class EncryptionResponsePacket extends MinecraftPacket {
     private byte sharedKey[];
     private byte verifyToken[];
 
@@ -51,10 +48,5 @@ public class EncryptionResponsePacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

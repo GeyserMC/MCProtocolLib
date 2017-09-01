@@ -1,28 +1,26 @@
 package com.github.steveice10.mc.protocol.packet.status.server;
 
+import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.util.Base64;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
+import com.github.steveice10.packetlib.io.NetInput;
+import com.github.steveice10.packetlib.io.NetOutput;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import javax.imageio.ImageIO;
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.util.Base64;
-import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class StatusResponsePacket implements Packet {
-
+public class StatusResponsePacket extends MinecraftPacket {
     private ServerStatusInfo info;
 
     @SuppressWarnings("unused")
@@ -123,15 +121,5 @@ public class StatusResponsePacket implements Packet {
         out.close();
         byte encoded[] = Base64.encode(out.toByteArray());
         return "data:image/png;base64," + new String(encoded, "UTF-8");
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

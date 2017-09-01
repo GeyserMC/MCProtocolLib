@@ -1,11 +1,12 @@
 package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class AttributeModifier {
-
     private ModifierType type;
     private UUID uuid;
     private double amount;
@@ -53,24 +54,22 @@ public class AttributeModifier {
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if(!(o instanceof AttributeModifier)) return false;
 
         AttributeModifier that = (AttributeModifier) o;
-
-        if(Double.compare(that.amount, amount) != 0) return false;
-        if(operation != that.operation) return false;
-        if(!type.equals(that.type)) return false;
-
-        return true;
+        return this.type == that.type &&
+                Objects.equals(this.uuid, that.uuid) &&
+                this.amount == that.amount &&
+                this.operation == that.operation;
     }
 
     @Override
     public int hashCode() {
-        int result = type.hashCode();
-        long temp = Double.doubleToLongBits(amount);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + operation.hashCode();
-        return result;
+        return ObjectUtil.hashCode(this.type, this.uuid, this.amount, this.operation);
     }
 
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
+    }
 }

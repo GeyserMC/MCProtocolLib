@@ -1,26 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
+import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.window.ClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.CreativeGrabParam;
-import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
-import com.github.steveice10.mc.protocol.data.game.window.WindowAction;
-import com.github.steveice10.mc.protocol.data.game.window.WindowActionParam;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.window.DropItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.FillStackParam;
 import com.github.steveice10.mc.protocol.data.game.window.MoveToHotbarParam;
 import com.github.steveice10.mc.protocol.data.game.window.ShiftClickItemParam;
+import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
+import com.github.steveice10.mc.protocol.data.game.window.WindowAction;
+import com.github.steveice10.mc.protocol.data.game.window.WindowActionParam;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientWindowActionPacket implements Packet {
-
+public class ClientWindowActionPacket extends MinecraftPacket {
     private int windowId;
     private int slot;
     private WindowActionParam param;
@@ -115,15 +113,5 @@ public class ClientWindowActionPacket implements Packet {
         out.writeShort(this.actionId);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         NetUtil.writeItem(out, this.clicked);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

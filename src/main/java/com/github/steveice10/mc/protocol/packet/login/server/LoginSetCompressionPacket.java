@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class LoginSetCompressionPacket implements Packet {
+public class LoginSetCompressionPacket extends MinecraftPacket {
     private int threshold;
 
     @SuppressWarnings("unused")
@@ -35,10 +34,5 @@ public class LoginSetCompressionPacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

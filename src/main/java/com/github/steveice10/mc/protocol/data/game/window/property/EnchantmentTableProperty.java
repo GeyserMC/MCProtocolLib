@@ -4,7 +4,6 @@ package com.github.steveice10.mc.protocol.data.game.window.property;
  * Window properties of an enchantment table.
  */
 public enum EnchantmentTableProperty implements WindowProperty {
-
     /**
      * Level of the enchantment in slot 1.
      */

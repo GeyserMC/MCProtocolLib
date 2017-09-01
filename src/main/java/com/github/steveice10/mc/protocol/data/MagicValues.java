@@ -5,35 +5,51 @@ import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.game.ClientRequest;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
+import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
+import com.github.steveice10.mc.protocol.data.game.TitleAction;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
+import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
+import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
+import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
+import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
+import com.github.steveice10.mc.protocol.data.game.entity.type.GlobalEntityType;
+import com.github.steveice10.mc.protocol.data.game.entity.type.MobType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.object.HangingDirection;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.MinecartType;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
+import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardPosition;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
+import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
 import com.github.steveice10.mc.protocol.data.game.window.AdvancementTabAction;
 import com.github.steveice10.mc.protocol.data.game.window.ClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.CraftingBookDataType;
 import com.github.steveice10.mc.protocol.data.game.window.CreativeGrabParam;
+import com.github.steveice10.mc.protocol.data.game.window.DropItemParam;
+import com.github.steveice10.mc.protocol.data.game.window.FillStackParam;
+import com.github.steveice10.mc.protocol.data.game.window.MoveToHotbarParam;
 import com.github.steveice10.mc.protocol.data.game.window.ShiftClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.WindowAction;
@@ -53,31 +69,15 @@ import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerV
 import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
+import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
+import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
-import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
-import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
-import com.github.steveice10.mc.protocol.data.game.TitleAction;
-import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
-import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
-import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
-import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
-import com.github.steveice10.mc.protocol.data.game.entity.type.GlobalEntityType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.MobType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.MinecartType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectType;
-import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
-import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
-import com.github.steveice10.mc.protocol.data.game.window.DropItemParam;
-import com.github.steveice10.mc.protocol.data.game.window.FillStackParam;
-import com.github.steveice10.mc.protocol.data.game.window.MoveToHotbarParam;
-import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
-import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
+import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 
 import java.util.ArrayList;
@@ -1043,7 +1043,7 @@ public class MagicValues {
         if(!values.containsKey(key)) {
             values.put(key, new ArrayList<Object>());
         } else if(overwrite) {
-            for(Iterator<Object> it = values.get(key).iterator(); it.hasNext();) {
+            for(Iterator<Object> it = values.get(key).iterator(); it.hasNext(); ) {
                 if(value.getClass().isAssignableFrom(it.next().getClass())) {
                     it.remove();
                 }
@@ -1053,7 +1053,7 @@ public class MagicValues {
         values.get(key).add(value);
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     public static <T> T key(Class<T> keyType, Object value) {
         for(Object key : values.keySet()) {
             if(keyType.isAssignableFrom(key.getClass())) {

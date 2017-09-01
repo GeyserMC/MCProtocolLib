@@ -1,17 +1,15 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.player;
 
-import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientPlayerInteractEntityPacket implements Packet {
-
+public class ClientPlayerInteractEntityPacket extends MinecraftPacket {
     private int entityId;
     private InteractAction action;
 
@@ -93,15 +91,5 @@ public class ClientPlayerInteractEntityPacket implements Packet {
         if(this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
             out.writeVarInt(MagicValues.value(Integer.class, this.hand));
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type;
 
 public enum PaintingType {
-
     KEBAB,
     AZTEC,
     ALBAN,
@@ -28,5 +27,4 @@ public enum PaintingType {
     BURNING_SKULL,
     SKELETON,
     DONKEY_KONG;
-
 }

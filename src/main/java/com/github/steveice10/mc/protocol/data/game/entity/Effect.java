@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity;
 
 public enum Effect {
-
     SPEED,
     SLOWNESS,
     DIG_SPEED,
@@ -29,5 +28,4 @@ public enum Effect {
     LEVITATION,
     LUCK,
     BAD_LUCK;
-
 }

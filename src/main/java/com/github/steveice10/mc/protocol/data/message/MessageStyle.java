@@ -1,7 +1,10 @@
 package com.github.steveice10.mc.protocol.data.message;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MessageStyle implements Cloneable {
     private static final MessageStyle DEFAULT = new MessageStyle();
@@ -21,33 +24,57 @@ public class MessageStyle implements Cloneable {
         return this.color;
     }
 
+    public MessageStyle setColor(ChatColor color) {
+        this.color = color;
+        return this;
+    }
+
     public List<ChatFormat> getFormats() {
         return new ArrayList<ChatFormat>(this.formats);
+    }
+
+    public MessageStyle setFormats(List<ChatFormat> formats) {
+        this.formats = new ArrayList<ChatFormat>(formats);
+        return this;
     }
 
     public ClickEvent getClickEvent() {
         return this.click;
     }
 
+    public MessageStyle setClickEvent(ClickEvent event) {
+        this.click = event;
+        return this;
+    }
+
     public HoverEvent getHoverEvent() {
         return this.hover;
+    }
+
+    public MessageStyle setHoverEvent(HoverEvent event) {
+        this.hover = event;
+        return this;
     }
 
     public String getInsertion() {
         return this.insertion;
     }
 
+    public MessageStyle setInsertion(String insertion) {
+        this.insertion = insertion;
+        return this;
+    }
+
     public MessageStyle getParent() {
         return this.parent;
     }
 
-    public MessageStyle setColor(ChatColor color) {
-        this.color = color;
-        return this;
-    }
+    protected MessageStyle setParent(MessageStyle parent) {
+        if(parent == null) {
+            parent = DEFAULT;
+        }
 
-    public MessageStyle setFormats(List<ChatFormat> formats) {
-        this.formats = new ArrayList<ChatFormat>(formats);
+        this.parent = parent;
         return this;
     }
 
@@ -66,35 +93,6 @@ public class MessageStyle implements Cloneable {
         return this;
     }
 
-    public MessageStyle setClickEvent(ClickEvent event) {
-        this.click = event;
-        return this;
-    }
-
-    public MessageStyle setHoverEvent(HoverEvent event) {
-        this.hover = event;
-        return this;
-    }
-
-    public MessageStyle setInsertion(String insertion) {
-        this.insertion = insertion;
-        return this;
-    }
-
-    protected MessageStyle setParent(MessageStyle parent) {
-        if(parent == null) {
-            parent = DEFAULT;
-        }
-
-        this.parent = parent;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "MessageStyle{color=" + this.color + ",formats=" + this.formats + ",clickEvent=" + this.click + ",hoverEvent=" + this.hover + ",insertion=" + this.insertion + "}";
-    }
-
     @Override
     public MessageStyle clone() {
         return new MessageStyle().setParent(this.parent).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : null).setHoverEvent(this.hover != null ? this.hover.clone() : null).setInsertion(this.insertion);
@@ -102,17 +100,25 @@ public class MessageStyle implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof MessageStyle && this.color == ((MessageStyle) o).color && this.formats.equals(((MessageStyle) o).formats) && (this.click != null ? this.click.equals(((MessageStyle) o).click) : ((MessageStyle) o).click == null) && (this.hover != null ? this.hover.equals(((MessageStyle) o).hover) : ((MessageStyle) o).hover == null) && (this.insertion != null ? this.insertion.equals(((MessageStyle) o).insertion) : ((MessageStyle) o).insertion == null) && this.parent.equals(((MessageStyle) o).parent);
+        if(this == o) return true;
+        if(!(o instanceof MessageStyle)) return false;
+
+        MessageStyle that = (MessageStyle) o;
+        return this.color == that.color &&
+                Objects.equals(this.formats, that.formats) &&
+                Objects.equals(this.click, that.click) &&
+                Objects.equals(this.hover, that.hover) &&
+                Objects.equals(this.insertion, that.insertion) &&
+                Objects.equals(this.parent, that.parent);
     }
 
     @Override
     public int hashCode() {
-        int result = this.color.hashCode();
-        result = 31 * result + this.formats.hashCode();
-        result = 31 * result + (this.click != null ? this.click.hashCode() : 0);
-        result = 31 * result + (this.hover != null ? this.hover.hashCode() : 0);
-        result = 31 * result + (this.insertion != null ? this.insertion.hashCode() : 0);
-        result = 31 * result + this.parent.hashCode();
-        return result;
+        return ObjectUtil.hashCode(this.color, this.formats, this.click, this.hover, this.insertion, this.parent);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

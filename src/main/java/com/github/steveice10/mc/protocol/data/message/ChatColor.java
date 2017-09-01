@@ -19,11 +19,6 @@ public enum ChatColor {
     WHITE,
     RESET;
 
-    @Override
-    public String toString() {
-        return this.name().toLowerCase();
-    }
-
     public static ChatColor byName(String name) {
         name = name.toLowerCase();
         for(ChatColor color : values()) {
@@ -33,5 +28,10 @@ public enum ChatColor {
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
     }
 }

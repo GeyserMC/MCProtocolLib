@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
 public class ServerEntityPositionRotationPacket extends ServerEntityMovementPacket {
-
     protected ServerEntityPositionRotationPacket() {
         this.pos = true;
         this.rot = true;
@@ -17,5 +16,4 @@ public class ServerEntityPositionRotationPacket extends ServerEntityMovementPack
         this.yaw = yaw;
         this.pitch = pitch;
     }
-
 }

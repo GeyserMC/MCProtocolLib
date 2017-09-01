@@ -1,15 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.data.game.world.Particle;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.world.Particle;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerSpawnParticlePacket implements Packet {
+public class ServerSpawnParticlePacket extends MinecraftPacket {
     private Particle particle;
     private boolean longDistance;
     private float x;
@@ -120,15 +119,5 @@ public class ServerSpawnParticlePacket implements Packet {
         for(int index = 0; index < this.particle.getDataLength(); index++) {
             out.writeVarInt(this.data[index]);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

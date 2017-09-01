@@ -1,6 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+
+import java.util.Arrays;
 
 public class Column {
     private int x;
@@ -73,5 +76,28 @@ public class Column {
 
     public boolean hasSkylight() {
         return this.skylight;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof Column)) return false;
+
+        Column that = (Column) o;
+        return this.x == that.x &&
+                this.z == that.z &&
+                Arrays.equals(this.chunks, that.chunks) &&
+                Arrays.equals(this.biomeData, that.biomeData) &&
+                Arrays.equals(this.tileEntities, that.tileEntities);
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectUtil.hashCode(this.x, this.z, this.chunks, this.biomeData, this.tileEntities);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

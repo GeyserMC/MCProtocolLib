@@ -1,18 +1,17 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.io.stream.StreamNetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ServerChunkDataPacket implements Packet {
+public class ServerChunkDataPacket extends MinecraftPacket {
     private Column column;
 
     @SuppressWarnings("unused")
@@ -58,15 +57,5 @@ public class ServerChunkDataPacket implements Packet {
         for(CompoundTag tag : this.column.getTileEntities()) {
             NetUtil.writeNBT(out, tag);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

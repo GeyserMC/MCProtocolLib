@@ -1,17 +1,15 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class ServerSpawnPlayerPacket implements Packet {
-
+public class ServerSpawnPlayerPacket extends MinecraftPacket {
     private int entityId;
     private UUID uuid;
     private double x;
@@ -90,15 +88,5 @@ public class ServerSpawnPlayerPacket implements Packet {
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         NetUtil.writeEntityMetadata(out, this.metadata);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

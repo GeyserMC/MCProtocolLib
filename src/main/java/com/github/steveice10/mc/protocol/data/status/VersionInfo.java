@@ -1,9 +1,11 @@
 package com.github.steveice10.mc.protocol.data.status;
 
 import com.github.steveice10.mc.protocol.MinecraftConstants;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
+import java.util.Objects;
 
 public class VersionInfo {
-
     public static final VersionInfo CURRENT = new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION);
 
     private String name;
@@ -24,13 +26,21 @@ public class VersionInfo {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof VersionInfo && this.name.equals(((VersionInfo) o).name) && this.protocol == ((VersionInfo) o).protocol;
+        if(this == o) return true;
+        if(!(o instanceof VersionInfo)) return false;
+
+        VersionInfo that = (VersionInfo) o;
+        return Objects.equals(this.name, that.name) &&
+                this.protocol == that.protocol;
     }
 
     @Override
     public int hashCode() {
-        int result = this.name.hashCode();
-        result = 31 * result + this.protocol;
-        return result;
+        return ObjectUtil.hashCode(this.name, this.protocol);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

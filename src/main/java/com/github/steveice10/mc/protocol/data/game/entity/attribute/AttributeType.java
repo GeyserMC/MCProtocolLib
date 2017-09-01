@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
 public enum AttributeType {
-
     GENERIC_MAX_HEALTH(20, 0, 1024),
     GENERIC_FOLLOW_RANGE(32, 0, 2048),
     GENERIC_KNOCKBACK_RESISTANCE(0, 0, 1),
@@ -36,5 +35,4 @@ public enum AttributeType {
     public double getMax() {
         return this.max;
     }
-
 }

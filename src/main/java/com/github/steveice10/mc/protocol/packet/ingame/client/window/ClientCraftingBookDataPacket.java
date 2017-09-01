@@ -2,15 +2,13 @@ package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.window.CraftingBookDataType;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientCraftingBookDataPacket implements Packet {
-
+public class ClientCraftingBookDataPacket extends MinecraftPacket {
     private CraftingBookDataType type;
     private int recipeId;
     private boolean craftingBookOpen;
@@ -36,7 +34,7 @@ public class ClientCraftingBookDataPacket implements Packet {
     }
 
     private void ensureType(CraftingBookDataType type, String what) {
-        if (this.type != type) {
+        if(this.type != type) {
             throw new IllegalStateException(what + " is only set when type is " + type + " but it is " + this.type);
         }
     }
@@ -58,7 +56,7 @@ public class ClientCraftingBookDataPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        switch (this.type = MagicValues.key(CraftingBookDataType.class, in.readVarInt())) {
+        switch(this.type = MagicValues.key(CraftingBookDataType.class, in.readVarInt())) {
             case DISPLAYED_RECIPE:
                 this.recipeId = in.readInt();
                 break;
@@ -74,7 +72,7 @@ public class ClientCraftingBookDataPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, this.type));
-        switch (this.type) {
+        switch(this.type) {
             case DISPLAYED_RECIPE:
                 out.writeInt(this.recipeId);
                 break;
@@ -85,15 +83,5 @@ public class ClientCraftingBookDataPacket implements Packet {
             default:
                 throw new IOException("Unknown crafting book data type: " + this.type);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

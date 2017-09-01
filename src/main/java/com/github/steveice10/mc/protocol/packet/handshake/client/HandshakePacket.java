@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.handshake.client;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class HandshakePacket implements Packet {
-
+public class HandshakePacket extends MinecraftPacket {
     private int protocolVersion;
     private String hostname;
     private int port;
@@ -62,10 +60,5 @@ public class HandshakePacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

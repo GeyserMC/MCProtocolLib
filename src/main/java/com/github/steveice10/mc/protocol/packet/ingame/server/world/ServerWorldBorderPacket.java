@@ -2,15 +2,13 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerWorldBorderPacket implements Packet {
-
+public class ServerWorldBorderPacket extends MinecraftPacket {
     private WorldBorderAction action;
 
     private double radius;
@@ -166,15 +164,5 @@ public class ServerWorldBorderPacket implements Packet {
         } else if(this.action == WorldBorderAction.SET_WARNING_BLOCKS) {
             out.writeVarInt(this.warningBlocks);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

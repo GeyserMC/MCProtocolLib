@@ -1,6 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.world.block;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
+import java.util.Objects;
 
 public class BlockChangeRecord {
     private Position position;
@@ -21,13 +24,21 @@ public class BlockChangeRecord {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof BlockChangeRecord && this.position.equals(((BlockChangeRecord) o).position) && this.block.equals(((BlockChangeRecord) o).block);
+        if(this == o) return true;
+        if(!(o instanceof BlockChangeRecord)) return false;
+
+        BlockChangeRecord that = (BlockChangeRecord) o;
+        return Objects.equals(this.position, that.position) &&
+                Objects.equals(this.block, that.block);
     }
 
     @Override
     public int hashCode() {
-        int result = this.position.hashCode();
-        result = 31 * result + this.block.hashCode();
-        return result;
+        return ObjectUtil.hashCode(this.position, this.block);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

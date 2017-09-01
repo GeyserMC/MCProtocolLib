@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientTabCompletePacket implements Packet {
-
+public class ClientTabCompletePacket extends MinecraftPacket {
     private String text;
     private boolean assumeCommand;
     private Position lookingAt;
@@ -56,15 +54,5 @@ public class ClientTabCompletePacket implements Packet {
         if(this.lookingAt != null) {
             NetUtil.writePosition(out, this.lookingAt);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

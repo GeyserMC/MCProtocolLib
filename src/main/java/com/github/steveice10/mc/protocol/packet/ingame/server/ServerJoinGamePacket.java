@@ -4,15 +4,13 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerJoinGamePacket implements Packet {
-
+public class ServerJoinGamePacket extends MinecraftPacket {
     private int entityId;
     private boolean hardcore;
     private GameMode gamemode;
@@ -97,15 +95,5 @@ public class ServerJoinGamePacket implements Packet {
         out.writeByte(this.maxPlayers);
         out.writeString(MagicValues.value(String.class, this.worldType));
         out.writeBoolean(this.reducedDebugInfo);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

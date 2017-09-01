@@ -1,7 +1,10 @@
 package com.github.steveice10.mc.protocol.data.message;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.Objects;
 
 public class KeybindMessage extends Message {
     private String keybind;
@@ -38,11 +41,21 @@ public class KeybindMessage extends Message {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof KeybindMessage && super.equals(o) && this.keybind.equals(((KeybindMessage) o).keybind);
+        if(this == o) return true;
+        if(!(o instanceof KeybindMessage)) return false;
+
+        KeybindMessage that = (KeybindMessage) o;
+        return super.equals(o) &&
+                Objects.equals(this.keybind, that.keybind);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode() * 31 + keybind.hashCode();
+        return ObjectUtil.hashCode(super.hashCode(), this.keybind);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

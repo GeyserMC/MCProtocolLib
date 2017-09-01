@@ -3,16 +3,14 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerBlockBreakAnimPacket implements Packet {
-
+public class ServerBlockBreakAnimPacket extends MinecraftPacket {
     private int breakerEntityId;
     private Position position;
     private BlockBreakStage stage;
@@ -55,15 +53,5 @@ public class ServerBlockBreakAnimPacket implements Packet {
         out.writeVarInt(this.breakerEntityId);
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.stage));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

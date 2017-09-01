@@ -1,6 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+
+import java.util.Objects;
 
 public class ItemStack {
     private int id;
@@ -45,15 +48,23 @@ public class ItemStack {
 
     @Override
     public boolean equals(Object o) {
-        return this == o || (o instanceof ItemStack && this.id == ((ItemStack) o).id && this.amount == ((ItemStack) o).amount && this.data == ((ItemStack) o).data && ((this.nbt != null && ((ItemStack) o).nbt != null) || (this.nbt != null && this.nbt.equals(((ItemStack) o).nbt))));
+        if(this == o) return true;
+        if(!(o instanceof ItemStack)) return false;
+
+        ItemStack that = (ItemStack) o;
+        return this.id == that.id &&
+                this.amount == that.amount &&
+                this.data == that.data &&
+                Objects.equals(this.nbt, that.nbt);
     }
 
     @Override
     public int hashCode() {
-        int result = this.id;
-        result = 31 * result + this.amount;
-        result = 31 * result + this.data;
-        result = 31 * result + (this.nbt != null ? this.nbt.hashCode() : 0);
-        return result;
+        return ObjectUtil.hashCode(this.id, this.amount, this.data, this.nbt);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

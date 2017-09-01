@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
-import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerUpdateScorePacket implements Packet {
-
+public class ServerUpdateScorePacket extends MinecraftPacket {
     private String entry;
     private ScoreboardAction action;
     private String objective;
@@ -67,15 +65,5 @@ public class ServerUpdateScorePacket implements Packet {
         if(this.action == ScoreboardAction.ADD_OR_UPDATE) {
             out.writeVarInt(this.value);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

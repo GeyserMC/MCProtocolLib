@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.CryptUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 import java.security.PublicKey;
 
-public class EncryptionRequestPacket implements Packet {
-
+public class EncryptionRequestPacket extends MinecraftPacket {
     private String serverId;
     private PublicKey publicKey;
     private byte verifyToken[];
@@ -57,10 +55,5 @@ public class EncryptionRequestPacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

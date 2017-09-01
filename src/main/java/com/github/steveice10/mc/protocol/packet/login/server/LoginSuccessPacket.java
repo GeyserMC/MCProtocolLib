@@ -1,15 +1,13 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class LoginSuccessPacket implements Packet {
-
+public class LoginSuccessPacket extends MinecraftPacket {
     private GameProfile profile;
 
     @SuppressWarnings("unused")
@@ -38,10 +36,5 @@ public class LoginSuccessPacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

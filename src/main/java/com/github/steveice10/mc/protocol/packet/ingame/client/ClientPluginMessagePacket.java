@@ -1,14 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientPluginMessagePacket implements Packet {
-
+public class ClientPluginMessagePacket extends MinecraftPacket {
     private String channel;
     private byte data[];
 
@@ -39,15 +37,5 @@ public class ClientPluginMessagePacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeString(this.channel);
         out.writeBytes(this.data);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

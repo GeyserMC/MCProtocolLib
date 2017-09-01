@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.world.block.value;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 public class GenericBlockValue implements BlockValue {
     private int value;
 
@@ -13,11 +15,20 @@ public class GenericBlockValue implements BlockValue {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof GenericBlockValue && this.value == ((GenericBlockValue) o).value;
+        if(this == o) return true;
+        if(!(o instanceof GenericBlockValue)) return false;
+
+        GenericBlockValue that = (GenericBlockValue) o;
+        return this.value == that.value;
     }
 
     @Override
     public int hashCode() {
-        return this.value;
+        return ObjectUtil.hashCode(this.value);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

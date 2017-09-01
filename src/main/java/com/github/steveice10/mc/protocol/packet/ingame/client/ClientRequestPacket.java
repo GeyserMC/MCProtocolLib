@@ -1,16 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
-import com.github.steveice10.mc.protocol.data.game.ClientRequest;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.ClientRequest;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientRequestPacket implements Packet {
-
+public class ClientRequestPacket extends MinecraftPacket {
     private ClientRequest request;
 
     @SuppressWarnings("unused")
@@ -33,15 +31,5 @@ public class ClientRequestPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, this.request));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

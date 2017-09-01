@@ -1,9 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
-
 public class ServerEntityRotationPacket extends ServerEntityMovementPacket {
-
     protected ServerEntityRotationPacket() {
         this.rot = true;
     }
@@ -13,10 +10,5 @@ public class ServerEntityRotationPacket extends ServerEntityMovementPacket {
         this.rot = true;
         this.yaw = yaw;
         this.pitch = pitch;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

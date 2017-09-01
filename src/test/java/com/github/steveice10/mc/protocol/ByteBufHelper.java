@@ -2,11 +2,11 @@ package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.io.ByteBufNetInput;
 import com.github.steveice10.packetlib.tcp.io.ByteBufNetOutput;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.lang.reflect.Constructor;
 
@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class ByteBufHelper {
-
     private static final ByteBuf buffer = Unpooled.buffer();
 
     public static final ByteBufNetOutput out = new ByteBufNetOutput(buffer);
@@ -52,5 +51,4 @@ public class ByteBufHelper {
         assertEquals("Received incorrect block id", block, record.getBlock().getId());
         assertEquals("Received incorrect block data", data, record.getBlock().getData());
     }
-
 }

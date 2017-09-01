@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.window;
 
 public enum WindowType {
-
     GENERIC_INVENTORY,
     ANVIL,
     BEACON,
@@ -16,5 +15,4 @@ public enum WindowType {
     VILLAGER,
     SHULKER_BOX,
     HORSE;
-
 }

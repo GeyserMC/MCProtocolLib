@@ -1,17 +1,15 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
+import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ServerPlayBuiltinSoundPacket implements Packet {
-
+public class ServerPlayBuiltinSoundPacket extends MinecraftPacket {
     private BuiltinSound sound;
     private SoundCategory category;
     private double x;
@@ -82,15 +80,5 @@ public class ServerPlayBuiltinSoundPacket implements Packet {
         out.writeInt((int) (this.z * 8));
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

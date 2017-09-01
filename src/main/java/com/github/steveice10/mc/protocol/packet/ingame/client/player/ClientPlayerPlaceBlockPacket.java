@@ -1,19 +1,17 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.player;
 
-import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
+import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
+import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.mc.protocol.util.ReflectionToString;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
 
-public class ClientPlayerPlaceBlockPacket implements Packet {
-
+public class ClientPlayerPlaceBlockPacket extends MinecraftPacket {
     private Position position;
     private BlockFace face;
     private Hand hand;
@@ -76,15 +74,5 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
         out.writeFloat(this.cursorX);
         out.writeFloat(this.cursorY);
         out.writeFloat(this.cursorZ);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToString.toString(this);
     }
 }

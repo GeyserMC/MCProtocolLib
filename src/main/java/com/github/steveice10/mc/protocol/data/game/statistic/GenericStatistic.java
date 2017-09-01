@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
 public enum GenericStatistic implements Statistic {
-
     CAKE_SLICES_EATEN,
     TIMES_CAULDRON_FILLED,
     TIMES_CAULDRON_USED,
@@ -52,5 +51,4 @@ public enum GenericStatistic implements Statistic {
     ANIMALS_BRED,
     PLAYERS_KILLED,
     FISH_CAUGHT;
-
 }

@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.world.effect;
 
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
 public class BreakPotionEffectData implements WorldEffectData {
     private int potionId;
 
@@ -13,11 +15,20 @@ public class BreakPotionEffectData implements WorldEffectData {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof BreakPotionEffectData && this.potionId == ((BreakPotionEffectData) o).potionId;
+        if(this == o) return true;
+        if(!(o instanceof BreakPotionEffectData)) return false;
+
+        BreakPotionEffectData that = (BreakPotionEffectData) o;
+        return this.potionId == that.potionId;
     }
 
     @Override
     public int hashCode() {
-        return this.potionId;
+        return ObjectUtil.hashCode(this.potionId);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }
