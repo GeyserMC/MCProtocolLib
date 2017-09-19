@@ -7,27 +7,27 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import java.io.IOException;
 
 public class ClientKeepAlivePacket extends MinecraftPacket {
-    private int id;
+    private long id;
 
     @SuppressWarnings("unused")
     private ClientKeepAlivePacket() {
     }
 
-    public ClientKeepAlivePacket(int id) {
+    public ClientKeepAlivePacket(long id) {
         this.id = id;
     }
 
-    public int getPingId() {
+    public long getPingId() {
         return this.id;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.id = in.readVarInt();
+        this.id = in.readLong();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.id);
+        out.writeLong(this.id);
     }
 }
