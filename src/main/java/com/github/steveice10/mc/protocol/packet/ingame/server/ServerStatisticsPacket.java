@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.statistic.BreakBlockStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.BreakItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.CraftItemStatistic;
+import com.github.steveice10.mc.protocol.data.game.statistic.CustomStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.DropItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.KillEntityStatistic;
@@ -66,7 +67,11 @@ public class ServerStatisticsPacket extends MinecraftPacket {
             } else if(value.startsWith(PICKUP_ITEM_PREFIX)) {
                 statistic = new PickupItemStatistic(value.substring(PICKUP_ITEM_PREFIX.length()));
             } else {
-                statistic = MagicValues.key(GenericStatistic.class, value);
+                try {
+                    statistic = MagicValues.key(GenericStatistic.class, value);
+                } catch(IllegalArgumentException e) {
+                    statistic = new CustomStatistic(value);
+                }
             }
 
             this.statistics.put(statistic, in.readVarInt());
