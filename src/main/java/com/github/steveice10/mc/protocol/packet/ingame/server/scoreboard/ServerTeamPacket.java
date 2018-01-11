@@ -127,7 +127,12 @@ public class ServerTeamPacket extends MinecraftPacket {
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
             this.nameTagVisibility = MagicValues.key(NameTagVisibility.class, in.readString());
             this.collisionRule = MagicValues.key(CollisionRule.class, in.readString());
-            this.color = MagicValues.key(TeamColor.class, in.readByte());
+
+            try {
+                this.color = MagicValues.key(TeamColor.class, in.readByte());
+            } catch(IllegalArgumentException e) {
+                this.color = TeamColor.NONE;
+            }
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
