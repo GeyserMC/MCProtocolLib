@@ -28,6 +28,7 @@ import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.server.ServerAdapter;
+import com.github.steveice10.packetlib.event.server.ServerClosedEvent;
 import com.github.steveice10.packetlib.event.server.SessionAddedEvent;
 import com.github.steveice10.packetlib.event.server.SessionRemovedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
@@ -70,6 +71,11 @@ public class MinecraftProtocolTest {
             server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 100);
             server.addListener(new ServerAdapter() {
                 @Override
+                public void serverClosed(ServerClosedEvent event) {
+                    System.out.println("Server closed.");
+                }
+
+                @Override
                 public void sessionAdded(SessionAddedEvent event) {
                     event.getSession().addListener(new SessionAdapter() {
                         @Override
@@ -94,7 +100,7 @@ public class MinecraftProtocolTest {
                     MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
                     if(protocol.getSubProtocol() == SubProtocol.GAME) {
                         System.out.println("Closing server.");
-                        event.getServer().close();
+                        event.getServer().close(false);
                     }
                 }
             });
