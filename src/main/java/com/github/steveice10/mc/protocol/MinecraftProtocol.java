@@ -148,6 +148,7 @@ public class MinecraftProtocol extends PacketProtocol {
     private AESEncryption encrypt;
 
     private GameProfile profile;
+    private String clientToken = "";
     private String accessToken = "";
 
     @SuppressWarnings("unused")
@@ -171,16 +172,24 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public MinecraftProtocol(String username, String password) throws RequestException {
-        this(username, password, false);
+        this(username, password, Proxy.NO_PROXY);
     }
 
-    public MinecraftProtocol(String username, String using, boolean token) throws RequestException {
-        this(username, using, token, Proxy.NO_PROXY);
+    public MinecraftProtocol(String username, String clientToken, String accessToken) throws RequestException {
+        this(username, clientToken, accessToken, Proxy.NO_PROXY);
     }
 
-    public MinecraftProtocol(String username, String using, boolean token, Proxy authProxy) throws RequestException {
+    public MinecraftProtocol(String username, String password, Proxy proxy) throws RequestException {
+        this(username, UUID.randomUUID().toString(), password, false, proxy);
+    }
+
+    public MinecraftProtocol(String username, String clientToken, String accessToken, Proxy proxy) throws RequestException {
+        this(username, clientToken, accessToken, true, proxy);
+    }
+
+    private MinecraftProtocol(String username, String clientToken, String using, boolean token, Proxy authProxy) throws RequestException {
         this(SubProtocol.LOGIN);
-        String clientToken = UUID.randomUUID().toString();
+
         AuthenticationService auth = new AuthenticationService(clientToken, authProxy);
         auth.setUsername(username);
         if(token) {
@@ -191,17 +200,23 @@ public class MinecraftProtocol extends PacketProtocol {
 
         auth.login();
         this.profile = auth.getSelectedProfile();
+        this.clientToken =  auth.getClientToken();
         this.accessToken = auth.getAccessToken();
     }
 
-    public MinecraftProtocol(GameProfile profile, String accessToken) {
+    public MinecraftProtocol(GameProfile profile, String clientToken, String accessToken) {
         this(SubProtocol.LOGIN);
         this.profile = profile;
+        this.clientToken = clientToken;
         this.accessToken = accessToken;
     }
 
     public GameProfile getProfile() {
         return this.profile;
+    }
+
+    public String getClientToken() {
+        return this.clientToken;
     }
 
     public String getAccessToken() {
