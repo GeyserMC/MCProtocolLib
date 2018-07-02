@@ -21,6 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.7</jdk.version>
+        <argLine></argLine>
     </properties>
 
     <licenses>
@@ -111,7 +112,7 @@
                 <version>2.20.1</version>
                 <configuration>
                     <!-- Force the right file encoding during unit testing -->
-                    <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding} @{argLine}</argLine>
                 </configuration>
             </plugin>
             <plugin>
