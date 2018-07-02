@@ -148,7 +148,7 @@ public class MinecraftProtocolTest {
         MinecraftProtocol protocol = null;
         if(VERIFY_USERS) {
             try {
-                protocol = new MinecraftProtocol(USERNAME, PASSWORD, false);
+                protocol = new MinecraftProtocol(USERNAME, PASSWORD);
                 System.out.println("Successfully authenticated user.");
             } catch(RequestException e) {
                 e.printStackTrace();
