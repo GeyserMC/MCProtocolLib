@@ -146,6 +146,7 @@ public class MagicValues {
         register(MetadataType.OPTIONAL_UUID, 12);
         register(MetadataType.BLOCK_STATE, 13);
         register(MetadataType.NBT_TAG, 14);
+        register(MetadataType.PARTICLE, 15);
 
         register(HandshakeIntent.STATUS, 1);
         register(HandshakeIntent.LOGIN, 2);

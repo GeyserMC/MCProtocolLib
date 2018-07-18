@@ -231,6 +231,9 @@ public class NetUtil {
                 case NBT_TAG:
                     value = readNBT(in);
                     break;
+                case PARTICLE:
+                    value = readParticle(in);
+                    break;
                 default:
                     throw new IOException("Unknown metadata type id: " + typeId);
             }
@@ -301,6 +304,9 @@ public class NetUtil {
                     break;
                 case NBT_TAG:
                     writeNBT(out, (CompoundTag) meta.getValue());
+                    break;
+                case PARTICLE:
+                    writeParticle(out, (Particle) meta.getValue());
                     break;
                 default:
                     throw new IOException("Unknown metadata type: " + meta.getType());
