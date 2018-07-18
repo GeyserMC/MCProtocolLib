@@ -130,6 +130,12 @@ public class NetUtil {
                 case STRING:
                     value = in.readString();
                     break;
+                case OPTIONAL_CHAT:
+                    boolean chatPresent = in.readBoolean();
+                    if (!chatPresent) {
+                        break;
+                    }
+                    // Intentional fall-through
                 case CHAT:
                     value = Message.fromString(in.readString());
                     break;
@@ -195,6 +201,12 @@ public class NetUtil {
                 case STRING:
                     out.writeString((String) meta.getValue());
                     break;
+                case OPTIONAL_CHAT:
+                    out.writeBoolean(meta.getValue() != null);
+                    if (meta.getValue() == null) {
+                        break;
+                    }
+                    // Intentional fall-through
                 case CHAT:
                     out.writeString(((Message) meta.getValue()).toJsonString());
                     break;

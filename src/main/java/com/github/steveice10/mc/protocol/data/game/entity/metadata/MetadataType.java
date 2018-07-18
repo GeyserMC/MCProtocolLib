@@ -6,6 +6,7 @@ public enum MetadataType {
     FLOAT,
     STRING,
     CHAT,
+    OPTIONAL_CHAT,
     ITEM,
     BOOLEAN,
     ROTATION,

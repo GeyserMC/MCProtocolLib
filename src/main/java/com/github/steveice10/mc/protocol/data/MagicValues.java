@@ -136,15 +136,16 @@ public class MagicValues {
         register(MetadataType.FLOAT, 2);
         register(MetadataType.STRING, 3);
         register(MetadataType.CHAT, 4);
-        register(MetadataType.ITEM, 5);
-        register(MetadataType.BOOLEAN, 6);
-        register(MetadataType.ROTATION, 7);
-        register(MetadataType.POSITION, 8);
-        register(MetadataType.OPTIONAL_POSITION, 9);
-        register(MetadataType.BLOCK_FACE, 10);
-        register(MetadataType.OPTIONAL_UUID, 11);
-        register(MetadataType.BLOCK_STATE, 12);
-        register(MetadataType.NBT_TAG, 13);
+        register(MetadataType.OPTIONAL_CHAT, 5);
+        register(MetadataType.ITEM, 6);
+        register(MetadataType.BOOLEAN, 7);
+        register(MetadataType.ROTATION, 8);
+        register(MetadataType.POSITION, 9);
+        register(MetadataType.OPTIONAL_POSITION, 10);
+        register(MetadataType.BLOCK_FACE, 11);
+        register(MetadataType.OPTIONAL_UUID, 12);
+        register(MetadataType.BLOCK_STATE, 13);
+        register(MetadataType.NBT_TAG, 14);
 
         register(HandshakeIntent.STATUS, 1);
         register(HandshakeIntent.LOGIN, 2);
