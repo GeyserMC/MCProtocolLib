@@ -74,7 +74,7 @@ public class NetUtil {
         if(item < 0) {
             return null;
         } else {
-            return new ItemStack(item, in.readByte(), in.readShort(), readNBT(in));
+            return new ItemStack(item, in.readByte(), readNBT(in));
         }
     }
 
@@ -84,7 +84,6 @@ public class NetUtil {
         } else {
             out.writeShort(item.getId());
             out.writeByte(item.getAmount());
-            out.writeShort(item.getData());
             writeNBT(out, item.getNBT());
         }
     }
