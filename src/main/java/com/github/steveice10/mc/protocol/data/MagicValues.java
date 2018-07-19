@@ -54,12 +54,16 @@ import com.github.steveice10.mc.protocol.data.game.window.FillStackParam;
 import com.github.steveice10.mc.protocol.data.game.window.MoveToHotbarParam;
 import com.github.steveice10.mc.protocol.data.game.window.ShiftClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
+import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockAction;
+import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockMode;
 import com.github.steveice10.mc.protocol.data.game.window.WindowAction;
 import com.github.steveice10.mc.protocol.data.game.window.WindowType;
 import com.github.steveice10.mc.protocol.data.game.window.property.AnvilProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
+import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
+import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
@@ -581,6 +585,25 @@ public class MagicValues {
         register(CommandBlockMode.SEQUENCE, 0);
         register(CommandBlockMode.AUTO, 1);
         register(CommandBlockMode.REDSTONE, 2);
+
+        register(UpdateStructureBlockAction.UPDATE_DATA, 0);
+        register(UpdateStructureBlockAction.SAVE_STRUCTURE, 1);
+        register(UpdateStructureBlockAction.LOAD_STRUCTURE, 2);
+        register(UpdateStructureBlockAction.DETECT_SIZE, 3);
+
+        register(UpdateStructureBlockMode.SAVE, 0);
+        register(UpdateStructureBlockMode.LOAD, 1);
+        register(UpdateStructureBlockMode.CORNER, 2);
+        register(UpdateStructureBlockMode.DATA, 3);
+
+        register(StructureRotation.NONE, 0);
+        register(StructureRotation.CLOCKWISE_90, 1);
+        register(StructureRotation.CLOCKWISE_180, 2);
+        register(StructureRotation.COUNTERCLOCKWISE_90, 3);
+
+        register(StructureMirror.NONE, 0);
+        register(StructureMirror.LEFT_RIGHT, 1);
+        register(StructureMirror.FRONT_BACK, 2);
 
         register(DemoMessageValue.WELCOME, 0);
         register(DemoMessageValue.MOVEMENT_CONTROLS, 101);

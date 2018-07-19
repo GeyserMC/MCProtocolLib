@@ -37,6 +37,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientPrepa
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientRenameItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientSelectTradePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientSetBeaconEffectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateStructureBlockPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientBlockNBTRequestPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientEntityNBTRequestPacket;
@@ -479,7 +480,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x22, ClientUpdateCommandBlockPacket.class);
         this.registerOutgoing(0x23, ClientUpdateCommandBlockMinecartPacket.class);
         this.registerOutgoing(0x24, ClientCreativeInventoryActionPacket.class);
-        // FIXME: 25
+        this.registerOutgoing(0x25, ClientUpdateStructureBlockPacket.class);
         this.registerOutgoing(0x26, ClientUpdateSignPacket.class);
         this.registerOutgoing(0x27, ClientPlayerSwingArmPacket.class);
         this.registerOutgoing(0x28, ClientSpectatePacket.class);
