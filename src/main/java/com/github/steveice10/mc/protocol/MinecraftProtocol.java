@@ -135,9 +135,11 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdate
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerWorldBorderPacket;
 import com.github.steveice10.mc.protocol.packet.login.client.EncryptionResponsePacket;
+import com.github.steveice10.mc.protocol.packet.login.client.LoginPluginResponsePacket;
 import com.github.steveice10.mc.protocol.packet.login.client.LoginStartPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.EncryptionRequestPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.login.server.LoginPluginRequestPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSetCompressionPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.LoginSuccessPacket;
 import com.github.steveice10.mc.protocol.packet.status.client.StatusPingPacket;
@@ -336,23 +338,23 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x01, EncryptionRequestPacket.class);
         this.registerIncoming(0x02, LoginSuccessPacket.class);
         this.registerIncoming(0x03, LoginSetCompressionPacket.class);
-        // FIXME: 04
+        this.registerIncoming(0x04, LoginPluginRequestPacket.class);
 
         this.registerOutgoing(0x00, LoginStartPacket.class);
         this.registerOutgoing(0x01, EncryptionResponsePacket.class);
-        // FIXME: 02
+        this.registerOutgoing(0x02, LoginPluginResponsePacket.class);
     }
 
     private void initServerLogin(Session session) {
         this.registerIncoming(0x00, LoginStartPacket.class);
         this.registerIncoming(0x01, EncryptionResponsePacket.class);
-        // FIXME: 02
+        this.registerIncoming(0x02, LoginPluginResponsePacket.class);
 
         this.registerOutgoing(0x00, LoginDisconnectPacket.class);
         this.registerOutgoing(0x01, EncryptionRequestPacket.class);
         this.registerOutgoing(0x02, LoginSuccessPacket.class);
         this.registerOutgoing(0x03, LoginSetCompressionPacket.class);
-        // FIXME: 04
+        this.registerOutgoing(0x04, LoginPluginRequestPacket.class);
     }
 
     private void initClientGame(Session session) {
