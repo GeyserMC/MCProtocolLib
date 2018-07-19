@@ -436,10 +436,10 @@ public class MinecraftProtocol extends PacketProtocol {
 
         this.registerOutgoing(0x00, ClientTeleportConfirmPacket.class);
         this.registerOutgoing(0x01, ClientBlockNBTRequestPacket.class);
-        this.registerOutgoing(0x02, ClientTabCompletePacket.class);
-        this.registerOutgoing(0x03, ClientChatPacket.class);
-        this.registerOutgoing(0x04, ClientRequestPacket.class);
-        this.registerOutgoing(0x05, ClientSettingsPacket.class);
+        this.registerOutgoing(0x02, ClientChatPacket.class);
+        this.registerOutgoing(0x03, ClientRequestPacket.class);
+        this.registerOutgoing(0x04, ClientSettingsPacket.class);
+        this.registerOutgoing(0x05, ClientTabCompletePacket.class);
         this.registerOutgoing(0x06, ClientConfirmTransactionPacket.class);
         this.registerOutgoing(0x07, ClientEnchantItemPacket.class);
         this.registerOutgoing(0x08, ClientWindowActionPacket.class);
