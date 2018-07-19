@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class BlockStorage {
-    private static final BlockState AIR = new BlockState(0, 0);
+    private static final BlockState AIR = new BlockState(0);
 
     private int bitsPerEntry;
 
@@ -46,11 +46,11 @@ public class BlockStorage {
     }
 
     private static BlockState rawToState(int raw) {
-        return new BlockState(raw >> 4, raw & 0xF);
+        return new BlockState(raw);
     }
 
     private static int stateToRaw(BlockState state) {
-        return (state.getId() << 4) | (state.getData() & 0xF);
+        return state.getId();
     }
 
     public void write(NetOutput out) throws IOException {

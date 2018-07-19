@@ -61,12 +61,11 @@ public class NetUtil {
     }
 
     public static BlockState readBlockState(NetInput in) throws IOException {
-        int rawId = in.readVarInt();
-        return new BlockState(rawId >> 4, rawId & 0xF);
+        return new BlockState(in.readVarInt());
     }
 
     public static void writeBlockState(NetOutput out, BlockState blockState) throws IOException {
-        out.writeVarInt((blockState.getId() << 4) | (blockState.getData() & 0xF));
+        out.writeVarInt(blockState.getId());
     }
 
     public static ItemStack readItem(NetInput in) throws IOException {

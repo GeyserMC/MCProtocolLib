@@ -66,7 +66,7 @@ public class ServerPlayEffectPacket extends MinecraftPacket {
         } else if(this.effect == ParticleEffect.SMOKE) {
             this.data = MagicValues.key(SmokeEffectData.class, value % 9);
         } else if(this.effect == ParticleEffect.BREAK_BLOCK) {
-            this.data = new BreakBlockEffectData(new BlockState(value & 4095, (value >> 12) & 255));
+            this.data = new BreakBlockEffectData(new BlockState(value));
         } else if(this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
             this.data = new BreakPotionEffectData(value);
         } else if(this.effect == ParticleEffect.BONEMEAL_GROW) {
@@ -86,7 +86,7 @@ public class ServerPlayEffectPacket extends MinecraftPacket {
         } else if(this.data instanceof SmokeEffectData) {
             value = MagicValues.value(Integer.class, (SmokeEffectData) this.data);
         } else if(this.data instanceof BreakBlockEffectData) {
-            value = (((BreakBlockEffectData) this.data).getBlockState().getId() & 4095) | ((((BreakBlockEffectData) this.data).getBlockState().getData() & 255) << 12);
+            value = ((BreakBlockEffectData) this.data).getBlockState().getId();
         } else if(this.data instanceof BreakPotionEffectData) {
             value = ((BreakPotionEffectData) this.data).getPotionId();
         } else if(this.data instanceof BonemealGrowEffectData) {
