@@ -43,6 +43,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancements
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerBossBarPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerCombatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareCommandsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
@@ -357,7 +358,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x0E, ServerChatPacket.class);
         this.registerIncoming(0x0F, ServerMultiBlockChangePacket.class);
         this.registerIncoming(0x10, ServerTabCompletePacket.class);
-        // FIXME: 0x11
+        this.registerIncoming(0x11, ServerDeclareCommandsPacket.class);
         this.registerIncoming(0x12, ServerConfirmTransactionPacket.class);
         this.registerIncoming(0x13, ServerCloseWindowPacket.class);
         this.registerIncoming(0x14, ServerOpenWindowPacket.class);
