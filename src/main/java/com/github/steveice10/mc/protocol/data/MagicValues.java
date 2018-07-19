@@ -13,6 +13,7 @@ import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
+import com.github.steveice10.mc.protocol.data.game.entity.FeetOrEyes;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
@@ -893,6 +894,9 @@ public class MagicValues {
         register(EquipmentSlot.LEGGINGS, 3);
         register(EquipmentSlot.CHESTPLATE, 4);
         register(EquipmentSlot.HELMET, 5);
+
+        register(FeetOrEyes.FEET, 0);
+        register(FeetOrEyes.EYES, 1);
 
         register(SoundCategory.MASTER, 0);
         register(SoundCategory.MUSIC, 1);

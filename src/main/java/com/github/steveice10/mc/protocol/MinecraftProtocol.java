@@ -80,6 +80,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntit
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerVehicleMovePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerAbilitiesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerFacingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerSetExperiencePacket;
@@ -391,7 +392,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x2E, ServerPlayerAbilitiesPacket.class);
         this.registerIncoming(0x2F, ServerCombatPacket.class);
         this.registerIncoming(0x30, ServerPlayerListEntryPacket.class);
-        // FIXME: 0x31
+        this.registerIncoming(0x31, ServerPlayerFacingPacket.class);
         this.registerIncoming(0x32, ServerPlayerPositionRotationPacket.class);
         this.registerIncoming(0x33, ServerPlayerUseBedPacket.class);
         this.registerIncoming(0x34, ServerUnlockRecipesPacket.class);
