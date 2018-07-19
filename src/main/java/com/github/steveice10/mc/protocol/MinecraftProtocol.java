@@ -44,6 +44,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSpecta
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerBoatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerVehiclePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientTeleportConfirmPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateCommandBlockMinecartPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientUpdateSignPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientVehicleMovePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancementTabPacket;
@@ -476,7 +477,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x20, ClientSetBeaconEffectPacket.class);
         this.registerOutgoing(0x21, ClientPlayerChangeHeldItemPacket.class);
         this.registerOutgoing(0x22, ClientUpdateCommandBlockPacket.class);
-        // FIXME: 23
+        this.registerOutgoing(0x23, ClientUpdateCommandBlockMinecartPacket.class);
         this.registerOutgoing(0x24, ClientCreativeInventoryActionPacket.class);
         // FIXME: 25
         this.registerOutgoing(0x26, ClientUpdateSignPacket.class);
