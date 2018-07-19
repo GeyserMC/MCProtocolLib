@@ -44,6 +44,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.ServerBossBarPacke
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerCombatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareCommandsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareRecipesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
@@ -428,7 +429,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x51, ServerAdvancementsPacket.class);
         this.registerIncoming(0x52, ServerEntityPropertiesPacket.class);
         this.registerIncoming(0x53, ServerEntityEffectPacket.class);
-        // FIXME: 54
+        this.registerIncoming(0x54, ServerDeclareRecipesPacket.class);
         // FIXME: 55
 
         this.registerOutgoing(0x00, ClientTeleportConfirmPacket.class);
