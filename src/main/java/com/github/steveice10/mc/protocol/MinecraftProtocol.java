@@ -108,6 +108,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerChunkD
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerExplosionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMapDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerNBTResponsePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerNotifyClientPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerOpenTileEntityEditorPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerPlayBuiltinSoundPacket;
@@ -370,7 +371,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x1A, ServerPlaySoundPacket.class);
         this.registerIncoming(0x1B, ServerDisconnectPacket.class);
         this.registerIncoming(0x1C, ServerEntityStatusPacket.class);
-        // FIXME: 0x1D
+        this.registerIncoming(0x1D, ServerNBTResponsePacket.class);
         this.registerIncoming(0x1E, ServerExplosionPacket.class);
         this.registerIncoming(0x1F, ServerUnloadChunkPacket.class);
         this.registerIncoming(0x20, ServerNotifyClientPacket.class);
