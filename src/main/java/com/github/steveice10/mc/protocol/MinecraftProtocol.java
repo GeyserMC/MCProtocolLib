@@ -34,6 +34,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEncha
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientPrepareCraftingGridPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientBlockNBTRequestPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientEntityNBTRequestPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSpectatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerBoatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerVehiclePacket;
@@ -447,7 +448,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x09, ClientCloseWindowPacket.class);
         this.registerOutgoing(0x0A, ClientPluginMessagePacket.class);
         this.registerOutgoing(0x0B, ClientEditBookPacket.class);
-        // FIXME: 0C
+        this.registerOutgoing(0x0C, ClientEntityNBTRequestPacket.class);
         this.registerOutgoing(0x0D, ClientPlayerInteractEntityPacket.class);
         this.registerOutgoing(0x0E, ClientKeepAlivePacket.class);
         this.registerOutgoing(0x0F, ClientPlayerMovementPacket.class);
