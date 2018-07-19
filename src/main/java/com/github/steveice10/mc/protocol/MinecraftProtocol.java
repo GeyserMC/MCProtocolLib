@@ -26,6 +26,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlaye
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerUseItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientAdvancementTabPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCloseWindowPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateCommandBlockPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientConfirmTransactionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCraftingBookDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCreativeInventoryActionPacket;
@@ -474,7 +475,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x1F, ClientSelectTradePacket.class);
         this.registerOutgoing(0x20, ClientSetBeaconEffectPacket.class);
         this.registerOutgoing(0x21, ClientPlayerChangeHeldItemPacket.class);
-        // FIXME: 22
+        this.registerOutgoing(0x22, ClientUpdateCommandBlockPacket.class);
         // FIXME: 23
         this.registerOutgoing(0x24, ClientCreativeInventoryActionPacket.class);
         // FIXME: 25

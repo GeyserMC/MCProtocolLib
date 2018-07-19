@@ -60,6 +60,7 @@ import com.github.steveice10.mc.protocol.data.game.window.property.AnvilProperty
 import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
+import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
@@ -576,6 +577,10 @@ public class MagicValues {
         register(ClientNotification.RAIN_STRENGTH, 7);
         register(ClientNotification.THUNDER_STRENGTH, 8);
         register(ClientNotification.AFFECTED_BY_ELDER_GUARDIAN, 10);
+
+        register(CommandBlockMode.SEQUENCE, 0);
+        register(CommandBlockMode.AUTO, 1);
+        register(CommandBlockMode.REDSTONE, 2);
 
         register(DemoMessageValue.WELCOME, 0);
         register(DemoMessageValue.MOVEMENT_CONTROLS, 101);
