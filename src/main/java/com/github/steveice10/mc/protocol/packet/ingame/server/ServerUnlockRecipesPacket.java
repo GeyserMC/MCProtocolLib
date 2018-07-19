@@ -13,30 +13,40 @@ import java.util.List;
 public class ServerUnlockRecipesPacket extends MinecraftPacket {
     private UnlockRecipesAction action;
 
-    private List<Integer> recipes;
-    private List<Integer> alreadyKnownRecipes;
+    private List<String> recipes;
+    private List<String> alreadyKnownRecipes;
 
     private boolean openCraftingBook;
-    private boolean activateFiltering;
+    private boolean activateCraftingFiltering;
+    private boolean openSmeltingBook;
+    private boolean activateSmeltingFiltering;
 
     @SuppressWarnings("unused")
     private ServerUnlockRecipesPacket() {
     }
 
-    private ServerUnlockRecipesPacket(boolean openCraftingBook, boolean activateFiltering, List<Integer> recipes) {
+    private ServerUnlockRecipesPacket(boolean openCraftingBook, boolean activateCraftingFiltering,
+                                      boolean openSmeltingBook, boolean activateSmeltingFiltering,
+                                      List<String> recipes) {
         this.openCraftingBook = openCraftingBook;
-        this.activateFiltering = activateFiltering;
+        this.activateCraftingFiltering = activateCraftingFiltering;
+        this.openSmeltingBook = openSmeltingBook;
+        this.activateSmeltingFiltering = activateSmeltingFiltering;
         this.recipes = recipes;
     }
 
-    public ServerUnlockRecipesPacket(boolean openCraftingBook, boolean activateFiltering, List<Integer> recipes, List<Integer> alreadyKnownRecipes) {
-        this(openCraftingBook, activateFiltering, recipes);
+    public ServerUnlockRecipesPacket(boolean openCraftingBook, boolean activateCraftingFiltering,
+                                     boolean openSmeltingBook, boolean activateSmeltingFiltering,
+                                     List<String> recipes, List<String> alreadyKnownRecipes) {
+        this(openCraftingBook, activateCraftingFiltering, openSmeltingBook, activateSmeltingFiltering, recipes);
         this.action = UnlockRecipesAction.INIT;
         this.alreadyKnownRecipes = alreadyKnownRecipes;
     }
 
-    public ServerUnlockRecipesPacket(boolean openCraftingBook, boolean activateFiltering, List<Integer> recipes, UnlockRecipesAction action) {
-        this(openCraftingBook, activateFiltering, recipes);
+    public ServerUnlockRecipesPacket(boolean openCraftingBook, boolean activateCraftingFiltering,
+                                     boolean openSmeltingBook, boolean activateSmeltingFiltering,
+                                     List<String> recipes, UnlockRecipesAction action) {
+        this(openCraftingBook, activateCraftingFiltering, openSmeltingBook, activateSmeltingFiltering, recipes);
         if(action != UnlockRecipesAction.ADD && action != UnlockRecipesAction.REMOVE) {
             throw new IllegalArgumentException("action must be ADD or REMOVE");
         }
@@ -47,11 +57,11 @@ public class ServerUnlockRecipesPacket extends MinecraftPacket {
         return this.action;
     }
 
-    public List<Integer> getRecipes() {
+    public List<String> getRecipes() {
         return this.recipes;
     }
 
-    public List<Integer> getAlreadyKnownRecipes() {
+    public List<String> getAlreadyKnownRecipes() {
         if(this.action != UnlockRecipesAction.INIT) {
             throw new IllegalStateException("alreadyKnownRecipes is only set if action is " + UnlockRecipesAction.INIT
                     + " but it was " + this.action);
@@ -63,8 +73,16 @@ public class ServerUnlockRecipesPacket extends MinecraftPacket {
         return this.openCraftingBook;
     }
 
-    public boolean getActivateFiltering() {
-        return this.activateFiltering;
+    public boolean getActivateCraftingFiltering() {
+        return this.activateCraftingFiltering;
+    }
+
+    public boolean getOpenSmeltingBook() {
+        return this.openSmeltingBook;
+    }
+
+    public boolean getActivateSmeltingFiltering() {
+        return this.activateSmeltingFiltering;
     }
 
     @Override
@@ -72,20 +90,22 @@ public class ServerUnlockRecipesPacket extends MinecraftPacket {
         this.action = MagicValues.key(UnlockRecipesAction.class, in.readVarInt());
 
         this.openCraftingBook = in.readBoolean();
-        this.activateFiltering = in.readBoolean();
+        this.activateCraftingFiltering = in.readBoolean();
+        this.openSmeltingBook = in.readBoolean();
+        this.activateSmeltingFiltering = in.readBoolean();
 
         if(this.action == UnlockRecipesAction.INIT) {
             int size = in.readVarInt();
             this.alreadyKnownRecipes = new ArrayList<>(size);
             for(int i = 0; i < size; i++) {
-                this.alreadyKnownRecipes.add(in.readVarInt());
+                this.alreadyKnownRecipes.add(in.readString());
             }
         }
 
         int size = in.readVarInt();
         this.recipes = new ArrayList<>(size);
         for(int i = 0; i < size; i++) {
-            this.recipes.add(in.readVarInt());
+            this.recipes.add(in.readString());
         }
     }
 
@@ -94,18 +114,20 @@ public class ServerUnlockRecipesPacket extends MinecraftPacket {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
 
         out.writeBoolean(this.openCraftingBook);
-        out.writeBoolean(this.activateFiltering);
+        out.writeBoolean(this.activateCraftingFiltering);
+        out.writeBoolean(this.openSmeltingBook);
+        out.writeBoolean(this.activateSmeltingFiltering);
 
         if(this.action == UnlockRecipesAction.INIT) {
             out.writeVarInt(this.alreadyKnownRecipes.size());
-            for(Integer recipeId : this.alreadyKnownRecipes) {
-                out.writeVarInt(recipeId);
+            for(String recipeId : this.alreadyKnownRecipes) {
+                out.writeString(recipeId);
             }
         }
 
         out.writeVarInt(this.recipes.size());
-        for(Integer recipeId : this.recipes) {
-            out.writeVarInt(recipeId);
+        for(String recipeId : this.recipes) {
+            out.writeString(recipeId);
         }
     }
 }
