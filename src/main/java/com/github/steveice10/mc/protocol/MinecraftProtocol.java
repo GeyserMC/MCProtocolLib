@@ -33,6 +33,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEditB
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEnchantItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientMoveItemToHotbarPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientPrepareCraftingGridPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientRenameItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientBlockNBTRequestPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientEntityNBTRequestPacket;
@@ -465,7 +466,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x19, ClientPlayerStatePacket.class);
         this.registerOutgoing(0x1A, ClientSteerVehiclePacket.class);
         this.registerOutgoing(0x1B, ClientCraftingBookDataPacket.class);
-        // FIXME: 1C
+        this.registerOutgoing(0x1C, ClientRenameItemPacket.class);
         this.registerOutgoing(0x1D, ClientResourcePackStatusPacket.class);
         this.registerOutgoing(0x1E, ClientAdvancementTabPacket.class);
         // FIXME: 1F
