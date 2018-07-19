@@ -55,6 +55,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.ServerResourcePack
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerRespawnPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerSetCooldownPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerStatisticsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerStopSoundPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerSwitchCameraPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerTabCompletePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerTitlePacket;
@@ -419,7 +420,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x49, ServerSpawnPositionPacket.class);
         this.registerIncoming(0x4A, ServerUpdateTimePacket.class);
         this.registerIncoming(0x4B, ServerTitlePacket.class);
-        // FIXME: 4C
+        this.registerIncoming(0x4C, ServerStopSoundPacket.class);
         this.registerIncoming(0x4D, ServerPlayBuiltinSoundPacket.class);
         this.registerIncoming(0x4E, ServerPlayerListDataPacket.class);
         this.registerIncoming(0x4F, ServerEntityCollectItemPacket.class);
