@@ -5,7 +5,7 @@ public enum UpdatedTileType {
     COMMAND_BLOCK,
     BEACON,
     SKULL,
-    FLOWER_POT,
+    CONDUIT,
     BANNER,
     STRUCTURE_BLOCK,
     END_GATEWAY,

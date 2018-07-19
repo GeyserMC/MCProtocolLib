@@ -546,7 +546,7 @@ public class MagicValues {
         register(UpdatedTileType.COMMAND_BLOCK, 2);
         register(UpdatedTileType.BEACON, 3);
         register(UpdatedTileType.SKULL, 4);
-        register(UpdatedTileType.FLOWER_POT, 5);
+        register(UpdatedTileType.CONDUIT, 5);
         register(UpdatedTileType.BANNER, 6);
         register(UpdatedTileType.STRUCTURE_BLOCK, 7);
         register(UpdatedTileType.END_GATEWAY, 8);
