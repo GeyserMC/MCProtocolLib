@@ -1,18 +1,27 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
+import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
-import java.util.Objects;
-
 public class CustomStatistic implements Statistic {
-    private String name;
+    private int category;
+    private int id;
 
-    public CustomStatistic(String name) {
-        this.name = name;
+    public CustomStatistic(int id) {
+        this(MagicValues.value(Integer.class, StatisticCategory.GENERIC), id);
     }
 
-    public String getName() {
-        return this.name;
+    public CustomStatistic(int category, int id) {
+        this.category = category;
+        this.id = id;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public int getCategory() {
+        return this.category;
     }
 
     @Override
@@ -21,12 +30,13 @@ public class CustomStatistic implements Statistic {
         if(!(o instanceof CustomStatistic)) return false;
 
         CustomStatistic that = (CustomStatistic) o;
-        return Objects.equals(this.name, that.name);
+        return this.category == that.category
+                && this.id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hashCode(this.name);
+        return ObjectUtil.hashCode(this.id, this.category);
     }
 
     @Override

@@ -2,16 +2,14 @@ package com.github.steveice10.mc.protocol.data.game.statistic;
 
 import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
-import java.util.Objects;
-
 public class KillEntityStatistic implements Statistic {
-    private String id;
+    private int id;
 
-    public KillEntityStatistic(String id) {
+    public KillEntityStatistic(int id) {
         this.id = id;
     }
 
-    public String getId() {
+    public int getId() {
         return this.id;
     }
 
@@ -21,7 +19,7 @@ public class KillEntityStatistic implements Statistic {
         if(!(o instanceof KillEntityStatistic)) return false;
 
         KillEntityStatistic that = (KillEntityStatistic) o;
-        return Objects.equals(this.id, that.id);
+        return this.id == that.id;
     }
 
     @Override
