@@ -814,8 +814,8 @@ public class MagicValues {
         register(TeamColor.YELLOW, 14);
         register(TeamColor.WHITE, 15);
 
-        register(ScoreType.INTEGER, "integer");
-        register(ScoreType.HEARTS, "hearts");
+        register(ScoreType.INTEGER, 0);
+        register(ScoreType.HEARTS, 1);
 
         register(Advancement.DisplayData.FrameType.TASK, 0);
         register(Advancement.DisplayData.FrameType.CHALLENGE, 1);
