@@ -8,13 +8,13 @@ import java.io.IOException;
 
 public class ServerPreparedCraftingGridPacket extends MinecraftPacket {
     private int windowId;
-    private int recipeId;
+    private String recipeId;
 
     @SuppressWarnings("unused")
     private ServerPreparedCraftingGridPacket() {
     }
 
-    public ServerPreparedCraftingGridPacket(int windowId, int recipeId) {
+    public ServerPreparedCraftingGridPacket(int windowId, String recipeId) {
         this.windowId = windowId;
         this.recipeId = recipeId;
     }
@@ -23,19 +23,19 @@ public class ServerPreparedCraftingGridPacket extends MinecraftPacket {
         return this.windowId;
     }
 
-    public int getRecipeId() {
+    public String getRecipeId() {
         return this.recipeId;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
         this.windowId = in.readByte();
-        this.recipeId = in.readVarInt();
+        this.recipeId = in.readString();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
-        out.writeVarInt(this.recipeId);
+        out.writeString(this.recipeId);
     }
 }
