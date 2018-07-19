@@ -796,7 +796,6 @@ public class MagicValues {
         register(CollisionRule.PUSH_OTHER_TEAMS, "pushOtherTeams");
         register(CollisionRule.PUSH_OWN_TEAM, "pushOwnTeam");
 
-        register(TeamColor.NONE, -1);
         register(TeamColor.BLACK, 0);
         register(TeamColor.DARK_BLUE, 1);
         register(TeamColor.DARK_GREEN, 2);
@@ -813,6 +812,12 @@ public class MagicValues {
         register(TeamColor.LIGHT_PURPLE, 13);
         register(TeamColor.YELLOW, 14);
         register(TeamColor.WHITE, 15);
+        register(TeamColor.OBFUSCATED, 16);
+        register(TeamColor.BOLD, 17);
+        register(TeamColor.STRIKETHROUGH, 18);
+        register(TeamColor.UNDERLINED, 19);
+        register(TeamColor.ITALIC, 20);
+        register(TeamColor.NONE, 21);
 
         register(ScoreType.INTEGER, 0);
         register(ScoreType.HEARTS, 1);

@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
+import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -14,9 +15,9 @@ import java.io.IOException;
 public class ServerTeamPacket extends MinecraftPacket {
     private String name;
     private TeamAction action;
-    private String displayName;
-    private String prefix;
-    private String suffix;
+    private Message displayName;
+    private Message prefix;
+    private Message suffix;
     private boolean friendlyFire;
     private boolean seeFriendlyInvisibles;
     private NameTagVisibility nameTagVisibility;
@@ -43,7 +44,7 @@ public class ServerTeamPacket extends MinecraftPacket {
         this.players = players;
     }
 
-    public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, CollisionRule collisionRule, TeamColor color) {
+    public ServerTeamPacket(String name, Message displayName, Message prefix, Message suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, CollisionRule collisionRule, TeamColor color) {
         this.name = name;
         this.displayName = displayName;
         this.prefix = prefix;
@@ -56,7 +57,7 @@ public class ServerTeamPacket extends MinecraftPacket {
         this.action = TeamAction.UPDATE;
     }
 
-    public ServerTeamPacket(String name, String displayName, String prefix, String suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, CollisionRule collisionRule, TeamColor color, String players[]) {
+    public ServerTeamPacket(String name, Message displayName, Message prefix, Message suffix, boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility, CollisionRule collisionRule, TeamColor color, String players[]) {
         this.name = name;
         this.displayName = displayName;
         this.prefix = prefix;
@@ -78,15 +79,15 @@ public class ServerTeamPacket extends MinecraftPacket {
         return this.action;
     }
 
-    public String getDisplayName() {
+    public Message getDisplayName() {
         return this.displayName;
     }
 
-    public String getPrefix() {
+    public Message getPrefix() {
         return this.prefix;
     }
 
-    public String getSuffix() {
+    public Message getSuffix() {
         return this.suffix;
     }
 
@@ -119,9 +120,7 @@ public class ServerTeamPacket extends MinecraftPacket {
         this.name = in.readString();
         this.action = MagicValues.key(TeamAction.class, in.readByte());
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            this.displayName = in.readString();
-            this.prefix = in.readString();
-            this.suffix = in.readString();
+            this.displayName = Message.fromString(in.readString());
             byte flags = in.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
@@ -129,10 +128,13 @@ public class ServerTeamPacket extends MinecraftPacket {
             this.collisionRule = MagicValues.key(CollisionRule.class, in.readString());
 
             try {
-                this.color = MagicValues.key(TeamColor.class, in.readByte());
+                this.color = MagicValues.key(TeamColor.class, in.readVarInt());
             } catch(IllegalArgumentException e) {
                 this.color = TeamColor.NONE;
             }
+
+            this.prefix = Message.fromString(in.readString());
+            this.suffix = Message.fromString(in.readString());
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
@@ -148,13 +150,13 @@ public class ServerTeamPacket extends MinecraftPacket {
         out.writeString(this.name);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            out.writeString(this.displayName);
-            out.writeString(this.prefix);
-            out.writeString(this.suffix);
+            out.writeString(this.displayName.toJsonString());
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
             out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
             out.writeString(MagicValues.value(String.class, this.collisionRule));
-            out.writeByte(MagicValues.value(Integer.class, this.color));
+            out.writeVarInt(MagicValues.value(Integer.class, this.color));
+            out.writeString(this.prefix.toJsonString());
+            out.writeString(this.suffix.toJsonString());
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {

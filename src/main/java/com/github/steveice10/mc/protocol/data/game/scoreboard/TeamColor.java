@@ -17,5 +17,10 @@ public enum TeamColor {
     RED,
     LIGHT_PURPLE,
     YELLOW,
-    WHITE;
+    WHITE,
+    OBFUSCATED,
+    BOLD,
+    STRIKETHROUGH,
+    UNDERLINED,
+    ITALIC;
 }
