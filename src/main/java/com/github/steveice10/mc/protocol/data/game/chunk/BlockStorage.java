@@ -33,7 +33,7 @@ public class BlockStorage {
         this.bitsPerEntry = in.readUnsignedByte();
 
         this.states = new ArrayList<BlockState>();
-        int stateCount = in.readVarInt();
+        int stateCount = this.bitsPerEntry > 8 ? 0 : in.readVarInt();
         for(int i = 0; i < stateCount; i++) {
             this.states.add(NetUtil.readBlockState(in));
         }
@@ -56,9 +56,11 @@ public class BlockStorage {
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.bitsPerEntry);
 
-        out.writeVarInt(this.states.size());
-        for(BlockState state : this.states) {
-            NetUtil.writeBlockState(out, state);
+        if (this.bitsPerEntry <= 8) {
+            out.writeVarInt(this.states.size());
+            for (BlockState state : this.states) {
+                NetUtil.writeBlockState(out, state);
+            }
         }
 
         long[] data = this.storage.getData();

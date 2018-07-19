@@ -329,9 +329,9 @@ public class NetUtil {
                 }
             }
 
-            byte biomeData[] = null;
+            int biomeData[] = null;
             if(fullChunk) {
-                biomeData = in.readBytes(256);
+                biomeData = in.readInts(256);
             }
 
             column = new Column(x, z, chunks, biomeData, tileEntities);
@@ -365,7 +365,7 @@ public class NetUtil {
         }
 
         if(fullChunk) {
-            out.writeBytes(column.getBiomeData());
+            out.writeInts(column.getBiomeData());
         }
 
         return mask;
