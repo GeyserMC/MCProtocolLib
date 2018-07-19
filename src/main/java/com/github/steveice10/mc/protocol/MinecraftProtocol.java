@@ -31,6 +31,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCraft
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCreativeInventoryActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEditBookPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEnchantItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientMoveItemToHotbarPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientPrepareCraftingGridPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientBlockNBTRequestPacket;
@@ -457,7 +458,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x12, ClientPlayerRotationPacket.class);
         this.registerOutgoing(0x13, ClientVehicleMovePacket.class);
         this.registerOutgoing(0x14, ClientSteerBoatPacket.class);
-        // FIXME: 15
+        this.registerOutgoing(0x15, ClientMoveItemToHotbarPacket.class);
         this.registerOutgoing(0x16, ClientPrepareCraftingGridPacket.class);
         this.registerOutgoing(0x17, ClientPlayerAbilitiesPacket.class);
         this.registerOutgoing(0x18, ClientPlayerActionPacket.class);
