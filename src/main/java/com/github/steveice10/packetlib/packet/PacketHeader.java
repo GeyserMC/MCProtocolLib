@@ -35,7 +35,7 @@ public interface PacketHeader {
      * Reads the length of a packet from the given input.
      *
      * @param in        Input to read from.
-     * @param available Number of available bytes in the NetInput.
+     * @param available Number of packet bytes available after the length.
      * @return The resulting packet length.
      * @throws java.io.IOException If an I/O error occurs.
      */
