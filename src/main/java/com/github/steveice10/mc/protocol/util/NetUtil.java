@@ -12,6 +12,13 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Rotation;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
+import com.github.steveice10.mc.protocol.data.game.world.particle.BlockParticleData;
+import com.github.steveice10.mc.protocol.data.game.world.particle.DustParticleData;
+import com.github.steveice10.mc.protocol.data.game.world.particle.FallingDustParticleData;
+import com.github.steveice10.mc.protocol.data.game.world.particle.ItemParticleData;
+import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
+import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleData;
 import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -54,12 +61,11 @@ public class NetUtil {
     }
 
     public static BlockState readBlockState(NetInput in) throws IOException {
-        int rawId = in.readVarInt();
-        return new BlockState(rawId >> 4, rawId & 0xF);
+        return new BlockState(in.readVarInt());
     }
 
     public static void writeBlockState(NetOutput out, BlockState blockState) throws IOException {
-        out.writeVarInt((blockState.getId() << 4) | (blockState.getData() & 0xF));
+        out.writeVarInt(blockState.getId());
     }
 
     public static ItemStack readItem(NetInput in) throws IOException {
@@ -67,7 +73,7 @@ public class NetUtil {
         if(item < 0) {
             return null;
         } else {
-            return new ItemStack(item, in.readByte(), in.readShort(), readNBT(in));
+            return new ItemStack(item, in.readByte(), readNBT(in));
         }
     }
 
@@ -77,7 +83,6 @@ public class NetUtil {
         } else {
             out.writeShort(item.getId());
             out.writeByte(item.getAmount());
-            out.writeShort(item.getData());
             writeNBT(out, item.getNBT());
         }
     }
@@ -110,6 +115,56 @@ public class NetUtil {
         out.writeFloat(rot.getRoll());
     }
 
+    public static Particle readParticle(NetInput in) throws IOException {
+        ParticleType type = MagicValues.key(ParticleType.class, in.readVarInt());
+        ParticleData data = readParticleData(in, type);
+        return new Particle(type, data);
+    }
+
+    public static ParticleData readParticleData(NetInput in, ParticleType type) throws IOException {
+        switch (type) {
+            case BLOCK:
+                return new BlockParticleData(readBlockState(in));
+            case DUST:
+                float red = in.readFloat();
+                float green = in.readFloat();
+                float blue = in.readFloat();
+                float scale = in.readFloat();
+                return new DustParticleData(red, green, blue, scale);
+            case FALLING_DUST:
+                return new FallingDustParticleData(readBlockState(in));
+            case ITEM:
+                return new ItemParticleData(readItem(in));
+            default:
+                return null;
+        }
+    }
+
+    public static void writeParticle(NetOutput out, Particle particle) throws IOException {
+        out.writeVarInt(MagicValues.value(Integer.class, particle.getType()));
+        writeParticleData(out, particle.getData(), particle.getType());
+    }
+
+    public static void writeParticleData(NetOutput out, ParticleData data, ParticleType type) throws IOException {
+        switch (type) {
+            case BLOCK:
+                writeBlockState(out, ((BlockParticleData) data).getBlockState());
+                break;
+            case DUST:
+                out.writeFloat(((DustParticleData) data).getRed());
+                out.writeFloat(((DustParticleData) data).getGreen());
+                out.writeFloat(((DustParticleData) data).getBlue());
+                out.writeFloat(((DustParticleData) data).getScale());
+                break;
+            case FALLING_DUST:
+                writeBlockState(out, ((FallingDustParticleData) data).getBlockState());
+                break;
+            case ITEM:
+                writeItem(out, ((ItemParticleData) data).getItemStack());
+                break;
+        }
+    }
+
     public static EntityMetadata[] readEntityMetadata(NetInput in) throws IOException {
         List<EntityMetadata> ret = new ArrayList<EntityMetadata>();
         int id;
@@ -130,6 +185,12 @@ public class NetUtil {
                 case STRING:
                     value = in.readString();
                     break;
+                case OPTIONAL_CHAT:
+                    boolean chatPresent = in.readBoolean();
+                    if (!chatPresent) {
+                        break;
+                    }
+                    // Intentional fall-through
                 case CHAT:
                     value = Message.fromString(in.readString());
                     break;
@@ -168,6 +229,9 @@ public class NetUtil {
                 case NBT_TAG:
                     value = readNBT(in);
                     break;
+                case PARTICLE:
+                    value = readParticle(in);
+                    break;
                 default:
                     throw new IOException("Unknown metadata type id: " + typeId);
             }
@@ -195,6 +259,12 @@ public class NetUtil {
                 case STRING:
                     out.writeString((String) meta.getValue());
                     break;
+                case OPTIONAL_CHAT:
+                    out.writeBoolean(meta.getValue() != null);
+                    if (meta.getValue() == null) {
+                        break;
+                    }
+                    // Intentional fall-through
                 case CHAT:
                     out.writeString(((Message) meta.getValue()).toJsonString());
                     break;
@@ -233,6 +303,9 @@ public class NetUtil {
                 case NBT_TAG:
                     writeNBT(out, (CompoundTag) meta.getValue());
                     break;
+                case PARTICLE:
+                    writeParticle(out, (Particle) meta.getValue());
+                    break;
                 default:
                     throw new IOException("Unknown metadata type: " + meta.getType());
             }
@@ -256,9 +329,9 @@ public class NetUtil {
                 }
             }
 
-            byte biomeData[] = null;
+            int biomeData[] = null;
             if(fullChunk) {
-                biomeData = in.readBytes(256);
+                biomeData = in.readInts(256);
             }
 
             column = new Column(x, z, chunks, biomeData, tileEntities);
@@ -292,7 +365,7 @@ public class NetUtil {
         }
 
         if(fullChunk) {
-            out.writeBytes(column.getBiomeData());
+            out.writeInts(column.getBiomeData());
         }
 
         return mask;

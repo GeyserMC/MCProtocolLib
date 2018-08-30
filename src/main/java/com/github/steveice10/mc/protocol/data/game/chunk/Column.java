@@ -9,7 +9,7 @@ public class Column {
     private int x;
     private int z;
     private Chunk chunks[];
-    private byte biomeData[];
+    private int biomeData[];
     private CompoundTag tileEntities[];
 
     private boolean skylight;
@@ -18,7 +18,7 @@ public class Column {
         this(x, z, chunks, null, tileEntities);
     }
 
-    public Column(int x, int z, Chunk chunks[], byte biomeData[], CompoundTag[] tileEntities) {
+    public Column(int x, int z, Chunk chunks[], int biomeData[], CompoundTag[] tileEntities) {
         if(chunks.length != 16) {
             throw new IllegalArgumentException("Chunk array length must be 16.");
         }
@@ -66,7 +66,7 @@ public class Column {
         return this.biomeData != null;
     }
 
-    public byte[] getBiomeData() {
+    public int[] getBiomeData() {
         return this.biomeData;
     }
 

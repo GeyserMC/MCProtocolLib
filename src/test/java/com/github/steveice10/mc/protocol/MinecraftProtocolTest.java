@@ -135,11 +135,11 @@ public class MinecraftProtocolTest {
 
     @Test
     public void testBlockBreak() throws IOException {
-        BlockChangeRecord record = new BlockChangeRecord(new Position(1, 61, -1), new BlockState(3, 2));
+        BlockChangeRecord record = new BlockChangeRecord(new Position(1, 61, -1), new BlockState(3));
         ServerBlockChangePacket packet = writeAndRead(new ServerBlockChangePacket(record));
 
         assertPosition(packet.getRecord().getPosition(), 1, 61, -1);
-        assertBlock(packet.getRecord(), 3, 2);
+        assertBlock(packet.getRecord(), 3);
     }
 
     @After

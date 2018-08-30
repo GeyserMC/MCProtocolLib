@@ -2,16 +2,14 @@ package com.github.steveice10.mc.protocol.data.game.statistic;
 
 import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
-import java.util.Objects;
-
 public class DropItemStatistic implements Statistic {
-    private String id;
+    private int id;
 
-    public DropItemStatistic(String id) {
+    public DropItemStatistic(int id) {
         this.id = id;
     }
 
-    public String getId() {
+    public int getId() {
         return this.id;
     }
 
@@ -21,7 +19,7 @@ public class DropItemStatistic implements Statistic {
         if(!(o instanceof DropItemStatistic)) return false;
 
         DropItemStatistic that = (DropItemStatistic) o;
-        return Objects.equals(this.id, that.id);
+        return this.id == that.id;
     }
 
     @Override

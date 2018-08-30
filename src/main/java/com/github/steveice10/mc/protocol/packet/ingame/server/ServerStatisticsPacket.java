@@ -11,6 +11,7 @@ import com.github.steveice10.mc.protocol.data.game.statistic.KillEntityStatistic
 import com.github.steveice10.mc.protocol.data.game.statistic.KilledByEntityStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.PickupItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.Statistic;
+import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
 import com.github.steveice10.mc.protocol.data.game.statistic.UseItemStatistic;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -21,15 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServerStatisticsPacket extends MinecraftPacket {
-    private static final String CRAFT_ITEM_PREFIX = "stat.craftItem.";
-    private static final String BREAK_BLOCK_PREFIX = "stat.mineBlock.";
-    private static final String USE_ITEM_PREFIX = "stat.useItem.";
-    private static final String BREAK_ITEM_PREFIX = "stat.breakItem.";
-    private static final String KILL_ENTITY_PREFIX = "stat.killEntity.";
-    private static final String KILLED_BY_ENTITY_PREFIX = "stat.entityKilledBy.";
-    private static final String DROP_ITEM_PREFIX = "stat.drop.";
-    private static final String PICKUP_ITEM_PREFIX = "stat.pickup.";
-
     private Map<Statistic, Integer> statistics = new HashMap<Statistic, Integer>();
 
     @SuppressWarnings("unused")
@@ -48,32 +40,44 @@ public class ServerStatisticsPacket extends MinecraftPacket {
     public void read(NetInput in) throws IOException {
         int length = in.readVarInt();
         for(int index = 0; index < length; index++) {
-            String value = in.readString();
-            Statistic statistic = null;
-            if(value.startsWith(CRAFT_ITEM_PREFIX)) {
-                statistic = new CraftItemStatistic(value.substring(CRAFT_ITEM_PREFIX.length()));
-            } else if(value.startsWith(BREAK_BLOCK_PREFIX)) {
-                statistic = new BreakBlockStatistic(value.substring(BREAK_BLOCK_PREFIX.length()));
-            } else if(value.startsWith(USE_ITEM_PREFIX)) {
-                statistic = new UseItemStatistic(value.substring(USE_ITEM_PREFIX.length()));
-            } else if(value.startsWith(BREAK_ITEM_PREFIX)) {
-                statistic = new BreakItemStatistic(value.substring(BREAK_ITEM_PREFIX.length()));
-            } else if(value.startsWith(KILL_ENTITY_PREFIX)) {
-                statistic = new KillEntityStatistic(value.substring(KILL_ENTITY_PREFIX.length()));
-            } else if(value.startsWith(KILLED_BY_ENTITY_PREFIX)) {
-                statistic = new KilledByEntityStatistic(value.substring(KILLED_BY_ENTITY_PREFIX.length()));
-            } else if(value.startsWith(DROP_ITEM_PREFIX)) {
-                statistic = new DropItemStatistic(value.substring(DROP_ITEM_PREFIX.length()));
-            } else if(value.startsWith(PICKUP_ITEM_PREFIX)) {
-                statistic = new PickupItemStatistic(value.substring(PICKUP_ITEM_PREFIX.length()));
-            } else {
-                try {
-                    statistic = MagicValues.key(GenericStatistic.class, value);
-                } catch(IllegalArgumentException e) {
-                    statistic = new CustomStatistic(value);
+            int categoryId = in.readVarInt();
+            int statisticId = in.readVarInt();
+            Statistic statistic;
+            try {
+                switch (MagicValues.key(StatisticCategory.class, categoryId)) {
+                    case BREAK_BLOCK:
+                        statistic = new BreakBlockStatistic(statisticId);
+                        break;
+                    case CRAFT_ITEM:
+                        statistic = new CraftItemStatistic(statisticId);
+                        break;
+                    case USE_ITEM:
+                        statistic = new UseItemStatistic(statisticId);
+                        break;
+                    case BREAK_ITEM:
+                        statistic = new BreakItemStatistic(statisticId);
+                        break;
+                    case PICKED_UP_ITEM:
+                        statistic = new PickupItemStatistic(statisticId);
+                        break;
+                    case DROP_ITEM:
+                        statistic = new DropItemStatistic(statisticId);
+                        break;
+                    case KILL_ENTITY:
+                        statistic = new KillEntityStatistic(statisticId);
+                        break;
+                    case KILLED_BY_ENTITY:
+                        statistic = new KilledByEntityStatistic(statisticId);
+                        break;
+                    case GENERIC:
+                        statistic = MagicValues.key(GenericStatistic.class, statisticId);
+                        break;
+                    default:
+                        throw new IllegalArgumentException();
                 }
+            } catch (IllegalArgumentException e) {
+                statistic = new CustomStatistic(categoryId, statisticId);
             }
-
             this.statistics.put(statistic, in.readVarInt());
         }
     }
@@ -82,28 +86,47 @@ public class ServerStatisticsPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.statistics.size());
         for(Statistic statistic : this.statistics.keySet()) {
-            String value = "";
-            if(statistic instanceof CraftItemStatistic) {
-                value = CRAFT_ITEM_PREFIX + ((CraftItemStatistic) statistic).getId();
-            } else if(statistic instanceof BreakBlockStatistic) {
-                value = BREAK_BLOCK_PREFIX + ((BreakBlockStatistic) statistic).getId();
-            } else if(statistic instanceof UseItemStatistic) {
-                value = USE_ITEM_PREFIX + ((UseItemStatistic) statistic).getId();
-            } else if(statistic instanceof BreakItemStatistic) {
-                value = BREAK_ITEM_PREFIX + ((BreakItemStatistic) statistic).getId();
-            } else if(statistic instanceof KillEntityStatistic) {
-                value = KILL_ENTITY_PREFIX + ((KillEntityStatistic) statistic).getId();
-            } else if(statistic instanceof KilledByEntityStatistic) {
-                value = KILLED_BY_ENTITY_PREFIX + ((KilledByEntityStatistic) statistic).getId();
-            } else if(statistic instanceof DropItemStatistic) {
-                value = DROP_ITEM_PREFIX + ((DropItemStatistic) statistic).getId();
-            } else if(statistic instanceof PickupItemStatistic) {
-                value = PICKUP_ITEM_PREFIX + ((PickupItemStatistic) statistic).getId();
-            } else if(statistic instanceof GenericStatistic) {
-                value = MagicValues.value(String.class, (GenericStatistic) statistic);
+            int categoryId;
+            int statisticId;
+            if(statistic instanceof CustomStatistic) {
+                categoryId = ((CustomStatistic) statistic).getCategory();
+                statisticId = ((CustomStatistic) statistic).getId();
+            } else {
+                StatisticCategory category;
+                if(statistic instanceof CraftItemStatistic) {
+                    category = StatisticCategory.CRAFT_ITEM;
+                    statisticId = ((CraftItemStatistic) statistic).getId();
+                } else if(statistic instanceof BreakBlockStatistic) {
+                    category = StatisticCategory.BREAK_BLOCK;
+                    statisticId = ((BreakBlockStatistic) statistic).getId();
+                } else if(statistic instanceof UseItemStatistic) {
+                    category = StatisticCategory.USE_ITEM;
+                    statisticId = ((UseItemStatistic) statistic).getId();
+                } else if(statistic instanceof BreakItemStatistic) {
+                    category = StatisticCategory.BREAK_ITEM;
+                    statisticId = ((BreakItemStatistic) statistic).getId();
+                } else if(statistic instanceof KillEntityStatistic) {
+                    category = StatisticCategory.KILL_ENTITY;
+                    statisticId = ((KillEntityStatistic) statistic).getId();
+                } else if(statistic instanceof KilledByEntityStatistic) {
+                    category = StatisticCategory.KILLED_BY_ENTITY;
+                    statisticId = ((KilledByEntityStatistic) statistic).getId();
+                } else if(statistic instanceof DropItemStatistic) {
+                    category = StatisticCategory.DROP_ITEM;
+                    statisticId = ((DropItemStatistic) statistic).getId();
+                } else if(statistic instanceof PickupItemStatistic) {
+                    category = StatisticCategory.PICKED_UP_ITEM;
+                    statisticId = ((PickupItemStatistic) statistic).getId();
+                } else if(statistic instanceof GenericStatistic) {
+                    category = StatisticCategory.GENERIC;
+                    statisticId = MagicValues.value(Integer.class, statistic);
+                } else {
+                    throw new IllegalArgumentException(statistic.getClass().getName());
+                }
+                categoryId = MagicValues.value(Integer.class, category);
             }
-
-            out.writeString(value);
+            out.writeVarInt(categoryId);
+            out.writeVarInt(statisticId);
             out.writeVarInt(this.statistics.get(statistic));
         }
     }

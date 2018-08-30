@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapData;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIcon;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
+import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -61,12 +62,15 @@ public class ServerMapDataPacket extends MinecraftPacket {
         this.trackingPosition = in.readBoolean();
         this.icons = new MapIcon[in.readVarInt()];
         for(int index = 0; index < this.icons.length; index++) {
-            int data = in.readUnsignedByte();
-            int type = (data >> 4) & 15;
-            int rotation = data & 15;
+            int type = in.readVarInt();
             int x = in.readUnsignedByte();
             int z = in.readUnsignedByte();
-            this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation);
+            int rotation = in.readUnsignedByte();
+            Message displayName = null;
+            if (in.readBoolean()) {
+                displayName = Message.fromString(in.readString());
+            }
+            this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
         }
 
         int columns = in.readUnsignedByte();
@@ -88,9 +92,16 @@ public class ServerMapDataPacket extends MinecraftPacket {
         for(int index = 0; index < this.icons.length; index++) {
             MapIcon icon = this.icons[index];
             int type = MagicValues.value(Integer.class, icon.getIconType());
-            out.writeByte((type & 15) << 4 | icon.getIconRotation() & 15);
+            out.writeVarInt(type);
             out.writeByte(icon.getCenterX());
             out.writeByte(icon.getCenterZ());
+            out.writeByte(icon.getIconRotation());
+            if (icon.getDisplayName() != null) {
+                out.writeBoolean(false);
+                out.writeString(icon.getDisplayName().toJsonString());
+            } else {
+                out.writeBoolean(true);
+            }
         }
 
         if(this.data != null && this.data.getColumns() != 0) {

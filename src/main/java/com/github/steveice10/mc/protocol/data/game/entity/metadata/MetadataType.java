@@ -6,6 +6,7 @@ public enum MetadataType {
     FLOAT,
     STRING,
     CHAT,
+    OPTIONAL_CHAT,
     ITEM,
     BOOLEAN,
     ROTATION,
@@ -14,5 +15,6 @@ public enum MetadataType {
     BLOCK_FACE,
     OPTIONAL_UUID,
     BLOCK_STATE,
-    NBT_TAG;
+    NBT_TAG,
+    PARTICLE;
 }

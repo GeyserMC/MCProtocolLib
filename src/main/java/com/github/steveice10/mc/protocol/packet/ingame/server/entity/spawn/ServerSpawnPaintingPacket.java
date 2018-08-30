@@ -55,7 +55,7 @@ public class ServerSpawnPaintingPacket extends MinecraftPacket {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.paintingType = MagicValues.key(PaintingType.class, in.readString());
+        this.paintingType = MagicValues.key(PaintingType.class, in.readVarInt());
         this.position = NetUtil.readPosition(in);
         this.direction = MagicValues.key(HangingDirection.class, in.readUnsignedByte());
     }
@@ -64,7 +64,7 @@ public class ServerSpawnPaintingPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeUUID(this.uuid);
-        out.writeString(MagicValues.value(String.class, this.paintingType));
+        out.writeVarInt(MagicValues.value(Integer.class, this.paintingType));
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.direction));
     }

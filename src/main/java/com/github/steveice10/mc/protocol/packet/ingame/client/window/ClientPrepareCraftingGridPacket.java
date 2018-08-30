@@ -8,14 +8,14 @@ import java.io.IOException;
 
 public class ClientPrepareCraftingGridPacket extends MinecraftPacket {
     private int windowId;
-    private int recipeId;
+    private String recipeId;
     private boolean makeAll;
 
     @SuppressWarnings("unused")
     private ClientPrepareCraftingGridPacket() {
     }
 
-    public ClientPrepareCraftingGridPacket(int windowId, int recipeId, boolean makeAll) {
+    public ClientPrepareCraftingGridPacket(int windowId, String recipeId, boolean makeAll) {
         this.windowId = windowId;
         this.recipeId = recipeId;
         this.makeAll = makeAll;
@@ -25,7 +25,7 @@ public class ClientPrepareCraftingGridPacket extends MinecraftPacket {
         return this.windowId;
     }
 
-    public int getRecipeId() {
+    public String getRecipeId() {
         return this.recipeId;
     }
 
@@ -36,14 +36,14 @@ public class ClientPrepareCraftingGridPacket extends MinecraftPacket {
     @Override
     public void read(NetInput in) throws IOException {
         this.windowId = in.readByte();
-        this.recipeId = in.readVarInt();
+        this.recipeId = in.readString();
         this.makeAll = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
-        out.writeVarInt(this.recipeId);
+        out.writeString(this.recipeId);
         out.writeBoolean(this.makeAll);
     }
 }

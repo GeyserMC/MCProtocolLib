@@ -1,18 +1,23 @@
 package com.github.steveice10.mc.protocol.data.game.world.map;
 
+import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.util.ObjectUtil;
+
+import java.util.Objects;
 
 public class MapIcon {
     private int centerX;
     private int centerZ;
     private MapIconType iconType;
     private int iconRotation;
+    private Message displayName;
 
-    public MapIcon(int centerX, int centerZ, MapIconType iconType, int iconRotation) {
+    public MapIcon(int centerX, int centerZ, MapIconType iconType, int iconRotation, Message displayName) {
         this.centerX = centerX;
         this.centerZ = centerZ;
         this.iconType = iconType;
         this.iconRotation = iconRotation;
+        this.displayName = displayName;
     }
 
     public int getCenterX() {
@@ -31,6 +36,10 @@ public class MapIcon {
         return this.iconRotation;
     }
 
+    public Message getDisplayName() {
+        return this.displayName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -40,12 +49,13 @@ public class MapIcon {
         return this.centerX == that.centerX &&
                 this.centerZ == that.centerZ &&
                 this.iconType == that.iconType &&
-                this.iconRotation == that.iconRotation;
+                this.iconRotation == that.iconRotation &&
+                Objects.equals(this.displayName, that.displayName);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hashCode(this.centerX, this.centerZ, this.iconType, this.iconRotation);
+        return ObjectUtil.hashCode(this.centerX, this.centerZ, this.iconType, this.iconRotation, this.displayName);
     }
 
     @Override

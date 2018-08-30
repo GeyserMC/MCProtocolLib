@@ -1,8 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.world.Particle;
+import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
+import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 
@@ -19,13 +21,12 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
     private float offsetZ;
     private float velocityOffset;
     private int amount;
-    private int data[];
 
     @SuppressWarnings("unused")
     private ServerSpawnParticlePacket() {
     }
 
-    public ServerSpawnParticlePacket(Particle particle, boolean longDistance, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount, int... data) {
+    public ServerSpawnParticlePacket(Particle particle, boolean longDistance, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount) {
         this.particle = particle;
         this.longDistance = longDistance;
         this.x = x;
@@ -36,10 +37,6 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
         this.offsetZ = offsetZ;
         this.velocityOffset = velocityOffset;
         this.amount = amount;
-        this.data = data;
-        if(this.data.length != particle.getDataLength()) {
-            throw new IllegalArgumentException("Data array length must be equal to particle's data length.");
-        }
     }
 
     public Particle getParticle() {
@@ -82,13 +79,9 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
         return this.amount;
     }
 
-    public int[] getData() {
-        return this.data;
-    }
-
     @Override
     public void read(NetInput in) throws IOException {
-        this.particle = MagicValues.key(Particle.class, in.readInt());
+        ParticleType type = MagicValues.key(ParticleType.class, in.readInt());
         this.longDistance = in.readBoolean();
         this.x = in.readFloat();
         this.y = in.readFloat();
@@ -98,10 +91,7 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
         this.offsetZ = in.readFloat();
         this.velocityOffset = in.readFloat();
         this.amount = in.readInt();
-        this.data = new int[this.particle.getDataLength()];
-        for(int index = 0; index < this.data.length; index++) {
-            this.data[index] = in.readVarInt();
-        }
+        this.particle = new Particle(type, NetUtil.readParticleData(in, type));
     }
 
     @Override
@@ -116,8 +106,6 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
         out.writeFloat(this.offsetZ);
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
-        for(int index = 0; index < this.particle.getDataLength(); index++) {
-            out.writeVarInt(this.data[index]);
-        }
+        NetUtil.writeParticleData(out, this.particle.getData(), this.particle.getType());
     }
 }

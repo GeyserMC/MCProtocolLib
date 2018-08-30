@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class BlockStorage {
-    private static final BlockState AIR = new BlockState(0, 0);
+    private static final BlockState AIR = new BlockState(0);
 
     private int bitsPerEntry;
 
@@ -33,7 +33,7 @@ public class BlockStorage {
         this.bitsPerEntry = in.readUnsignedByte();
 
         this.states = new ArrayList<BlockState>();
-        int stateCount = in.readVarInt();
+        int stateCount = this.bitsPerEntry > 8 ? 0 : in.readVarInt();
         for(int i = 0; i < stateCount; i++) {
             this.states.add(NetUtil.readBlockState(in));
         }
@@ -46,19 +46,21 @@ public class BlockStorage {
     }
 
     private static BlockState rawToState(int raw) {
-        return new BlockState(raw >> 4, raw & 0xF);
+        return new BlockState(raw);
     }
 
     private static int stateToRaw(BlockState state) {
-        return (state.getId() << 4) | (state.getData() & 0xF);
+        return state.getId();
     }
 
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.bitsPerEntry);
 
-        out.writeVarInt(this.states.size());
-        for(BlockState state : this.states) {
-            NetUtil.writeBlockState(out, state);
+        if (this.bitsPerEntry <= 8) {
+            out.writeVarInt(this.states.size());
+            for (BlockState state : this.states) {
+                NetUtil.writeBlockState(out, state);
+            }
         }
 
         long[] data = this.storage.getData();
