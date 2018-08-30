@@ -21,13 +21,14 @@ public class ServerBossBarPacket extends MinecraftPacket {
     private BossBarColor color;
     private BossBarDivision division;
     private boolean darkenSky;
-    private boolean dragonBar;
+    private boolean playEndMusic;
+    private boolean showFog;
 
     @SuppressWarnings("unused")
     private ServerBossBarPacket() {
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title, float health, BossBarColor color, BossBarDivision division, boolean darkenSky, boolean dragonBar) {
+    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title, float health, BossBarColor color, BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this.uuid = uuid;
         this.action = BossBarAction.ADD;
 
@@ -36,7 +37,8 @@ public class ServerBossBarPacket extends MinecraftPacket {
         this.color = color;
         this.division = division;
         this.darkenSky = darkenSky;
-        this.dragonBar = dragonBar;
+        this.playEndMusic = playEndMusic;
+        this.showFog = showFog;
     }
 
     public ServerBossBarPacket(UUID uuid) {
@@ -66,12 +68,13 @@ public class ServerBossBarPacket extends MinecraftPacket {
         this.division = division;
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, boolean darkenSky, boolean dragonBar) {
+    public ServerBossBarPacket(UUID uuid, BossBarAction action, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this.uuid = uuid;
         this.action = BossBarAction.UPDATE_FLAGS;
 
         this.darkenSky = darkenSky;
-        this.dragonBar = dragonBar;
+        this.playEndMusic = playEndMusic;
+        this.showFog = showFog;
     }
 
     public UUID getUUID() {
@@ -102,8 +105,12 @@ public class ServerBossBarPacket extends MinecraftPacket {
         return this.darkenSky;
     }
 
-    public boolean isDragonBar() {
-        return this.dragonBar;
+    public boolean shouldPlayEndMusic() {
+        return this.playEndMusic;
+    }
+
+    public boolean shouldShowFog() {
+        return this.showFog;
     }
 
     @Override
@@ -127,7 +134,8 @@ public class ServerBossBarPacket extends MinecraftPacket {
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {
             int flags = in.readUnsignedByte();
             this.darkenSky = (flags & 0x1) == 0x1;
-            this.dragonBar = (flags & 0x2) == 0x2;
+            this.playEndMusic = (flags & 0x2) == 0x2;
+            this.showFog = (flags & 0x4) == 0x4;
         }
     }
 
@@ -155,8 +163,12 @@ public class ServerBossBarPacket extends MinecraftPacket {
                 flags |= 0x1;
             }
 
-            if(this.dragonBar) {
+            if(this.playEndMusic) {
                 flags |= 0x2;
+            }
+
+            if(this.showFog) {
+                flags |= 0x4;
             }
 
             out.writeByte(flags);
