@@ -2,18 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.*;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -22,15 +11,17 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import java.io.IOException;
 
 public class ServerBlockValuePacket extends MinecraftPacket {
-    private static final int NOTE_BLOCK = 25;
-    private static final int STICKY_PISTON = 29;
-    private static final int PISTON = 33;
-    private static final int MOB_SPAWNER = 52;
-    private static final int CHEST = 54;
-    private static final int ENDER_CHEST = 130;
-    private static final int TRAPPED_CHEST = 146;
-    private static final int SHULKER_BOX_LOWER = 219;
-    private static final int SHULKER_BOX_HIGHER = 234;
+    private static final int NOTE_BLOCK = 73;
+    private static final int STICKY_PISTON = 92;
+    private static final int PISTON = 99;
+    private static final int MOB_SPAWNER = 140;
+    private static final int CHEST = 142;
+    private static final int ENDER_CHEST = 249;
+    private static final int BEACON = 257;
+    private static final int TRAPPED_CHEST = 305;
+    private static final int END_GATEWAY = 472;
+    private static final int SHULKER_BOX_LOWER = 482;
+    private static final int SHULKER_BOX_HIGHER = 498;
 
     private Position position;
     private BlockValueType type;
@@ -84,6 +75,12 @@ public class ServerBlockValuePacket extends MinecraftPacket {
                 || (this.blockId >= SHULKER_BOX_LOWER && this.blockId <= SHULKER_BOX_HIGHER)) {
             this.type = MagicValues.key(ChestValueType.class, type);
             this.value = new ChestValue(value);
+        } else if(this.blockId == BEACON) {
+            this.type = MagicValues.key(BeaconValueType.class, type);
+            this.value = new BeaconValue();
+        } else if(this.blockId == END_GATEWAY) {
+            this.type = MagicValues.key(EndGatewayValueType.class, type);
+            this.value = new EndGatewayValue();
         } else {
             this.type = MagicValues.key(GenericBlockValueType.class, type);
             this.value = new GenericBlockValue(value);
@@ -92,34 +89,19 @@ public class ServerBlockValuePacket extends MinecraftPacket {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NetUtil.writePosition(out, this.position);
-        int type = 0;
-        if(this.type instanceof NoteBlockValueType) {
-            type = MagicValues.value(Integer.class, (NoteBlockValueType) this.type);
-        } else if(this.type instanceof PistonValueType) {
-            type = MagicValues.value(Integer.class, (PistonValueType) this.type);
-        } else if(this.type instanceof MobSpawnerValueType) {
-            type = MagicValues.value(Integer.class, (MobSpawnerValueType) this.type);
-        } else if(this.type instanceof ChestValueType) {
-            type = MagicValues.value(Integer.class, (ChestValueType) this.type);
-        } else if(this.type instanceof GenericBlockValueType) {
-            type = MagicValues.value(Integer.class, (GenericBlockValueType) this.type);
-        }
-
-        out.writeByte(type);
         int val = 0;
-        if(this.value instanceof NoteBlockValue) {
+        if(this.type instanceof NoteBlockValueType) {
             val = ((NoteBlockValue) this.value).getPitch();
-        } else if(this.value instanceof PistonValue) {
-            val = MagicValues.value(Integer.class, (PistonValue) this.value);
-        } else if(this.value instanceof MobSpawnerValue) {
-            val = 0;
-        } else if(this.value instanceof ChestValue) {
+        } else if(this.type instanceof PistonValueType) {
+            val = MagicValues.value(Integer.class, this.value);
+        } else if(this.type instanceof ChestValueType) {
             val = ((ChestValue) this.value).getViewers();
-        } else if(this.value instanceof GenericBlockValue) {
+        } else if(this.type instanceof GenericBlockValueType) {
             val = ((GenericBlockValue) this.value).getValue();
         }
 
+        NetUtil.writePosition(out, this.position);
+        out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeByte(val);
         out.writeVarInt(this.blockId & 4095);
     }

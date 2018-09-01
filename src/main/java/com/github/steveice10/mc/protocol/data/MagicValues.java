@@ -65,17 +65,12 @@ import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProper
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.*;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.UpdatedTileType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
@@ -750,6 +745,10 @@ public class MagicValues {
         register(MobSpawnerValueType.RESET_DELAY, 1);
 
         register(ChestValueType.VIEWING_PLAYER_COUNT, 1);
+
+        register(BeaconValueType.RECALCULATE_BEAM, 1);
+
+        register(EndGatewayValueType.TRIGGER_BEAM, 1);
 
         register(GenericBlockValueType.GENERIC, 1);
 
