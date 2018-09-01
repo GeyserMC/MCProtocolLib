@@ -96,7 +96,7 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeInt(MagicValues.value(Integer.class, this.particle));
+        out.writeInt(MagicValues.value(Integer.class, this.particle.getType()));
         out.writeBoolean(this.longDistance);
         out.writeFloat(this.x);
         out.writeFloat(this.y);
