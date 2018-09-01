@@ -750,6 +750,7 @@ public class MagicValues {
 
         register(EndGatewayValueType.TRIGGER_BEAM, 1);
 
+        register(GenericBlockValueType.GENERIC, 0);
         register(GenericBlockValueType.GENERIC, 1);
 
         register(PistonValue.DOWN, 0);
