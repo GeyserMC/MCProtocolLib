@@ -20,9 +20,9 @@ public class AESEncryption implements PacketEncryption {
      */
     public AESEncryption(Key key) throws GeneralSecurityException {
         this.inCipher = Cipher.getInstance("AES/CFB8/NoPadding");
-        this.inCipher.init(2, key, new IvParameterSpec(key.getEncoded()));
+        this.inCipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
         this.outCipher = Cipher.getInstance("AES/CFB8/NoPadding");
-        this.outCipher.init(1, key, new IvParameterSpec(key.getEncoded()));
+        this.outCipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
     }
 
     @Override
