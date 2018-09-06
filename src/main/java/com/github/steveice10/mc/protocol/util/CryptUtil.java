@@ -23,7 +23,7 @@ public class CryptUtil {
 
     public static SecretKey generateSharedKey() {
         try {
-            KeyGenerator gen = KeyGenerator.getInstance("AES/CFB8/NoPadding");
+            KeyGenerator gen = KeyGenerator.getInstance("AES");
             gen.init(128);
             return gen.generateKey();
         } catch(NoSuchAlgorithmException e) {
@@ -50,7 +50,7 @@ public class CryptUtil {
     }
 
     public static SecretKey decryptSharedKey(PrivateKey privateKey, byte[] sharedKey) {
-        return new SecretKeySpec(decryptData(privateKey, sharedKey), "AES/CFB8/NoPadding");
+        return new SecretKeySpec(decryptData(privateKey, sharedKey), "AES");
     }
 
     public static byte[] encryptData(Key key, byte[] data) {
@@ -63,7 +63,7 @@ public class CryptUtil {
 
     private static byte[] runEncryption(int mode, Key key, byte[] data) {
         try {
-            Cipher cipher = Cipher.getInstance(key.getAlgorithm());
+            Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
             cipher.init(mode, key);
             return cipher.doFinal(data);
         } catch(GeneralSecurityException e) {
