@@ -63,7 +63,7 @@ public class CryptUtil {
 
     private static byte[] runEncryption(int mode, Key key, byte[] data) {
         try {
-            Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
+            Cipher cipher = Cipher.getInstance(key.getAlgorithm().equals("RSA") ? "RSA/ECB/PKCS1Padding" : "AES/CFB8/NoPadding");
             cipher.init(mode, key);
             return cipher.doFinal(data);
         } catch(GeneralSecurityException e) {
