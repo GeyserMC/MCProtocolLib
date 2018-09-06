@@ -54,11 +54,11 @@ public class CryptUtil {
     }
 
     public static byte[] encryptData(Key key, byte[] data) {
-        return runEncryption(1, key, data);
+        return runEncryption(Cipher.ENCRYPT_MODE, key, data);
     }
 
     public static byte[] decryptData(Key key, byte[] data) {
-        return runEncryption(2, key, data);
+        return runEncryption(Cipher.DECRYPT_MODE, key, data);
     }
 
     private static byte[] runEncryption(int mode, Key key, byte[] data) {
