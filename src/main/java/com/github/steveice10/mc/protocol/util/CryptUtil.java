@@ -23,7 +23,7 @@ public class CryptUtil {
 
     public static SecretKey generateSharedKey() {
         try {
-            KeyGenerator gen = KeyGenerator.getInstance("AES");
+            KeyGenerator gen = KeyGenerator.getInstance("AES/CFB8/NoPadding");
             gen.init(128);
             return gen.generateKey();
         } catch(NoSuchAlgorithmException e) {
@@ -50,7 +50,7 @@ public class CryptUtil {
     }
 
     public static SecretKey decryptSharedKey(PrivateKey privateKey, byte[] sharedKey) {
-        return new SecretKeySpec(decryptData(privateKey, sharedKey), "AES");
+        return new SecretKeySpec(decryptData(privateKey, sharedKey), "AES/CFB8/NoPadding");
     }
 
     public static byte[] encryptData(Key key, byte[] data) {
@@ -73,22 +73,13 @@ public class CryptUtil {
 
     public static byte[] getServerIdHash(String serverId, PublicKey publicKey, SecretKey secretKey) {
         try {
-            return encrypt("SHA-1", new byte[][]{serverId.getBytes("ISO_8859_1"), secretKey.getEncoded(), publicKey.getEncoded()});
-        } catch(UnsupportedEncodingException e) {
-            throw new Error("Failed to generate server id hash.", e);
-        }
-    }
-
-    private static byte[] encrypt(String encryption, byte[]... data) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance(encryption);
-            for(byte array[] : data) {
-                digest.update(array);
-            }
-
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            digest.update(serverId.getBytes("ISO_8859_1"));
+            digest.update(secretKey.getEncoded());
+            digest.update(publicKey.getEncoded());
             return digest.digest();
-        } catch(NoSuchAlgorithmException e) {
-            throw new Error("Failed to encrypt data.", e);
+        } catch(Exception e) {
+            throw new Error("Failed to generate server ID hash.", e);
         }
     }
 }
