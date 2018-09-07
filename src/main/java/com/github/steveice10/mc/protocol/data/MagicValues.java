@@ -219,6 +219,9 @@ public class MagicValues {
         register(SpreadItemParam.RIGHT_MOUSE_BEGIN_DRAG, 4);
         register(SpreadItemParam.RIGHT_MOUSE_ADD_SLOT, 5);
         register(SpreadItemParam.RIGHT_MOUSE_END_DRAG, 6);
+        register(SpreadItemParam.MIDDLE_MOUSE_BEGIN_DRAG, 8);
+        register(SpreadItemParam.MIDDLE_MOUSE_ADD_SLOT, 9);
+        register(SpreadItemParam.MIDDLE_MOUSE_END_DRAG, 10);
 
         register(FillStackParam.FILL, 0);
 
