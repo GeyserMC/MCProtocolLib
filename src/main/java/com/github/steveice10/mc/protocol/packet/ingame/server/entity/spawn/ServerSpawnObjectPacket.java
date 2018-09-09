@@ -1,13 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.FallingBlockData;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.HangingDirection;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.MinecartType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectData;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.ProjectileData;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.SplashPotionData;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.*;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -121,21 +115,18 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
         this.yaw = in.readByte() * 360 / 256f;
 
         int data = in.readInt();
-        if(data > 0) {
-            if(this.type == ObjectType.MINECART) {
-                this.data = MagicValues.key(MinecartType.class, data);
-            } else if(this.type == ObjectType.ITEM_FRAME) {
-                this.data = MagicValues.key(HangingDirection.class, data);
-            } else if(this.type == ObjectType.FALLING_BLOCK) {
-                this.data = new FallingBlockData(data & 65535, data >> 16);
-            } else if(this.type == ObjectType.POTION) {
-                this.data = new SplashPotionData(data);
-            } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.TIPPED_ARROW || this.type == ObjectType.GHAST_FIREBALL || this.type == ObjectType.BLAZE_FIREBALL || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_HEAD_PROJECTILE || this.type == ObjectType.FISH_HOOK) {
-                this.data = new ProjectileData(data);
-            } else {
-                this.data = new ObjectData() {
-                };
-            }
+        if(this.type == ObjectType.MINECART) {
+            this.data = MagicValues.key(MinecartType.class, data);
+        } else if(this.type == ObjectType.ITEM_FRAME) {
+            this.data = MagicValues.key(HangingDirection.class, data);
+        } else if(this.type == ObjectType.FALLING_BLOCK) {
+            this.data = new FallingBlockData(data & 65535, data >> 16);
+        } else if(this.type == ObjectType.POTION) {
+            this.data = new SplashPotionData(data);
+        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.TIPPED_ARROW || this.type == ObjectType.GHAST_FIREBALL || this.type == ObjectType.BLAZE_FIREBALL || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_HEAD_PROJECTILE || this.type == ObjectType.FISH_HOOK) {
+            this.data = new ProjectileData(data);
+        } else {
+            this.data = new GenericObjectData(data);
         }
 
         this.motX = in.readShort() / 8000D;
@@ -155,20 +146,18 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
         out.writeByte((byte) (this.yaw * 256 / 360));
 
         int data = 0;
-        if(this.data != null) {
-            if(this.data instanceof MinecartType) {
-                data = MagicValues.value(Integer.class, (Enum<?>) this.data);
-            } else if(this.data instanceof HangingDirection) {
-                data = MagicValues.value(Integer.class, (Enum<?>) this.data);
-            } else if(this.data instanceof FallingBlockData) {
-                data = ((FallingBlockData) this.data).getId() | ((FallingBlockData) this.data).getMetadata() << 16;
-            } else if(this.data instanceof SplashPotionData) {
-                data = ((SplashPotionData) this.data).getPotionData();
-            } else if(this.data instanceof ProjectileData) {
-                data = ((ProjectileData) this.data).getOwnerId();
-            } else {
-                data = 1;
-            }
+        if(this.data instanceof MinecartType) {
+            data = MagicValues.value(Integer.class, (Enum<?>) this.data);
+        } else if(this.data instanceof HangingDirection) {
+            data = MagicValues.value(Integer.class, (Enum<?>) this.data);
+        } else if(this.data instanceof FallingBlockData) {
+            data = ((FallingBlockData) this.data).getId() | ((FallingBlockData) this.data).getMetadata() << 16;
+        } else if(this.data instanceof SplashPotionData) {
+            data = ((SplashPotionData) this.data).getPotionData();
+        } else if(this.data instanceof ProjectileData) {
+            data = ((ProjectileData) this.data).getOwnerId();
+        } else if(this.data instanceof GenericObjectData) {
+            data = ((GenericObjectData) this.data).getValue();
         }
 
         out.writeInt(data);
