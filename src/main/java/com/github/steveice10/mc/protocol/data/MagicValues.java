@@ -427,10 +427,12 @@ public class MagicValues {
         register(MinecartType.HOPPER, 5);
         register(MinecartType.COMMAND_BLOCK, 6);
 
-        register(HangingDirection.SOUTH, 0);
-        register(HangingDirection.WEST, 1);
+        register(HangingDirection.DOWN, 0);
+        register(HangingDirection.UP, 1);
         register(HangingDirection.NORTH, 2);
-        register(HangingDirection.EAST, 3);
+        register(HangingDirection.SOUTH, 3);
+        register(HangingDirection.WEST, 4);
+        register(HangingDirection.EAST, 5);
 
         register(PaintingType.KEBAB, 0);
         register(PaintingType.AZTEC, 1);
