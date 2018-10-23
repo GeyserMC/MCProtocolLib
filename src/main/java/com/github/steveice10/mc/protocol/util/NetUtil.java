@@ -69,19 +69,18 @@ public class NetUtil {
     }
 
     public static ItemStack readItem(NetInput in) throws IOException {
-        short item = in.readShort();
-        if(item < 0) {
+        boolean present = in.readBoolean();
+        if (!present) {
             return null;
-        } else {
-            return new ItemStack(item, in.readByte(), readNBT(in));
         }
+        int item = in.readVarInt();
+        return new ItemStack(item, in.readByte(), readNBT(in));
     }
 
     public static void writeItem(NetOutput out, ItemStack item) throws IOException {
-        if(item == null) {
-            out.writeShort(-1);
-        } else {
-            out.writeShort(item.getId());
+        out.writeBoolean(item != null);
+        if (item != null) {
+            out.writeVarInt(item.getId());
             out.writeByte(item.getAmount());
             writeNBT(out, item.getNBT());
         }
