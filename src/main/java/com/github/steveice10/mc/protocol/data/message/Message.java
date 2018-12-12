@@ -25,6 +25,18 @@ public abstract class Message implements Cloneable {
     public static Message fromJson(JsonElement e) {
         if(e.isJsonPrimitive()) {
             return new TextMessage(e.getAsString());
+        } else if(e.isJsonArray()) {
+            JsonArray array = e.getAsJsonArray();
+            if(array.size() == 0) {
+                return new TextMessage("");
+            }
+
+            Message msg = Message.fromJson(array.get(0));
+            for(int index = 1; index < array.size(); index++) {
+                msg.addExtra(Message.fromJson(array.get(index)));
+            }
+
+            return msg;
         } else if(e.isJsonObject()) {
             JsonObject json = e.getAsJsonObject();
             Message msg = null;
@@ -78,19 +90,12 @@ public abstract class Message implements Cloneable {
             }
 
             msg.setStyle(style);
+
             if(json.has("extra")) {
                 JsonArray extraJson = json.get("extra").getAsJsonArray();
-                List<Message> extra = new ArrayList<Message>();
                 for(int index = 0; index < extraJson.size(); index++) {
-                    JsonElement el = extraJson.get(index);
-                    if(el.isJsonPrimitive()) {
-                        extra.add(new TextMessage(el.getAsString()));
-                    } else {
-                        extra.add(Message.fromJson(el.getAsJsonObject()));
-                    }
+                    msg.addExtra(Message.fromJson(extraJson.get(index)));
                 }
-
-                msg.setExtra(extra);
             }
 
             return msg;
