@@ -332,6 +332,7 @@ public class MagicValues {
 
         register(GlobalEntityType.LIGHTNING_BOLT, 1);
 
+        register(MobType.ARMOR_STAND, 1);
         register(MobType.BAT, 3);
         register(MobType.BLAZE, 4);
         register(MobType.CAVE_SPIDER, 6);
