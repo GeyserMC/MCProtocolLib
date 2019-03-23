@@ -88,6 +88,7 @@ public class ServerPlayerListEntryPacket extends MinecraftPacket {
                     }
 
                     entry = new PlayerListEntry(profile, disp);
+                    break;
                 case REMOVE_PLAYER:
                     entry = new PlayerListEntry(profile);
                     break;
