@@ -15,6 +15,7 @@ import java.util.Objects;
 public class BlockStorage {
     private static final BlockState AIR = new BlockState(0);
 
+    private int blockCount;
     private int bitsPerEntry;
 
     private List<BlockState> states;
@@ -30,6 +31,7 @@ public class BlockStorage {
     }
 
     public BlockStorage(NetInput in) throws IOException {
+        this.blockCount = in.readShort();
         this.bitsPerEntry = in.readUnsignedByte();
 
         this.states = new ArrayList<BlockState>();
@@ -54,6 +56,7 @@ public class BlockStorage {
     }
 
     public void write(NetOutput out) throws IOException {
+        out.writeShort(this.blockCount);
         out.writeByte(this.bitsPerEntry);
 
         if (this.bitsPerEntry <= 8) {

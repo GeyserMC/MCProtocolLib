@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.chunk.BlockStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
-import com.github.steveice10.mc.protocol.data.game.chunk.NibbleArray3d;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
@@ -313,7 +312,7 @@ public class NetUtil {
         out.writeByte(255);
     }
 
-    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask, CompoundTag[] tileEntities) throws IOException {
+    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask, CompoundTag[] tileEntities, CompoundTag heightmaps) throws IOException {
         NetInput in = new StreamNetInput(new ByteArrayInputStream(data));
         Throwable ex = null;
         Column column = null;
@@ -322,9 +321,7 @@ public class NetUtil {
             for(int index = 0; index < chunks.length; index++) {
                 if((mask & (1 << index)) != 0) {
                     BlockStorage blocks = new BlockStorage(in);
-                    NibbleArray3d blocklight = new NibbleArray3d(in, 2048);
-                    NibbleArray3d skylight = hasSkylight ? new NibbleArray3d(in, 2048) : null;
-                    chunks[index] = new Chunk(blocks, blocklight, skylight);
+                    chunks[index] = new Chunk(blocks);
                 }
             }
 
@@ -333,14 +330,14 @@ public class NetUtil {
                 biomeData = in.readInts(256);
             }
 
-            column = new Column(x, z, chunks, biomeData, tileEntities);
+            column = new Column(x, z, chunks, biomeData, tileEntities, heightmaps);
         } catch(Throwable e) {
             ex = e;
         }
 
         // Unfortunately, this is needed to detect whether the chunks contain skylight or not.
         if((in.available() > 0 || ex != null) && !hasSkylight) {
-            return readColumn(data, x, z, fullChunk, true, mask, tileEntities);
+            return readColumn(data, x, z, fullChunk, true, mask, tileEntities, heightmaps);
         } else if(ex != null) {
             throw new IOException("Failed to read chunk data.", ex);
         }
@@ -356,10 +353,6 @@ public class NetUtil {
             if(chunk != null && (!fullChunk || !chunk.isEmpty())) {
                 mask |= 1 << index;
                 chunk.getBlocks().write(out);
-                chunk.getBlockLight().write(out);
-                if(hasSkylight) {
-                    chunk.getSkyLight().write(out);
-                }
             }
         }
 
