@@ -109,6 +109,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerT
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerUpdateScorePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerCloseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerConfirmTransactionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenHorseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerPreparedCraftingGridPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket;
@@ -388,7 +389,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x1C, ServerExplosionPacket.class);
         this.registerIncoming(0x1D, ServerUnloadChunkPacket.class);
         this.registerIncoming(0x1E, ServerNotifyClientPacket.class);
-        // 0x1F Open Horse Window - New
+        this.registerIncoming(0x1F, ServerOpenHorseWindowPacket.class);
         this.registerIncoming(0x20, ServerKeepAlivePacket.class);
         this.registerIncoming(0x21, ServerChunkDataPacket.class);
         this.registerIncoming(0x22, ServerPlayEffectPacket.class);
@@ -578,7 +579,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x1C, ServerExplosionPacket.class);
         this.registerOutgoing(0x1D, ServerUnloadChunkPacket.class);
         this.registerOutgoing(0x1E, ServerNotifyClientPacket.class);
-        // 0x1F Open Horse Window - New
+        this.registerIncoming(0x1F, ServerOpenHorseWindowPacket.class);
         this.registerOutgoing(0x20, ServerKeepAlivePacket.class);
         this.registerOutgoing(0x21, ServerChunkDataPacket.class);
         this.registerOutgoing(0x22, ServerPlayEffectPacket.class);
