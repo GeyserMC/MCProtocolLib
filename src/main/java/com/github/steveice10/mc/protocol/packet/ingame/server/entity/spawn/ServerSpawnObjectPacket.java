@@ -107,7 +107,7 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.type = MagicValues.key(ObjectType.class, in.readByte());
+        this.type = MagicValues.key(ObjectType.class, in.readVarInt());
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -138,7 +138,7 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeUUID(this.uuid);
-        out.writeByte(MagicValues.value(Integer.class, this.type));
+        out.writeVarInt(MagicValues.value(Integer.class, this.type));
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
