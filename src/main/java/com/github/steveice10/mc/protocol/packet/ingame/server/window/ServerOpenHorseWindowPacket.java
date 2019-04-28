@@ -21,7 +21,19 @@ public class ServerOpenHorseWindowPacket extends MinecraftPacket {
         this.numberOfSlots = numberOfSlots;
         this.entityId = entityId;
     }
-    
+
+    public int getWindowId() {
+        return windowId;
+    }
+
+    public int getNumberOfSlots() {
+        return numberOfSlots;
+    }
+
+    public int getEntityId() {
+        return entityId;
+    }
+
     @Override
     public void read(NetInput in) throws IOException {
         windowId = in.readByte();
