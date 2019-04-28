@@ -58,6 +58,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareRecip
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareTagsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerEntitySoundEffectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerPlayerListDataPacket;
@@ -443,7 +444,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x4D, ServerSpawnPositionPacket.class);
         this.registerIncoming(0x4E, ServerUpdateTimePacket.class);
         this.registerIncoming(0x4F, ServerTitlePacket.class);
-        // 0x50 Entity Sound Effect
+        this.registerIncoming(0x50, ServerEntitySoundEffectPacket.class);
         this.registerIncoming(0x51, ServerPlayBuiltinSoundPacket.class);
         this.registerIncoming(0x52, ServerStopSoundPacket.class);
         this.registerIncoming(0x53, ServerPlayerListDataPacket.class);
@@ -633,7 +634,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x4D, ServerSpawnPositionPacket.class);
         this.registerOutgoing(0x4E, ServerUpdateTimePacket.class);
         this.registerOutgoing(0x4F, ServerTitlePacket.class);
-        // 0x50 Entity Sound Effect
+        this.registerOutgoing(0x50, ServerEntitySoundEffectPacket.class);
         this.registerOutgoing(0x51, ServerPlayBuiltinSoundPacket.class);
         this.registerOutgoing(0x52, ServerStopSoundPacket.class);
         this.registerOutgoing(0x53, ServerPlayerListDataPacket.class);
