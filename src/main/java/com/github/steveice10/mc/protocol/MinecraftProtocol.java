@@ -7,6 +7,7 @@ import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientLockDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientRequestPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientResourcePackStatusPacket;
@@ -474,7 +475,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x0D, ClientEntityNBTRequestPacket.class);
         this.registerOutgoing(0x0E, ClientPlayerInteractEntityPacket.class);
         this.registerOutgoing(0x0F, ClientKeepAlivePacket.class);
-        // 0x10 Lock Difficulty
+        this.registerOutgoing(0x10, ClientLockDifficultyPacket.class);
         this.registerOutgoing(0x11, ClientPlayerPositionPacket.class);
         this.registerOutgoing(0x12, ClientPlayerPositionRotationPacket.class);
         this.registerOutgoing(0x13, ClientPlayerRotationPacket.class);
@@ -523,7 +524,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x0D, ClientEntityNBTRequestPacket.class);
         this.registerIncoming(0x0E, ClientPlayerInteractEntityPacket.class);
         this.registerIncoming(0x0F, ClientKeepAlivePacket.class);
-        // 0x10 Lock Difficulty
+        this.registerIncoming(0x10, ClientLockDifficultyPacket.class);
         this.registerIncoming(0x11, ClientPlayerPositionPacket.class);
         this.registerIncoming(0x12, ClientPlayerPositionRotationPacket.class);
         this.registerIncoming(0x13, ClientPlayerRotationPacket.class);
