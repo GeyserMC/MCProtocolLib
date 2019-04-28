@@ -109,6 +109,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerT
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerUpdateScorePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerCloseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerConfirmTransactionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenBookPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenHorseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerPreparedCraftingGridPacket;
@@ -402,8 +403,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x29, ServerEntityPositionRotationPacket.class);
         this.registerIncoming(0x2A, ServerEntityRotationPacket.class);
         // 0x2B Entity?
-        this.registerIncoming(0x2B, ServerVehicleMovePacket.class);
-        // 0x2D Open Book - New
+        this.registerIncoming(0x2C, ServerVehicleMovePacket.class);
+        this.registerIncoming(0x2D, ServerOpenBookPacket.class);
         this.registerIncoming(0x2E, ServerOpenWindowPacket.class);
         this.registerIncoming(0x2F, ServerOpenTileEntityEditorPacket.class);
         this.registerIncoming(0x30, ServerPreparedCraftingGridPacket.class);
@@ -592,8 +593,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x29, ServerEntityPositionRotationPacket.class);
         this.registerOutgoing(0x2A, ServerEntityRotationPacket.class);
         // 0x2B Entity?
-        this.registerOutgoing(0x2B, ServerVehicleMovePacket.class);
-        // 0x2D Open Book - New
+        this.registerOutgoing(0x2C, ServerVehicleMovePacket.class);
+        this.registerOutgoing(0x2D, ServerOpenBookPacket.class);
         this.registerOutgoing(0x2E, ServerOpenWindowPacket.class);
         this.registerOutgoing(0x2F, ServerOpenTileEntityEditorPacket.class);
         this.registerOutgoing(0x30, ServerPreparedCraftingGridPacket.class);
