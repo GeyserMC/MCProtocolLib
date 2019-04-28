@@ -422,7 +422,6 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x35, ServerPlayerPositionRotationPacket.class);
         this.registerIncoming(0x36, ServerUnlockRecipesPacket.class);
         this.registerIncoming(0x37, ServerEntityDestroyPacket.class);
-        // DELETED this.registerIncoming(0x33, ServerPlayerUseBedPacket.class);
         this.registerIncoming(0x38, ServerEntityRemoveEffectPacket.class);
         this.registerIncoming(0x39, ServerResourcePackSendPacket.class);
         this.registerIncoming(0x3A, ServerRespawnPacket.class);
@@ -612,7 +611,6 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x35, ServerPlayerPositionRotationPacket.class);
         this.registerOutgoing(0x36, ServerUnlockRecipesPacket.class);
         this.registerOutgoing(0x37, ServerEntityDestroyPacket.class);
-        // DELETED this.registerOutgoing(0x33, ServerPlayerUseBedPacket.class);
         this.registerOutgoing(0x38, ServerEntityRemoveEffectPacket.class);
         this.registerOutgoing(0x39, ServerResourcePackSendPacket.class);
         this.registerOutgoing(0x3A, ServerRespawnPacket.class);
