@@ -579,7 +579,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x1C, ServerExplosionPacket.class);
         this.registerOutgoing(0x1D, ServerUnloadChunkPacket.class);
         this.registerOutgoing(0x1E, ServerNotifyClientPacket.class);
-        this.registerIncoming(0x1F, ServerOpenHorseWindowPacket.class);
+        this.registerOutgoing(0x1F, ServerOpenHorseWindowPacket.class);
         this.registerOutgoing(0x20, ServerKeepAlivePacket.class);
         this.registerOutgoing(0x21, ServerChunkDataPacket.class);
         this.registerOutgoing(0x22, ServerPlayEffectPacket.class);
