@@ -18,6 +18,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeTyp
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
@@ -93,6 +94,10 @@ public class MagicValues {
     private static final Map<Object, List<Object>> values = new HashMap<Object, List<Object>>();
 
     static {
+        for (int i = 0; i < Pose.values().length; i++) {
+            register(Pose.values()[i], i);
+        }
+
         register(AttributeType.GENERIC_MAX_HEALTH, "generic.maxHealth");
         register(AttributeType.GENERIC_FOLLOW_RANGE, "generic.followRange");
         register(AttributeType.GENERIC_KNOCKBACK_RESISTANCE, "generic.knockbackResistance");
@@ -149,6 +154,9 @@ public class MagicValues {
         register(MetadataType.BLOCK_STATE, 13);
         register(MetadataType.NBT_TAG, 14);
         register(MetadataType.PARTICLE, 15);
+        register(MetadataType.VILLAGER_DATA, 16);
+        register(MetadataType.OPTIONAL_VARINT, 17);
+        register(MetadataType.POSE, 18);
 
         register(HandshakeIntent.STATUS, 1);
         register(HandshakeIntent.LOGIN, 2);

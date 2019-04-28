@@ -7,8 +7,10 @@ import com.github.steveice10.mc.protocol.data.game.chunk.Column;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Rotation;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.game.world.particle.BlockParticleData;
@@ -31,6 +33,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.UUID;
 
 public class NetUtil {
@@ -230,6 +233,20 @@ public class NetUtil {
                 case PARTICLE:
                     value = readParticle(in);
                     break;
+                case VILLAGER_DATA:
+                    VillagerData villagerData = new VillagerData();
+                    villagerData.setVillagerType(in.readVarInt());
+                    villagerData.setVillagerProfession(in.readVarInt());
+                    villagerData.setLevel(in.readVarInt());
+                    value = villagerData;
+                    break;
+                case OPTIONAL_VARINT:
+                    int i = in.readVarInt();
+                    value = i == 0 ? OptionalInt.empty() : OptionalInt.of(i - 1);
+                    break;
+                case POSE:
+                    value = MagicValues.key(Pose.class, in.readVarInt());
+                    break;
                 default:
                     throw new IOException("Unknown metadata type id: " + typeId);
             }
@@ -303,6 +320,19 @@ public class NetUtil {
                     break;
                 case PARTICLE:
                     writeParticle(out, (Particle) meta.getValue());
+                    break;
+                case VILLAGER_DATA:
+                    VillagerData villagerData = (VillagerData) meta.getValue();
+                    out.writeVarInt(villagerData.getVillagerType());
+                    out.writeVarInt(villagerData.getVillagerProfession());
+                    out.writeVarInt(villagerData.getLevel());
+                    break;
+                case OPTIONAL_VARINT:
+                    OptionalInt optionalInt = (OptionalInt) meta.getValue();
+                    out.writeVarInt(optionalInt.orElse(-1) + 1);
+                    break;
+                case POSE:
+                    out.writeVarInt(MagicValues.value(Integer.class, meta.getValue()));
                     break;
                 default:
                     throw new IOException("Unknown metadata type: " + meta.getType());
