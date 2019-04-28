@@ -523,20 +523,9 @@ public class MagicValues {
         register(MapIconType.BLACK_BANNER, 25);
         register(MapIconType.TREASURE_MARKER, 26);
 
-        register(WindowType.GENERIC_INVENTORY, "minecraft:container");
-        register(WindowType.ANVIL, "minecraft:anvil");
-        register(WindowType.BEACON, "minecraft:beacon");
-        register(WindowType.BREWING_STAND, "minecraft:brewing_stand");
-        register(WindowType.CHEST, "minecraft:chest");
-        register(WindowType.CRAFTING_TABLE, "minecraft:crafting_table");
-        register(WindowType.DISPENSER, "minecraft:dispenser");
-        register(WindowType.DROPPER, "minecraft:dropper");
-        register(WindowType.ENCHANTING_TABLE, "minecraft:enchanting_table");
-        register(WindowType.FURNACE, "minecraft:furnace");
-        register(WindowType.HOPPER, "minecraft:hopper");
-        register(WindowType.VILLAGER, "minecraft:villager");
-        register(WindowType.SHULKER_BOX, "minecraft:shulker_box");
-        register(WindowType.HORSE, "EntityHorse");
+        for (int i = 0; i < WindowType.values().length; i++) {
+            register(WindowType.values()[i], i);
+        }
 
         register(BrewingStandProperty.BREW_TIME, 0);
 
