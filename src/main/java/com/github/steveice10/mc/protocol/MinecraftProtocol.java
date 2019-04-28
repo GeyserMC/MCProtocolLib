@@ -114,6 +114,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenH
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerPreparedCraftingGridPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSlotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerTradeListPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowPropertyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockBreakAnimPacket;
@@ -398,11 +399,11 @@ public class MinecraftProtocol extends PacketProtocol {
         // 0x24 Update Light - New
         this.registerIncoming(0x25, ServerJoinGamePacket.class);
         this.registerIncoming(0x26, ServerMapDataPacket.class);
-        this.registerIncoming(0x27, ServerEntityMovementPacket.class);
+        this.registerIncoming(0x27, ServerTradeListPacket.class);
         this.registerIncoming(0x28, ServerEntityPositionPacket.class);
         this.registerIncoming(0x29, ServerEntityPositionRotationPacket.class);
         this.registerIncoming(0x2A, ServerEntityRotationPacket.class);
-        // 0x2B Entity?
+        this.registerIncoming(0x2B, ServerEntityMovementPacket.class);
         this.registerIncoming(0x2C, ServerVehicleMovePacket.class);
         this.registerIncoming(0x2D, ServerOpenBookPacket.class);
         this.registerIncoming(0x2E, ServerOpenWindowPacket.class);
@@ -588,11 +589,11 @@ public class MinecraftProtocol extends PacketProtocol {
         // 0x24 Update Light - New
         this.registerOutgoing(0x25, ServerJoinGamePacket.class);
         this.registerOutgoing(0x26, ServerMapDataPacket.class);
-        this.registerOutgoing(0x27, ServerEntityMovementPacket.class);
+        this.registerOutgoing(0x27, ServerTradeListPacket.class);
         this.registerOutgoing(0x28, ServerEntityPositionPacket.class);
         this.registerOutgoing(0x29, ServerEntityPositionRotationPacket.class);
         this.registerOutgoing(0x2A, ServerEntityRotationPacket.class);
-        // 0x2B Entity?
+        this.registerOutgoing(0x2B, ServerEntityMovementPacket.class);
         this.registerOutgoing(0x2C, ServerVehicleMovePacket.class);
         this.registerOutgoing(0x2D, ServerOpenBookPacket.class);
         this.registerOutgoing(0x2E, ServerOpenWindowPacket.class);
