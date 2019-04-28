@@ -1,14 +1,13 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import java.io.IOException;
+
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-
-import java.io.IOException;
 
 public class ServerJoinGamePacket extends MinecraftPacket {
     private int entityId;
