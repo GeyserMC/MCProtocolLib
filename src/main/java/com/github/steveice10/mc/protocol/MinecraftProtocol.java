@@ -32,7 +32,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientConfi
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCraftingBookDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCreativeInventoryActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEditBookPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEnchantItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientClickWindowButtonPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientMoveItemToHotbarPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientPrepareCraftingGridPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientRenameItemPacket;
@@ -466,7 +466,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x05, ClientSettingsPacket.class);
         this.registerOutgoing(0x06, ClientTabCompletePacket.class);
         this.registerOutgoing(0x07, ClientConfirmTransactionPacket.class);
-        this.registerOutgoing(0x08, ClientEnchantItemPacket.class); // Rename to Confirm Transaction
+        this.registerOutgoing(0x08, ClientClickWindowButtonPacket.class);
         this.registerOutgoing(0x09, ClientWindowActionPacket.class);
         this.registerOutgoing(0x0A, ClientCloseWindowPacket.class);
         this.registerOutgoing(0x0B, ClientPluginMessagePacket.class);
@@ -515,7 +515,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x05, ClientSettingsPacket.class);
         this.registerIncoming(0x06, ClientTabCompletePacket.class);
         this.registerIncoming(0x07, ClientConfirmTransactionPacket.class);
-        this.registerIncoming(0x08, ClientEnchantItemPacket.class); // Rename to Confirm Transaction
+        this.registerIncoming(0x08, ClientClickWindowButtonPacket.class);
         this.registerIncoming(0x09, ClientWindowActionPacket.class);
         this.registerIncoming(0x0A, ClientCloseWindowPacket.class);
         this.registerIncoming(0x0B, ClientPluginMessagePacket.class);
