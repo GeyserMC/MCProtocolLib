@@ -135,6 +135,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerSpawnP
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUnloadChunkPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateViewDistancePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateViewPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerWorldBorderPacket;
 import com.github.steveice10.mc.protocol.packet.login.client.EncryptionResponsePacket;
@@ -427,7 +428,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x3E, ServerSwitchCameraPacket.class);
         this.registerIncoming(0x3F, ServerPlayerChangeHeldItemPacket.class);
         this.registerIncoming(0x40, ServerUpdateViewPositionPacket.class);
-        // 0x41 Update View Distance
+        this.registerIncoming(0x41, ServerUpdateViewDistancePacket.class);
         this.registerIncoming(0x42, ServerDisplayScoreboardPacket.class);
         this.registerIncoming(0x43, ServerEntityMetadataPacket.class);
         this.registerIncoming(0x44, ServerEntityAttachPacket.class);
@@ -617,7 +618,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x3E, ServerSwitchCameraPacket.class);
         this.registerOutgoing(0x3F, ServerPlayerChangeHeldItemPacket.class);
         this.registerOutgoing(0x40, ServerUpdateViewPositionPacket.class);
-        // 0x41 Update View Distance
+        this.registerOutgoing(0x41, ServerUpdateViewDistancePacket.class);
         this.registerOutgoing(0x42, ServerDisplayScoreboardPacket.class);
         this.registerOutgoing(0x43, ServerEntityMetadataPacket.class);
         this.registerOutgoing(0x44, ServerEntityAttachPacket.class);
