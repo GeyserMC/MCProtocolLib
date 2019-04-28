@@ -137,6 +137,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerPlaySo
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerSpawnParticlePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUnloadChunkPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateLightPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateViewDistancePacket;
@@ -402,7 +403,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x21, ServerChunkDataPacket.class);
         this.registerIncoming(0x22, ServerPlayEffectPacket.class);
         this.registerIncoming(0x23, ServerSpawnParticlePacket.class);
-        // 0x24 Update Light - New
+        this.registerIncoming(0x24, ServerUpdateLightPacket.class);
         this.registerIncoming(0x25, ServerJoinGamePacket.class);
         this.registerIncoming(0x26, ServerMapDataPacket.class);
         this.registerIncoming(0x27, ServerTradeListPacket.class);
@@ -591,7 +592,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x21, ServerChunkDataPacket.class);
         this.registerOutgoing(0x22, ServerPlayEffectPacket.class);
         this.registerOutgoing(0x23, ServerSpawnParticlePacket.class);
-        // 0x24 Update Light - New
+        this.registerOutgoing(0x24, ServerUpdateLightPacket.class);
         this.registerOutgoing(0x25, ServerJoinGamePacket.class);
         this.registerOutgoing(0x26, ServerMapDataPacket.class);
         this.registerOutgoing(0x27, ServerTradeListPacket.class);
