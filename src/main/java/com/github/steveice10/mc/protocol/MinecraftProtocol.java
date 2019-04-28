@@ -29,6 +29,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlaye
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientAdvancementTabPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCloseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateCommandBlockPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateJigsawBlockPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientConfirmTransactionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCraftingBookDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCreativeInventoryActionPacket;
@@ -498,7 +499,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x24, ClientUpdateCommandBlockPacket.class);
         this.registerOutgoing(0x25, ClientUpdateCommandBlockMinecartPacket.class);
         this.registerOutgoing(0x26, ClientCreativeInventoryActionPacket.class);
-        // 0x27 Update Jigsaw Block
+        this.registerOutgoing(0x27, ClientUpdateJigsawBlockPacket.class);
         this.registerOutgoing(0x28, ClientUpdateStructureBlockPacket.class);
         this.registerOutgoing(0x29, ClientUpdateSignPacket.class);
         this.registerOutgoing(0x2A, ClientPlayerSwingArmPacket.class);
@@ -547,7 +548,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x24, ClientUpdateCommandBlockPacket.class);
         this.registerIncoming(0x25, ClientUpdateCommandBlockMinecartPacket.class);
         this.registerIncoming(0x26, ClientCreativeInventoryActionPacket.class);
-        // 0x27 Update Jigsaw Block
+        this.registerIncoming(0x27, ClientUpdateJigsawBlockPacket.class);
         this.registerIncoming(0x28, ClientUpdateStructureBlockPacket.class);
         this.registerIncoming(0x29, ClientUpdateSignPacket.class);
         this.registerIncoming(0x2A, ClientPlayerSwingArmPacket.class);
