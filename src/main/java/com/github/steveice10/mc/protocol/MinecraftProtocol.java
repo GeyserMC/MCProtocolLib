@@ -10,6 +10,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePac
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientRequestPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientResourcePackStatusPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientSetDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientSettingsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerAbilitiesPacket;
@@ -459,7 +460,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
         this.registerOutgoing(0x00, ClientTeleportConfirmPacket.class);
         this.registerOutgoing(0x01, ClientBlockNBTRequestPacket.class);
-        // 0x02 Set Difficulty
+        this.registerOutgoing(0x02, ClientSetDifficultyPacket.class);
         this.registerOutgoing(0x03, ClientChatPacket.class);
         this.registerOutgoing(0x04, ClientRequestPacket.class);
         this.registerOutgoing(0x05, ClientSettingsPacket.class);
@@ -508,7 +509,7 @@ public class MinecraftProtocol extends PacketProtocol {
     private void initServerGame(Session session) {
         this.registerIncoming(0x00, ClientTeleportConfirmPacket.class);
         this.registerIncoming(0x01, ClientBlockNBTRequestPacket.class);
-        // 0x02 Set Difficulty
+        this.registerIncoming(0x02, ClientSetDifficultyPacket.class);
         this.registerIncoming(0x03, ClientChatPacket.class);
         this.registerIncoming(0x04, ClientRequestPacket.class);
         this.registerIncoming(0x05, ClientSettingsPacket.class);
