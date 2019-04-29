@@ -123,7 +123,7 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
             this.data = new FallingBlockData(data & 65535, data >> 16);
         } else if(this.type == ObjectType.POTION) {
             this.data = new SplashPotionData(data);
-        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.TIPPED_ARROW || this.type == ObjectType.GHAST_FIREBALL || this.type == ObjectType.BLAZE_FIREBALL || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_HEAD_PROJECTILE || this.type == ObjectType.FISH_HOOK) {
+        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.FIREBALL || this.type == ObjectType.SMALL_FIREBALL || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_SKULL || this.type == ObjectType.FISHING_BOBBER) {
             this.data = new ProjectileData(data);
         } else {
             this.data = new GenericObjectData(data);
