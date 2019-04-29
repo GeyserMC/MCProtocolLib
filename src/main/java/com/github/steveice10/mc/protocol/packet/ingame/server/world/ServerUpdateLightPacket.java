@@ -62,6 +62,9 @@ public class ServerUpdateLightPacket extends MinecraftPacket {
         this.skyLight = new ArrayList<>(18);
         for (int i = 0; i < 18; i++) {
             if ((skyLightMask & 1 << i) != 0) {
+                if (in.readVarInt() != 2048) {
+                    throw new IOException("Expected sky light byte array to be of length 2048");
+                }
                 this.skyLight.add(new NibbleArray3d(in, 2048)); // 2048 bytes read = 4096 entries
             } else if ((emptySkyLightMask & 1 << i) != 0) {
                 this.skyLight.add(new NibbleArray3d(4096));
@@ -73,6 +76,9 @@ public class ServerUpdateLightPacket extends MinecraftPacket {
         this.blockLight = new ArrayList<>(18);
         for (int i = 0; i < 18; i++) {
             if ((blockLightMask & 1 << i) != 0) {
+                if (in.readVarInt() != 2048) {
+                    throw new IOException("Expected block light byte array to be of length 2048");
+                }
                 this.blockLight.add(new NibbleArray3d(in, 2048)); // 2048 bytes read = 4096 entries
             } else if ((emptyBlockLightMask & 1 << i) != 0) {
                 this.blockLight.add(new NibbleArray3d(4096));
@@ -118,12 +124,14 @@ public class ServerUpdateLightPacket extends MinecraftPacket {
 
         for (int i = 0; i < 18; i++) {
             if ((skyLightMask & 1 << i) != 0) {
+                out.writeVarInt(2048); // dunno why Minecraft feels the need to send these
                 this.skyLight.get(i).write(out);
             }
         }
 
         for (int i = 0; i < 18; i++) {
             if ((blockLightMask & 1 << i) != 0) {
+                out.writeVarInt(2048); // dunno why Minecraft feels the need to send these
                 this.blockLight.get(i).write(out);
             }
         }
