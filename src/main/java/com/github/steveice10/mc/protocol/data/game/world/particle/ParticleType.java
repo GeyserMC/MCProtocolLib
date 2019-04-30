@@ -39,6 +39,7 @@ public enum ParticleType {
     PORTAL,
     RAIN,
     SMOKE,
+    SNEEZE,
     SPIT,
     SQUID_INK,
     SWEEP_ATTACK,
@@ -50,5 +51,7 @@ public enum ParticleType {
     CURRENT_DOWN,
     BUBBLE_COLUMN_UP,
     NAUTILUS,
-    DOLPHIN;
+    DOLPHIN,
+    CAMPFIRE_COSY_SMOKE,
+    CAMPFIRE_SIGNAL_SMOKE;
 }
