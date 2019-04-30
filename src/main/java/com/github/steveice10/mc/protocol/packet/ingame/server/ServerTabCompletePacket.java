@@ -52,6 +52,9 @@ public class ServerTabCompletePacket extends MinecraftPacket {
 
     @Override
     public void read(NetInput in) throws IOException {
+        this.transactionId = in.readVarInt();
+        this.start = in.readVarInt();
+        this.length = in.readVarInt();
         this.matches = new String[in.readVarInt()];
         this.tooltips = new TextMessage[this.matches.length];
         for(int index = 0; index < this.matches.length; index++) {
@@ -64,6 +67,9 @@ public class ServerTabCompletePacket extends MinecraftPacket {
 
     @Override
     public void write(NetOutput out) throws IOException {
+        out.writeVarInt(this.transactionId);
+        out.writeVarInt(this.start);
+        out.writeVarInt(this.length);
         out.writeVarInt(this.matches.length);
         for(int index = 0; index < this.matches.length; index++) {
             out.writeString(this.matches[index]);
