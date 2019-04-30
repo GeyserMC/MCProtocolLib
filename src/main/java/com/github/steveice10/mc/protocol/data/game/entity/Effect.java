@@ -1,14 +1,14 @@
 package com.github.steveice10.mc.protocol.data.game.entity;
 
 public enum Effect {
-    SPEED,
-    SLOWNESS,
-    DIG_SPEED,
-    DIG_SLOWNESS,
-    DAMAGE_BOOST,
+    FASTER_MOVEMENT,
+    SLOWER_MOVEMENT,
+    FASTER_DIG,
+    SLOWER_DIG,
+    INCREASE_DAMAGE,
     HEAL,
-    DAMAGE,
-    JUMP_BOOST,
+    HARM,
+    JUMP,
     CONFUSION,
     REGENERATION,
     RESISTANCE,
@@ -20,12 +20,17 @@ public enum Effect {
     HUNGER,
     WEAKNESS,
     POISON,
-    WITHER_EFFECT,
+    WITHER,
     HEALTH_BOOST,
-    ABSORPTION,
+    ABSORBTION,
     SATURATION,
     GLOWING,
     LEVITATION,
     LUCK,
-    BAD_LUCK;
+    UNLUCK,
+    SLOW_FALLING,
+    CONDUIT_POWER,
+    DOLPHINS_GRACE,
+    BAD_OMEN,
+    HERO_OF_THE_VILLAGE;
 }

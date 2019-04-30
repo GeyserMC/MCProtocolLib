@@ -266,14 +266,14 @@ public class MagicValues {
         register(Animation.CRITICAL_HIT, 4);
         register(Animation.ENCHANTMENT_CRITICAL_HIT, 5);
 
-        register(Effect.SPEED, 1);
-        register(Effect.SLOWNESS, 2);
-        register(Effect.DIG_SPEED, 3);
-        register(Effect.DIG_SLOWNESS, 4);
-        register(Effect.DAMAGE_BOOST, 5);
+        register(Effect.FASTER_MOVEMENT, 1);
+        register(Effect.SLOWER_MOVEMENT, 2);
+        register(Effect.FASTER_DIG, 3);
+        register(Effect.SLOWER_DIG, 4);
+        register(Effect.INCREASE_DAMAGE, 5);
         register(Effect.HEAL, 6);
-        register(Effect.DAMAGE, 7);
-        register(Effect.JUMP_BOOST, 8);
+        register(Effect.HARM, 7);
+        register(Effect.JUMP, 8);
         register(Effect.CONFUSION, 9);
         register(Effect.REGENERATION, 10);
         register(Effect.RESISTANCE, 11);
@@ -285,14 +285,19 @@ public class MagicValues {
         register(Effect.HUNGER, 17);
         register(Effect.WEAKNESS, 18);
         register(Effect.POISON, 19);
-        register(Effect.WITHER_EFFECT, 20);
+        register(Effect.WITHER, 20);
         register(Effect.HEALTH_BOOST, 21);
-        register(Effect.ABSORPTION, 22);
+        register(Effect.ABSORBTION, 22);
         register(Effect.SATURATION, 23);
         register(Effect.GLOWING, 24);
         register(Effect.LEVITATION, 25);
         register(Effect.LUCK, 26);
-        register(Effect.BAD_LUCK, 27);
+        register(Effect.UNLUCK, 27);
+        register(Effect.SLOW_FALLING, 28);
+        register(Effect.CONDUIT_POWER, 29);
+        register(Effect.DOLPHINS_GRACE, 30);
+        register(Effect.BAD_OMEN, 31);
+        register(Effect.HERO_OF_THE_VILLAGE, 32);
 
         register(EntityStatus.TIPPED_ARROW_EMIT_PARTICLES, 0);
         register(EntityStatus.RABBIT_JUMP_OR_MINECART_SPAWNER_DELAY_RESET, 1);
