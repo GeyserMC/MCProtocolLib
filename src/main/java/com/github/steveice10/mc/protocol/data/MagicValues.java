@@ -746,6 +746,7 @@ public class MagicValues {
 
         register(PistonValueType.PUSHING, 0);
         register(PistonValueType.PULLING, 1);
+        register(PistonValueType.CANCELLED_MID_PUSH, 2);
 
         register(MobSpawnerValueType.RESET_DELAY, 1);
 
