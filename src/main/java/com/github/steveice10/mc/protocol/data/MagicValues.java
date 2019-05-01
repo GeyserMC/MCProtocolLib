@@ -789,6 +789,12 @@ public class MagicValues {
         register(NoteBlockValueType.GUITAR, 7);
         register(NoteBlockValueType.CHIME, 8);
         register(NoteBlockValueType.XYLOPHONE, 9);
+        register(NoteBlockValueType.IRON_XYLOPHONE, 10);
+        register(NoteBlockValueType.COW_BELL, 11);
+        register(NoteBlockValueType.DIDGERIDOO, 12);
+        register(NoteBlockValueType.BIT, 13);
+        register(NoteBlockValueType.BANJO, 14);
+        register(NoteBlockValueType.PLING, 15);
 
         register(PistonValueType.PUSHING, 0);
         register(PistonValueType.PULLING, 1);
