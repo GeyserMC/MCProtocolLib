@@ -15,7 +15,7 @@ import java.util.Objects;
 public class BlockStorage {
     private static final BlockState AIR = new BlockState(0);
 
-    private int blockCount;
+    private int blockCount = 0;
     private int bitsPerEntry;
 
     private List<BlockState> states;
@@ -89,6 +89,12 @@ public class BlockStorage {
     }
 
     public void set(int x, int y, int z, BlockState state) {
+        if (state.getId() != AIR.getId()) {
+            blockCount++;
+        } else {
+            blockCount--;
+        }
+
         int id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : stateToRaw(state);
         if(id == -1) {
             this.states.add(state);
