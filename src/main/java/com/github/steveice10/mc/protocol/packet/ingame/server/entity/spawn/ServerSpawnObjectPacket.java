@@ -107,7 +107,7 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.type = MagicValues.key(ObjectType.class, in.readByte());
+        this.type = MagicValues.key(ObjectType.class, in.readVarInt());
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -123,7 +123,7 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
             this.data = new FallingBlockData(data & 65535, data >> 16);
         } else if(this.type == ObjectType.POTION) {
             this.data = new SplashPotionData(data);
-        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.TIPPED_ARROW || this.type == ObjectType.GHAST_FIREBALL || this.type == ObjectType.BLAZE_FIREBALL || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_HEAD_PROJECTILE || this.type == ObjectType.FISH_HOOK) {
+        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.FIREBALL || this.type == ObjectType.SMALL_FIREBALL || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_SKULL || this.type == ObjectType.FISHING_BOBBER) {
             this.data = new ProjectileData(data);
         } else {
             this.data = new GenericObjectData(data);
@@ -138,7 +138,7 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeUUID(this.uuid);
-        out.writeByte(MagicValues.value(Integer.class, this.type));
+        out.writeVarInt(MagicValues.value(Integer.class, this.type));
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

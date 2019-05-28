@@ -11,7 +11,10 @@ public enum ParticleType {
     DAMAGE_INDICATOR,
     DRAGON_BREATH,
     DRIPPING_LAVA,
+    FALLING_LAVA,
+    LANDING_LAVA,
     DRIPPING_WATER,
+    FALLING_WATER,
     DUST,
     EFFECT,
     ELDER_GUARDIAN,
@@ -25,7 +28,9 @@ public enum ParticleType {
     FIREWORK,
     FISHING,
     FLAME,
+    FLASH,
     HAPPY_VILLAGER,
+    COMPOSTER,
     HEART,
     INSTANT_EFFECT,
     ITEM,
@@ -39,6 +44,7 @@ public enum ParticleType {
     PORTAL,
     RAIN,
     SMOKE,
+    SNEEZE,
     SPIT,
     SQUID_INK,
     SWEEP_ATTACK,
@@ -50,5 +56,7 @@ public enum ParticleType {
     CURRENT_DOWN,
     BUBBLE_COLUMN_UP,
     NAUTILUS,
-    DOLPHIN;
+    DOLPHIN,
+    CAMPFIRE_COSY_SMOKE,
+    CAMPFIRE_SIGNAL_SMOKE;
 }

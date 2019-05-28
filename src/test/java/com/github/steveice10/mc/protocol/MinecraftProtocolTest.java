@@ -72,7 +72,7 @@ public class MinecraftProtocolTest {
         server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, new ServerLoginHandler() {
             @Override
             public void loggedIn(Session session) {
-                session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, PEACEFUL, 100, DEFAULT, false));
+                session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, DEFAULT, 16, false));
             }
         });
 
@@ -127,9 +127,9 @@ public class MinecraftProtocolTest {
         assertFalse("Received incorrect hardcore flag.", packet.getHardcore());
         Assert.assertEquals("Received incorrect gamemode.", GameMode.SURVIVAL, packet.getGameMode());
         assertEquals("Received incorrect dimension.", 0, packet.getDimension());
-        assertEquals("Received incorrect difficulty.", PEACEFUL, packet.getDifficulty());
         assertEquals("Received incorrect max players.", 100, packet.getMaxPlayers());
         assertEquals("Received incorrect world type.", DEFAULT, packet.getWorldType());
+        assertEquals("Received incorrect view distance type.", 16, packet.getViewDistance());
         assertFalse("Received incorrect reduced debug info flag.", packet.getReducedDebugInfo());
     }
 

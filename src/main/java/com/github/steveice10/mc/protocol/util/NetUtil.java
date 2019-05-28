@@ -4,12 +4,13 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.chunk.BlockStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
-import com.github.steveice10.mc.protocol.data.game.chunk.NibbleArray3d;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Rotation;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.game.world.particle.BlockParticleData;
@@ -32,11 +33,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.UUID;
 
 public class NetUtil {
     private static final int POSITION_X_SIZE = 38;
-    private static final int POSITION_Y_SIZE = 26;
+    private static final int POSITION_Y_SIZE = 12;
     private static final int POSITION_Z_SIZE = 38;
     private static final int POSITION_Y_SHIFT = 0xFFF;
     private static final int POSITION_WRITE_SHIFT = 0x3FFFFFF;
@@ -90,8 +92,8 @@ public class NetUtil {
         long val = in.readLong();
 
         int x = (int) (val >> POSITION_X_SIZE);
-        int y = (int) ((val >> POSITION_Y_SIZE) & POSITION_Y_SHIFT);
-        int z = (int) ((val << POSITION_Z_SIZE) >> POSITION_Z_SIZE);
+        int y = (int) (val  & POSITION_Y_SHIFT);
+        int z = (int) (val << 26 >> POSITION_Z_SIZE);
 
         return new Position(x, y, z);
     }
@@ -101,7 +103,7 @@ public class NetUtil {
         long y = pos.getY() & POSITION_Y_SHIFT;
         long z = pos.getZ() & POSITION_WRITE_SHIFT;
 
-        out.writeLong(x << POSITION_X_SIZE | y << POSITION_Y_SIZE | z);
+        out.writeLong(x << POSITION_X_SIZE | z << POSITION_Y_SIZE | y);
     }
 
     public static Rotation readRotation(NetInput in) throws IOException {
@@ -231,6 +233,20 @@ public class NetUtil {
                 case PARTICLE:
                     value = readParticle(in);
                     break;
+                case VILLAGER_DATA:
+                    VillagerData villagerData = new VillagerData();
+                    villagerData.setVillagerType(in.readVarInt());
+                    villagerData.setVillagerProfession(in.readVarInt());
+                    villagerData.setLevel(in.readVarInt());
+                    value = villagerData;
+                    break;
+                case OPTIONAL_VARINT:
+                    int i = in.readVarInt();
+                    value = i == 0 ? OptionalInt.empty() : OptionalInt.of(i - 1);
+                    break;
+                case POSE:
+                    value = MagicValues.key(Pose.class, in.readVarInt());
+                    break;
                 default:
                     throw new IOException("Unknown metadata type id: " + typeId);
             }
@@ -305,6 +321,19 @@ public class NetUtil {
                 case PARTICLE:
                     writeParticle(out, (Particle) meta.getValue());
                     break;
+                case VILLAGER_DATA:
+                    VillagerData villagerData = (VillagerData) meta.getValue();
+                    out.writeVarInt(villagerData.getVillagerType());
+                    out.writeVarInt(villagerData.getVillagerProfession());
+                    out.writeVarInt(villagerData.getLevel());
+                    break;
+                case OPTIONAL_VARINT:
+                    OptionalInt optionalInt = (OptionalInt) meta.getValue();
+                    out.writeVarInt(optionalInt.orElse(-1) + 1);
+                    break;
+                case POSE:
+                    out.writeVarInt(MagicValues.value(Integer.class, meta.getValue()));
+                    break;
                 default:
                     throw new IOException("Unknown metadata type: " + meta.getType());
             }
@@ -313,7 +342,7 @@ public class NetUtil {
         out.writeByte(255);
     }
 
-    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask, CompoundTag[] tileEntities) throws IOException {
+    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask, CompoundTag[] tileEntities, CompoundTag heightmaps) throws IOException {
         NetInput in = new StreamNetInput(new ByteArrayInputStream(data));
         Throwable ex = null;
         Column column = null;
@@ -322,9 +351,7 @@ public class NetUtil {
             for(int index = 0; index < chunks.length; index++) {
                 if((mask & (1 << index)) != 0) {
                     BlockStorage blocks = new BlockStorage(in);
-                    NibbleArray3d blocklight = new NibbleArray3d(in, 2048);
-                    NibbleArray3d skylight = hasSkylight ? new NibbleArray3d(in, 2048) : null;
-                    chunks[index] = new Chunk(blocks, blocklight, skylight);
+                    chunks[index] = new Chunk(blocks);
                 }
             }
 
@@ -333,14 +360,14 @@ public class NetUtil {
                 biomeData = in.readInts(256);
             }
 
-            column = new Column(x, z, chunks, biomeData, tileEntities);
+            column = new Column(x, z, chunks, biomeData, tileEntities, heightmaps);
         } catch(Throwable e) {
             ex = e;
         }
 
         // Unfortunately, this is needed to detect whether the chunks contain skylight or not.
         if((in.available() > 0 || ex != null) && !hasSkylight) {
-            return readColumn(data, x, z, fullChunk, true, mask, tileEntities);
+            return readColumn(data, x, z, fullChunk, true, mask, tileEntities, heightmaps);
         } else if(ex != null) {
             throw new IOException("Failed to read chunk data.", ex);
         }
@@ -356,10 +383,6 @@ public class NetUtil {
             if(chunk != null && (!fullChunk || !chunk.isEmpty())) {
                 mask |= 1 << index;
                 chunk.getBlocks().write(out);
-                chunk.getBlockLight().write(out);
-                if(hasSkylight) {
-                    chunk.getSkyLight().write(out);
-                }
             }
         }
 

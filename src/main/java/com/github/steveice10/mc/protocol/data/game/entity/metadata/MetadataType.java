@@ -16,5 +16,8 @@ public enum MetadataType {
     OPTIONAL_UUID,
     BLOCK_STATE,
     NBT_TAG,
-    PARTICLE;
+    PARTICLE,
+    VILLAGER_DATA,
+    OPTIONAL_VARINT,
+    POSE;
 }

@@ -11,14 +11,15 @@ public class Column {
     private Chunk chunks[];
     private int biomeData[];
     private CompoundTag tileEntities[];
+    private CompoundTag heightmaps;
 
     private boolean skylight;
 
-    public Column(int x, int z, Chunk chunks[], CompoundTag[] tileEntities) {
-        this(x, z, chunks, null, tileEntities);
+    public Column(int x, int z, Chunk chunks[], CompoundTag[] tileEntities, CompoundTag heightmaps) {
+        this(x, z, chunks, null, tileEntities, heightmaps);
     }
 
-    public Column(int x, int z, Chunk chunks[], int biomeData[], CompoundTag[] tileEntities) {
+    public Column(int x, int z, Chunk chunks[], int biomeData[], CompoundTag[] tileEntities, CompoundTag heightmaps) {
         if(chunks.length != 16) {
             throw new IllegalArgumentException("Chunk array length must be 16.");
         }
@@ -27,27 +28,12 @@ public class Column {
             throw new IllegalArgumentException("Biome data array length must be 256.");
         }
 
-        this.skylight = false;
-        boolean noSkylight = false;
-        for(Chunk chunk : chunks) {
-            if(chunk != null) {
-                if(chunk.getSkyLight() == null) {
-                    noSkylight = true;
-                } else {
-                    this.skylight = true;
-                }
-            }
-        }
-
-        if(noSkylight && this.skylight) {
-            throw new IllegalArgumentException("Either all chunks must have skylight values or none must have them.");
-        }
-
         this.x = x;
         this.z = z;
         this.chunks = chunks;
         this.biomeData = biomeData;
         this.tileEntities = tileEntities != null ? tileEntities : new CompoundTag[0];
+        this.heightmaps = heightmaps;
     }
 
     public int getX() {
@@ -76,6 +62,10 @@ public class Column {
 
     public boolean hasSkylight() {
         return this.skylight;
+    }
+
+    public CompoundTag getHeightmaps() {
+        return heightmaps;
     }
 
     @Override

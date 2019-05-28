@@ -1,18 +1,27 @@
 package com.github.steveice10.mc.protocol.data.game.window;
 
 public enum WindowType {
-    GENERIC_INVENTORY,
+    GENERIC_9X1,
+    GENERIC_9X2,
+    GENERIC_9X3,
+    GENERIC_9X4,
+    GENERIC_9X5,
+    GENERIC_9X6,
+    GENERIC_3X3,
     ANVIL,
     BEACON,
+    BLAST_FURNACE,
     BREWING_STAND,
-    CHEST,
-    CRAFTING_TABLE,
-    DISPENSER,
-    DROPPER,
-    ENCHANTING_TABLE,
+    CRAFTING,
+    ENCHANTMENT,
     FURNACE,
+    GRINDSTONE,
     HOPPER,
-    VILLAGER,
+    LECTERN,
+    LOOM,
+    MERCHANT,
     SHULKER_BOX,
-    HORSE;
+    SMOKER,
+    CARTOGRAPHY,
+    STONECUTTER;
 }

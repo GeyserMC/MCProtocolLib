@@ -32,13 +32,14 @@ public class ServerChunkDataPacket extends MinecraftPacket {
         int z = in.readInt();
         boolean fullChunk = in.readBoolean();
         int chunkMask = in.readVarInt();
+        CompoundTag heightmaps = NetUtil.readNBT(in);
         byte data[] = in.readBytes(in.readVarInt());
         CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
         for(int i = 0; i < tileEntities.length; i++) {
             tileEntities[i] = NetUtil.readNBT(in);
         }
 
-        this.column = NetUtil.readColumn(data, x, z, fullChunk, false, chunkMask, tileEntities);
+        this.column = NetUtil.readColumn(data, x, z, fullChunk, false, chunkMask, tileEntities, heightmaps);
     }
 
     @Override
@@ -51,6 +52,7 @@ public class ServerChunkDataPacket extends MinecraftPacket {
         out.writeInt(this.column.getZ());
         out.writeBoolean(this.column.hasBiomeData());
         out.writeVarInt(mask);
+        NetUtil.writeNBT(out, this.column.getHeightmaps());
         out.writeVarInt(byteOut.size());
         out.writeBytes(byteOut.toByteArray(), byteOut.size());
         out.writeVarInt(this.column.getTileEntities().length);

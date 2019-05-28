@@ -10,12 +10,13 @@ import java.io.IOException;
 
 public class ServerDifficultyPacket extends MinecraftPacket {
     private Difficulty difficulty;
+    private boolean difficultyLocked;
 
     @SuppressWarnings("unused")
     private ServerDifficultyPacket() {
     }
 
-    public ServerDifficultyPacket(Difficulty difficulty) {
+    public ServerDifficultyPacket(Difficulty difficulty, boolean difficultyLocked) {
         this.difficulty = difficulty;
     }
 
@@ -23,13 +24,19 @@ public class ServerDifficultyPacket extends MinecraftPacket {
         return this.difficulty;
     }
 
+    public boolean isDifficultyLocked() {
+        return difficultyLocked;
+    }
+
     @Override
     public void read(NetInput in) throws IOException {
         this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
+        this.difficultyLocked = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(MagicValues.value(Integer.class, this.difficulty));
+        out.writeBoolean(difficultyLocked);
     }
 }

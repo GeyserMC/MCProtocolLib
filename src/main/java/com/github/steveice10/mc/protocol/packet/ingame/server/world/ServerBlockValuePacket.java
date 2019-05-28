@@ -14,14 +14,14 @@ public class ServerBlockValuePacket extends MinecraftPacket {
     private static final int NOTE_BLOCK = 73;
     private static final int STICKY_PISTON = 92;
     private static final int PISTON = 99;
-    private static final int MOB_SPAWNER = 140;
-    private static final int CHEST = 142;
-    private static final int ENDER_CHEST = 249;
-    private static final int BEACON = 257;
-    private static final int TRAPPED_CHEST = 305;
-    private static final int END_GATEWAY = 472;
-    private static final int SHULKER_BOX_LOWER = 482;
-    private static final int SHULKER_BOX_HIGHER = 498;
+    private static final int MOB_SPAWNER = 143;
+    private static final int CHEST = 145;
+    private static final int ENDER_CHEST = 262;
+    private static final int BEACON = 270;
+    private static final int TRAPPED_CHEST = 321;
+    private static final int END_GATEWAY = 491;
+    private static final int SHULKER_BOX_LOWER = 501;
+    private static final int SHULKER_BOX_HIGHER = 517;
 
     private Position position;
     private BlockValueType type;

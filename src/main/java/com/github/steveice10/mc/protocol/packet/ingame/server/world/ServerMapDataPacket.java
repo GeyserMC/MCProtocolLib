@@ -15,6 +15,7 @@ public class ServerMapDataPacket extends MinecraftPacket {
     private int mapId;
     private byte scale;
     private boolean trackingPosition;
+    private boolean locked;
     private MapIcon icons[];
 
     private MapData data;
@@ -23,14 +24,15 @@ public class ServerMapDataPacket extends MinecraftPacket {
     private ServerMapDataPacket() {
     }
 
-    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapIcon icons[]) {
-        this(mapId, scale, trackingPosition, icons, null);
+    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, boolean locked, MapIcon icons[]) {
+        this(mapId, scale, trackingPosition, locked, icons, null);
     }
 
-    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, MapIcon icons[], MapData data) {
+    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, boolean locked, MapIcon icons[], MapData data) {
         this.mapId = mapId;
         this.scale = scale;
         this.trackingPosition = trackingPosition;
+        this.locked = locked;
         this.icons = icons;
         this.data = data;
     }
@@ -47,6 +49,10 @@ public class ServerMapDataPacket extends MinecraftPacket {
         return this.trackingPosition;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
     public MapIcon[] getIcons() {
         return this.icons;
     }
@@ -60,6 +66,7 @@ public class ServerMapDataPacket extends MinecraftPacket {
         this.mapId = in.readVarInt();
         this.scale = in.readByte();
         this.trackingPosition = in.readBoolean();
+        this.locked = in.readBoolean();
         this.icons = new MapIcon[in.readVarInt()];
         for(int index = 0; index < this.icons.length; index++) {
             int type = in.readVarInt();
@@ -88,6 +95,7 @@ public class ServerMapDataPacket extends MinecraftPacket {
         out.writeVarInt(this.mapId);
         out.writeByte(this.scale);
         out.writeBoolean(this.trackingPosition);
+        out.writeBoolean(this.locked);
         out.writeVarInt(this.icons.length);
         for(int index = 0; index < this.icons.length; index++) {
             MapIcon icon = this.icons[index];
