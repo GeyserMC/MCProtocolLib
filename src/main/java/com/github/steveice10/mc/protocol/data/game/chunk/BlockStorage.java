@@ -89,12 +89,6 @@ public class BlockStorage {
     }
 
     public void set(int x, int y, int z, BlockState state) {
-        if (state.getId() != AIR.getId()) {
-            blockCount++;
-        } else {
-            blockCount--;
-        }
-
         int id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : stateToRaw(state);
         if(id == -1) {
             this.states.add(state);
@@ -116,6 +110,14 @@ public class BlockStorage {
             }
 
             id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : stateToRaw(state);
+        }
+
+        int index = index(x, y, z);
+        int curr = this.storage.get(index)
+        if(state.getId() != AIR.getId() && curr == AIR.getId()) {
+            this.blockCount++;
+        } else if(state.getId() == AIR.getId() && curr != AIR.getId()) {
+            this.blockCount--;
         }
 
         this.storage.set(index(x, y, z), id);
