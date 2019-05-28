@@ -234,11 +234,7 @@ public class NetUtil {
                     value = readParticle(in);
                     break;
                 case VILLAGER_DATA:
-                    VillagerData villagerData = new VillagerData();
-                    villagerData.setVillagerType(in.readVarInt());
-                    villagerData.setVillagerProfession(in.readVarInt());
-                    villagerData.setLevel(in.readVarInt());
-                    value = villagerData;
+                    value = new VillagerData(in.readVarInt(), in.readVarInt(), in.readVarInt());
                     break;
                 case OPTIONAL_VARINT:
                     int i = in.readVarInt();
@@ -323,8 +319,8 @@ public class NetUtil {
                     break;
                 case VILLAGER_DATA:
                     VillagerData villagerData = (VillagerData) meta.getValue();
-                    out.writeVarInt(villagerData.getVillagerType());
-                    out.writeVarInt(villagerData.getVillagerProfession());
+                    out.writeVarInt(villagerData.getType());
+                    out.writeVarInt(villagerData.getProfession());
                     out.writeVarInt(villagerData.getLevel());
                     break;
                 case OPTIONAL_VARINT:

@@ -1,103 +1,93 @@
 package com.github.steveice10.mc.protocol.data.game.window;
 
-import java.io.IOException;
+import java.util.Objects;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.util.NetUtil;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 public class VillagerTrade {
-
-    private ItemStack input1Item;
-    private ItemStack input2Item;
-    private ItemStack outputItem;
+    private ItemStack firstInput;
+    private ItemStack secondInput;
+    private ItemStack output;
     private boolean tradeDisabled;
-    private int numberOfUses;
-    private int maxNumberOfUses;
+    private int numUses;
+    private int maxUses;
     private int xp;
     private int specialPrice;
     private float priceMultiplier;
 
-    public VillagerTrade() {
-    }
-
-    public VillagerTrade(ItemStack input1Item, ItemStack input2Item, ItemStack outputItem, boolean tradeDisabled, int numberOfUses, int maxNumberOfUses, int xp, int specialPrice, float priceMultiplier) {
-        this.input1Item = input1Item;
-        this.input2Item = input2Item;
-        this.outputItem = outputItem;
+    public VillagerTrade(ItemStack firstInput, ItemStack secondInput, ItemStack output, boolean tradeDisabled, int numUses, int maxUses, int xp, int specialPrice, float priceMultiplier) {
+        this.firstInput = firstInput;
+        this.secondInput = secondInput;
+        this.output = output;
         this.tradeDisabled = tradeDisabled;
-        this.numberOfUses = numberOfUses;
-        this.maxNumberOfUses = maxNumberOfUses;
+        this.numUses = numUses;
+        this.maxUses = maxUses;
         this.xp = xp;
         this.specialPrice = specialPrice;
         this.priceMultiplier = priceMultiplier;
     }
 
-    public ItemStack getInput1Item() {
-        return input1Item;
+    public ItemStack getFirstInput() {
+        return this.firstInput;
     }
 
-    public ItemStack getInput2Item() {
-        return input2Item;
+    public ItemStack getSecondInput() {
+        return this.secondInput;
     }
 
-    public ItemStack getOutputItem() {
-        return outputItem;
+    public ItemStack getOutput() {
+        return this.output;
     }
 
     public boolean isTradeDisabled() {
-        return tradeDisabled;
+        return this.tradeDisabled;
     }
 
-    public int getNumberOfUses() {
-        return numberOfUses;
+    public int getNumUses() {
+        return this.numUses;
     }
 
-    public int getMaxNumberOfUses() {
-        return maxNumberOfUses;
+    public int getMaxUses() {
+        return this.maxUses;
     }
 
     public int getXp() {
-        return xp;
+        return this.xp;
     }
 
     public int getSpecialPrice() {
-        return specialPrice;
+        return this.specialPrice;
     }
 
     public float getPriceMultiplier() {
-        return priceMultiplier;
+        return this.priceMultiplier;
     }
 
-    public void read(NetInput in) throws IOException {
-        this.input1Item = NetUtil.readItem(in);
-        this.outputItem = NetUtil.readItem(in);
-        boolean hasSecondItem = in.readBoolean();
-        if (hasSecondItem) {
-            this.input2Item = NetUtil.readItem(in);
-        }
-        this.tradeDisabled = in.readBoolean();
-        this.numberOfUses = in.readInt();
-        this.maxNumberOfUses = in.readInt();
-        this.xp = in.readInt();
-        this.specialPrice = in.readInt();
-        this.priceMultiplier = in.readFloat();
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof VillagerTrade)) return false;
+
+        VillagerTrade that = (VillagerTrade) o;
+        return Objects.equals(this.firstInput, that.firstInput) &&
+                Objects.equals(this.secondInput, that.secondInput) &&
+                Objects.equals(this.output, that.output) &&
+                this.tradeDisabled == that.tradeDisabled &&
+                this.numUses == that.numUses &&
+                this.maxUses == that.maxUses &&
+                this.xp == that.xp &&
+                this.specialPrice == that.specialPrice &&
+                Float.floatToIntBits(this.priceMultiplier) == Float.floatToIntBits(that.priceMultiplier);
     }
 
-    public void write(NetOutput out) throws IOException {
-        NetUtil.writeItem(out, this.input1Item);
-        NetUtil.writeItem(out, this.outputItem);
-        boolean hasSecondItem = this.input2Item != null;
-        out.writeBoolean(hasSecondItem);
-        if (hasSecondItem) {
-            NetUtil.writeItem(out, this.input2Item);
-        }
-        out.writeBoolean(this.tradeDisabled);
-        out.writeInt(this.numberOfUses);
-        out.writeInt(this.maxNumberOfUses);
-        out.writeInt(this.xp);
-        out.writeInt(this.specialPrice);
-        out.writeFloat(this.priceMultiplier);
+    @Override
+    public int hashCode() {
+        return ObjectUtil.hashCode(this.firstInput, this.secondInput, this.output, this.tradeDisabled, this.numUses, this.maxUses, this.xp, this.specialPrice, this.priceMultiplier);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

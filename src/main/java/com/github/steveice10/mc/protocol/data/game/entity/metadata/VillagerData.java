@@ -1,34 +1,32 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
-public class VillagerData {
+import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
-    private int villagerType;
-    private int villagerProfession;
+public class VillagerData {
+    private int type;
+    private int profession;
     private int level;
 
-    public VillagerData() {
-    }
-
-    public VillagerData(int villagerType, int villagerProfession, int level) {
-        this.villagerType = villagerType;
-        this.villagerProfession = villagerProfession;
+    public VillagerData(int type, int profession, int level) {
+        this.type = type;
+        this.profession = profession;
         this.level = level;
     }
 
-    public int getVillagerType() {
-        return villagerType;
+    public int getType() {
+        return type;
     }
 
-    public void setVillagerType(int villagerType) {
-        this.villagerType = villagerType;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public int getVillagerProfession() {
-        return villagerProfession;
+    public int getProfession() {
+        return profession;
     }
 
-    public void setVillagerProfession(int villagerProfession) {
-        this.villagerProfession = villagerProfession;
+    public void setProfession(int profession) {
+        this.profession = profession;
     }
 
     public int getLevel() {
@@ -37,5 +35,26 @@ public class VillagerData {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!(o instanceof VillagerData)) return false;
+
+        VillagerData that = (VillagerData) o;
+        return this.type == that.type &&
+                this.profession == that.profession &&
+                this.level == that.level;
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectUtil.hashCode(this.type, this.profession, this.level);
+    }
+
+    @Override
+    public String toString() {
+        return ObjectUtil.toString(this);
     }
 }

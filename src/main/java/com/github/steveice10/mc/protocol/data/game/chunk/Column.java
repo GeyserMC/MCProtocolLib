@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Column {
     private int x;
@@ -11,15 +12,15 @@ public class Column {
     private Chunk chunks[];
     private int biomeData[];
     private CompoundTag tileEntities[];
-    private CompoundTag heightmaps;
+    private CompoundTag heightMaps;
 
     private boolean skylight;
 
-    public Column(int x, int z, Chunk chunks[], CompoundTag[] tileEntities, CompoundTag heightmaps) {
-        this(x, z, chunks, null, tileEntities, heightmaps);
+    public Column(int x, int z, Chunk chunks[], CompoundTag[] tileEntities, CompoundTag heightMaps) {
+        this(x, z, chunks, null, tileEntities, heightMaps);
     }
 
-    public Column(int x, int z, Chunk chunks[], int biomeData[], CompoundTag[] tileEntities, CompoundTag heightmaps) {
+    public Column(int x, int z, Chunk chunks[], int biomeData[], CompoundTag[] tileEntities, CompoundTag heightMaps) {
         if(chunks.length != 16) {
             throw new IllegalArgumentException("Chunk array length must be 16.");
         }
@@ -33,7 +34,7 @@ public class Column {
         this.chunks = chunks;
         this.biomeData = biomeData;
         this.tileEntities = tileEntities != null ? tileEntities : new CompoundTag[0];
-        this.heightmaps = heightmaps;
+        this.heightMaps = heightMaps;
     }
 
     public int getX() {
@@ -64,8 +65,8 @@ public class Column {
         return this.skylight;
     }
 
-    public CompoundTag getHeightmaps() {
-        return heightmaps;
+    public CompoundTag getHeightMaps() {
+        return this.heightMaps;
     }
 
     @Override
@@ -78,12 +79,13 @@ public class Column {
                 this.z == that.z &&
                 Arrays.equals(this.chunks, that.chunks) &&
                 Arrays.equals(this.biomeData, that.biomeData) &&
-                Arrays.equals(this.tileEntities, that.tileEntities);
+                Arrays.equals(this.tileEntities, that.tileEntities) &&
+                Objects.equals(this.heightMaps, that.heightMaps);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hashCode(this.x, this.z, this.chunks, this.biomeData, this.tileEntities);
+        return ObjectUtil.hashCode(this.x, this.z, this.chunks, this.biomeData, this.tileEntities, this.heightMaps);
     }
 
     @Override

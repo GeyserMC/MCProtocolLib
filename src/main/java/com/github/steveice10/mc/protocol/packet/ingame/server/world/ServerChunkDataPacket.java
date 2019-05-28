@@ -52,7 +52,7 @@ public class ServerChunkDataPacket extends MinecraftPacket {
         out.writeInt(this.column.getZ());
         out.writeBoolean(this.column.hasBiomeData());
         out.writeVarInt(mask);
-        NetUtil.writeNBT(out, this.column.getHeightmaps());
+        NetUtil.writeNBT(out, this.column.getHeightMaps());
         out.writeVarInt(byteOut.size());
         out.writeBytes(byteOut.toByteArray(), byteOut.size());
         out.writeVarInt(this.column.getTileEntities().length);

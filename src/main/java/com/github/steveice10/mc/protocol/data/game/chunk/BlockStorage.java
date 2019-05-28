@@ -15,13 +15,14 @@ import java.util.Objects;
 public class BlockStorage {
     private static final BlockState AIR = new BlockState(0);
 
-    private int blockCount = 0;
+    private int blockCount;
     private int bitsPerEntry;
 
     private List<BlockState> states;
     private FlexibleStorage storage;
 
     public BlockStorage() {
+        this.blockCount = 0;
         this.bitsPerEntry = 4;
 
         this.states = new ArrayList<BlockState>();
@@ -112,15 +113,15 @@ public class BlockStorage {
             id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : stateToRaw(state);
         }
 
-        int index = index(x, y, z);
-        int curr = this.storage.get(index)
+        int ind = index(x, y, z);
+        int curr = this.storage.get(ind);
         if(state.getId() != AIR.getId() && curr == AIR.getId()) {
             this.blockCount++;
         } else if(state.getId() == AIR.getId() && curr != AIR.getId()) {
             this.blockCount--;
         }
 
-        this.storage.set(index(x, y, z), id);
+        this.storage.set(ind, id);
     }
 
     public boolean isEmpty() {
