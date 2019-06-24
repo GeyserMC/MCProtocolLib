@@ -16,16 +16,18 @@ public class ServerTradeListPacket extends MinecraftPacket {
     private int villagerLevel;
     private int experience;
     private boolean isRegularVillager;
+    private boolean canRestock;
 
     public ServerTradeListPacket() {
     }
 
-    public ServerTradeListPacket(int windowId, VillagerTrade[] trades, int villagerLevel, int experience, boolean isRegularVillager) {
+    public ServerTradeListPacket(int windowId, VillagerTrade[] trades, int villagerLevel, int experience, boolean isRegularVillager, boolean canRestock) {
         this.windowId = windowId;
         this.trades = trades;
         this.villagerLevel = villagerLevel;
         this.experience = experience;
         this.isRegularVillager = isRegularVillager;
+        this.canRestock = canRestock;
     }
 
     public int getWindowId() {
@@ -46,6 +48,10 @@ public class ServerTradeListPacket extends MinecraftPacket {
 
     public boolean isRegularVillager() {
         return isRegularVillager;
+    }
+
+    public boolean canRestock() {
+        return canRestock;
     }
 
     @Override
@@ -76,6 +82,7 @@ public class ServerTradeListPacket extends MinecraftPacket {
         this.villagerLevel = in.readVarInt();
         this.experience = in.readVarInt();
         this.isRegularVillager = in.readBoolean();
+        this.canRestock = in.readBoolean();
     }
 
     @Override
@@ -106,5 +113,6 @@ public class ServerTradeListPacket extends MinecraftPacket {
         out.writeVarInt(this.villagerLevel);
         out.writeVarInt(this.experience);
         out.writeBoolean(this.isRegularVillager);
+        out.writeBoolean(this.canRestock);
     }
 }
