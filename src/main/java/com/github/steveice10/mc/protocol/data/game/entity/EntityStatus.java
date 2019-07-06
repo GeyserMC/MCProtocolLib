@@ -37,5 +37,6 @@ public enum EntityStatus {
     IRON_GOLEM_EMPTY_HAND,
     TOTEM_OF_UNDYING_MAKE_SOUND,
     LIVING_DROWN,
-    LIVING_BURN;
+    LIVING_BURN,
+    DOLPHIN_HAPPY;
 }
