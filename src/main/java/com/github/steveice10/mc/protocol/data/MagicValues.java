@@ -337,6 +337,20 @@ public class MagicValues {
         register(EntityStatus.LIVING_DROWN, 36);
         register(EntityStatus.LIVING_BURN, 37);
         register(EntityStatus.DOLPHIN_HAPPY, 38);
+        register(EntityStatus.RAVAGER_STUNNED, 39);
+        register(EntityStatus.OCELOT_TAMING_FAILED, 40);
+        register(EntityStatus.OCELOT_TAMING_SUCCEEDED, 41);
+        register(EntityStatus.VILLAGER_SWEAT, 42);
+        register(EntityStatus.PLAYER_EMIT_CLOUD, 43);
+        register(EntityStatus.LIVING_HURT_SWEET_BERRY_BUSH, 44);
+        register(EntityStatus.FOX_EATING, 45);
+        register(EntityStatus.LIVING_TELEPORT, 46);
+        register(EntityStatus.LIVING_EQUIPMENT_BREAK_MAIN_HAND, 47);
+        register(EntityStatus.LIVING_EQUIPMENT_BREAK_OFF_HAND, 48);
+        register(EntityStatus.LIVING_EQUIPMENT_BREAK_HEAD, 49);
+        register(EntityStatus.LIVING_EQUIPMENT_BREAK_CHEST, 50);
+        register(EntityStatus.LIVING_EQUIPMENT_BREAK_LEGS, 51);
+        register(EntityStatus.LIVING_EQUIPMENT_BREAK_FEET, 52);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);
