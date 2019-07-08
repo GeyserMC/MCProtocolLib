@@ -358,7 +358,7 @@ public class MagicValues {
         register(PositionElement.PITCH, 3);
         register(PositionElement.YAW, 4);
 
-        register(GlobalEntityType.LIGHTNING_BOLT, 99);
+        register(GlobalEntityType.LIGHTNING_BOLT, 1);
 
         register(MobType.AREA_EFFECT_CLOUD, 0);
         register(MobType.ARMOR_STAND, 1);
