@@ -15,8 +15,9 @@ public class VillagerTrade {
     private int xp;
     private int specialPrice;
     private float priceMultiplier;
+    private int demand;
 
-    public VillagerTrade(ItemStack firstInput, ItemStack secondInput, ItemStack output, boolean tradeDisabled, int numUses, int maxUses, int xp, int specialPrice, float priceMultiplier) {
+    public VillagerTrade(ItemStack firstInput, ItemStack secondInput, ItemStack output, boolean tradeDisabled, int numUses, int maxUses, int xp, int specialPrice, float priceMultiplier, int demand) {
         this.firstInput = firstInput;
         this.secondInput = secondInput;
         this.output = output;
@@ -26,6 +27,7 @@ public class VillagerTrade {
         this.xp = xp;
         this.specialPrice = specialPrice;
         this.priceMultiplier = priceMultiplier;
+        this.demand = demand;
     }
 
     public ItemStack getFirstInput() {
@@ -64,6 +66,10 @@ public class VillagerTrade {
         return this.priceMultiplier;
     }
 
+    public int getDemand() {
+        return this.demand;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -78,12 +84,13 @@ public class VillagerTrade {
                 this.maxUses == that.maxUses &&
                 this.xp == that.xp &&
                 this.specialPrice == that.specialPrice &&
-                Float.floatToIntBits(this.priceMultiplier) == Float.floatToIntBits(that.priceMultiplier);
+                Float.floatToIntBits(this.priceMultiplier) == Float.floatToIntBits(that.priceMultiplier) &&
+                this.demand == that.demand;
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hashCode(this.firstInput, this.secondInput, this.output, this.tradeDisabled, this.numUses, this.maxUses, this.xp, this.specialPrice, this.priceMultiplier);
+        return ObjectUtil.hashCode(this.firstInput, this.secondInput, this.output, this.tradeDisabled, this.numUses, this.maxUses, this.xp, this.specialPrice, this.priceMultiplier, this.demand);
     }
 
     @Override
