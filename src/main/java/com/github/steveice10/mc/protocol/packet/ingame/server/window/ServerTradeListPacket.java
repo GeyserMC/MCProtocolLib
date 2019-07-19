@@ -75,8 +75,9 @@ public class ServerTradeListPacket extends MinecraftPacket {
             int xp = in.readInt();
             int specialPrice = in.readInt();
             float priceMultiplier = in.readFloat();
+            int demand = in.readInt();
 
-            this.trades[i] = new VillagerTrade(firstInput, secondInput, output, tradeDisabled, numUses, maxUses, xp, specialPrice, priceMultiplier);
+            this.trades[i] = new VillagerTrade(firstInput, secondInput, output, tradeDisabled, numUses, maxUses, xp, specialPrice, priceMultiplier, demand);
         }
 
         this.villagerLevel = in.readVarInt();
@@ -108,6 +109,7 @@ public class ServerTradeListPacket extends MinecraftPacket {
             out.writeInt(trade.getXp());
             out.writeInt(trade.getSpecialPrice());
             out.writeFloat(trade.getPriceMultiplier());
+            out.writeInt(trade.getDemand());
         }
 
         out.writeVarInt(this.villagerLevel);

@@ -96,6 +96,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntit
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityVelocityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerVehicleMovePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerAbilitiesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerActionAckPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerFacingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
@@ -459,6 +460,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x59, ServerEntityEffectPacket.class);
         this.registerIncoming(0x5A, ServerDeclareRecipesPacket.class);
         this.registerIncoming(0x5B, ServerDeclareTagsPacket.class);
+        this.registerIncoming(0x5C, ServerPlayerActionAckPacket.class);
 
         this.registerOutgoing(0x00, ClientTeleportConfirmPacket.class);
         this.registerOutgoing(0x01, ClientBlockNBTRequestPacket.class);
@@ -648,6 +650,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x59, ServerEntityEffectPacket.class);
         this.registerOutgoing(0x5A, ServerDeclareRecipesPacket.class);
         this.registerOutgoing(0x5B, ServerDeclareTagsPacket.class);
+        this.registerOutgoing(0x5C, ServerPlayerActionAckPacket.class);
     }
 
     private void initClientStatus(Session session) {
