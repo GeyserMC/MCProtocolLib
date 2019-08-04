@@ -25,11 +25,11 @@ public class ServerOpenBookPacket extends MinecraftPacket {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.hand = MagicValues.value(Hand.class, in.readVarInt());
+        this.hand = MagicValues.key(Hand.class, in.readVarInt());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeVarInt(MagicValues.key(Integer.class, hand));
+        out.writeVarInt(MagicValues.value(Integer.class, hand));
     }
 }
