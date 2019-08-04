@@ -256,6 +256,7 @@ public class MagicValues {
         register(WorldType.LARGE_BIOMES, "largebiomes");
         register(WorldType.AMPLIFIED, "amplified");
         register(WorldType.CUSTOMIZED, "customized");
+        register(WorldType.BUFFET, "buffet");
         register(WorldType.DEBUG, "debug_all_block_states");
         register(WorldType.DEFAULT_1_1, "default_1_1");
 
