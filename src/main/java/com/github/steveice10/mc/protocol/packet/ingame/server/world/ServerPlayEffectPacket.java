@@ -6,6 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BonemealGrowEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakBlockEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakPotionEffectData;
+import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.RecordEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
@@ -71,6 +72,8 @@ public class ServerPlayEffectPacket extends MinecraftPacket {
             this.data = new BreakPotionEffectData(value);
         } else if(this.effect == ParticleEffect.BONEMEAL_GROW) {
             this.data = new BonemealGrowEffectData(value);
+        } else if(this.effect == ParticleEffect.COMPOSTER) {
+            this.data = value > 0 ? ComposterEffectData.FILL_SUCCESS : ComposterEffectData.FILL;
         }
 
         this.broadcast = in.readBoolean();
@@ -91,6 +94,8 @@ public class ServerPlayEffectPacket extends MinecraftPacket {
             value = ((BreakPotionEffectData) this.data).getPotionId();
         } else if(this.data instanceof BonemealGrowEffectData) {
             value = ((BonemealGrowEffectData) this.data).getParticleCount();
+        } else if(this.data instanceof ComposterEffectData) {
+            value = MagicValues.value(Integer.class, this.data);
         }
 
         out.writeInt(value);
