@@ -67,6 +67,7 @@ import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.*;
+import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
@@ -906,8 +907,18 @@ public class MagicValues {
         register(SoundEffect.BLOCK_BREWING_STAND_BREW, 1035);
         register(SoundEffect.BLOCK_IRON_TRAPDOOR_CLOSE, 1036);
         register(SoundEffect.BLOCK_IRON_TRAPDOOR_OPEN, 1037);
+        register(SoundEffect.BLOCK_END_PORTAL_SPAWN, 1038);
+        register(SoundEffect.ENTITY_PHANTOM_BITE, 1039);
+        register(SoundEffect.ENTITY_ZOMBIE_CONVERTED_TO_DROWNED, 1040);
+        register(SoundEffect.ENTITY_HUSK_CONVERTED_TO_ZOMBIE, 1041);
+        register(SoundEffect.BLOCK_GRINDSTONE_USE, 1042);
+        register(SoundEffect.ITEM_BOOK_PAGE_TURN, 1043);
         register(SoundEffect.ENTITY_ENDERDRAGON_GROWL, 3001);
 
+        register(ParticleEffect.COMPOSTER, 1500);
+        register(ParticleEffect.BLOCK_LAVA_EXTINGUISH, 1501);
+        register(ParticleEffect.BLOCK_REDSTONE_TORCH_BURNOUT, 1502);
+        register(ParticleEffect.BLOCK_END_PORTAL_FRAME_FILL, 1503);
         register(ParticleEffect.SMOKE, 2000);
         register(ParticleEffect.BREAK_BLOCK, 2001);
         register(ParticleEffect.BREAK_SPLASH_POTION, 2002);
@@ -916,6 +927,7 @@ public class MagicValues {
         register(ParticleEffect.BONEMEAL_GROW, 2005);
         register(ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE, 2006);
         register(ParticleEffect.BREAK_SPLASH_POTION, 2007);
+        register(ParticleEffect.EXPLOSION, 2008);
         register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
 
         register(SmokeEffectData.SOUTH_EAST, 0);
@@ -927,6 +939,9 @@ public class MagicValues {
         register(SmokeEffectData.NORTH_EAST, 6);
         register(SmokeEffectData.NORTH, 7);
         register(SmokeEffectData.NORTH_WEST, 8);
+
+        register(ComposterEffectData.FILL, 0);
+        register(ComposterEffectData.FILL_SUCCESS, 1);
 
         register(NameTagVisibility.ALWAYS, "");
         register(NameTagVisibility.ALWAYS, "always");
