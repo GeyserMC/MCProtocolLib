@@ -1,37 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.player;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerPlayerHealthPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPlayerHealthPacket implements Packet {
     private float health;
     private int food;
     private float saturation;
-
-    @SuppressWarnings("unused")
-    private ServerPlayerHealthPacket() {
-    }
-
-    public ServerPlayerHealthPacket(float health, int food, float saturation) {
-        this.health = health;
-        this.food = food;
-        this.saturation = saturation;
-    }
-
-    public float getHealth() {
-        return this.health;
-    }
-
-    public int getFood() {
-        return this.food;
-    }
-
-    public float getSaturation() {
-        return this.saturation;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -45,5 +32,10 @@ public class ServerPlayerHealthPacket extends MinecraftPacket {
         out.writeFloat(this.health);
         out.writeVarInt(this.food);
         out.writeFloat(this.saturation);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

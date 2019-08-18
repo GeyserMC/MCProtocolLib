@@ -4,67 +4,39 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class ClientSettingsPacket extends MinecraftPacket {
-    private String locale;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientSettingsPacket implements Packet {
+    private @NonNull String locale;
     private int renderDistance;
-    private ChatVisibility chatVisibility;
-    private boolean chatColors;
-    private List<SkinPart> visibleParts;
-    private Hand mainHand;
-
-    @SuppressWarnings("unused")
-    private ClientSettingsPacket() {
-    }
-
-    public ClientSettingsPacket(String locale, int renderDistance, ChatVisibility chatVisibility, boolean chatColors, SkinPart[] visibleParts, Hand mainHand) {
-        this.locale = locale;
-        this.renderDistance = renderDistance;
-        this.chatVisibility = chatVisibility;
-        this.chatColors = chatColors;
-        this.visibleParts = Arrays.asList(visibleParts);
-        this.mainHand = mainHand;
-    }
-
-    public String getLocale() {
-        return this.locale;
-    }
-
-    public int getRenderDistance() {
-        return this.renderDistance;
-    }
-
-    public ChatVisibility getChatVisibility() {
-        return this.chatVisibility;
-    }
-
-    public boolean getUseChatColors() {
-        return this.chatColors;
-    }
-
-    public List<SkinPart> getVisibleParts() {
-        return this.visibleParts;
-    }
-
-    public Hand getMainHand() {
-        return this.mainHand;
-    }
+    private @NonNull ChatVisibility chatVisibility;
+    private boolean useChatColors;
+    private @NonNull List<SkinPart> visibleParts;
+    private @NonNull Hand mainHand;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.locale = in.readString();
         this.renderDistance = in.readByte();
         this.chatVisibility = MagicValues.key(ChatVisibility.class, in.readVarInt());
-        this.chatColors = in.readBoolean();
-        this.visibleParts = new ArrayList<SkinPart>();
+        this.useChatColors = in.readBoolean();
+        this.visibleParts = new ArrayList<>();
 
         int flags = in.readUnsignedByte();
         for(SkinPart part : SkinPart.values()) {
@@ -82,7 +54,7 @@ public class ClientSettingsPacket extends MinecraftPacket {
         out.writeString(this.locale);
         out.writeByte(this.renderDistance);
         out.writeVarInt(MagicValues.value(Integer.class, this.chatVisibility));
-        out.writeBoolean(this.chatColors);
+        out.writeBoolean(this.useChatColors);
 
         int flags = 0;
         for(SkinPart part : this.visibleParts) {
@@ -92,5 +64,10 @@ public class ClientSettingsPacket extends MinecraftPacket {
         out.writeByte(flags);
 
         out.writeVarInt(MagicValues.value(Integer.class, this.mainHand));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

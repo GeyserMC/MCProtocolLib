@@ -1,34 +1,29 @@
 package com.github.steveice10.mc.protocol.packet.login.client;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class LoginPluginResponsePacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class LoginPluginResponsePacket implements Packet {
     private int messageId;
     private byte[] data;
 
-    @SuppressWarnings("unused")
-    private LoginPluginResponsePacket() {
-    }
-
     public LoginPluginResponsePacket(int messageId) {
-        this.messageId = messageId;
+        this(messageId, null);
     }
 
     public LoginPluginResponsePacket(int messageId, byte[] data) {
         this.messageId = messageId;
         this.data = data;
-    }
-
-    public int getMessageId() {
-        return this.messageId;
-    }
-
-    public byte[] getData() {
-        return this.data;
     }
 
     @Override
@@ -50,5 +45,10 @@ public class LoginPluginResponsePacket extends MinecraftPacket {
         } else {
             out.writeBoolean(false);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

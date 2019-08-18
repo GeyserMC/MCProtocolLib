@@ -1,37 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerEntityCollectItemPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntityCollectItemPacket implements Packet {
     private int collectedEntityId;
     private int collectorEntityId;
     private int itemCount;
-
-    @SuppressWarnings("unused")
-    private ServerEntityCollectItemPacket() {
-    }
-
-    public ServerEntityCollectItemPacket(int collectedEntityId, int collectorEntityId, int itemCount) {
-        this.collectedEntityId = collectedEntityId;
-        this.collectorEntityId = collectorEntityId;
-        this.itemCount = itemCount;
-    }
-
-    public int getCollectedEntityId() {
-        return this.collectedEntityId;
-    }
-
-    public int getCollectorEntityId() {
-        return this.collectorEntityId;
-    }
-
-    public int getItemCount() {
-        return this.itemCount;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -45,5 +32,10 @@ public class ServerEntityCollectItemPacket extends MinecraftPacket {
         out.writeVarInt(this.collectedEntityId);
         out.writeVarInt(this.collectorEntityId);
         out.writeVarInt(this.itemCount);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

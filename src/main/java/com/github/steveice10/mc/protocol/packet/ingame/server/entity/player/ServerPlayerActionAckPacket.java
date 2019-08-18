@@ -4,45 +4,28 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerPlayerActionAckPacket extends MinecraftPacket {
-    private PlayerAction action;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPlayerActionAckPacket implements Packet {
+    private @NonNull PlayerAction action;
     private boolean successful;
-    private Position position;
-    private BlockState newState;
-
-    @SuppressWarnings("unused")
-    private ServerPlayerActionAckPacket() {
-    }
-
-    public ServerPlayerActionAckPacket(PlayerAction action, boolean successful, Position position, BlockState newState) {
-        this.position = position;
-        this.newState = newState;
-        this.action = action;
-        this.successful = successful;
-    }
-
-    public PlayerAction getAction() {
-        return this.action;
-    }
-
-    public boolean wasSuccessful() {
-        return this.successful;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public BlockState getNewState() {
-        return this.newState;
-    }
+    private @NonNull Position position;
+    private @NonNull BlockState newState;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -58,5 +41,10 @@ public class ServerPlayerActionAckPacket extends MinecraftPacket {
         NetUtil.writeBlockState(out, this.newState);
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         out.writeBoolean(this.successful);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

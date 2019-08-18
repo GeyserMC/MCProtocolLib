@@ -1,70 +1,33 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class ServerSpawnPlayerPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerSpawnPlayerPacket implements Packet {
     private int entityId;
-    private UUID uuid;
+    private @NonNull UUID uuid;
     private double x;
     private double y;
     private double z;
     private float yaw;
     private float pitch;
-    private EntityMetadata metadata[];
-
-    @SuppressWarnings("unused")
-    private ServerSpawnPlayerPacket() {
-    }
-
-    public ServerSpawnPlayerPacket(int entityId, UUID uuid, double x, double y, double z, float yaw, float pitch, EntityMetadata metadata[]) {
-        this.entityId = entityId;
-        this.uuid = uuid;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        this.metadata = metadata;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
-
-    public EntityMetadata[] getMetadata() {
-        return this.metadata;
-    }
+    private @NonNull EntityMetadata[] metadata;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -88,5 +51,10 @@ public class ServerSpawnPlayerPacket extends MinecraftPacket {
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         NetUtil.writeEntityMetadata(out, this.metadata);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

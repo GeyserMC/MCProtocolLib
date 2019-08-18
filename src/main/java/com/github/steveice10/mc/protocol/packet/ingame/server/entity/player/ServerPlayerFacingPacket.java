@@ -1,71 +1,46 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.player;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.FeetOrEyes;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
+import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerPlayerFacingPacket extends MinecraftPacket {
-    private FeetOrEyes origin; // presumably the origin from which pitch is calculated at
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPlayerFacingPacket implements Packet {
+    private @NonNull RotationOrigin origin;
     private double x;
     private double y;
     private double z;
-    private Integer targetEntityId;
-    private FeetOrEyes targetEntityFeetOrEyes;
 
-    @SuppressWarnings("unused")
-    private ServerPlayerFacingPacket() {
-    }
+    private int targetEntityId;
+    private RotationOrigin targetEntityOrigin;
 
-    public ServerPlayerFacingPacket(FeetOrEyes origin, double x, double y, double z) {
-        this.origin = origin;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public ServerPlayerFacingPacket(FeetOrEyes origin, int targetEntityId, FeetOrEyes lookAt) {
-        this.origin = origin;
-        this.targetEntityId = targetEntityId;
-        this.targetEntityFeetOrEyes = lookAt;
-    }
-
-    public FeetOrEyes getOrigin() {
-        return origin;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public Integer getTargetEntityId() {
-        return targetEntityId;
-    }
-
-    public FeetOrEyes getTargetEntityFeetOrEyes() {
-        return targetEntityFeetOrEyes;
+    public ServerPlayerFacingPacket(RotationOrigin origin, double x, double y, double z) {
+        this(origin, x, y, z, 0, null);
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.origin = MagicValues.key(FeetOrEyes.class, in.readVarInt());
+        this.origin = MagicValues.key(RotationOrigin.class, in.readVarInt());
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
-        if (in.readBoolean()) {
+
+        if(in.readBoolean()) {
             this.targetEntityId = in.readVarInt();
-            this.targetEntityFeetOrEyes = MagicValues.key(FeetOrEyes.class, in.readVarInt());
+            this.targetEntityOrigin = MagicValues.key(RotationOrigin.class, in.readVarInt());
         }
     }
 
@@ -75,12 +50,18 @@ public class ServerPlayerFacingPacket extends MinecraftPacket {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
-        if (this.targetEntityId != null) {
+
+        if(this.targetEntityOrigin != null) {
             out.writeBoolean(true);
             out.writeVarInt(this.targetEntityId);
-            out.writeVarInt(MagicValues.value(Integer.class, this.targetEntityFeetOrEyes));
+            out.writeVarInt(MagicValues.value(Integer.class, this.targetEntityOrigin));
         } else {
             out.writeBoolean(false);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

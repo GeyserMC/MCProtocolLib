@@ -3,39 +3,26 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerBlockBreakAnimPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerBlockBreakAnimPacket implements Packet {
     private int breakerEntityId;
     private Position position;
     private BlockBreakStage stage;
-
-    @SuppressWarnings("unused")
-    private ServerBlockBreakAnimPacket() {
-    }
-
-    public ServerBlockBreakAnimPacket(int breakerEntityId, Position position, BlockBreakStage stage) {
-        this.breakerEntityId = breakerEntityId;
-        this.position = position;
-        this.stage = stage;
-    }
-
-    public int getBreakerEntityId() {
-        return this.breakerEntityId;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public BlockBreakStage getStage() {
-        return this.stage;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -53,5 +40,10 @@ public class ServerBlockBreakAnimPacket extends MinecraftPacket {
         out.writeVarInt(this.breakerEntityId);
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.stage));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

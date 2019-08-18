@@ -1,78 +1,45 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import java.io.IOException;
-
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
-public class ServerJoinGamePacket extends MinecraftPacket {
+import java.io.IOException;
+
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerJoinGamePacket implements Packet {
+    private static final int GAMEMODE_MASK = 0x07;
+    private static final int GAMEMODE_FLAG_HARDCORE = 0x08;
+
     private int entityId;
     private boolean hardcore;
-    private GameMode gamemode;
+    private @NonNull GameMode gameMode;
     private int dimension;
     private int maxPlayers;
-    private WorldType worldType;
+    private @NonNull WorldType worldType;
     private int viewDistance;
     private boolean reducedDebugInfo;
-
-    @SuppressWarnings("unused")
-    private ServerJoinGamePacket() {
-    }
-
-    public ServerJoinGamePacket(int entityId, boolean hardcore, GameMode gamemode, int dimension, int maxPlayers, WorldType worldType, int viewDistance, boolean reducedDebugInfo) {
-        this.entityId = entityId;
-        this.hardcore = hardcore;
-        this.gamemode = gamemode;
-        this.dimension = dimension;
-        this.maxPlayers = maxPlayers;
-        this.worldType = worldType;
-        this.viewDistance = viewDistance;
-        this.reducedDebugInfo = reducedDebugInfo;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public boolean getHardcore() {
-        return this.hardcore;
-    }
-
-    public GameMode getGameMode() {
-        return this.gamemode;
-    }
-
-    public int getDimension() {
-        return this.dimension;
-    }
-
-    public int getMaxPlayers() {
-        return this.maxPlayers;
-    }
-
-    public WorldType getWorldType() {
-        return this.worldType;
-    }
-
-    public int getViewDistance() {
-        return viewDistance;
-    }
-
-    public boolean getReducedDebugInfo() {
-        return this.reducedDebugInfo;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readInt();
-        int gamemode = in.readUnsignedByte();
-        this.hardcore = (gamemode & 8) == 8;
-        gamemode &= -9;
-        this.gamemode = MagicValues.key(GameMode.class, gamemode);
+
+        int gameMode = in.readUnsignedByte();
+        this.hardcore = (gameMode & GAMEMODE_FLAG_HARDCORE) != 0;
+        this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
+
         this.dimension = in.readInt();
         this.maxPlayers = in.readUnsignedByte();
         this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
@@ -83,16 +50,23 @@ public class ServerJoinGamePacket extends MinecraftPacket {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.entityId);
-        int gamemode = MagicValues.value(Integer.class, this.gamemode);
+
+        int gameMode = MagicValues.value(Integer.class, this.gameMode) & GAMEMODE_MASK;
         if(this.hardcore) {
-            gamemode |= 8;
+            gameMode |= GAMEMODE_FLAG_HARDCORE;
         }
 
-        out.writeByte(gamemode);
+        out.writeByte(gameMode);
+
         out.writeInt(this.dimension);
         out.writeByte(this.maxPlayers);
         out.writeString(MagicValues.value(String.class, this.worldType));
         out.writeVarInt(this.viewDistance);
         out.writeBoolean(this.reducedDebugInfo);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

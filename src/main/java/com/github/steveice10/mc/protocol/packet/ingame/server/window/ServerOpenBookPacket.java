@@ -1,27 +1,25 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
-import java.io.IOException;
-
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
-public class ServerOpenBookPacket extends MinecraftPacket {
+import java.io.IOException;
 
-    private Hand hand;
-
-    public ServerOpenBookPacket() {
-    }
-
-    public ServerOpenBookPacket(Hand hand) {
-        this.hand = hand;
-    }
-
-    public Hand getHand() {
-        return hand;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerOpenBookPacket implements Packet {
+    private @NonNull Hand hand;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -31,5 +29,10 @@ public class ServerOpenBookPacket extends MinecraftPacket {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, hand));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

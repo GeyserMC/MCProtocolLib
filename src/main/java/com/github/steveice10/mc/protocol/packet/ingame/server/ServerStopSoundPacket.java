@@ -5,42 +5,39 @@ import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.CustomSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerStopSoundPacket extends MinecraftPacket {
-    private SoundCategory category;
-    private Sound sound;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerStopSoundPacket implements Packet {
+    private static final int FLAG_CATEGORY = 0x01;
+    private static final int FLAG_SOUND = 0x02;
 
-    @SuppressWarnings("unused")
-    private ServerStopSoundPacket() {
-    }
-
-    public ServerStopSoundPacket(SoundCategory category, Sound sound) {
-        this.category = category;
-        this.sound = sound;
-    }
-
-    public SoundCategory getCategory() {
-        return this.category;
-    }
-
-    public Sound getSound() {
-        return sound;
-    }
+    private @NonNull SoundCategory category;
+    private @NonNull Sound sound;
 
     @Override
     public void read(NetInput in) throws IOException {
         int flags = in.readByte();
-        if((flags & 0x1) != 0) {
+        if((flags & FLAG_CATEGORY) != 0) {
             this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
         } else {
             this.category = null;
         }
-        if((flags & 0x2) != 0) {
+
+        if((flags & FLAG_SOUND) != 0) {
             String value = in.readString();
             try {
                 this.sound = MagicValues.key(BuiltinSound.class, value);
@@ -54,18 +51,34 @@ public class ServerStopSoundPacket extends MinecraftPacket {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeByte((this.category != null ? 0x1 : 0) | (this.sound != null ? 0x2 : 0));
-        if (this.category != null) {
+        int flags = 0;
+        if(this.category != null) {
+            flags |= FLAG_CATEGORY;
+        }
+
+        if(this.sound != null) {
+            flags |= FLAG_SOUND;
+        }
+
+        out.writeByte(flags);
+        if(this.category != null) {
             out.writeByte(MagicValues.value(Integer.class, this.category));
         }
-        if (this.sound != null) {
+
+        if(this.sound != null) {
             String value = "";
-            if (this.sound instanceof CustomSound) {
+            if(this.sound instanceof CustomSound) {
                 value = ((CustomSound) this.sound).getName();
-            } else if (this.sound instanceof BuiltinSound) {
+            } else if(this.sound instanceof BuiltinSound) {
                 value = MagicValues.value(String.class, this.sound);
             }
+
             out.writeString(value);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

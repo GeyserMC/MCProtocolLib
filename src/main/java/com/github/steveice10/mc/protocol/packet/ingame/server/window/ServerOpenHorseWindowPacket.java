@@ -1,50 +1,41 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
-import java.io.IOException;
-
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public class ServerOpenHorseWindowPacket extends MinecraftPacket {
+import java.io.IOException;
 
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerOpenHorseWindowPacket implements Packet {
     private int windowId;
     private int numberOfSlots;
     private int entityId;
 
-    @SuppressWarnings("unused")
-    private ServerOpenHorseWindowPacket() {
-    }
-
-    public ServerOpenHorseWindowPacket(int windowId, int numberOfSlots, int entityId) {
-        this.windowId = windowId;
-        this.numberOfSlots = numberOfSlots;
-        this.entityId = entityId;
-    }
-
-    public int getWindowId() {
-        return windowId;
-    }
-
-    public int getNumberOfSlots() {
-        return numberOfSlots;
-    }
-
-    public int getEntityId() {
-        return entityId;
-    }
-
     @Override
     public void read(NetInput in) throws IOException {
-        windowId = in.readByte();
-        numberOfSlots = in.readVarInt();
-        entityId = in.readInt();
+        this.windowId = in.readByte();
+        this.numberOfSlots = in.readVarInt();
+        this.entityId = in.readInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeByte(windowId);
-        out.writeVarInt(numberOfSlots);
-        out.writeInt(entityId);
+        out.writeByte(this.windowId);
+        out.writeVarInt(this.numberOfSlots);
+        out.writeInt(this.entityId);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

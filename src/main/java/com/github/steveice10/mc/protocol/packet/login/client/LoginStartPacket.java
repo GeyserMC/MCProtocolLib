@@ -1,25 +1,23 @@
 package com.github.steveice10.mc.protocol.packet.login.client;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class LoginStartPacket extends MinecraftPacket {
-    private String username;
-
-    @SuppressWarnings("unused")
-    private LoginStartPacket() {
-    }
-
-    public LoginStartPacket(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class LoginStartPacket implements Packet {
+    private @NonNull String username;
 
     @Override
     public void read(NetInput in) throws IOException {

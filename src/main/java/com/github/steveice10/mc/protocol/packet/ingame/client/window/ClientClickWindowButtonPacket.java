@@ -1,32 +1,23 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientClickWindowButtonPacket extends MinecraftPacket {
-
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientClickWindowButtonPacket implements Packet {
     private int windowId;
     private int buttonId;
-
-    @SuppressWarnings("unused")
-    private ClientClickWindowButtonPacket() {
-    }
-
-    public ClientClickWindowButtonPacket(int windowId, int enchantment) {
-        this.windowId = windowId;
-        this.buttonId = enchantment;
-    }
-
-    public int getWindowId() {
-        return this.windowId;
-    }
-
-    public int getEnchantment() {
-        return this.buttonId;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -38,5 +29,10 @@ public class ClientClickWindowButtonPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
         out.writeByte(this.buttonId);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

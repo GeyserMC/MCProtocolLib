@@ -6,33 +6,26 @@ import com.github.steveice10.mc.protocol.data.game.PlayerListEntry;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class ServerPlayerListEntryPacket extends MinecraftPacket {
-    private PlayerListEntryAction action;
-    private PlayerListEntry entries[];
-
-    @SuppressWarnings("unused")
-    private ServerPlayerListEntryPacket() {
-    }
-
-    public ServerPlayerListEntryPacket(PlayerListEntryAction action, PlayerListEntry entries[]) {
-        this.action = action;
-        this.entries = entries;
-    }
-
-    public PlayerListEntryAction getAction() {
-        return this.action;
-    }
-
-    public PlayerListEntry[] getEntries() {
-        return this.entries;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPlayerListEntryPacket implements Packet {
+    private @NonNull PlayerListEntryAction action;
+    private @NonNull PlayerListEntry[] entries;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -142,5 +135,10 @@ public class ServerPlayerListEntryPacket extends MinecraftPacket {
                     break;
             }
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

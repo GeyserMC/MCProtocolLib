@@ -1,43 +1,41 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientEditBookPacket extends MinecraftPacket {
-    private ItemStack book;
-    private boolean isSigning;
-
-    @SuppressWarnings("unused")
-    private ClientEditBookPacket() {
-    }
-
-    public ClientEditBookPacket(ItemStack book, boolean isSigning) {
-        this.book = book;
-        this.isSigning = isSigning;
-    }
-
-    public ItemStack getBook() {
-        return this.book;
-    }
-
-    public boolean getIsSigning() {
-        return this.isSigning;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientEditBookPacket implements Packet {
+    private @NonNull ItemStack book;
+    private boolean signing;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.book = NetUtil.readItem(in);
-        this.isSigning = in.readBoolean();
+        this.signing = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         NetUtil.writeItem(out, this.book);
-        out.writeBoolean(this.isSigning);
+        out.writeBoolean(this.signing);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

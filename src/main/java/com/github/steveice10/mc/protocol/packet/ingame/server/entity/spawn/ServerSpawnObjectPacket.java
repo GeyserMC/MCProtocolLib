@@ -1,106 +1,59 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.*;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.FallingBlockData;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.GenericObjectData;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.HangingDirection;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.MinecartType;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectData;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectType;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.ProjectileData;
+import com.github.steveice10.mc.protocol.data.game.entity.type.object.SplashPotionData;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class ServerSpawnObjectPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerSpawnObjectPacket implements Packet {
     private int entityId;
-    private UUID uuid;
-    private ObjectType type;
+    private @NonNull UUID uuid;
+    private @NonNull ObjectType type;
+    private @NonNull ObjectData data;
     private double x;
     private double y;
     private double z;
-    private float pitch;
     private float yaw;
-    private ObjectData data;
+    private float pitch;
     private double motX;
     private double motY;
     private double motZ;
 
-    @SuppressWarnings("unused")
-    private ServerSpawnObjectPacket() {
+    public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type,
+                                   double x, double y, double z, float yaw, float pitch) {
+        this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, 0, 0, 0);
     }
 
-    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, double x, double y, double z, float yaw, float pitch) {
-        this(entityId, uuid, type, null, x, y, z, yaw, pitch, 0, 0, 0);
-    }
-
-    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, ObjectData data, double x, double y, double z, float yaw, float pitch) {
+    public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type, @NonNull ObjectData data,
+                                   double x, double y, double z, float yaw, float pitch) {
         this(entityId, uuid, type, data, x, y, z, yaw, pitch, 0, 0, 0);
     }
 
-    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, double x, double y, double z, float yaw, float pitch, double motX, double motY, double motZ) {
-        this(entityId, uuid, type, new ObjectData() {
-        }, x, y, z, yaw, pitch, motX, motY, motZ);
-    }
-
-    public ServerSpawnObjectPacket(int entityId, UUID uuid, ObjectType type, ObjectData data, double x, double y, double z, float yaw, float pitch, double motX, double motY, double motZ) {
-        this.entityId = entityId;
-        this.uuid = uuid;
-        this.type = type;
-        this.data = data;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        this.motX = motX;
-        this.motY = motY;
-        this.motZ = motZ;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-    public ObjectType getType() {
-        return this.type;
-    }
-
-    public ObjectData getData() {
-        return this.data;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
-
-    public double getMotionX() {
-        return this.motX;
-    }
-
-    public double getMotionY() {
-        return this.motY;
-    }
-
-    public double getMotionZ() {
-        return this.motZ;
+    public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type,
+                                   double x, double y, double z, float yaw, float pitch,
+                                   double motX, double motY, double motZ) {
+        this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, motX, motY, motZ);
     }
 
     @Override
@@ -123,7 +76,8 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
             this.data = new FallingBlockData(data & 65535, data >> 16);
         } else if(this.type == ObjectType.POTION) {
             this.data = new SplashPotionData(data);
-        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.FIREBALL || this.type == ObjectType.SMALL_FIREBALL || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_SKULL || this.type == ObjectType.FISHING_BOBBER) {
+        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.FIREBALL || this.type == ObjectType.SMALL_FIREBALL
+                || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_SKULL || this.type == ObjectType.FISHING_BOBBER) {
             this.data = new ProjectileData(data);
         } else {
             this.data = new GenericObjectData(data);
@@ -147,9 +101,9 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
 
         int data = 0;
         if(this.data instanceof MinecartType) {
-            data = MagicValues.value(Integer.class, (Enum<?>) this.data);
+            data = MagicValues.value(Integer.class, this.data);
         } else if(this.data instanceof HangingDirection) {
-            data = MagicValues.value(Integer.class, (Enum<?>) this.data);
+            data = MagicValues.value(Integer.class, this.data);
         } else if(this.data instanceof FallingBlockData) {
             data = ((FallingBlockData) this.data).getId() | ((FallingBlockData) this.data).getMetadata() << 16;
         } else if(this.data instanceof SplashPotionData) {
@@ -165,5 +119,10 @@ public class ServerSpawnObjectPacket extends MinecraftPacket {
         out.writeShort((int) (this.motX * 8000));
         out.writeShort((int) (this.motY * 8000));
         out.writeShort((int) (this.motZ * 8000));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

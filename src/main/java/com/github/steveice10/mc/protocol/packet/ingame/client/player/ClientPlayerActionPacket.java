@@ -4,39 +4,27 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientPlayerActionPacket extends MinecraftPacket {
-    private PlayerAction action;
-    private Position position;
-    private BlockFace face;
-
-    @SuppressWarnings("unused")
-    private ClientPlayerActionPacket() {
-    }
-
-    public ClientPlayerActionPacket(PlayerAction action, Position position, BlockFace face) {
-        this.action = action;
-        this.position = position;
-        this.face = face;
-    }
-
-    public PlayerAction getAction() {
-        return this.action;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public BlockFace getFace() {
-        return this.face;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientPlayerActionPacket implements Packet {
+    private @NonNull PlayerAction action;
+    private @NonNull Position position;
+    private @NonNull BlockFace face;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -50,5 +38,10 @@ public class ClientPlayerActionPacket extends MinecraftPacket {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.face));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

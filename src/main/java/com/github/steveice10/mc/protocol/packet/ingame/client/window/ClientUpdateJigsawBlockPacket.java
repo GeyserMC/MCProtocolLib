@@ -1,45 +1,28 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
-import java.io.IOException;
-
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
-public class ClientUpdateJigsawBlockPacket extends MinecraftPacket {
+import java.io.IOException;
 
-    private Position position;
-    private String attachmentType;
-    private String targetPool;
-    private String finalState;
-
-    public ClientUpdateJigsawBlockPacket() {
-    }
-
-    public ClientUpdateJigsawBlockPacket(Position position, String attachmentType, String targetPool, String finalState) {
-        this.position = position;
-        this.attachmentType = attachmentType;
-        this.targetPool = targetPool;
-        this.finalState = finalState;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public String getAttachmentType() {
-        return attachmentType;
-    }
-
-    public String getTargetPool() {
-        return targetPool;
-    }
-
-    public String getFinalState() {
-        return finalState;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientUpdateJigsawBlockPacket implements Packet {
+    private @NonNull Position position;
+    private @NonNull String attachmentType;
+    private @NonNull String targetPool;
+    private @NonNull String finalState;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -55,5 +38,10 @@ public class ClientUpdateJigsawBlockPacket extends MinecraftPacket {
         out.writeString(this.attachmentType);
         out.writeString(this.targetPool);
         out.writeString(this.finalState);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

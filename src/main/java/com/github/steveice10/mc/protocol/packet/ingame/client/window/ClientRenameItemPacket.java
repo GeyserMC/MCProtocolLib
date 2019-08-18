@@ -1,25 +1,23 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientRenameItemPacket extends MinecraftPacket {
-    private String name;
-
-    @SuppressWarnings("unused")
-    private ClientRenameItemPacket() {
-    }
-
-    public ClientRenameItemPacket(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientRenameItemPacket implements Packet {
+    private @NonNull String name;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -29,5 +27,10 @@ public class ClientRenameItemPacket extends MinecraftPacket {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.name);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

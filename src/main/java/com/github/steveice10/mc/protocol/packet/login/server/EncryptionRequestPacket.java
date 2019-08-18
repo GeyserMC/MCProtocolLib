@@ -1,39 +1,27 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.CryptUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.security.PublicKey;
 
-public class EncryptionRequestPacket extends MinecraftPacket {
-    private String serverId;
-    private PublicKey publicKey;
-    private byte verifyToken[];
-
-    @SuppressWarnings("unused")
-    private EncryptionRequestPacket() {
-    }
-
-    public EncryptionRequestPacket(String serverId, PublicKey publicKey, byte verifyToken[]) {
-        this.serverId = serverId;
-        this.publicKey = publicKey;
-        this.verifyToken = verifyToken;
-    }
-
-    public String getServerId() {
-        return this.serverId;
-    }
-
-    public PublicKey getPublicKey() {
-        return this.publicKey;
-    }
-
-    public byte[] getVerifyToken() {
-        return this.verifyToken;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class EncryptionRequestPacket implements Packet {
+    private @NonNull String serverId;
+    private @NonNull PublicKey publicKey;
+    private @NonNull byte[] verifyToken;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -45,7 +33,7 @@ public class EncryptionRequestPacket extends MinecraftPacket {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.serverId);
-        byte encoded[] = this.publicKey.getEncoded();
+        byte[] encoded = this.publicKey.getEncoded();
         out.writeVarInt(encoded.length);
         out.writeBytes(encoded);
         out.writeVarInt(this.verifyToken.length);

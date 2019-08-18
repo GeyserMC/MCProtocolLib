@@ -1,31 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerPluginMessagePacket extends MinecraftPacket {
-    private String channel;
-    private byte data[];
-
-    @SuppressWarnings("unused")
-    private ServerPluginMessagePacket() {
-    }
-
-    public ServerPluginMessagePacket(String channel, byte data[]) {
-        this.channel = channel;
-        this.data = data;
-    }
-
-    public String getChannel() {
-        return this.channel;
-    }
-
-    public byte[] getData() {
-        return this.data;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPluginMessagePacket implements Packet {
+    private @NonNull String channel;
+    private @NonNull byte[] data;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -37,5 +30,10 @@ public class ServerPluginMessagePacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeString(this.channel);
         out.writeBytes(this.data);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

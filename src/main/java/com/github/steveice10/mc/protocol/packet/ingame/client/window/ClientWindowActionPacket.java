@@ -11,60 +11,43 @@ import com.github.steveice10.mc.protocol.data.game.window.ShiftClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.WindowAction;
 import com.github.steveice10.mc.protocol.data.game.window.WindowActionParam;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientWindowActionPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ClientWindowActionPacket implements Packet {
+    public static final int CLICK_OUTSIDE_NOT_HOLDING_SLOT = -999;
+
     private int windowId;
-    private int slot;
-    private WindowActionParam param;
     private int actionId;
+    private int slot;
+    private ItemStack clickedItem;
     private WindowAction action;
-    private ItemStack clicked;
+    private WindowActionParam param;
 
-    @SuppressWarnings("unused")
-    private ClientWindowActionPacket() {
-    }
-
-    public ClientWindowActionPacket(int windowId, int actionId, int slot, ItemStack clicked, WindowAction action, WindowActionParam param) {
-        if((param == DropItemParam.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemParam.RIGHT_CLICK_OUTSIDE_NOT_HOLDING) && slot != -999) {
-            throw new IllegalArgumentException("Slot must be -999 with param LEFT_CLICK_OUTSIDE_NOT_HOLDING or RIGHT_CLICK_OUTSIDE_NOT_HOLDING");
+    public ClientWindowActionPacket(int windowId, int actionId, int slot, ItemStack clickedItem, WindowAction action, WindowActionParam param) {
+        if((param == DropItemParam.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemParam.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
+                && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
+            throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
+                    + " with param LEFT_CLICK_OUTSIDE_NOT_HOLDING or RIGHT_CLICK_OUTSIDE_NOT_HOLDING");
         }
 
         this.windowId = windowId;
         this.actionId = actionId;
         this.slot = slot;
-        this.clicked = clicked;
+        this.clickedItem = clickedItem;
         this.action = action;
         this.param = param;
-    }
-
-    public int getWindowId() {
-        return this.windowId;
-    }
-
-    public int getActionId() {
-        return this.actionId;
-    }
-
-    public int getSlot() {
-        return this.slot;
-    }
-
-    public ItemStack getClickedItem() {
-        return this.clicked;
-    }
-
-    public WindowAction getAction() {
-        return this.action;
-    }
-
-    public WindowActionParam getParam() {
-        return this.param;
     }
 
     @Override
@@ -74,7 +57,7 @@ public class ClientWindowActionPacket extends MinecraftPacket {
         byte param = in.readByte();
         this.actionId = in.readShort();
         this.action = MagicValues.key(WindowAction.class, in.readByte());
-        this.clicked = NetUtil.readItem(in);
+        this.clickedItem = NetUtil.readItem(in);
         if(this.action == WindowAction.CLICK_ITEM) {
             this.param = MagicValues.key(ClickItemParam.class, param);
         } else if(this.action == WindowAction.SHIFT_CLICK_ITEM) {
@@ -105,6 +88,11 @@ public class ClientWindowActionPacket extends MinecraftPacket {
         out.writeByte(param);
         out.writeShort(this.actionId);
         out.writeByte(MagicValues.value(Integer.class, this.action));
-        NetUtil.writeItem(out, this.clicked);
+        NetUtil.writeItem(out, this.clickedItem);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

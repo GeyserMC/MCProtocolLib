@@ -1,12 +1,21 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerEntityTeleportPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntityTeleportPacket implements Packet {
     private int entityId;
     private double x;
     private double y;
@@ -14,48 +23,6 @@ public class ServerEntityTeleportPacket extends MinecraftPacket {
     private float yaw;
     private float pitch;
     private boolean onGround;
-
-    @SuppressWarnings("unused")
-    private ServerEntityTeleportPacket() {
-    }
-
-    public ServerEntityTeleportPacket(int entityId, double x, double y, double z, float yaw, float pitch, boolean onGround) {
-        this.entityId = entityId;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        this.onGround = onGround;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
-
-    public boolean isOnGround() {
-        return this.onGround;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -77,5 +44,10 @@ public class ServerEntityTeleportPacket extends MinecraftPacket {
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeBoolean(this.onGround);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

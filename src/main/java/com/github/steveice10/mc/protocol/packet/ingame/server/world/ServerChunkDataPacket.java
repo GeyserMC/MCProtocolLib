@@ -1,30 +1,28 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.io.stream.StreamNetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ServerChunkDataPacket extends MinecraftPacket {
-    private Column column;
-
-    @SuppressWarnings("unused")
-    private ServerChunkDataPacket() {
-    }
-
-    public ServerChunkDataPacket(Column column) {
-        this.column = column;
-    }
-
-    public Column getColumn() {
-        return this.column;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerChunkDataPacket implements Packet {
+    private @NonNull Column column;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -46,11 +44,11 @@ public class ServerChunkDataPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         NetOutput netOut = new StreamNetOutput(byteOut);
-        int mask = NetUtil.writeColumn(netOut, this.column, this.column.hasBiomeData(), this.column.hasSkylight());
+        int mask = NetUtil.writeColumn(netOut, this.column);
 
         out.writeInt(this.column.getX());
         out.writeInt(this.column.getZ());
-        out.writeBoolean(this.column.hasBiomeData());
+        out.writeBoolean(this.column.getBiomeData() != null);
         out.writeVarInt(mask);
         NetUtil.writeNBT(out, this.column.getHeightMaps());
         out.writeVarInt(byteOut.size());
@@ -59,5 +57,10 @@ public class ServerChunkDataPacket extends MinecraftPacket {
         for(CompoundTag tag : this.column.getTileEntities()) {
             NetUtil.writeNBT(out, tag);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

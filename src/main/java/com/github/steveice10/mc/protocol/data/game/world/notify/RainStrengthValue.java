@@ -1,9 +1,10 @@
 package com.github.steveice10.mc.protocol.data.game.world.notify;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
+import lombok.Data;
 
+@Data
 public class RainStrengthValue implements ClientNotificationValue {
-    private float strength;
+    private final float strength;
 
     public RainStrengthValue(float strength) {
         if(strength > 1) {
@@ -15,28 +16,5 @@ public class RainStrengthValue implements ClientNotificationValue {
         }
 
         this.strength = strength;
-    }
-
-    public float getStrength() {
-        return this.strength;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof RainStrengthValue)) return false;
-
-        RainStrengthValue that = (RainStrengthValue) o;
-        return Float.compare(this.strength, that.strength) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtil.hashCode(this.strength);
-    }
-
-    @Override
-    public String toString() {
-        return ObjectUtil.toString(this);
     }
 }

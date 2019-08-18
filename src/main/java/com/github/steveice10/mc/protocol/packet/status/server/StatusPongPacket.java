@@ -1,33 +1,35 @@
 package com.github.steveice10.mc.protocol.packet.status.server;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class StatusPongPacket extends MinecraftPacket {
-    private long time;
-
-    @SuppressWarnings("unused")
-    private StatusPongPacket() {
-    }
-
-    public StatusPongPacket(long time) {
-        this.time = time;
-    }
-
-    public long getPingTime() {
-        return this.time;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class StatusPongPacket implements Packet {
+    private long pingTime;
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.time = in.readLong();
+        this.pingTime = in.readLong();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeLong(this.time);
+        out.writeLong(this.pingTime);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -1,33 +1,28 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
 
 import java.io.IOException;
-import java.util.Arrays;
 
+@Data
+@AllArgsConstructor
 public class NibbleArray3d {
-    private byte[] data;
+    private final @NonNull byte[] data;
 
     public NibbleArray3d(int size) {
-        this.data = new byte[size >> 1];
+        this(new byte[size >> 1]);
     }
 
-    public NibbleArray3d(byte[] array) {
-        this.data = array;
+    public NibbleArray3d(@NonNull NetInput in, int size) throws IOException {
+        this(in.readBytes(size));
     }
 
-    public NibbleArray3d(NetInput in, int size) throws IOException {
-        this.data = in.readBytes(size);
-    }
-
-    public void write(NetOutput out) throws IOException {
+    public void write(@NonNull NetOutput out) throws IOException {
         out.writeBytes(this.data);
-    }
-
-    public byte[] getData() {
-        return this.data;
     }
 
     public int get(int x, int y, int z) {
@@ -58,24 +53,5 @@ public class NibbleArray3d {
                 this.data[ind] = (byte) (this.data[ind] & 15 | (val & 15) << 4);
             }
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof NibbleArray3d)) return false;
-
-        NibbleArray3d that = (NibbleArray3d) o;
-        return Arrays.equals(this.data, that.data);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(this.data);
-    }
-
-    @Override
-    public String toString() {
-        return ObjectUtil.toString(this);
     }
 }

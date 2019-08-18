@@ -1,25 +1,22 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerAdvancementTabPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerAdvancementTabPacket implements Packet {
     private String tabId;
-
-    @SuppressWarnings("unused")
-    private ServerAdvancementTabPacket() {
-    }
-
-    public ServerAdvancementTabPacket(String tabId) {
-        this.tabId = tabId;
-    }
-
-    public String getTabId() {
-        return this.tabId;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -38,5 +35,10 @@ public class ServerAdvancementTabPacket extends MinecraftPacket {
         } else {
             out.writeBoolean(false);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

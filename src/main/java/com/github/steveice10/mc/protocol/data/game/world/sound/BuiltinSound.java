@@ -1,5 +1,11 @@
 package com.github.steveice10.mc.protocol.data.game.world.sound;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
+
+@Getter
+@AllArgsConstructor
 public enum BuiltinSound implements Sound {
     AMBIENT_CAVE("ambient.cave"),
     AMBIENT_UNDERWATER_ENTER("ambient.underwater.enter"),
@@ -797,13 +803,5 @@ public enum BuiltinSound implements Sound {
     WEATHER_RAIN("weather.rain"),
     WEATHER_RAIN_ABOVE("weather.rain.above");
 
-    private final String name;
-
-    private BuiltinSound(String name) {
-        this.name = name;
-    }
-
-    public String getSoundName() {
-        return this.name;
-    }
+    private final @NonNull String name;
 }

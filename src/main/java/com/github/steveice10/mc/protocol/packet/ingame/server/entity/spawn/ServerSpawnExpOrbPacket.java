@@ -1,49 +1,26 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerSpawnExpOrbPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerSpawnExpOrbPacket implements Packet {
     private int entityId;
     private double x;
     private double y;
     private double z;
     private int exp;
-
-    @SuppressWarnings("unused")
-    private ServerSpawnExpOrbPacket() {
-    }
-
-    public ServerSpawnExpOrbPacket(int entityId, double x, double y, double z, int exp) {
-        this.entityId = entityId;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.exp = exp;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public int getExp() {
-        return this.exp;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -61,5 +38,10 @@ public class ServerSpawnExpOrbPacket extends MinecraftPacket {
         out.writeDouble(this.y);
         out.writeDouble(this.z);
         out.writeShort(this.exp);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

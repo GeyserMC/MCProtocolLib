@@ -8,32 +8,25 @@ import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.RainStrengthValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ThunderStrengthValue;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerNotifyClientPacket extends MinecraftPacket {
-    private ClientNotification notification;
-    private ClientNotificationValue value;
-
-    @SuppressWarnings("unused")
-    private ServerNotifyClientPacket() {
-    }
-
-    public ServerNotifyClientPacket(ClientNotification notification, ClientNotificationValue value) {
-        this.notification = notification;
-        this.value = value;
-    }
-
-    public ClientNotification getNotification() {
-        return this.notification;
-    }
-
-    public ClientNotificationValue getValue() {
-        return this.value;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerNotifyClientPacket implements Packet {
+    private @NonNull ClientNotification notification;
+    private @NonNull ClientNotificationValue value;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -65,5 +58,10 @@ public class ServerNotifyClientPacket extends MinecraftPacket {
         }
 
         out.writeFloat(value);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

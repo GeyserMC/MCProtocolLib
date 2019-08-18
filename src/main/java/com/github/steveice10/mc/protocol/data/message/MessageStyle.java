@@ -1,18 +1,21 @@
 package com.github.steveice10.mc.protocol.data.message;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+@Data
+@Setter(AccessLevel.NONE)
 public class MessageStyle implements Cloneable {
     private static final MessageStyle DEFAULT = new MessageStyle();
 
     private ChatColor color = ChatColor.WHITE;
     private List<ChatFormat> formats = new ArrayList<ChatFormat>();
-    private ClickEvent click;
-    private HoverEvent hover;
+    private ClickEvent clickEvent;
+    private HoverEvent hoverEvent;
     private String insertion;
     private MessageStyle parent = DEFAULT;
 
@@ -20,17 +23,9 @@ public class MessageStyle implements Cloneable {
         return this.equals(DEFAULT);
     }
 
-    public ChatColor getColor() {
-        return this.color;
-    }
-
     public MessageStyle setColor(ChatColor color) {
         this.color = color;
         return this;
-    }
-
-    public List<ChatFormat> getFormats() {
-        return new ArrayList<ChatFormat>(this.formats);
     }
 
     public MessageStyle setFormats(List<ChatFormat> formats) {
@@ -38,35 +33,19 @@ public class MessageStyle implements Cloneable {
         return this;
     }
 
-    public ClickEvent getClickEvent() {
-        return this.click;
-    }
-
     public MessageStyle setClickEvent(ClickEvent event) {
-        this.click = event;
+        this.clickEvent = event;
         return this;
-    }
-
-    public HoverEvent getHoverEvent() {
-        return this.hover;
     }
 
     public MessageStyle setHoverEvent(HoverEvent event) {
-        this.hover = event;
+        this.hoverEvent = event;
         return this;
-    }
-
-    public String getInsertion() {
-        return this.insertion;
     }
 
     public MessageStyle setInsertion(String insertion) {
         this.insertion = insertion;
         return this;
-    }
-
-    public MessageStyle getParent() {
-        return this.parent;
     }
 
     protected MessageStyle setParent(MessageStyle parent) {
@@ -95,30 +74,12 @@ public class MessageStyle implements Cloneable {
 
     @Override
     public MessageStyle clone() {
-        return new MessageStyle().setParent(this.parent).setColor(this.color).setFormats(this.formats).setClickEvent(this.click != null ? this.click.clone() : null).setHoverEvent(this.hover != null ? this.hover.clone() : null).setInsertion(this.insertion);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof MessageStyle)) return false;
-
-        MessageStyle that = (MessageStyle) o;
-        return this.color == that.color &&
-                Objects.equals(this.formats, that.formats) &&
-                Objects.equals(this.click, that.click) &&
-                Objects.equals(this.hover, that.hover) &&
-                Objects.equals(this.insertion, that.insertion) &&
-                Objects.equals(this.parent, that.parent);
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtil.hashCode(this.color, this.formats, this.click, this.hover, this.insertion, this.parent);
-    }
-
-    @Override
-    public String toString() {
-        return ObjectUtil.toString(this);
+        return new MessageStyle()
+                .setParent(this.parent)
+                .setColor(this.color)
+                .setFormats(this.formats)
+                .setClickEvent(this.clickEvent)
+                .setHoverEvent(this.hoverEvent)
+                .setInsertion(this.insertion);
     }
 }

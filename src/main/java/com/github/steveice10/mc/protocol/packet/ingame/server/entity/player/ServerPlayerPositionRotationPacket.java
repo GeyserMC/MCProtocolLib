@@ -2,27 +2,30 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.entity.player;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ServerPlayerPositionRotationPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerPlayerPositionRotationPacket implements Packet {
     private double x;
     private double y;
     private double z;
     private float yaw;
     private float pitch;
-    private List<PositionElement> relative;
     private int teleportId;
-
-    @SuppressWarnings("unused")
-    private ServerPlayerPositionRotationPacket() {
-    }
+    private List<PositionElement> relative;
 
     public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, int teleportId, PositionElement... relative) {
         this.x = x;
@@ -34,34 +37,6 @@ public class ServerPlayerPositionRotationPacket extends MinecraftPacket {
         this.relative = Arrays.asList(relative != null ? relative : new PositionElement[0]);
     }
 
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
-
-    public List<PositionElement> getRelativeElements() {
-        return this.relative;
-    }
-
-    public int getTeleportId() {
-        return this.teleportId;
-    }
-
     @Override
     public void read(NetInput in) throws IOException {
         this.x = in.readDouble();
@@ -69,7 +44,8 @@ public class ServerPlayerPositionRotationPacket extends MinecraftPacket {
         this.z = in.readDouble();
         this.yaw = in.readFloat();
         this.pitch = in.readFloat();
-        this.relative = new ArrayList<PositionElement>();
+
+        this.relative = new ArrayList<>();
         int flags = in.readUnsignedByte();
         for(PositionElement element : PositionElement.values()) {
             int bit = 1 << MagicValues.value(Integer.class, element);
@@ -88,12 +64,19 @@ public class ServerPlayerPositionRotationPacket extends MinecraftPacket {
         out.writeDouble(this.z);
         out.writeFloat(this.yaw);
         out.writeFloat(this.pitch);
+
         int flags = 0;
         for(PositionElement element : this.relative) {
             flags |= 1 << MagicValues.value(Integer.class, element);
         }
 
         out.writeByte(flags);
+
         out.writeVarInt(this.teleportId);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

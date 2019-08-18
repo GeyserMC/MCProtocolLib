@@ -1,37 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerConfirmTransactionPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerConfirmTransactionPacket implements Packet {
     private int windowId;
     private int actionId;
     private boolean accepted;
-
-    @SuppressWarnings("unused")
-    private ServerConfirmTransactionPacket() {
-    }
-
-    public ServerConfirmTransactionPacket(int windowId, int actionId, boolean accepted) {
-        this.windowId = windowId;
-        this.actionId = actionId;
-        this.accepted = accepted;
-    }
-
-    public int getWindowId() {
-        return this.windowId;
-    }
-
-    public int getActionId() {
-        return this.actionId;
-    }
-
-    public boolean getAccepted() {
-        return this.accepted;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -45,5 +32,10 @@ public class ServerConfirmTransactionPacket extends MinecraftPacket {
         out.writeByte(this.windowId);
         out.writeShort(this.actionId);
         out.writeBoolean(this.accepted);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

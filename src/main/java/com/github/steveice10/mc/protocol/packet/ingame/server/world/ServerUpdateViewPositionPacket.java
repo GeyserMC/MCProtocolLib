@@ -1,31 +1,23 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import java.io.IOException;
-
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public class ServerUpdateViewPositionPacket extends MinecraftPacket {
+import java.io.IOException;
 
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerUpdateViewPositionPacket implements Packet {
     private int chunkX;
     private int chunkZ;
-
-    public ServerUpdateViewPositionPacket() {
-    }
-
-    public ServerUpdateViewPositionPacket(int chunkX, int chunkZ) {
-        this.chunkX = chunkX;
-        this.chunkZ = chunkZ;
-    }
-
-    public int getChunkX() {
-        return chunkX;
-    }
-
-    public int getChunkZ() {
-        return chunkZ;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -37,5 +29,10 @@ public class ServerUpdateViewPositionPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.chunkX);
         out.writeVarInt(this.chunkZ);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

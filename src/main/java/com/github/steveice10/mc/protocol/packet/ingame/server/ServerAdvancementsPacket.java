@@ -6,10 +6,16 @@ import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.Displ
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,54 +23,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ServerAdvancementsPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerAdvancementsPacket implements Packet {
+    private static final int FLAG_HAS_BACKGROUND_TEXTURE = 0x01;
+    private static final int FLAG_SHOW_TOAST = 0x02;
+    private static final int FLAG_HIDDEN = 0x04;
+
     private boolean reset;
-    private List<Advancement> advancements;
-    private List<String> removedAdvancements;
-    private Map<String, Map<String, Long>> progress;
+    private @NonNull Advancement[] advancements;
+    private @NonNull String[] removedAdvancements;
+    private @NonNull Map<String, Map<String, Long>> progress;
 
-    @SuppressWarnings("unused")
-    private ServerAdvancementsPacket() {
+    public Map<String, Long> getProgress(@NonNull String advancementId) {
+        return this.progress.get(advancementId);
     }
 
-    public ServerAdvancementsPacket(boolean reset, List<Advancement> advancements, List<String> removedAdvancements, Map<String, Map<String, Long>> progress) {
-        this.reset = reset;
-        this.advancements = advancements;
-        this.removedAdvancements = removedAdvancements;
-        this.progress = progress;
-    }
+    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
+        Map<String, Long> progress = this.getProgress(advancementId);
+        if(progress == null || !progress.containsKey(criterionId)) {
+            return -1;
+        }
 
-    public boolean doesReset() {
-        return this.reset;
-    }
-
-    public List<Advancement> getAdvancements() {
-        return this.advancements;
-    }
-
-    public List<String> getRemovedAdvancements() {
-        return this.removedAdvancements;
-    }
-
-    public Map<String, Map<String, Long>> getProgress() {
-        return this.progress;
-    }
-
-    public Map<String, Long> getProgress(String advancementId) {
-        return getProgress().get(advancementId);
-    }
-
-    public Long getAchievedDate(String advancementId, String criterionId) {
-        return getProgress(advancementId).get(criterionId);
+        return this.getProgress(advancementId).get(criterionId);
     }
 
     @Override
     public void read(NetInput in) throws IOException {
         this.reset = in.readBoolean();
 
-        this.advancements = new ArrayList<>();
-        int advancementCount = in.readVarInt();
-        for(int i = 0; i < advancementCount; i++) {
+        this.advancements = new Advancement[in.readVarInt()];
+        for(int i = 0; i < this.advancements.length; i++) {
             String id = in.readString();
             String parentId = in.readBoolean() ? in.readString() : null;
             DisplayData displayData = null;
@@ -75,9 +66,9 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
                 FrameType frameType = MagicValues.key(FrameType.class, in.readVarInt());
 
                 int flags = in.readInt();
-                boolean hasBackgroundTexture = (flags & 0x1) != 0;
-                boolean showToast = (flags & 0x2) != 0;
-                boolean hidden = (flags & 0x4) != 0;
+                boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
+                boolean showToast = (flags & FLAG_SHOW_TOAST) != 0;
+                boolean hidden = (flags & FLAG_HIDDEN) != 0;
 
                 String backgroundTexture = hasBackgroundTexture ? in.readString() : null;
                 float posX = in.readFloat();
@@ -104,13 +95,12 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
                 requirements.add(requirement);
             }
 
-            this.advancements.add(new Advancement(id, parentId, criteria, requirements, displayData));
+            this.advancements[i] = new Advancement(id, parentId, criteria, requirements, displayData);
         }
 
-        this.removedAdvancements = new ArrayList<>();
-        int removedCount = in.readVarInt();
-        for(int i = 0; i < removedCount; i++) {
-            this.removedAdvancements.add(in.readString());
+        this.removedAdvancements = new String[in.readVarInt()];
+        for(int i = 0; i < this.removedAdvancements.length; i++) {
+            this.removedAdvancements[i] = in.readString();
         }
 
         this.progress = new HashMap<>();
@@ -134,7 +124,7 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeBoolean(this.reset);
 
-        out.writeVarInt(this.advancements.size());
+        out.writeVarInt(this.advancements.length);
         for(Advancement advancement : this.advancements) {
             out.writeString(advancement.getId());
             if(advancement.getParentId() != null) {
@@ -154,9 +144,18 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
                 String backgroundTexture = displayData.getBackgroundTexture();
 
                 int flags = 0;
-                if(backgroundTexture != null) flags |= 0x1;
-                if(displayData.doesShowToast()) flags |= 0x2;
-                if(displayData.isHidden()) flags |= 0x4;
+                if(backgroundTexture != null) {
+                    flags |= FLAG_HAS_BACKGROUND_TEXTURE;
+                }
+
+                if(displayData.isShowToast()) {
+                    flags |= FLAG_SHOW_TOAST;
+                }
+
+                if(displayData.isHidden()) {
+                    flags |= FLAG_HIDDEN;
+                }
+
                 out.writeInt(flags);
 
                 if(backgroundTexture != null) {
@@ -183,7 +182,7 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
             }
         }
 
-        out.writeVarInt(this.removedAdvancements.size());
+        out.writeVarInt(this.removedAdvancements.length);
         for(String id : this.removedAdvancements) {
             out.writeString(id);
         }
@@ -203,5 +202,10 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

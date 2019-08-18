@@ -2,49 +2,37 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerUpdateScorePacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerUpdateScorePacket implements Packet {
     private String entry;
     private ScoreboardAction action;
     private String objective;
     private int value;
 
-    @SuppressWarnings("unused")
-    private ServerUpdateScorePacket() {
-    }
-
     public ServerUpdateScorePacket(String entry, String objective) {
         this.entry = entry;
-        this.objective = objective;
         this.action = ScoreboardAction.REMOVE;
+        this.objective = objective;
     }
 
     public ServerUpdateScorePacket(String entry, String objective, int value) {
         this.entry = entry;
-        this.objective = objective;
-        this.value = value;
         this.action = ScoreboardAction.ADD_OR_UPDATE;
-    }
+        this.objective = objective;
 
-    public String getEntry() {
-        return this.entry;
-    }
-
-    public ScoreboardAction getAction() {
-        return this.action;
-    }
-
-    public String getObjective() {
-        return this.objective;
-    }
-
-    public int getValue() {
-        return this.value;
+        this.value = value;
     }
 
     @Override
@@ -65,5 +53,10 @@ public class ServerUpdateScorePacket extends MinecraftPacket {
         if(this.action == ScoreboardAction.ADD_OR_UPDATE) {
             out.writeVarInt(this.value);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

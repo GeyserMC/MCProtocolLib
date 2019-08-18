@@ -13,48 +13,31 @@ import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.WorldEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.WorldEffectData;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerPlayEffectPacket extends MinecraftPacket {
-    private WorldEffect effect;
-    private Position position;
-    private WorldEffectData data;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPlayEffectPacket implements Packet {
+    private @NonNull WorldEffect effect;
+    private @NonNull Position position;
+    private @NonNull WorldEffectData data;
     private boolean broadcast;
 
-    @SuppressWarnings("unused")
-    private ServerPlayEffectPacket() {
-    }
-
-    public ServerPlayEffectPacket(WorldEffect effect, Position position, WorldEffectData data) {
+    public ServerPlayEffectPacket(@NonNull WorldEffect effect, @NonNull Position position, @NonNull WorldEffectData data) {
         this(effect, position, data, false);
-    }
-
-    public ServerPlayEffectPacket(WorldEffect effect, Position position, WorldEffectData data, boolean broadcast) {
-        this.effect = effect;
-        this.position = position;
-        this.data = data;
-        this.broadcast = broadcast;
-    }
-
-    public WorldEffect getEffect() {
-        return this.effect;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public WorldEffectData getData() {
-        return this.data;
-    }
-
-    public boolean getBroadcast() {
-        return this.broadcast;
     }
 
     @Override
@@ -100,5 +83,10 @@ public class ServerPlayEffectPacket extends MinecraftPacket {
 
         out.writeInt(value);
         out.writeBoolean(this.broadcast);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

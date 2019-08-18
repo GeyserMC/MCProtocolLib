@@ -1,31 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerEntitySetPassengersPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntitySetPassengersPacket implements Packet {
     private int entityId;
-    private int passengerIds[];
-
-    @SuppressWarnings("unused")
-    private ServerEntitySetPassengersPacket() {
-    }
-
-    public ServerEntitySetPassengersPacket(int entityId, int... passengerIds) {
-        this.entityId = entityId;
-        this.passengerIds = passengerIds;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public int[] getPassengerIds() {
-        return this.passengerIds;
-    }
+    private @NonNull int[] passengerIds;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -43,5 +36,10 @@ public class ServerEntitySetPassengersPacket extends MinecraftPacket {
         for(int entityId : this.passengerIds) {
             out.writeVarInt(entityId);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -2,32 +2,25 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerEntityStatusPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntityStatusPacket implements Packet {
     protected int entityId;
-    protected EntityStatus status;
-
-    @SuppressWarnings("unused")
-    private ServerEntityStatusPacket() {
-    }
-
-    public ServerEntityStatusPacket(int entityId, EntityStatus status) {
-        this.entityId = entityId;
-        this.status = status;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public EntityStatus getStatus() {
-        return this.status;
-    }
+    protected @NonNull EntityStatus status;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -39,5 +32,10 @@ public class ServerEntityStatusPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.entityId);
         out.writeByte(MagicValues.value(Integer.class, this.status));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

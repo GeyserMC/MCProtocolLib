@@ -1,16 +1,25 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
-import java.io.IOException;
-
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
-public class ClientSetDifficultyPacket extends MinecraftPacket {
+import java.io.IOException;
 
-    private Difficulty difficulty;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientSetDifficultyPacket implements Packet {
+    private @NonNull Difficulty difficulty;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -20,5 +29,10 @@ public class ClientSetDifficultyPacket extends MinecraftPacket {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(MagicValues.key(Byte.class, this.difficulty));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -1,51 +1,29 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import java.io.IOException;
-
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
-public class ServerEntitySoundEffectPacket extends MinecraftPacket {
+import java.io.IOException;
 
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntitySoundEffectPacket implements Packet {
     private int soundId;
-    private SoundCategory soundCategory;
+    private @NonNull SoundCategory soundCategory;
     private int entityId;
     private float volume;
     private float pitch;
-
-    public ServerEntitySoundEffectPacket() {
-    }
-
-    public ServerEntitySoundEffectPacket(int soundId, SoundCategory soundCategory, int entityId, float volume, float pitch) {
-        this.soundId = soundId;
-        this.soundCategory = soundCategory;
-        this.entityId = entityId;
-        this.volume = volume;
-        this.pitch = pitch;
-    }
-
-    public int getSoundId() {
-        return soundId;
-    }
-
-    public SoundCategory getSoundCategory() {
-        return soundCategory;
-    }
-
-    public int getEntityId() {
-        return entityId;
-    }
-
-    public float getVolume() {
-        return volume;
-    }
-
-    public float getPitch() {
-        return pitch;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -63,5 +41,10 @@ public class ServerEntitySoundEffectPacket extends MinecraftPacket {
         out.writeVarInt(this.entityId);
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -27,19 +27,20 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlaye
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerSwingArmPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerUseItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientAdvancementTabPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientClickWindowButtonPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCloseWindowPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateCommandBlockPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateJigsawBlockPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientConfirmTransactionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCraftingBookDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCreativeInventoryActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEditBookPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientClickWindowButtonPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientMoveItemToHotbarPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientPrepareCraftingGridPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientRenameItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientSelectTradePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientSetBeaconEffectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateCommandBlockMinecartPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateCommandBlockPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateJigsawBlockPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateStructureBlockPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientWindowActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientBlockNBTRequestPacket;
@@ -48,7 +49,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSpecta
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerBoatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerVehiclePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientTeleportConfirmPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientUpdateCommandBlockMinecartPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientUpdateSignPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientVehicleMovePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancementTabPacket;
@@ -164,31 +164,40 @@ import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import com.github.steveice10.packetlib.packet.DefaultPacketHeader;
 import com.github.steveice10.packetlib.packet.PacketHeader;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.UUID;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MinecraftProtocol extends PacketProtocol {
     private SubProtocol subProtocol = SubProtocol.HANDSHAKE;
-    private PacketHeader header = new DefaultPacketHeader();
-    private AESEncryption encrypt;
+    private final PacketHeader packetHeader = new DefaultPacketHeader();
+    private AESEncryption encryption = null;
 
-    private GameProfile profile;
+    private SubProtocol targetSubProtocol;
+    @Getter
+    private GameProfile profile = null;
+    @Getter
     private String clientToken = "";
+    @Getter
     private String accessToken = "";
 
-    @SuppressWarnings("unused")
-    private MinecraftProtocol() {
-    }
+    @Getter
+    @Setter
+    private boolean useDefaultListeners = true;
 
     public MinecraftProtocol(SubProtocol subProtocol) {
         if(subProtocol != SubProtocol.LOGIN && subProtocol != SubProtocol.STATUS) {
             throw new IllegalArgumentException("Only login and status modes are permitted.");
         }
 
-        this.subProtocol = subProtocol;
+        this.targetSubProtocol = subProtocol;
         if(subProtocol == SubProtocol.LOGIN) {
             this.profile = new GameProfile((UUID) null, "Player");
         }
@@ -196,6 +205,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
     public MinecraftProtocol(String username) {
         this(SubProtocol.LOGIN);
+
         this.profile = new GameProfile((UUID) null, username);
     }
 
@@ -239,18 +249,6 @@ public class MinecraftProtocol extends PacketProtocol {
         this.accessToken = accessToken;
     }
 
-    public GameProfile getProfile() {
-        return this.profile;
-    }
-
-    public String getClientToken() {
-        return this.clientToken;
-    }
-
-    public String getAccessToken() {
-        return this.accessToken;
-    }
-
     @Override
     public String getSRVRecordPrefix() {
         return "_minecraft";
@@ -258,12 +256,12 @@ public class MinecraftProtocol extends PacketProtocol {
 
     @Override
     public PacketHeader getPacketHeader() {
-        return this.header;
+        return this.packetHeader;
     }
 
     @Override
     public PacketEncryption getEncryption() {
-        return this.encrypt;
+        return this.encryption;
     }
 
     @Override
@@ -273,19 +271,25 @@ public class MinecraftProtocol extends PacketProtocol {
             session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
         }
 
-        this.setSubProtocol(this.subProtocol, true, session);
-        session.addListener(new ClientListener());
+        this.setSubProtocol(SubProtocol.HANDSHAKE, true, session);
+
+        if(this.useDefaultListeners) {
+            session.addListener(new ClientListener(this.targetSubProtocol));
+        }
     }
 
     @Override
     public void newServerSession(Server server, Session session) {
         this.setSubProtocol(SubProtocol.HANDSHAKE, false, session);
-        session.addListener(new ServerListener());
+
+        if(this.useDefaultListeners) {
+            session.addListener(new ServerListener());
+        }
     }
 
     protected void enableEncryption(Key key) {
         try {
-            this.encrypt = new AESEncryption(key);
+            this.encryption = new AESEncryption(key);
         } catch(GeneralSecurityException e) {
             throw new Error("Failed to enable protocol encryption.", e);
         }

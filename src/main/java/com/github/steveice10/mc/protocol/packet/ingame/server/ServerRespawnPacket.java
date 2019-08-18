@@ -1,41 +1,28 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import java.io.IOException;
-
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
-public class ServerRespawnPacket extends MinecraftPacket {
+import java.io.IOException;
 
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerRespawnPacket implements Packet {
     private int dimension;
-    private GameMode gamemode;
-    private WorldType worldType;
-
-    @SuppressWarnings("unused")
-    private ServerRespawnPacket() {
-    }
-
-    public ServerRespawnPacket(int dimension, GameMode gamemode, WorldType worldType) {
-        this.dimension = dimension;
-        this.gamemode = gamemode;
-        this.worldType = worldType;
-    }
-
-    public int getDimension() {
-        return this.dimension;
-    }
-
-    public GameMode getGameMode() {
-        return this.gamemode;
-    }
-
-    public WorldType getWorldType() {
-        return this.worldType;
-    }
+    private @NonNull GameMode gamemode;
+    private @NonNull WorldType worldType;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -49,5 +36,10 @@ public class ServerRespawnPacket extends MinecraftPacket {
         out.writeInt(this.dimension);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
         out.writeString(MagicValues.value(String.class, this.worldType));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

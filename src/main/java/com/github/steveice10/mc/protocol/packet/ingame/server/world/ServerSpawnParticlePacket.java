@@ -3,15 +3,25 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerSpawnParticlePacket extends MinecraftPacket {
-    private Particle particle;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerSpawnParticlePacket implements Packet {
+    private @NonNull Particle particle;
     private boolean longDistance;
     private float x;
     private float y;
@@ -21,63 +31,6 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
     private float offsetZ;
     private float velocityOffset;
     private int amount;
-
-    @SuppressWarnings("unused")
-    private ServerSpawnParticlePacket() {
-    }
-
-    public ServerSpawnParticlePacket(Particle particle, boolean longDistance, float x, float y, float z, float offsetX, float offsetY, float offsetZ, float velocityOffset, int amount) {
-        this.particle = particle;
-        this.longDistance = longDistance;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.offsetZ = offsetZ;
-        this.velocityOffset = velocityOffset;
-        this.amount = amount;
-    }
-
-    public Particle getParticle() {
-        return this.particle;
-    }
-
-    public boolean isLongDistance() {
-        return this.longDistance;
-    }
-
-    public float getX() {
-        return this.x;
-    }
-
-    public float getY() {
-        return this.y;
-    }
-
-    public float getZ() {
-        return this.z;
-    }
-
-    public float getOffsetX() {
-        return this.offsetX;
-    }
-
-    public float getOffsetY() {
-        return this.offsetY;
-    }
-
-    public float getOffsetZ() {
-        return this.offsetZ;
-    }
-
-    public float getVelocityOffset() {
-        return this.velocityOffset;
-    }
-
-    public int getAmount() {
-        return this.amount;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -107,5 +60,10 @@ public class ServerSpawnParticlePacket extends MinecraftPacket {
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
         NetUtil.writeParticleData(out, this.particle.getData(), this.particle.getType());
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

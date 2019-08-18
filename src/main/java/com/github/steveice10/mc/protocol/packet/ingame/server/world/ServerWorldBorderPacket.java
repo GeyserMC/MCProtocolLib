@@ -2,14 +2,22 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerWorldBorderPacket extends MinecraftPacket {
-    private WorldBorderAction action;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerWorldBorderPacket implements Packet {
+    private @NonNull WorldBorderAction action;
 
     private double radius;
 
@@ -26,17 +34,15 @@ public class ServerWorldBorderPacket extends MinecraftPacket {
 
     private int warningBlocks;
 
-    @SuppressWarnings("unused")
-    private ServerWorldBorderPacket() {
-    }
-
     public ServerWorldBorderPacket(double radius) {
         this.action = WorldBorderAction.SET_SIZE;
+
         this.radius = radius;
     }
 
     public ServerWorldBorderPacket(double oldRadius, double newRadius, long speed) {
         this.action = WorldBorderAction.LERP_SIZE;
+
         this.oldRadius = oldRadius;
         this.newRadius = newRadius;
         this.speed = speed;
@@ -44,12 +50,26 @@ public class ServerWorldBorderPacket extends MinecraftPacket {
 
     public ServerWorldBorderPacket(double centerX, double centerY) {
         this.action = WorldBorderAction.SET_CENTER;
+
         this.centerX = centerX;
         this.centerY = centerY;
     }
 
+    public ServerWorldBorderPacket(boolean time, int warning) {
+        if(time) {
+            this.action = WorldBorderAction.SET_WARNING_TIME;
+
+            this.warningTime = warning;
+        } else {
+            this.action = WorldBorderAction.SET_WARNING_BLOCKS;
+
+            this.warningBlocks = warning;
+        }
+    }
+
     public ServerWorldBorderPacket(double centerX, double centerY, double oldRadius, double newRadius, long speed, int portalTeleportBoundary, int warningTime, int warningBlocks) {
         this.action = WorldBorderAction.INITIALIZE;
+
         this.centerX = centerX;
         this.centerY = centerY;
         this.oldRadius = oldRadius;
@@ -58,56 +78,6 @@ public class ServerWorldBorderPacket extends MinecraftPacket {
         this.portalTeleportBoundary = portalTeleportBoundary;
         this.warningTime = warningTime;
         this.warningBlocks = warningBlocks;
-    }
-
-    public ServerWorldBorderPacket(int warning, boolean time) {
-        if(time) {
-            this.action = WorldBorderAction.SET_WARNING_TIME;
-            this.warningTime = warning;
-        } else {
-            this.action = WorldBorderAction.SET_WARNING_BLOCKS;
-            this.warningBlocks = warning;
-        }
-    }
-
-    public WorldBorderAction getAction() {
-        return this.action;
-    }
-
-    public double getRadius() {
-        return this.radius;
-    }
-
-    public double getOldRadius() {
-        return this.oldRadius;
-    }
-
-    public double getNewRadius() {
-        return this.newRadius;
-    }
-
-    public long getSpeed() {
-        return this.speed;
-    }
-
-    public double getCenterX() {
-        return this.centerX;
-    }
-
-    public double getCenterY() {
-        return this.centerY;
-    }
-
-    public int getPortalTeleportBoundary() {
-        return this.portalTeleportBoundary;
-    }
-
-    public int getWarningTime() {
-        return this.warningTime;
-    }
-
-    public int getWarningBlocks() {
-        return this.warningBlocks;
     }
 
     @Override
@@ -164,5 +134,10 @@ public class ServerWorldBorderPacket extends MinecraftPacket {
         } else if(this.action == WorldBorderAction.SET_WARNING_BLOCKS) {
             out.writeVarInt(this.warningBlocks);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

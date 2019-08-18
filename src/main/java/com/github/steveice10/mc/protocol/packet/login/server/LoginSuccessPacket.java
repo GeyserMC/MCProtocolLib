@@ -1,26 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class LoginSuccessPacket extends MinecraftPacket {
-    private GameProfile profile;
-
-    @SuppressWarnings("unused")
-    private LoginSuccessPacket() {
-    }
-
-    public LoginSuccessPacket(GameProfile profile) {
-        this.profile = profile;
-    }
-
-    public GameProfile getProfile() {
-        return this.profile;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class LoginSuccessPacket implements Packet {
+    private @NonNull GameProfile profile;
 
     @Override
     public void read(NetInput in) throws IOException {

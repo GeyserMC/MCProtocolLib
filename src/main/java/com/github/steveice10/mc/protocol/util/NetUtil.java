@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.util;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.chunk.BlockStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
@@ -18,8 +17,8 @@ import com.github.steveice10.mc.protocol.data.game.world.particle.DustParticleDa
 import com.github.steveice10.mc.protocol.data.game.world.particle.FallingDustParticleData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ItemParticleData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
-import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleData;
+import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -42,6 +41,7 @@ public class NetUtil {
     private static final int POSITION_Z_SIZE = 38;
     private static final int POSITION_Y_SHIFT = 0xFFF;
     private static final int POSITION_WRITE_SHIFT = 0x3FFFFFF;
+
     private NetUtil() {
     }
 
@@ -72,9 +72,10 @@ public class NetUtil {
 
     public static ItemStack readItem(NetInput in) throws IOException {
         boolean present = in.readBoolean();
-        if (!present) {
+        if(!present) {
             return null;
         }
+
         int item = in.readVarInt();
         return new ItemStack(item, in.readByte(), readNBT(in));
     }
@@ -84,7 +85,7 @@ public class NetUtil {
         if (item != null) {
             out.writeVarInt(item.getId());
             out.writeByte(item.getAmount());
-            writeNBT(out, item.getNBT());
+            writeNBT(out, item.getNbt());
         }
     }
 
@@ -346,8 +347,7 @@ public class NetUtil {
             Chunk[] chunks = new Chunk[16];
             for(int index = 0; index < chunks.length; index++) {
                 if((mask & (1 << index)) != 0) {
-                    BlockStorage blocks = new BlockStorage(in);
-                    chunks[index] = new Chunk(blocks);
+                    chunks[index] = new Chunk(in);
                 }
             }
 
@@ -356,7 +356,7 @@ public class NetUtil {
                 biomeData = in.readInts(256);
             }
 
-            column = new Column(x, z, chunks, biomeData, tileEntities, heightmaps);
+            column = new Column(x, z, chunks, tileEntities, heightmaps, biomeData);
         } catch(Throwable e) {
             ex = e;
         }
@@ -371,18 +371,20 @@ public class NetUtil {
         return column;
     }
 
-    public static int writeColumn(NetOutput out, Column column, boolean fullChunk, boolean hasSkylight) throws IOException {
+    public static int writeColumn(NetOutput out, Column column) throws IOException {
+        boolean full = column.getBiomeData() != null;
+
         int mask = 0;
         Chunk chunks[] = column.getChunks();
         for(int index = 0; index < chunks.length; index++) {
             Chunk chunk = chunks[index];
-            if(chunk != null && (!fullChunk || !chunk.isEmpty())) {
+            if(chunk != null && (!full || !chunk.isEmpty())) {
                 mask |= 1 << index;
-                chunk.getBlocks().write(out);
+                chunk.write(out);
             }
         }
 
-        if(fullChunk) {
+        if(full) {
             out.writeInts(column.getBiomeData());
         }
 

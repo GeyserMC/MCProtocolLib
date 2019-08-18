@@ -1,18 +1,20 @@
 package com.github.steveice10.mc.protocol.data.message;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+@Getter
+@EqualsAndHashCode
 public abstract class Message implements Cloneable {
     private MessageStyle style = new MessageStyle();
-    private List<Message> extra = new ArrayList<Message>();
+    private final List<Message> extra = new ArrayList<Message>();
 
     public static Message fromString(String str) {
         try {
@@ -115,23 +117,15 @@ public abstract class Message implements Cloneable {
         return build.toString();
     }
 
-    public MessageStyle getStyle() {
-        return this.style;
-    }
-
     public Message setStyle(MessageStyle style) {
         this.style = style;
         return this;
     }
 
-    public List<Message> getExtra() {
-        return new ArrayList<Message>(this.extra);
-    }
-
     public Message setExtra(List<Message> extra) {
-        this.extra = new ArrayList<Message>(extra);
-        for(Message msg : this.extra) {
-            msg.getStyle().setParent(this.style);
+        this.clearExtra();
+        for(Message msg : extra) {
+            this.addExtra(msg.clone());
         }
 
         return this;
@@ -160,21 +154,6 @@ public abstract class Message implements Cloneable {
 
     @Override
     public abstract Message clone();
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof Message)) return false;
-
-        Message that = (Message) o;
-        return Objects.equals(this.style, that.style) &&
-                Objects.equals(this.extra, that.extra);
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtil.hashCode(this.style, this.extra);
-    }
 
     @Override
     public String toString() {

@@ -1,41 +1,38 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerUpdateTimePacket extends MinecraftPacket {
-    private long age;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerUpdateTimePacket implements Packet {
+    private long worldAge;
     private long time;
-
-    @SuppressWarnings("unused")
-    private ServerUpdateTimePacket() {
-    }
-
-    public ServerUpdateTimePacket(long age, long time) {
-        this.age = age;
-        this.time = time;
-    }
-
-    public long getWorldAge() {
-        return this.age;
-    }
-
-    public long getTime() {
-        return this.time;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.age = in.readLong();
+        this.worldAge = in.readLong();
         this.time = in.readLong();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeLong(this.age);
+        out.writeLong(this.worldAge);
         out.writeLong(this.time);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

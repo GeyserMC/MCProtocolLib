@@ -5,60 +5,33 @@ import com.github.steveice10.mc.protocol.data.game.world.map.MapData;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIcon;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerMapDataPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerMapDataPacket implements Packet {
     private int mapId;
     private byte scale;
     private boolean trackingPosition;
     private boolean locked;
-    private MapIcon icons[];
+    private @NonNull MapIcon[] icons;
 
     private MapData data;
 
-    @SuppressWarnings("unused")
-    private ServerMapDataPacket() {
-    }
-
-    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, boolean locked, MapIcon icons[]) {
+    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, boolean locked, @NonNull MapIcon[] icons) {
         this(mapId, scale, trackingPosition, locked, icons, null);
-    }
-
-    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, boolean locked, MapIcon icons[], MapData data) {
-        this.mapId = mapId;
-        this.scale = scale;
-        this.trackingPosition = trackingPosition;
-        this.locked = locked;
-        this.icons = icons;
-        this.data = data;
-    }
-
-    public int getMapId() {
-        return this.mapId;
-    }
-
-    public byte getScale() {
-        return this.scale;
-    }
-
-    public boolean getTrackingPosition() {
-        return this.trackingPosition;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public MapIcon[] getIcons() {
-        return this.icons;
-    }
-
-    public MapData getData() {
-        return this.data;
     }
 
     @Override
@@ -74,9 +47,10 @@ public class ServerMapDataPacket extends MinecraftPacket {
             int z = in.readUnsignedByte();
             int rotation = in.readUnsignedByte();
             Message displayName = null;
-            if (in.readBoolean()) {
+            if(in.readBoolean()) {
                 displayName = Message.fromString(in.readString());
             }
+
             this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
         }
 
@@ -85,7 +59,8 @@ public class ServerMapDataPacket extends MinecraftPacket {
             int rows = in.readUnsignedByte();
             int x = in.readUnsignedByte();
             int y = in.readUnsignedByte();
-            byte data[] = in.readBytes(in.readVarInt());
+            byte[] data = in.readBytes(in.readVarInt());
+
             this.data = new MapData(columns, rows, x, y, data);
         }
     }
@@ -122,5 +97,10 @@ public class ServerMapDataPacket extends MinecraftPacket {
         } else {
             out.writeByte(0);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

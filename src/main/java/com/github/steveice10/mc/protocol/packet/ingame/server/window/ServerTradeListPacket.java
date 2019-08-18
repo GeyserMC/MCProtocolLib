@@ -1,58 +1,31 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
-import java.io.IOException;
-
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.window.VillagerTrade;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
-public class ServerTradeListPacket extends MinecraftPacket {
+import java.io.IOException;
 
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerTradeListPacket implements Packet {
     private int windowId;
-    private VillagerTrade[] trades;
+    private @NonNull VillagerTrade[] trades;
     private int villagerLevel;
     private int experience;
-    private boolean isRegularVillager;
+    private boolean regularVillager;
     private boolean canRestock;
-
-    public ServerTradeListPacket() {
-    }
-
-    public ServerTradeListPacket(int windowId, VillagerTrade[] trades, int villagerLevel, int experience, boolean isRegularVillager, boolean canRestock) {
-        this.windowId = windowId;
-        this.trades = trades;
-        this.villagerLevel = villagerLevel;
-        this.experience = experience;
-        this.isRegularVillager = isRegularVillager;
-        this.canRestock = canRestock;
-    }
-
-    public int getWindowId() {
-        return windowId;
-    }
-
-    public VillagerTrade[] getTrades() {
-        return trades;
-    }
-
-    public int getVillagerLevel() {
-        return villagerLevel;
-    }
-
-    public int getExperience() {
-        return experience;
-    }
-
-    public boolean isRegularVillager() {
-        return isRegularVillager;
-    }
-
-    public boolean canRestock() {
-        return canRestock;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -82,7 +55,7 @@ public class ServerTradeListPacket extends MinecraftPacket {
 
         this.villagerLevel = in.readVarInt();
         this.experience = in.readVarInt();
-        this.isRegularVillager = in.readBoolean();
+        this.regularVillager = in.readBoolean();
         this.canRestock = in.readBoolean();
     }
 
@@ -114,7 +87,12 @@ public class ServerTradeListPacket extends MinecraftPacket {
 
         out.writeVarInt(this.villagerLevel);
         out.writeVarInt(this.experience);
-        out.writeBoolean(this.isRegularVillager);
+        out.writeBoolean(this.regularVillager);
         out.writeBoolean(this.canRestock);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

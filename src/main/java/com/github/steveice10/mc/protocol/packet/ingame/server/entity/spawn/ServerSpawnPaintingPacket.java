@@ -4,52 +4,30 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.object.HangingDirection;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class ServerSpawnPaintingPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerSpawnPaintingPacket implements Packet {
     private int entityId;
-    private UUID uuid;
-    private PaintingType paintingType;
-    private Position position;
-    private HangingDirection direction;
-
-    @SuppressWarnings("unused")
-    private ServerSpawnPaintingPacket() {
-    }
-
-    public ServerSpawnPaintingPacket(int entityId, UUID uuid, PaintingType paintingType, Position position, HangingDirection direction) {
-        this.entityId = entityId;
-        this.uuid = uuid;
-        this.paintingType = paintingType;
-        this.position = position;
-        this.direction = direction;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-    public PaintingType getPaintingType() {
-        return this.paintingType;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public HangingDirection getDirection() {
-        return this.direction;
-    }
+    private @NonNull UUID uuid;
+    private @NonNull PaintingType paintingType;
+    private @NonNull Position position;
+    private @NonNull HangingDirection direction;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -67,5 +45,10 @@ public class ServerSpawnPaintingPacket extends MinecraftPacket {
         out.writeVarInt(MagicValues.value(Integer.class, this.paintingType));
         NetUtil.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.direction));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

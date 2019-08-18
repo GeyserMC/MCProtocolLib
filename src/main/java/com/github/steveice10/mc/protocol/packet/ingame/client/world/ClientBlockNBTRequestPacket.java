@@ -1,33 +1,26 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.world;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientBlockNBTRequestPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientBlockNBTRequestPacket implements Packet {
     private int transactionId;
-    private Position position;
-
-    @SuppressWarnings("unused")
-    private ClientBlockNBTRequestPacket() {
-    }
-
-    public ClientBlockNBTRequestPacket(int transactionId, Position position) {
-        this.transactionId = transactionId;
-        this.position = position;
-    }
-
-    public int getTransactionId() {
-        return this.transactionId;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
+    private @NonNull Position position;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -39,5 +32,10 @@ public class ClientBlockNBTRequestPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.transactionId);
         NetUtil.writePosition(out, this.position);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

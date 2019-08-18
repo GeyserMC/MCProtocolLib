@@ -1,12 +1,26 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.player;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientPlayerAbilitiesPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientPlayerAbilitiesPacket implements Packet {
+    private static final int FLAG_INVINCIBLE = 0x01;
+    private static final int FLAG_CAN_FLY = 0x02;
+    private static final int FLAG_FLYING = 0x04;
+    private static final int FLAG_CREATIVE = 0x08;
+
     private boolean invincible;
     private boolean canFly;
     private boolean flying;
@@ -14,75 +28,45 @@ public class ClientPlayerAbilitiesPacket extends MinecraftPacket {
     private float flySpeed;
     private float walkSpeed;
 
-    @SuppressWarnings("unused")
-    private ClientPlayerAbilitiesPacket() {
-    }
-
-    public ClientPlayerAbilitiesPacket(boolean invincible, boolean canFly, boolean flying, boolean creative, float flySpeed, float walkSpeed) {
-        this.invincible = invincible;
-        this.canFly = canFly;
-        this.flying = flying;
-        this.creative = creative;
-        this.flySpeed = flySpeed;
-        this.walkSpeed = walkSpeed;
-    }
-
-    public boolean getInvincible() {
-        return this.invincible;
-    }
-
-    public boolean getCanFly() {
-        return this.canFly;
-    }
-
-    public boolean getFlying() {
-        return this.flying;
-    }
-
-    public boolean getCreative() {
-        return this.creative;
-    }
-
-    public float getFlySpeed() {
-        return this.flySpeed;
-    }
-
-    public float getWalkSpeed() {
-        return this.walkSpeed;
-    }
-
     @Override
     public void read(NetInput in) throws IOException {
         byte flags = in.readByte();
-        this.invincible = (flags & 1) > 0;
-        this.canFly = (flags & 2) > 0;
-        this.flying = (flags & 4) > 0;
-        this.creative = (flags & 8) > 0;
+        this.invincible = (flags & FLAG_INVINCIBLE) > 0;
+        this.canFly = (flags & FLAG_CAN_FLY) > 0;
+        this.flying = (flags & FLAG_FLYING) > 0;
+        this.creative = (flags & FLAG_CREATIVE) > 0;
+
         this.flySpeed = in.readFloat();
         this.walkSpeed = in.readFloat();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        byte flags = 0;
+        int flags = 0;
         if(this.invincible) {
-            flags = (byte) (flags | 1);
+            flags |= FLAG_INVINCIBLE;
         }
 
         if(this.canFly) {
-            flags = (byte) (flags | 2);
+            flags |= FLAG_CAN_FLY;
         }
 
         if(this.flying) {
-            flags = (byte) (flags | 4);
+            flags |= FLAG_FLYING;
         }
 
         if(this.creative) {
-            flags = (byte) (flags | 8);
+            flags |= FLAG_CREATIVE;
         }
 
         out.writeByte(flags);
+
         out.writeFloat(this.flySpeed);
         out.writeFloat(this.walkSpeed);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

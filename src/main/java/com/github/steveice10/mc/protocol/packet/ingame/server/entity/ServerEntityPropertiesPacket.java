@@ -5,39 +5,32 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeModifier;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerEntityPropertiesPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntityPropertiesPacket implements Packet {
     private int entityId;
-    private List<Attribute> attributes;
-
-    @SuppressWarnings("unused")
-    private ServerEntityPropertiesPacket() {
-    }
-
-    public ServerEntityPropertiesPacket(int entityId, List<Attribute> attributes) {
-        this.entityId = entityId;
-        this.attributes = attributes;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public List<Attribute> getAttributes() {
-        return this.attributes;
-    }
+    private @NonNull List<Attribute> attributes;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.attributes = new ArrayList<Attribute>();
+        this.attributes = new ArrayList<>();
         int length = in.readInt();
         for(int index = 0; index < length; index++) {
             String key = in.readString();
@@ -61,10 +54,15 @@ public class ServerEntityPropertiesPacket extends MinecraftPacket {
             out.writeDouble(attribute.getValue());
             out.writeVarInt(attribute.getModifiers().size());
             for(AttributeModifier modifier : attribute.getModifiers()) {
-                out.writeUUID(modifier.getUUID());
+                out.writeUUID(modifier.getUuid());
                 out.writeDouble(modifier.getAmount());
                 out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));
             }
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

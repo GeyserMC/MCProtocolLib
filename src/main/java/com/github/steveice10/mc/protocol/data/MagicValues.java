@@ -10,10 +10,14 @@ import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
 import com.github.steveice10.mc.protocol.data.game.TitleAction;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
+import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
+import com.github.steveice10.mc.protocol.data.game.command.CommandType;
+import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
+import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
-import com.github.steveice10.mc.protocol.data.game.entity.FeetOrEyes;
+import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
@@ -34,6 +38,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.object.HangingDirection;
 import com.github.steveice10.mc.protocol.data.game.entity.type.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectType;
+import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
@@ -63,16 +68,22 @@ import com.github.steveice10.mc.protocol.data.game.window.property.AnvilProperty
 import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
-import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
-import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
-import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.*;
-import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
-import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
 import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
+import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
+import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
+import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
 import com.github.steveice10.mc.protocol.data.game.world.block.UpdatedTileType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.BeaconValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.EndGatewayValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
+import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
@@ -80,6 +91,7 @@ import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
+import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
@@ -645,7 +657,6 @@ public class MagicValues {
         register(UpdatedTileType.STRUCTURE_BLOCK, 7);
         register(UpdatedTileType.END_GATEWAY, 8);
         register(UpdatedTileType.SIGN, 9);
-        register(UpdatedTileType.SHULKER_BOX, 10);
         register(UpdatedTileType.BED, 11);
         register(UpdatedTileType.JIGSAW_BLOCK, 12);
         register(UpdatedTileType.CAMPFIRE, 13);
@@ -1060,8 +1071,33 @@ public class MagicValues {
         register(EquipmentSlot.CHESTPLATE, 4);
         register(EquipmentSlot.HELMET, 5);
 
-        register(FeetOrEyes.FEET, 0);
-        register(FeetOrEyes.EYES, 1);
+        register(RotationOrigin.FEET, 0);
+        register(RotationOrigin.EYES, 1);
+
+        for(RecipeType type : RecipeType.values()) {
+            register(type, "minecraft:" + type.name().toLowerCase());
+        }
+
+        register(CommandType.ROOT, 0);
+        register(CommandType.LITERAL, 1);
+        register(CommandType.ARGUMENT, 2);
+
+        for(CommandParser parser : CommandParser.values()) {
+            if(parser == CommandParser.BOOL || parser == CommandParser.DOUBLE || parser == CommandParser.FLOAT
+                    || parser == CommandParser.INTEGER || parser == CommandParser.STRING) {
+                register(parser, "brigadier:" + parser.name().toLowerCase());
+            } else {
+                register(parser, "minecraft:" + parser.name().toLowerCase());
+            }
+        }
+
+        for(SuggestionType type : SuggestionType.values()) {
+            register(type, "minecraft:" + type.name().toLowerCase());
+        }
+
+        register(StringProperties.SINGLE_WORD, 0);
+        register(StringProperties.QUOTABLE_PHRASE, 1);
+        register(StringProperties.GREEDY_PHRASE, 2);
 
         register(SoundCategory.MASTER, 0);
         register(SoundCategory.MUSIC, 1);
@@ -1076,7 +1112,7 @@ public class MagicValues {
 
         for(BuiltinSound sound : BuiltinSound.values()) {
             register(sound, sound.ordinal());
-            register(sound, sound.getSoundName());
+            register(sound, sound.getName());
         }
     }
 

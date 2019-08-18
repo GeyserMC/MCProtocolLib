@@ -1,31 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientTabCompletePacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientTabCompletePacket implements Packet {
     private int transactionId;
-    private String text;
-
-    @SuppressWarnings("unused")
-    private ClientTabCompletePacket() {
-    }
-
-    public ClientTabCompletePacket(int transactionId, String text) {
-        this.transactionId = transactionId;
-        this.text = text;
-    }
-
-    public int getTransactionId() {
-        return this.transactionId;
-    }
-
-    public String getText() {
-        return this.text;
-    }
+    private @NonNull String text;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -37,5 +30,10 @@ public class ClientTabCompletePacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.transactionId);
         out.writeString(this.text);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

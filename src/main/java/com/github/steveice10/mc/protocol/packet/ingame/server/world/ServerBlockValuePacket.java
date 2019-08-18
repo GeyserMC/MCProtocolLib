@@ -2,15 +2,40 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.*;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.BeaconValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.BeaconValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.EndGatewayValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.EndGatewayValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.MobSpawnerValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
+import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerBlockValuePacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerBlockValuePacket implements Packet {
     private static final int NOTE_BLOCK = 73;
     private static final int STICKY_PISTON = 92;
     private static final int PISTON = 99;
@@ -23,37 +48,10 @@ public class ServerBlockValuePacket extends MinecraftPacket {
     private static final int SHULKER_BOX_LOWER = 501;
     private static final int SHULKER_BOX_HIGHER = 517;
 
-    private Position position;
-    private BlockValueType type;
-    private BlockValue value;
+    private @NonNull Position position;
+    private @NonNull BlockValueType type;
+    private @NonNull BlockValue value;
     private int blockId;
-
-    @SuppressWarnings("unused")
-    private ServerBlockValuePacket() {
-    }
-
-    public ServerBlockValuePacket(Position position, BlockValueType type, BlockValue value, int blockId) {
-        this.position = position;
-        this.type = type;
-        this.value = value;
-        this.blockId = blockId;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public BlockValueType getType() {
-        return this.type;
-    }
-
-    public BlockValue getValue() {
-        return this.value;
-    }
-
-    public int getBlockId() {
-        return this.blockId;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -104,5 +102,10 @@ public class ServerBlockValuePacket extends MinecraftPacket {
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeByte(val);
         out.writeVarInt(this.blockId & 4095);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -10,8 +10,6 @@ public enum UpdatedTileType {
     STRUCTURE_BLOCK,
     END_GATEWAY,
     SIGN,
-    @Deprecated
-    SHULKER_BOX,
     BED,
     JIGSAW_BLOCK,
     CAMPFIRE;

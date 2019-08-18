@@ -2,52 +2,38 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.data.message.TextMessage;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
-public class ServerTabCompletePacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerTabCompletePacket implements Packet {
     private int transactionId;
     private int start;
     private int length;
-    private String matches[];
-    private Message tooltips[];
+    private @NonNull String[] matches;
+    private @NonNull Message[] tooltips;
 
-    @SuppressWarnings("unused")
-    private ServerTabCompletePacket() {
-    }
-
-    public ServerTabCompletePacket(int transactionId, int start, int length, String matches[], Message tooltips[]) {
-        if (tooltips.length != matches.length) {
+    public ServerTabCompletePacket(int transactionId, int start, int length, @NonNull String[] matches, @NonNull Message[] tooltips) {
+        if(tooltips.length != matches.length) {
             throw new IllegalArgumentException("Length of matches and tooltips must be equal.");
         }
+
         this.transactionId = transactionId;
         this.start = start;
         this.length = length;
-        this.matches = matches;
-        this.tooltips = tooltips;
-    }
-
-    public int getTransactionId() {
-        return this.transactionId;
-    }
-
-    public int getStart() {
-        return this.start;
-    }
-
-    public int getLength() {
-        return this.length;
-    }
-
-    public String[] getMatches() {
-        return this.matches;
-    }
-
-    public Message[] getTooltips() {
-        return this.tooltips;
+        this.matches = Arrays.copyOf(matches, matches.length);
+        this.tooltips = Arrays.copyOf(tooltips, tooltips.length);
     }
 
     @Override
@@ -81,5 +67,10 @@ public class ServerTabCompletePacket extends MinecraftPacket {
                 out.writeBoolean(false);
             }
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

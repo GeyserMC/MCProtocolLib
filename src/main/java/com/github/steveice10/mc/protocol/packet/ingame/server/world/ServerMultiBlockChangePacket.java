@@ -3,19 +3,23 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerMultiBlockChangePacket extends MinecraftPacket {
-    private BlockChangeRecord records[];
-
-    @SuppressWarnings("unused")
-    private ServerMultiBlockChangePacket() {
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerMultiBlockChangePacket implements Packet {
+    private @NonNull BlockChangeRecord[] records;
 
     public ServerMultiBlockChangePacket(BlockChangeRecord... records) {
         if(records == null || records.length == 0) {
@@ -23,10 +27,6 @@ public class ServerMultiBlockChangePacket extends MinecraftPacket {
         }
 
         this.records = records;
-    }
-
-    public BlockChangeRecord[] getRecords() {
-        return this.records;
     }
 
     @Override
@@ -55,5 +55,10 @@ public class ServerMultiBlockChangePacket extends MinecraftPacket {
             out.writeShort((record.getPosition().getX() - (chunkX << 4)) << 12 | (record.getPosition().getZ() - (chunkZ << 4)) << 8 | record.getPosition().getY());
             NetUtil.writeBlockState(out, record.getBlock());
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

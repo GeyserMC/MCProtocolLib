@@ -1,25 +1,23 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientChatPacket extends MinecraftPacket {
-    private String message;
-
-    @SuppressWarnings("unused")
-    private ClientChatPacket() {
-    }
-
-    public ClientChatPacket(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientChatPacket implements Packet {
+    private @NonNull String message;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -29,5 +27,10 @@ public class ClientChatPacket extends MinecraftPacket {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.message);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

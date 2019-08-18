@@ -13,28 +13,26 @@ import com.github.steveice10.mc.protocol.data.game.statistic.PickupItemStatistic
 import com.github.steveice10.mc.protocol.data.game.statistic.Statistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
 import com.github.steveice10.mc.protocol.data.game.statistic.UseItemStatistic;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServerStatisticsPacket extends MinecraftPacket {
-    private Map<Statistic, Integer> statistics = new HashMap<Statistic, Integer>();
-
-    @SuppressWarnings("unused")
-    private ServerStatisticsPacket() {
-    }
-
-    public ServerStatisticsPacket(Map<Statistic, Integer> statistics) {
-        this.statistics = statistics;
-    }
-
-    public Map<Statistic, Integer> getStatistics() {
-        return this.statistics;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerStatisticsPacket implements Packet {
+    private @NonNull Map<Statistic, Integer> statistics = new HashMap<Statistic, Integer>();
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -129,5 +127,10 @@ public class ServerStatisticsPacket extends MinecraftPacket {
             out.writeVarInt(statisticId);
             out.writeVarInt(this.statistics.get(statistic));
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -1,37 +1,25 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class LoginPluginRequestPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class LoginPluginRequestPacket implements Packet {
     private int messageId;
-    private String channel;
-    private byte[] data;
-
-    @SuppressWarnings("unused")
-    private LoginPluginRequestPacket() {
-    }
-
-    public LoginPluginRequestPacket(int messageId, String channel, byte[] data) {
-        this.messageId = messageId;
-        this.channel = channel;
-        this.data = data;
-    }
-
-    public int getMessageId() {
-        return this.messageId;
-    }
-
-    public String getChannel() {
-        return this.channel;
-    }
-
-    public byte[] getData() {
-        return this.data;
-    }
+    private @NonNull String channel;
+    private @NonNull byte[] data;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -45,5 +33,10 @@ public class LoginPluginRequestPacket extends MinecraftPacket {
         out.writeVarInt(this.messageId);
         out.writeString(this.channel);
         out.writeBytes(this.data);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

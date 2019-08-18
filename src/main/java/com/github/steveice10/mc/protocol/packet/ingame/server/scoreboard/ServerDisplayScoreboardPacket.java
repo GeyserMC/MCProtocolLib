@@ -2,32 +2,25 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardPosition;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerDisplayScoreboardPacket extends MinecraftPacket {
-    private ScoreboardPosition position;
-    private String name;
-
-    @SuppressWarnings("unused")
-    private ServerDisplayScoreboardPacket() {
-    }
-
-    public ServerDisplayScoreboardPacket(ScoreboardPosition position, String name) {
-        this.position = position;
-        this.name = name;
-    }
-
-    public ScoreboardPosition getPosition() {
-        return this.position;
-    }
-
-    public String getScoreboardName() {
-        return this.name;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerDisplayScoreboardPacket implements Packet {
+    private @NonNull ScoreboardPosition position;
+    private @NonNull String name;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -39,5 +32,10 @@ public class ServerDisplayScoreboardPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeByte(MagicValues.value(Integer.class, this.position));
         out.writeString(this.name);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

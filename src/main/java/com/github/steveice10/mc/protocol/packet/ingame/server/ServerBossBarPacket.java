@@ -5,30 +5,74 @@ import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class ServerBossBarPacket extends MinecraftPacket {
-    private UUID uuid;
-    private BossBarAction action;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerBossBarPacket implements Packet {
+    private @NonNull UUID uuid;
+    private @NonNull BossBarAction action;
 
     private Message title;
+
     private float health;
+
     private BossBarColor color;
     private BossBarDivision division;
+
     private boolean darkenSky;
     private boolean playEndMusic;
     private boolean showFog;
 
-    @SuppressWarnings("unused")
-    private ServerBossBarPacket() {
+    public ServerBossBarPacket(@NonNull UUID uuid) {
+        this.uuid = uuid;
+        this.action = BossBarAction.REMOVE;
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title, float health, BossBarColor color, BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
+    public ServerBossBarPacket(@NonNull UUID uuid, @NonNull Message title) {
+        this.uuid = uuid;
+        this.action = BossBarAction.UPDATE_TITLE;
+
+        this.title = title;
+    }
+
+    public ServerBossBarPacket(@NonNull UUID uuid, float health) {
+        this.uuid = uuid;
+        this.action = BossBarAction.UPDATE_HEALTH;
+
+        this.health = health;
+    }
+
+    public ServerBossBarPacket(@NonNull UUID uuid, @NonNull BossBarColor color, @NonNull BossBarDivision division) {
+        this.uuid = uuid;
+        this.action = BossBarAction.UPDATE_STYLE;
+
+        this.color = color;
+        this.division = division;
+    }
+
+    public ServerBossBarPacket(@NonNull UUID uuid, boolean darkenSky, boolean playEndMusic, boolean showFog) {
+        this.uuid = uuid;
+        this.action = BossBarAction.UPDATE_FLAGS;
+
+        this.darkenSky = darkenSky;
+        this.playEndMusic = playEndMusic;
+        this.showFog = showFog;
+    }
+
+    public ServerBossBarPacket(@NonNull UUID uuid, @NonNull Message title, float health, @NonNull BossBarColor color,
+                               @NonNull BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this.uuid = uuid;
         this.action = BossBarAction.ADD;
 
@@ -39,78 +83,6 @@ public class ServerBossBarPacket extends MinecraftPacket {
         this.darkenSky = darkenSky;
         this.playEndMusic = playEndMusic;
         this.showFog = showFog;
-    }
-
-    public ServerBossBarPacket(UUID uuid) {
-        this.uuid = uuid;
-        this.action = BossBarAction.REMOVE;
-    }
-
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, float health) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_HEALTH;
-
-        this.health = health;
-    }
-
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_TITLE;
-
-        this.title = title;
-    }
-
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, BossBarColor color, BossBarDivision division) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_STYLE;
-
-        this.color = color;
-        this.division = division;
-    }
-
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, boolean darkenSky, boolean playEndMusic, boolean showFog) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_FLAGS;
-
-        this.darkenSky = darkenSky;
-        this.playEndMusic = playEndMusic;
-        this.showFog = showFog;
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-    public BossBarAction getAction() {
-        return this.action;
-    }
-
-    public Message getTitle() {
-        return this.title;
-    }
-
-    public float getHealth() {
-        return this.health;
-    }
-
-    public BossBarColor getColor() {
-        return this.color;
-    }
-
-    public BossBarDivision getDivision() {
-        return this.division;
-    }
-
-    public boolean getDarkenSky() {
-        return this.darkenSky;
-    }
-
-    public boolean shouldPlayEndMusic() {
-        return this.playEndMusic;
-    }
-
-    public boolean shouldShowFog() {
-        return this.showFog;
     }
 
     @Override
@@ -173,5 +145,10 @@ public class ServerBossBarPacket extends MinecraftPacket {
 
             out.writeByte(flags);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

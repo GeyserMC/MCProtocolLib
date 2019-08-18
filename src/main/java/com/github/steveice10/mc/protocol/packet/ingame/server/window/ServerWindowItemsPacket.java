@@ -1,33 +1,26 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerWindowItemsPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerWindowItemsPacket implements Packet {
     private int windowId;
-    private ItemStack items[];
-
-    @SuppressWarnings("unused")
-    private ServerWindowItemsPacket() {
-    }
-
-    public ServerWindowItemsPacket(int windowId, ItemStack items[]) {
-        this.windowId = windowId;
-        this.items = items;
-    }
-
-    public int getWindowId() {
-        return this.windowId;
-    }
-
-    public ItemStack[] getItems() {
-        return this.items;
-    }
+    private @NonNull ItemStack[] items;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -45,5 +38,10 @@ public class ServerWindowItemsPacket extends MinecraftPacket {
         for(ItemStack item : this.items) {
             NetUtil.writeItem(out, item);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

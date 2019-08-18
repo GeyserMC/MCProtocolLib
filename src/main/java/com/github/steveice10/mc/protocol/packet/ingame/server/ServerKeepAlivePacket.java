@@ -1,33 +1,35 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerKeepAlivePacket extends MinecraftPacket {
-    private long id;
-
-    @SuppressWarnings("unused")
-    private ServerKeepAlivePacket() {
-    }
-
-    public ServerKeepAlivePacket(long id) {
-        this.id = id;
-    }
-
-    public long getPingId() {
-        return this.id;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerKeepAlivePacket implements Packet {
+    private long pingId;
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.id = in.readLong();
+        this.pingId = in.readLong();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeLong(this.id);
+        out.writeLong(this.pingId);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

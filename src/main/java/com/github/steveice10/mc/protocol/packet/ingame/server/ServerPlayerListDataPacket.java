@@ -1,32 +1,25 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerPlayerListDataPacket extends MinecraftPacket {
-    private Message header;
-    private Message footer;
-
-    @SuppressWarnings("unused")
-    private ServerPlayerListDataPacket() {
-    }
-
-    public ServerPlayerListDataPacket(Message header, Message footer) {
-        this.header = header;
-        this.footer = footer;
-    }
-
-    public Message getHeader() {
-        return this.header;
-    }
-
-    public Message getFooter() {
-        return this.footer;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPlayerListDataPacket implements Packet {
+    private @NonNull Message header;
+    private @NonNull Message footer;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -38,5 +31,10 @@ public class ServerPlayerListDataPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeString(this.header.toJsonString());
         out.writeString(this.footer.toJsonString());
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

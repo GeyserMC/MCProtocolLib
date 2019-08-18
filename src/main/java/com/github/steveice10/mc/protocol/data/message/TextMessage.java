@@ -1,23 +1,17 @@
 package com.github.steveice10.mc.protocol.data.message;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import java.util.Objects;
-
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 public class TextMessage extends Message {
-    private String text;
-
-    public TextMessage(String text) {
-        this.text = text;
-    }
-
-    @Override
-    public String getText() {
-        return this.text;
-    }
+    private final String text;
 
     @Override
     public TextMessage clone() {
@@ -38,25 +32,5 @@ public class TextMessage extends Message {
                 return e;
             }
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof TextMessage)) return false;
-
-        TextMessage that = (TextMessage) o;
-        return super.equals(o) &&
-                Objects.equals(this.text, that.text);
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtil.hashCode(super.hashCode(), this.text);
-    }
-
-    @Override
-    public String toString() {
-        return ObjectUtil.toString(this);
     }
 }

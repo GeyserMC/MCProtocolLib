@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity;
 
-public enum FeetOrEyes {
+public enum RotationOrigin {
     FEET,
     EYES;
 }

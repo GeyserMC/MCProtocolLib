@@ -3,24 +3,30 @@ package com.github.steveice10.mc.protocol.packet.ingame.client.player;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientPlayerInteractEntityPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientPlayerInteractEntityPacket implements Packet {
     private int entityId;
-    private InteractAction action;
+    private @NonNull InteractAction action;
 
     private float targetX;
     private float targetY;
     private float targetZ;
-    private Hand hand;
-
-    @SuppressWarnings("unused")
-    private ClientPlayerInteractEntityPacket() {
-    }
+    private @NonNull Hand hand;
 
     public ClientPlayerInteractEntityPacket(int entityId, InteractAction action) {
         this(entityId, action, Hand.MAIN_HAND);
@@ -28,39 +34,6 @@ public class ClientPlayerInteractEntityPacket extends MinecraftPacket {
 
     public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, Hand hand) {
         this(entityId, action, 0, 0, 0, hand);
-    }
-
-    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, float targetX, float targetY, float targetZ, Hand hand) {
-        this.entityId = entityId;
-        this.action = action;
-        this.targetX = targetX;
-        this.targetY = targetY;
-        this.targetZ = targetZ;
-        this.hand = hand;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public InteractAction getAction() {
-        return this.action;
-    }
-
-    public float getTargetX() {
-        return this.targetX;
-    }
-
-    public float getTargetY() {
-        return this.targetY;
-    }
-
-    public float getTargetZ() {
-        return this.targetZ;
-    }
-
-    public Hand getHand() {
-        return this.hand;
     }
 
     @Override
@@ -91,5 +64,10 @@ public class ClientPlayerInteractEntityPacket extends MinecraftPacket {
         if(this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
             out.writeVarInt(MagicValues.value(Integer.class, this.hand));
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

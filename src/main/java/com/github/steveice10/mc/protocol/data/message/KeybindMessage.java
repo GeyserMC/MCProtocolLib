@@ -1,21 +1,16 @@
 package com.github.steveice10.mc.protocol.data.message;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import java.util.Objects;
-
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 public class KeybindMessage extends Message {
-    private String keybind;
-
-    public KeybindMessage(String keybind) {
-        this.keybind = keybind;
-    }
-
-    public String getKeybind() {
-        return this.keybind;
-    }
+    private final String keybind;
 
     @Override
     public String getText() {
@@ -24,7 +19,7 @@ public class KeybindMessage extends Message {
 
     @Override
     public KeybindMessage clone() {
-        return (KeybindMessage) new KeybindMessage(this.getKeybind()).setStyle(this.getStyle().clone()).setExtra(this.getExtra());
+        return (KeybindMessage) new KeybindMessage(this.keybind).setStyle(this.getStyle().clone()).setExtra(this.getExtra());
     }
 
     @Override
@@ -37,25 +32,5 @@ public class KeybindMessage extends Message {
         } else {
             return e;
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof KeybindMessage)) return false;
-
-        KeybindMessage that = (KeybindMessage) o;
-        return super.equals(o) &&
-                Objects.equals(this.keybind, that.keybind);
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtil.hashCode(super.hashCode(), this.keybind);
-    }
-
-    @Override
-    public String toString() {
-        return ObjectUtil.toString(this);
     }
 }

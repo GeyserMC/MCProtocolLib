@@ -29,12 +29,17 @@ import com.github.steveice10.mc.protocol.util.CryptUtil;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
 import java.net.Proxy;
 
+@AllArgsConstructor
 public class ClientListener extends SessionAdapter {
+    private final @NonNull SubProtocol targetSubProtocol;
+
     @Override
     public void packetReceived(PacketReceivedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
@@ -64,7 +69,7 @@ public class ClientListener extends SessionAdapter {
                     return;
                 }
 
-                event.getSession().send(new EncryptionResponsePacket(key, packet.getPublicKey(), packet.getVerifyToken()));
+                event.getSession().send(new EncryptionResponsePacket(packet.getPublicKey(), key, packet.getVerifyToken()));
                 protocol.enableEncryption(key);
             } else if(event.getPacket() instanceof LoginSuccessPacket) {
                 LoginSuccessPacket packet = event.getPacket();
@@ -108,15 +113,15 @@ public class ClientListener extends SessionAdapter {
     @Override
     public void connected(ConnectedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-        if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
-            GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
-            protocol.setSubProtocol(SubProtocol.HANDSHAKE, true, event.getSession());
+        if(this.targetSubProtocol == SubProtocol.LOGIN) {
             event.getSession().send(new HandshakePacket(MinecraftConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
+
+            GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
             protocol.setSubProtocol(SubProtocol.LOGIN, true, event.getSession());
             event.getSession().send(new LoginStartPacket(profile != null ? profile.getName() : ""));
-        } else if(protocol.getSubProtocol() == SubProtocol.STATUS) {
-            protocol.setSubProtocol(SubProtocol.HANDSHAKE, true, event.getSession());
+        } else if(this.targetSubProtocol == SubProtocol.STATUS) {
             event.getSession().send(new HandshakePacket(MinecraftConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
+
             protocol.setSubProtocol(SubProtocol.STATUS, true, event.getSession());
             event.getSession().send(new StatusQueryPacket());
         }

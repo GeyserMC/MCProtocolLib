@@ -1,37 +1,29 @@
 package com.github.steveice10.mc.protocol.data.message;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.Objects;
-
+@Getter
+@EqualsAndHashCode(callSuper = true)
 public class TranslationMessage extends Message {
-    private String translationKey;
-    private Message translationParams[];
+    private final String translationKey;
+    private final Message[] translationParams;
 
     public TranslationMessage(String translationKey, Message... translationParams) {
         this.translationKey = translationKey;
-        this.translationParams = translationParams;
-        this.translationParams = this.getTranslationParams();
-        for(Message param : this.translationParams) {
-            param.getStyle().setParent(this.getStyle());
+        this.translationParams = new Message[translationParams.length];
+        for(int index = 0; index < this.translationParams.length; index++) {
+            this.translationParams[index] = translationParams[index].clone();
+            this.translationParams[index].getStyle().setParent(this.getStyle());
         }
     }
 
-    public String getTranslationKey() {
+    @Override
+    public String getText() {
         return this.translationKey;
-    }
-
-    public Message[] getTranslationParams() {
-        Message copy[] = Arrays.copyOf(this.translationParams, this.translationParams.length);
-        for(int index = 0; index < copy.length; index++) {
-            copy[index] = copy[index].clone();
-        }
-
-        return copy;
     }
 
     @Override
@@ -45,13 +37,8 @@ public class TranslationMessage extends Message {
     }
 
     @Override
-    public String getText() {
-        return this.translationKey;
-    }
-
-    @Override
     public TranslationMessage clone() {
-        return (TranslationMessage) new TranslationMessage(this.getTranslationKey(), this.getTranslationParams()).setStyle(this.getStyle().clone()).setExtra(this.getExtra());
+        return (TranslationMessage) new TranslationMessage(this.translationKey, this.translationParams).setStyle(this.getStyle().clone()).setExtra(this.getExtra());
     }
 
     @Override
@@ -70,26 +57,5 @@ public class TranslationMessage extends Message {
         } else {
             return e;
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof TranslationMessage)) return false;
-
-        TranslationMessage that = (TranslationMessage) o;
-        return super.equals(o) &&
-                Objects.equals(this.translationKey, that.translationKey) &&
-                Arrays.equals(this.translationParams, that.translationParams);
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtil.hashCode(super.hashCode(), this.translationKey, this.translationParams);
-    }
-
-    @Override
-    public String toString() {
-        return ObjectUtil.toString(this);
     }
 }

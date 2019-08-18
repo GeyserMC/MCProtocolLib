@@ -1,25 +1,22 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientMoveItemToHotbarPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientMoveItemToHotbarPacket implements Packet {
     private int slot;
-
-    @SuppressWarnings("unused")
-    private ClientMoveItemToHotbarPacket() {
-    }
-
-    public ClientMoveItemToHotbarPacket(int slot) {
-        this.slot = slot;
-    }
-
-    public int getSlot() {
-        return this.slot;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -29,5 +26,10 @@ public class ClientMoveItemToHotbarPacket extends MinecraftPacket {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.slot);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

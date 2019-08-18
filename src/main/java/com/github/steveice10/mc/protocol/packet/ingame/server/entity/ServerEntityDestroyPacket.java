@@ -1,25 +1,23 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerEntityDestroyPacket extends MinecraftPacket {
-    private int entityIds[];
-
-    @SuppressWarnings("unused")
-    private ServerEntityDestroyPacket() {
-    }
-
-    public ServerEntityDestroyPacket(int... entityIds) {
-        this.entityIds = entityIds;
-    }
-
-    public int[] getEntityIds() {
-        return this.entityIds;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntityDestroyPacket implements Packet {
+    private @NonNull int[] entityIds;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -35,5 +33,10 @@ public class ServerEntityDestroyPacket extends MinecraftPacket {
         for(int entityId : this.entityIds) {
             out.writeVarInt(entityId);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -4,52 +4,41 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerScoreboardObjectivePacket extends MinecraftPacket {
-    private String name;
-    private ObjectiveAction action;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServerScoreboardObjectivePacket implements Packet {
+    private @NonNull String name;
+    private @NonNull ObjectiveAction action;
+
     private Message displayName;
     private ScoreType type;
 
-    @SuppressWarnings("unused")
-    private ServerScoreboardObjectivePacket() {
-    }
-
-    public ServerScoreboardObjectivePacket(String name) {
+    public ServerScoreboardObjectivePacket(@NonNull String name) {
         this.name = name;
         this.action = ObjectiveAction.REMOVE;
     }
 
-    public ServerScoreboardObjectivePacket(String name, ObjectiveAction action, Message displayName, ScoreType type) {
+    public ServerScoreboardObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, @NonNull Message displayName, @NonNull ScoreType type) {
         if(action != ObjectiveAction.ADD && action != ObjectiveAction.UPDATE) {
-            throw new IllegalArgumentException("(name, action, displayName) constructor only valid for adding and updating objectives.");
+            throw new IllegalArgumentException("(name, action, displayName, type) constructor only valid for adding and updating objectives.");
         }
 
         this.name = name;
         this.action = action;
         this.displayName = displayName;
         this.type = type;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public ObjectiveAction getAction() {
-        return this.action;
-    }
-
-    public Message getDisplayName() {
-        return this.displayName;
-    }
-
-    public ScoreType getType() {
-        return this.type;
     }
 
     @Override
@@ -70,5 +59,10 @@ public class ServerScoreboardObjectivePacket extends MinecraftPacket {
             out.writeString(this.displayName.toJsonString());
             out.writeVarInt(MagicValues.value(Integer.class, this.type));
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

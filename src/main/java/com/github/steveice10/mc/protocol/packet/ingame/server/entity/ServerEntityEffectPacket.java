@@ -2,56 +2,32 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerEntityEffectPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerEntityEffectPacket implements Packet {
+    private static final int FLAG_AMBIENT = 0x01;
+    private static final int FLAG_SHOW_PARTICLES = 0x02;
+
     private int entityId;
-    private Effect effect;
+    private @NonNull Effect effect;
     private int amplifier;
     private int duration;
     private boolean ambient;
     private boolean showParticles;
-
-    @SuppressWarnings("unused")
-    private ServerEntityEffectPacket() {
-    }
-
-    public ServerEntityEffectPacket(int entityId, Effect effect, int amplifier, int duration, boolean ambient, boolean showParticles) {
-        this.entityId = entityId;
-        this.effect = effect;
-        this.amplifier = amplifier;
-        this.duration = duration;
-        this.ambient = ambient;
-        this.showParticles = showParticles;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public Effect getEffect() {
-        return this.effect;
-    }
-
-    public int getAmplifier() {
-        return this.amplifier;
-    }
-
-    public int getDuration() {
-        return this.duration;
-    }
-
-    public boolean isAmbient() {
-        return this.ambient;
-    }
-
-    public boolean getShowParticles() {
-        return this.showParticles;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -61,8 +37,8 @@ public class ServerEntityEffectPacket extends MinecraftPacket {
         this.duration = in.readVarInt();
 
         int flags = in.readByte();
-        this.ambient = (flags & 0x1) == 0x1;
-        this.showParticles = (flags & 0x2) == 0x2;
+        this.ambient = (flags & FLAG_AMBIENT) != 0;
+        this.showParticles = (flags & FLAG_SHOW_PARTICLES) != 0;
     }
 
     @Override
@@ -74,13 +50,18 @@ public class ServerEntityEffectPacket extends MinecraftPacket {
 
         int flags = 0;
         if(this.ambient) {
-            flags |= 0x1;
+            flags |= FLAG_AMBIENT;
         }
 
         if(this.showParticles) {
-            flags |= 0x2;
+            flags |= FLAG_SHOW_PARTICLES;
         }
 
         out.writeByte(flags);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

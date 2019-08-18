@@ -1,24 +1,28 @@
 package com.github.steveice10.mc.protocol.packet.login.client;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.CryptUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-public class EncryptionResponsePacket extends MinecraftPacket {
-    private byte sharedKey[];
-    private byte verifyToken[];
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class EncryptionResponsePacket implements Packet {
+    private @NonNull byte sharedKey[];
+    private @NonNull byte verifyToken[];
 
-    @SuppressWarnings("unused")
-    private EncryptionResponsePacket() {
-    }
-
-    public EncryptionResponsePacket(SecretKey secretKey, PublicKey publicKey, byte verifyToken[]) {
+    public EncryptionResponsePacket(PublicKey publicKey, SecretKey secretKey, byte verifyToken[]) {
         this.sharedKey = CryptUtil.encryptData(publicKey, secretKey.getEncoded());
         this.verifyToken = CryptUtil.encryptData(publicKey, verifyToken);
     }

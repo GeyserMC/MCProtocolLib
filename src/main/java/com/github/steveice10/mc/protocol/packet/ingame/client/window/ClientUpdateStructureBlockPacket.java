@@ -6,110 +6,42 @@ import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockAc
 import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientUpdateStructureBlockPacket extends MinecraftPacket {
-    private Position position;
-    private UpdateStructureBlockAction action;
-    private UpdateStructureBlockMode mode;
-    private String name;
-    private Position offset;
-    private Position size;
-    private StructureMirror mirror;
-    private StructureRotation rotation;
-    private String metadata;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientUpdateStructureBlockPacket implements Packet {
+    private static final int FLAG_IGNORE_ENTITIES = 0x01;
+    private static final int FLAG_SHOW_AIR = 0x02;
+    private static final int FLAG_SHOW_BOUNDING_BOX = 0x04;
+
+    private @NonNull Position position;
+    private @NonNull UpdateStructureBlockAction action;
+    private @NonNull UpdateStructureBlockMode mode;
+    private @NonNull String name;
+    private @NonNull Position offset;
+    private @NonNull Position size;
+    private @NonNull StructureMirror mirror;
+    private @NonNull StructureRotation rotation;
+    private @NonNull String metadata;
     private float integrity;
     private long seed;
     private boolean ignoreEntities;
     private boolean showAir;
     private boolean showBoundingBox;
-
-    @SuppressWarnings("unused")
-    private ClientUpdateStructureBlockPacket() {
-    }
-
-    public ClientUpdateStructureBlockPacket(Position position,
-                                            UpdateStructureBlockAction action, UpdateStructureBlockMode mode,
-                                            String name, Position offset, Position size,
-                                            StructureMirror mirror, StructureRotation rotation,
-                                            String metadata, float integrity, long seed,
-                                            boolean ignoreEntities, boolean showAir, boolean showBoundingBox) {
-        this.position = position;
-        this.action = action;
-        this.mode = mode;
-        this.name = name;
-        this.offset = offset;
-        this.size = size;
-        this.mirror = mirror;
-        this.rotation = rotation;
-        this.metadata = metadata;
-        this.integrity = integrity;
-        this.seed = seed;
-        this.ignoreEntities = ignoreEntities;
-        this.showAir = showAir;
-        this.showBoundingBox = showBoundingBox;
-    }
-
-    public Position getPosition() {
-        return this.position;
-    }
-
-    public UpdateStructureBlockAction getAction() {
-        return this.action;
-    }
-
-    public UpdateStructureBlockMode getMode() {
-        return this.mode;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public Position getOffset() {
-        return this.offset;
-    }
-
-    public Position getSize() {
-        return this.size;
-    }
-
-    public StructureMirror getMirror() {
-        return this.mirror;
-    }
-
-    public StructureRotation getRotation() {
-        return this.rotation;
-    }
-
-    public String getMetadata() {
-        return this.metadata;
-    }
-
-    public float getIntegrity() {
-        return this.integrity;
-    }
-
-    public long getSeed() {
-        return this.seed;
-    }
-
-    public boolean isIgnoreEntities() {
-        return this.ignoreEntities;
-    }
-
-    public boolean isShowAir() {
-        return this.showAir;
-    }
-
-    public boolean isShowBoundingBox() {
-        return this.showBoundingBox;
-    }
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -124,10 +56,11 @@ public class ClientUpdateStructureBlockPacket extends MinecraftPacket {
         this.metadata = in.readString();
         this.integrity = in.readFloat();
         this.seed = in.readVarLong();
+
         int flags = in.readUnsignedByte();
-        this.ignoreEntities = (flags & 0x01) != 0;
-        this.showAir = (flags & 0x02) != 0;
-        this.showBoundingBox = (flags & 0x04) != 0;
+        this.ignoreEntities = (flags & FLAG_IGNORE_ENTITIES) != 0;
+        this.showAir = (flags & FLAG_SHOW_AIR) != 0;
+        this.showBoundingBox = (flags & FLAG_SHOW_BOUNDING_BOX) != 0;
     }
 
     @Override
@@ -147,10 +80,25 @@ public class ClientUpdateStructureBlockPacket extends MinecraftPacket {
         out.writeString(this.metadata);
         out.writeFloat(this.integrity);
         out.writeVarLong(this.seed);
+
         int flags = 0;
-        if (this.ignoreEntities) flags |= 0x01;
-        if (this.showAir) flags |= 0x02;
-        if (this.showBoundingBox) flags |= 0x04;
+        if(this.ignoreEntities) {
+            flags |= FLAG_IGNORE_ENTITIES;
+        }
+
+        if(this.showAir) {
+            flags |= FLAG_SHOW_AIR;
+        }
+
+        if(this.showBoundingBox) {
+            flags |= FLAG_SHOW_BOUNDING_BOX;
+        }
+
         out.writeByte(flags);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

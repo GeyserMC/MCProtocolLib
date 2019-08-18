@@ -1,66 +1,58 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.world;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ClientSteerVehiclePacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ClientSteerVehiclePacket implements Packet {
+    private static final int FLAG_JUMP = 0x01;
+    private static final int FLAG_DISMOUNT = 0x02;
+
     private float sideways;
     private float forward;
     private boolean jump;
     private boolean dismount;
 
-    @SuppressWarnings("unused")
-    private ClientSteerVehiclePacket() {
-    }
-
-    public ClientSteerVehiclePacket(float sideways, float forward, boolean jump, boolean dismount) {
-        this.sideways = sideways;
-        this.forward = forward;
-        this.jump = jump;
-        this.dismount = dismount;
-    }
-
-    public float getSideways() {
-        return this.sideways;
-    }
-
-    public float getForward() {
-        return this.forward;
-    }
-
-    public boolean getJumping() {
-        return this.jump;
-    }
-
-    public boolean getDismounting() {
-        return this.dismount;
-    }
-
     @Override
     public void read(NetInput in) throws IOException {
         this.sideways = in.readFloat();
         this.forward = in.readFloat();
+
         int flags = in.readUnsignedByte();
-        this.jump = (flags & 1) > 0;
-        this.dismount = (flags & 2) > 0;
+        this.jump = (flags & FLAG_JUMP) != 0;
+        this.dismount = (flags & FLAG_DISMOUNT) != 0;
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeFloat(this.sideways);
         out.writeFloat(this.forward);
-        byte flags = 0;
+
+        int flags = 0;
         if(this.jump) {
-            flags = (byte) (flags | 1);
+            flags |= FLAG_JUMP;
         }
 
         if(this.dismount) {
-            flags = (byte) (flags | 2);
+            flags |= FLAG_DISMOUNT;
         }
 
         out.writeByte(flags);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

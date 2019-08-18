@@ -3,43 +3,36 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerChatPacket extends MinecraftPacket {
-    private Message message;
-    private MessageType type;
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerChatPacket implements Packet {
+    private @NonNull Message message;
+    private @NonNull MessageType type;
 
-    @SuppressWarnings("unused")
-    private ServerChatPacket() {
-    }
-
-    public ServerChatPacket(String text) {
+    public ServerChatPacket(@NonNull String text) {
         this(Message.fromString(text));
     }
 
-    public ServerChatPacket(Message message) {
+    public ServerChatPacket(@NonNull Message message) {
         this(message, MessageType.SYSTEM);
     }
 
-    public ServerChatPacket(String text, MessageType type) {
+    public ServerChatPacket(@NonNull String text, @NonNull MessageType type) {
         this(Message.fromString(text), type);
-    }
-
-    public ServerChatPacket(Message message, MessageType type) {
-        this.message = message;
-        this.type = type;
-    }
-
-    public Message getMessage() {
-        return this.message;
-    }
-
-    public MessageType getType() {
-        return this.type;
     }
 
     @Override
@@ -52,5 +45,10 @@ public class ServerChatPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeString(this.message.toJsonString());
         out.writeByte(MagicValues.value(Integer.class, this.type));
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

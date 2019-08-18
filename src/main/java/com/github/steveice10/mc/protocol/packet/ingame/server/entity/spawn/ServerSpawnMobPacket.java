@@ -3,18 +3,28 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.type.MobType;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class ServerSpawnMobPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerSpawnMobPacket implements Packet {
     private int entityId;
-    private UUID uuid;
-    private MobType type;
+    private @NonNull UUID uuid;
+    private @NonNull MobType type;
     private double x;
     private double y;
     private double z;
@@ -24,79 +34,7 @@ public class ServerSpawnMobPacket extends MinecraftPacket {
     private double motX;
     private double motY;
     private double motZ;
-    private EntityMetadata metadata[];
-
-    @SuppressWarnings("unused")
-    private ServerSpawnMobPacket() {
-    }
-
-    public ServerSpawnMobPacket(int entityId, UUID uuid, MobType type, double x, double y, double z, float yaw, float pitch, float headYaw, double motX, double motY, double motZ, EntityMetadata metadata[]) {
-        this.entityId = entityId;
-        this.uuid = uuid;
-        this.type = type;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        this.headYaw = headYaw;
-        this.motX = motX;
-        this.motY = motY;
-        this.motZ = motZ;
-        this.metadata = metadata;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-    public MobType getType() {
-        return this.type;
-    }
-
-    public double getX() {
-        return this.x;
-    }
-
-    public double getY() {
-        return this.y;
-    }
-
-    public double getZ() {
-        return this.z;
-    }
-
-    public float getYaw() {
-        return this.yaw;
-    }
-
-    public float getPitch() {
-        return this.pitch;
-    }
-
-    public float getHeadYaw() {
-        return this.headYaw;
-    }
-
-    public double getMotionX() {
-        return this.motX;
-    }
-
-    public double getMotionY() {
-        return this.motY;
-    }
-
-    public double getMotionZ() {
-        return this.motZ;
-    }
-
-    public EntityMetadata[] getMetadata() {
-        return this.metadata;
-    }
+    private @NonNull EntityMetadata[] metadata;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -130,5 +68,10 @@ public class ServerSpawnMobPacket extends MinecraftPacket {
         out.writeShort((int) (this.motY * 8000));
         out.writeShort((int) (this.motZ * 8000));
         NetUtil.writeEntityMetadata(out, this.metadata);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

@@ -2,16 +2,27 @@ package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.window.CraftingBookDataType;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 
 import java.io.IOException;
 
-public class ClientCraftingBookDataPacket extends MinecraftPacket {
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ClientCraftingBookDataPacket implements Packet {
+    @Getter
+    private @NonNull CraftingBookDataType type;
 
-    private CraftingBookDataType type;
     private String recipeId;
+
     private boolean craftingBookOpen;
     private boolean filterCraftingActive;
     private boolean smeltingBookOpen;
@@ -21,17 +32,18 @@ public class ClientCraftingBookDataPacket extends MinecraftPacket {
     private boolean smokingBookOpen;
     private boolean filterSmokingActive;
 
-    @SuppressWarnings("unused")
-    private ClientCraftingBookDataPacket() {
-    }
-
-    public ClientCraftingBookDataPacket(String recipeId) {
+    public ClientCraftingBookDataPacket(@NonNull String recipeId) {
         this.type = CraftingBookDataType.DISPLAYED_RECIPE;
+
         this.recipeId = recipeId;
     }
 
-    public ClientCraftingBookDataPacket(boolean craftingBookOpen, boolean filterCraftingActive, boolean smeltingBookOpen, boolean filterSmeltingActive, boolean blastingBookOpen, boolean filterBlastingActive, boolean smokingBookOpen, boolean filterSmokingActive) {
+    public ClientCraftingBookDataPacket(boolean craftingBookOpen, boolean filterCraftingActive,
+                                        boolean smeltingBookOpen, boolean filterSmeltingActive,
+                                        boolean blastingBookOpen, boolean filterBlastingActive,
+                                        boolean smokingBookOpen, boolean filterSmokingActive) {
         this.type = CraftingBookDataType.CRAFTING_BOOK_STATUS;
+
         this.craftingBookOpen = craftingBookOpen;
         this.filterCraftingActive = filterCraftingActive;
         this.smeltingBookOpen = smeltingBookOpen;
@@ -42,10 +54,6 @@ public class ClientCraftingBookDataPacket extends MinecraftPacket {
         this.filterSmokingActive = filterSmokingActive;
     }
 
-    public CraftingBookDataType getType() {
-        return type;
-    }
-
     private void ensureType(CraftingBookDataType type, String what) {
         if (this.type != type) {
             throw new IllegalStateException(what + " is only set when type is " + type + " but it is " + this.type);
@@ -53,53 +61,54 @@ public class ClientCraftingBookDataPacket extends MinecraftPacket {
     }
 
     public String getRecipeId() {
-        ensureType(CraftingBookDataType.DISPLAYED_RECIPE, "recipeId");
-        return recipeId;
+        this.ensureType(CraftingBookDataType.DISPLAYED_RECIPE, "recipeId");
+        return this.recipeId;
     }
 
     public boolean isCraftingBookOpen() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "craftingBookOpen");
-        return craftingBookOpen;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "craftingBookOpen");
+        return this.craftingBookOpen;
     }
 
     public boolean isFilterCraftingActive() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterCraftingActive");
-        return filterCraftingActive;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterCraftingActive");
+        return this.filterCraftingActive;
     }
 
     public boolean isSmeltingBookOpen() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "smeltingBookOpen");
-        return smeltingBookOpen;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "smeltingBookOpen");
+        return this.smeltingBookOpen;
     }
 
     public boolean isFilterSmeltingActive() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterSmeltingActive");
-        return filterSmeltingActive;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterSmeltingActive");
+        return this.filterSmeltingActive;
     }
 
     public boolean isBlastingBookOpen() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "blastingBookOpen");
-        return blastingBookOpen;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "blastingBookOpen");
+        return this.blastingBookOpen;
     }
 
     public boolean isFilterBlastingActive() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterBlastingActive");
-        return filterBlastingActive;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterBlastingActive");
+        return this.filterBlastingActive;
     }
 
     public boolean isSmokingBookOpen() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "smokingBookOpen");
-        return smokingBookOpen;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "smokingBookOpen");
+        return this.smokingBookOpen;
     }
 
     public boolean isFilterSmokingActive() {
-        ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterSmokingActive");
-        return filterSmokingActive;
+        this.ensureType(CraftingBookDataType.CRAFTING_BOOK_STATUS, "filterSmokingActive");
+        return this.filterSmokingActive;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        switch (this.type = MagicValues.key(CraftingBookDataType.class, in.readVarInt())) {
+        this.type = MagicValues.key(CraftingBookDataType.class, in.readVarInt());
+        switch(this.type) {
             case DISPLAYED_RECIPE:
                 this.recipeId = in.readString();
                 break;
@@ -138,5 +147,10 @@ public class ClientCraftingBookDataPacket extends MinecraftPacket {
             default:
                 throw new IOException("Unknown crafting book data type: " + this.type);
         }
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }

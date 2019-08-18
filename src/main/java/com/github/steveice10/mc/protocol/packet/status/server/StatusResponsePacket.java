@@ -6,34 +6,33 @@ import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-public class StatusResponsePacket extends MinecraftPacket {
-    private ServerStatusInfo info;
-
-    @SuppressWarnings("unused")
-    private StatusResponsePacket() {
-    }
-
-    public StatusResponsePacket(ServerStatusInfo info) {
-        this.info = info;
-    }
-
-    public ServerStatusInfo getInfo() {
-        return this.info;
-    }
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class StatusResponsePacket implements Packet {
+    private @NonNull ServerStatusInfo info;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -41,7 +40,7 @@ public class StatusResponsePacket extends MinecraftPacket {
         JsonObject ver = obj.get("version").getAsJsonObject();
         VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
         JsonObject plrs = obj.get("players").getAsJsonObject();
-        GameProfile profiles[] = new GameProfile[0];
+        GameProfile[] profiles = new GameProfile[0];
         if(plrs.has("sample")) {
             JsonArray prof = plrs.get("sample").getAsJsonArray();
             if(prof.size() > 0) {
@@ -95,12 +94,17 @@ public class StatusResponsePacket extends MinecraftPacket {
         out.writeString(obj.toString());
     }
 
+    @Override
+    public boolean isPriority() {
+        return false;
+    }
+
     private BufferedImage stringToIcon(String str) throws IOException {
         if(str.startsWith("data:image/png;base64,")) {
             str = str.substring("data:image/png;base64,".length());
         }
 
-        byte bytes[] = Base64.decode(str.getBytes("UTF-8"));
+        byte[] bytes = Base64.decode(str.getBytes(StandardCharsets.UTF_8));
         ByteArrayInputStream in = new ByteArrayInputStream(bytes);
         BufferedImage icon = ImageIO.read(in);
         in.close();
@@ -119,7 +123,7 @@ public class StatusResponsePacket extends MinecraftPacket {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(icon, "PNG", out);
         out.close();
-        byte encoded[] = Base64.encode(out.toByteArray());
-        return "data:image/png;base64," + new String(encoded, "UTF-8");
+        byte[] encoded = Base64.encode(out.toByteArray());
+        return "data:image/png;base64," + new String(encoded, StandardCharsets.UTF_8);
     }
 }

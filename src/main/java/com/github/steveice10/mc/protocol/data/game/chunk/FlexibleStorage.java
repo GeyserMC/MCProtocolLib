@@ -1,11 +1,13 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import com.github.steveice10.mc.protocol.util.ObjectUtil;
+import lombok.Data;
+import lombok.NonNull;
 
 import java.util.Arrays;
 
+@Data
 public class FlexibleStorage {
-    private final long[] data;
+    private final @NonNull long[] data;
     private final int bitsPerEntry;
     private final int size;
     private final long maxEntryValue;
@@ -14,13 +16,13 @@ public class FlexibleStorage {
         this(bitsPerEntry, new long[roundToNearest(size * bitsPerEntry, 64) / 64]);
     }
 
-    public FlexibleStorage(int bitsPerEntry, long[] data) {
+    public FlexibleStorage(int bitsPerEntry, @NonNull long[] data) {
         if(bitsPerEntry < 4) {
             bitsPerEntry = 4;
         }
 
         this.bitsPerEntry = bitsPerEntry;
-        this.data = data;
+        this.data = Arrays.copyOf(data, data.length);
 
         this.size = this.data.length * 64 / this.bitsPerEntry;
         this.maxEntryValue = (1L << this.bitsPerEntry) - 1;
@@ -39,18 +41,6 @@ public class FlexibleStorage {
             int remainder = value % roundTo;
             return remainder != 0 ? value + roundTo - remainder : value;
         }
-    }
-
-    public long[] getData() {
-        return this.data;
-    }
-
-    public int getBitsPerEntry() {
-        return this.bitsPerEntry;
-    }
-
-    public int getSize() {
-        return this.size;
     }
 
     public int get(int index) {
@@ -88,27 +78,5 @@ public class FlexibleStorage {
             int endBitSubIndex = 64 - startBitSubIndex;
             this.data[endIndex] = this.data[endIndex] >>> endBitSubIndex << endBitSubIndex | ((long) value & this.maxEntryValue) >> endBitSubIndex;
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(!(o instanceof FlexibleStorage)) return false;
-
-        FlexibleStorage that = (FlexibleStorage) o;
-        return Arrays.equals(this.data, that.data) &&
-                this.bitsPerEntry == that.bitsPerEntry &&
-                this.size == that.size &&
-                this.maxEntryValue == that.maxEntryValue;
-    }
-
-    @Override
-    public int hashCode() {
-        return ObjectUtil.hashCode(this.data, this.bitsPerEntry, this.size, this.maxEntryValue);
-    }
-
-    @Override
-    public String toString() {
-        return ObjectUtil.toString(this);
     }
 }

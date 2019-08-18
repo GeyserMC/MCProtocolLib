@@ -1,31 +1,24 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
-import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.packet.Packet;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 
-public class ServerPreparedCraftingGridPacket extends MinecraftPacket {
+@Data
+@Setter(AccessLevel.NONE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+public class ServerPreparedCraftingGridPacket implements Packet {
     private int windowId;
-    private String recipeId;
-
-    @SuppressWarnings("unused")
-    private ServerPreparedCraftingGridPacket() {
-    }
-
-    public ServerPreparedCraftingGridPacket(int windowId, String recipeId) {
-        this.windowId = windowId;
-        this.recipeId = recipeId;
-    }
-
-    public int getWindowId() {
-        return this.windowId;
-    }
-
-    public String getRecipeId() {
-        return this.recipeId;
-    }
+    private @NonNull String recipeId;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -37,5 +30,10 @@ public class ServerPreparedCraftingGridPacket extends MinecraftPacket {
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
         out.writeString(this.recipeId);
+    }
+
+    @Override
+    public boolean isPriority() {
+        return false;
     }
 }
