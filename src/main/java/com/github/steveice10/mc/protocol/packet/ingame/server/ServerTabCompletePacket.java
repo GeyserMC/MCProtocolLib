@@ -42,7 +42,7 @@ public class ServerTabCompletePacket implements Packet {
         this.start = in.readVarInt();
         this.length = in.readVarInt();
         this.matches = new String[in.readVarInt()];
-        this.tooltips = new TextMessage[this.matches.length];
+        this.tooltips = new Message[this.matches.length];
         for(int index = 0; index < this.matches.length; index++) {
             this.matches[index] = in.readString();
             if (in.readBoolean()) {
