@@ -8,5 +8,5 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Particle {
     private final @NonNull ParticleType type;
-    private final @NonNull ParticleData data;
+    private final ParticleData data;
 }
