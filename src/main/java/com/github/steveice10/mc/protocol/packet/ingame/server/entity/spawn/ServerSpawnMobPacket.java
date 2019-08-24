@@ -31,9 +31,9 @@ public class ServerSpawnMobPacket implements Packet {
     private float pitch;
     private float yaw;
     private float headYaw;
-    private double motX;
-    private double motY;
-    private double motZ;
+    private double motionX;
+    private double motionY;
+    private double motionZ;
     private @NonNull EntityMetadata[] metadata;
 
     @Override
@@ -47,9 +47,9 @@ public class ServerSpawnMobPacket implements Packet {
         this.yaw = in.readByte() * 360 / 256f;
         this.pitch = in.readByte() * 360 / 256f;
         this.headYaw = in.readByte() * 360 / 256f;
-        this.motX = in.readShort() / 8000D;
-        this.motY = in.readShort() / 8000D;
-        this.motZ = in.readShort() / 8000D;
+        this.motionX = in.readShort() / 8000D;
+        this.motionY = in.readShort() / 8000D;
+        this.motionZ = in.readShort() / 8000D;
         this.metadata = NetUtil.readEntityMetadata(in);
     }
 
@@ -64,9 +64,9 @@ public class ServerSpawnMobPacket implements Packet {
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeByte((byte) (this.headYaw * 256 / 360));
-        out.writeShort((int) (this.motX * 8000));
-        out.writeShort((int) (this.motY * 8000));
-        out.writeShort((int) (this.motZ * 8000));
+        out.writeShort((int) (this.motionX * 8000));
+        out.writeShort((int) (this.motionY * 8000));
+        out.writeShort((int) (this.motionZ * 8000));
         NetUtil.writeEntityMetadata(out, this.metadata);
     }
 

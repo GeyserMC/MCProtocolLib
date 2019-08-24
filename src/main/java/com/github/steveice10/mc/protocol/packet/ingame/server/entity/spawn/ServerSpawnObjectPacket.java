@@ -36,9 +36,9 @@ public class ServerSpawnObjectPacket implements Packet {
     private double z;
     private float yaw;
     private float pitch;
-    private double motX;
-    private double motY;
-    private double motZ;
+    private double motionX;
+    private double motionY;
+    private double motionZ;
 
     public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type,
                                    double x, double y, double z, float yaw, float pitch) {
@@ -52,8 +52,8 @@ public class ServerSpawnObjectPacket implements Packet {
 
     public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type,
                                    double x, double y, double z, float yaw, float pitch,
-                                   double motX, double motY, double motZ) {
-        this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, motX, motY, motZ);
+                                   double motionX, double motionY, double motionZ) {
+        this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, motionX, motionY, motionZ);
     }
 
     @Override
@@ -83,9 +83,9 @@ public class ServerSpawnObjectPacket implements Packet {
             this.data = new GenericObjectData(data);
         }
 
-        this.motX = in.readShort() / 8000D;
-        this.motY = in.readShort() / 8000D;
-        this.motZ = in.readShort() / 8000D;
+        this.motionX = in.readShort() / 8000D;
+        this.motionY = in.readShort() / 8000D;
+        this.motionZ = in.readShort() / 8000D;
     }
 
     @Override
@@ -116,9 +116,9 @@ public class ServerSpawnObjectPacket implements Packet {
 
         out.writeInt(data);
 
-        out.writeShort((int) (this.motX * 8000));
-        out.writeShort((int) (this.motY * 8000));
-        out.writeShort((int) (this.motZ * 8000));
+        out.writeShort((int) (this.motionX * 8000));
+        out.writeShort((int) (this.motionY * 8000));
+        out.writeShort((int) (this.motionZ * 8000));
     }
 
     @Override
