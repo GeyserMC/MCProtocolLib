@@ -1,8 +1,6 @@
 package com.github.steveice10.mc.protocol.util;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
-import com.github.steveice10.mc.protocol.data.game.chunk.Column;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
@@ -24,9 +22,7 @@ import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.io.stream.StreamNetInput;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -123,6 +119,11 @@ public class NetUtil {
         return new Particle(type, data);
     }
 
+    public static void writeParticle(NetOutput out, Particle particle) throws IOException {
+        out.writeVarInt(MagicValues.value(Integer.class, particle.getType()));
+        writeParticleData(out, particle.getData(), particle.getType());
+    }
+
     public static ParticleData readParticleData(NetInput in, ParticleType type) throws IOException {
         switch (type) {
             case BLOCK:
@@ -140,11 +141,6 @@ public class NetUtil {
             default:
                 return null;
         }
-    }
-
-    public static void writeParticle(NetOutput out, Particle particle) throws IOException {
-        out.writeVarInt(MagicValues.value(Integer.class, particle.getType()));
-        writeParticleData(out, particle.getData(), particle.getType());
     }
 
     public static void writeParticleData(NetOutput out, ParticleData data, ParticleType type) throws IOException {
@@ -337,58 +333,6 @@ public class NetUtil {
         }
 
         out.writeByte(255);
-    }
-
-    public static Column readColumn(byte data[], int x, int z, boolean fullChunk, boolean hasSkylight, int mask, CompoundTag[] tileEntities, CompoundTag heightmaps) throws IOException {
-        NetInput in = new StreamNetInput(new ByteArrayInputStream(data));
-        Throwable ex = null;
-        Column column = null;
-        try {
-            Chunk[] chunks = new Chunk[16];
-            for(int index = 0; index < chunks.length; index++) {
-                if((mask & (1 << index)) != 0) {
-                    chunks[index] = new Chunk(in);
-                }
-            }
-
-            int biomeData[] = null;
-            if(fullChunk) {
-                biomeData = in.readInts(256);
-            }
-
-            column = new Column(x, z, chunks, tileEntities, heightmaps, biomeData);
-        } catch(Throwable e) {
-            ex = e;
-        }
-
-        // Unfortunately, this is needed to detect whether the chunks contain skylight or not.
-        if((in.available() > 0 || ex != null) && !hasSkylight) {
-            return readColumn(data, x, z, fullChunk, true, mask, tileEntities, heightmaps);
-        } else if(ex != null) {
-            throw new IOException("Failed to read chunk data.", ex);
-        }
-
-        return column;
-    }
-
-    public static int writeColumn(NetOutput out, Column column) throws IOException {
-        boolean full = column.getBiomeData() != null;
-
-        int mask = 0;
-        Chunk chunks[] = column.getChunks();
-        for(int index = 0; index < chunks.length; index++) {
-            Chunk chunk = chunks[index];
-            if(chunk != null && (!full || !chunk.isEmpty())) {
-                mask |= 1 << index;
-                chunk.write(out);
-            }
-        }
-
-        if(full) {
-            out.writeInts(column.getBiomeData());
-        }
-
-        return mask;
     }
 
     private static class NetInputStream extends InputStream {
