@@ -40,5 +40,6 @@ public enum CommandParser {
     FLOAT_RANGE,
     ITEM_ENCHANTMENT,
     ENTITY_SUMMON,
-    DIMENSION;
+    DIMENSION,
+    TIME;
 }
