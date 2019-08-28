@@ -137,7 +137,6 @@
                 <configuration>
                     <show>public</show>
                     <failOnError>false</failOnError>
-                    <additionalOptions>-html5</additionalOptions>
                 </configuration>
             </plugin>
             <plugin>

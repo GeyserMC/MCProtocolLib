@@ -19,7 +19,6 @@ public enum MobType {
     DROWNED,
     ELDER_GUARDIAN,
     END_CRYSTAL,
-    ENDER_CRYSTAL,
     ENDER_DRAGON,
     ENDERMAN,
     ENDERMITE,

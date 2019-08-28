@@ -1,8 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
 public enum ModifierType {
-    DYNAMIC,
-
     CREATURE_FLEE_SPEED_BONUS,
     ENDERMAN_ATTACK_SPEED_BOOST,
     SPRINT_SPEED_BOOST,

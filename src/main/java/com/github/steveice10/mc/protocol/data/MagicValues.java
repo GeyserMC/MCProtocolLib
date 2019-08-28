@@ -98,18 +98,21 @@ import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class MagicValues {
-    private static final Map<Object, List<Object>> values = new HashMap<Object, List<Object>>();
+    private static final Map<Object, List<Object>> VALUES = new HashMap<>();
 
     static {
-        for (int i = 0; i < Pose.values().length; i++) {
-            register(Pose.values()[i], i);
-        }
+        register(Pose.STANDING, 0);
+        register(Pose.FALL_FLYING, 1);
+        register(Pose.SLEEPING, 2);
+        register(Pose.SWIMMING, 3);
+        register(Pose.SPIN_ATTACK, 4);
+        register(Pose.SNEAKING, 5);
+        register(Pose.DYING, 6);
 
         register(AttributeType.GENERIC_MAX_HEALTH, "generic.maxHealth");
         register(AttributeType.GENERIC_FOLLOW_RANGE, "generic.followRange");
@@ -614,9 +617,29 @@ public class MagicValues {
         register(MapIconType.BLACK_BANNER, 25);
         register(MapIconType.TREASURE_MARKER, 26);
 
-        for (int i = 0; i < WindowType.values().length; i++) {
-            register(WindowType.values()[i], i);
-        }
+        register(WindowType.GENERIC_9X1, 0);
+        register(WindowType.GENERIC_9X2, 1);
+        register(WindowType.GENERIC_9X3, 2);
+        register(WindowType.GENERIC_9X4, 3);
+        register(WindowType.GENERIC_9X5, 4);
+        register(WindowType.GENERIC_9X6, 5);
+        register(WindowType.GENERIC_3X3, 6);
+        register(WindowType.ANVIL, 7);
+        register(WindowType.BEACON, 8);
+        register(WindowType.BLAST_FURNACE, 9);
+        register(WindowType.BREWING_STAND, 10);
+        register(WindowType.CRAFTING, 11);
+        register(WindowType.ENCHANTMENT, 12);
+        register(WindowType.FURNACE, 13);
+        register(WindowType.GRINDSTONE, 14);
+        register(WindowType.HOPPER, 15);
+        register(WindowType.LECTERN, 16);
+        register(WindowType.LOOM, 17);
+        register(WindowType.MERCHANT, 18);
+        register(WindowType.SHULKER_BOX, 19);
+        register(WindowType.SMOKER, 20);
+        register(WindowType.CARTOGRAPHY, 21);
+        register(WindowType.STONECUTTER, 22);
 
         register(BrewingStandProperty.BREW_TIME, 0);
 
@@ -1074,26 +1097,78 @@ public class MagicValues {
         register(RotationOrigin.FEET, 0);
         register(RotationOrigin.EYES, 1);
 
-        for(RecipeType type : RecipeType.values()) {
-            register(type, "minecraft:" + type.name().toLowerCase());
-        }
+        register(RecipeType.CRAFTING_SHAPELESS, "minecraft:crafting_shapeless");
+        register(RecipeType.CRAFTING_SHAPED, "minecraft:crafting_shaped");
+        register(RecipeType.CRAFTING_SPECIAL_ARMORDYE, "minecraft:crafting_special_armordye");
+        register(RecipeType.CRAFTING_SPECIAL_BOOKCLONING, "minecraft:crafting_special_bookcloning");
+        register(RecipeType.CRAFTING_SPECIAL_MAPCLONING, "minecraft:crafting_special_mapcloning");
+        register(RecipeType.CRAFTING_SPECIAL_MAPEXTENDING, "minecraft:crafting_special_mapextending");
+        register(RecipeType.CRAFTING_SPECIAL_FIREWORK_ROCKET, "minecraft:crafting_special_firework_rocket");
+        register(RecipeType.CRAFTING_SPECIAL_FIREWORK_STAR, "minecraft:crafting_special_firework_star");
+        register(RecipeType.CRAFTING_SPECIAL_FIREWORK_STAR_FADE, "minecraft:crafting_special_firework_star_fade");
+        register(RecipeType.CRAFTING_SPECIAL_REPAIRITEM, "minecraft:crafting_special_repairitem");
+        register(RecipeType.CRAFTING_SPECIAL_TIPPEDARROW, "minecraft:crafting_special_tippedarrow");
+        register(RecipeType.CRAFTING_SPECIAL_BANNERDUPLICATE, "minecraft:crafting_special_bannerduplicate");
+        register(RecipeType.CRAFTING_SPECIAL_BANNERADDPATTERN, "minecraft:crafting_special_banneraddpattern");
+        register(RecipeType.CRAFTING_SPECIAL_SHIELDDECORATION, "minecraft:crafting_special_shielddecoration");
+        register(RecipeType.CRAFTING_SPECIAL_SHULKERBOXCOLORING, "minecraft:crafting_special_shulkerboxcoloring");
+        register(RecipeType.CRAFTING_SPECIAL_SUSPICIOUSSTEW, "minecraft:crafting_special_suspiciousstew");
+        register(RecipeType.SMELTING, "minecraft:smelting");
+        register(RecipeType.BLASTING, "minecraft:blasting");
+        register(RecipeType.SMOKING, "minecraft:smoking");
+        register(RecipeType.CAMPFIRE_COOKING, "minecraft:campfire_cooking");
+        register(RecipeType.STONECUTTING, "minecraft:stonecutting");
 
         register(CommandType.ROOT, 0);
         register(CommandType.LITERAL, 1);
         register(CommandType.ARGUMENT, 2);
 
-        for(CommandParser parser : CommandParser.values()) {
-            if(parser == CommandParser.BOOL || parser == CommandParser.DOUBLE || parser == CommandParser.FLOAT
-                    || parser == CommandParser.INTEGER || parser == CommandParser.STRING) {
-                register(parser, "brigadier:" + parser.name().toLowerCase());
-            } else {
-                register(parser, "minecraft:" + parser.name().toLowerCase());
-            }
-        }
+        register(CommandParser.BOOL, "brigadier:bool");
+        register(CommandParser.DOUBLE, "brigadier:double");
+        register(CommandParser.FLOAT, "brigadier:float");
+        register(CommandParser.INTEGER, "brigadier:integer");
+        register(CommandParser.STRING, "brigadier:string");
+        register(CommandParser.ENTITY, "minecraft:entity");
+        register(CommandParser.GAME_PROFILE, "minecraft:game_profile");
+        register(CommandParser.BLOCK_POS, "minecraft:block_pos");
+        register(CommandParser.COLUMN_POS, "minecraft:column_pos");
+        register(CommandParser.VEC3, "minecraft:vec3");
+        register(CommandParser.VEC2, "minecraft:vec2");
+        register(CommandParser.BLOCK_STATE, "minecraft:block_state");
+        register(CommandParser.BLOCK_PREDICATE, "minecraft:block_predicate");
+        register(CommandParser.ITEM_STACK, "minecraft:item_stack");
+        register(CommandParser.ITEM_PREDICATE, "minecraft:item_predicate");
+        register(CommandParser.COLOR, "minecraft:color");
+        register(CommandParser.COMPONENT, "minecraft:component");
+        register(CommandParser.MESSAGE, "minecraft:message");
+        register(CommandParser.NBT, "minecraft:nbt");
+        register(CommandParser.NBT_PATH, "minecraft:nbt_path");
+        register(CommandParser.OBJECTIVE, "minecraft:objective");
+        register(CommandParser.OBJECTIVE_CRITERIA, "minecraft:objective_criteria");
+        register(CommandParser.OPERATION, "minecraft:operation");
+        register(CommandParser.PARTICLE, "minecraft:particle");
+        register(CommandParser.ROTATION, "minecraft:rotation");
+        register(CommandParser.SCOREBOARD_SLOT, "minecraft:scoreboard_slot");
+        register(CommandParser.SCORE_HOLDER, "minecraft:score_holder");
+        register(CommandParser.SWIZZLE, "minecraft:swizzle");
+        register(CommandParser.TEAM, "minecraft:team");
+        register(CommandParser.ITEM_SLOT, "minecraft:item_slot");
+        register(CommandParser.RESOURCE_LOCATION, "minecraft:resource_location");
+        register(CommandParser.MOB_EFFECT, "minecraft:mob_effect");
+        register(CommandParser.FUNCTION, "minecraft:function");
+        register(CommandParser.ENTITY_ANCHOR, "minecraft:entity_anchor");
+        register(CommandParser.RANGE, "minecraft:range");
+        register(CommandParser.INT_RANGE, "minecraft:int_range");
+        register(CommandParser.FLOAT_RANGE, "minecraft:float_range");
+        register(CommandParser.ITEM_ENCHANTMENT, "minecraft:item_enchantment");
+        register(CommandParser.ENTITY_SUMMON, "minecraft:entity_summon");
+        register(CommandParser.DIMENSION, "minecraft:dimension");
+        register(CommandParser.TIME, "minecraft:time");
 
-        for(SuggestionType type : SuggestionType.values()) {
-            register(type, "minecraft:" + type.name().toLowerCase());
-        }
+        register(SuggestionType.ASK_SERVER, "minecraft:ask_server");
+        register(SuggestionType.ALL_RECIPES, "minecraft:all_recipes");
+        register(SuggestionType.AVAILABLE_SOUNDS, "minecraft:available_sounds");
+        register(SuggestionType.SUMMONABLE_ENTITIES, "minecraft:summonable_entities");
 
         register(StringProperties.SINGLE_WORD, 0);
         register(StringProperties.QUOTABLE_PHRASE, 1);
@@ -1116,29 +1191,18 @@ public class MagicValues {
         }
     }
 
+    private MagicValues() {
+    }
+
     private static void register(Enum<?> key, Object value) {
-        register(key, value, false);
+        VALUES.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
     }
 
-    private static void register(Enum<?> key, Object value, boolean overwrite) {
-        if(!values.containsKey(key)) {
-            values.put(key, new ArrayList<Object>());
-        } else if(overwrite) {
-            for(Iterator<Object> it = values.get(key).iterator(); it.hasNext(); ) {
-                if(value.getClass().isAssignableFrom(it.next().getClass())) {
-                    it.remove();
-                }
-            }
-        }
-
-        values.get(key).add(value);
-    }
-
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("unchecked")
     public static <T> T key(Class<T> keyType, Object value) {
-        for(Object key : values.keySet()) {
+        for(Object key : VALUES.keySet()) {
             if(keyType.isAssignableFrom(key.getClass())) {
-                for(Object val : values.get(key)) {
+                for(Object val : VALUES.get(key)) {
                     if(val == value || val.equals(value)) {
                         return (T) key;
                     } else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
@@ -1163,8 +1227,8 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T value(Class<T> valueType, Object key) {
-        if(values.containsKey(key)) {
-            for(Object val : values.get(key)) {
+        if(VALUES.containsKey(key)) {
+            for(Object val : VALUES.get(key)) {
                 if(valueType.isAssignableFrom(val.getClass())) {
                     return (T) val;
                 } else if(Number.class.isAssignableFrom(val.getClass())) {
