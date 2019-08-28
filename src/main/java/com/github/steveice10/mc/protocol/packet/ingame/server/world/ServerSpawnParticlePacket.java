@@ -2,8 +2,8 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -44,7 +44,7 @@ public class ServerSpawnParticlePacket implements Packet {
         this.offsetZ = in.readFloat();
         this.velocityOffset = in.readFloat();
         this.amount = in.readInt();
-        this.particle = new Particle(type, NetUtil.readParticleData(in, type));
+        this.particle = new Particle(type, ParticleData.read(in, type));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ServerSpawnParticlePacket implements Packet {
         out.writeFloat(this.offsetZ);
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
-        NetUtil.writeParticleData(out, this.particle.getData(), this.particle.getType());
+        ParticleData.write(out, this.particle.getType(), this.particle.getData());
     }
 
     @Override

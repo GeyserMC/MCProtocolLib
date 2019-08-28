@@ -6,7 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.Displ
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -62,7 +61,7 @@ public class ServerAdvancementsPacket implements Packet {
             if(in.readBoolean()) {
                 Message title = Message.fromString(in.readString());
                 Message description = Message.fromString(in.readString());
-                ItemStack icon = NetUtil.readItem(in);
+                ItemStack icon = ItemStack.read(in);
                 FrameType frameType = MagicValues.key(FrameType.class, in.readVarInt());
 
                 int flags = in.readInt();
@@ -139,7 +138,7 @@ public class ServerAdvancementsPacket implements Packet {
                 out.writeBoolean(true);
                 out.writeString(displayData.getTitle().toJsonString());
                 out.writeString(displayData.getDescription().toJsonString());
-                NetUtil.writeItem(out, displayData.getIcon());
+                ItemStack.write(out, displayData.getIcon());
                 out.writeVarInt(MagicValues.value(Integer.class, displayData.getFrameType()));
                 String backgroundTexture = displayData.getBackgroundTexture();
 

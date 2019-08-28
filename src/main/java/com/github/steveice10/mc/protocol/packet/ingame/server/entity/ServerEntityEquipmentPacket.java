@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -29,14 +28,14 @@ public class ServerEntityEquipmentPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.slot = MagicValues.key(EquipmentSlot.class, in.readVarInt());
-        this.item = NetUtil.readItem(in);
+        this.item = ItemStack.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeVarInt(MagicValues.value(Integer.class, this.slot));
-        NetUtil.writeItem(out, this.item);
+        ItemStack.write(out, this.item);
     }
 
     @Override

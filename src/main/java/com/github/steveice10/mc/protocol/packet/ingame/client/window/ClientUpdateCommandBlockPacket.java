@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -34,7 +33,7 @@ public class ClientUpdateCommandBlockPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.position = NetUtil.readPosition(in);
+        this.position = Position.read(in);
         this.command = in.readString();
         this.mode = MagicValues.key(CommandBlockMode.class, in.readVarInt());
 
@@ -46,7 +45,7 @@ public class ClientUpdateCommandBlockPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NetUtil.writePosition(out, this.position);
+        Position.write(out, this.position);
         out.writeString(this.command);
         out.writeVarInt(MagicValues.value(Integer.class, this.mode));
 

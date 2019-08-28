@@ -1,12 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.login.client;
 
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import com.github.steveice10.mc.protocol.util.CryptUtil;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -20,8 +22,18 @@ public class EncryptionResponsePacketTest extends PacketTest {
 
     @Before
     public void setup() {
-        this.keyPair = CryptUtil.generateServerKeyPair();
-        this.secretKey = CryptUtil.generateSharedKey();
+        try {
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+            keyPairGen.initialize(1024);
+            this.keyPair = keyPairGen.generateKeyPair();
+
+            KeyGenerator secretKeyGen = KeyGenerator.getInstance("AES");
+            secretKeyGen.init(128);
+            this.secretKey = secretKeyGen.generateKey();
+        } catch(NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Failed to generate test keys.", e);
+        }
+
         this.verifyToken = new byte[4];
         new Random().nextBytes(this.verifyToken);
 

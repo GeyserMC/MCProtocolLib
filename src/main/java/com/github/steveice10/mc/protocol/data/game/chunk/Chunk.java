@@ -1,20 +1,22 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
 @Setter(AccessLevel.NONE)
+@AllArgsConstructor
 public class Chunk {
     private static final BlockState AIR = new BlockState(0);
 
@@ -25,46 +27,41 @@ public class Chunk {
     private @NonNull FlexibleStorage storage;
 
     public Chunk() {
-        this.blockCount = 0;
-        this.bitsPerEntry = 4;
-
-        this.states = new ArrayList<>();
-        this.states.add(AIR);
-
-        this.storage = new FlexibleStorage(this.bitsPerEntry, 4096);
+        this(0, 4, new ArrayList<>(Collections.singletonList(AIR)), new FlexibleStorage(4, 4096));
     }
 
-    public Chunk(@NonNull NetInput in) throws IOException {
-        this.blockCount = in.readShort();
-        this.bitsPerEntry = in.readUnsignedByte();
+    public static Chunk read(NetInput in) throws IOException {
+        int blockCount = in.readShort();
+        int bitsPerEntry = in.readUnsignedByte();
 
-        this.states = new ArrayList<>();
-        int stateCount = this.bitsPerEntry > 8 ? 0 : in.readVarInt();
+        List<BlockState> states = new ArrayList<>();
+        int stateCount = bitsPerEntry > 8 ? 0 : in.readVarInt();
         for(int i = 0; i < stateCount; i++) {
-            this.states.add(NetUtil.readBlockState(in));
+            states.add(BlockState.read(in));
         }
 
-        this.storage = new FlexibleStorage(this.bitsPerEntry, in.readLongs(in.readVarInt()));
+        FlexibleStorage storage = new FlexibleStorage(bitsPerEntry, in.readLongs(in.readVarInt()));
+        return new Chunk(blockCount, bitsPerEntry, states, storage);
+    }
+
+    public static void write(NetOutput out, Chunk chunk) throws IOException {
+        out.writeShort(chunk.getBlockCount());
+        out.writeByte(chunk.getBitsPerEntry());
+
+        if(chunk.getBitsPerEntry() <= 8) {
+            out.writeVarInt(chunk.getStates().size());
+            for (BlockState state : chunk.getStates()) {
+                BlockState.write(out, state);
+            }
+        }
+
+        long[] data = chunk.getStorage().getData();
+        out.writeVarInt(data.length);
+        out.writeLongs(data);
     }
 
     private static int index(int x, int y, int z) {
         return y << 8 | z << 4 | x;
-    }
-
-    public void write(@NonNull NetOutput out) throws IOException {
-        out.writeShort(this.blockCount);
-        out.writeByte(this.bitsPerEntry);
-
-        if (this.bitsPerEntry <= 8) {
-            out.writeVarInt(this.states.size());
-            for (BlockState state : this.states) {
-                NetUtil.writeBlockState(out, state);
-            }
-        }
-
-        long[] data = this.storage.getData();
-        out.writeVarInt(data.length);
-        out.writeLongs(data);
     }
 
     public BlockState get(int x, int y, int z) {

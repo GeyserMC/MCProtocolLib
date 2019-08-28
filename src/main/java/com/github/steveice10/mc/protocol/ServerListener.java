@@ -23,7 +23,6 @@ import com.github.steveice10.mc.protocol.packet.status.client.StatusPingPacket;
 import com.github.steveice10.mc.protocol.packet.status.client.StatusQueryPacket;
 import com.github.steveice10.mc.protocol.packet.status.server.StatusPongPacket;
 import com.github.steveice10.mc.protocol.packet.status.server.StatusResponsePacket;
-import com.github.steveice10.mc.protocol.util.CryptUtil;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
@@ -31,9 +30,10 @@ import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 
 import javax.crypto.SecretKey;
-import java.math.BigInteger;
 import java.net.Proxy;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.Random;
@@ -44,7 +44,17 @@ public class ServerListener extends SessionAdapter {
 
     // Always empty post-1.7
     private static final String SERVER_ID = "";
-    private static final KeyPair KEY_PAIR = CryptUtil.generateServerKeyPair();
+    private static final KeyPair KEY_PAIR;
+
+    static {
+        try {
+            KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+            gen.initialize(1024);
+            KEY_PAIR = gen.generateKeyPair();
+        } catch(NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Failed to generate server key pair.", e);
+        }
+    }
 
     private byte[] verifyToken = new byte[4];
     private String username = "";
@@ -170,8 +180,9 @@ public class ServerListener extends SessionAdapter {
                     proxy = Proxy.NO_PROXY;
                 }
 
+                SessionService sessionService = new SessionService(proxy);
                 try {
-                    profile = new SessionService(proxy).getProfileByServer(username, new BigInteger(CryptUtil.getServerIdHash(SERVER_ID, KEY_PAIR.getPublic(), this.key)).toString(16));
+                    profile = sessionService.getProfileByServer(username, sessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
                 } catch(RequestException e) {
                     this.session.disconnect("Failed to make session service request.", e);
                     return;

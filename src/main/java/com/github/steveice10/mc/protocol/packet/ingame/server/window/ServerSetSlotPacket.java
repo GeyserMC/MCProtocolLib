@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -27,14 +26,14 @@ public class ServerSetSlotPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.windowId = in.readUnsignedByte();
         this.slot = in.readShort();
-        this.item = NetUtil.readItem(in);
+        this.item = ItemStack.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
         out.writeShort(this.slot);
-        NetUtil.writeItem(out, this.item);
+        ItemStack.write(out, this.item);
     }
 
     @Override

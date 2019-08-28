@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -24,13 +23,13 @@ public class ClientEditBookPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.book = NetUtil.readItem(in);
+        this.book = ItemStack.read(in);
         this.signing = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NetUtil.writeItem(out, this.book);
+        ItemStack.write(out, this.book);
         out.writeBoolean(this.signing);
     }
 

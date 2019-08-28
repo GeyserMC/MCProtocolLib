@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
+import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -33,18 +33,18 @@ public class ServerChunkDataPacket implements Packet {
         int z = in.readInt();
         boolean fullChunk = in.readBoolean();
         int chunkMask = in.readVarInt();
-        CompoundTag heightMaps = NetUtil.readNBT(in);
+        CompoundTag heightMaps = NBT.read(in);
         byte[] data = in.readBytes(in.readVarInt());
         CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
         for(int i = 0; i < tileEntities.length; i++) {
-            tileEntities[i] = NetUtil.readNBT(in);
+            tileEntities[i] = NBT.read(in);
         }
 
         NetInput dataIn = new StreamNetInput(new ByteArrayInputStream(data));
         Chunk[] chunks = new Chunk[16];
         for(int index = 0; index < chunks.length; index++) {
             if((chunkMask & (1 << index)) != 0) {
-                chunks[index] = new Chunk(dataIn);
+                chunks[index] = Chunk.read(dataIn);
             }
         }
 
@@ -67,7 +67,7 @@ public class ServerChunkDataPacket implements Packet {
             Chunk chunk = chunks[index];
             if(chunk != null && (this.column.getBiomeData() == null || !chunk.isEmpty())) {
                 mask |= 1 << index;
-                chunk.write(dataOut);
+                Chunk.write(dataOut, chunk);
             }
         }
 
@@ -79,12 +79,12 @@ public class ServerChunkDataPacket implements Packet {
         out.writeInt(this.column.getZ());
         out.writeBoolean(this.column.getBiomeData() != null);
         out.writeVarInt(mask);
-        NetUtil.writeNBT(out, this.column.getHeightMaps());
+        NBT.write(out, this.column.getHeightMaps());
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());
         out.writeVarInt(this.column.getTileEntities().length);
         for(CompoundTag tag : this.column.getTileEntities()) {
-            NetUtil.writeNBT(out, tag);
+            NBT.write(out, tag);
         }
     }
 

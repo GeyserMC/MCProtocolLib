@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
-import com.github.steveice10.mc.protocol.util.NetUtil;
+import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -25,13 +25,13 @@ public class ServerNBTResponsePacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.transactionId = in.readVarInt();
-        this.nbt = NetUtil.readNBT(in);
+        this.nbt = NBT.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.transactionId);
-        NetUtil.writeNBT(out, this.nbt);
+        NBT.write(out, this.nbt);
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -33,7 +32,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.hand = MagicValues.key(Hand.class, in.readVarInt());
-        this.position = NetUtil.readPosition(in);
+        this.position = Position.read(in);
         this.face = MagicValues.key(BlockFace.class, in.readVarInt());
         this.cursorX = in.readFloat();
         this.cursorY = in.readFloat();
@@ -44,7 +43,7 @@ public class ClientPlayerPlaceBlockPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, this.hand));
-        NetUtil.writePosition(out, this.position);
+        Position.write(out, this.position);
         out.writeVarInt(MagicValues.value(Integer.class, this.face));
         out.writeFloat(this.cursorX);
         out.writeFloat(this.cursorY);

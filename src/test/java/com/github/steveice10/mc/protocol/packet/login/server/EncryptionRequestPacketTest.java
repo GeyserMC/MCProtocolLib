@@ -1,17 +1,28 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import com.github.steveice10.mc.protocol.util.CryptUtil;
 import org.junit.Before;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class EncryptionRequestPacketTest extends PacketTest {
     @Before
     public void setup() {
+        KeyPair keyPair;
+        try {
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+            keyPairGen.initialize(1024);
+            keyPair = keyPairGen.generateKeyPair();
+        } catch(NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Failed to generate test key pair.", e);
+        }
+
         byte[] verifyToken = new byte[4];
         new Random().nextBytes(verifyToken);
 
-        this.setPackets(new EncryptionRequestPacket("ServerID", CryptUtil.generateServerKeyPair().getPublic(), verifyToken));
+        this.setPackets(new EncryptionRequestPacket("ServerID", keyPair.getPublic(), verifyToken));
     }
 }

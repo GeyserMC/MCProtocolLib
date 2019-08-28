@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -25,13 +24,13 @@ public class ClientCreativeInventoryActionPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.slot = in.readShort();
-        this.clickedItem = NetUtil.readItem(in);
+        this.clickedItem = ItemStack.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeShort(this.slot);
-        NetUtil.writeItem(out, this.clickedItem);
+        ItemStack.write(out, this.clickedItem);
     }
 
     @Override

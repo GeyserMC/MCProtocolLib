@@ -18,7 +18,6 @@ import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockVa
 import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -55,7 +54,7 @@ public class ServerBlockValuePacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.position = NetUtil.readPosition(in);
+        this.position = Position.read(in);
         int type = in.readUnsignedByte();
         int value = in.readUnsignedByte();
         this.blockId = in.readVarInt() & 0xFFF;
@@ -98,7 +97,7 @@ public class ServerBlockValuePacket implements Packet {
             val = ((GenericBlockValue) this.value).getValue();
         }
 
-        NetUtil.writePosition(out, this.position);
+        Position.write(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeByte(val);
         out.writeVarInt(this.blockId & 4095);

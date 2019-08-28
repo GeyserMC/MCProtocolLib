@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -23,12 +22,12 @@ public class ServerOpenTileEntityEditorPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.position = NetUtil.readPosition(in);
+        this.position = Position.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NetUtil.writePosition(out, this.position);
+        Position.write(out, this.position);
     }
 
     @Override

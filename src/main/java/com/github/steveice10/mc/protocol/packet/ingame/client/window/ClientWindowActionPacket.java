@@ -11,7 +11,6 @@ import com.github.steveice10.mc.protocol.data.game.window.ShiftClickItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.SpreadItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.WindowAction;
 import com.github.steveice10.mc.protocol.data.game.window.WindowActionParam;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -57,7 +56,7 @@ public class ClientWindowActionPacket implements Packet {
         byte param = in.readByte();
         this.actionId = in.readShort();
         this.action = MagicValues.key(WindowAction.class, in.readByte());
-        this.clickedItem = NetUtil.readItem(in);
+        this.clickedItem = ItemStack.read(in);
         if(this.action == WindowAction.CLICK_ITEM) {
             this.param = MagicValues.key(ClickItemParam.class, param);
         } else if(this.action == WindowAction.SHIFT_CLICK_ITEM) {
@@ -88,7 +87,7 @@ public class ClientWindowActionPacket implements Packet {
         out.writeByte(param);
         out.writeShort(this.actionId);
         out.writeByte(MagicValues.value(Integer.class, this.action));
-        NetUtil.writeItem(out, this.clickedItem);
+        ItemStack.write(out, this.clickedItem);
     }
 
     @Override

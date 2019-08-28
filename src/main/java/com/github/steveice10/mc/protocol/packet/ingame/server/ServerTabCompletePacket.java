@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.TextMessage;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;

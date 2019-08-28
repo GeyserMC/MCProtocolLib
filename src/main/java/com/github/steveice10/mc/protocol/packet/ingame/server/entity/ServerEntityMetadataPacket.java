@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -25,13 +24,13 @@ public class ServerEntityMetadataPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.metadata = NetUtil.readEntityMetadata(in);
+        this.metadata = EntityMetadata.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        NetUtil.writeEntityMetadata(out, this.metadata);
+        EntityMetadata.write(out, this.metadata);
     }
 
     @Override

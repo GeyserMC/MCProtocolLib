@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -27,7 +26,7 @@ public class ServerWindowItemsPacket implements Packet {
         this.windowId = in.readUnsignedByte();
         this.items = new ItemStack[in.readShort()];
         for(int index = 0; index < this.items.length; index++) {
-            this.items[index] = NetUtil.readItem(in);
+            this.items[index] = ItemStack.read(in);
         }
     }
 
@@ -36,7 +35,7 @@ public class ServerWindowItemsPacket implements Packet {
         out.writeByte(this.windowId);
         out.writeShort(this.items.length);
         for(ItemStack item : this.items) {
-            NetUtil.writeItem(out, item);
+            ItemStack.write(out, item);
         }
     }
 

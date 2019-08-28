@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.window;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.window.VillagerTrade;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -34,12 +33,12 @@ public class ServerTradeListPacket implements Packet {
         byte size = in.readByte();
         this.trades = new VillagerTrade[size];
         for(int i = 0; i < trades.length; i++) {
-            ItemStack firstInput = NetUtil.readItem(in);
-            ItemStack output = NetUtil.readItem(in);
+            ItemStack firstInput = ItemStack.read(in);
+            ItemStack output = ItemStack.read(in);
 
             ItemStack secondInput = null;
             if(in.readBoolean()) {
-                secondInput = NetUtil.readItem(in);
+                secondInput = ItemStack.read(in);
             }
 
             boolean tradeDisabled = in.readBoolean();
@@ -67,13 +66,13 @@ public class ServerTradeListPacket implements Packet {
         for(int i = 0; i < this.trades.length; i++) {
             VillagerTrade trade = this.trades[i];
 
-            NetUtil.writeItem(out, trade.getFirstInput());
-            NetUtil.writeItem(out, trade.getOutput());
+            ItemStack.write(out, trade.getFirstInput());
+            ItemStack.write(out, trade.getOutput());
 
             boolean hasSecondItem = trade.getSecondInput() != null;
             out.writeBoolean(hasSecondItem);
             if(hasSecondItem) {
-                NetUtil.writeItem(out, trade.getSecondInput());
+                ItemStack.write(out, trade.getSecondInput());
             }
 
             out.writeBoolean(trade.isTradeDisabled());

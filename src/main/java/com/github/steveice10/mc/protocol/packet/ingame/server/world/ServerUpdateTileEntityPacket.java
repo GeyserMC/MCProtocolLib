@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.UpdatedTileType;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -28,16 +28,16 @@ public class ServerUpdateTileEntityPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.position = NetUtil.readPosition(in);
+        this.position = Position.read(in);
         this.type = MagicValues.key(UpdatedTileType.class, in.readUnsignedByte());
-        this.nbt = NetUtil.readNBT(in);
+        this.nbt = NBT.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NetUtil.writePosition(out, this.position);
+        Position.write(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.type));
-        NetUtil.writeNBT(out, this.nbt);
+        NBT.write(out, this.nbt);
     }
 
     @Override

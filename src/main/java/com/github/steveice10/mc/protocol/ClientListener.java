@@ -25,16 +25,16 @@ import com.github.steveice10.mc.protocol.packet.status.client.StatusPingPacket;
 import com.github.steveice10.mc.protocol.packet.status.client.StatusQueryPacket;
 import com.github.steveice10.mc.protocol.packet.status.server.StatusPongPacket;
 import com.github.steveice10.mc.protocol.packet.status.server.StatusResponsePacket;
-import com.github.steveice10.mc.protocol.util.CryptUtil;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.math.BigInteger;
 import java.net.Proxy;
+import java.security.NoSuchAlgorithmException;
 
 @AllArgsConstructor
 public class ClientListener extends SessionAdapter {
@@ -46,18 +46,26 @@ public class ClientListener extends SessionAdapter {
         if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
             if(event.getPacket() instanceof EncryptionRequestPacket) {
                 EncryptionRequestPacket packet = event.getPacket();
-                SecretKey key = CryptUtil.generateSharedKey();
+                SecretKey key;
+                try {
+                    KeyGenerator gen = KeyGenerator.getInstance("AES");
+                    gen.init(128);
+                    key = gen.generateKey();
+                } catch(NoSuchAlgorithmException e) {
+                    throw new IllegalStateException("Failed to generate shared key.", e);
+                }
 
                 Proxy proxy = event.getSession().<Proxy>getFlag(MinecraftConstants.AUTH_PROXY_KEY);
                 if(proxy == null) {
                     proxy = Proxy.NO_PROXY;
                 }
 
+                SessionService sessionService = new SessionService(proxy);
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
-                String serverHash = new BigInteger(CryptUtil.getServerIdHash(packet.getServerId(), packet.getPublicKey(), key)).toString(16);
+                String serverId = sessionService.getServerId(packet.getServerId(), packet.getPublicKey(), key);
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
                 try {
-                    new SessionService(proxy).joinServer(profile, accessToken, serverHash);
+                    sessionService.joinServer(profile, accessToken, serverId);
                 } catch(ServiceUnavailableException e) {
                     event.getSession().disconnect("Login failed: Authentication service unavailable.", e);
                     return;

@@ -6,7 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockAc
 import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -45,7 +44,7 @@ public class ClientUpdateStructureBlockPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.position = NetUtil.readPosition(in);
+        this.position = Position.read(in);
         this.action = MagicValues.key(UpdateStructureBlockAction.class, in.readVarInt());
         this.mode = MagicValues.key(UpdateStructureBlockMode.class, in.readVarInt());
         this.name = in.readString();
@@ -65,7 +64,7 @@ public class ClientUpdateStructureBlockPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NetUtil.writePosition(out, this.position);
+        Position.write(out, this.position);
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         out.writeVarInt(MagicValues.value(Integer.class, this.mode));
         out.writeString(this.name);

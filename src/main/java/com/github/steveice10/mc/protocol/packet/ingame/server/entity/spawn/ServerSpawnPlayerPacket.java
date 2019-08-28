@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -38,7 +37,7 @@ public class ServerSpawnPlayerPacket implements Packet {
         this.z = in.readDouble();
         this.yaw = in.readByte() * 360 / 256f;
         this.pitch = in.readByte() * 360 / 256f;
-        this.metadata = NetUtil.readEntityMetadata(in);
+        this.metadata = EntityMetadata.read(in);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class ServerSpawnPlayerPacket implements Packet {
         out.writeDouble(this.z);
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
-        NetUtil.writeEntityMetadata(out, this.metadata);
+        EntityMetadata.write(out, this.metadata);
     }
 
     @Override

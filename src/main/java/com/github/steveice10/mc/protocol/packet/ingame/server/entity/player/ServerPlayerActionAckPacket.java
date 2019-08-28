@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -29,16 +28,16 @@ public class ServerPlayerActionAckPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.position = NetUtil.readPosition(in);
-        this.newState = NetUtil.readBlockState(in);
+        this.position = Position.read(in);
+        this.newState = BlockState.read(in);
         this.action = MagicValues.key(PlayerAction.class, in.readVarInt());
         this.successful = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NetUtil.writePosition(out, this.position);
-        NetUtil.writeBlockState(out, this.newState);
+        Position.write(out, this.position);
+        BlockState.write(out, this.newState);
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         out.writeBoolean(this.successful);
     }

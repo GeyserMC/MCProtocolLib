@@ -13,7 +13,6 @@ import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.WorldEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.WorldEffectData;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -43,7 +42,7 @@ public class ServerPlayEffectPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.effect = MagicValues.key(WorldEffect.class, in.readInt());
-        this.position = NetUtil.readPosition(in);
+        this.position = Position.read(in);
         int value = in.readInt();
         if(this.effect == SoundEffect.RECORD) {
             this.data = new RecordEffectData(value);
@@ -65,7 +64,7 @@ public class ServerPlayEffectPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeInt(MagicValues.value(Integer.class, this.effect));
-        NetUtil.writePosition(out, this.position);
+        Position.write(out, this.position);
         int value = 0;
         if(this.data instanceof RecordEffectData) {
             value = ((RecordEffectData) this.data).getRecordId();

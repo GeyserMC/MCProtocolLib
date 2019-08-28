@@ -10,7 +10,6 @@ import com.github.steveice10.mc.protocol.data.game.recipe.data.RecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
-import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -45,7 +44,7 @@ public class ServerDeclareRecipesPacket implements Packet {
                         ingredients[j] = this.readIngredient(in);
                     }
 
-                    ItemStack result = NetUtil.readItem(in);
+                    ItemStack result = ItemStack.read(in);
 
                     data = new ShapelessRecipeData(group, ingredients, result);
                     break;
@@ -59,7 +58,7 @@ public class ServerDeclareRecipesPacket implements Packet {
                         ingredients[j] = this.readIngredient(in);
                     }
 
-                    ItemStack result = NetUtil.readItem(in);
+                    ItemStack result = ItemStack.read(in);
 
                     data = new ShapedRecipeData(width, height, group, ingredients, result);
                     break;
@@ -70,7 +69,7 @@ public class ServerDeclareRecipesPacket implements Packet {
                 case CAMPFIRE_COOKING: {
                     String group = in.readString();
                     Ingredient ingredient = this.readIngredient(in);
-                    ItemStack result = NetUtil.readItem(in);
+                    ItemStack result = ItemStack.read(in);
                     float experience = in.readFloat();
                     int cookingTime = in.readVarInt();
 
@@ -80,7 +79,7 @@ public class ServerDeclareRecipesPacket implements Packet {
                 case STONECUTTING: {
                     String group = in.readString();
                     Ingredient ingredient = this.readIngredient(in);
-                    ItemStack result = NetUtil.readItem(in);
+                    ItemStack result = ItemStack.read(in);
 
                     data = new StoneCuttingRecipeData(group, ingredient, result);
                     break;
@@ -96,7 +95,7 @@ public class ServerDeclareRecipesPacket implements Packet {
     private Ingredient readIngredient(NetInput in) throws IOException {
         ItemStack[] options = new ItemStack[in.readVarInt()];
         for(int i = 0; i < options.length; i++) {
-            options[i] = NetUtil.readItem(in);
+            options[i] = ItemStack.read(in);
         }
 
         return new Ingredient(options);
@@ -118,7 +117,7 @@ public class ServerDeclareRecipesPacket implements Packet {
                         this.writeIngredient(out, ingredient);
                     }
 
-                    NetUtil.writeItem(out, data.getResult());
+                    ItemStack.write(out, data.getResult());
                     break;
                 }
                 case CRAFTING_SHAPED: {
@@ -134,7 +133,7 @@ public class ServerDeclareRecipesPacket implements Packet {
                         this.writeIngredient(out, ingredient);
                     }
 
-                    NetUtil.writeItem(out, data.getResult());
+                    ItemStack.write(out, data.getResult());
                     break;
                 }
                 case SMELTING:
@@ -145,7 +144,7 @@ public class ServerDeclareRecipesPacket implements Packet {
 
                     out.writeString(data.getGroup());
                     this.writeIngredient(out, data.getIngredient());
-                    NetUtil.writeItem(out, data.getResult());
+                    ItemStack.write(out, data.getResult());
                     out.writeFloat(data.getExperience());
                     out.writeVarInt(data.getCookingTime());
                     break;
@@ -155,7 +154,7 @@ public class ServerDeclareRecipesPacket implements Packet {
 
                     out.writeString(data.getGroup());
                     this.writeIngredient(out, data.getIngredient());
-                    NetUtil.writeItem(out, data.getResult());
+                    ItemStack.write(out, data.getResult());
                     break;
                 }
                 default:
@@ -167,7 +166,7 @@ public class ServerDeclareRecipesPacket implements Packet {
     private void writeIngredient(NetOutput out, Ingredient ingredient) throws IOException {
         out.writeVarInt(ingredient.getOptions().length);
         for(ItemStack option : ingredient.getOptions()) {
-            NetUtil.writeItem(out, option);
+            ItemStack.write(out, option);
         }
     }
 
