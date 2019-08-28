@@ -40,10 +40,13 @@ import java.util.Random;
 import java.util.UUID;
 
 public class ServerListener extends SessionAdapter {
-    private static final KeyPair KEY_PAIR = CryptUtil.generateKeyPair();
+    private static final int DEFAULT_COMPRESSION_THRESHOLD = 256;
 
-    private byte verifyToken[] = new byte[4];
-    private String serverId = "";
+    // Always empty post-1.7
+    private static final String SERVER_ID = "";
+    private static final KeyPair KEY_PAIR = CryptUtil.generateServerKeyPair();
+
+    private byte[] verifyToken = new byte[4];
     private String username = "";
 
     private long lastPingTime = 0;
@@ -89,7 +92,7 @@ public class ServerListener extends SessionAdapter {
 
                 boolean verify = event.getSession().hasFlag(MinecraftConstants.VERIFY_USERS_KEY) ? event.getSession().<Boolean>getFlag(MinecraftConstants.VERIFY_USERS_KEY) : true;
                 if(verify) {
-                    event.getSession().send(new EncryptionRequestPacket(this.serverId, KEY_PAIR.getPublic(), this.verifyToken));
+                    event.getSession().send(new EncryptionRequestPacket(SERVER_ID, KEY_PAIR.getPublic(), this.verifyToken));
                 } else {
                     new Thread(new UserAuthTask(event.getSession(), null)).start();
                 }
@@ -111,12 +114,12 @@ public class ServerListener extends SessionAdapter {
             if(event.getPacket() instanceof StatusQueryPacket) {
                 ServerInfoBuilder builder = event.getSession().getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if(builder == null) {
-                    builder = new ServerInfoBuilder() {
-                        @Override
-                        public ServerStatusInfo buildInfo(Session session) {
-                            return new ServerStatusInfo(VersionInfo.CURRENT, new PlayerInfo(0, 20, new GameProfile[]{}), Message.fromString("A Minecraft Server"), null);
-                        }
-                    };
+                    builder = session -> new ServerStatusInfo(
+                            VersionInfo.CURRENT,
+                            new PlayerInfo(0, 20, new GameProfile[0]),
+                            Message.fromString("A Minecraft Server"),
+                            null
+                    );
                 }
 
                 ServerStatusInfo info = builder.buildInfo(event.getSession());
@@ -168,7 +171,7 @@ public class ServerListener extends SessionAdapter {
                 }
 
                 try {
-                    profile = new SessionService(proxy).getProfileByServer(username, new BigInteger(CryptUtil.getServerIdHash(serverId, KEY_PAIR.getPublic(), this.key)).toString(16));
+                    profile = new SessionService(proxy).getProfileByServer(username, new BigInteger(CryptUtil.getServerIdHash(SERVER_ID, KEY_PAIR.getPublic(), this.key)).toString(16));
                 } catch(RequestException e) {
                     this.session.disconnect("Failed to make session service request.", e);
                     return;
@@ -185,7 +188,7 @@ public class ServerListener extends SessionAdapter {
             if(this.session.hasFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD)) {
                 threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
             } else {
-                threshold = 256;
+                threshold = DEFAULT_COMPRESSION_THRESHOLD;
             }
 
             this.session.send(new LoginSetCompressionPacket(threshold));

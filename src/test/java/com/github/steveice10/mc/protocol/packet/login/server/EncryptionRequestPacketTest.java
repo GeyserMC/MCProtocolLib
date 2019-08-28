@@ -12,6 +12,6 @@ public class EncryptionRequestPacketTest extends PacketTest {
         byte[] verifyToken = new byte[4];
         new Random().nextBytes(verifyToken);
 
-        this.setPackets(new EncryptionRequestPacket("ServerID", CryptUtil.generateKeyPair().getPublic(), verifyToken));
+        this.setPackets(new EncryptionRequestPacket("ServerID", CryptUtil.generateServerKeyPair().getPublic(), verifyToken));
     }
 }

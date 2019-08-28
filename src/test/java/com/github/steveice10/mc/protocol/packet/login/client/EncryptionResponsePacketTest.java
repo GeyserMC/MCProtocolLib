@@ -20,7 +20,7 @@ public class EncryptionResponsePacketTest extends PacketTest {
 
     @Before
     public void setup() {
-        this.keyPair = CryptUtil.generateKeyPair();
+        this.keyPair = CryptUtil.generateServerKeyPair();
         this.secretKey = CryptUtil.generateSharedKey();
         this.verifyToken = new byte[4];
         new Random().nextBytes(this.verifyToken);

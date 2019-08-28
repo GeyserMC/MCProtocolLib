@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
-import com.github.steveice10.mc.protocol.util.CryptUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -12,7 +11,10 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 
 @Data
 @Setter(AccessLevel.NONE)
@@ -26,8 +28,14 @@ public class EncryptionRequestPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.serverId = in.readString();
-        this.publicKey = CryptUtil.decodePublicKey(in.readBytes(in.readVarInt()));
+        byte[] publicKey = in.readBytes(in.readVarInt());
         this.verifyToken = in.readBytes(in.readVarInt());
+
+        try {
+            this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
+        } catch(GeneralSecurityException e) {
+            throw new IOException("Could not decode public key.", e);
+        }
     }
 
     @Override

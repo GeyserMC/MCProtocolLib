@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.login.client;
 
-import com.github.steveice10.mc.protocol.util.CryptUtil;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -10,8 +9,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -19,20 +22,20 @@ import java.security.PublicKey;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EncryptionResponsePacket implements Packet {
-    private @NonNull byte sharedKey[];
-    private @NonNull byte verifyToken[];
+    private @NonNull byte[] sharedKey;
+    private @NonNull byte[] verifyToken;
 
-    public EncryptionResponsePacket(PublicKey publicKey, SecretKey secretKey, byte verifyToken[]) {
-        this.sharedKey = CryptUtil.encryptData(publicKey, secretKey.getEncoded());
-        this.verifyToken = CryptUtil.encryptData(publicKey, verifyToken);
+    public EncryptionResponsePacket(PublicKey publicKey, SecretKey secretKey, byte[] verifyToken) {
+        this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
+        this.verifyToken = runEncryption(Cipher.ENCRYPT_MODE, publicKey, verifyToken);
     }
 
     public SecretKey getSecretKey(PrivateKey privateKey) {
-        return CryptUtil.decryptSharedKey(privateKey, this.sharedKey);
+        return new SecretKeySpec(runEncryption(Cipher.DECRYPT_MODE, privateKey, this.sharedKey), "AES");
     }
 
     public byte[] getVerifyToken(PrivateKey privateKey) {
-        return CryptUtil.decryptData(privateKey, this.verifyToken);
+        return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.verifyToken);
     }
 
     @Override
@@ -52,5 +55,15 @@ public class EncryptionResponsePacket implements Packet {
     @Override
     public boolean isPriority() {
         return true;
+    }
+
+    private static byte[] runEncryption(int mode, Key key, byte[] data) {
+        try {
+            Cipher cipher = Cipher.getInstance(key.getAlgorithm().equals("RSA") ? "RSA/ECB/PKCS1Padding" : "AES/CFB8/NoPadding");
+            cipher.init(mode, key);
+            return cipher.doFinal(data);
+        } catch(GeneralSecurityException e) {
+            throw new IllegalStateException("Failed to " + (mode == Cipher.DECRYPT_MODE ? "decrypt" : "encrypt") + " data.", e);
+        }
     }
 }
