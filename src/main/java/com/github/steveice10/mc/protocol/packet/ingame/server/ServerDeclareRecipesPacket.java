@@ -34,7 +34,11 @@ public class ServerDeclareRecipesPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.recipes = new Recipe[in.readVarInt()];
         for(int i = 0; i < this.recipes.length; i++) {
-            RecipeType type = MagicValues.key(RecipeType.class, in.readString());
+            String recipeTypeString = in.readString();
+            if(!recipeTypeString.contains(":")){
+                recipeTypeString = "minecraft:" + recipeTypeString;
+            }
+            RecipeType type = MagicValues.key(RecipeType.class, recipeTypeString);
             String identifier = in.readString();
             RecipeData data = null;
             switch(type) {
