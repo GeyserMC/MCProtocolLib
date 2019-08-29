@@ -12,12 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 public class Advancement {
     private final @NonNull String id;
-    private final @NonNull String parentId;
+    private final String parentId;
     private final @NonNull List<String> criteria;
     private final @NonNull List<List<String>> requirements;
     private final DisplayData displayData;
 
-    public Advancement(@NonNull String id, @NonNull String parentId, @NonNull List<String> criteria, @NonNull List<List<String>> requirements) {
+    public Advancement(@NonNull String id, String parentId, @NonNull List<String> criteria, @NonNull List<List<String>> requirements) {
         this(id, parentId, criteria, requirements, null);
     }
 
