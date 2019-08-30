@@ -46,7 +46,7 @@ public class ServerAdvancementsPacket implements Packet {
             return -1;
         }
 
-        return this.getProgress(advancementId).get(criterionId);
+        return progress.get(criterionId);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class ServerAdvancementsPacket implements Packet {
                 requirements.add(requirement);
             }
 
-            this.advancements[i] = new Advancement(id, parentId, criteria, requirements, displayData);
+            this.advancements[i] = new Advancement(id, criteria, requirements, parentId, displayData);
         }
 
         this.removedAdvancements = new String[in.readVarInt()];
@@ -111,7 +111,7 @@ public class ServerAdvancementsPacket implements Packet {
             int criterionCount = in.readVarInt();
             for(int j = 0; j < criterionCount; j++) {
                 String criterionId = in.readString();
-                Long achievedDate = in.readBoolean() ? in.readLong() : null;
+                long achievedDate = in.readBoolean() ? in.readLong() : -1;
                 advancementProgress.put(criterionId, achievedDate);
             }
 
@@ -193,7 +193,7 @@ public class ServerAdvancementsPacket implements Packet {
             out.writeVarInt(advancementProgress.size());
             for(Map.Entry<String, Long> criterion : advancementProgress.entrySet()) {
                 out.writeString(criterion.getKey());
-                if(criterion.getValue() != null) {
+                if(criterion.getValue() != -1) {
                     out.writeBoolean(true);
                     out.writeLong(criterion.getValue());
                 } else {
