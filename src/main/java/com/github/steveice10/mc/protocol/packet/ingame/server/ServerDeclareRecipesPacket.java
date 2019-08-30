@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
@@ -33,7 +34,7 @@ public class ServerDeclareRecipesPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.recipes = new Recipe[in.readVarInt()];
         for(int i = 0; i < this.recipes.length; i++) {
-            RecipeType type = MagicValues.key(RecipeType.class, in.readString());
+            RecipeType type = MagicValues.key(RecipeType.class, Identifier.formalize(in.readString()));
             String identifier = in.readString();
             RecipeData data = null;
             switch(type) {

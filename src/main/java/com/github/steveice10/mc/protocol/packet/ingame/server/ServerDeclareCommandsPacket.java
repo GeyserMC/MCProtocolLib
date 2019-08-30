@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
@@ -70,7 +71,7 @@ public class ServerDeclareCommandsPacket implements Packet {
             CommandParser parser = null;
             CommandProperties properties = null;
             if(type == CommandType.ARGUMENT) {
-                parser = MagicValues.key(CommandParser.class, in.readString());
+                parser = MagicValues.key(CommandParser.class, Identifier.formalize(in.readString()));
                 switch(parser) {
                     case DOUBLE: {
                         byte numberFlags = in.readByte();
@@ -139,7 +140,7 @@ public class ServerDeclareCommandsPacket implements Packet {
 
             SuggestionType suggestionType = null;
             if((flags & FLAG_SUGGESTION_TYPE) != 0) {
-                suggestionType = MagicValues.key(SuggestionType.class, in.readString());
+                suggestionType = MagicValues.key(SuggestionType.class, Identifier.formalize(in.readString()));
             }
 
             this.nodes[i] = new CommandNode(type, executable, children, redirectIndex, name, parser, properties, suggestionType);
