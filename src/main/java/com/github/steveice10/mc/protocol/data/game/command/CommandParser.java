@@ -21,6 +21,7 @@ public enum CommandParser {
     MESSAGE,
     NBT,
     NBT_COMPOUND_TAG,
+    NBT_TAG,
     NBT_PATH,
     OBJECTIVE,
     OBJECTIVE_CRITERIA,
