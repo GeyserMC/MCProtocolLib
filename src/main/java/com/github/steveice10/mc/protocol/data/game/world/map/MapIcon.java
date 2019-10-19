@@ -12,5 +12,5 @@ public class MapIcon {
     private final int centerZ;
     private final @NonNull MapIconType iconType;
     private final int iconRotation;
-    private final @NonNull Message displayName;
+    private final Message displayName;
 }
