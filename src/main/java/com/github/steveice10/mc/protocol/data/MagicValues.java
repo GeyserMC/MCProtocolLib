@@ -1165,6 +1165,7 @@ public class MagicValues {
         register(CommandParser.DIMENSION, "minecraft:dimension");
         register(CommandParser.TIME, "minecraft:time");
         register(CommandParser.NBT_COMPOUND_TAG, "minecraft:nbt_compound_tag");
+        register(CommandParser.NBT_TAG, "minecraft:nbt_tag");
 
         register(SuggestionType.ASK_SERVER, "minecraft:ask_server");
         register(SuggestionType.ALL_RECIPES, "minecraft:all_recipes");
