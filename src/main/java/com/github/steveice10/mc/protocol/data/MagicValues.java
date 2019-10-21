@@ -428,6 +428,7 @@ public class MagicValues {
         register(MobType.MULE, 48);
         register(MobType.MOOSHROOM, 49);
         register(MobType.OCELOT, 50);
+        register(MobType.PAINTING, 51);
         register(MobType.PANDA, 52);
         register(MobType.PARROT, 53);
         register(MobType.PIG, 54);

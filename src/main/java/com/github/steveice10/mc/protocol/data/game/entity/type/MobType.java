@@ -52,6 +52,7 @@ public enum MobType {
     MULE,
     MOOSHROOM,
     OCELOT,
+    PAINTING,
     PANDA,
     PARROT,
     PIG,
