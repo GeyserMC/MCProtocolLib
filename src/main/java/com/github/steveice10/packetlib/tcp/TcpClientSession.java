@@ -83,6 +83,9 @@ public class TcpClientSession extends TcpSession {
                             String[] result = new InitialDirContext(environment).getAttributes(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, new String[] {"SRV"}).get("srv").get().toString().split(" ", 4);
                             host = result[3];
                             port = Integer.parseInt(result[2]);
+                            if(host.endsWith(".")) {
+                                host = host.substring(0, host.length() - 1);
+                            }
                         } catch(Throwable t) {
                         }
 
