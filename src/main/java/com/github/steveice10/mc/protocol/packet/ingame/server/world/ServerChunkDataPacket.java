@@ -72,16 +72,19 @@ public class ServerChunkDataPacket implements Packet {
             }
         }
 
-        if(this.column.getBiomeData() != null) {
+        boolean fullChunk = this.column.getBiomeData() != null;
+        if(fullChunk) {
             dataOut.writeInts(this.column.getBiomeData());
         }
 
         out.writeInt(this.column.getX());
         out.writeInt(this.column.getZ());
-        out.writeBoolean(this.column.getBiomeData() != null);
+        out.writeBoolean(fullChunk);
         out.writeVarInt(mask);
         NBT.write(out, this.column.getHeightMaps());
-        out.writeInts(new int[1024]); // TODO store
+        if (fullChunk) {
+            out.writeInts(new int[1024]); // TODO store
+        }
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());
         out.writeVarInt(this.column.getTileEntities().length);
