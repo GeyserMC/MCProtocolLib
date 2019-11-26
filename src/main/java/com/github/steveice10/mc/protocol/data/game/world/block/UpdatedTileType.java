@@ -12,5 +12,6 @@ public enum UpdatedTileType {
     SIGN,
     BED,
     JIGSAW_BLOCK,
-    CAMPFIRE;
+    CAMPFIRE,
+    BEEHIVE;
 }

@@ -21,12 +21,14 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerRespawnPacket implements Packet {
     private int dimension;
+    private long hashedSeed;
     private @NonNull GameMode gamemode;
     private @NonNull WorldType worldType;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.dimension = in.readInt();
+        this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
         this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
     }
@@ -34,6 +36,7 @@ public class ServerRespawnPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.dimension);
+        out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
         out.writeString(MagicValues.value(String.class, this.worldType));
     }
