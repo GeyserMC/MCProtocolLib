@@ -571,7 +571,6 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x06, ServerEntityAnimationPacket.class);
         this.registerOutgoing(0x07, ServerStatisticsPacket.class);
         this.registerOutgoing(0x08, ServerPlayerActionAckPacket.class);
-
         this.registerOutgoing(0x09, ServerBlockBreakAnimPacket.class);
         this.registerOutgoing(0x0A, ServerUpdateTileEntityPacket.class);
         this.registerOutgoing(0x0B, ServerBlockValuePacket.class);
