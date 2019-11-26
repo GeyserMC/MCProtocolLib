@@ -45,7 +45,7 @@ public class MinecraftProtocolTest {
             new TextMessage("Hello world!"),
             null
     );
-    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, 0, DEFAULT, 16, false);
+    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, 0, DEFAULT, 16, false, false);
 
     private static Server server;
 
