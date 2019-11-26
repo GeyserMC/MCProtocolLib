@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.type.MobType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -33,7 +32,6 @@ public class ServerSpawnMobPacket implements Packet {
     private double motionX;
     private double motionY;
     private double motionZ;
-    private @NonNull EntityMetadata[] metadata;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -49,7 +47,6 @@ public class ServerSpawnMobPacket implements Packet {
         this.motionX = in.readShort() / 8000D;
         this.motionY = in.readShort() / 8000D;
         this.motionZ = in.readShort() / 8000D;
-        this.metadata = EntityMetadata.read(in);
     }
 
     @Override
@@ -66,7 +63,6 @@ public class ServerSpawnMobPacket implements Packet {
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));
         out.writeShort((int) (this.motionZ * 8000));
-        EntityMetadata.write(out, this.metadata);
     }
 
     @Override

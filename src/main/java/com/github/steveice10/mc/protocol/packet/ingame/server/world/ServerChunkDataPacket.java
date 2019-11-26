@@ -34,6 +34,7 @@ public class ServerChunkDataPacket implements Packet {
         boolean fullChunk = in.readBoolean();
         int chunkMask = in.readVarInt();
         CompoundTag heightMaps = NBT.read(in);
+        int[] biomes = fullChunk ? in.readInts(1024) : null; // TODO store
         byte[] data = in.readBytes(in.readVarInt());
         CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
         for(int i = 0; i < tileEntities.length; i++) {
@@ -80,6 +81,7 @@ public class ServerChunkDataPacket implements Packet {
         out.writeBoolean(this.column.getBiomeData() != null);
         out.writeVarInt(mask);
         NBT.write(out, this.column.getHeightMaps());
+        out.writeInts(new int[1024]); // TODO store
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());
         out.writeVarInt(this.column.getTileEntities().length);
