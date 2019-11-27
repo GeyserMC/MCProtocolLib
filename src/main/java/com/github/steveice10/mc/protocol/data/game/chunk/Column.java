@@ -24,8 +24,8 @@ public class Column {
             throw new IllegalArgumentException("Chunk array length must be 16.");
         }
 
-        if(biomeData != null && biomeData.length != 256) {
-            throw new IllegalArgumentException("Biome data array length must be 256.");
+        if(biomeData != null && biomeData.length != 1024) {
+            throw new IllegalArgumentException("Biome data array length must be 1024.");
         }
 
         this.x = x;

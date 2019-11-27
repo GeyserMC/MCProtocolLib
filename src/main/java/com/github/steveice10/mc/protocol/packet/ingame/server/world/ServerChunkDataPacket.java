@@ -34,7 +34,7 @@ public class ServerChunkDataPacket implements Packet {
         boolean fullChunk = in.readBoolean();
         int chunkMask = in.readVarInt();
         CompoundTag heightMaps = NBT.read(in);
-        int[] biomes = fullChunk ? in.readInts(1024) : null; // TODO store
+        int[] biomeData = fullChunk ? in.readInts(1024) : null;
         byte[] data = in.readBytes(in.readVarInt());
         CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
         for(int i = 0; i < tileEntities.length; i++) {
@@ -47,11 +47,6 @@ public class ServerChunkDataPacket implements Packet {
             if((chunkMask & (1 << index)) != 0) {
                 chunks[index] = Chunk.read(dataIn);
             }
-        }
-
-        int[] biomeData = null;
-        if(fullChunk) {
-            biomeData = dataIn.readInts(256);
         }
 
         this.column = new Column(x, z, chunks, tileEntities, heightMaps, biomeData);
@@ -73,9 +68,6 @@ public class ServerChunkDataPacket implements Packet {
         }
 
         boolean fullChunk = this.column.getBiomeData() != null;
-        if(fullChunk) {
-            dataOut.writeInts(this.column.getBiomeData());
-        }
 
         out.writeInt(this.column.getX());
         out.writeInt(this.column.getZ());
@@ -83,7 +75,7 @@ public class ServerChunkDataPacket implements Packet {
         out.writeVarInt(mask);
         NBT.write(out, this.column.getHeightMaps());
         if (fullChunk) {
-            out.writeInts(new int[1024]); // TODO store
+            out.writeInts(this.column.getBiomeData());
         }
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());

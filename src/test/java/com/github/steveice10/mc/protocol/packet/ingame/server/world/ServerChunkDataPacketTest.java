@@ -26,7 +26,7 @@ public class ServerChunkDataPacketTest extends PacketTest {
                                 chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk
                         }, new CompoundTag[] {
                                 new CompoundTag("TileEntity")
-                        }, new CompoundTag("HeightMaps"), new int[256])
+                        }, new CompoundTag("HeightMaps"), new int[1024])
                 )
         );
     }
