@@ -23,9 +23,9 @@ import java.io.IOException;
 public class ServerSpawnParticlePacket implements Packet {
     private @NonNull Particle particle;
     private boolean longDistance;
-    private float x;
-    private float y;
-    private float z;
+    private double x;
+    private double y;
+    private double z;
     private float offsetX;
     private float offsetY;
     private float offsetZ;
@@ -36,9 +36,9 @@ public class ServerSpawnParticlePacket implements Packet {
     public void read(NetInput in) throws IOException {
         ParticleType type = MagicValues.key(ParticleType.class, in.readInt());
         this.longDistance = in.readBoolean();
-        this.x = in.readFloat();
-        this.y = in.readFloat();
-        this.z = in.readFloat();
+        this.x = in.readDouble();
+        this.y = in.readDouble();
+        this.z = in.readDouble();
         this.offsetX = in.readFloat();
         this.offsetY = in.readFloat();
         this.offsetZ = in.readFloat();
@@ -51,9 +51,9 @@ public class ServerSpawnParticlePacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeInt(MagicValues.value(Integer.class, this.particle.getType()));
         out.writeBoolean(this.longDistance);
-        out.writeFloat(this.x);
-        out.writeFloat(this.y);
-        out.writeFloat(this.z);
+        out.writeDouble(this.x);
+        out.writeDouble(this.y);
+        out.writeDouble(this.z);
         out.writeFloat(this.offsetX);
         out.writeFloat(this.offsetY);
         out.writeFloat(this.offsetZ);
