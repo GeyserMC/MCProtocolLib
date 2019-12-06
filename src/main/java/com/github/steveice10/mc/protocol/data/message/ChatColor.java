@@ -17,7 +17,8 @@ public enum ChatColor {
     LIGHT_PURPLE,
     YELLOW,
     WHITE,
-    RESET;
+    RESET,
+    NONE;
 
     public static ChatColor byName(String name) {
         name = name.toLowerCase();

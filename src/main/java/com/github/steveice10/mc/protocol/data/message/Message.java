@@ -166,7 +166,10 @@ public abstract class Message implements Cloneable {
 
     public JsonElement toJson() {
         JsonObject json = new JsonObject();
-        json.addProperty("color", this.style.getColor().toString());
+        if(this.style.hasColor()) {
+            json.addProperty("color", this.style.getColor().toString());
+        }
+
         for(ChatFormat format : this.style.getFormats()) {
             json.addProperty(format.toString(), true);
         }
