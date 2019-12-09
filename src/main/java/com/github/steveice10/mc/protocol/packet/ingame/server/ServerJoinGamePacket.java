@@ -32,7 +32,7 @@ public class ServerJoinGamePacket implements Packet {
     private @NonNull WorldType worldType;
     private int viewDistance;
     private boolean reducedDebugInfo;
-    private boolean unknown;
+    private boolean enableRespawnScreen;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -48,7 +48,7 @@ public class ServerJoinGamePacket implements Packet {
         this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
         this.viewDistance = in.readVarInt();
         this.reducedDebugInfo = in.readBoolean();
-        this.unknown = in.readBoolean();
+        this.enableRespawnScreen = in.readBoolean();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ServerJoinGamePacket implements Packet {
         out.writeString(MagicValues.value(String.class, this.worldType));
         out.writeVarInt(this.viewDistance);
         out.writeBoolean(this.reducedDebugInfo);
-        out.writeBoolean(this.unknown);
+        out.writeBoolean(this.enableRespawnScreen);
     }
 
     @Override
