@@ -2,8 +2,8 @@ package com.github.steveice10.mc.protocol;
 
 public class MinecraftConstants {
     // General Constants
-    public static final String GAME_VERSION = "1.15-pre6";
-    public static final int PROTOCOL_VERSION = 571;
+    public static final String GAME_VERSION = "1.15";
+    public static final int PROTOCOL_VERSION = 573;
 
     // General Key Constants
     public static final String PROFILE_KEY = "profile";
