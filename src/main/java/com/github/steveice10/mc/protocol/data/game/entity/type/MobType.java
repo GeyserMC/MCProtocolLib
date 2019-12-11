@@ -5,6 +5,7 @@ public enum MobType {
     ARMOR_STAND,
     ARROW,
     BAT,
+    BEE,
     BOAT,
     BLAZE,
     CAT,
