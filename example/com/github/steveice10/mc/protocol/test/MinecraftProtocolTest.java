@@ -68,7 +68,7 @@ public class MinecraftProtocolTest {
             server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, new ServerLoginHandler() {
                 @Override
                 public void loggedIn(Session session) {
-                    session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, WorldType.DEFAULT, 16, false));
+                    session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 0, 100, WorldType.DEFAULT, 16, false, true));
                 }
             });
 
