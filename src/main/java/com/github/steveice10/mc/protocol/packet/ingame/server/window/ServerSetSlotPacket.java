@@ -20,7 +20,7 @@ import java.io.IOException;
 public class ServerSetSlotPacket implements Packet {
     private int windowId;
     private int slot;
-    private @NonNull ItemStack item;
+    private ItemStack item;
 
     @Override
     public void read(NetInput in) throws IOException {
