@@ -368,6 +368,8 @@ public class MagicValues {
         register(EntityStatus.LIVING_EQUIPMENT_BREAK_CHEST, 50);
         register(EntityStatus.LIVING_EQUIPMENT_BREAK_LEGS, 51);
         register(EntityStatus.LIVING_EQUIPMENT_BREAK_FEET, 52);
+        register(EntityStatus.HONEY_BLOCK_SLIDE, 53);
+        register(EntityStatus.HONEY_BLOCK_LAND, 54);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);
