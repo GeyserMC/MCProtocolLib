@@ -43,7 +43,7 @@ public class MinecraftProtocolTest {
     private static final boolean VERIFY_USERS = false;
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 25565;
-    private static final Proxy PROXY = Proxy.NO_PROXY;
+    private static final Proxy PROXY = null;
     private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
