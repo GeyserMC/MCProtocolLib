@@ -9,7 +9,7 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class VillagerTrade {
     private final @NonNull ItemStack firstInput;
-    private final @NonNull ItemStack secondInput;
+    private final ItemStack secondInput;
     private final @NonNull ItemStack output;
     private final boolean tradeDisabled;
     private final int numUses;
