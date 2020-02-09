@@ -690,8 +690,8 @@ public class MagicValues {
         register(UpdatedTileType.BEEHIVE, 14);
 
         register(ClientNotification.INVALID_BED, 0);
-        register(ClientNotification.START_RAIN, 1);
-        register(ClientNotification.STOP_RAIN, 2);
+        register(ClientNotification.STOP_RAIN, 1);
+        register(ClientNotification.START_RAIN, 2);
         register(ClientNotification.CHANGE_GAMEMODE, 3);
         register(ClientNotification.ENTER_CREDITS, 4);
         register(ClientNotification.DEMO_MESSAGE, 5);
