@@ -91,6 +91,7 @@ import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
+import com.github.steveice10.mc.protocol.data.game.world.notify.RespawnScreenValue;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
@@ -698,7 +699,9 @@ public class MagicValues {
         register(ClientNotification.ARROW_HIT_PLAYER, 6);
         register(ClientNotification.RAIN_STRENGTH, 7);
         register(ClientNotification.THUNDER_STRENGTH, 8);
+        register(ClientNotification.PUFFERFISH_STING_SOUND, 9);
         register(ClientNotification.AFFECTED_BY_ELDER_GUARDIAN, 10);
+        register(ClientNotification.ENABLE_RESPAWN_SCREEN, 11);
 
         register(CommandBlockMode.SEQUENCE, 0);
         register(CommandBlockMode.AUTO, 1);
@@ -730,6 +733,9 @@ public class MagicValues {
 
         register(EnterCreditsValue.SEEN_BEFORE, 0);
         register(EnterCreditsValue.FIRST_TIME, 1);
+
+        register(RespawnScreenValue.ENABLE_RESPAWN_SCREEN, 0);
+        register(RespawnScreenValue.IMMEDIATE_RESPAWN, 1);
 
         register(GenericStatistic.LEAVE_GAME, 0);
         register(GenericStatistic.PLAY_ONE_MINUTE, 1);
