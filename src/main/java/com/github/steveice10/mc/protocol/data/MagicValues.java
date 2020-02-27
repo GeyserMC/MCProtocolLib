@@ -698,7 +698,9 @@ public class MagicValues {
         register(ClientNotification.ARROW_HIT_PLAYER, 6);
         register(ClientNotification.RAIN_STRENGTH, 7);
         register(ClientNotification.THUNDER_STRENGTH, 8);
+        register(ClientNotification.PUFFERFISH_STING_SOUND, 9);
         register(ClientNotification.AFFECTED_BY_ELDER_GUARDIAN, 10);
+        register(ClientNotification.ENABLE_RESPAWN_SCREEN, 11);
 
         register(CommandBlockMode.SEQUENCE, 0);
         register(CommandBlockMode.AUTO, 1);
