@@ -90,6 +90,19 @@ public interface Session {
     public <T> T getFlag(String key);
 
     /**
+     * Gets the value of the given flag as an instance of the given type. If this
+     * session belongs to a server, the server's flags will be checked for the flag
+     * as well. If no flag is found, the specified default value will be returned.
+     *
+     * @param <T> Type of the flag.
+     * @param key Key of the flag.
+     * @param def Default value of the flag.
+     * @return Value of the flag.
+     * @throws IllegalStateException If the flag's value isn't of the required type.
+     */
+    public <T> T getFlag(String key, T def);
+
+    /**
      * Sets the value of a flag. This does not change a server's flags if this session
      * belongs to a server.
      *
@@ -207,24 +220,7 @@ public interface Session {
      * Disconnects the session.
      *
      * @param reason Reason for disconnecting.
-     * @param wait   Whether to wait for the session to be disconnected.
-     */
-    public void disconnect(String reason, boolean wait);
-
-    /**
-     * Disconnects the session.
-     *
-     * @param reason Reason for disconnecting.
      * @param cause  Throwable responsible for disconnecting.
      */
     public void disconnect(String reason, Throwable cause);
-
-    /**
-     * Disconnects the session.
-     *
-     * @param reason Reason for disconnecting.
-     * @param cause  Throwable responsible for disconnecting.
-     * @param wait   Whether to wait for the session to be disconnected.
-     */
-    public void disconnect(String reason, Throwable cause, boolean wait);
 }

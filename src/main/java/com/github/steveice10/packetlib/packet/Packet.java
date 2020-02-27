@@ -26,9 +26,9 @@ public interface Packet {
     public void write(NetOutput out) throws IOException;
 
     /**
-     * Gets whether the packet has handling and writing priority.
-     * If the result is true, the thread will wait for the packet to finish writing
-     * when writing and the packet will be handled immediately after reading it.
+     * Gets whether the packet has handling priority.
+     * If the result is true, the packet will be handled immediately after being
+     * decoded.
      *
      * @return Whether the packet has priority.
      */

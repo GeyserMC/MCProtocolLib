@@ -104,9 +104,14 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getFlag(String key) {
+        return this.getFlag(key, null);
+    }
+
+    @Override
+    public <T> T getFlag(String key, T def) {
         Object value = this.getFlags().get(key);
         if(value == null) {
-            return null;
+            return def;
         }
 
         try {
@@ -214,8 +219,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
         if(!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
-
-            ChannelFuture future = this.channel.writeAndFlush(toSend).addListener(new ChannelFutureListener() {
+            this.channel.writeAndFlush(toSend).addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if(future.isSuccess()) {
@@ -225,33 +229,16 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
                     }
                 }
             });
-
-            if(toSend.isPriority()) {
-                try {
-                    future.await();
-                } catch(InterruptedException e) {
-                }
-            }
         }
     }
 
     @Override
     public void disconnect(String reason) {
-        this.disconnect(reason, false);
-    }
-
-    @Override
-    public void disconnect(String reason, boolean wait) {
-        this.disconnect(reason, null, wait);
+        this.disconnect(reason, null);
     }
 
     @Override
     public void disconnect(final String reason, final Throwable cause) {
-        this.disconnect(reason, cause, false);
-    }
-
-    @Override
-    public void disconnect(final String reason, final Throwable cause, boolean wait) {
         if(this.disconnected) {
             return;
         }
@@ -265,19 +252,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
         if(this.channel != null && this.channel.isOpen()) {
             this.callEvent(new DisconnectingEvent(this, reason, cause));
-            ChannelFuture future = this.channel.flush().close().addListener(new ChannelFutureListener() {
+            this.channel.flush().close().addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     callEvent(new DisconnectedEvent(TcpSession.this, reason != null ? reason : "Connection closed.", cause));
                 }
             });
-
-            if(wait) {
-                try {
-                    future.await();
-                } catch(InterruptedException e) {
-                }
-            }
         } else {
             this.callEvent(new DisconnectedEvent(this, reason != null ? reason : "Connection closed.", cause));
         }
