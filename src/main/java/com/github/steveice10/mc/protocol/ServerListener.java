@@ -27,6 +27,7 @@ import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
+import com.github.steveice10.packetlib.event.session.PacketSentEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 
 import javax.crypto.SecretKey;
@@ -100,8 +101,7 @@ public class ServerListener extends SessionAdapter {
             if(event.getPacket() instanceof LoginStartPacket) {
                 this.username = event.<LoginStartPacket>getPacket().getUsername();
 
-                boolean verify = event.getSession().hasFlag(MinecraftConstants.VERIFY_USERS_KEY) ? event.getSession().<Boolean>getFlag(MinecraftConstants.VERIFY_USERS_KEY) : true;
-                if(verify) {
+                if(event.getSession().getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
                     event.getSession().send(new EncryptionRequestPacket(SERVER_ID, KEY_PAIR.getPublic(), this.verifyToken));
                 } else {
                     new Thread(new UserAuthTask(event.getSession(), null)).start();
@@ -151,6 +151,23 @@ public class ServerListener extends SessionAdapter {
     }
 
     @Override
+    public void packetSent(PacketSentEvent event) {
+        Session session = event.getSession();
+        if(event.getPacket() instanceof LoginSetCompressionPacket) {
+            session.setCompressionThreshold(event.<LoginSetCompressionPacket>getPacket().getThreshold());
+            session.send(new LoginSuccessPacket(session.getFlag(MinecraftConstants.PROFILE_KEY)));
+        } else if(event.getPacket() instanceof LoginSuccessPacket) {
+            ((MinecraftProtocol) session.getPacketProtocol()).setSubProtocol(SubProtocol.GAME, false, session);
+            ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
+            if(handler != null) {
+                handler.loggedIn(session);
+            }
+
+            new Thread(new KeepAliveTask(session)).start();
+        }
+    }
+
+    @Override
     public void disconnecting(DisconnectingEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
         if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
@@ -171,16 +188,9 @@ public class ServerListener extends SessionAdapter {
 
         @Override
         public void run() {
-            boolean verify = this.session.hasFlag(MinecraftConstants.VERIFY_USERS_KEY) ? this.session.<Boolean>getFlag(MinecraftConstants.VERIFY_USERS_KEY) : true;
-
             GameProfile profile = null;
-            if(verify && this.key != null) {
-                Proxy proxy = this.session.<Proxy>getFlag(MinecraftConstants.AUTH_PROXY_KEY);
-                if(proxy == null) {
-                    proxy = Proxy.NO_PROXY;
-                }
-
-                SessionService sessionService = new SessionService(proxy);
+            if(this.key != null) {
+                SessionService sessionService = new SessionService(this.session.getFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY));
                 try {
                     profile = sessionService.getProfileByServer(username, sessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
                 } catch(RequestException e) {
@@ -195,24 +205,10 @@ public class ServerListener extends SessionAdapter {
                 profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes()), username);
             }
 
-            int threshold;
-            if(this.session.hasFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD)) {
-                threshold = this.session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD);
-            } else {
-                threshold = DEFAULT_COMPRESSION_THRESHOLD;
-            }
-
-            this.session.send(new LoginSetCompressionPacket(threshold));
-            this.session.setCompressionThreshold(threshold);
-            this.session.send(new LoginSuccessPacket(profile));
             this.session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
-            ((MinecraftProtocol) this.session.getPacketProtocol()).setSubProtocol(SubProtocol.GAME, false, this.session);
-            ServerLoginHandler handler = this.session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
-            if(handler != null) {
-                handler.loggedIn(this.session);
-            }
 
-            new Thread(new KeepAliveTask(this.session)).start();
+            int threshold = session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, DEFAULT_COMPRESSION_THRESHOLD);
+            this.session.send(new LoginSetCompressionPacket(threshold));
         }
     }
 

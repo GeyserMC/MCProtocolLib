@@ -24,6 +24,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
 import com.github.steveice10.packetlib.Client;
+import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.server.ServerAdapter;
@@ -43,14 +44,14 @@ public class MinecraftProtocolTest {
     private static final boolean VERIFY_USERS = false;
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 25565;
-    private static final Proxy PROXY = Proxy.NO_PROXY;
+    private static final ProxyInfo PROXY = null;
     private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
 
     public static void main(String[] args) {
         if(SPAWN_SERVER) {
-            Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory(PROXY));
+            Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
             server.setGlobalFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
