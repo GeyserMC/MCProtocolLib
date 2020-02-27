@@ -33,12 +33,12 @@ public class ServerNotifyClientPacket implements Packet {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
         } else if(this.notification == ClientNotification.ENTER_CREDITS) {
             this.value = MagicValues.key(EnterCreditsValue.class, (int) value);
+        } else if(this.notification == ClientNotification.ENABLE_RESPAWN_SCREEN) {
+            this.value = MagicValues.key(RespawnScreenValue.class, (int) value);
         } else if(this.notification == ClientNotification.RAIN_STRENGTH) {
             this.value = new RainStrengthValue(value);
         } else if(this.notification == ClientNotification.THUNDER_STRENGTH) {
             this.value = new ThunderStrengthValue(value);
-        } else if(this.notification == ClientNotification.ENABLE_RESPAWN_SCREEN) {
-            this.value = new RespawnScreenValue((int) value);
         }
     }
 
@@ -52,8 +52,6 @@ public class ServerNotifyClientPacket implements Packet {
             value = ((RainStrengthValue) this.value).getStrength();
         } else if(this.value instanceof ThunderStrengthValue) {
             value = ((ThunderStrengthValue) this.value).getStrength();
-        } else if(this.value instanceof RespawnScreenValue) {
-            value = ((RespawnScreenValue) this.value).getRespawnScreen();
         }
 
         out.writeFloat(value);

@@ -91,6 +91,7 @@ import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
+import com.github.steveice10.mc.protocol.data.game.world.notify.RespawnScreenValue;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
@@ -732,6 +733,9 @@ public class MagicValues {
 
         register(EnterCreditsValue.SEEN_BEFORE, 0);
         register(EnterCreditsValue.FIRST_TIME, 1);
+
+        register(RespawnScreenValue.ENABLE_RESPAWN_SCREEN, 0);
+        register(RespawnScreenValue.IMMEDIATE_RESPAWN, 1);
 
         register(GenericStatistic.LEAVE_GAME, 0);
         register(GenericStatistic.PLAY_ONE_MINUTE, 1);
