@@ -17,8 +17,8 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerPlayerAbilitiesPacket implements Packet {
     private static final int FLAG_INVINCIBLE = 0x01;
-    private static final int FLAG_CAN_FLY = 0x02;
-    private static final int FLAG_FLYING = 0x04;
+    private static final int FLAG_FLYING = 0x02;
+    private static final int FLAG_CAN_FLY = 0x04;
     private static final int FLAG_CREATIVE = 0x08;
 
     private boolean invincible;
