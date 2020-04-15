@@ -17,7 +17,11 @@ public enum AttributeType {
     GENERIC_LUCK(0, -1024, 1024),
     GENERIC_FLYING_SPEED(0.4000000059604645, 0, 1024),
     HORSE_JUMP_STRENGTH(0.7, 0, 2),
-    ZOMBIE_SPAWN_REINFORCEMENTS(0, 0, 1);
+    ZOMBIE_SPAWN_REINFORCEMENTS(0, 0, 1),
+    // Forge - retrieved from Forge source code
+    SWIM_SPEED(1, 0, 1024),
+    NAMETAG_DISTANCE(64, 0, Float.MAX_VALUE),
+    ENTITY_GRAVITY(0.08, -8.0, 8.0);
 
     private final double def;
     private final double min;
