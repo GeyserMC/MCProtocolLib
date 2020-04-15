@@ -127,6 +127,9 @@ public class MagicValues {
         register(AttributeType.GENERIC_FLYING_SPEED, "generic.flyingSpeed");
         register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jumpStrength");
         register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "zombie.spawnReinforcements");
+        register(AttributeType.SWIM_SPEED, "forge.swimSpeed");
+        register(AttributeType.NAMETAG_DISTANCE, "forge.nameTagDistance");
+        register(AttributeType.ENTITY_GRAVITY, "forge.entity_gravity");
 
         register(ModifierType.CREATURE_FLEE_SPEED_BONUS, UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A"));
         register(ModifierType.ENDERMAN_ATTACK_SPEED_BOOST, UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0"));
