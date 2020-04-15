@@ -19,17 +19,17 @@ public enum AttributeType {
     HORSE_JUMP_STRENGTH(0.7, 0, 2),
     ZOMBIE_SPAWN_REINFORCEMENTS(0, 0, 1),
     /**
-     * Required for logging into a Minecraft Forge server
+     * Only available for clients/servers using Minecraft Forge.
      * Source: MinecraftForge/patches/minecraft/net/minecraft/entity/LivingEntity.java.patch#10
      */
     SWIM_SPEED(1, 0, 1024),
     /**
-     * Required for logging into a Minecraft Forge server
+     * Only available for clients/servers using Minecraft Forge.
      * Source: MinecraftForge/patches/minecraft/net/minecraft/entity/LivingEntity.java.patch#11
      */
     NAMETAG_DISTANCE(64, 0, Float.MAX_VALUE),
     /**
-     * Required for logging into a Minecraft Forge server
+     * Only available for clients/servers using Minecraft Forge.
      * Source: MinecraftForge/patches/minecraft/net/minecraft/entity/LivingEntity.java.patch#12
      */
     ENTITY_GRAVITY(0.08, -8.0, 8.0);
