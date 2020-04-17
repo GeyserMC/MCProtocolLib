@@ -58,7 +58,6 @@ public enum MobType {
     PARROT,
     PIG,
     PUFFERFISH,
-    ZOMBIE_PIGMAN,
     POLAR_BEAR,
     PRIMED_TNT,
     RABBIT,
@@ -98,9 +97,14 @@ public enum MobType {
     WOLF,
     ZOMBIE,
     ZOMBIE_HORSE,
+    ZOMBIFIED_PIGLIN,
     ZOMBIE_VILLAGER,
     PHANTOM,
     RAVAGER,
+    HOGLIN,
+    PIGLIN,
+    STRIDER,
+    ZOGLIN,
     PLAYER,
     FISHING_BOBBER;
 }

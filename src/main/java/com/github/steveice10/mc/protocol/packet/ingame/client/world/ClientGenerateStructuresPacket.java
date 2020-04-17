@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.packet.ingame.client.window;
+package com.github.steveice10.mc.protocol.packet.ingame.client.world;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -17,32 +17,20 @@ import java.io.IOException;
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class ClientUpdateJigsawBlockPacket implements Packet {
+public class ClientGenerateStructuresPacket implements Packet {
     private @NonNull Position position;
-    private @NonNull String name;
-    private @NonNull String target;
-    private @NonNull String pool;
-    private @NonNull String finalState;
-    private @NonNull String jointType;
+    private int levels;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.position = Position.read(in);
-        this.name = in.readString();
-        this.target = in.readString();
-        this.pool = in.readString();
-        this.finalState = in.readString();
-        this.jointType = in.readString();
+        this.levels = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         Position.write(out, this.position);
-        out.writeString(this.name);
-        out.writeString(this.target);
-        out.writeString(this.pool);
-        out.writeString(this.finalState);
-        out.writeString(this.jointType);
+        out.writeVarInt(this.levels);
     }
 
     @Override
