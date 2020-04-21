@@ -106,7 +106,7 @@ public class TcpClientSession extends TcpSession {
 
                         try {
                             Record[] records = new Lookup(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, Type.SRV).run();
-                            if(records.length > 0) {
+                            if(records != null && records.length > 0) {
                                 SRVRecord srv = (SRVRecord) records[0];
 
                                 host = srv.getTarget().toString().replaceFirst("\\.$", "");
