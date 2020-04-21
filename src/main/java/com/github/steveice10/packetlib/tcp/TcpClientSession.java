@@ -15,10 +15,11 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import io.netty.util.concurrent.Future;
-
-import javax.naming.directory.InitialDirContext;
-import java.util.Hashtable;
+import org.xbill.DNS.Lookup;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.SRVRecord;
+import org.xbill.DNS.TextParseException;
+import org.xbill.DNS.Type;
 
 public class TcpClientSession extends TcpSession {
     private Client client;
@@ -104,17 +105,14 @@ public class TcpClientSession extends TcpSession {
                         int port = getPort();
 
                         try {
-                            Hashtable<String, String> environment = new Hashtable<String, String>();
-                            environment.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
-                            environment.put("java.naming.provider.url", "dns:");
+                            Record[] records = new Lookup(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, Type.SRV).run();
+                            if(records.length > 0) {
+                                SRVRecord srv = (SRVRecord) records[0];
 
-                            String[] result = new InitialDirContext(environment).getAttributes(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, new String[] {"SRV"}).get("srv").get().toString().split(" ", 4);
-                            host = result[3];
-                            port = Integer.parseInt(result[2]);
-                            if(host.endsWith(".")) {
-                                host = host.substring(0, host.length() - 1);
+                                host = srv.getTarget().toString().replaceFirst("\\.$", "");
+                                port = srv.getPort();
                             }
-                        } catch(Throwable t) {
+                        } catch(TextParseException e) {
                         }
 
                         bootstrap.remoteAddress(host, port);

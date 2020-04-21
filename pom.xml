@@ -52,6 +52,17 @@
             <version>4.1.45.Final</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>dnsjava</groupId>
+            <artifactId>dnsjava</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <!-- Silence dnsjava slf4j warnings -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.30</version>
+        </dependency>
     </dependencies>
 
     <build>
