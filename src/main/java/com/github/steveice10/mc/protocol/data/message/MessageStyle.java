@@ -12,7 +12,7 @@ import java.util.List;
 public class MessageStyle implements Cloneable {
     private static final MessageStyle DEFAULT = new MessageStyle();
 
-    private ChatColor color = ChatColor.NONE;
+    private String color = ChatColor.NONE;
     private List<ChatFormat> formats = new ArrayList<ChatFormat>();
     private ClickEvent clickEvent;
     private HoverEvent hoverEvent;
@@ -24,16 +24,16 @@ public class MessageStyle implements Cloneable {
     }
 
     public boolean hasColor() {
-        return color != ChatColor.NONE;
+        return !color.equals(ChatColor.NONE);
     }
 
-    public MessageStyle setColor(ChatColor color) {
+    public MessageStyle setColor(String color) {
         this.color = color;
         return this;
     }
 
     public MessageStyle setFormats(List<ChatFormat> formats) {
-        this.formats = new ArrayList<ChatFormat>(formats);
+        this.formats = new ArrayList<>(formats);
         return this;
     }
 

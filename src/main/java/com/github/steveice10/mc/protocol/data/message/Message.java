@@ -68,7 +68,7 @@ public abstract class Message implements Cloneable {
 
             MessageStyle style = new MessageStyle();
             if(json.has("color")) {
-                style.setColor(ChatColor.byName(json.get("color").getAsString()));
+                style.setColor(json.get("color").getAsString());
             }
 
             for(ChatFormat format : ChatFormat.values()) {
