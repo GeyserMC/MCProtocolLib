@@ -1187,6 +1187,7 @@ public class MagicValues {
 
         register(SuggestionType.ASK_SERVER, "minecraft:ask_server");
         register(SuggestionType.ALL_RECIPES, "minecraft:all_recipes");
+        register(SuggestionType.AVAILABLE_BIOMES, "minecraft:available_biomes");
         register(SuggestionType.AVAILABLE_SOUNDS, "minecraft:available_sounds");
         register(SuggestionType.SUMMONABLE_ENTITIES, "minecraft:summonable_entities");
 
