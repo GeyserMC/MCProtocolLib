@@ -878,6 +878,10 @@ public class MagicValues {
         register(ParticleType.DOLPHIN, 55);
         register(ParticleType.CAMPFIRE_COSY_SMOKE, 56);
         register(ParticleType.CAMPFIRE_SIGNAL_SMOKE, 57);
+        register(ParticleType.DRIPPING_HONEY, 58);
+        register(ParticleType.FALLING_HONEY, 59);
+        register(ParticleType.LANDING_HONEY, 60);
+        register(ParticleType.FALLING_NECTAR, 61);
 
         register(NoteBlockValueType.HARP, 0);
         register(NoteBlockValueType.DOUBLE_BASS, 1);
