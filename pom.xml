@@ -5,7 +5,7 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>1.12.2-3-SNAPSHOT</version>
+    <version>1.12.2-toobeetooteebot-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
@@ -47,10 +47,23 @@
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>daporkchop</id>
+            <url>https://maven.daporkchop.net/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>daporkchop-release</id>
+            <name>daporkchop-release</name>
+            <url>https://maven.daporkchop.net/release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>daporkchop-snapshot</id>
+            <name>daporkchop-snapshot</name>
+            <url>https://maven.daporkchop.net/snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -68,7 +81,7 @@
         <dependency>
             <groupId>com.github.steveice10</groupId>
             <artifactId>mcauthlib</artifactId>
-            <version>1.0</version>
+            <version>91b624ec36</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
