@@ -5,7 +5,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
-import com.github.steveice10.mc.protocol.data.message.TextMessage;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -65,7 +64,7 @@ public class MinecraftProtocolTest {
             @Override
             public ServerStatusInfo buildInfo(Session session) {
                 return new ServerStatusInfo(new VersionInfo(GAME_VERSION, PROTOCOL_VERSION),
-                        new PlayerInfo(100, 0, new GameProfile[0]), new TextMessage("Hello world!"), null);
+                        new PlayerInfo(100, 0, new GameProfile[0]), "Hello world!", null, true);
             }
         });
 
@@ -100,7 +99,7 @@ public class MinecraftProtocolTest {
         ServerStatusInfo info = handler.info;
         assertNotNull("Failed to get server info.", info);
 
-        assertEquals("Received incorrect description.", "Hello world!", info.getDescription().getFullText());
+        assertEquals("Received incorrect description.", "{\"text\":\"Hello world!\"}", info.getDescription());
         assertEquals("Received incorrect game version.", GAME_VERSION, info.getVersionInfo().getVersionName());
         assertEquals("Received incorrect protocol version.", PROTOCOL_VERSION, info.getVersionInfo().getProtocolVersion());
         assertEquals("Received incorrect online players.", 0, info.getPlayerInfo().getOnlinePlayers());

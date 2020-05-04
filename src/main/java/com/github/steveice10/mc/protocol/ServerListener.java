@@ -4,13 +4,13 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.login.client.EncryptionResponsePacket;
@@ -29,6 +29,8 @@ import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
@@ -114,7 +116,7 @@ public class ServerListener extends SessionAdapter {
                     builder = new ServerInfoBuilder() {
                         @Override
                         public ServerStatusInfo buildInfo(Session session) {
-                            return new ServerStatusInfo(VersionInfo.CURRENT, new PlayerInfo(0, 20, new GameProfile[]{}), Message.fromString("A Minecraft Server"), null);
+                            return new ServerStatusInfo(VersionInfo.CURRENT, new PlayerInfo(0, 20, new GameProfile[]{}), "A Minecraft Server", null, true);
                         }
                     };
                 }
@@ -140,10 +142,19 @@ public class ServerListener extends SessionAdapter {
     @Override
     public void disconnecting(DisconnectingEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
+        boolean escape = false;
+        if (event.getReason() != null)  {
+            try {
+                new JsonParser().parse(event.getReason());
+                escape = false;
+            } catch (JsonSyntaxException ignored) {
+                escape = true;
+            }
+        }
         if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
-            event.getSession().send(new LoginDisconnectPacket(event.getReason()));
+            event.getSession().send(new LoginDisconnectPacket(event.getReason(), escape));
         } else if(protocol.getSubProtocol() == SubProtocol.GAME) {
-            event.getSession().send(new ServerDisconnectPacket(event.getReason()));
+            event.getSession().send(new ServerDisconnectPacket(event.getReason(), escape));
         }
     }
 

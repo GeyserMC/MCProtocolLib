@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.status.server;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.util.Base64;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -13,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -55,13 +55,13 @@ public class StatusResponsePacket extends MinecraftPacket {
 
         PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
         JsonElement desc = obj.get("description");
-        Message description = Message.fromJson(desc);
+        String description = desc.toString();
         BufferedImage icon = null;
         if(obj.has("favicon")) {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
         }
 
-        this.info = new ServerStatusInfo(version, players, description, icon);
+        this.info = new ServerStatusInfo(version, players, description, icon, false);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class StatusResponsePacket extends MinecraftPacket {
 
         obj.add("version", ver);
         obj.add("players", plrs);
-        obj.add("description", this.info.getDescription().toJson());
+        obj.add("description", new JsonParser().parse(this.info.getDescription()));
         if(this.info.getIcon() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIcon()));
         }

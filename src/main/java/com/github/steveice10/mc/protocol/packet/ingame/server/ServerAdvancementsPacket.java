@@ -5,7 +5,6 @@ import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.mc.protocol.util.NetUtil;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -69,8 +68,8 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
             String parentId = in.readBoolean() ? in.readString() : null;
             DisplayData displayData = null;
             if(in.readBoolean()) {
-                Message title = Message.fromString(in.readString());
-                Message description = Message.fromString(in.readString());
+                String title = in.readString();
+                String description = in.readString();
                 ItemStack icon = NetUtil.readItem(in);
                 FrameType frameType = MagicValues.key(FrameType.class, in.readVarInt());
 
@@ -147,8 +146,8 @@ public class ServerAdvancementsPacket extends MinecraftPacket {
             DisplayData displayData = advancement.getDisplayData();
             if(displayData != null) {
                 out.writeBoolean(true);
-                out.writeString(displayData.getTitle().toJsonString());
-                out.writeString(displayData.getDescription().toJsonString());
+                out.writeString(displayData.getTitle());
+                out.writeString(displayData.getDescription());
                 NetUtil.writeItem(out, displayData.getIcon());
                 out.writeVarInt(MagicValues.value(Integer.class, displayData.getFrameType()));
                 String backgroundTexture = displayData.getBackgroundTexture();

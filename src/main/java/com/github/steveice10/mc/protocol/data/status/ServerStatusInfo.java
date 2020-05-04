@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.status;
 
-import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 import java.awt.image.BufferedImage;
@@ -9,13 +9,13 @@ import java.util.Objects;
 public class ServerStatusInfo {
     private VersionInfo version;
     private PlayerInfo players;
-    private Message description;
+    private String description;
     private BufferedImage icon;
 
-    public ServerStatusInfo(VersionInfo version, PlayerInfo players, Message description, BufferedImage icon) {
+    public ServerStatusInfo(VersionInfo version, PlayerInfo players, String description, BufferedImage icon, boolean escape) {
         this.version = version;
         this.players = players;
-        this.description = description;
+        this.description = escape ? ServerChatPacket.escapeText(description) : description;
         this.icon = icon;
     }
 
@@ -27,7 +27,7 @@ public class ServerStatusInfo {
         return this.players;
     }
 
-    public Message getDescription() {
+    public String getDescription() {
         return this.description;
     }
 

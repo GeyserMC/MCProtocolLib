@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -16,7 +15,7 @@ public class ServerBossBarPacket extends MinecraftPacket {
     private UUID uuid;
     private BossBarAction action;
 
-    private Message title;
+    private String title;
     private float health;
     private BossBarColor color;
     private BossBarDivision division;
@@ -27,11 +26,11 @@ public class ServerBossBarPacket extends MinecraftPacket {
     private ServerBossBarPacket() {
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title, float health, BossBarColor color, BossBarDivision division, boolean darkenSky, boolean dragonBar) {
+    public ServerBossBarPacket(UUID uuid, BossBarAction action, String title, float health, BossBarColor color, BossBarDivision division, boolean darkenSky, boolean dragonBar, boolean escape) {
         this.uuid = uuid;
         this.action = BossBarAction.ADD;
 
-        this.title = title;
+        this.title = escape ? ServerChatPacket.escapeText(title) : title;
         this.health = health;
         this.color = color;
         this.division = division;
@@ -51,11 +50,11 @@ public class ServerBossBarPacket extends MinecraftPacket {
         this.health = health;
     }
 
-    public ServerBossBarPacket(UUID uuid, BossBarAction action, Message title) {
+    public ServerBossBarPacket(UUID uuid, BossBarAction action, String title, boolean escape) {
         this.uuid = uuid;
         this.action = BossBarAction.UPDATE_TITLE;
 
-        this.title = title;
+        this.title = escape ? ServerChatPacket.escapeText(title) : title;
     }
 
     public ServerBossBarPacket(UUID uuid, BossBarAction action, BossBarColor color, BossBarDivision division) {
@@ -82,7 +81,7 @@ public class ServerBossBarPacket extends MinecraftPacket {
         return this.action;
     }
 
-    public Message getTitle() {
+    public String getTitle() {
         return this.title;
     }
 
@@ -112,7 +111,7 @@ public class ServerBossBarPacket extends MinecraftPacket {
         this.action = MagicValues.key(BossBarAction.class, in.readVarInt());
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            this.title = Message.fromString(in.readString());
+            this.title = in.readString();
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -137,7 +136,7 @@ public class ServerBossBarPacket extends MinecraftPacket {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            out.writeString(this.title.toJsonString());
+            out.writeString(this.title);
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {

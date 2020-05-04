@@ -12,7 +12,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Rotation;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -131,7 +130,7 @@ public class NetUtil {
                     value = in.readString();
                     break;
                 case CHAT:
-                    value = Message.fromString(in.readString());
+                    value = in.readString();
                     break;
                 case ITEM:
                     value = readItem(in);
@@ -193,10 +192,8 @@ public class NetUtil {
                     out.writeFloat((Float) meta.getValue());
                     break;
                 case STRING:
-                    out.writeString((String) meta.getValue());
-                    break;
                 case CHAT:
-                    out.writeString(((Message) meta.getValue()).toJsonString());
+                    out.writeString((String) meta.getValue());
                     break;
                 case ITEM:
                     writeItem(out, (ItemStack) meta.getValue());

@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.advancement;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 import java.util.List;
@@ -70,15 +69,15 @@ public class Advancement {
     }
 
     public static class DisplayData {
-        private Message title;
-        private Message description;
+        private String title;
+        private String description;
         private ItemStack icon;
         private FrameType frameType;
         private boolean showToast;
         private boolean hidden;
         private String backgroundTexture;
         private float posX, posY;
-        public DisplayData(Message title, Message description, ItemStack icon, FrameType frameType,
+        public DisplayData(String title, String description, ItemStack icon, FrameType frameType,
                            boolean showToast, boolean hidden, float posX, float posY) {
             this.title = title;
             this.description = description;
@@ -90,17 +89,17 @@ public class Advancement {
             this.posY = posY;
         }
 
-        public DisplayData(Message title, Message description, ItemStack icon, FrameType frameType,
+        public DisplayData(String title, String description, ItemStack icon, FrameType frameType,
                            boolean showToast, boolean hidden, float posX, float posY, String backgroundTexture) {
             this(title, description, icon, frameType, showToast, hidden, posX, posY);
             this.backgroundTexture = backgroundTexture;
         }
 
-        public Message getTitle() {
+        public String getTitle() {
             return title;
         }
 
-        public Message getDescription() {
+        public String getDescription() {
             return description;
         }
 

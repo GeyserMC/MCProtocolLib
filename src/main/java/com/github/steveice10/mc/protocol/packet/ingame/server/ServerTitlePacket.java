@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.TitleAction;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -12,11 +11,11 @@ import java.io.IOException;
 public class ServerTitlePacket extends MinecraftPacket {
     private TitleAction action;
 
-    private Message title;
+    private String title;
 
-    private Message subtitle;
+    private String subtitle;
 
-    private Message actionBar;
+    private String actionBar;
 
     private int fadeIn;
     private int stay;
@@ -26,20 +25,16 @@ public class ServerTitlePacket extends MinecraftPacket {
     private ServerTitlePacket() {
     }
 
-    public ServerTitlePacket(String title, boolean sub) {
-        this(Message.fromString(title), sub);
+    public ServerTitlePacket(String title, boolean sub, boolean escape) {
+        this(sub ? TitleAction.SUBTITLE : TitleAction.TITLE, title, escape);
     }
 
-    public ServerTitlePacket(Message title, boolean sub) {
-        this(sub ? TitleAction.SUBTITLE : TitleAction.TITLE, title);
-    }
-
-    public ServerTitlePacket(TitleAction action, String title) {
-        this(action, Message.fromString(title));
-    }
-
-    public ServerTitlePacket(TitleAction action, Message title) {
+    public ServerTitlePacket(TitleAction action, String title, boolean escape) {
         this.action = action;
+
+        if (escape) {
+            title = ServerChatPacket.escapeText(title);
+        }
 
         switch(action) {
             case TITLE:
@@ -75,15 +70,15 @@ public class ServerTitlePacket extends MinecraftPacket {
         return this.action;
     }
 
-    public Message getTitle() {
+    public String getTitle() {
         return this.title;
     }
 
-    public Message getSubtitle() {
+    public String getSubtitle() {
         return this.subtitle;
     }
 
-    public Message getActionBar() {
+    public String getActionBar() {
         return this.actionBar;
     }
 
@@ -104,13 +99,13 @@ public class ServerTitlePacket extends MinecraftPacket {
         this.action = MagicValues.key(TitleAction.class, in.readVarInt());
         switch(this.action) {
             case TITLE:
-                this.title = Message.fromString(in.readString());
+                this.title = in.readString();
                 break;
             case SUBTITLE:
-                this.subtitle = Message.fromString(in.readString());
+                this.subtitle = in.readString();
                 break;
             case ACTION_BAR:
-                this.actionBar = Message.fromString(in.readString());
+                this.actionBar = in.readString();
                 break;
             case TIMES:
                 this.fadeIn = in.readInt();
@@ -129,13 +124,13 @@ public class ServerTitlePacket extends MinecraftPacket {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         switch(this.action) {
             case TITLE:
-                out.writeString(this.title.toJsonString());
+                out.writeString(this.title);
                 break;
             case SUBTITLE:
-                out.writeString(this.subtitle.toJsonString());
+                out.writeString(this.subtitle);
                 break;
             case ACTION_BAR:
-                out.writeString(this.actionBar.toJsonString());
+                out.writeString(this.actionBar);
                 break;
             case TIMES:
                 out.writeInt(this.fadeIn);

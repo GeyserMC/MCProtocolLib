@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.data.game;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.util.ObjectUtil;
 
 import java.util.Objects;
@@ -12,13 +12,13 @@ public class PlayerListEntry {
 
     private GameMode gameMode;
     private int ping;
-    private Message displayName;
+    private String displayName;
 
-    public PlayerListEntry(GameProfile profile, GameMode gameMode, int ping, Message displayName) {
+    public PlayerListEntry(GameProfile profile, GameMode gameMode, int ping, String displayName, boolean escape) {
         this.profile = profile;
         this.gameMode = gameMode;
         this.ping = ping;
-        this.displayName = displayName;
+        this.displayName = escape ? ServerChatPacket.escapeText(displayName) : displayName;
     }
 
     public PlayerListEntry(GameProfile profile, GameMode gameMode) {
@@ -31,9 +31,9 @@ public class PlayerListEntry {
         this.ping = ping;
     }
 
-    public PlayerListEntry(GameProfile profile, Message displayName) {
+    public PlayerListEntry(GameProfile profile, String displayName, boolean escape) {
         this.profile = profile;
-        this.displayName = displayName;
+        this.displayName = escape ? ServerChatPacket.escapeText(displayName) : displayName;
     }
 
     public PlayerListEntry(GameProfile profile) {
@@ -52,7 +52,7 @@ public class PlayerListEntry {
         return this.ping;
     }
 
-    public Message getDisplayName() {
+    public String getDisplayName() {
         return this.displayName;
     }
 

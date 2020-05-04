@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -14,7 +13,7 @@ public class ServerCombatPacket extends MinecraftPacket {
     private int entityId;
     private int duration;
     private int playerId;
-    private Message message;
+    private String message;
 
     public ServerCombatPacket() {
         this.state = CombatState.ENTER_COMBAT;
@@ -26,11 +25,11 @@ public class ServerCombatPacket extends MinecraftPacket {
         this.duration = duration;
     }
 
-    public ServerCombatPacket(int entityId, int playerId, Message message) {
+    public ServerCombatPacket(int entityId, int playerId, String message, boolean escape) {
         this.state = CombatState.ENTITY_DEAD;
         this.entityId = entityId;
         this.playerId = playerId;
-        this.message = message;
+        this.message = escape ? ServerChatPacket.escapeText(message) : message;
     }
 
     public CombatState getCombatState() {
@@ -49,7 +48,7 @@ public class ServerCombatPacket extends MinecraftPacket {
         return this.playerId;
     }
 
-    public Message getMessage() {
+    public String getMessage() {
         return this.message;
     }
 
@@ -62,7 +61,7 @@ public class ServerCombatPacket extends MinecraftPacket {
         } else if(this.state == CombatState.ENTITY_DEAD) {
             this.playerId = in.readVarInt();
             this.entityId = in.readInt();
-            this.message = Message.fromString(in.readString());
+            this.message = in.readString();
         }
     }
 
@@ -75,7 +74,7 @@ public class ServerCombatPacket extends MinecraftPacket {
         } else if(this.state == CombatState.ENTITY_DEAD) {
             out.writeVarInt(this.playerId);
             out.writeInt(this.entityId);
-            out.writeString(this.message.toJsonString());
+            out.writeString(this.message);
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -8,35 +7,35 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import java.io.IOException;
 
 public class ServerPlayerListDataPacket extends MinecraftPacket {
-    private Message header;
-    private Message footer;
+    private String header;
+    private String footer;
 
     @SuppressWarnings("unused")
     private ServerPlayerListDataPacket() {
     }
 
-    public ServerPlayerListDataPacket(Message header, Message footer) {
-        this.header = header;
-        this.footer = footer;
+    public ServerPlayerListDataPacket(String header, String footer, boolean escape) {
+        this.header = escape ? ServerChatPacket.escapeText(header) : header;
+        this.footer = escape ? ServerChatPacket.escapeText(footer) : footer;
     }
 
-    public Message getHeader() {
+    public String getHeader() {
         return this.header;
     }
 
-    public Message getFooter() {
+    public String getFooter() {
         return this.footer;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.header = Message.fromString(in.readString());
-        this.footer = Message.fromString(in.readString());
+        this.header = in.readString();
+        this.footer = in.readString();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(this.header.toJsonString());
-        out.writeString(this.footer.toJsonString());
+        out.writeString(this.header);
+        out.writeString(this.footer);
     }
 }

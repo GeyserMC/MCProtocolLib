@@ -5,7 +5,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntry;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import com.github.steveice10.mc.protocol.packet.MinecraftPacket;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -65,12 +64,12 @@ public class ServerPlayerListEntryPacket extends MinecraftPacket {
                     int g = in.readVarInt();
                     GameMode gameMode = MagicValues.key(GameMode.class, g < 0 ? 0 : g);
                     int ping = in.readVarInt();
-                    Message displayName = null;
+                    String displayName = null;
                     if(in.readBoolean()) {
-                        displayName = Message.fromString(in.readString());
+                        displayName = in.readString();
                     }
 
-                    entry = new PlayerListEntry(profile, gameMode, ping, displayName);
+                    entry = new PlayerListEntry(profile, gameMode, ping, displayName, false);
                     break;
                 case UPDATE_GAMEMODE:
                     g = in.readVarInt();
@@ -82,12 +81,12 @@ public class ServerPlayerListEntryPacket extends MinecraftPacket {
                     entry = new PlayerListEntry(profile, png);
                     break;
                 case UPDATE_DISPLAY_NAME:
-                    Message disp = null;
+                    String disp = null;
                     if(in.readBoolean()) {
-                        disp = Message.fromString(in.readString());
+                        disp = in.readString();
                     }
 
-                    entry = new PlayerListEntry(profile, disp);
+                    entry = new PlayerListEntry(profile, disp, false);
                 case REMOVE_PLAYER:
                     entry = new PlayerListEntry(profile);
                     break;
@@ -120,7 +119,7 @@ public class ServerPlayerListEntryPacket extends MinecraftPacket {
                     out.writeVarInt(entry.getPing());
                     out.writeBoolean(entry.getDisplayName() != null);
                     if(entry.getDisplayName() != null) {
-                        out.writeString(entry.getDisplayName().toJsonString());
+                        out.writeString(entry.getDisplayName());
                     }
 
                     break;
@@ -133,7 +132,7 @@ public class ServerPlayerListEntryPacket extends MinecraftPacket {
                 case UPDATE_DISPLAY_NAME:
                     out.writeBoolean(entry.getDisplayName() != null);
                     if(entry.getDisplayName() != null) {
-                        out.writeString(entry.getDisplayName().toJsonString());
+                        out.writeString(entry.getDisplayName());
                     }
 
                     break;
