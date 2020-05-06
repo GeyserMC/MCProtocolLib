@@ -24,6 +24,7 @@ public class ServerRespawnPacket implements Packet {
     private long hashedSeed;
     private @NonNull GameMode gamemode;
     private @NonNull WorldType worldType;
+    private boolean copyMetadata;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -31,6 +32,7 @@ public class ServerRespawnPacket implements Packet {
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
         this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
+        this.copyMetadata = in.readBoolean();
     }
 
     @Override
@@ -39,6 +41,7 @@ public class ServerRespawnPacket implements Packet {
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
         out.writeString(MagicValues.value(String.class, this.worldType));
+        out.writeBoolean(this.copyMetadata);
     }
 
     @Override
