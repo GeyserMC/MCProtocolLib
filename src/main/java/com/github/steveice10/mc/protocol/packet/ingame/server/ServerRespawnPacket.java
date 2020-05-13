@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -23,7 +22,8 @@ public class ServerRespawnPacket implements Packet {
     private int dimension;
     private long hashedSeed;
     private @NonNull GameMode gamemode;
-    private @NonNull WorldType worldType;
+    private boolean debug;
+    private boolean flat;
     private boolean copyMetadata;
 
     @Override
@@ -31,7 +31,8 @@ public class ServerRespawnPacket implements Packet {
         this.dimension = in.readInt();
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-        this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
+        this.debug = in.readBoolean();
+        this.flat = in.readBoolean();
         this.copyMetadata = in.readBoolean();
     }
 
@@ -40,7 +41,8 @@ public class ServerRespawnPacket implements Packet {
         out.writeInt(this.dimension);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
-        out.writeString(MagicValues.value(String.class, this.worldType));
+        out.writeBoolean(this.debug);
+        out.writeBoolean(this.flat);
         out.writeBoolean(this.copyMetadata);
     }
 

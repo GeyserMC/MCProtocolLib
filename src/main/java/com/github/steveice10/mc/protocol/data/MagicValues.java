@@ -69,7 +69,6 @@ import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandP
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
-import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
@@ -270,15 +269,6 @@ public class MagicValues {
         register(Difficulty.EASY, 1);
         register(Difficulty.NORMAL, 2);
         register(Difficulty.HARD, 3);
-
-        register(WorldType.DEFAULT, "default");
-        register(WorldType.FLAT, "flat");
-        register(WorldType.LARGE_BIOMES, "largebiomes");
-        register(WorldType.AMPLIFIED, "amplified");
-        register(WorldType.CUSTOMIZED, "customized");
-        register(WorldType.BUFFET, "buffet");
-        register(WorldType.DEBUG, "debug_all_block_states");
-        register(WorldType.DEFAULT_1_1, "default_1_1");
 
         register(Animation.SWING_ARM, 0);
         register(Animation.DAMAGE, 1);

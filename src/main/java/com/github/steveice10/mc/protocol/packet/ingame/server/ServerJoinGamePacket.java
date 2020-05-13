@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -29,10 +28,11 @@ public class ServerJoinGamePacket implements Packet {
     private int dimension;
     private long hashedSeed;
     private int maxPlayers;
-    private @NonNull WorldType worldType;
     private int viewDistance;
     private boolean reducedDebugInfo;
     private boolean enableRespawnScreen;
+    private boolean debug;
+    private boolean flat;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -45,10 +45,11 @@ public class ServerJoinGamePacket implements Packet {
         this.dimension = in.readInt();
         this.hashedSeed = in.readLong();
         this.maxPlayers = in.readUnsignedByte();
-        this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
         this.viewDistance = in.readVarInt();
         this.reducedDebugInfo = in.readBoolean();
         this.enableRespawnScreen = in.readBoolean();
+        this.debug = in.readBoolean();
+        this.flat = in.readBoolean();
     }
 
     @Override
@@ -65,10 +66,11 @@ public class ServerJoinGamePacket implements Packet {
         out.writeInt(this.dimension);
         out.writeLong(this.hashedSeed);
         out.writeByte(this.maxPlayers);
-        out.writeString(MagicValues.value(String.class, this.worldType));
         out.writeVarInt(this.viewDistance);
         out.writeBoolean(this.reducedDebugInfo);
         out.writeBoolean(this.enableRespawnScreen);
+        out.writeBoolean(this.debug);
+        out.writeBoolean(this.flat);
     }
 
     @Override

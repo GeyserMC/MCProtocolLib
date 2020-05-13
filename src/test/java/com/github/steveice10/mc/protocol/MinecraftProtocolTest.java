@@ -29,7 +29,6 @@ import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_H
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static com.github.steveice10.mc.protocol.data.SubProtocol.STATUS;
-import static com.github.steveice10.mc.protocol.data.game.world.WorldType.DEFAULT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +44,7 @@ public class MinecraftProtocolTest {
             new TextMessage("Hello world!"),
             null
     );
-    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, 0, DEFAULT, 16, false, false);
+    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, 0, 16, false, false, false, false);
 
     private static Server server;
 
