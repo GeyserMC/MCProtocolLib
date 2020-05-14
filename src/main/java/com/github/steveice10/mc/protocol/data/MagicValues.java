@@ -688,6 +688,7 @@ public class MagicValues {
         register(UpdatedTileType.STRUCTURE_BLOCK, 7);
         register(UpdatedTileType.END_GATEWAY, 8);
         register(UpdatedTileType.SIGN, 9);
+        register(UpdatedTileType.SHULKER_BOX, 10);
         register(UpdatedTileType.BED, 11);
         register(UpdatedTileType.JIGSAW_BLOCK, 12);
         register(UpdatedTileType.CAMPFIRE, 13);
