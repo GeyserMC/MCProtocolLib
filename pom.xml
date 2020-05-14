@@ -5,7 +5,7 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>20w20a-SNAPSHOT</version>
+    <version>20w20b-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
