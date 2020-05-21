@@ -1206,6 +1206,10 @@ public class MagicValues {
         register(SoundCategory.AMBIENT, 8);
         register(SoundCategory.VOICE, 9);
 
+        // Handle some protocol version translators that may send -1 for untranslatable sound IDs.
+        // Choice of sound is based on what (I think?) vanilla would default to.
+        register(BuiltinSound.ENTITY_ITEM_PICKUP, -1);
+
         for(BuiltinSound sound : BuiltinSound.values()) {
             register(sound, sound.ordinal());
             register(sound, sound.getName());
