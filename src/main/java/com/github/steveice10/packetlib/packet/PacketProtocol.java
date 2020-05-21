@@ -132,15 +132,30 @@ public abstract class PacketProtocol {
     /**
      * Gets the registered id of an outgoing packet class.
      *
-     * @param packet Class of the packet to get the id for.
+     * @param packetClass Class of the packet to get the id for.
      * @return The packet's registered id.
      * @throws IllegalArgumentException If the packet is not registered.
      */
-    public final int getOutgoingId(Class<? extends Packet> packet) {
-        if(!this.outgoing.containsKey(packet) || this.outgoing.get(packet) == null) {
-            throw new IllegalArgumentException("Unregistered outgoing packet class: " + packet.getName());
+    public final int getOutgoingId(Class<? extends Packet> packetClass) {
+        if(!this.outgoing.containsKey(packetClass) || this.outgoing.get(packetClass) == null) {
+            throw new IllegalArgumentException("Unregistered outgoing packet class: " + packetClass.getName());
         }
 
-        return this.outgoing.get(packet);
+        return this.outgoing.get(packetClass);
+    }
+
+    /**
+     * Gets the registered id of an outgoing {@link Packet} instance.
+     *
+     * @param packet Instance of {@link Packet} to get the id for.
+     * @return The packet's registered id.
+     * @throws IllegalArgumentException If the packet is not registered.
+     */
+    public final int getOutgoingId(Packet packet) {
+        if(packet instanceof BufferedPacket) {
+            return getOutgoingId(((BufferedPacket)packet).getPacketClass());
+        }
+
+        return getOutgoingId(packet.getClass());
     }
 }
