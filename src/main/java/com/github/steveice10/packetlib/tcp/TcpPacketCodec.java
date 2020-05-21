@@ -23,7 +23,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) throws Exception {
         NetOutput out = new ByteBufNetOutput(buf);
-        this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet.getClass()));
+        this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet));
         packet.write(out);
     }
 
