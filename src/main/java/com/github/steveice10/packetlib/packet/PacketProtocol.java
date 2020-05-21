@@ -137,11 +137,12 @@ public abstract class PacketProtocol {
      * @throws IllegalArgumentException If the packet is not registered.
      */
     public final int getOutgoingId(Class<? extends Packet> packetClass) {
-        if(!this.outgoing.containsKey(packetClass) || this.outgoing.get(packetClass) == null) {
+        Integer packetId = this.outgoing.get(packetClass);
+        if(packetId == null) {
             throw new IllegalArgumentException("Unregistered outgoing packet class: " + packetClass.getName());
         }
 
-        return this.outgoing.get(packetClass);
+        return packetId;
     }
 
     /**
