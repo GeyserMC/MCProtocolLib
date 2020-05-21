@@ -25,7 +25,7 @@ public class ServerWorldBorderPacket implements Packet {
     private long lerpTime;
 
     private double newCenterX;
-    private double newCenterY;
+    private double newCenterZ;
 
     private int newAbsoluteMaxSize;
 
@@ -47,11 +47,11 @@ public class ServerWorldBorderPacket implements Packet {
         this.lerpTime = lerpTime;
     }
 
-    public ServerWorldBorderPacket(double newCenterX, double newCenterY) {
+    public ServerWorldBorderPacket(double newCenterX, double newCenterZ) {
         this.action = WorldBorderAction.SET_CENTER;
 
         this.newCenterX = newCenterX;
-        this.newCenterY = newCenterY;
+        this.newCenterZ = newCenterZ;
     }
 
     public ServerWorldBorderPacket(boolean isTime, int warningValue) {
@@ -66,11 +66,11 @@ public class ServerWorldBorderPacket implements Packet {
         }
     }
 
-    public ServerWorldBorderPacket(double newCenterX, double newCenterY, double oldSize, double newSize, long lerpTime, int newAbsoluteMaxSize, int warningTime, int warningBlocks) {
+    public ServerWorldBorderPacket(double newCenterX, double newCenterZ, double oldSize, double newSize, long lerpTime, int newAbsoluteMaxSize, int warningTime, int warningBlocks) {
         this.action = WorldBorderAction.INITIALIZE;
 
         this.newCenterX = newCenterX;
-        this.newCenterY = newCenterY;
+        this.newCenterZ = newCenterZ;
         this.oldSize = oldSize;
         this.newSize = newSize;
         this.lerpTime = lerpTime;
@@ -90,10 +90,10 @@ public class ServerWorldBorderPacket implements Packet {
             this.lerpTime = in.readVarLong();
         } else if(this.action == WorldBorderAction.SET_CENTER) {
             this.newCenterX = in.readDouble();
-            this.newCenterY = in.readDouble();
+            this.newCenterZ = in.readDouble();
         } else if(this.action == WorldBorderAction.INITIALIZE) {
             this.newCenterX = in.readDouble();
-            this.newCenterY = in.readDouble();
+            this.newCenterZ = in.readDouble();
             this.oldSize = in.readDouble();
             this.newSize = in.readDouble();
             this.lerpTime = in.readVarLong();
@@ -118,10 +118,10 @@ public class ServerWorldBorderPacket implements Packet {
             out.writeVarLong(this.lerpTime);
         } else if(this.action == WorldBorderAction.SET_CENTER) {
             out.writeDouble(this.newCenterX);
-            out.writeDouble(this.newCenterY);
+            out.writeDouble(this.newCenterZ);
         } else if(this.action == WorldBorderAction.INITIALIZE) {
             out.writeDouble(this.newCenterX);
-            out.writeDouble(this.newCenterY);
+            out.writeDouble(this.newCenterZ);
             out.writeDouble(this.oldSize);
             out.writeDouble(this.newSize);
             out.writeVarLong(this.lerpTime);
