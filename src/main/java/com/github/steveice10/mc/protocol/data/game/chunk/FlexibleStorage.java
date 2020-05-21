@@ -21,6 +21,13 @@ public class FlexibleStorage {
             bitsPerEntry = 4;
         }
 
+        char valuesPerLong = (char) (64 / bitsPerEntry);
+        int expectedLength = (4096 + valuesPerLong - 1) / valuesPerLong;
+
+        if (data.length != expectedLength) {
+            throw new IllegalArgumentException("Got " + data.length + " as the chunk data length, but was expecting " + expectedLength);
+        }
+
         this.bitsPerEntry = bitsPerEntry;
         this.data = Arrays.copyOf(data, data.length);
 
