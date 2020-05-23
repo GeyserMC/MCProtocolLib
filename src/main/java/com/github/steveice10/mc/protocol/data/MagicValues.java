@@ -1173,11 +1173,6 @@ public class MagicValues {
             register(sound, sound.ordinal());
             register(sound, sound.getName());
         }
-
-        // Handle some protocol version translators that may send -1 for untranslatable IDs.
-        // Choics are based on what (I think?) vanilla would default to.
-        register(EntityType.PIG, -1);
-        register(BuiltinSound.ENTITY_ITEM_PICKUP, -1);
     }
 
     private MagicValues() {
@@ -1211,7 +1206,7 @@ public class MagicValues {
             }
         }
 
-        throw new IllegalArgumentException("Value " + value + " has no mapping for key class " + keyType.getName() + ".");
+        throw new UnmappedValueException(value, keyType);
     }
 
     @SuppressWarnings("unchecked")
@@ -1238,6 +1233,6 @@ public class MagicValues {
             }
         }
 
-        throw new IllegalArgumentException("Key " + key + " has no mapping for value class " + valueType.getName() + ".");
+        throw new UnmappedKeyException(key, valueType);
     }
 }

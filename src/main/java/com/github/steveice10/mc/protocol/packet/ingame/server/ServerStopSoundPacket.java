@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.UnmappedValueException;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.CustomSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.Sound;
@@ -41,7 +42,7 @@ public class ServerStopSoundPacket implements Packet {
             String value = in.readString();
             try {
                 this.sound = MagicValues.key(BuiltinSound.class, value);
-            } catch(IllegalArgumentException e) {
+            } catch(UnmappedValueException e) {
                 this.sound = new CustomSound(value);
             }
         } else {

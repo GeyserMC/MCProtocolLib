@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.UnmappedValueException;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
@@ -100,7 +101,7 @@ public class ServerTeamPacket implements Packet {
 
             try {
                 this.color = MagicValues.key(TeamColor.class, in.readVarInt());
-            } catch(IllegalArgumentException e) {
+            } catch(UnmappedValueException e) {
                 this.color = TeamColor.NONE;
             }
 

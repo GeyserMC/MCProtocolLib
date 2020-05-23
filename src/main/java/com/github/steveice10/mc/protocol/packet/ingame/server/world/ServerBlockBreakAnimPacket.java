@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.UnmappedValueException;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -29,7 +30,7 @@ public class ServerBlockBreakAnimPacket implements Packet {
         this.position = Position.read(in);
         try {
             this.stage = MagicValues.key(BlockBreakStage.class, in.readUnsignedByte());
-        } catch(IllegalArgumentException e) {
+        } catch(UnmappedValueException e) {
             this.stage = BlockBreakStage.RESET;
         }
     }
