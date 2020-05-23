@@ -103,9 +103,9 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.Serv
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerSetExperiencePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnExpOrbPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnGlobalEntityPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnMobPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnObjectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnWeatherEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnLivingEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPaintingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerDisplayScoreboardPacket;
@@ -372,10 +372,10 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     private void initClientGame(Session session) {
-        this.registerIncoming(0x00, ServerSpawnObjectPacket.class);
+        this.registerIncoming(0x00, ServerSpawnEntityPacket.class);
         this.registerIncoming(0x01, ServerSpawnExpOrbPacket.class);
-        this.registerIncoming(0x02, ServerSpawnGlobalEntityPacket.class);
-        this.registerIncoming(0x03, ServerSpawnMobPacket.class);
+        this.registerIncoming(0x02, ServerSpawnWeatherEntityPacket.class);
+        this.registerIncoming(0x03, ServerSpawnLivingEntityPacket.class);
         this.registerIncoming(0x04, ServerSpawnPaintingPacket.class);
         this.registerIncoming(0x05, ServerSpawnPlayerPacket.class);
         this.registerIncoming(0x06, ServerEntityAnimationPacket.class);
@@ -562,10 +562,10 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x2C, ClientPlayerPlaceBlockPacket.class);
         this.registerIncoming(0x2D, ClientPlayerUseItemPacket.class);
 
-        this.registerOutgoing(0x00, ServerSpawnObjectPacket.class);
+        this.registerOutgoing(0x00, ServerSpawnEntityPacket.class);
         this.registerOutgoing(0x01, ServerSpawnExpOrbPacket.class);
-        this.registerOutgoing(0x02, ServerSpawnGlobalEntityPacket.class);
-        this.registerOutgoing(0x03, ServerSpawnMobPacket.class);
+        this.registerOutgoing(0x02, ServerSpawnWeatherEntityPacket.class);
+        this.registerOutgoing(0x03, ServerSpawnLivingEntityPacket.class);
         this.registerOutgoing(0x04, ServerSpawnPaintingPacket.class);
         this.registerOutgoing(0x05, ServerSpawnPlayerPacket.class);
         this.registerOutgoing(0x06, ServerEntityAnimationPacket.class);

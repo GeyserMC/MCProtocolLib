@@ -1,7 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.type.MobType;
+import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -19,10 +19,10 @@ import java.util.UUID;
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class ServerSpawnMobPacket implements Packet {
+public class ServerSpawnLivingEntityPacket implements Packet {
     private int entityId;
     private @NonNull UUID uuid;
-    private @NonNull MobType type;
+    private @NonNull EntityType type;
     private double x;
     private double y;
     private double z;
@@ -37,7 +37,7 @@ public class ServerSpawnMobPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.type = MagicValues.key(MobType.class, in.readVarInt());
+        this.type = MagicValues.key(EntityType.class, in.readVarInt());
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();

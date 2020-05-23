@@ -1,14 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.FallingBlockData;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.GenericObjectData;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.HangingDirection;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.MinecartType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectData;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.ObjectType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.ProjectileData;
-import com.github.steveice10.mc.protocol.data.game.entity.type.object.SplashPotionData;
+import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
+import com.github.steveice10.mc.protocol.data.game.entity.object.FallingBlockData;
+import com.github.steveice10.mc.protocol.data.game.entity.object.GenericObjectData;
+import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
+import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
+import com.github.steveice10.mc.protocol.data.game.entity.object.ObjectData;
+import com.github.steveice10.mc.protocol.data.game.entity.object.ProjectileData;
+import com.github.steveice10.mc.protocol.data.game.entity.object.SplashPotionData;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -26,10 +26,10 @@ import java.util.UUID;
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class ServerSpawnObjectPacket implements Packet {
+public class ServerSpawnEntityPacket implements Packet {
     private int entityId;
     private @NonNull UUID uuid;
-    private @NonNull ObjectType type;
+    private @NonNull EntityType type;
     private @NonNull ObjectData data;
     private double x;
     private double y;
@@ -40,17 +40,17 @@ public class ServerSpawnObjectPacket implements Packet {
     private double motionY;
     private double motionZ;
 
-    public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type,
+    public ServerSpawnEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
                                    double x, double y, double z, float yaw, float pitch) {
         this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, 0, 0, 0);
     }
 
-    public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type, @NonNull ObjectData data,
+    public ServerSpawnEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type, @NonNull ObjectData data,
                                    double x, double y, double z, float yaw, float pitch) {
         this(entityId, uuid, type, data, x, y, z, yaw, pitch, 0, 0, 0);
     }
 
-    public ServerSpawnObjectPacket(int entityId, @NonNull UUID uuid, @NonNull ObjectType type,
+    public ServerSpawnEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
                                    double x, double y, double z, float yaw, float pitch,
                                    double motionX, double motionY, double motionZ) {
         this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, motionX, motionY, motionZ);
@@ -60,7 +60,7 @@ public class ServerSpawnObjectPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.type = MagicValues.key(ObjectType.class, in.readVarInt());
+        this.type = MagicValues.key(EntityType.class, in.readVarInt());
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -68,16 +68,16 @@ public class ServerSpawnObjectPacket implements Packet {
         this.yaw = in.readByte() * 360 / 256f;
 
         int data = in.readInt();
-        if(this.type == ObjectType.MINECART) {
+        if(this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
-        } else if(this.type == ObjectType.ITEM_FRAME) {
+        } else if(this.type == EntityType.ITEM_FRAME) {
             this.data = MagicValues.key(HangingDirection.class, data);
-        } else if(this.type == ObjectType.FALLING_BLOCK) {
+        } else if(this.type == EntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);
-        } else if(this.type == ObjectType.POTION) {
+        } else if(this.type == EntityType.THROWN_POTION) {
             this.data = new SplashPotionData(data);
-        } else if(this.type == ObjectType.SPECTRAL_ARROW || this.type == ObjectType.FIREBALL || this.type == ObjectType.SMALL_FIREBALL
-                || this.type == ObjectType.DRAGON_FIREBALL || this.type == ObjectType.WITHER_SKULL || this.type == ObjectType.FISHING_BOBBER) {
+        } else if(this.type == EntityType.SPECTRAL_ARROW || this.type == EntityType.FIREBALL || this.type == EntityType.SMALL_FIREBALL
+                || this.type == EntityType.DRAGON_FIREBALL || this.type == EntityType.WITHER_SKULL || this.type == EntityType.FISHING_BOBBER) {
             this.data = new ProjectileData(data);
         } else {
             this.data = new GenericObjectData(data);

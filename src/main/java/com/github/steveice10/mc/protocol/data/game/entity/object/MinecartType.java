@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.data.game.entity.type.object;
+package com.github.steveice10.mc.protocol.data.game.entity.object;
 
 public enum MinecartType implements ObjectData {
     NORMAL,
