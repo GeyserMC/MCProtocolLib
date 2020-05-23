@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type;
 
-public enum MobType {
+public enum EntityType {
     AREA_EFFECT_CLOUD,
     ARMOR_STAND,
     ARROW,

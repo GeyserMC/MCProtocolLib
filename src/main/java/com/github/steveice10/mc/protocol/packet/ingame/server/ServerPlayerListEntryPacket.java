@@ -17,6 +17,8 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -42,8 +44,9 @@ public class ServerPlayerListEntryPacket implements Packet {
 
             PlayerListEntry entry = null;
             switch(this.action) {
-                case ADD_PLAYER:
+                case ADD_PLAYER: {
                     int properties = in.readVarInt();
+                    List<GameProfile.Property> propertyList = new ArrayList<>();
                     for(int index = 0; index < properties; index++) {
                         String propertyName = in.readString();
                         String value = in.readString();
@@ -52,11 +55,13 @@ public class ServerPlayerListEntryPacket implements Packet {
                             signature = in.readString();
                         }
 
-                        profile.getProperties().add(new GameProfile.Property(propertyName, value, signature));
+                        propertyList.add(new GameProfile.Property(propertyName, value, signature));
                     }
 
-                    int g = in.readVarInt();
-                    GameMode gameMode = MagicValues.key(GameMode.class, g < 0 ? 0 : g);
+                    profile.setProperties(propertyList);
+
+                    int rawGameMode = in.readVarInt();
+                    GameMode gameMode = MagicValues.key(GameMode.class, rawGameMode < 0 ? 0 : rawGameMode);
                     int ping = in.readVarInt();
                     Message displayName = null;
                     if(in.readBoolean()) {
@@ -65,23 +70,29 @@ public class ServerPlayerListEntryPacket implements Packet {
 
                     entry = new PlayerListEntry(profile, gameMode, ping, displayName);
                     break;
-                case UPDATE_GAMEMODE:
-                    g = in.readVarInt();
-                    GameMode mode = MagicValues.key(GameMode.class, g < 0 ? 0 : g);
+                }
+                case UPDATE_GAMEMODE: {
+                    int rawGameMode = in.readVarInt();
+                    GameMode mode = MagicValues.key(GameMode.class, rawGameMode < 0 ? 0 : rawGameMode);
+
                     entry = new PlayerListEntry(profile, mode);
                     break;
-                case UPDATE_LATENCY:
-                    int png = in.readVarInt();
-                    entry = new PlayerListEntry(profile, png);
+                }
+                case UPDATE_LATENCY: {
+                    int ping = in.readVarInt();
+
+                    entry = new PlayerListEntry(profile, ping);
                     break;
-                case UPDATE_DISPLAY_NAME:
-                    Message disp = null;
+                }
+                case UPDATE_DISPLAY_NAME: {
+                    Message displayName = null;
                     if(in.readBoolean()) {
-                        disp = Message.fromString(in.readString());
+                        displayName = Message.fromString(in.readString());
                     }
 
-                    entry = new PlayerListEntry(profile, disp);
+                    entry = new PlayerListEntry(profile, displayName);
                     break;
+                }
                 case REMOVE_PLAYER:
                     entry = new PlayerListEntry(profile);
                     break;

@@ -62,13 +62,13 @@
         <dependency>
             <groupId>com.github.steveice10</groupId>
             <artifactId>packetlib</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>43b394dfdc</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.steveice10</groupId>
             <artifactId>mcauthlib</artifactId>
-            <version>1.1</version>
+            <version>401c99c722</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
