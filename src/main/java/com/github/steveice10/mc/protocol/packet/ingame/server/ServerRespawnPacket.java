@@ -19,7 +19,7 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerRespawnPacket implements Packet {
-    private int dimension;
+    private String dimension;
     private long hashedSeed;
     private @NonNull GameMode gamemode;
     private boolean debug;
@@ -28,7 +28,7 @@ public class ServerRespawnPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.dimension = in.readInt();
+        this.dimension = in.readString();
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
         this.debug = in.readBoolean();
@@ -38,7 +38,7 @@ public class ServerRespawnPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeInt(this.dimension);
+        out.writeString(this.dimension);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
         out.writeBoolean(this.debug);

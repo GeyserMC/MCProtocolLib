@@ -14,6 +14,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Data
 @Setter(AccessLevel.NONE)
@@ -22,6 +23,7 @@ import java.io.IOException;
 public class ServerChatPacket implements Packet {
     private @NonNull Message message;
     private @NonNull MessageType type;
+    private @NonNull UUID senderUuid;
 
     public ServerChatPacket(@NonNull String text) {
         this(Message.fromString(text));
@@ -32,19 +34,29 @@ public class ServerChatPacket implements Packet {
     }
 
     public ServerChatPacket(@NonNull String text, @NonNull MessageType type) {
-        this(Message.fromString(text), type);
+        this(Message.fromString(text), type, new UUID(0, 0));
+    }
+
+    public ServerChatPacket(@NonNull Message message, @NonNull MessageType type) {
+        this(message, type, new UUID(0, 0));
+    }
+
+    public ServerChatPacket(@NonNull String text, @NonNull MessageType type, UUID uuid) {
+        this(Message.fromString(text), type, uuid);
     }
 
     @Override
     public void read(NetInput in) throws IOException {
         this.message = Message.fromString(in.readString());
         this.type = MagicValues.key(MessageType.class, in.readByte());
+        this.senderUuid = in.readUUID();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.message.toJsonString());
         out.writeByte(MagicValues.value(Integer.class, this.type));
+        out.writeUUID(this.senderUuid);
     }
 
     @Override

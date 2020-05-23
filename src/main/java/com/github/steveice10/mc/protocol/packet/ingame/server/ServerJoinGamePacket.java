@@ -1,7 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -25,7 +27,8 @@ public class ServerJoinGamePacket implements Packet {
     private int entityId;
     private boolean hardcore;
     private @NonNull GameMode gameMode;
-    private int dimension;
+    private @NonNull CompoundTag dimensionCodec;
+    private @NonNull String dimension;
     private long hashedSeed;
     private int maxPlayers;
     private int viewDistance;
@@ -41,8 +44,8 @@ public class ServerJoinGamePacket implements Packet {
         int gameMode = in.readUnsignedByte();
         this.hardcore = (gameMode & GAMEMODE_FLAG_HARDCORE) != 0;
         this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
-
-        this.dimension = in.readInt();
+        this.dimensionCodec = NBT.read(in);
+        this.dimension = in.readString();
         this.hashedSeed = in.readLong();
         this.maxPlayers = in.readUnsignedByte();
         this.viewDistance = in.readVarInt();
@@ -62,8 +65,8 @@ public class ServerJoinGamePacket implements Packet {
         }
 
         out.writeByte(gameMode);
-
-        out.writeInt(this.dimension);
+        NBT.write(out, this.dimensionCodec);
+        out.writeString(this.dimension);
         out.writeLong(this.hashedSeed);
         out.writeByte(this.maxPlayers);
         out.writeVarInt(this.viewDistance);

@@ -9,6 +9,9 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
@@ -44,7 +47,7 @@ public class MinecraftProtocolTest {
             new TextMessage("Hello world!"),
             null
     );
-    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, 0, 16, false, false, false, false);
+    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, getDimensionTag(), "minecraft:overworld", 100, 0, 16, false, false, false, false);
 
     private static Server server;
 
@@ -138,5 +141,16 @@ public class MinecraftProtocolTest {
                 event.getCause().printStackTrace();
             }
         }
+    }
+
+    private static CompoundTag getDimensionTag() {
+        CompoundTag tag = new CompoundTag("");
+        ListTag dimensionTag = new ListTag("dimension");
+        CompoundTag overworldTag = new CompoundTag("");
+        overworldTag.put(new StringTag("key", "minecraft:overworld"));
+        overworldTag.put(new StringTag("element", "minecraft:overworld"));
+        dimensionTag.add(overworldTag);
+        tag.put(tag);
+        return tag;
     }
 }
