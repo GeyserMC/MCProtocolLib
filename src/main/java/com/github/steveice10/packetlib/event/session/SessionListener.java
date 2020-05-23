@@ -26,6 +26,13 @@ public interface SessionListener {
     public void packetSent(PacketSentEvent event);
 
     /**
+     * Called when a session encounters an error while reading or writing packet data.
+     *
+     * @param event Data relating to the event.
+     */
+    public void packetError(PacketErrorEvent event);
+
+    /**
      * Called when a session connects.
      *
      * @param event Data relating to the event.
