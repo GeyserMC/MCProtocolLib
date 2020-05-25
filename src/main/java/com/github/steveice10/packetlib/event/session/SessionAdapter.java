@@ -17,6 +17,10 @@ public class SessionAdapter implements SessionListener {
     }
 
     @Override
+    public void packetError(PacketErrorEvent event) {
+    }
+
+    @Override
     public void connected(ConnectedEvent event) {
     }
 

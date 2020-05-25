@@ -1,6 +1,7 @@
 package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.event.session.PacketErrorEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -23,8 +24,16 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) throws Exception {
         NetOutput out = new ByteBufNetOutput(buf);
-        this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet));
-        packet.write(out);
+        try {
+            this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet));
+            packet.write(out);
+        } catch(Throwable t) {
+            PacketErrorEvent e = new PacketErrorEvent(this.session, t);
+            this.session.callEvent(e);
+            if(!e.shouldSuppress()) {
+                throw t;
+            }
+        }
     }
 
     @Override
@@ -37,8 +46,19 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             return;
         }
 
-        Packet packet = this.session.getPacketProtocol().createIncomingPacket(id);
-        packet.read(in);
+        Packet packet;
+        try {
+            packet = this.session.getPacketProtocol().createIncomingPacket(id);
+            packet.read(in);
+        } catch(Throwable t) {
+            PacketErrorEvent e = new PacketErrorEvent(this.session, t);
+            this.session.callEvent(e);
+            if(!e.shouldSuppress()) {
+                throw t;
+            }
+
+            return;
+        }
 
         if(buf.readableBytes() > 0) {
             throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");
