@@ -3,23 +3,23 @@ package com.github.steveice10.packetlib.io.stream;
 import com.github.steveice10.packetlib.io.NetInput;
 
 import java.io.EOFException;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
  * A NetInput implementation using an InputStream as a backend.
  */
-public class StreamNetInput implements NetInput {
-    private InputStream in;
-
+public class StreamNetInput extends FilterInputStream implements NetInput {
     /**
      * Creates a new StreamNetInput instance.
      *
      * @param in InputStream to read from.
      */
     public StreamNetInput(InputStream in) {
-        this.in = in;
+        super(in);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public int readUnsignedByte() throws IOException {
-        int b = this.in.read();
+        int b = this.read();
         if(b < 0) {
             throw new EOFException();
         }
@@ -125,7 +125,7 @@ public class StreamNetInput implements NetInput {
         byte b[] = new byte[length];
         int n = 0;
         while(n < length) {
-            int count = this.in.read(b, n, length - n);
+            int count = this.read(b, n, length - n);
             if(count < 0) {
                 throw new EOFException();
             }
@@ -138,12 +138,12 @@ public class StreamNetInput implements NetInput {
 
     @Override
     public int readBytes(byte[] b) throws IOException {
-        return this.in.read(b);
+        return this.read(b);
     }
 
     @Override
     public int readBytes(byte[] b, int offset, int length) throws IOException {
-        return this.in.read(b, offset, length);
+        return this.read(b, offset, length);
     }
 
     @Override
@@ -249,32 +249,11 @@ public class StreamNetInput implements NetInput {
     public String readString() throws IOException {
         int length = this.readVarInt();
         byte bytes[] = this.readBytes(length);
-        return new String(bytes, "UTF-8");
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     @Override
     public UUID readUUID() throws IOException {
         return new UUID(this.readLong(), this.readLong());
-    }
-
-    @Override
-    public int available() throws IOException {
-        return this.in.available();
-    }
-
-    public void mark(int readLimit) {
-        this.in.mark(readLimit);
-    }
-
-    public boolean markSupported() {
-        return this.in.markSupported();
-    }
-
-    public void reset() throws IOException {
-        this.in.reset();
-    }
-
-    public long skip(long n) throws IOException {
-        return this.in.skip(n);
     }
 }
