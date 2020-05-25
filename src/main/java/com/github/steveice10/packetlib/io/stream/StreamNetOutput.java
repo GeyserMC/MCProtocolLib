@@ -2,23 +2,23 @@ package com.github.steveice10.packetlib.io.stream;
 
 import com.github.steveice10.packetlib.io.NetOutput;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
  * A NetOutput implementation using an OutputStream as a backend.
  */
-public class StreamNetOutput implements NetOutput {
-    private OutputStream out;
-
+public class StreamNetOutput extends FilterOutputStream implements NetOutput {
     /**
      * Creates a new StreamNetOutput instance.
      *
      * @param out OutputStream to write to.
      */
     public StreamNetOutput(OutputStream out) {
-        this.out = out;
+        super(out);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class StreamNetOutput implements NetOutput {
 
     @Override
     public void writeByte(int b) throws IOException {
-        this.out.write(b);
+        this.write(b);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class StreamNetOutput implements NetOutput {
 
     @Override
     public void writeBytes(byte b[], int length) throws IOException {
-        this.out.write(b, 0, length);
+        this.write(b, 0, length);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class StreamNetOutput implements NetOutput {
             throw new IllegalArgumentException("String cannot be null!");
         }
 
-        byte[] bytes = s.getBytes("UTF-8");
+        byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
         if(bytes.length > 32767) {
             throw new IOException("String too big (was " + s.length() + " bytes encoded, max " + 32767 + ")");
         } else {
@@ -158,10 +158,5 @@ public class StreamNetOutput implements NetOutput {
     public void writeUUID(UUID uuid) throws IOException {
         this.writeLong(uuid.getMostSignificantBits());
         this.writeLong(uuid.getLeastSignificantBits());
-    }
-
-    @Override
-    public void flush() throws IOException {
-        this.out.flush();
     }
 }
