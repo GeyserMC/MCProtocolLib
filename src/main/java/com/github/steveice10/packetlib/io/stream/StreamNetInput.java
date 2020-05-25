@@ -270,6 +270,10 @@ public class StreamNetInput implements NetInput {
         return this.in.markSupported();
     }
 
+    public void reset() throws IOException {
+        this.in.reset();
+    }
+
     public long skip(long n) throws IOException {
         return this.in.skip(n);
     }
