@@ -261,4 +261,16 @@ public class StreamNetInput implements NetInput {
     public int available() throws IOException {
         return this.in.available();
     }
+
+    public void mark(int readLimit) {
+        this.in.mark(readLimit);
+    }
+
+    public boolean markSupported() {
+        return this.in.markSupported();
+    }
+
+    public long skip(long n) throws IOException {
+        return this.in.skip(n);
+    }
 }
