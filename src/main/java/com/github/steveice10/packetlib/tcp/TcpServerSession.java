@@ -33,18 +33,8 @@ public class TcpServerSession extends TcpSession {
     }
 
     @Override
-    public <T> T getFlag(String key) {
-        T ret = super.getFlag(key);
-        if(ret != null) {
-            return ret;
-        }
-
-        return this.server.getGlobalFlag(key);
-    }
-
-    @Override
     public <T> T getFlag(String key, T def) {
-        T ret = super.getFlag(key);
+        T ret = super.getFlag(key, null);
         if(ret != null) {
             return ret;
         }
