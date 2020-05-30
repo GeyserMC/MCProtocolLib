@@ -108,7 +108,8 @@ public class TcpClientSession extends TcpSession {
                         int port = getPort();
 
                         try {
-                            Record[] records = new Lookup(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, Type.SRV).run();
+                            Lookup lookup = new Lookup(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, Type.SRV);
+                            Record[] records = lookup.run();
                             if(records != null && records.length > 0) {
                                 SRVRecord srv = (SRVRecord) records[0];
 
@@ -119,7 +120,7 @@ public class TcpClientSession extends TcpSession {
                                     System.out.println("[PacketLib] Found SRV record for \"" + host + ":" + port + "\".");
                                 }
                             } else if(debug) {
-                                System.out.println("[PacketLib] No SRV records found.");
+                                System.out.println("[PacketLib] No SRV records found; resolver returned \"" + lookup.getErrorString() + "\".");
                             }
                         } catch(TextParseException e) {
                             if(debug) {
