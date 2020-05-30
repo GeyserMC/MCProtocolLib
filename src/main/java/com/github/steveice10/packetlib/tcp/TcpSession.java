@@ -25,6 +25,7 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import java.net.ConnectException;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,12 +94,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public Map<String, Object> getFlags() {
-        return new HashMap<String, Object>(this.flags);
+        return Collections.unmodifiableMap(this.flags);
     }
 
     @Override
     public boolean hasFlag(String key) {
-        return this.getFlags().containsKey(key);
+        return this.flags.containsKey(key);
     }
 
     @SuppressWarnings("unchecked")
@@ -109,7 +110,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public <T> T getFlag(String key, T def) {
-        Object value = this.getFlags().get(key);
+        Object value = this.flags.get(key);
         if(value == null) {
             return def;
         }
