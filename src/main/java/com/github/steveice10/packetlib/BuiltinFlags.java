@@ -5,10 +5,9 @@ package com.github.steveice10.packetlib;
  */
 public class BuiltinFlags {
     /**
-     * When set to true, prints exceptions that occur when attempting
-     * to resolve DNS SRV records, rather than silently ignoring them.
+     * When set to true, enables printing internal debug messages.
      */
-    public static final String PRINT_DNS_ERRORS = "print-dns-errors";
+    public static final String PRINT_DEBUG = "print-packetlib-debug";
 
     private BuiltinFlags() {
     }

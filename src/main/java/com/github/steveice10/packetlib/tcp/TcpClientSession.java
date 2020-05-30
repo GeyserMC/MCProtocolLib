@@ -102,6 +102,8 @@ public class TcpClientSession extends TcpSession {
                 @Override
                 public void run() {
                     try {
+                        boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
+
                         String host = getHost();
                         int port = getPort();
 
@@ -112,9 +114,16 @@ public class TcpClientSession extends TcpSession {
 
                                 host = srv.getTarget().toString().replaceFirst("\\.$", "");
                                 port = srv.getPort();
+
+                                if(debug) {
+                                    System.out.println("[PacketLib] Found SRV record for \"" + host + ":" + port + "\".");
+                                }
+                            } else if(debug) {
+                                System.out.println("[PacketLib] No SRV records found.");
                             }
                         } catch(TextParseException e) {
-                            if(getFlag(BuiltinFlags.PRINT_DNS_ERRORS, false)) {
+                            if(debug) {
+                                System.out.println("[PacketLib] Failed to resolve SRV record.");
                                 e.printStackTrace();
                             }
                         }
