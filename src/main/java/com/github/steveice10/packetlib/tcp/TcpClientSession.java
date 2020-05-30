@@ -1,5 +1,6 @@
 package com.github.steveice10.packetlib.tcp;
 
+import com.github.steveice10.packetlib.BuiltinFlags;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
@@ -113,6 +114,9 @@ public class TcpClientSession extends TcpSession {
                                 port = srv.getPort();
                             }
                         } catch(TextParseException e) {
+                            if(getFlag(BuiltinFlags.PRINT_DNS_ERRORS, false)) {
+                                e.printStackTrace();
+                            }
                         }
 
                         bootstrap.remoteAddress(host, port);
