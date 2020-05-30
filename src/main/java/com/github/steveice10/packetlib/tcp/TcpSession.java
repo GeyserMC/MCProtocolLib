@@ -129,7 +129,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public List<SessionListener> getListeners() {
-        return new ArrayList<SessionListener>(this.listeners);
+        return Collections.unmodifiableList(this.listeners);
     }
 
     @Override

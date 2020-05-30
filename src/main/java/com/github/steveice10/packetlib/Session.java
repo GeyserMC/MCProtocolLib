@@ -92,7 +92,7 @@ public interface Session {
     /**
      * Gets the value of the given flag as an instance of the given type. If this
      * session belongs to a server, the server's flags will be checked for the flag
-     * as well. If no flag is found, the specified default value will be returned.
+     * as well. If the flag is not set, the specified default value will be returned.
      *
      * @param <T> Type of the flag.
      * @param key Key of the flag.

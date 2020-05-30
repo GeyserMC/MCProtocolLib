@@ -11,6 +11,7 @@ import com.github.steveice10.packetlib.packet.PacketProtocol;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class Server {
      * @return This server's flags.
      */
     public Map<String, Object> getGlobalFlags() {
-        return new HashMap<String, Object>(this.flags);
+        return Collections.unmodifiableMap(this.flags);
     }
 
     /**
@@ -131,20 +132,32 @@ public class Server {
     }
 
     /**
-     * Gets the value of the given flag as an instance of the given type. If this
-     * session belongs to a server, the server's flags will be checked for the flag
-     * as well.
+     * Gets the value of the given flag as an instance of the given type.
      *
      * @param <T> Type of the flag.
      * @param key Key of the flag.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    @SuppressWarnings("unchecked")
     public <T> T getGlobalFlag(String key) {
+        return this.getGlobalFlag(key, null);
+    }
+
+    /**
+     * Gets the value of the given flag as an instance of the given type.
+     * If the flag is not set, the specified default value will be returned.
+     *
+     * @param <T> Type of the flag.
+     * @param key Key of the flag.
+     * @param def Default value of the flag.
+     * @return Value of the flag.
+     * @throws IllegalStateException If the flag's value isn't of the required type.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getGlobalFlag(String key, T def) {
         Object value = this.flags.get(key);
         if(value == null) {
-            return null;
+            return def;
         }
 
         try {
@@ -171,7 +184,7 @@ public class Server {
      * @return This server's listeners.
      */
     public List<ServerListener> getListeners() {
-        return new ArrayList<ServerListener>(this.listeners);
+        return Collections.unmodifiableList(this.listeners);
     }
 
     /**

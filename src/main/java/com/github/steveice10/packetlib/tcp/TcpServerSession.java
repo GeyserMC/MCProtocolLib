@@ -4,6 +4,7 @@ import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class TcpServerSession extends TcpSession {
@@ -16,9 +17,39 @@ public class TcpServerSession extends TcpSession {
 
     @Override
     public Map<String, Object> getFlags() {
-        Map<String, Object> ret = super.getFlags();
+        Map<String, Object> ret = new HashMap<>();
         ret.putAll(this.server.getGlobalFlags());
+        ret.putAll(super.getFlags());
         return ret;
+    }
+
+    @Override
+    public boolean hasFlag(String key) {
+        if(super.hasFlag(key)) {
+            return true;
+        }
+
+        return this.server.hasGlobalFlag(key);
+    }
+
+    @Override
+    public <T> T getFlag(String key) {
+        T ret = super.getFlag(key);
+        if(ret != null) {
+            return ret;
+        }
+
+        return this.server.getGlobalFlag(key);
+    }
+
+    @Override
+    public <T> T getFlag(String key, T def) {
+        T ret = super.getFlag(key);
+        if(ret != null) {
+            return ret;
+        }
+
+        return this.server.getGlobalFlag(key, def);
     }
 
     @Override
