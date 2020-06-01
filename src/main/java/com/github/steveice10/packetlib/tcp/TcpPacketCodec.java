@@ -23,8 +23,9 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) throws Exception {
-        NetOutput out = new ByteBufNetOutput(buf);
         try {
+            NetOutput out = new ByteBufNetOutput(buf);
+
             this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet));
             packet.write(out);
         } catch(Throwable t) {
@@ -38,18 +39,23 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        int initial = buf.readerIndex();
-        NetInput in = new ByteBufNetInput(buf);
-        int id = this.session.getPacketProtocol().getPacketHeader().readPacketId(in);
-        if(id == -1) {
-            buf.readerIndex(initial);
-            return;
-        }
-
         Packet packet;
         try {
+            NetInput in = new ByteBufNetInput(buf);
+
+            int initial = buf.readerIndex();
+            int id = this.session.getPacketProtocol().getPacketHeader().readPacketId(in);
+            if(id == -1) {
+                buf.readerIndex(initial);
+                return;
+            }
+
             packet = this.session.getPacketProtocol().createIncomingPacket(id);
             packet.read(in);
+
+            if(buf.readableBytes() > 0) {
+                throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");
+            }
         } catch(Throwable t) {
             PacketErrorEvent e = new PacketErrorEvent(this.session, t);
             this.session.callEvent(e);
@@ -58,10 +64,6 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             }
 
             return;
-        }
-
-        if(buf.readableBytes() > 0) {
-            throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");
         }
 
         if(packet.isPriority()) {
