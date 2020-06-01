@@ -359,8 +359,10 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
-        if(!packet.isPriority()) {
+    protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+        if(packet.isPriority()) {
+            this.callEvent(new PacketReceivedEvent(this, packet));
+        } else {
             this.packets.add(packet);
         }
     }

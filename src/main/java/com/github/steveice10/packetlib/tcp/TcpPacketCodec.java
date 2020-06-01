@@ -46,7 +46,6 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         int initial = buf.readerIndex();
 
-        Packet packet;
         try {
             NetInput in = new ByteBufNetInput(buf);
 
@@ -56,12 +55,14 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 return;
             }
 
-            packet = this.session.getPacketProtocol().createIncomingPacket(id);
+            Packet packet = this.session.getPacketProtocol().createIncomingPacket(id);
             packet.read(in);
 
             if(buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");
             }
+
+            out.add(packet);
         } catch(Throwable t) {
             // Advance buffer to end to make sure remaining data in this packet is skipped.
             buf.readerIndex(buf.readerIndex() + buf.readableBytes());
@@ -71,14 +72,6 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             if(!e.shouldSuppress()) {
                 throw t;
             }
-
-            return;
         }
-
-        if(packet.isPriority()) {
-            this.session.callEvent(new PacketReceivedEvent(this.session, packet));
-        }
-
-        out.add(packet);
     }
 }
