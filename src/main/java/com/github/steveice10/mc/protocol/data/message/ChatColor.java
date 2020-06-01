@@ -28,7 +28,7 @@ public enum ChatColor {
             }
         }
 
-        return null;
+        return ChatColor.NONE;
     }
 
     @Override
