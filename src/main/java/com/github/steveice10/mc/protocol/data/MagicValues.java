@@ -120,12 +120,14 @@ public class MagicValues {
         register(AttributeType.GENERIC_MOVEMENT_SPEED, "generic.movementSpeed");
         register(AttributeType.GENERIC_ATTACK_DAMAGE, "generic.attackDamage");
         register(AttributeType.GENERIC_ATTACK_SPEED, "generic.attackSpeed");
+        register(AttributeType.GENERIC_FLYING_SPEED, "generic.flyingSpeed");
         register(AttributeType.GENERIC_ARMOR, "generic.armor");
         register(AttributeType.GENERIC_ARMOR_TOUGHNESS, "generic.armorToughness");
+        register(AttributeType.GENERIC_ATTACK_KNOCKBACK, "generic.attackKnockback");
         register(AttributeType.GENERIC_LUCK, "generic.luck");
-        register(AttributeType.GENERIC_FLYING_SPEED, "generic.flyingSpeed");
         register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jumpStrength");
         register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "zombie.spawnReinforcements");
+        // Forge-only
         register(AttributeType.SWIM_SPEED, "forge.swimSpeed");
         register(AttributeType.NAMETAG_DISTANCE, "forge.nameTagDistance");
         register(AttributeType.ENTITY_GRAVITY, "forge.entity_gravity");
@@ -152,6 +154,8 @@ public class MagicValues {
         register(ModifierType.CHESTPLATE_MODIFIER, UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"));
         register(ModifierType.HELMET_MODIFIER, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
         register(ModifierType.COVERED_ARMOR_BONUS, UUID.fromString("7E0292F2-9434-48D5-A29F-9583AF7DF27F"));
+        // Forge-only
+        register(ModifierType.SLOW_FALLING, UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA"));
 
         register(ModifierOperation.ADD, 0);
         register(ModifierOperation.ADD_MULTIPLIED, 1);
