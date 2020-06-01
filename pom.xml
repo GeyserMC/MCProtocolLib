@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.github.steveice10</groupId>
             <artifactId>packetlib</artifactId>
-            <version>72bde6a3c0</version>
+            <version>bfd0687b3c</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
