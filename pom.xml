@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.github.steveice10</groupId>
             <artifactId>mcauthlib</artifactId>
-            <version>401c99c722</version>
+            <version>1058d78fd5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

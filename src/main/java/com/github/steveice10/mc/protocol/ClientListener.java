@@ -56,7 +56,9 @@ public class ClientListener extends SessionAdapter {
                     throw new IllegalStateException("Failed to generate shared key.", e);
                 }
 
-                SessionService sessionService = new SessionService(event.getSession().getFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY));
+                SessionService sessionService = new SessionService();
+                sessionService.setProxy(event.getSession().getFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY));
+
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                 String serverId = sessionService.getServerId(packet.getServerId(), packet.getPublicKey(), key);
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
