@@ -5,6 +5,7 @@ import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,15 +13,22 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.dns.DefaultDnsQuestion;
+import io.netty.handler.codec.dns.DefaultDnsRawRecord;
+import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
+import io.netty.handler.codec.dns.DnsMessage;
+import io.netty.handler.codec.dns.DnsRecordType;
+import io.netty.handler.codec.dns.DnsSection;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import org.xbill.DNS.Lookup;
-import org.xbill.DNS.Record;
-import org.xbill.DNS.SRVRecord;
-import org.xbill.DNS.TextParseException;
-import org.xbill.DNS.Type;
+import io.netty.resolver.dns.DnsNameResolver;
+import io.netty.resolver.dns.DnsNameResolverBuilder;
+
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 public class TcpClientSession extends TcpSession {
     private Client client;
@@ -102,34 +110,7 @@ public class TcpClientSession extends TcpSession {
                 @Override
                 public void run() {
                     try {
-                        boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
-
-                        String host = getHost();
-                        int port = getPort();
-
-                        try {
-                            Lookup lookup = new Lookup(getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host, Type.SRV);
-                            Record[] records = lookup.run();
-                            if(records != null && records.length > 0) {
-                                SRVRecord srv = (SRVRecord) records[0];
-
-                                host = srv.getTarget().toString().replaceFirst("\\.$", "");
-                                port = srv.getPort();
-
-                                if(debug) {
-                                    System.out.println("[PacketLib] Found SRV record for \"" + host + ":" + port + "\".");
-                                }
-                            } else if(debug) {
-                                System.out.println("[PacketLib] No SRV records found; resolver returned \"" + lookup.getErrorString() + "\".");
-                            }
-                        } catch(TextParseException e) {
-                            if(debug) {
-                                System.out.println("[PacketLib] Failed to resolve SRV record.");
-                                e.printStackTrace();
-                            }
-                        }
-
-                        bootstrap.remoteAddress(host, port);
+                        bootstrap.remoteAddress(resolveAddress());
 
                         ChannelFuture future = bootstrap.connect().sync();
                         if(future.isSuccess()) {
@@ -154,6 +135,53 @@ public class TcpClientSession extends TcpSession {
         } catch(Throwable t) {
             exceptionCaught(null, t);
         }
+    }
+
+    private SocketAddress resolveAddress() {
+        boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
+
+        String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
+        if(debug) {
+            System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
+        }
+
+        try {
+            final DnsNameResolver resolver = new DnsNameResolverBuilder(this.group.next())
+                    .channelType(NioDatagramChannel.class)
+                    .build();
+
+            DnsMessage message = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get().content();
+            if(message.count(DnsSection.ANSWER) > 0) {
+                DefaultDnsRawRecord record = message.recordAt(DnsSection.ANSWER, 0);
+                if(record.type() == DnsRecordType.SRV) {
+                    ByteBuf buf = record.content();
+                    buf.skipBytes(4); // Skip priority and weight.
+
+                    int port = buf.readUnsignedShort();
+                    String host = DefaultDnsRecordDecoder.decodeName(buf);
+                    if(host.endsWith(".")) {
+                        host = host.substring(0, host.length() - 1);
+                    }
+
+                    if(debug) {
+                        System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
+                    }
+
+                    return new InetSocketAddress(host, port);
+                } else if(debug) {
+                    System.out.println("[PacketLib] Received non-SRV record in response.");
+                }
+            } else if(debug) {
+                System.out.println("[PacketLib] No SRV record found.");
+            }
+        } catch(Exception e) {
+            if(debug) {
+                System.out.println("[PacketLib] Failed to resolve SRV record.");
+                e.printStackTrace();
+            }
+        }
+
+        return new InetSocketAddress(this.getHost(), this.getPort());
     }
 
     @Override
