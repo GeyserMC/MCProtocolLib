@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.login.server;
 
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -21,17 +22,17 @@ public class LoginDisconnectPacket implements Packet {
     private @NonNull Message reason;
 
     public LoginDisconnectPacket(String text) {
-        this(Message.fromString(text));
+        this(MessageSerializer.fromString(text));
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.reason = Message.fromString(in.readString());
+        this.reason = MessageSerializer.fromString(in.readString());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(this.reason.toJsonString());
+        out.writeString(MessageSerializer.toJsonString(this.reason));
     }
 
     @Override

@@ -83,7 +83,7 @@ public class ClientListener extends SessionAdapter {
                 protocol.setSubProtocol(SubProtocol.GAME, true, event.getSession());
             } else if(event.getPacket() instanceof LoginDisconnectPacket) {
                 LoginDisconnectPacket packet = event.getPacket();
-                event.getSession().disconnect(packet.getReason().getFullText());
+                event.getSession().disconnect(packet.getReason().toString());
             } else if(event.getPacket() instanceof LoginSetCompressionPacket) {
                 event.getSession().setCompressionThreshold(event.<LoginSetCompressionPacket>getPacket().getThreshold());
             }
@@ -109,7 +109,7 @@ public class ClientListener extends SessionAdapter {
             if(event.getPacket() instanceof ServerKeepAlivePacket) {
                 event.getSession().send(new ClientKeepAlivePacket(event.<ServerKeepAlivePacket>getPacket().getPingId()));
             } else if(event.getPacket() instanceof ServerDisconnectPacket) {
-                event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().getFullText());
+                event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().toString());
             } else if(event.getPacket() instanceof ServerSetCompressionPacket) {
                 event.getSession().setCompressionThreshold(event.<ServerSetCompressionPacket>getPacket().getThreshold());
             }

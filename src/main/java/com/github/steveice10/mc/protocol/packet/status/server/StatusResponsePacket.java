@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.packet.status.server;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.util.Base64;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -50,7 +51,7 @@ public class StatusResponsePacket implements Packet {
 
         PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
         JsonElement desc = obj.get("description");
-        Message description = Message.fromJson(desc);
+        Message description = MessageSerializer.fromJson(desc);
         byte[] icon = null;
         if(obj.has("favicon")) {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
@@ -82,7 +83,7 @@ public class StatusResponsePacket implements Packet {
 
         obj.add("version", ver);
         obj.add("players", plrs);
-        obj.add("description", this.info.getDescription().toJson());
+        obj.add("description", MessageSerializer.toJson(this.info.getDescription()));
         if(this.info.getIconPng() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }

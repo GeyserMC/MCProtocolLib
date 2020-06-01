@@ -8,6 +8,7 @@ import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -56,7 +57,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    value = Message.fromString(in.readString());
+                    value = MessageSerializer.fromString(in.readString());
                     break;
                 case ITEM:
                     value = ItemStack.read(in);
@@ -142,7 +143,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    out.writeString(((Message) meta.getValue()).toJsonString());
+                    out.writeString(MessageSerializer.toJsonString((Message) meta.getValue()));
                     break;
                 case ITEM:
                     ItemStack.write(out, (ItemStack) meta.getValue());

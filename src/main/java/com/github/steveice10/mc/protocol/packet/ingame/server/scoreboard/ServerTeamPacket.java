@@ -7,6 +7,7 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -92,7 +93,7 @@ public class ServerTeamPacket implements Packet {
         this.teamName = in.readString();
         this.action = MagicValues.key(TeamAction.class, in.readByte());
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            this.displayName = Message.fromString(in.readString());
+            this.displayName = MessageSerializer.fromString(in.readString());
             byte flags = in.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
@@ -105,8 +106,8 @@ public class ServerTeamPacket implements Packet {
                 this.color = TeamColor.NONE;
             }
 
-            this.prefix = Message.fromString(in.readString());
-            this.suffix = Message.fromString(in.readString());
+            this.prefix = MessageSerializer.fromString(in.readString());
+            this.suffix = MessageSerializer.fromString(in.readString());
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
@@ -122,13 +123,13 @@ public class ServerTeamPacket implements Packet {
         out.writeString(this.teamName);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            out.writeString(this.displayName.toJsonString());
+            out.writeString(MessageSerializer.toJsonString(this.displayName));
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
             out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
             out.writeString(MagicValues.value(String.class, this.collisionRule));
             out.writeVarInt(MagicValues.value(Integer.class, this.color));
-            out.writeString(this.prefix.toJsonString());
-            out.writeString(this.suffix.toJsonString());
+            out.writeString(MessageSerializer.toJsonString(this.prefix));
+            out.writeString(MessageSerializer.toJsonString(this.suffix));
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {

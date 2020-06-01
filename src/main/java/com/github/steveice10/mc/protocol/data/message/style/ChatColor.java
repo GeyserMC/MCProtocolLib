@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.data.message;
+package com.github.steveice10.mc.protocol.data.message.style;
 
 public enum ChatColor {
     BLACK,
@@ -21,9 +21,9 @@ public enum ChatColor {
     NONE;
 
     public static ChatColor byName(String name) {
-        name = name.toLowerCase();
+        String lowerCase = name.toLowerCase();
         for(ChatColor color : values()) {
-            if(color.toString().equals(name)) {
+            if(color.toString().equals(lowerCase)) {
                 return color;
             }
         }

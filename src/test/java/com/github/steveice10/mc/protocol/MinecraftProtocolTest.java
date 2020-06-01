@@ -42,7 +42,7 @@ public class MinecraftProtocolTest {
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
             VersionInfo.CURRENT,
             new PlayerInfo(100, 0, new GameProfile[0]),
-            new TextMessage("Hello world!"),
+            new TextMessage.Builder().text("Hello world!").build(),
             null
     );
     private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, 0, DEFAULT, 16, false, false);

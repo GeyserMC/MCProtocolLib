@@ -1,15 +1,14 @@
-package com.github.steveice10.mc.protocol.data.message;
+package com.github.steveice10.mc.protocol.data.message.style;
 
 public enum HoverAction {
     SHOW_TEXT,
     SHOW_ITEM,
-    SHOW_ACHIEVEMENT,
     SHOW_ENTITY;
 
     public static HoverAction byName(String name) {
-        name = name.toLowerCase();
+        String lowerCase = name.toLowerCase();
         for(HoverAction action : values()) {
-            if(action.toString().equals(name)) {
+            if(action.toString().equals(lowerCase)) {
                 return action;
             }
         }

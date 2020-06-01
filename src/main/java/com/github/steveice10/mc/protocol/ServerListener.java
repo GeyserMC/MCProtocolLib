@@ -4,7 +4,7 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
-import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.TextMessage;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -127,7 +127,7 @@ public class ServerListener extends SessionAdapter {
                     builder = session -> new ServerStatusInfo(
                             VersionInfo.CURRENT,
                             new PlayerInfo(0, 20, new GameProfile[0]),
-                            Message.fromString("A Minecraft Server"),
+                            new TextMessage.Builder().text("A Minecraft Server").build(),
                             null
                     );
                 }

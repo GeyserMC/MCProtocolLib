@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
 
-import java.awt.image.BufferedImage;
-
 @Data
 @Setter(AccessLevel.NONE)
 @AllArgsConstructor
