@@ -95,7 +95,7 @@ public class StatusResponsePacket implements Packet {
         return false;
     }
 
-    private byte[] stringToIcon(String str) throws IOException {
+    private byte[] stringToIcon(String str) {
         if(str.startsWith("data:image/png;base64,")) {
             str = str.substring("data:image/png;base64,".length());
         }
@@ -103,7 +103,7 @@ public class StatusResponsePacket implements Packet {
         return Base64.decode(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    private String iconToString(byte[] icon) throws IOException {
+    private String iconToString(byte[] icon) {
         return "data:image/png;base64," + new String(Base64.encode(icon), StandardCharsets.UTF_8);
     }
 }
