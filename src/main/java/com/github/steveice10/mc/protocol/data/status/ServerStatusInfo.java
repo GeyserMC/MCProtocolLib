@@ -16,5 +16,5 @@ public class ServerStatusInfo {
     private @NonNull VersionInfo versionInfo;
     private @NonNull PlayerInfo playerInfo;
     private @NonNull Message description;
-    private BufferedImage icon;
+    private byte[] iconPng;
 }

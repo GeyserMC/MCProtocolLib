@@ -128,7 +128,7 @@ public class MinecraftProtocolTest {
                 System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
                 System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
                 System.out.println("Description: " + info.getDescription().getFullText());
-                System.out.println("Icon: " + info.getIcon());
+                System.out.println("Icon: " + info.getIconPng());
             }
         });
 

@@ -20,10 +20,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -55,7 +51,7 @@ public class StatusResponsePacket implements Packet {
         PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
         JsonElement desc = obj.get("description");
         Message description = Message.fromJson(desc);
-        BufferedImage icon = null;
+        byte[] icon = null;
         if(obj.has("favicon")) {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
         }
@@ -87,8 +83,8 @@ public class StatusResponsePacket implements Packet {
         obj.add("version", ver);
         obj.add("players", plrs);
         obj.add("description", this.info.getDescription().toJson());
-        if(this.info.getIcon() != null) {
-            obj.addProperty("favicon", this.iconToString(this.info.getIcon()));
+        if(this.info.getIconPng() != null) {
+            obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }
 
         out.writeString(obj.toString());
@@ -99,31 +95,15 @@ public class StatusResponsePacket implements Packet {
         return false;
     }
 
-    private BufferedImage stringToIcon(String str) throws IOException {
+    private byte[] stringToIcon(String str) throws IOException {
         if(str.startsWith("data:image/png;base64,")) {
             str = str.substring("data:image/png;base64,".length());
         }
 
-        byte[] bytes = Base64.decode(str.getBytes(StandardCharsets.UTF_8));
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-        BufferedImage icon = ImageIO.read(in);
-        in.close();
-        if(icon != null && (icon.getWidth() != 64 || icon.getHeight() != 64)) {
-            throw new IOException("Icon must be 64x64.");
-        }
-
-        return icon;
+        return Base64.decode(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    private String iconToString(BufferedImage icon) throws IOException {
-        if(icon.getWidth() != 64 || icon.getHeight() != 64) {
-            throw new IOException("Icon must be 64x64.");
-        }
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write(icon, "PNG", out);
-        out.close();
-        byte[] encoded = Base64.encode(out.toByteArray());
-        return "data:image/png;base64," + new String(encoded, StandardCharsets.UTF_8);
+    private String iconToString(byte[] icon) throws IOException {
+        return "data:image/png;base64," + new String(Base64.encode(icon), StandardCharsets.UTF_8);
     }
 }
