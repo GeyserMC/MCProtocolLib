@@ -6,6 +6,7 @@ import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -18,8 +19,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
 import io.netty.handler.codec.dns.DefaultDnsRawRecord;
 import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
-import io.netty.handler.codec.dns.DnsMessage;
 import io.netty.handler.codec.dns.DnsRecordType;
+import io.netty.handler.codec.dns.DnsResponse;
 import io.netty.handler.codec.dns.DnsSection;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
@@ -145,14 +146,14 @@ public class TcpClientSession extends TcpSession {
             System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
         }
 
-        try {
-            final DnsNameResolver resolver = new DnsNameResolverBuilder(this.group.next())
-                    .channelType(NioDatagramChannel.class)
-                    .build();
-
-            DnsMessage message = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get().content();
-            if(message.count(DnsSection.ANSWER) > 0) {
-                DefaultDnsRawRecord record = message.recordAt(DnsSection.ANSWER, 0);
+        AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
+        try(DnsNameResolver resolver = new DnsNameResolverBuilder(this.group.next())
+                .channelType(NioDatagramChannel.class)
+                .build()) {
+            envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+            DnsResponse response = envelope.content();
+            if(response.count(DnsSection.ANSWER) > 0) {
+                DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
                 if(record.type() == DnsRecordType.SRV) {
                     ByteBuf buf = record.content();
                     buf.skipBytes(4); // Skip priority and weight.
@@ -178,6 +179,10 @@ public class TcpClientSession extends TcpSession {
             if(debug) {
                 System.out.println("[PacketLib] Failed to resolve SRV record.");
                 e.printStackTrace();
+            }
+        } finally {
+            if(envelope != null) {
+                envelope.release();
             }
         }
 
