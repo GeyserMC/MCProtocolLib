@@ -20,6 +20,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerRespawnPacket implements Packet {
     private String dimension;
+    private String worldName;
     private long hashedSeed;
     private @NonNull GameMode gamemode;
     private boolean debug;
@@ -29,6 +30,7 @@ public class ServerRespawnPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.dimension = in.readString();
+        this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
         this.debug = in.readBoolean();
@@ -39,6 +41,7 @@ public class ServerRespawnPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.dimension);
+        out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
         out.writeBoolean(this.debug);

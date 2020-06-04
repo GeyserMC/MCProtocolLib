@@ -645,6 +645,7 @@ public class MagicValues {
         register(UpdatedTileType.STRUCTURE_BLOCK, 7);
         register(UpdatedTileType.END_GATEWAY, 8);
         register(UpdatedTileType.SIGN, 9);
+        register(UpdatedTileType.SHULKER_BOX, 10);
         register(UpdatedTileType.BED, 11);
         register(UpdatedTileType.JIGSAW_BLOCK, 12);
         register(UpdatedTileType.CAMPFIRE, 13);
@@ -835,6 +836,18 @@ public class MagicValues {
         register(ParticleType.DOLPHIN, 55);
         register(ParticleType.CAMPFIRE_COSY_SMOKE, 56);
         register(ParticleType.CAMPFIRE_SIGNAL_SMOKE, 57);
+        register(ParticleType.DRIPPING_HONEY, 58);
+        register(ParticleType.FALLING_HONEY, 59);
+        register(ParticleType.LANDING_HONEY, 60);
+        register(ParticleType.FALLING_NECTAR, 61);
+        register(ParticleType.ASH, 62);
+        register(ParticleType.CRIMSON_SPORE, 63);
+        register(ParticleType.WARPED_SPORE, 64);
+        register(ParticleType.DRIPPING_OBBSIDIAN_TEAR, 65);
+        register(ParticleType.FALLING_OBSIDIAN_TEAR, 66);
+        register(ParticleType.LANDING_OBSIDIAN_TEAR, 67);
+        register(ParticleType.REVERSE_PORTAL, 68);
+        register(ParticleType.WHITE_ASH, 69);
 
         register(NoteBlockValueType.HARP, 0);
         register(NoteBlockValueType.DOUBLE_BASS, 1);
@@ -1141,6 +1154,7 @@ public class MagicValues {
         register(SuggestionType.ASK_SERVER, "minecraft:ask_server");
         register(SuggestionType.ALL_RECIPES, "minecraft:all_recipes");
         register(SuggestionType.AVAILABLE_SOUNDS, "minecraft:available_sounds");
+        register(SuggestionType.AVAILABLE_BIOMES, "minecraft:available_biomes");
         register(SuggestionType.SUMMONABLE_ENTITIES, "minecraft:summonable_entities");
 
         register(StringProperties.SINGLE_WORD, 0);

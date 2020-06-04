@@ -20,17 +20,20 @@ import java.io.IOException;
 public class ClientGenerateStructuresPacket implements Packet {
     private @NonNull Position position;
     private int levels;
+    private boolean keepJigsaws;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.position = Position.read(in);
         this.levels = in.readVarInt();
+        this.keepJigsaws = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         Position.write(out, this.position);
         out.writeVarInt(this.levels);
+        out.writeBoolean(this.keepJigsaws);
     }
 
     @Override

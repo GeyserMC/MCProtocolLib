@@ -27,8 +27,11 @@ public class ServerJoinGamePacket implements Packet {
     private int entityId;
     private boolean hardcore;
     private @NonNull GameMode gameMode;
+    private int worldCount;
+    private String[] worldNames;
     private @NonNull CompoundTag dimensionCodec;
     private @NonNull String dimension;
+    private String worldName;
     private long hashedSeed;
     private int maxPlayers;
     private int viewDistance;
@@ -44,8 +47,13 @@ public class ServerJoinGamePacket implements Packet {
         int gameMode = in.readUnsignedByte();
         this.hardcore = (gameMode & GAMEMODE_FLAG_HARDCORE) != 0;
         this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
+        this.worldCount = in.readVarInt();
+        for (int i = 0; i < this.worldCount; i++) {
+            in.readString();
+        }
         this.dimensionCodec = NBT.read(in);
         this.dimension = in.readString();
+        this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.maxPlayers = in.readUnsignedByte();
         this.viewDistance = in.readVarInt();
@@ -65,8 +73,13 @@ public class ServerJoinGamePacket implements Packet {
         }
 
         out.writeByte(gameMode);
+        out.writeVarInt(this.worldCount);
+        for (String worldName : this.worldNames) {
+            out.writeString(worldName);
+        }
         NBT.write(out, this.dimensionCodec);
         out.writeString(this.dimension);
+        out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(this.maxPlayers);
         out.writeVarInt(this.viewDistance);

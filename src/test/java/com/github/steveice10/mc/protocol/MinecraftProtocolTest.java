@@ -47,7 +47,7 @@ public class MinecraftProtocolTest {
             new TextMessage("Hello world!"),
             null
     );
-    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, getDimensionTag(), "minecraft:overworld", 100, 0, 16, false, false, false, false);
+    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), "minecraft:overworld", "minecraft:world", 100, 0, 16, false, false, false, false);
 
     private static Server server;
 
