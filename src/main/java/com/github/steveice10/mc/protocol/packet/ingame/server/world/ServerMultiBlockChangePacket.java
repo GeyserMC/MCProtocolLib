@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockChangeRecord;
-import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -35,7 +34,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         this.records = new BlockChangeRecord[in.readVarInt()];
         for(int index = 0; index < this.records.length; index++) {
             short pos = in.readShort();
-            BlockState block = BlockState.read(in);
+            int block = in.readVarInt();
             int x = (chunkX << 4) + (pos >> 12 & 15);
             int y = pos & 255;
             int z = (chunkZ << 4) + (pos >> 8 & 15);
@@ -52,7 +51,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         out.writeVarInt(this.records.length);
         for(BlockChangeRecord record : this.records) {
             out.writeShort((record.getPosition().getX() - (chunkX << 4)) << 12 | (record.getPosition().getZ() - (chunkZ << 4)) << 8 | record.getPosition().getY());
-            BlockState.write(out, record.getBlock());
+            out.writeVarInt(record.getBlock());
         }
     }
 
