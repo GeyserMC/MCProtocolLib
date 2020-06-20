@@ -23,6 +23,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOper
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
+import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
+import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
@@ -32,11 +34,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
-import com.github.steveice10.mc.protocol.data.game.entity.type.WeatherEntityType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
-import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
-import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
+import com.github.steveice10.mc.protocol.data.game.entity.type.WeatherEntityType;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
@@ -125,6 +125,7 @@ public class MagicValues {
         register(AttributeType.GENERIC_FLYING_SPEED, "generic.flying_speed");
         register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jump_strength");
         register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "zombie.spawn_reinforcements");
+        // Forge-only
         register(AttributeType.SWIM_SPEED, "forge.swim_speed");
         register(AttributeType.NAMETAG_DISTANCE, "forge.name_tag_distance");
         register(AttributeType.ENTITY_GRAVITY, "forge.entity_gravity");
@@ -151,6 +152,8 @@ public class MagicValues {
         register(ModifierType.CHESTPLATE_MODIFIER, UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"));
         register(ModifierType.HELMET_MODIFIER, UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150"));
         register(ModifierType.COVERED_ARMOR_BONUS, UUID.fromString("7E0292F2-9434-48D5-A29F-9583AF7DF27F"));
+        // Forge-only
+        register(ModifierType.SLOW_FALLING, UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA"));
 
         register(ModifierOperation.ADD, 0);
         register(ModifierOperation.ADD_MULTIPLIED, 1);
@@ -1209,7 +1212,7 @@ public class MagicValues {
             }
         }
 
-        throw new IllegalArgumentException("Value " + value + " has no mapping for key class " + keyType.getName() + ".");
+        throw new UnmappedValueException(value, keyType);
     }
 
     @SuppressWarnings("unchecked")
@@ -1236,6 +1239,6 @@ public class MagicValues {
             }
         }
 
-        throw new IllegalArgumentException("Key " + key + " has no mapping for value class " + valueType.getName() + ".");
+        throw new UnmappedKeyException(key, valueType);
     }
 }

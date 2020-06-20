@@ -7,12 +7,14 @@ import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.mc.protocol.data.message.ChatColor;
 import com.github.steveice10.mc.protocol.data.message.ChatFormat;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageStyle;
 import com.github.steveice10.mc.protocol.data.message.TextMessage;
-import com.github.steveice10.mc.protocol.data.message.TranslationMessage;
+import com.github.steveice10.mc.protocol.data.message.style.ChatColor;
+import com.github.steveice10.mc.protocol.data.message.style.ChatFormat;
+import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -59,7 +61,7 @@ public class MinecraftProtocolTest {
                     return new ServerStatusInfo(
                             new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION),
                             new PlayerInfo(100, 0, new GameProfile[0]),
-                            new TextMessage("Hello world!"),
+                            new TextMessage.Builder().text("Hello world!").build(),
                             null
                     );
                 }
@@ -88,11 +90,28 @@ public class MinecraftProtocolTest {
                                 ClientChatPacket packet = event.getPacket();
                                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                                 System.out.println(profile.getName() + ": " + packet.getMessage());
-                                Message msg = new TextMessage("Hello, ").setStyle(new MessageStyle().setColor(ChatColor.GREEN));
-                                Message name = new TextMessage(profile.getName()).setStyle(new MessageStyle().setColor(ChatColor.AQUA).addFormat(ChatFormat.UNDERLINED));
-                                Message end = new TextMessage("!");
-                                msg.addExtra(name);
-                                msg.addExtra(end);
+
+                                MessageStyle green = new MessageStyle.Builder()
+                                        .color(ChatColor.GREEN)
+                                        .build();
+                                MessageStyle aquaUnderline = new MessageStyle.Builder()
+                                        .color(ChatColor.AQUA)
+                                        .formats(ChatFormat.UNDERLINED)
+                                        .build();
+
+                                Message msg = new TextMessage.Builder()
+                                        .text("Hello, ")
+                                        .style(green)
+                                        .extra(new TextMessage.Builder()
+                                                .text(profile.getName())
+                                                .style(aquaUnderline)
+                                                .build())
+                                        .extra(new TextMessage.Builder()
+                                                .text("!")
+                                                .style(green)
+                                                .build())
+                                        .build();
+
                                 event.getSession().send(new ServerChatPacket(msg));
                             }
                         }
@@ -126,8 +145,8 @@ public class MinecraftProtocolTest {
                 System.out.println("Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
                 System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
                 System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
-                System.out.println("Description: " + info.getDescription().getFullText());
-                System.out.println("Icon: " + info.getIcon());
+                System.out.println("Description: " + info.getDescription());
+                System.out.println("Icon: " + info.getIconPng());
             }
         });
 
@@ -171,18 +190,14 @@ public class MinecraftProtocolTest {
                     event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
                 } else if(event.getPacket() instanceof ServerChatPacket) {
                     Message message = event.<ServerChatPacket>getPacket().getMessage();
-                    System.out.println("Received Message: " + message.getFullText());
-                    if(message instanceof TranslationMessage) {
-                        System.out.println("Received Translation Components: " + Arrays.toString(((TranslationMessage) message).getTranslationParams()));
-                    }
-
+                    System.out.println("Received Message: " + message);
                     event.getSession().disconnect("Finished");
                 }
             }
 
             @Override
             public void disconnected(DisconnectedEvent event) {
-                System.out.println("Disconnected: " + Message.fromString(event.getReason()).getFullText());
+                System.out.println("Disconnected: " + event.getReason());
                 if(event.getCause() != null) {
                     event.getCause().printStackTrace();
                 }

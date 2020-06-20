@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -45,7 +46,7 @@ public class ServerTabCompletePacket implements Packet {
         for(int index = 0; index < this.matches.length; index++) {
             this.matches[index] = in.readString();
             if (in.readBoolean()) {
-                this.tooltips[index] = Message.fromString(in.readString());
+                this.tooltips[index] = MessageSerializer.fromString(in.readString());
             }
         }
     }
@@ -61,7 +62,7 @@ public class ServerTabCompletePacket implements Packet {
             Message tooltip = this.tooltips[index];
             if (tooltip != null) {
                 out.writeBoolean(true);
-                out.writeString(tooltip.toJsonString());
+                out.writeString(MessageSerializer.toJsonString(tooltip));
             } else {
                 out.writeBoolean(false);
             }

@@ -1,206 +1,64 @@
 package com.github.steveice10.mc.protocol.data.message;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-@Getter
 @EqualsAndHashCode
-public abstract class Message implements Cloneable {
-    private MessageStyle style = new MessageStyle();
-    private final List<Message> extra = new ArrayList<Message>();
+public abstract class Message {
+    public abstract static class Builder<B extends Builder<?, M>, M extends Message> {
+        @NonNull
+        protected MessageStyle style = MessageStyle.DEFAULT;
+        @NonNull
+        protected List<Message> extra = new ArrayList<>();
 
-    public static Message fromString(String str) {
-        try {
-            return fromJson(new JsonParser().parse(str));
-        } catch(Exception e) {
-            return new TextMessage(str);
-        }
-    }
-
-    public static Message fromJson(JsonElement e) {
-        if(e.isJsonPrimitive()) {
-            return new TextMessage(e.getAsString());
-        } else if(e.isJsonArray()) {
-            JsonArray array = e.getAsJsonArray();
-            if(array.size() == 0) {
-                return new TextMessage("");
-            }
-
-            Message msg = Message.fromJson(array.get(0));
-            for(int index = 1; index < array.size(); index++) {
-                msg.addExtra(Message.fromJson(array.get(index)));
-            }
-
-            return msg;
-        } else if(e.isJsonObject()) {
-            JsonObject json = e.getAsJsonObject();
-            Message msg = null;
-            if(json.has("text")) {
-                msg = new TextMessage(json.get("text").getAsString());
-            } else if(json.has("translate")) {
-                Message with[] = new Message[0];
-                if(json.has("with")) {
-                    JsonArray withJson = json.get("with").getAsJsonArray();
-                    with = new Message[withJson.size()];
-                    for(int index = 0; index < withJson.size(); index++) {
-                        JsonElement el = withJson.get(index);
-                        if(el.isJsonPrimitive()) {
-                            with[index] = new TextMessage(el.getAsString());
-                        } else {
-                            with[index] = Message.fromJson(el.getAsJsonObject());
-                        }
-                    }
-                }
-
-                msg = new TranslationMessage(json.get("translate").getAsString(), with);
-            } else if(json.has("keybind")) {
-                msg = new KeybindMessage(json.get("keybind").getAsString());
-            } else {
-                throw new IllegalArgumentException("Unknown message type in json: " + json.toString());
-            }
-
-            MessageStyle style = new MessageStyle();
-            if(json.has("color")) {
-                style.setColor(json.get("color").getAsString());
-            }
-
-            for(ChatFormat format : ChatFormat.values()) {
-                if(json.has(format.toString()) && json.get(format.toString()).getAsBoolean()) {
-                    style.addFormat(format);
-                }
-            }
-
-            if(json.has("clickEvent")) {
-                JsonObject click = json.get("clickEvent").getAsJsonObject();
-                style.setClickEvent(new ClickEvent(ClickAction.byName(click.get("action").getAsString()), click.get("value").getAsString()));
-            }
-
-            if(json.has("hoverEvent")) {
-                JsonObject hover = json.get("hoverEvent").getAsJsonObject();
-                style.setHoverEvent(new HoverEvent(HoverAction.byName(hover.get("action").getAsString()), Message.fromJson(hover.get("value"))));
-            }
-
-            if(json.has("insertion")) {
-                style.setInsertion(json.get("insertion").getAsString());
-            }
-
-            msg.setStyle(style);
-
-            if(json.has("extra")) {
-                JsonArray extraJson = json.get("extra").getAsJsonArray();
-                for(int index = 0; index < extraJson.size(); index++) {
-                    msg.addExtra(Message.fromJson(extraJson.get(index)));
-                }
-            }
-
-            return msg;
-        } else {
-            throw new IllegalArgumentException("Cannot convert " + e.getClass().getSimpleName() + " to a message.");
-        }
-    }
-
-    public abstract String getText();
-
-    public String getFullText() {
-        StringBuilder build = new StringBuilder(this.getText());
-        for(Message msg : this.extra) {
-            build.append(msg.getFullText());
+        public B style(@NonNull MessageStyle style) {
+            this.style = style;
+            return (B) this;
         }
 
-        return build.toString();
+        public B extra(@NonNull Message... extra) {
+            return this.extra(Arrays.asList(extra));
+        }
+
+        public B extra(@NonNull Collection<Message> extra) {
+            this.extra.addAll(extra);
+            return (B) this;
+        }
+
+        public B copy(@NonNull M message) {
+            this.style = message.getStyle();
+            this.extra = new ArrayList<>(message.getExtra());
+            return (B) this;
+        }
+
+        public abstract M build();
     }
 
-    public Message setStyle(MessageStyle style) {
+    private final MessageStyle style;
+    private final List<Message> extra;
+
+    protected Message(MessageStyle style, List<Message> extra) {
         this.style = style;
-        return this;
+        this.extra = Collections.unmodifiableList(extra);
     }
 
-    public Message setExtra(List<Message> extra) {
-        this.clearExtra();
-        for(Message msg : extra) {
-            this.addExtra(msg.clone());
-        }
-
-        return this;
+    public MessageStyle getStyle() {
+        return this.style;
     }
 
-    public Message addExtra(Message message) {
-        this.extra.add(message);
-        message.getStyle().setParent(this.style);
-        return this;
+    public List<Message> getExtra() {
+        return this.extra;
     }
-
-    public Message removeExtra(Message message) {
-        this.extra.remove(message);
-        message.getStyle().setParent(null);
-        return this;
-    }
-
-    public Message clearExtra() {
-        for(Message msg : this.extra) {
-            msg.getStyle().setParent(null);
-        }
-
-        this.extra.clear();
-        return this;
-    }
-
-    @Override
-    public abstract Message clone();
 
     @Override
     public String toString() {
-        return this.getFullText();
-    }
-
-    public String toJsonString() {
-        return this.toJson().toString();
-    }
-
-    public JsonElement toJson() {
-        JsonObject json = new JsonObject();
-        if(this.style.hasColor()) {
-            json.addProperty("color", this.style.getColor().toString());
-        }
-
-        for(ChatFormat format : this.style.getFormats()) {
-            json.addProperty(format.toString(), true);
-        }
-
-        if(this.style.getClickEvent() != null) {
-            JsonObject click = new JsonObject();
-            click.addProperty("action", this.style.getClickEvent().getAction().toString());
-            click.addProperty("value", this.style.getClickEvent().getValue());
-            json.add("clickEvent", click);
-        }
-
-        if(this.style.getHoverEvent() != null) {
-            JsonObject hover = new JsonObject();
-            hover.addProperty("action", this.style.getHoverEvent().getAction().toString());
-            hover.add("value", this.style.getHoverEvent().getValue().toJson());
-            json.add("hoverEvent", hover);
-        }
-
-        if(this.style.getInsertion() != null) {
-            json.addProperty("insertion", this.style.getInsertion());
-        }
-
-        if(this.extra.size() > 0) {
-            JsonArray extra = new JsonArray();
-            for(Message msg : this.extra) {
-                extra.add(msg.toJson());
-            }
-
-            json.add("extra", extra);
-        }
-
-        return json;
+        return MessageSerializer.toJsonString(this);
     }
 }

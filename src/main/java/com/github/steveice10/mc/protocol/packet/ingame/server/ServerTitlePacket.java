@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.TitleAction;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -59,7 +60,7 @@ public class ServerTitlePacket implements Packet {
             case TITLE:
             case SUBTITLE:
             case ACTION_BAR:
-                this.title = Message.fromString(in.readString());
+                this.title = MessageSerializer.fromString(in.readString());
                 break;
             case TIMES:
                 this.fadeIn = in.readInt();
@@ -79,7 +80,7 @@ public class ServerTitlePacket implements Packet {
             case TITLE:
             case SUBTITLE:
             case ACTION_BAR:
-                out.writeString(this.title.toJsonString());
+                out.writeString(MessageSerializer.toJsonString(this.title));
                 break;
             case TIMES:
                 out.writeInt(this.fadeIn);

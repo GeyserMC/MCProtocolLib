@@ -103,12 +103,12 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.Serv
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerSetExperiencePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnExpOrbPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnWeatherEntityPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnLivingEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnExpOrbPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnLivingEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPaintingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnWeatherEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerDisplayScoreboardPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerScoreboardObjectivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerTeamPacket;
@@ -229,7 +229,8 @@ public class MinecraftProtocol extends PacketProtocol {
     private MinecraftProtocol(String username, String clientToken, String using, boolean token, Proxy authProxy) throws RequestException {
         this(SubProtocol.LOGIN);
 
-        AuthenticationService auth = new AuthenticationService(clientToken, authProxy);
+        AuthenticationService auth = new AuthenticationService(clientToken);
+        auth.setProxy(authProxy);
         auth.setUsername(username);
         if(token) {
             auth.setAccessToken(using);

@@ -56,7 +56,9 @@ public class ClientListener extends SessionAdapter {
                     throw new IllegalStateException("Failed to generate shared key.", e);
                 }
 
-                SessionService sessionService = new SessionService(event.getSession().getFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY));
+                SessionService sessionService = new SessionService();
+                sessionService.setProxy(event.getSession().getFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY));
+
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                 String serverId = sessionService.getServerId(packet.getServerId(), packet.getPublicKey(), key);
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
@@ -81,7 +83,7 @@ public class ClientListener extends SessionAdapter {
                 protocol.setSubProtocol(SubProtocol.GAME, true, event.getSession());
             } else if(event.getPacket() instanceof LoginDisconnectPacket) {
                 LoginDisconnectPacket packet = event.getPacket();
-                event.getSession().disconnect(packet.getReason().getFullText());
+                event.getSession().disconnect(packet.getReason().toString());
             } else if(event.getPacket() instanceof LoginSetCompressionPacket) {
                 event.getSession().setCompressionThreshold(event.<LoginSetCompressionPacket>getPacket().getThreshold());
             }
@@ -107,7 +109,7 @@ public class ClientListener extends SessionAdapter {
             if(event.getPacket() instanceof ServerKeepAlivePacket) {
                 event.getSession().send(new ClientKeepAlivePacket(event.<ServerKeepAlivePacket>getPacket().getPingId()));
             } else if(event.getPacket() instanceof ServerDisconnectPacket) {
-                event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().getFullText());
+                event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().toString());
             } else if(event.getPacket() instanceof ServerSetCompressionPacket) {
                 event.getSession().setCompressionThreshold(event.<ServerSetCompressionPacket>getPacket().getThreshold());
             }

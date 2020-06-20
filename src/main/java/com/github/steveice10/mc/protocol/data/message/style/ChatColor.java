@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.data.message;
+package com.github.steveice10.mc.protocol.data.message.style;
 
 public class ChatColor {
     public static final String BLACK = "black";

@@ -1,61 +1,65 @@
 package com.github.steveice10.mc.protocol.data.message;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.NonNull;
 
-@Getter
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 public class TranslationMessage extends Message {
-    private final String translationKey;
-    private final Message[] translationParams;
+    public static class Builder extends Message.Builder<Builder, TranslationMessage> {
+        @NonNull
+        private String key = "";
+        @NonNull
+        private List<Message> with = new ArrayList<>();
 
-    public TranslationMessage(String translationKey, Message... translationParams) {
-        this.translationKey = translationKey;
-        this.translationParams = new Message[translationParams.length];
-        for(int index = 0; index < this.translationParams.length; index++) {
-            this.translationParams[index] = translationParams[index].clone();
-            this.translationParams[index].getStyle().setParent(this.getStyle());
+        public Builder key(@NonNull String key) {
+            this.key = key;
+            return this;
+        }
+
+        public Builder with(@NonNull Message... with) {
+            return this.with(Arrays.asList(with));
+        }
+
+        public Builder with(@NonNull Collection<Message> with) {
+            this.with.addAll(with);
+            return this;
+        }
+
+        @Override
+        public Builder copy(@NonNull TranslationMessage message) {
+            super.copy(message);
+            this.key = message.getKey();
+            this.with = new ArrayList<>(message.getWith());
+            return this;
+        }
+
+        @Override
+        public TranslationMessage build() {
+            return new TranslationMessage(this.style, this.extra, this.key, this.with);
         }
     }
 
-    @Override
-    public String getText() {
-        return this.translationKey;
+    private final String key;
+    private final List<Message> with;
+
+    private TranslationMessage(MessageStyle style, List<Message> extra, String key, List<Message> with) {
+        super(style, extra);
+        this.key = key;
+        this.with = Collections.unmodifiableList(with);
     }
 
-    @Override
-    public Message setStyle(MessageStyle style) {
-        super.setStyle(style);
-        for(Message param : this.translationParams) {
-            param.getStyle().setParent(this.getStyle());
-        }
-
-        return this;
+    public String getKey() {
+        return this.key;
     }
 
-    @Override
-    public TranslationMessage clone() {
-        return (TranslationMessage) new TranslationMessage(this.translationKey, this.translationParams).setStyle(this.getStyle().clone()).setExtra(this.getExtra());
-    }
-
-    @Override
-    public JsonElement toJson() {
-        JsonElement e = super.toJson();
-        if(e.isJsonObject()) {
-            JsonObject json = e.getAsJsonObject();
-            json.addProperty("translate", this.translationKey);
-            JsonArray params = new JsonArray();
-            for(Message param : this.translationParams) {
-                params.add(param.toJson());
-            }
-
-            json.add("with", params);
-            return json;
-        } else {
-            return e;
-        }
+    public List<Message> getWith() {
+        return this.with;
     }
 }

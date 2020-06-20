@@ -6,6 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.PlayerListEntry;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -61,11 +62,11 @@ public class ServerPlayerListEntryPacket implements Packet {
                     profile.setProperties(propertyList);
 
                     int rawGameMode = in.readVarInt();
-                    GameMode gameMode = MagicValues.key(GameMode.class, rawGameMode < 0 ? 0 : rawGameMode);
+                    GameMode gameMode = MagicValues.key(GameMode.class, Math.max(rawGameMode, 0));
                     int ping = in.readVarInt();
                     Message displayName = null;
                     if(in.readBoolean()) {
-                        displayName = Message.fromString(in.readString());
+                        displayName = MessageSerializer.fromString(in.readString());
                     }
 
                     entry = new PlayerListEntry(profile, gameMode, ping, displayName);
@@ -73,7 +74,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                 }
                 case UPDATE_GAMEMODE: {
                     int rawGameMode = in.readVarInt();
-                    GameMode mode = MagicValues.key(GameMode.class, rawGameMode < 0 ? 0 : rawGameMode);
+                    GameMode mode = MagicValues.key(GameMode.class, Math.max(rawGameMode, 0));
 
                     entry = new PlayerListEntry(profile, mode);
                     break;
@@ -87,7 +88,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                 case UPDATE_DISPLAY_NAME: {
                     Message displayName = null;
                     if(in.readBoolean()) {
-                        displayName = Message.fromString(in.readString());
+                        displayName = MessageSerializer.fromString(in.readString());
                     }
 
                     entry = new PlayerListEntry(profile, displayName);
@@ -125,7 +126,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                     out.writeVarInt(entry.getPing());
                     out.writeBoolean(entry.getDisplayName() != null);
                     if(entry.getDisplayName() != null) {
-                        out.writeString(entry.getDisplayName().toJsonString());
+                        out.writeString(MessageSerializer.toJsonString(entry.getDisplayName()));
                     }
 
                     break;
@@ -138,7 +139,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                 case UPDATE_DISPLAY_NAME:
                     out.writeBoolean(entry.getDisplayName() != null);
                     if(entry.getDisplayName() != null) {
-                        out.writeString(entry.getDisplayName().toJsonString());
+                        out.writeString(MessageSerializer.toJsonString(entry.getDisplayName()));
                     }
 
                     break;

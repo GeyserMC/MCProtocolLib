@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.data.message;
+package com.github.steveice10.mc.protocol.data.message.style;
 
 public enum ChatFormat {
     BOLD,
@@ -8,9 +8,9 @@ public enum ChatFormat {
     OBFUSCATED;
 
     public static ChatFormat byName(String name) {
-        name = name.toLowerCase();
+        String lowerCase = name.toLowerCase();
         for(ChatFormat format : values()) {
-            if(format.toString().equals(name)) {
+            if(format.toString().equals(lowerCase)) {
                 return format;
             }
         }

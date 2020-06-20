@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BonemealGrowEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakBlockEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakPotionEffectData;
@@ -49,7 +48,7 @@ public class ServerPlayEffectPacket implements Packet {
         } else if(this.effect == ParticleEffect.SMOKE) {
             this.data = MagicValues.key(SmokeEffectData.class, value % 9);
         } else if(this.effect == ParticleEffect.BREAK_BLOCK) {
-            this.data = new BreakBlockEffectData(new BlockState(value));
+            this.data = new BreakBlockEffectData(value);
         } else if(this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
             this.data = new BreakPotionEffectData(value);
         } else if(this.effect == ParticleEffect.BONEMEAL_GROW) {
@@ -71,7 +70,7 @@ public class ServerPlayEffectPacket implements Packet {
         } else if(this.data instanceof SmokeEffectData) {
             value = MagicValues.value(Integer.class, (SmokeEffectData) this.data);
         } else if(this.data instanceof BreakBlockEffectData) {
-            value = ((BreakBlockEffectData) this.data).getBlockState().getId();
+            value = ((BreakBlockEffectData) this.data).getBlockState();
         } else if(this.data instanceof BreakPotionEffectData) {
             value = ((BreakPotionEffectData) this.data).getPotionId();
         } else if(this.data instanceof BonemealGrowEffectData) {

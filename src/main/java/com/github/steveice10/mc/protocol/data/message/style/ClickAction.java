@@ -1,15 +1,15 @@
-package com.github.steveice10.mc.protocol.data.message;
+package com.github.steveice10.mc.protocol.data.message.style;
 
 public enum ClickAction {
     RUN_COMMAND,
     SUGGEST_COMMAND,
     OPEN_URL,
-    OPEN_FILE;
+    CHANGE_PAGE;
 
     public static ClickAction byName(String name) {
-        name = name.toLowerCase();
+        String lowerCase = name.toLowerCase();
         for(ClickAction action : values()) {
-            if(action.toString().equals(name)) {
+            if(action.toString().equals(lowerCase)) {
                 return action;
             }
         }

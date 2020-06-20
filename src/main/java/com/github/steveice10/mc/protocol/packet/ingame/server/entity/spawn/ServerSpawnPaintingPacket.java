@@ -2,8 +2,8 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
+import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
