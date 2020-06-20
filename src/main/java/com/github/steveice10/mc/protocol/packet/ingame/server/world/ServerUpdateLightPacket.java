@@ -23,10 +23,11 @@ public class ServerUpdateLightPacket implements Packet {
 
     private int x;
     private int z;
+    private boolean unknown; // TODO: Find what this value is
     private @NonNull NibbleArray3d[] skyLight;
     private @NonNull NibbleArray3d[] blockLight;
 
-    public ServerUpdateLightPacket(int x, int z, @NonNull NibbleArray3d[] skyLight, @NonNull NibbleArray3d[] blockLight) {
+    public ServerUpdateLightPacket(int x, int z, boolean unknown, @NonNull NibbleArray3d[] skyLight, @NonNull NibbleArray3d[] blockLight) {
         if(skyLight.length != NUM_ENTRIES) {
             throw new IllegalArgumentException("skyLight must have exactly " + NUM_ENTRIES + " entries (null entries are permitted)");
         }
@@ -37,6 +38,7 @@ public class ServerUpdateLightPacket implements Packet {
 
         this.x = x;
         this.z = z;
+        this.unknown = unknown;
         this.skyLight = Arrays.copyOf(skyLight, skyLight.length);
         this.blockLight = Arrays.copyOf(blockLight, blockLight.length);
     }
@@ -45,6 +47,7 @@ public class ServerUpdateLightPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.x = in.readVarInt();
         this.z = in.readVarInt();
+        this.unknown = in.readBoolean();
 
         int skyLightMask = in.readVarInt();
         int blockLightMask = in.readVarInt();
@@ -78,6 +81,7 @@ public class ServerUpdateLightPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.x);
         out.writeVarInt(this.z);
+        out.writeBoolean(this.unknown);
 
         int skyLightMask = 0;
         int blockLightMask = 0;

@@ -32,6 +32,7 @@ public class ServerChunkDataPacket implements Packet {
         int x = in.readInt();
         int z = in.readInt();
         boolean fullChunk = in.readBoolean();
+        boolean ignoreOldData = in.readBoolean();
         int chunkMask = in.readVarInt();
         CompoundTag heightMaps = NBT.read(in);
         int[] biomeData = fullChunk ? in.readInts(1024) : null;
@@ -49,7 +50,7 @@ public class ServerChunkDataPacket implements Packet {
             }
         }
 
-        this.column = new Column(x, z, chunks, tileEntities, heightMaps, biomeData);
+        this.column = new Column(x, z, ignoreOldData, chunks, tileEntities, heightMaps, biomeData);
     }
 
     @Override
@@ -72,6 +73,7 @@ public class ServerChunkDataPacket implements Packet {
         out.writeInt(this.column.getX());
         out.writeInt(this.column.getZ());
         out.writeBoolean(fullChunk);
+        out.writeBoolean(this.column.isIgnoreOldData());
         out.writeVarInt(mask);
         NBT.write(out, this.column.getHeightMaps());
         if (fullChunk) {
