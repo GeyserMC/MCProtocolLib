@@ -108,7 +108,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.Serve
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnLivingEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPaintingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnPlayerPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnWeatherEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerDisplayScoreboardPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerScoreboardObjectivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerTeamPacket;
@@ -567,7 +566,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
         this.registerOutgoing(0x00, ServerSpawnEntityPacket.class);
         this.registerOutgoing(0x01, ServerSpawnExpOrbPacket.class);
-        this.registerOutgoing(0x02, ServerSpawnWeatherEntityPacket.class);
+        this.registerOutgoing(0x02, ServerSpawnLivingEntityPacket.class);
         this.registerOutgoing(0x03, ServerSpawnPaintingPacket.class);
         this.registerOutgoing(0x04, ServerSpawnPlayerPacket.class);
         this.registerOutgoing(0x05, ServerEntityAnimationPacket.class);
