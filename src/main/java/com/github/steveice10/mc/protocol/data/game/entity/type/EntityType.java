@@ -40,6 +40,7 @@ public enum EntityType {
     ITEM_FRAME,
     FIREBALL,
     LEASH_KNOT,
+    LIGHTNING_BOLT,
     LLAMA,
     LLAMA_SPIT,
     MAGMA_CUBE,
