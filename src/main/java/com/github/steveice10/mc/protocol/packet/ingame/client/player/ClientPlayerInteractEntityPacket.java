@@ -27,14 +27,14 @@ public class ClientPlayerInteractEntityPacket implements Packet {
     private float targetY;
     private float targetZ;
     private @NonNull Hand hand;
-    private boolean unknown;
+    private boolean isSneaking;
 
-    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, boolean unknown) {
-        this(entityId, action, Hand.MAIN_HAND, unknown);
+    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, boolean isSneaking) {
+        this(entityId, action, Hand.MAIN_HAND, isSneaking);
     }
 
-    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, Hand hand, boolean unknown) {
-        this(entityId, action, 0, 0, 0, hand, unknown);
+    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, Hand hand, boolean isSneaking) {
+        this(entityId, action, 0, 0, 0, hand, isSneaking);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ClientPlayerInteractEntityPacket implements Packet {
         if(this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
             this.hand = MagicValues.key(Hand.class, in.readVarInt());
         }
-        this.unknown = in.readBoolean();
+        this.isSneaking = in.readBoolean();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ClientPlayerInteractEntityPacket implements Packet {
         if(this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
             out.writeVarInt(MagicValues.value(Integer.class, this.hand));
         }
-        out.writeBoolean(this.unknown);
+        out.writeBoolean(this.isSneaking);
     }
 
     @Override
