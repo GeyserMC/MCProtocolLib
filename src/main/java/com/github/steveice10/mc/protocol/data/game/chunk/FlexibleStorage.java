@@ -17,20 +17,12 @@ public class FlexibleStorage {
     }
 
     public FlexibleStorage(int bitsPerEntry, @NonNull long[] data) {
-        if(bitsPerEntry < 4) {
-            bitsPerEntry = 4;
-        }
-
-        char valuesPerLong = (char) (64 / bitsPerEntry);
-        int expectedLength = (4096 + valuesPerLong - 1) / valuesPerLong;
-
         this.bitsPerEntry = bitsPerEntry;
-        this.data = padArray(bitsPerEntry, Arrays.copyOf(data, data.length), valuesPerLong, expectedLength);
-
-        if (this.data.length != expectedLength) {
-            throw new IllegalArgumentException("Got " + this.data.length + " as the chunk data length, but was expecting " + expectedLength);
+        if(bitsPerEntry <= 8) {
+            this.data = padArray(bitsPerEntry, Arrays.copyOf(data, data.length));
+        } else {
+            this.data = padArray(bitsPerEntry, 14, Arrays.copyOf(data, data.length));
         }
-
         this.size = data.length * 64 / this.bitsPerEntry;
         this.maxEntryValue = (1L << this.bitsPerEntry) - 1;
     }
@@ -109,25 +101,34 @@ public class FlexibleStorage {
             70409299, 70409299, 0, 69273666, 69273666, 0, 68174084, 68174084, 0, Integer.MIN_VALUE,
             0, 5 };
 
-    private static long[] padArray(int bitsPerEntry, long[] oldData, char valuesPerLong, int size) {
+    private static long[] padArray(int bitsPerEntry, long[] oldData) {
+        return padArray(bitsPerEntry, bitsPerEntry, oldData);
+    }
+
+    private static long[] padArray(int bitsPerEntry, int newBitsPerEntry, long[] oldData) {
+        long maxEntryValue = (1L << bitsPerEntry) - 1;
+        char valuesPerLong = (char) (64 / newBitsPerEntry);
         int magicIndex = (valuesPerLong - 1) * 3;
+        long divideMultiply = Integer.toUnsignedLong(MAGIC_CHUNK_VALUES[magicIndex]);
+        long divideAdd = Integer.toUnsignedLong(MAGIC_CHUNK_VALUES[magicIndex + 1]);
         int divideShift = MAGIC_CHUNK_VALUES[magicIndex + 2];
-        long maxEntries = (1L << bitsPerEntry) - 1;
-        long[] data = new long[size];
-        for (int index = 0; index < 4096; index++) {
-            int startIndex = (index * bitsPerEntry) / 64;
+        long[] data = new long[(4096 + valuesPerLong - 1) / valuesPerLong];
+        for(int index = 0; index < 4096; index++) {
+            int bitIndex = index * bitsPerEntry;
+            int startIndex = bitIndex / 64;
             int endIndex = ((index + 1) * bitsPerEntry - 1) / 64;
-            int startBitSubIndex = (index * bitsPerEntry) % 64;
+            int startBitSubIndex = bitIndex % 64;
             int value;
-            if (startIndex != endIndex) {
-                value = (int) ((oldData[startIndex] >>> startBitSubIndex | oldData[endIndex] << (64 - startBitSubIndex)) & maxEntries);
+            if(startIndex != endIndex) {
+                int endBitSubIndex = 64 - startBitSubIndex;
+                value = (int) ((oldData[startIndex] >>> startBitSubIndex | oldData[endIndex] << endBitSubIndex) & maxEntryValue);
             } else {
-                value = (int) (oldData[startIndex] >>> startBitSubIndex & maxEntries);
+                value = (int) (oldData[startIndex] >>> startBitSubIndex & maxEntryValue);
             }
 
-            int cellIndex = (int) (index * ((long) MAGIC_CHUNK_VALUES[magicIndex]) & 0xffffffffL + ((long) MAGIC_CHUNK_VALUES[magicIndex + 1]) & 0xffffffffL >> 32L >> divideShift);
-            int bitIndex = (index - cellIndex * valuesPerLong) * bitsPerEntry;
-            data[cellIndex] = data[cellIndex] & ~(maxEntries << bitIndex) | (value & maxEntries) << bitIndex;
+            int cellIndex = (int) (index * divideMultiply + divideAdd >> 32L >> divideShift);
+            int newBitIndex = (index - cellIndex * valuesPerLong) * newBitsPerEntry;
+            data[cellIndex] = data[cellIndex] & ~(maxEntryValue << newBitIndex) | (value & maxEntryValue) << newBitIndex;
         }
         return data;
     }
