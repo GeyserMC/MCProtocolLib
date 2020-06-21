@@ -1106,6 +1106,7 @@ public class MagicValues {
         register(RecipeType.SMOKING, "minecraft:smoking");
         register(RecipeType.CAMPFIRE_COOKING, "minecraft:campfire_cooking");
         register(RecipeType.STONECUTTING, "minecraft:stonecutting");
+        register(RecipeType.SMITHING, "minecraft:smithing");
 
         register(CommandType.ROOT, 0);
         register(CommandType.LITERAL, 1);
