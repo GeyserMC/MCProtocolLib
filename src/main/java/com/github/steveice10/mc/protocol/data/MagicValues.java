@@ -1142,6 +1142,7 @@ public class MagicValues {
         register(CommandParser.SCORE_HOLDER, "minecraft:score_holder");
         register(CommandParser.SWIZZLE, "minecraft:swizzle");
         register(CommandParser.TEAM, "minecraft:team");
+        register(CommandParser.UUID, "minecraft:uuid");
         register(CommandParser.ITEM_SLOT, "minecraft:item_slot");
         register(CommandParser.RESOURCE_LOCATION, "minecraft:resource_location");
         register(CommandParser.MOB_EFFECT, "minecraft:mob_effect");
