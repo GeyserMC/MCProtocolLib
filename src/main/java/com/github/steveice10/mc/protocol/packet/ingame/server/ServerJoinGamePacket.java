@@ -50,8 +50,9 @@ public class ServerJoinGamePacket implements Packet {
         this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
         this.gameMode2 = MagicValues.key(GameMode.class, in.readUnsignedByte());
         this.worldCount = in.readVarInt();
+        this.worldNames = new String[this.worldCount];
         for (int i = 0; i < this.worldCount; i++) {
-            in.readString();
+            this.worldNames[i] = in.readString();
         }
         this.dimensionCodec = NBT.read(in);
         this.dimension = in.readString();
@@ -70,7 +71,7 @@ public class ServerJoinGamePacket implements Packet {
         out.writeInt(this.entityId);
 
         int gameMode = MagicValues.value(Integer.class, this.gameMode) & GAMEMODE_MASK;
-        if(this.hardcore) {
+        if (this.hardcore) {
             gameMode |= GAMEMODE_FLAG_HARDCORE;
         }
 

@@ -118,6 +118,7 @@ public class MagicValues {
         register(AttributeType.GENERIC_KNOCKBACK_RESISTANCE, "generic.knockback_resistance");
         register(AttributeType.GENERIC_MOVEMENT_SPEED, "generic.movement_speed");
         register(AttributeType.GENERIC_ATTACK_DAMAGE, "generic.attack_damage");
+        register(AttributeType.GENERIC_ATTACK_KNOCKBACK, "generic.attack_knockback");
         register(AttributeType.GENERIC_ATTACK_SPEED, "generic.attack_speed");
         register(AttributeType.GENERIC_ARMOR, "generic.armor");
         register(AttributeType.GENERIC_ARMOR_TOUGHNESS, "generic.armor_toughness");

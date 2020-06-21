@@ -34,7 +34,7 @@ public class Chunk {
         int bitsPerEntry = in.readUnsignedByte();
 
         List<Integer> states = new ArrayList<>();
-        int stateCount = bitsPerEntry > 8  || bitsPerEntry == 0 ? 0 : in.readVarInt();
+        int stateCount = bitsPerEntry > 8 || bitsPerEntry == 0 ? 0 : in.readVarInt();
         for(int i = 0; i < stateCount; i++) {
             states.add(in.readVarInt());
         }
