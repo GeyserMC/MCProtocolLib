@@ -113,19 +113,19 @@ public class MagicValues {
         register(Pose.SNEAKING, 5);
         register(Pose.DYING, 6);
 
-        register(AttributeType.GENERIC_MAX_HEALTH, "generic.max_health");
-        register(AttributeType.GENERIC_FOLLOW_RANGE, "generic.follow_range");
-        register(AttributeType.GENERIC_KNOCKBACK_RESISTANCE, "generic.knockback_resistance");
-        register(AttributeType.GENERIC_MOVEMENT_SPEED, "generic.movement_speed");
-        register(AttributeType.GENERIC_ATTACK_DAMAGE, "generic.attack_damage");
-        register(AttributeType.GENERIC_ATTACK_KNOCKBACK, "generic.attack_knockback");
-        register(AttributeType.GENERIC_ATTACK_SPEED, "generic.attack_speed");
-        register(AttributeType.GENERIC_ARMOR, "generic.armor");
-        register(AttributeType.GENERIC_ARMOR_TOUGHNESS, "generic.armor_toughness");
-        register(AttributeType.GENERIC_LUCK, "generic.luck");
-        register(AttributeType.GENERIC_FLYING_SPEED, "generic.flying_speed");
-        register(AttributeType.HORSE_JUMP_STRENGTH, "horse.jump_strength");
-        register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "zombie.spawn_reinforcements");
+        register(AttributeType.GENERIC_MAX_HEALTH, "minecraft:generic.max_health");
+        register(AttributeType.GENERIC_FOLLOW_RANGE, "minecraft:generic.follow_range");
+        register(AttributeType.GENERIC_KNOCKBACK_RESISTANCE, "minecraft:generic.knockback_resistance");
+        register(AttributeType.GENERIC_MOVEMENT_SPEED, "minecraft:generic.movement_speed");
+        register(AttributeType.GENERIC_ATTACK_DAMAGE, "minecraft:generic.attack_damage");
+        register(AttributeType.GENERIC_ATTACK_KNOCKBACK, "minecraft:generic.attack_knockback");
+        register(AttributeType.GENERIC_ATTACK_SPEED, "minecraft:generic.attack_speed");
+        register(AttributeType.GENERIC_ARMOR, "minecraft:generic.armor");
+        register(AttributeType.GENERIC_ARMOR_TOUGHNESS, "minecraft:generic.armor_toughness");
+        register(AttributeType.GENERIC_LUCK, "minecraft:generic.luck");
+        register(AttributeType.GENERIC_FLYING_SPEED, "minecraft:generic.flying_speed");
+        register(AttributeType.HORSE_JUMP_STRENGTH, "minecraft:horse.jump_strength");
+        register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "minecraft:zombie.spawn_reinforcements");
         // Forge-only
         register(AttributeType.SWIM_SPEED, "forge.swim_speed");
         register(AttributeType.NAMETAG_DISTANCE, "forge.name_tag_distance");
