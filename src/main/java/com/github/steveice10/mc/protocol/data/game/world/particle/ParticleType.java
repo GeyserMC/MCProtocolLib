@@ -28,6 +28,8 @@ public enum ParticleType {
     FIREWORK,
     FISHING,
     FLAME,
+    SOUL_FLAME,
+    SOUL,
     FLASH,
     HAPPY_VILLAGER,
     COMPOSTER,
