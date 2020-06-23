@@ -58,7 +58,6 @@ public class ServerBlockValuePacket implements Packet {
         int type = in.readUnsignedByte();
         int value = in.readUnsignedByte();
         this.blockId = in.readVarInt() & 0xFFF;
-        System.out.println(this.blockId);
 
         if(this.blockId == NOTE_BLOCK) {
             this.type = MagicValues.key(NoteBlockValueType.class, type);
