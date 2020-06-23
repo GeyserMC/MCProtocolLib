@@ -35,17 +35,17 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerBlockValuePacket implements Packet {
-    private static final int NOTE_BLOCK = 73;
-    private static final int STICKY_PISTON = 92;
-    private static final int PISTON = 99;
-    private static final int MOB_SPAWNER = 143;
-    private static final int CHEST = 145;
-    private static final int ENDER_CHEST = 262;
-    private static final int BEACON = 270;
-    private static final int TRAPPED_CHEST = 321;
-    private static final int END_GATEWAY = 491;
-    private static final int SHULKER_BOX_LOWER = 501;
-    private static final int SHULKER_BOX_HIGHER = 517;
+    private static final int NOTE_BLOCK = 74;
+    private static final int STICKY_PISTON = 93;
+    private static final int PISTON = 100;
+    private static final int MOB_SPAWNER = 143; // Value does not show in 1.16
+    private static final int CHEST = 147;
+    private static final int ENDER_CHEST = 270;
+    private static final int BEACON = 0; // Was 270; Value does not show in 1.16
+    private static final int TRAPPED_CHEST = 329;
+    private static final int END_GATEWAY = 499;
+    private static final int SHULKER_BOX_LOWER = 509;
+    private static final int SHULKER_BOX_HIGHER = 525;
 
     private @NonNull Position position;
     private @NonNull BlockValueType type;
@@ -58,6 +58,7 @@ public class ServerBlockValuePacket implements Packet {
         int type = in.readUnsignedByte();
         int value = in.readUnsignedByte();
         this.blockId = in.readVarInt() & 0xFFF;
+        System.out.println(this.blockId);
 
         if(this.blockId == NOTE_BLOCK) {
             this.type = MagicValues.key(NoteBlockValueType.class, type);
