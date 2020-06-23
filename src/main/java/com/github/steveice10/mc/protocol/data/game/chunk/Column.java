@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ public class Column {
     private final int x;
     private final int z;
     private final boolean ignoreOldData;
+    @EqualsAndHashCode.Exclude
     private final @NonNull Chunk[] chunks;
     private final @NonNull CompoundTag[] tileEntities;
     private final @NonNull CompoundTag heightMaps;
