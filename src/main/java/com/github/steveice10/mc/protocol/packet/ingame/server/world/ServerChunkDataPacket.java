@@ -37,10 +37,6 @@ public class ServerChunkDataPacket implements Packet {
         CompoundTag heightMaps = NBT.read(in);
         int[] biomeData = fullChunk ? in.readInts(1024) : null;
         byte[] data = in.readBytes(in.readVarInt());
-        CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
-        for(int i = 0; i < tileEntities.length; i++) {
-            tileEntities[i] = NBT.read(in);
-        }
 
         NetInput dataIn = new StreamNetInput(new ByteArrayInputStream(data));
         Chunk[] chunks = new Chunk[16];
@@ -48,6 +44,11 @@ public class ServerChunkDataPacket implements Packet {
             if((chunkMask & (1 << index)) != 0) {
                 chunks[index] = Chunk.read(dataIn);
             }
+        }
+
+        CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
+        for(int i = 0; i < tileEntities.length; i++) {
+            tileEntities[i] = NBT.read(in);
         }
 
         this.column = new Column(x, z, ignoreOldData, chunks, tileEntities, heightMaps, biomeData);

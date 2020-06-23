@@ -2,11 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,25 +18,27 @@ public class Chunk {
     private int blockCount;
     private int bitsPerEntry;
 
-    private @NonNull List<Integer> states;
+    private @NonNull List<Integer> palette;
     private @NonNull FlexibleStorage storage;
 
     public Chunk() {
-        this(0, 4, new ArrayList<>(Collections.singletonList(AIR)), new FlexibleStorage(4, 4096));
+        this(0, 4, new ArrayList<>(Collections.singletonList(AIR)), new FlexibleStorage(4));
     }
 
     public static Chunk read(NetInput in) throws IOException {
         int blockCount = in.readShort();
         int bitsPerEntry = in.readUnsignedByte();
 
-        List<Integer> states = new ArrayList<>();
-        int stateCount = bitsPerEntry > 8 || bitsPerEntry == 0 ? 0 : in.readVarInt();
-        for(int i = 0; i < stateCount; i++) {
-            states.add(in.readVarInt());
+        List<Integer> palette = new ArrayList<>();
+        if(bitsPerEntry <= 8) {
+            int paletteLength = in.readVarInt();
+            for(int i = 0; i < paletteLength; i++) {
+                palette.add(in.readVarInt());
+            }
         }
 
         FlexibleStorage storage = new FlexibleStorage(bitsPerEntry, in.readLongs(in.readVarInt()));
-        return new Chunk(blockCount, bitsPerEntry, states, storage);
+        return new Chunk(blockCount, bitsPerEntry, palette, storage);
     }
 
     public static void write(NetOutput out, Chunk chunk) throws IOException {
@@ -48,8 +46,8 @@ public class Chunk {
         out.writeByte(chunk.getBitsPerEntry());
 
         if(chunk.getBitsPerEntry() <= 8) {
-            out.writeVarInt(chunk.getStates().size());
-            for (int state : chunk.getStates()) {
+            out.writeVarInt(chunk.getPalette().size());
+            for (int state : chunk.getPalette()) {
                 out.writeVarInt(state);
             }
         }
@@ -65,31 +63,28 @@ public class Chunk {
 
     public int get(int x, int y, int z) {
         int id = this.storage.get(index(x, y, z));
-        return this.bitsPerEntry <= 8 ? (id >= 0 && id < this.states.size() ? this.states.get(id) : AIR) : id;
+        return this.bitsPerEntry <= 8 ? (id >= 0 && id < this.palette.size() ? this.palette.get(id) : AIR) : id;
     }
 
     public void set(int x, int y, int z, @NonNull int state) {
-        int id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : state;
+        int id = this.bitsPerEntry <= 8 ? this.palette.indexOf(state) : state;
         if(id == -1) {
-            this.states.add(state);
-            if(this.states.size() > 1 << this.bitsPerEntry) {
+            this.palette.add(state);
+            if(this.palette.size() > 1 << this.bitsPerEntry) {
                 this.bitsPerEntry++;
 
-                List<Integer> oldStates = this.states;
+                final List<Integer> oldStates = this.bitsPerEntry > 8 ? new ArrayList<>(this.palette) : this.palette;
                 if(this.bitsPerEntry > 8) {
-                    oldStates = new ArrayList<Integer>(this.states);
-                    this.states.clear();
-                    this.bitsPerEntry = 13;
+                    this.palette.clear();
+                    this.bitsPerEntry = 14;
                 }
 
                 FlexibleStorage oldStorage = this.storage;
-                this.storage = new FlexibleStorage(this.bitsPerEntry, this.storage.getSize());
-                for(int index = 0; index < this.storage.getSize(); index++) {
-                    this.storage.set(index, this.bitsPerEntry <= 8 ? oldStorage.get(index) : oldStates.get(index));
-                }
+                this.storage = oldStorage.transferData(this.bitsPerEntry, (index) ->
+                        this.bitsPerEntry <= 8 ? oldStorage.get(index) : oldStates.get(index));
             }
 
-            id = this.bitsPerEntry <= 8 ? this.states.indexOf(state) : state;
+            id = this.bitsPerEntry <= 8 ? this.palette.indexOf(state) : state;
         }
 
         int ind = index(x, y, z);

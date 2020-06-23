@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.util.Arrays;
+import java.util.function.IntFunction;
 
 @Data
 public class FlexibleStorage {
@@ -12,34 +13,32 @@ public class FlexibleStorage {
     private final int size;
     private final long maxEntryValue;
 
-    public FlexibleStorage(int bitsPerEntry, int size) {
-        this(bitsPerEntry, new long[roundToNearest(size * bitsPerEntry, 64) / 64]);
+    private final char valuesPerLong;
+    private final int magicIndex;
+    private final long divideMultiply;
+    private final long divideAdd;
+    private final long divideShift;
+
+    public FlexibleStorage(int bitsPerEntry) {
+        this(bitsPerEntry, new long[(4096 + (64 / bitsPerEntry) - 1) / (64 / bitsPerEntry)]);
     }
 
     public FlexibleStorage(int bitsPerEntry, @NonNull long[] data) {
         this.bitsPerEntry = bitsPerEntry;
-        if(bitsPerEntry <= 8) {
-            this.data = padArray(bitsPerEntry, Arrays.copyOf(data, data.length));
-        } else {
-            this.data = padArray(bitsPerEntry, 14, Arrays.copyOf(data, data.length));
-        }
-        this.size = data.length * 64 / this.bitsPerEntry;
-        this.maxEntryValue = (1L << this.bitsPerEntry) - 1;
-    }
+        this.data = Arrays.copyOf(data, data.length);
+        this.size = data.length * 64 / bitsPerEntry;
+        this.maxEntryValue = (1L << bitsPerEntry) - 1;
 
-    private static int roundToNearest(int value, int roundTo) {
-        if(roundTo == 0) {
-            return 0;
-        } else if(value == 0) {
-            return roundTo;
-        } else {
-            if(value < 0) {
-                roundTo *= -1;
-            }
-
-            int remainder = value % roundTo;
-            return remainder != 0 ? value + roundTo - remainder : value;
+        this.valuesPerLong = (char) (64 / bitsPerEntry);
+        int expectedLength = (4096 + valuesPerLong - 1) / valuesPerLong;
+        if(data.length != expectedLength) {
+            throw new IllegalArgumentException("Expected " + expectedLength + " longs but got " + data.length + " longs");
         }
+
+        this.magicIndex = 3 * (valuesPerLong - 1);
+        this.divideMultiply = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex]);
+        this.divideAdd = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex + 1]);
+        this.divideShift = MAGIC_VALUES[magicIndex + 2];
     }
 
     public int get(int index) {
@@ -47,16 +46,9 @@ public class FlexibleStorage {
             throw new IndexOutOfBoundsException();
         }
 
-        int bitIndex = index * this.bitsPerEntry;
-        int startIndex = bitIndex / 64;
-        int endIndex = ((index + 1) * this.bitsPerEntry - 1) / 64;
-        int startBitSubIndex = bitIndex % 64;
-        if(startIndex == endIndex) {
-            return (int) (this.data[startIndex] >>> startBitSubIndex & this.maxEntryValue);
-        } else {
-            int endBitSubIndex = 64 - startBitSubIndex;
-            return (int) ((this.data[startIndex] >>> startBitSubIndex | this.data[endIndex] << endBitSubIndex) & this.maxEntryValue);
-        }
+        int cellIndex = (int) (index * divideMultiply + divideAdd >> 32L >> divideShift);
+        int bitIndex = (index - cellIndex * valuesPerLong) * bitsPerEntry;
+        return (int) (data[cellIndex] >> bitIndex & maxEntryValue);
     }
 
     public void set(int index, int value) {
@@ -68,18 +60,12 @@ public class FlexibleStorage {
             throw new IllegalArgumentException("Value cannot be outside of accepted range.");
         }
 
-        int bitIndex = index * this.bitsPerEntry;
-        int startIndex = bitIndex / 64;
-        int endIndex = ((index + 1) * this.bitsPerEntry - 1) / 64;
-        int startBitSubIndex = bitIndex % 64;
-        this.data[startIndex] = this.data[startIndex] & ~(this.maxEntryValue << startBitSubIndex) | ((long) value & this.maxEntryValue) << startBitSubIndex;
-        if(startIndex != endIndex) {
-            int endBitSubIndex = 64 - startBitSubIndex;
-            this.data[endIndex] = this.data[endIndex] >>> endBitSubIndex << endBitSubIndex | ((long) value & this.maxEntryValue) >> endBitSubIndex;
-        }
+        int cellIndex = (int) (index * divideMultiply + divideAdd >> 32L >> divideShift);
+        int bitIndex = (index - cellIndex * valuesPerLong) * bitsPerEntry;
+        data[cellIndex] &= ~(maxEntryValue << bitIndex) | (value & maxEntryValue) << bitIndex;
     }
 
-    private static final int[] MAGIC_CHUNK_VALUES = {
+    private static final int[] MAGIC_VALUES = {
             -1, -1, 0, Integer.MIN_VALUE, 0, 0, 1431655765, 1431655765, 0, Integer.MIN_VALUE,
             0, 1, 858993459, 858993459, 0, 715827882, 715827882, 0, 613566756, 613566756,
             0, Integer.MIN_VALUE, 0, 2, 477218588, 477218588, 0, 429496729, 429496729, 0,
@@ -101,35 +87,11 @@ public class FlexibleStorage {
             70409299, 70409299, 0, 69273666, 69273666, 0, 68174084, 68174084, 0, Integer.MIN_VALUE,
             0, 5 };
 
-    private static long[] padArray(int bitsPerEntry, long[] oldData) {
-        return padArray(bitsPerEntry, bitsPerEntry, oldData);
-    }
-
-    private static long[] padArray(int bitsPerEntry, int newBitsPerEntry, long[] oldData) {
-        long maxEntryValue = (1L << bitsPerEntry) - 1;
-        char valuesPerLong = (char) (64 / newBitsPerEntry);
-        int magicIndex = (valuesPerLong - 1) * 3;
-        long divideMultiply = Integer.toUnsignedLong(MAGIC_CHUNK_VALUES[magicIndex]);
-        long divideAdd = Integer.toUnsignedLong(MAGIC_CHUNK_VALUES[magicIndex + 1]);
-        int divideShift = MAGIC_CHUNK_VALUES[magicIndex + 2];
-        long[] data = new long[(4096 + valuesPerLong - 1) / valuesPerLong];
-        for(int index = 0; index < 4096; index++) {
-            int bitIndex = index * bitsPerEntry;
-            int startIndex = bitIndex / 64;
-            int endIndex = ((index + 1) * bitsPerEntry - 1) / 64;
-            int startBitSubIndex = bitIndex % 64;
-            int value;
-            if(startIndex != endIndex) {
-                int endBitSubIndex = 64 - startBitSubIndex;
-                value = (int) ((oldData[startIndex] >>> startBitSubIndex | oldData[endIndex] << endBitSubIndex) & maxEntryValue);
-            } else {
-                value = (int) (oldData[startIndex] >>> startBitSubIndex & maxEntryValue);
-            }
-
-            int cellIndex = (int) (index * divideMultiply + divideAdd >> 32L >> divideShift);
-            int newBitIndex = (index - cellIndex * valuesPerLong) * newBitsPerEntry;
-            data[cellIndex] = data[cellIndex] & ~(maxEntryValue << newBitIndex) | (value & maxEntryValue) << newBitIndex;
+    public FlexibleStorage transferData(int newBitsPerEntry, IntFunction<Integer> valueGetter) {
+        FlexibleStorage newStorage = new FlexibleStorage(newBitsPerEntry);
+        for(int i = 0; i < 4096; i++) {
+            newStorage.set(i, valueGetter.apply(i));
         }
-        return data;
+        return newStorage;
     }
 }
