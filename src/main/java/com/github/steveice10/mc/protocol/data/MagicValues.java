@@ -881,8 +881,6 @@ public class MagicValues {
 
         register(ChestValueType.VIEWING_PLAYER_COUNT, 1);
 
-        register(BeaconValueType.RECALCULATE_BEAM, 1);
-
         register(EndGatewayValueType.TRIGGER_BEAM, 1);
 
         register(GenericBlockValueType.GENERIC_0, 0);

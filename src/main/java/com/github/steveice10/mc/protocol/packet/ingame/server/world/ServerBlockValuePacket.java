@@ -2,8 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.BeaconValue;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.BeaconValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.BlockValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValue;
@@ -41,7 +39,6 @@ public class ServerBlockValuePacket implements Packet {
     private static final int MOB_SPAWNER = 143; // Value does not show in 1.16
     private static final int CHEST = 147;
     private static final int ENDER_CHEST = 270;
-    private static final int BEACON = 0; // Was 270; Value does not show in 1.16
     private static final int TRAPPED_CHEST = 329;
     private static final int END_GATEWAY = 499;
     private static final int SHULKER_BOX_LOWER = 509;
@@ -72,9 +69,6 @@ public class ServerBlockValuePacket implements Packet {
                 || (this.blockId >= SHULKER_BOX_LOWER && this.blockId <= SHULKER_BOX_HIGHER)) {
             this.type = MagicValues.key(ChestValueType.class, type);
             this.value = new ChestValue(value);
-        } else if(this.blockId == BEACON) {
-            this.type = MagicValues.key(BeaconValueType.class, type);
-            this.value = new BeaconValue();
         } else if(this.blockId == END_GATEWAY) {
             this.type = MagicValues.key(EndGatewayValueType.class, type);
             this.value = new EndGatewayValue();

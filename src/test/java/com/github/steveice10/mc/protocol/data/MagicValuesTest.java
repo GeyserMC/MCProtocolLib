@@ -174,7 +174,6 @@ public class MagicValuesTest {
         this.register(PistonValueType.class, Integer.class);
         this.register(MobSpawnerValueType.class, Integer.class);
         this.register(ChestValueType.class, Integer.class);
-        this.register(BeaconValueType.class, Integer.class);
         this.register(EndGatewayValueType.class, Integer.class);
         this.register(GenericBlockValueType.class, Integer.class);
         this.register(PistonValue.class, Integer.class);
