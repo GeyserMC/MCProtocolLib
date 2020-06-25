@@ -41,6 +41,9 @@ public class ServerEntityPropertiesPacket implements Packet {
                 modifiers.add(new AttributeModifier(in.readUUID(), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
             }
 
+            if (key.startsWith("minecraft:")) {
+                key = key.replace("minecraft:", "");
+            }
             this.attributes.add(new Attribute(MagicValues.key(AttributeType.class, key), value, modifiers));
         }
     }
