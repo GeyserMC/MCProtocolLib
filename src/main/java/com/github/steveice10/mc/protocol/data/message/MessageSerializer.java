@@ -60,6 +60,10 @@ public class MessageSerializer {
         return toJson(message).toString();
     }
 
+    public static String toJsonAsString(Message message) {
+        return toJson(message).getAsString();
+    }
+
     public static JsonElement toJson(Message message) {
         if(message instanceof TextMessage && message.getStyle().equals(MessageStyle.DEFAULT) && message.getExtra().isEmpty()) {
             return new JsonPrimitive(((TextMessage) message).getText());
@@ -121,6 +125,11 @@ public class MessageSerializer {
             } else {
                 throw new IllegalArgumentException("Unknown NBT message type in json: " + json);
             }
+        } else if(json.has("type")) {
+            return new EntityHoverMessage.Builder()
+                    .type(json.get("type").getAsString())
+                    .id(json.get("id").getAsString())
+                    .name(fromJson(json.get("name")));
         } else {
             throw new IllegalArgumentException("Unknown message type in json: " + json);
         }
@@ -170,6 +179,11 @@ public class MessageSerializer {
             } else if(message instanceof StorageNbtMessage) {
                 json.addProperty("storage", ((StorageNbtMessage) nbtMessage).getId());
             }
+        } else if(message instanceof EntityHoverMessage) {
+            EntityHoverMessage entityHoverMessage = (EntityHoverMessage) message;
+            json.addProperty("type", entityHoverMessage.getType());
+            json.addProperty("id", entityHoverMessage.getId());
+            json.add("name", toJson(entityHoverMessage.getName()));
         }
     }
 
@@ -192,7 +206,7 @@ public class MessageSerializer {
 
         if(json.has("hoverEvent")) {
             JsonObject hover = json.get("hoverEvent").getAsJsonObject();
-            style.hoverEvent(new HoverEvent(HoverAction.byName(hover.get("action").getAsString()), fromJson(hover.get("value"))));
+            style.hoverEvent(new HoverEvent(HoverAction.byName(hover.get("action").getAsString()), fromJson(hover.get("contents"))));
         }
 
         if(json.has("insertion")) {
@@ -221,7 +235,7 @@ public class MessageSerializer {
         if(style.getHoverEvent() != null) {
             JsonObject hover = new JsonObject();
             hover.addProperty("action", style.getHoverEvent().getAction().toString());
-            hover.add("value", toJson(style.getHoverEvent().getValue()));
+            hover.add("contents", toJson(style.getHoverEvent().getContents()));
             json.add("hoverEvent", hover);
         }
 
