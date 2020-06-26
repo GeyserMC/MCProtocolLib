@@ -7,11 +7,9 @@ import com.github.steveice10.mc.protocol.data.message.style.ClickEvent;
 import com.github.steveice10.mc.protocol.data.message.style.HoverAction;
 import com.github.steveice10.mc.protocol.data.message.style.HoverEvent;
 import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+import com.github.steveice10.opennbt.conversion.builtin.CompoundTagConverter;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.google.gson.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,11 +119,21 @@ public class MessageSerializer {
             } else {
                 throw new IllegalArgumentException("Unknown NBT message type in json: " + json);
             }
-        } else if(json.has("type")) {
-            return new EntityHoverMessage.Builder()
-                    .type(json.get("type").getAsString())
-                    .id(json.get("id").getAsString())
-                    .name(fromJson(json.get("name")));
+        } else if(json.has("type") && json.has("id")) {
+            EntityHoverMessage.Builder builder = new EntityHoverMessage.Builder();
+            builder.type(json.get("type").getAsString());
+            builder.id(json.get("id").getAsString());
+            if (json.has("name"))
+                builder.name(fromJson(json.get("name")));
+            return builder;
+        } else if(json.has("id")) {
+            ItemHoverMessage.Builder builder = new ItemHoverMessage.Builder();
+            builder.id(json.get("id").getAsString());
+            if (json.has("count"))
+                builder.count(json.get("count").getAsInt());
+            if (json.has("tag"))
+                builder.tag(new Gson().fromJson(json.get("tag"), CompoundTag.class));
+            return builder;
         } else {
             throw new IllegalArgumentException("Unknown message type in json: " + json);
         }
@@ -180,6 +188,11 @@ public class MessageSerializer {
             json.addProperty("type", entityHoverMessage.getType());
             json.addProperty("id", entityHoverMessage.getId());
             json.add("name", toJson(entityHoverMessage.getName()));
+        } else if(message instanceof ItemHoverMessage) {
+            ItemHoverMessage entityHoverMessage = (ItemHoverMessage) message;
+            json.addProperty("id", entityHoverMessage.getId());
+            json.addProperty("count", entityHoverMessage.getCount());
+            json.add("tag",  new Gson().toJsonTree(entityHoverMessage.getTag()));
         }
     }
 
