@@ -60,10 +60,6 @@ public class MessageSerializer {
         return toJson(message).toString();
     }
 
-    public static String toJsonAsString(Message message) {
-        return toJson(message).getAsString();
-    }
-
     public static JsonElement toJson(Message message) {
         if(message instanceof TextMessage && message.getStyle().equals(MessageStyle.DEFAULT) && message.getExtra().isEmpty()) {
             return new JsonPrimitive(((TextMessage) message).getText());
