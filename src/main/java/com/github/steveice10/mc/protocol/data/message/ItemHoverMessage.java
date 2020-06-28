@@ -22,12 +22,12 @@ public class ItemHoverMessage extends Message {
             return this;
         }
 
-        public Builder count(@NonNull int count) {
+        public Builder count(int count) {
             this.count = count;
             return this;
         }
 
-        public Builder tag(@NonNull JsonElement tag) {
+        public Builder tag(JsonElement tag) {
             this.tag = tag;
             return this;
         }

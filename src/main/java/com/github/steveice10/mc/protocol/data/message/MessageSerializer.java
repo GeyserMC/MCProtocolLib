@@ -127,16 +127,24 @@ public class MessageSerializer {
             EntityHoverMessage.Builder builder = new EntityHoverMessage.Builder();
             builder.type(json.get("type").getAsString());
             builder.id(json.get("id").getAsString());
-            if (json.has("name"))
+
+            if (json.has("name")) {
                 builder.name(fromJson(json.get("name")));
+            }
+
             return builder;
         } else if(json.has("id")) {
             ItemHoverMessage.Builder builder = new ItemHoverMessage.Builder();
             builder.id(json.get("id").getAsString());
-            if (json.has("count"))
+
+            if (json.has("count")) {
                 builder.count(json.get("count").getAsInt());
-            if (json.has("tag"))
+            }
+
+            if (json.has("tag")) {
                 builder.tag(json.get("tag"));
+            }
+
             return builder;
         } else {
             throw new IllegalArgumentException("Unknown message type in json: " + json);

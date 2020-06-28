@@ -25,7 +25,7 @@ public class EntityHoverMessage extends Message {
             return this;
         }
 
-        public Builder name(@NonNull Message name) {
+        public Builder name(Message name) {
             this.name = name;
             return this;
         }
