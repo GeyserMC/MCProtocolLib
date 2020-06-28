@@ -607,9 +607,10 @@ public class MagicValues {
         register(WindowType.LOOM, 17);
         register(WindowType.MERCHANT, 18);
         register(WindowType.SHULKER_BOX, 19);
-        register(WindowType.SMOKER, 20);
-        register(WindowType.CARTOGRAPHY, 21);
-        register(WindowType.STONECUTTER, 22);
+        register(WindowType.SMITHING, 20);
+        register(WindowType.SMOKER, 21);
+        register(WindowType.CARTOGRAPHY, 22);
+        register(WindowType.STONECUTTER, 23);
 
         register(BrewingStandProperty.BREW_TIME, 0);
 
