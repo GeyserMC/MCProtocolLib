@@ -10,7 +10,7 @@ import lombok.ToString;
 public class HoverEvent {
     @NonNull
     private final HoverAction action;
-    @NonNull
+
     private final Message contents;
     
     public HoverEvent(@NonNull HoverAction action, @NonNull Message contents) {

@@ -215,7 +215,7 @@ public class MessageSerializer {
 
         if(json.has("hoverEvent")) {
             JsonObject hover = json.get("hoverEvent").getAsJsonObject();
-            style.hoverEvent(new HoverEvent(HoverAction.byName(hover.get("action").getAsString()), fromJson(hover.get("contents"))));
+            style.hoverEvent(new HoverEvent(HoverAction.byName(hover.get("action").getAsString()), fromJson(hover.has("value") ? hover.get("value") : hover.get("contents"))));
         }
 
         if(json.has("insertion")) {
