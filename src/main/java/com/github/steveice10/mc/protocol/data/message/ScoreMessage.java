@@ -67,4 +67,9 @@ public class ScoreMessage extends Message {
     public String getValue() {
         return this.value;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }

@@ -40,4 +40,9 @@ public class TextMessage extends Message {
     public String getText() {
         return this.text;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }

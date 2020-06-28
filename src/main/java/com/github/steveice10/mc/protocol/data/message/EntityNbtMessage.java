@@ -40,4 +40,9 @@ public class EntityNbtMessage extends NbtMessage {
     public String getSelector() {
         return this.selector;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }

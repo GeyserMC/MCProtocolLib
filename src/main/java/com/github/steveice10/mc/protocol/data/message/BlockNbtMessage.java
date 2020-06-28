@@ -40,4 +40,9 @@ public class BlockNbtMessage extends NbtMessage {
     public String getPos() {
         return this.pos;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }
