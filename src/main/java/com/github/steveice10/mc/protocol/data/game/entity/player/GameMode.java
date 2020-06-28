@@ -6,5 +6,6 @@ public enum GameMode implements ClientNotificationValue {
     SURVIVAL,
     CREATIVE,
     ADVENTURE,
-    SPECTATOR;
+    SPECTATOR,
+    UNDEFINED;
 }
