@@ -38,14 +38,14 @@ public class ServerEntityEquipmentPacket implements Packet {
             list.add(new Equipment(slot, item));
             hasNextEntry = (rawSlot & 128) == 128;
         }
-        this.equipment = list.toArray(new Equipment[list.size()]);
+        this.equipment = list.toArray(new Equipment[0]);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         for (int i = 0; i < this.equipment.length; i++) {
-            int rawSlot = MagicValues.value(Integer.class, this.equipment);
+            int rawSlot = MagicValues.value(Integer.class, this.equipment[i].getSlot());
             if (i != equipment.length - 1) {
                 rawSlot = rawSlot | 128;
             }
