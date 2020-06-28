@@ -34,8 +34,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
-    private String host;
-    private int port;
+    protected String host;
+    protected int port;
     private PacketProtocol protocol;
 
     private int compressionThreshold = -1;

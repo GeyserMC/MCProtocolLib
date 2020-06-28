@@ -29,7 +29,6 @@ import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 public class TcpClientSession extends TcpSession {
     private Client client;
@@ -111,7 +110,8 @@ public class TcpClientSession extends TcpSession {
                 @Override
                 public void run() {
                     try {
-                        bootstrap.remoteAddress(resolveAddress());
+                        resolveAddress();
+                        bootstrap.remoteAddress(getHost(), getPort());
 
                         ChannelFuture future = bootstrap.connect().sync();
                         if(future.isSuccess()) {
@@ -138,7 +138,7 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    private SocketAddress resolveAddress() {
+    private void resolveAddress() {
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
         String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
@@ -168,7 +168,8 @@ public class TcpClientSession extends TcpSession {
                         System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
                     }
 
-                    return new InetSocketAddress(host, port);
+                    this.host = host;
+                    this.port = port;
                 } else if(debug) {
                     System.out.println("[PacketLib] Received non-SRV record in response.");
                 }
@@ -185,8 +186,6 @@ public class TcpClientSession extends TcpSession {
                 envelope.release();
             }
         }
-
-        return new InetSocketAddress(this.getHost(), this.getPort());
     }
 
     @Override
