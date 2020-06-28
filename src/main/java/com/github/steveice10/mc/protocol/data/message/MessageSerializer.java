@@ -62,7 +62,11 @@ public class MessageSerializer {
         if(message instanceof TextMessage && message.getStyle().equals(MessageStyle.DEFAULT) && message.getExtra().isEmpty()) {
             return new JsonPrimitive(((TextMessage) message).getText());
         }
+        
+        return toJsonObject(message);
+    }
 
+    public static JsonObject toJsonObject(Message message) {
         JsonObject json = new JsonObject();
         dataToJson(json, message);
         styleToJson(json, message.getStyle());
@@ -132,7 +136,7 @@ public class MessageSerializer {
             if (json.has("count"))
                 builder.count(json.get("count").getAsInt());
             if (json.has("tag"))
-                builder.tag(new Gson().fromJson(json.get("tag"), CompoundTag.class));
+                builder.tag(json.get("tag"));
             return builder;
         } else {
             throw new IllegalArgumentException("Unknown message type in json: " + json);
@@ -192,7 +196,7 @@ public class MessageSerializer {
             ItemHoverMessage entityHoverMessage = (ItemHoverMessage) message;
             json.addProperty("id", entityHoverMessage.getId());
             json.addProperty("count", entityHoverMessage.getCount());
-            json.add("tag",  new Gson().toJsonTree(entityHoverMessage.getTag()));
+            json.add("tag",  entityHoverMessage.getTag());
         }
     }
 

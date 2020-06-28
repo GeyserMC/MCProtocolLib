@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.data.message;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.google.gson.JsonElement;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
@@ -14,7 +15,7 @@ public class ItemHoverMessage extends Message {
         @NonNull
         private String id = "";
         private int count;
-        private CompoundTag tag;
+        private JsonElement tag;
 
         public Builder id(@NonNull String id) {
             this.id = id;
@@ -26,7 +27,7 @@ public class ItemHoverMessage extends Message {
             return this;
         }
 
-        public Builder tag(@NonNull CompoundTag tag) {
+        public Builder tag(@NonNull JsonElement tag) {
             this.tag = tag;
             return this;
         }
@@ -48,9 +49,9 @@ public class ItemHoverMessage extends Message {
 
     private final String id;
     private final int count;
-    private final CompoundTag tag;
+    private final JsonElement tag;
 
-    private ItemHoverMessage(MessageStyle style, List<Message> extra, String id, int count, CompoundTag tag) {
+    private ItemHoverMessage(MessageStyle style, List<Message> extra, String id, int count, JsonElement tag) {
         super(style, extra);
         this.id = id;
         this.count = count;
@@ -65,7 +66,7 @@ public class ItemHoverMessage extends Message {
         return this.count;
     }
 
-    public CompoundTag getTag() {
+    public JsonElement getTag() {
         return this.tag;
     }
 }
