@@ -67,4 +67,9 @@ public class EntityHoverMessage extends Message {
     public Message getName() {
         return this.name;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }

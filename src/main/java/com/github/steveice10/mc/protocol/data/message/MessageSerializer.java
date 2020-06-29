@@ -62,11 +62,7 @@ public class MessageSerializer {
         if(message instanceof TextMessage && message.getStyle().equals(MessageStyle.DEFAULT) && message.getExtra().isEmpty()) {
             return new JsonPrimitive(((TextMessage) message).getText());
         }
-        
-        return toJsonObject(message);
-    }
 
-    public static JsonObject toJsonObject(Message message) {
         JsonObject json = new JsonObject();
         dataToJson(json, message);
         styleToJson(json, message.getStyle());

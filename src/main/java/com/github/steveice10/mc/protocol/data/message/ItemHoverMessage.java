@@ -69,4 +69,9 @@ public class ItemHoverMessage extends Message {
     public JsonElement getTag() {
         return this.tag;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }
