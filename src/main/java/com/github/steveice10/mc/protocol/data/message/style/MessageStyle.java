@@ -100,4 +100,8 @@ public class MessageStyle {
     public String getInsertion() {
         return this.insertion;
     }
+
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }

@@ -57,6 +57,8 @@ public abstract class Message {
         return this.extra;
     }
 
+    public abstract Builder<?, ?> toBuilder();
+
     @Override
     public String toString() {
         return MessageSerializer.toJsonString(this);

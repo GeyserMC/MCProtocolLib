@@ -62,4 +62,9 @@ public class TranslationMessage extends Message {
     public List<Message> getWith() {
         return this.with;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }

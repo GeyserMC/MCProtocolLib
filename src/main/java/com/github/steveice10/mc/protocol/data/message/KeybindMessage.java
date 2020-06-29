@@ -40,4 +40,9 @@ public class KeybindMessage extends Message {
     public String getKeybind() {
         return this.keybind;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }

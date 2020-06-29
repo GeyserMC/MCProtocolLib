@@ -40,4 +40,9 @@ public class StorageNbtMessage extends NbtMessage {
     public String getId() {
         return this.id;
     }
+
+    @Override
+    public Builder toBuilder() {
+        return new Builder().copy(this);
+    }
 }
