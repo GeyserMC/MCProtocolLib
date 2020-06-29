@@ -32,7 +32,7 @@ public class ServerEntityEquipmentPacket implements Packet {
         boolean hasNextEntry = true;
         List<Equipment> list = new ArrayList<>();
         while (hasNextEntry) {
-            int rawSlot = in.readVarInt();
+            int rawSlot = in.readByte();
             EquipmentSlot slot = MagicValues.key(EquipmentSlot.class, ((byte) rawSlot) & 127);
             ItemStack item = ItemStack.read(in);
             list.add(new Equipment(slot, item));
@@ -49,7 +49,7 @@ public class ServerEntityEquipmentPacket implements Packet {
             if (i != equipment.length - 1) {
                 rawSlot = rawSlot | 128;
             }
-            out.writeVarInt(rawSlot);
+            out.writeByte(rawSlot);
             ItemStack.write(out, this.equipment[i].getItem());
         }
     }

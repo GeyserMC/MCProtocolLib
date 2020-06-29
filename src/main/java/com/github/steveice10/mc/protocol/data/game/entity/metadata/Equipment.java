@@ -9,5 +9,5 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Equipment {
     private @NonNull EquipmentSlot slot;
-    private @NonNull ItemStack item;
+    private ItemStack item;
 }
