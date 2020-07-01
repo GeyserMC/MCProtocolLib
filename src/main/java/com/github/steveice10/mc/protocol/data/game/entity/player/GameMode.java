@@ -19,7 +19,7 @@ public enum GameMode implements ClientNotificationValue {
         return MagicValues.key(GameMode.class, gamemode);
     }
 
-    public static void writePreviousGameMode(NetOutput out, @Nullable GameMode gamemode) throws IOException {
+    public static void writePreviousGameMode(NetOutput out, GameMode gamemode) throws IOException {
         if (gamemode == null) {
             out.writeByte(255);
         } else {
