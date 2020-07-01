@@ -27,7 +27,7 @@ public class ServerJoinGamePacket implements Packet {
     private int entityId;
     private boolean hardcore;
     private @NonNull GameMode gameMode;
-    private @NonNull GameMode previousGamemode;
+    private GameMode previousGamemode;
     private int worldCount;
     private String[] worldNames;
     private @NonNull CompoundTag dimensionCodec;
@@ -48,7 +48,7 @@ public class ServerJoinGamePacket implements Packet {
         int gameMode = in.readUnsignedByte();
         this.hardcore = (gameMode & GAMEMODE_FLAG_HARDCORE) != 0;
         this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
-        this.previousGamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
+        this.previousGamemode = GameMode.readPreviousGameMode(in.readUnsignedByte());
         this.worldCount = in.readVarInt();
         this.worldNames = new String[this.worldCount];
         for (int i = 0; i < this.worldCount; i++) {
@@ -76,7 +76,7 @@ public class ServerJoinGamePacket implements Packet {
         }
 
         out.writeByte(gameMode);
-        out.writeByte(MagicValues.value(Integer.class, this.previousGamemode));
+        GameMode.writePreviousGameMode(out, this.previousGamemode);
         out.writeVarInt(this.worldCount);
         for (String worldName : this.worldNames) {
             out.writeString(worldName);
