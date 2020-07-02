@@ -127,9 +127,7 @@ public class MagicValues {
         register(AttributeType.HORSE_JUMP_STRENGTH, "minecraft:horse.jump_strength");
         register(AttributeType.ZOMBIE_SPAWN_REINFORCEMENTS, "minecraft:zombie.spawn_reinforcements");
         // Forge-only
-        register(AttributeType.SWIM_SPEED, "forge.swim_speed");
-        register(AttributeType.NAMETAG_DISTANCE, "forge.name_tag_distance");
-        register(AttributeType.ENTITY_GRAVITY, "forge.entity_gravity");
+        register(AttributeType.ENTITY_GRAVITY, "forge:entity_gravity");
 
         register(ModifierType.CREATURE_FLEE_SPEED_BONUS, UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A"));
         register(ModifierType.ENDERMAN_ATTACK_SPEED_BOOST, UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0"));

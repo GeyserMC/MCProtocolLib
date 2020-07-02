@@ -21,16 +21,6 @@ public enum AttributeType {
     ZOMBIE_SPAWN_REINFORCEMENTS(0, 0, 1),
     /**
      * Only available for clients/servers using Minecraft Forge.
-     * Source: MinecraftForge/patches/minecraft/net/minecraft/entity/LivingEntity.java.patch#10
-     */
-    SWIM_SPEED(1, 0, 1024),
-    /**
-     * Only available for clients/servers using Minecraft Forge.
-     * Source: MinecraftForge/patches/minecraft/net/minecraft/entity/LivingEntity.java.patch#11
-     */
-    NAMETAG_DISTANCE(64, 0, Float.MAX_VALUE),
-    /**
-     * Only available for clients/servers using Minecraft Forge.
      * Source: MinecraftForge/patches/minecraft/net/minecraft/entity/LivingEntity.java.patch#12
      */
     ENTITY_GRAVITY(0.08, -8.0, 8.0);
