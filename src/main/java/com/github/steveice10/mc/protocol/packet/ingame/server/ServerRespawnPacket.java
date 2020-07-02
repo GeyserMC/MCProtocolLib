@@ -19,8 +19,8 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerRespawnPacket implements Packet {
-    private String dimension;
-    private String worldName;
+    private @NonNull String dimension;
+    private @NonNull String worldName;
     private long hashedSeed;
     private @NonNull GameMode gamemode;
     private @NonNull GameMode previousGamemode;

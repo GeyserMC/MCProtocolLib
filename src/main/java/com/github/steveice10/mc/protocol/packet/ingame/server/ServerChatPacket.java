@@ -43,7 +43,7 @@ public class ServerChatPacket implements Packet {
         this(message, type, new UUID(0, 0));
     }
 
-    public ServerChatPacket(@NonNull String text, @NonNull MessageType type, UUID uuid) {
+    public ServerChatPacket(@NonNull String text, @NonNull MessageType type, @NonNull UUID uuid) {
         this(MessageSerializer.fromString(text), type, uuid);
     }
 
