@@ -27,13 +27,14 @@ public class ClientPlayerInteractEntityPacket implements Packet {
     private float targetY;
     private float targetZ;
     private @NonNull Hand hand;
+    private boolean isSneaking;
 
-    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action) {
-        this(entityId, action, Hand.MAIN_HAND);
+    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, boolean isSneaking) {
+        this(entityId, action, Hand.MAIN_HAND, isSneaking);
     }
 
-    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, Hand hand) {
-        this(entityId, action, 0, 0, 0, hand);
+    public ClientPlayerInteractEntityPacket(int entityId, InteractAction action, Hand hand, boolean isSneaking) {
+        this(entityId, action, 0, 0, 0, hand, isSneaking);
     }
 
     @Override
@@ -49,6 +50,7 @@ public class ClientPlayerInteractEntityPacket implements Packet {
         if(this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
             this.hand = MagicValues.key(Hand.class, in.readVarInt());
         }
+        this.isSneaking = in.readBoolean();
     }
 
     @Override
@@ -64,6 +66,7 @@ public class ClientPlayerInteractEntityPacket implements Packet {
         if(this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
             out.writeVarInt(MagicValues.value(Integer.class, this.hand));
         }
+        out.writeBoolean(this.isSneaking);
     }
 
     @Override

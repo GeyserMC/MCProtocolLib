@@ -15,14 +15,14 @@ import java.util.List;
 public class MessageStyle {
     public static class Builder {
         @NonNull
-        private ChatColor color = ChatColor.NONE;
+        private String color = ChatColor.NONE;
         @NonNull
         private List<ChatFormat> formats = new ArrayList<>();
         private ClickEvent clickEvent;
         private HoverEvent hoverEvent;
         private String insertion;
 
-        public Builder color(@NonNull ChatColor color) {
+        public Builder color(@NonNull String color) {
             this.color = color;
             return this;
         }
@@ -67,13 +67,13 @@ public class MessageStyle {
 
     public static final MessageStyle DEFAULT = new MessageStyle.Builder().build();
 
-    private final ChatColor color;
+    private final String color;
     private final List<ChatFormat> formats;
     private final ClickEvent clickEvent;
     private final HoverEvent hoverEvent;
     private final String insertion;
 
-    private MessageStyle(ChatColor color, List<ChatFormat> formats, ClickEvent clickEvent, HoverEvent hoverEvent, String insertion) {
+    private MessageStyle(String color, List<ChatFormat> formats, ClickEvent clickEvent, HoverEvent hoverEvent, String insertion) {
         this.color = color;
         this.formats = Collections.unmodifiableList(formats);
         this.clickEvent = clickEvent;
@@ -81,7 +81,7 @@ public class MessageStyle {
         this.insertion = insertion;
     }
 
-    public ChatColor getColor() {
+    public String getColor() {
         return this.color;
     }
 

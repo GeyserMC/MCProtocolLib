@@ -9,6 +9,12 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.opennbt.tag.builtin.ByteTag;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.FloatTag;
+import com.github.steveice10.opennbt.tag.builtin.IntTag;
+import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
@@ -29,7 +35,6 @@ import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_H
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static com.github.steveice10.mc.protocol.data.SubProtocol.STATUS;
-import static com.github.steveice10.mc.protocol.data.game.world.WorldType.DEFAULT;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +50,7 @@ public class MinecraftProtocolTest {
             new TextMessage.Builder().text("Hello world!").build(),
             null
     );
-    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 100, 0, DEFAULT, 16, false, false);
+    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), "minecraft:overworld", "minecraft:world", 100, 0, 16, false, false, false, false);
 
     private static Server server;
 
@@ -139,5 +144,32 @@ public class MinecraftProtocolTest {
                 event.getCause().printStackTrace();
             }
         }
+    }
+
+    private static CompoundTag getDimensionTag() {
+        CompoundTag tag = new CompoundTag("");
+        ListTag dimensionTag = new ListTag("dimension");
+        CompoundTag overworldTag = new CompoundTag("");
+        overworldTag.put(new StringTag("name", "minecraft:overworld"));
+        overworldTag.put(new ByteTag("natural", (byte) 1));
+        overworldTag.put(new FloatTag("ambient_light", 0f));
+        overworldTag.put(new ByteTag("shrunk", (byte) 0));
+        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
+        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
+        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
+        overworldTag.put(new ByteTag("piglin_safe", (byte) 0));
+        overworldTag.put(new ByteTag("natural", (byte) 1));
+        overworldTag.put(new FloatTag("ambient_light", 0));
+        overworldTag.put(new StringTag("infiniburn", "minecraft:infiniburn_overworld"));
+        overworldTag.put(new ByteTag("respawn_anchor_works", (byte) 0));
+        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
+        overworldTag.put(new ByteTag("bed_works", (byte) 1));
+        overworldTag.put(new ByteTag("has_raids", (byte) 1));
+        overworldTag.put(new IntTag("logical_height", 256));
+        overworldTag.put(new ByteTag("shrunk", (byte) 0));
+        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
+        dimensionTag.add(overworldTag);
+        overworldTag.put(tag);
+        return tag;
     }
 }

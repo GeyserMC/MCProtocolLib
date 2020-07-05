@@ -14,13 +14,13 @@ public class ServerChunkDataPacketTest extends PacketTest {
 
         this.setPackets(
                 new ServerChunkDataPacket(
-                        new Column(0, 0, new Chunk[] {
+                        new Column(0, 0, false, new Chunk[] {
                                 null, null, null, null, null, null, null, chunk,
                                 null, chunk, null, null, null, chunk, null, null
                         }, new CompoundTag[0], new CompoundTag("HeightMaps"))
                 ),
                 new ServerChunkDataPacket(
-                        new Column(1, 1, new Chunk[] {
+                        new Column(1, 1, false, new Chunk[] {
                                 chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk,
                                 chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk
                         }, new CompoundTag[] {

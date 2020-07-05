@@ -10,19 +10,19 @@ import lombok.ToString;
 public class HoverEvent {
     @NonNull
     private final HoverAction action;
-    @NonNull
-    private final Message value;
+
+    private final Message contents;
     
-    public HoverEvent(@NonNull HoverAction action, @NonNull Message value) {
+    public HoverEvent(@NonNull HoverAction action, @NonNull Message contents) {
         this.action = action;
-        this.value = value;
+        this.contents = contents;
     }
     
     public HoverAction getAction() {
         return this.action;
     }
     
-    public Message getValue() {
-        return this.value;
+    public Message getContents() {
+        return this.contents;
     }
 }

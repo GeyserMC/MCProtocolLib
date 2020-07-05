@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -20,25 +19,37 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerRespawnPacket implements Packet {
-    private int dimension;
+    private @NonNull String dimension;
+    private @NonNull String worldName;
     private long hashedSeed;
     private @NonNull GameMode gamemode;
-    private @NonNull WorldType worldType;
+    private @NonNull GameMode previousGamemode;
+    private boolean debug;
+    private boolean flat;
+    private boolean copyMetadata;
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.dimension = in.readInt();
+        this.dimension = in.readString();
+        this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-        this.worldType = MagicValues.key(WorldType.class, in.readString().toLowerCase());
+        this.previousGamemode = GameMode.readPreviousGameMode(in.readUnsignedByte());
+        this.debug = in.readBoolean();
+        this.flat = in.readBoolean();
+        this.copyMetadata = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeInt(this.dimension);
+        out.writeString(this.dimension);
+        out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
-        out.writeString(MagicValues.value(String.class, this.worldType));
+        GameMode.writePreviousGameMode(out, this.previousGamemode);
+        out.writeBoolean(this.debug);
+        out.writeBoolean(this.flat);
+        out.writeBoolean(this.copyMetadata);
     }
 
     @Override

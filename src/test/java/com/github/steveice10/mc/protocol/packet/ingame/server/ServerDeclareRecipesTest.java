@@ -4,10 +4,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.CookedRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.*;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import org.junit.Before;
 
@@ -83,6 +80,19 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                                         new ItemStack(9)
                                                 }),
                                                 new ItemStack(40)
+                                        )
+                                ),
+                                new Recipe(
+                                        RecipeType.SMITHING,
+                                        "Recipe5",
+                                        new SmithingRecipeData(
+                                                new Ingredient(new ItemStack[] {
+                                                        new ItemStack(10)
+                                                }),
+                                                new Ingredient(new ItemStack[] {
+                                                        new ItemStack(11)
+                                                }),
+                                                new ItemStack(12)
                                         )
                                 )
                         }

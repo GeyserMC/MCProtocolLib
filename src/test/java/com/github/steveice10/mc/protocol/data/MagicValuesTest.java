@@ -68,7 +68,6 @@ import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandP
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
 import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
-import com.github.steveice10.mc.protocol.data.game.world.WorldType;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
@@ -139,7 +138,6 @@ public class MagicValuesTest {
         this.register(CombatState.class, Integer.class);
         this.register(GameMode.class, Integer.class);
         this.register(Difficulty.class, Integer.class);
-        this.register(WorldType.class, String.class);
         this.register(Animation.class, Integer.class);
         this.register(Effect.class, Integer.class);
         this.register(EntityStatus.class, Integer.class);
@@ -176,7 +174,6 @@ public class MagicValuesTest {
         this.register(PistonValueType.class, Integer.class);
         this.register(MobSpawnerValueType.class, Integer.class);
         this.register(ChestValueType.class, Integer.class);
-        this.register(BeaconValueType.class, Integer.class);
         this.register(EndGatewayValueType.class, Integer.class);
         this.register(GenericBlockValueType.class, Integer.class);
         this.register(PistonValue.class, Integer.class);

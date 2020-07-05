@@ -31,6 +31,7 @@ public enum CommandParser {
     SCOREBOARD_SLOT,
     SCORE_HOLDER,
     SWIZZLE,
+    UUID,
     TEAM,
     ITEM_SLOT,
     RESOURCE_LOCATION,

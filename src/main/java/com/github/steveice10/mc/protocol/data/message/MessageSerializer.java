@@ -7,11 +7,9 @@ import com.github.steveice10.mc.protocol.data.message.style.ClickEvent;
 import com.github.steveice10.mc.protocol.data.message.style.HoverAction;
 import com.github.steveice10.mc.protocol.data.message.style.HoverEvent;
 import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+import com.github.steveice10.opennbt.conversion.builtin.CompoundTagConverter;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.google.gson.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +119,29 @@ public class MessageSerializer {
             } else {
                 throw new IllegalArgumentException("Unknown NBT message type in json: " + json);
             }
+        } else if(json.has("type") && json.has("id")) {
+            EntityHoverMessage.Builder builder = new EntityHoverMessage.Builder();
+            builder.type(json.get("type").getAsString());
+            builder.id(json.get("id").getAsString());
+
+            if (json.has("name")) {
+                builder.name(fromJson(json.get("name")));
+            }
+
+            return builder;
+        } else if(json.has("id")) {
+            ItemHoverMessage.Builder builder = new ItemHoverMessage.Builder();
+            builder.id(json.get("id").getAsString());
+
+            if (json.has("count")) {
+                builder.count(json.get("count").getAsInt());
+            }
+
+            if (json.has("tag")) {
+                builder.tag(json.get("tag"));
+            }
+
+            return builder;
         } else {
             throw new IllegalArgumentException("Unknown message type in json: " + json);
         }
@@ -170,13 +191,23 @@ public class MessageSerializer {
             } else if(message instanceof StorageNbtMessage) {
                 json.addProperty("storage", ((StorageNbtMessage) nbtMessage).getId());
             }
+        } else if(message instanceof EntityHoverMessage) {
+            EntityHoverMessage entityHoverMessage = (EntityHoverMessage) message;
+            json.addProperty("type", entityHoverMessage.getType());
+            json.addProperty("id", entityHoverMessage.getId());
+            json.add("name", toJson(entityHoverMessage.getName()));
+        } else if(message instanceof ItemHoverMessage) {
+            ItemHoverMessage entityHoverMessage = (ItemHoverMessage) message;
+            json.addProperty("id", entityHoverMessage.getId());
+            json.addProperty("count", entityHoverMessage.getCount());
+            json.add("tag",  entityHoverMessage.getTag());
         }
     }
 
     private static MessageStyle styleFromJson(JsonObject json) {
         MessageStyle.Builder style = new MessageStyle.Builder();
         if(json.has("color")) {
-            style.color(ChatColor.byName(json.get("color").getAsString()));
+            style.color(json.get("color").getAsString());
         }
 
         for(ChatFormat format : ChatFormat.values()) {
@@ -192,7 +223,7 @@ public class MessageSerializer {
 
         if(json.has("hoverEvent")) {
             JsonObject hover = json.get("hoverEvent").getAsJsonObject();
-            style.hoverEvent(new HoverEvent(HoverAction.byName(hover.get("action").getAsString()), fromJson(hover.get("value"))));
+            style.hoverEvent(new HoverEvent(HoverAction.byName(hover.get("action").getAsString()), fromJson(hover.has("value") ? hover.get("value") : hover.get("contents"))));
         }
 
         if(json.has("insertion")) {
@@ -221,7 +252,7 @@ public class MessageSerializer {
         if(style.getHoverEvent() != null) {
             JsonObject hover = new JsonObject();
             hover.addProperty("action", style.getHoverEvent().getAction().toString());
-            hover.add("value", toJson(style.getHoverEvent().getValue()));
+            hover.add("contents", toJson(style.getHoverEvent().getContents()));
             json.add("hoverEvent", hover);
         }
 

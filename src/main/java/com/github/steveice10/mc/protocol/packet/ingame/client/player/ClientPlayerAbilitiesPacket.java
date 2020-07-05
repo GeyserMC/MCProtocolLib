@@ -25,8 +25,6 @@ public class ClientPlayerAbilitiesPacket implements Packet {
     private boolean canFly;
     private boolean flying;
     private boolean creative;
-    private float flySpeed;
-    private float walkSpeed;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -35,9 +33,6 @@ public class ClientPlayerAbilitiesPacket implements Packet {
         this.canFly = (flags & FLAG_CAN_FLY) > 0;
         this.flying = (flags & FLAG_FLYING) > 0;
         this.creative = (flags & FLAG_CREATIVE) > 0;
-
-        this.flySpeed = in.readFloat();
-        this.walkSpeed = in.readFloat();
     }
 
     @Override
@@ -60,9 +55,6 @@ public class ClientPlayerAbilitiesPacket implements Packet {
         }
 
         out.writeByte(flags);
-
-        out.writeFloat(this.flySpeed);
-        out.writeFloat(this.walkSpeed);
     }
 
     @Override
