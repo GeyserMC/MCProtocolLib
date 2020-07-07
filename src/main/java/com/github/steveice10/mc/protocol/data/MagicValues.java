@@ -30,6 +30,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
+import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
@@ -1045,6 +1046,9 @@ public class MagicValues {
 
         register(Hand.MAIN_HAND, 0);
         register(Hand.OFF_HAND, 1);
+
+        register(HandPreference.LEFT_HAND, 0);
+        register(HandPreference.RIGHT_HAND, 1);
 
         register(BossBarAction.ADD, 0);
         register(BossBarAction.REMOVE, 1);
