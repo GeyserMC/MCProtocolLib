@@ -30,6 +30,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
+import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
@@ -194,6 +195,7 @@ public class MagicValuesTest {
         this.register(AdvancementTabAction.class, Integer.class);
         this.register(ResourcePackStatus.class, Integer.class);
         this.register(Hand.class, Integer.class);
+        this.register(HandPreference.class, Integer.class);
         this.register(BossBarAction.class, Integer.class);
         this.register(BossBarColor.class, Integer.class);
         this.register(BossBarDivision.class, Integer.class);

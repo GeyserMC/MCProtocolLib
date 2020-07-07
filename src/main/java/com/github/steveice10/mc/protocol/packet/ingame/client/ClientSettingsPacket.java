@@ -1,7 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
+import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -28,7 +28,7 @@ public class ClientSettingsPacket implements Packet {
     private @NonNull ChatVisibility chatVisibility;
     private boolean useChatColors;
     private @NonNull List<SkinPart> visibleParts;
-    private @NonNull Hand mainHand;
+    private @NonNull HandPreference mainHand;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -46,7 +46,7 @@ public class ClientSettingsPacket implements Packet {
             }
         }
 
-        this.mainHand = MagicValues.key(Hand.class, in.readVarInt());
+        this.mainHand = MagicValues.key(HandPreference.class, in.readVarInt());
     }
 
     @Override
