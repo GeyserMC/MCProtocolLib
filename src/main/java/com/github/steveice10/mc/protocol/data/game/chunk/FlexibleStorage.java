@@ -84,7 +84,7 @@ public class FlexibleStorage {
 
         int cellIndex = (int) (index * divideMultiply + divideAdd >> 32L >> divideShift);
         int bitIndex = (index - cellIndex * valuesPerLong) * bitsPerEntry;
-        data[cellIndex] &= ~(maxEntryValue << bitIndex) | (value & maxEntryValue) << bitIndex;
+        this.data[cellIndex] = this.data[cellIndex] & ~(this.maxEntryValue << bitIndex) | ((long) value & this.maxEntryValue) << bitIndex;
     }
 
     public FlexibleStorage transferData(int newBitsPerEntry, IntFunction<Integer> valueGetter) {
