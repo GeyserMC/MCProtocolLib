@@ -29,10 +29,10 @@ public class ServerJoinGamePacket implements Packet {
     private @NonNull GameMode gameMode;
     private GameMode previousGamemode;
     private int worldCount;
-    private String[] worldNames;
+    private @NonNull String[] worldNames;
     private @NonNull CompoundTag dimensionCodec;
     private @NonNull String dimension;
-    private String worldName;
+    private @NonNull String worldName;
     private long hashedSeed;
     private int maxPlayers;
     private int viewDistance;
