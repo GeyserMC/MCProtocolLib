@@ -16,42 +16,22 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientPlayerAbilitiesPacket implements Packet {
-    private static final int FLAG_INVINCIBLE = 0x01;
-    private static final int FLAG_CAN_FLY = 0x02;
     private static final int FLAG_FLYING = 0x04;
-    private static final int FLAG_CREATIVE = 0x08;
 
-    private boolean invincible;
-    private boolean canFly;
     private boolean flying;
-    private boolean creative;
 
     @Override
     public void read(NetInput in) throws IOException {
         byte flags = in.readByte();
-        this.invincible = (flags & FLAG_INVINCIBLE) > 0;
-        this.canFly = (flags & FLAG_CAN_FLY) > 0;
         this.flying = (flags & FLAG_FLYING) > 0;
-        this.creative = (flags & FLAG_CREATIVE) > 0;
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         int flags = 0;
-        if(this.invincible) {
-            flags |= FLAG_INVINCIBLE;
-        }
-
-        if(this.canFly) {
-            flags |= FLAG_CAN_FLY;
-        }
 
         if(this.flying) {
             flags |= FLAG_FLYING;
-        }
-
-        if(this.creative) {
-            flags |= FLAG_CREATIVE;
         }
 
         out.writeByte(flags);
