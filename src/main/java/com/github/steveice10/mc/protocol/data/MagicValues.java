@@ -53,7 +53,7 @@ import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
 import com.github.steveice10.mc.protocol.data.game.window.AdvancementTabAction;
 import com.github.steveice10.mc.protocol.data.game.window.ClickItemParam;
-import com.github.steveice10.mc.protocol.data.game.window.CraftingBookDataType;
+import com.github.steveice10.mc.protocol.data.game.window.CraftingBookStateType;
 import com.github.steveice10.mc.protocol.data.game.window.CreativeGrabParam;
 import com.github.steveice10.mc.protocol.data.game.window.DropItemParam;
 import com.github.steveice10.mc.protocol.data.game.window.FillStackParam;
@@ -74,7 +74,6 @@ import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureRotation;
 import com.github.steveice10.mc.protocol.data.game.world.block.UpdatedTileType;
-import com.github.steveice10.mc.protocol.data.game.world.block.value.BeaconValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.ChestValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.EndGatewayValueType;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.GenericBlockValueType;
@@ -1033,8 +1032,10 @@ public class MagicValues {
         register(UnlockRecipesAction.ADD, 1);
         register(UnlockRecipesAction.REMOVE, 2);
 
-        register(CraftingBookDataType.DISPLAYED_RECIPE, 0);
-        register(CraftingBookDataType.CRAFTING_BOOK_STATUS, 1);
+        register(CraftingBookStateType.CRAFTING, 0);
+        register(CraftingBookStateType.FURNACE, 1);
+        register(CraftingBookStateType.BLAST_FURNACE, 2);
+        register(CraftingBookStateType.SMOKER, 3);
 
         register(AdvancementTabAction.OPENED_TAB, 0);
         register(AdvancementTabAction.CLOSED_SCREEN, 1);

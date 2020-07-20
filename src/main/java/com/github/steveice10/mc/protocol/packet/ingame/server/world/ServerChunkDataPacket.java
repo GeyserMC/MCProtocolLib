@@ -35,7 +35,12 @@ public class ServerChunkDataPacket implements Packet {
         boolean ignoreOldData = in.readBoolean();
         int chunkMask = in.readVarInt();
         CompoundTag heightMaps = NBT.read(in);
-        int[] biomeData = fullChunk ? in.readInts(1024) : null;
+        int[] biomeData = fullChunk ? new int[in.readVarInt()] : null;
+        if (fullChunk) {
+            for (int index = 0; index < biomeData.length; index++) {
+                biomeData[index] = in.readVarInt();
+            }
+        }
         byte[] data = in.readBytes(in.readVarInt());
 
         NetInput dataIn = new StreamNetInput(new ByteArrayInputStream(data));
@@ -78,7 +83,10 @@ public class ServerChunkDataPacket implements Packet {
         out.writeVarInt(mask);
         NBT.write(out, this.column.getHeightMaps());
         if (fullChunk) {
-            out.writeInts(this.column.getBiomeData());
+            out.writeVarInt(this.column.getBiomeData().length);
+            for (int biomeData : this.column.getBiomeData()) {
+                out.writeVarInt(biomeData);
+            }
         }
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());
