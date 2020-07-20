@@ -1034,8 +1034,8 @@ public class MagicValues {
 
         register(CraftingBookStateType.CRAFTING, 0);
         register(CraftingBookStateType.FURNACE, 1);
-        register(CraftingBookStateType.BLAST_FURNACE, 1);
-        register(CraftingBookStateType.SMOKER, 1);
+        register(CraftingBookStateType.BLAST_FURNACE, 2);
+        register(CraftingBookStateType.SMOKER, 3);
 
         register(AdvancementTabAction.OPENED_TAB, 0);
         register(AdvancementTabAction.CLOSED_SCREEN, 1);
