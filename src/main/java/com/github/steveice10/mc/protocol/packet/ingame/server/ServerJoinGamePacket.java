@@ -22,7 +22,6 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerJoinGamePacket implements Packet {
     private static final int GAMEMODE_MASK = 0x07;
-    private static final int GAMEMODE_FLAG_HARDCORE = 0x08;
 
     private int entityId;
     private boolean hardcore;
@@ -45,8 +44,8 @@ public class ServerJoinGamePacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readInt();
 
+        this.hardcore = in.readBoolean();
         int gameMode = in.readUnsignedByte();
-        this.hardcore = (gameMode & GAMEMODE_FLAG_HARDCORE) != 0;
         this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
         this.previousGamemode = GameMode.readPreviousGameMode(in.readUnsignedByte());
         this.worldCount = in.readVarInt();
@@ -70,10 +69,8 @@ public class ServerJoinGamePacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.entityId);
 
+        out.writeBoolean(this.hardcore);
         int gameMode = MagicValues.value(Integer.class, this.gameMode) & GAMEMODE_MASK;
-        if (this.hardcore) {
-            gameMode |= GAMEMODE_FLAG_HARDCORE;
-        }
 
         out.writeByte(gameMode);
         GameMode.writePreviousGameMode(out, this.previousGamemode);
