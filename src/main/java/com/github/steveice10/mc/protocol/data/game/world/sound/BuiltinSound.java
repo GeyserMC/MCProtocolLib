@@ -594,6 +594,7 @@ public enum BuiltinSound implements Sound {
     ENTITY_PARROT_IMITATE_MAGMA_CUBE("entity.parrot.imitate.magma_cube"),
     ENTITY_PARROT_IMITATE_PHANTOM("entity.parrot.imitate.phantom"),
     ENTITY_PARROT_IMITATE_PIGLIN("entity.parrot.imitate.piglin"),
+    ENTITY_PARROT_IMITATE_PIGLIN_BRUTE("entity.parrot.imitate.piglin_brute"),
     ENTITY_PARROT_IMITATE_PILLAGER("entity.parrot.imitate.pillager"),
     ENTITY_PARROT_IMITATE_RAVAGER("entity.parrot.imitate.ravager"),
     ENTITY_PARROT_IMITATE_SHULKER("entity.parrot.imitate.shulker"),
