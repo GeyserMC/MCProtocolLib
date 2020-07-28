@@ -28,7 +28,7 @@ public class ClientSetDifficultyPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeByte(MagicValues.key(Byte.class, this.difficulty));
+        out.writeByte(MagicValues.value(Byte.class, this.difficulty));
     }
 
     @Override
