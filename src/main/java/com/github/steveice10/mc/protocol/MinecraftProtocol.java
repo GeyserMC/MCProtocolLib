@@ -511,7 +511,7 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x29, ClientUpdateJigsawBlockPacket.class);
         this.registerOutgoing(0x2A, ClientUpdateStructureBlockPacket.class);
         this.registerOutgoing(0x2B, ClientUpdateSignPacket.class);
-        this.registerOutgoing(0x2D, ClientPlayerSwingArmPacket.class);
+        this.registerOutgoing(0x2C, ClientPlayerSwingArmPacket.class);
         this.registerOutgoing(0x2D, ClientSpectatePacket.class);
         this.registerOutgoing(0x2E, ClientPlayerPlaceBlockPacket.class);
         this.registerOutgoing(0x2F, ClientPlayerUseItemPacket.class);
