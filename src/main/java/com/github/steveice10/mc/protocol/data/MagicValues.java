@@ -953,6 +953,7 @@ public class MagicValues {
         register(ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE, 2006);
         register(ParticleEffect.BREAK_SPLASH_POTION, 2007);
         register(ParticleEffect.EXPLOSION, 2008);
+        register(ParticleEffect.EVAPORATE, 2009);
         register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
 
         register(SmokeEffectData.DOWN, 0);
