@@ -938,6 +938,7 @@ public class MagicValues {
         register(SoundEffect.ENTITY_HUSK_CONVERTED_TO_ZOMBIE, 1041);
         register(SoundEffect.BLOCK_GRINDSTONE_USE, 1042);
         register(SoundEffect.ITEM_BOOK_PAGE_TURN, 1043);
+        register(SoundEffect.BLOCK_SMITHING_TABLE_USE, 1044);
         register(SoundEffect.ENTITY_ENDERDRAGON_GROWL, 3001);
 
         register(ParticleEffect.COMPOSTER, 1500);
