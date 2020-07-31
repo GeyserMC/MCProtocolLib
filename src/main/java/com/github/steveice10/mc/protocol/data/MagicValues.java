@@ -83,6 +83,7 @@ import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockVa
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
+import com.github.steveice10.mc.protocol.data.game.world.effect.DragonFireballEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
@@ -963,6 +964,9 @@ public class MagicValues {
 
         register(ComposterEffectData.FILL, 0);
         register(ComposterEffectData.FILL_SUCCESS, 1);
+
+        register(DragonFireballEffectData.NO_SOUND, 0);
+        register(DragonFireballEffectData.HAS_SOUND, 1);
 
         register(NameTagVisibility.ALWAYS, "");
         register(NameTagVisibility.ALWAYS, "always");

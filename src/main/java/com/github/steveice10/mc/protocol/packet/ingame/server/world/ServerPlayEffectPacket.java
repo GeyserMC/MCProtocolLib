@@ -6,6 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.world.effect.BonemealGrowEffe
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakBlockEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakPotionEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
+import com.github.steveice10.mc.protocol.data.game.world.effect.DragonFireballEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.RecordEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
@@ -55,6 +56,8 @@ public class ServerPlayEffectPacket implements Packet {
             this.data = new BonemealGrowEffectData(value);
         } else if(this.effect == ParticleEffect.COMPOSTER) {
             this.data = value > 0 ? ComposterEffectData.FILL_SUCCESS : ComposterEffectData.FILL;
+        } else if(this.effect == ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE) {
+            this.data = value == 1 ? DragonFireballEffectData.HAS_SOUND : DragonFireballEffectData.NO_SOUND;
         }
 
         this.broadcast = in.readBoolean();
@@ -76,6 +79,8 @@ public class ServerPlayEffectPacket implements Packet {
         } else if(this.data instanceof BonemealGrowEffectData) {
             value = ((BonemealGrowEffectData) this.data).getParticleCount();
         } else if(this.data instanceof ComposterEffectData) {
+            value = MagicValues.value(Integer.class, this.data);
+        } else if(this.data instanceof DragonFireballEffectData) {
             value = MagicValues.value(Integer.class, this.data);
         }
 
