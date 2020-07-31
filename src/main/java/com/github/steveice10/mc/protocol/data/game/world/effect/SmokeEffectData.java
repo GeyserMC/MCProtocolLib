@@ -6,5 +6,5 @@ public enum SmokeEffectData implements WorldEffectData {
     NORTH,
     SOUTH,
     WEST,
-    EAST
+    EAST;
 }
