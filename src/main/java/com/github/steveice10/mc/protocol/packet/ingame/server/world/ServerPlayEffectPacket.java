@@ -46,7 +46,7 @@ public class ServerPlayEffectPacket implements Packet {
         if(this.effect == SoundEffect.RECORD) {
             this.data = new RecordEffectData(value);
         } else if(this.effect == ParticleEffect.SMOKE) {
-            this.data = MagicValues.key(SmokeEffectData.class, value % 9);
+            this.data = MagicValues.key(SmokeEffectData.class, value % 6);
         } else if(this.effect == ParticleEffect.BREAK_BLOCK) {
             this.data = new BreakBlockEffectData(value);
         } else if(this.effect == ParticleEffect.BREAK_SPLASH_POTION) {

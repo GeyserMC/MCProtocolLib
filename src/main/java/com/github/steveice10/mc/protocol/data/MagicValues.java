@@ -954,15 +954,12 @@ public class MagicValues {
         register(ParticleEffect.EXPLOSION, 2008);
         register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
 
-        register(SmokeEffectData.SOUTH_EAST, 0);
-        register(SmokeEffectData.SOUTH, 1);
-        register(SmokeEffectData.SOUTH_WEST, 2);
-        register(SmokeEffectData.EAST, 3);
-        register(SmokeEffectData.UP, 4);
-        register(SmokeEffectData.WEST, 5);
-        register(SmokeEffectData.NORTH_EAST, 6);
-        register(SmokeEffectData.NORTH, 7);
-        register(SmokeEffectData.NORTH_WEST, 8);
+        register(SmokeEffectData.DOWN, 0);
+        register(SmokeEffectData.UP, 1);
+        register(SmokeEffectData.NORTH, 2);
+        register(SmokeEffectData.SOUTH, 3);
+        register(SmokeEffectData.WEST, 4);
+        register(SmokeEffectData.EAST, 5);
 
         register(ComposterEffectData.FILL, 0);
         register(ComposterEffectData.FILL_SUCCESS, 1);
