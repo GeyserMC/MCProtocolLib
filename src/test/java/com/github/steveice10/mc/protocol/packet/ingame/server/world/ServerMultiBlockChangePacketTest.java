@@ -10,7 +10,7 @@ public class ServerMultiBlockChangePacketTest extends PacketTest {
     @Before
     public void setup() {
         this.setPackets(
-                new ServerMultiBlockChangePacket(1, 1, 1, new BlockChangeRecord(new Position(1, 15, 3), 3))
+                new ServerMultiBlockChangePacket(3, 4, 12, new BlockChangeRecord(new Position(50, 65, 200), 3))
         );
     }
 

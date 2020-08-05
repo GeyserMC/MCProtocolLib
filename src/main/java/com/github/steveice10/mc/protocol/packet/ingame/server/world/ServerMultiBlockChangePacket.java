@@ -20,6 +20,9 @@ public class ServerMultiBlockChangePacket implements Packet {
     private int chunkX;
     private int chunkY;
     private int chunkZ;
+    /**
+     * The server sends the record position in terms of the local chunk coordinate but it is stored here in terms of global coordinates.
+     */
     private @NonNull BlockChangeRecord[] records;
 
     public ServerMultiBlockChangePacket(int chunkX, int chunkY, int chunkZ, BlockChangeRecord... records) {
@@ -43,7 +46,10 @@ public class ServerMultiBlockChangePacket implements Packet {
         for (int index = 0; index < this.records.length; index++) {
             long blockData = in.readVarLong();
             short position = (short) (blockData & 0xFFFL);
-            this.records[index] = new BlockChangeRecord(new Position(position >>> 8 & 0xF, position & 0xF, position >>> 4 & 0xF), (int) (blockData >>> 12));
+            int x = (this.chunkX << 4) + (position >>> 8 & 0xF);
+            int y = (this.chunkY << 4) + (position & 0xF);
+            int z = (this.chunkZ << 4) + (position >>> 4 & 0xF);
+            this.records[index] = new BlockChangeRecord(new Position(x, y, z), (int) (blockData >>> 12));
         }
     }
 
@@ -55,7 +61,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         out.writeLong(chunkPosition | (this.chunkY & 0xFFFFFL));
         out.writeVarInt(this.records.length);
         for (BlockChangeRecord record : this.records) {
-            short position = (short) (record.getPosition().getX() << 8 | record.getPosition().getZ() << 4 | record.getPosition().getY());
+            short position = (short) ((record.getPosition().getX() - (this.chunkX << 4)) << 8 | (record.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (record.getPosition().getY() - (this.chunkY << 4)));
             out.writeVarLong((long) record.getBlock() << 12 | position);
         }
     }
