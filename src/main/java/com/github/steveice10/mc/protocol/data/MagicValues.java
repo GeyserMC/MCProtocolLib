@@ -82,6 +82,7 @@ import com.github.steveice10.mc.protocol.data.game.world.block.value.NoteBlockVa
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValue;
 import com.github.steveice10.mc.protocol.data.game.world.block.value.PistonValueType;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
+import com.github.steveice10.mc.protocol.data.game.world.effect.DragonFireballEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SoundEffect;
@@ -937,6 +938,7 @@ public class MagicValues {
         register(SoundEffect.ENTITY_HUSK_CONVERTED_TO_ZOMBIE, 1041);
         register(SoundEffect.BLOCK_GRINDSTONE_USE, 1042);
         register(SoundEffect.ITEM_BOOK_PAGE_TURN, 1043);
+        register(SoundEffect.BLOCK_SMITHING_TABLE_USE, 1044);
         register(SoundEffect.ENTITY_ENDERDRAGON_GROWL, 3001);
 
         register(ParticleEffect.COMPOSTER, 1500);
@@ -952,20 +954,21 @@ public class MagicValues {
         register(ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE, 2006);
         register(ParticleEffect.BREAK_SPLASH_POTION, 2007);
         register(ParticleEffect.EXPLOSION, 2008);
+        register(ParticleEffect.EVAPORATE, 2009);
         register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
 
-        register(SmokeEffectData.SOUTH_EAST, 0);
-        register(SmokeEffectData.SOUTH, 1);
-        register(SmokeEffectData.SOUTH_WEST, 2);
-        register(SmokeEffectData.EAST, 3);
-        register(SmokeEffectData.UP, 4);
-        register(SmokeEffectData.WEST, 5);
-        register(SmokeEffectData.NORTH_EAST, 6);
-        register(SmokeEffectData.NORTH, 7);
-        register(SmokeEffectData.NORTH_WEST, 8);
+        register(SmokeEffectData.DOWN, 0);
+        register(SmokeEffectData.UP, 1);
+        register(SmokeEffectData.NORTH, 2);
+        register(SmokeEffectData.SOUTH, 3);
+        register(SmokeEffectData.WEST, 4);
+        register(SmokeEffectData.EAST, 5);
 
         register(ComposterEffectData.FILL, 0);
         register(ComposterEffectData.FILL_SUCCESS, 1);
+
+        register(DragonFireballEffectData.NO_SOUND, 0);
+        register(DragonFireballEffectData.HAS_SOUND, 1);
 
         register(NameTagVisibility.ALWAYS, "");
         register(NameTagVisibility.ALWAYS, "always");
