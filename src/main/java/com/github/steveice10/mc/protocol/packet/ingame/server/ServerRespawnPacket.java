@@ -1,7 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -19,7 +21,7 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerRespawnPacket implements Packet {
-    private @NonNull String dimension;
+    private @NonNull CompoundTag dimension;
     private @NonNull String worldName;
     private long hashedSeed;
     private @NonNull GameMode gamemode;
@@ -30,7 +32,7 @@ public class ServerRespawnPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.dimension = in.readString();
+        this.dimension = NBT.read(in);
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
@@ -42,7 +44,7 @@ public class ServerRespawnPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(this.dimension);
+        NBT.write(out, this.dimension);
         out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
