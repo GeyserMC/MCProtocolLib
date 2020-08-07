@@ -30,7 +30,7 @@ public class ServerJoinGamePacket implements Packet {
     private int worldCount;
     private @NonNull String[] worldNames;
     private @NonNull CompoundTag dimensionCodec;
-    private @NonNull String dimension;
+    private @NonNull CompoundTag dimension;
     private @NonNull String worldName;
     private long hashedSeed;
     private int maxPlayers;
@@ -54,7 +54,7 @@ public class ServerJoinGamePacket implements Packet {
             this.worldNames[i] = in.readString();
         }
         this.dimensionCodec = NBT.read(in);
-        this.dimension = in.readString();
+        this.dimension = NBT.read(in);
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.maxPlayers = in.readUnsignedByte();
@@ -79,7 +79,7 @@ public class ServerJoinGamePacket implements Packet {
             out.writeString(worldName);
         }
         NBT.write(out, this.dimensionCodec);
-        out.writeString(this.dimension);
+        NBT.write(out, this.dimension);
         out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(this.maxPlayers);
