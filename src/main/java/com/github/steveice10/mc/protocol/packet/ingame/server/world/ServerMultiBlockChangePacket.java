@@ -20,12 +20,13 @@ public class ServerMultiBlockChangePacket implements Packet {
     private int chunkX;
     private int chunkY;
     private int chunkZ;
+    private boolean ignoreOldLight;
     /**
      * The server sends the record position in terms of the local chunk coordinate but it is stored here in terms of global coordinates.
      */
     private @NonNull BlockChangeRecord[] records;
 
-    public ServerMultiBlockChangePacket(int chunkX, int chunkY, int chunkZ, BlockChangeRecord... records) {
+    public ServerMultiBlockChangePacket(int chunkX, int chunkY, int chunkZ, boolean ignoreOldLight, BlockChangeRecord... records) {
         if(records == null || records.length == 0) {
             throw new IllegalArgumentException("Records must contain at least 1 value.");
         }
@@ -33,6 +34,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         this.chunkX = chunkX;
         this.chunkY = chunkY;
         this.chunkZ = chunkZ;
+        this.ignoreOldLight = ignoreOldLight;
         this.records = records;
     }
 
@@ -42,6 +44,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         this.chunkX = (int) (chunkPosition >> 42);
         this.chunkY = (int) (chunkPosition << 44 >> 44);
         this.chunkZ = (int) (chunkPosition << 22 >> 42);
+        this.ignoreOldLight = in.readBoolean();
         this.records = new BlockChangeRecord[in.readVarInt()];
         for (int index = 0; index < this.records.length; index++) {
             long blockData = in.readVarLong();
@@ -59,6 +62,7 @@ public class ServerMultiBlockChangePacket implements Packet {
         chunkPosition |= (this.chunkX & 0x3FFFFFL) << 42;
         chunkPosition |= (this.chunkZ & 0x3FFFFFL) << 20;
         out.writeLong(chunkPosition | (this.chunkY & 0xFFFFFL));
+        out.writeBoolean(this.ignoreOldLight);
         out.writeVarInt(this.records.length);
         for (BlockChangeRecord record : this.records) {
             short position = (short) ((record.getPosition().getX() - (this.chunkX << 4)) << 8 | (record.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (record.getPosition().getY() - (this.chunkY << 4)));
