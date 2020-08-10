@@ -366,6 +366,8 @@ public class MagicValues {
         register(EntityStatus.LIVING_EQUIPMENT_BREAK_FEET, 52);
         register(EntityStatus.HONEY_BLOCK_SLIDE, 53);
         register(EntityStatus.HONEY_BLOCK_LAND, 54);
+        register(EntityStatus.PLAYER_SWAP_SAME_ITEM, 55);
+        register(EntityStatus.WOLF_SHAKE_WATER_STOP, 56);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);
