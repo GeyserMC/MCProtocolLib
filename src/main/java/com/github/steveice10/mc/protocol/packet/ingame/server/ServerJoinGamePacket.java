@@ -57,7 +57,7 @@ public class ServerJoinGamePacket implements Packet {
         this.dimension = NBT.read(in);
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
-        this.maxPlayers = in.readUnsignedByte();
+        this.maxPlayers = in.readVarInt();
         this.viewDistance = in.readVarInt();
         this.reducedDebugInfo = in.readBoolean();
         this.enableRespawnScreen = in.readBoolean();
@@ -82,7 +82,7 @@ public class ServerJoinGamePacket implements Packet {
         NBT.write(out, this.dimension);
         out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
-        out.writeByte(this.maxPlayers);
+        out.writeVarInt(this.maxPlayers);
         out.writeVarInt(this.viewDistance);
         out.writeBoolean(this.reducedDebugInfo);
         out.writeBoolean(this.enableRespawnScreen);
