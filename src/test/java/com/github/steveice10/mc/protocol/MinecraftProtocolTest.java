@@ -158,23 +158,19 @@ public class MinecraftProtocolTest {
     private static CompoundTag getOverworldTag() {
         CompoundTag overworldTag = new CompoundTag("");
         overworldTag.put(new StringTag("name", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("natural", (byte) 1));
-        overworldTag.put(new FloatTag("ambient_light", 0f));
-        overworldTag.put(new ByteTag("shrunk", (byte) 0));
-        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
-        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
-        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
         overworldTag.put(new ByteTag("piglin_safe", (byte) 0));
         overworldTag.put(new ByteTag("natural", (byte) 1));
-        overworldTag.put(new FloatTag("ambient_light", 0));
+        overworldTag.put(new FloatTag("ambient_light", 0f));
         overworldTag.put(new StringTag("infiniburn", "minecraft:infiniburn_overworld"));
         overworldTag.put(new ByteTag("respawn_anchor_works", (byte) 0));
         overworldTag.put(new ByteTag("has_skylight", (byte) 1));
         overworldTag.put(new ByteTag("bed_works", (byte) 1));
+        overworldTag.put(new StringTag("effects", "minecraft:overworld"));
         overworldTag.put(new ByteTag("has_raids", (byte) 1));
         overworldTag.put(new IntTag("logical_height", 256));
-        overworldTag.put(new ByteTag("shrunk", (byte) 0));
+        overworldTag.put(new FloatTag("coordinate_scale", 1f));
         overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
+        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
         return overworldTag;
     }
 }
