@@ -17,41 +17,56 @@ import java.io.IOException;
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerMultiBlockChangePacket implements Packet {
+    private int chunkX;
+    private int chunkY;
+    private int chunkZ;
+    private boolean ignoreOldLight;
+    /**
+     * The server sends the record position in terms of the local chunk coordinate but it is stored here in terms of global coordinates.
+     */
     private @NonNull BlockChangeRecord[] records;
 
-    public ServerMultiBlockChangePacket(BlockChangeRecord... records) {
+    public ServerMultiBlockChangePacket(int chunkX, int chunkY, int chunkZ, boolean ignoreOldLight, BlockChangeRecord... records) {
         if(records == null || records.length == 0) {
             throw new IllegalArgumentException("Records must contain at least 1 value.");
         }
 
+        this.chunkX = chunkX;
+        this.chunkY = chunkY;
+        this.chunkZ = chunkZ;
+        this.ignoreOldLight = ignoreOldLight;
         this.records = records;
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        int chunkX = in.readInt();
-        int chunkZ = in.readInt();
+        long chunkPosition = in.readLong();
+        this.chunkX = (int) (chunkPosition >> 42);
+        this.chunkY = (int) (chunkPosition << 44 >> 44);
+        this.chunkZ = (int) (chunkPosition << 22 >> 42);
+        this.ignoreOldLight = in.readBoolean();
         this.records = new BlockChangeRecord[in.readVarInt()];
-        for(int index = 0; index < this.records.length; index++) {
-            short pos = in.readShort();
-            int block = in.readVarInt();
-            int x = (chunkX << 4) + (pos >> 12 & 15);
-            int y = pos & 255;
-            int z = (chunkZ << 4) + (pos >> 8 & 15);
-            this.records[index] = new BlockChangeRecord(new Position(x, y, z), block);
+        for (int index = 0; index < this.records.length; index++) {
+            long blockData = in.readVarLong();
+            short position = (short) (blockData & 0xFFFL);
+            int x = (this.chunkX << 4) + (position >>> 8 & 0xF);
+            int y = (this.chunkY << 4) + (position & 0xF);
+            int z = (this.chunkZ << 4) + (position >>> 4 & 0xF);
+            this.records[index] = new BlockChangeRecord(new Position(x, y, z), (int) (blockData >>> 12));
         }
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        int chunkX = this.records[0].getPosition().getX() >> 4;
-        int chunkZ = this.records[0].getPosition().getZ() >> 4;
-        out.writeInt(chunkX);
-        out.writeInt(chunkZ);
+        long chunkPosition = 0;
+        chunkPosition |= (this.chunkX & 0x3FFFFFL) << 42;
+        chunkPosition |= (this.chunkZ & 0x3FFFFFL) << 20;
+        out.writeLong(chunkPosition | (this.chunkY & 0xFFFFFL));
+        out.writeBoolean(this.ignoreOldLight);
         out.writeVarInt(this.records.length);
-        for(BlockChangeRecord record : this.records) {
-            out.writeShort((record.getPosition().getX() - (chunkX << 4)) << 12 | (record.getPosition().getZ() - (chunkZ << 4)) << 8 | record.getPosition().getY());
-            out.writeVarInt(record.getBlock());
+        for (BlockChangeRecord record : this.records) {
+            short position = (short) ((record.getPosition().getX() - (this.chunkX << 4)) << 8 | (record.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (record.getPosition().getY() - (this.chunkY << 4)));
+            out.writeVarLong((long) record.getBlock() << 12 | position);
         }
     }
 
