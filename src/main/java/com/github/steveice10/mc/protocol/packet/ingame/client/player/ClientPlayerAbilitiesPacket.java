@@ -16,7 +16,7 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientPlayerAbilitiesPacket implements Packet {
-    private static final int FLAG_FLYING = 0x04;
+    private static final int FLAG_FLYING = 0x02;
 
     private boolean flying;
 
