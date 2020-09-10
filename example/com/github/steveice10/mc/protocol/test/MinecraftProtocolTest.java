@@ -2,6 +2,8 @@ package com.github.steveice10.mc.protocol.test;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
+import com.github.steveice10.mc.auth.service.AuthenticationService;
+import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
@@ -55,8 +57,11 @@ public class MinecraftProtocolTest {
 
     public static void main(String[] args) {
         if(SPAWN_SERVER) {
+            SessionService sessionService = new SessionService();
+            sessionService.setProxy(AUTH_PROXY);
+
             Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
-            server.setGlobalFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+            server.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
                 @Override
@@ -81,7 +86,7 @@ public class MinecraftProtocolTest {
                             1,
                             new String[] {"minecraft:world"},
                             getDimensionTag(),
-                            "minecraft:overworld",
+                            getOverworldTag(),
                             "minecraft:world",
                             100,
                             0,
@@ -156,9 +161,12 @@ public class MinecraftProtocolTest {
     }
 
     private static void status() {
+        SessionService sessionService = new SessionService();
+        sessionService.setProxy(AUTH_PROXY);
+
         MinecraftProtocol protocol = new MinecraftProtocol(SubProtocol.STATUS);
         Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+        client.getSession().setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
             @Override
             public void handle(Session session, ServerStatusInfo info) {
@@ -190,8 +198,17 @@ public class MinecraftProtocolTest {
     private static void login() {
         MinecraftProtocol protocol = null;
         if(VERIFY_USERS) {
+
             try {
-                protocol = new MinecraftProtocol(USERNAME, PASSWORD);
+                AuthenticationService authService = new AuthenticationService();
+                authService.setUsername(USERNAME);
+                authService.setPassword(PASSWORD);
+                authService.setProxy(AUTH_PROXY);
+                authService.login();
+
+                // Can also use "new MinecraftProtocol(USERNAME, PASSWORD)"
+                // if you don't need a proxy or any other customizations.
+                protocol = new MinecraftProtocol(authService);
                 System.out.println("Successfully authenticated user.");
             } catch(RequestException e) {
                 e.printStackTrace();
@@ -201,8 +218,11 @@ public class MinecraftProtocolTest {
             protocol = new MinecraftProtocol(USERNAME);
         }
 
+        SessionService sessionService = new SessionService();
+        sessionService.setProxy(AUTH_PROXY);
+
         Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+        client.getSession().setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.getSession().addListener(new SessionAdapter() {
             @Override
             public void packetReceived(PacketReceivedEvent event) {
@@ -230,27 +250,28 @@ public class MinecraftProtocolTest {
     private static CompoundTag getDimensionTag() {
         CompoundTag tag = new CompoundTag("");
         ListTag dimensionTag = new ListTag("dimension");
+        CompoundTag overworldTag = getOverworldTag();
+        dimensionTag.add(overworldTag);
+        overworldTag.put(tag);
+        return tag;
+    }
+
+    private static CompoundTag getOverworldTag() {
         CompoundTag overworldTag = new CompoundTag("");
         overworldTag.put(new StringTag("name", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("natural", (byte) 1));
-        overworldTag.put(new FloatTag("ambient_light", 0f));
-        overworldTag.put(new ByteTag("shrunk", (byte) 0));
-        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
-        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
-        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
         overworldTag.put(new ByteTag("piglin_safe", (byte) 0));
         overworldTag.put(new ByteTag("natural", (byte) 1));
-        overworldTag.put(new FloatTag("ambient_light", 0));
+        overworldTag.put(new FloatTag("ambient_light", 0f));
         overworldTag.put(new StringTag("infiniburn", "minecraft:infiniburn_overworld"));
         overworldTag.put(new ByteTag("respawn_anchor_works", (byte) 0));
         overworldTag.put(new ByteTag("has_skylight", (byte) 1));
         overworldTag.put(new ByteTag("bed_works", (byte) 1));
+        overworldTag.put(new StringTag("effects", "minecraft:overworld"));
         overworldTag.put(new ByteTag("has_raids", (byte) 1));
         overworldTag.put(new IntTag("logical_height", 256));
-        overworldTag.put(new ByteTag("shrunk", (byte) 0));
+        overworldTag.put(new FloatTag("coordinate_scale", 1f));
         overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
-        dimensionTag.add(overworldTag);
-        overworldTag.put(tag);
-        return tag;
+        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
+        return overworldTag;
     }
 }

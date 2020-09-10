@@ -31,7 +31,6 @@ import com.github.steveice10.packetlib.event.session.PacketSentEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 
 import javax.crypto.SecretKey;
-import java.net.Proxy;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -40,6 +39,9 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
+/**
+ * Handles initial login and status requests for servers.
+ */
 public class ServerListener extends SessionAdapter {
     private static final int DEFAULT_COMPRESSION_THRESHOLD = 256;
 
@@ -190,9 +192,7 @@ public class ServerListener extends SessionAdapter {
         public void run() {
             GameProfile profile = null;
             if(this.key != null) {
-                SessionService sessionService = new SessionService();
-                sessionService.setProxy(this.session.getFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY));
-
+                SessionService sessionService = this.session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
                 try {
                     profile = sessionService.getProfileByServer(username, sessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
                 } catch(RequestException e) {

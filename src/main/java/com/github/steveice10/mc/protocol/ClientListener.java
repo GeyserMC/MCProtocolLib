@@ -34,9 +34,11 @@ import lombok.NonNull;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.net.Proxy;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Handles making initial login and status requests for clients.
+ */
 @AllArgsConstructor
 public class ClientListener extends SessionAdapter {
     private final @NonNull SubProtocol targetSubProtocol;
@@ -56,9 +58,7 @@ public class ClientListener extends SessionAdapter {
                     throw new IllegalStateException("Failed to generate shared key.", e);
                 }
 
-                SessionService sessionService = new SessionService();
-                sessionService.setProxy(event.getSession().getFlag(MinecraftConstants.AUTH_PROXY_KEY, Proxy.NO_PROXY));
-
+                SessionService sessionService = event.getSession().getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                 String serverId = sessionService.getServerId(packet.getServerId(), packet.getPublicKey(), key);
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
