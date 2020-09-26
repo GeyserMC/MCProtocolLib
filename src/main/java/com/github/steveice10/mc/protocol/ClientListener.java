@@ -106,7 +106,7 @@ public class ClientListener extends SessionAdapter {
                 event.getSession().disconnect("Finished");
             }
         } else if(protocol.getSubProtocol() == SubProtocol.GAME) {
-            if(event.getPacket() instanceof ServerKeepAlivePacket && protocol.isAutomaticallySendKeepAlive()) {
+            if(event.getPacket() instanceof ServerKeepAlivePacket && event.getSession().getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
                 event.getSession().send(new ClientKeepAlivePacket(event.<ServerKeepAlivePacket>getPacket().getPingId()));
             } else if(event.getPacket() instanceof ServerDisconnectPacket) {
                 event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().toString());
