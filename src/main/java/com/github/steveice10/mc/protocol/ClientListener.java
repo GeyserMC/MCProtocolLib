@@ -106,7 +106,7 @@ public class ClientListener extends SessionAdapter {
                 event.getSession().disconnect("Finished");
             }
         } else if(protocol.getSubProtocol() == SubProtocol.GAME) {
-            if(event.getPacket() instanceof ServerKeepAlivePacket) {
+            if(event.getPacket() instanceof ServerKeepAlivePacket && protocol.isAutomaticallySendKeepAlive()) {
                 event.getSession().send(new ClientKeepAlivePacket(event.<ServerKeepAlivePacket>getPacket().getPingId()));
             } else if(event.getPacket() instanceof ServerDisconnectPacket) {
                 event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().toString());

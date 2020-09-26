@@ -165,7 +165,9 @@ public class ServerListener extends SessionAdapter {
                 handler.loggedIn(session);
             }
 
-            new Thread(new KeepAliveTask(session)).start();
+            if (((MinecraftProtocol) session.getPacketProtocol()).isAutomaticallySendKeepAlive()) {
+                new Thread(new KeepAliveTask(session)).start();
+            }
         }
     }
 

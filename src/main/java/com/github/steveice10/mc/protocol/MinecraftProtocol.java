@@ -212,6 +212,16 @@ public class MinecraftProtocol extends PacketProtocol {
     private boolean useDefaultListeners = true;
 
     /**
+     * Whether to automatically send a keep alive packet. <br>
+     * For servers: determines if the keep alive task is run. <br>
+     * For clients: determines if MCProtocolLib automatically sends back a packet
+     * when the server sends their keep alive packet.
+     */
+    @Getter
+    @Setter
+    private boolean automaticallySendKeepAlive = true;
+
+    /**
      * Constructs a new MinecraftProtocol instance, starting with a specific {@link SubProtocol}.
      * @param subProtocol {@link SubProtocol} to start with.
      */
