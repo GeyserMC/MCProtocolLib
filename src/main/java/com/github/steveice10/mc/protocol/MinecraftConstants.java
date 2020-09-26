@@ -31,6 +31,14 @@ public final class MinecraftConstants {
      */
     public static final String SESSION_SERVICE_KEY = "session-service";
 
+    /**
+     * Session flag for whether to automatically send a keep alive packet. <br>
+     * For servers: determines if the keep alive task is run. <br>
+     * For clients: determines if MCProtocolLib automatically sends back a packet
+     * when the server sends their keep alive packet.
+     */
+    public static final String AUTOMATIC_KEEP_ALIVE_MANAGEMENT = "manage-keep-alive";
+
     // Client Key Constants
 
     /**
