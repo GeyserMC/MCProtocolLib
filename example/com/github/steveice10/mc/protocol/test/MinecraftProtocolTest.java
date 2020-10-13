@@ -198,7 +198,6 @@ public class MinecraftProtocolTest {
     private static void login() {
         MinecraftProtocol protocol = null;
         if(VERIFY_USERS) {
-
             try {
                 AuthenticationService authService = new AuthenticationService();
                 authService.setUsername(USERNAME);

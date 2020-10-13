@@ -170,7 +170,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.net.Proxy;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.UUID;
