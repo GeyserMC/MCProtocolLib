@@ -1,10 +1,11 @@
 package com.github.steveice10.mc.protocol.data.message.style;
 
 public enum ClickAction {
-    RUN_COMMAND,
-    SUGGEST_COMMAND,
-    OPEN_URL,
-    CHANGE_PAGE;
+	CHANGE_PAGE,
+	COPY_TO_CLIPBOARD,
+	OPEN_URL,
+	RUN_COMMAND,
+	SUGGEST_COMMAND;
 
     public static ClickAction byName(String name) {
         String lowerCase = name.toLowerCase();
