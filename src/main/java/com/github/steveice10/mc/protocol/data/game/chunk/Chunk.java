@@ -99,14 +99,14 @@ public class Chunk {
 
     private void resizePalette() {
         Palette oldPalette = this.palette;
-        int[] oldData = this.storage.toIntArray();
+        BitStorage oldData = this.storage;
 
-        int bitsPerEntry = sanitizeBitsPerEntry(this.storage.getBitsPerEntry() + 1);
+        int bitsPerEntry = sanitizeBitsPerEntry(oldData.getBitsPerEntry() + 1);
         this.palette = createPalette(bitsPerEntry);
         this.storage = new BitStorage(bitsPerEntry, CHUNK_SIZE);
 
-        for(int i = 0; i < oldData.length; i++) {
-            this.storage.set(i, this.palette.stateToId(oldPalette.idToState(oldData[i])));
+        for(int i = 0; i < CHUNK_SIZE; i++) {
+            this.storage.set(i, this.palette.stateToId(oldPalette.idToState(oldData.get(i))));
         }
     }
 
