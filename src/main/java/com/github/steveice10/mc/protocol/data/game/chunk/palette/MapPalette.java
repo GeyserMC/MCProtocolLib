@@ -1,9 +1,8 @@
 package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
+import io.netty.util.collection.IntObjectHashMap;
+import io.netty.util.collection.IntObjectMap;
 import lombok.EqualsAndHashCode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A palette backed by a map.
@@ -12,20 +11,20 @@ import java.util.Map;
 public class MapPalette implements Palette {
     private final int maxId;
 
-    private final Map<Integer, Integer> idToState = new HashMap<>();
-    private final Map<Integer, Integer> stateToId = new HashMap<>();
+    private final int[] idToState;
+    private final IntObjectMap<Integer> stateToId = new IntObjectHashMap<>();
     private int nextId = 1;
 
     public MapPalette(int bitsPerEntry) {
         this.maxId = (1 << bitsPerEntry) - 1;
 
-        this.idToState.put(0, 0);
-        this.stateToId.put(0, 0);
+        this.idToState = new int[this.maxId + 1];
+        this.stateToId.put(0, (Integer) 0);
     }
 
     @Override
     public int size() {
-        return this.idToState.size();
+        return this.nextId;
     }
 
     @Override
@@ -33,7 +32,7 @@ public class MapPalette implements Palette {
         Integer id = this.stateToId.get(state);
         if(id == null && this.size() < this.maxId + 1) {
             id = this.nextId++;
-            this.idToState.put(id, state);
+            this.idToState[id] = state;
             this.stateToId.put(state, id);
         }
 
@@ -46,9 +45,8 @@ public class MapPalette implements Palette {
 
     @Override
     public int idToState(int id) {
-        Integer state = this.idToState.get(id);
-        if(state != null) {
-            return state;
+        if(id >= 0 && id < this.size()) {
+            return this.idToState[id];
         } else {
             return 0;
         }
