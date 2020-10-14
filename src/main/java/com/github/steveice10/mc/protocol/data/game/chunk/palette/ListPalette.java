@@ -2,9 +2,6 @@ package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
 import lombok.EqualsAndHashCode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A palette backed by a List.
  */
