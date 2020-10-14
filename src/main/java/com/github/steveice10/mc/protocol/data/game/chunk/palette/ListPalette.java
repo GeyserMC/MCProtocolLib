@@ -12,25 +12,32 @@ import java.util.List;
 public class ListPalette implements Palette {
     private final int maxId;
 
-    private final List<Integer> data = new ArrayList<>();
+    private final int[] data;
+    private int nextId = 1;
 
     public ListPalette(int bitsPerEntry) {
         this.maxId = (1 << bitsPerEntry) - 1;
 
-        this.data.add(0);
+        this.data = new int[this.maxId + 1];
     }
 
     @Override
     public int size() {
-        return this.data.size();
+        return this.nextId;
     }
 
     @Override
     public int stateToId(int state) {
-        int id = this.data.indexOf(state);
+        int id = -1;
+        for(int i = 0; i < this.nextId; i++) { // Linear search for state
+            if(this.data[i] == state) {
+                id = i;
+                break;
+            }
+        }
         if(id == -1 && this.size() < this.maxId + 1) {
-            this.data.add(id);
-            id = this.data.size() - 1;
+            id = this.nextId++;
+            this.data[id] = state;
         }
 
         return id;
@@ -38,8 +45,8 @@ public class ListPalette implements Palette {
 
     @Override
     public int idToState(int id) {
-        if(id >= 0 && id < this.data.size()) {
-            return this.data.get(id);
+        if(id >= 0 && id < this.size()) {
+            return this.data[id];
         } else {
             return 0;
         }
