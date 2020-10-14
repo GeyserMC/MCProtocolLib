@@ -29,7 +29,7 @@ public class ListPalette implements Palette {
     public int stateToId(int state) {
         int id = this.data.indexOf(state);
         if(id == -1 && this.size() < this.maxId + 1) {
-            this.data.add(id);
+            this.data.add(state);
             id = this.data.size() - 1;
         }
 
