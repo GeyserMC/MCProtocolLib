@@ -28,7 +28,9 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.FloatTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.LongTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
+import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.Server;
@@ -44,6 +46,7 @@ import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
 
 import java.net.Proxy;
 import java.util.Arrays;
+import java.util.Map;
 
 public class MinecraftProtocolTest {
     private static final boolean SPAWN_SERVER = true;
