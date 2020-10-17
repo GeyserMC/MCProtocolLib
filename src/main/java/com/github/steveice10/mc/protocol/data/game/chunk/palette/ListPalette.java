@@ -10,7 +10,7 @@ public class ListPalette implements Palette {
     private final int maxId;
 
     private final int[] data;
-    private int nextId = 1;
+    private int nextId = 0;
 
     public ListPalette(int bitsPerEntry) {
         this.maxId = (1 << bitsPerEntry) - 1;
