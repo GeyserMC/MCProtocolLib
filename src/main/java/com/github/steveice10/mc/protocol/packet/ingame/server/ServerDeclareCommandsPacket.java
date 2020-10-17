@@ -71,7 +71,9 @@ public class ServerDeclareCommandsPacket implements Packet {
             CommandParser parser = null;
             CommandProperties properties = null;
             if(type == CommandType.ARGUMENT) {
-                parser = MagicValues.key(CommandParser.class, Identifier.formalize(in.readString()));
+                String identifier = Identifier.formalize(in.readString());
+                if (identifier.equals("minecraft:")) continue;
+                parser = MagicValues.key(CommandParser.class, identifier);
                 switch(parser) {
                     case DOUBLE: {
                         byte numberFlags = in.readByte();

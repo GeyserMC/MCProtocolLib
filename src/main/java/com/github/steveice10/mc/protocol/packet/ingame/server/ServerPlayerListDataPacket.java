@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -23,14 +24,14 @@ public class ServerPlayerListDataPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.header = Message.fromString(in.readString());
-        this.footer = Message.fromString(in.readString());
+        this.header = MessageSerializer.fromString(in.readString());
+        this.footer = MessageSerializer.fromString(in.readString());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(this.header.toJsonString());
-        out.writeString(this.footer.toJsonString());
+        out.writeString(MessageSerializer.toJsonString(this.header));
+        out.writeString(MessageSerializer.toJsonString(this.footer));
     }
 
     @Override

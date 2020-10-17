@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.UnmappedValueException;
 import com.github.steveice10.mc.protocol.data.game.statistic.BreakBlockStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.BreakItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.CraftItemStatistic;
@@ -73,7 +74,7 @@ public class ServerStatisticsPacket implements Packet {
                     default:
                         throw new IllegalArgumentException();
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (UnmappedValueException e) {
                 statistic = new CustomStatistic(categoryId, statisticId);
             }
             this.statistics.put(statistic, in.readVarInt());

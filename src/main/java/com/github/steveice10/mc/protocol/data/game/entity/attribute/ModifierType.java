@@ -22,5 +22,10 @@ public enum ModifierType {
     LEGGINGS_MODIFIER,
     CHESTPLATE_MODIFIER,
     HELMET_MODIFIER,
-    COVERED_ARMOR_BONUS;
+    COVERED_ARMOR_BONUS,
+    /**
+     * Only available for clients/servers using Minecraft Forge.
+     * Source: MinecraftForge/patches/minecraft/net/minecraft/entity/LivingEntity.java.patch#9
+     */
+    SLOW_FALLING
 }

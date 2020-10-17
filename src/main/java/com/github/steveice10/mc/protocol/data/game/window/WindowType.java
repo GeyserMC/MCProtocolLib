@@ -21,6 +21,7 @@ public enum WindowType {
     LOOM,
     MERCHANT,
     SHULKER_BOX,
+    SMITHING,
     SMOKER,
     CARTOGRAPHY,
     STONECUTTER;

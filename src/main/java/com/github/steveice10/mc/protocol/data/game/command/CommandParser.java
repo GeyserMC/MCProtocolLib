@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.command;
 
 public enum CommandParser {
+    ANGLE,
     BOOL,
     DOUBLE,
     FLOAT,
@@ -31,6 +32,7 @@ public enum CommandParser {
     SCOREBOARD_SLOT,
     SCORE_HOLDER,
     SWIZZLE,
+    UUID,
     TEAM,
     ITEM_SLOT,
     RESOURCE_LOCATION,

@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -51,7 +52,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.combatState == CombatState.ENTITY_DEAD) {
             this.playerId = in.readVarInt();
             this.entityId = in.readInt();
-            this.message = Message.fromString(in.readString());
+            this.message = MessageSerializer.fromString(in.readString());
         }
     }
 
@@ -64,7 +65,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.combatState == CombatState.ENTITY_DEAD) {
             out.writeVarInt(this.playerId);
             out.writeInt(this.entityId);
-            out.writeString(this.message.toJsonString());
+            out.writeString(MessageSerializer.toJsonString(this.message));
         }
     }
 

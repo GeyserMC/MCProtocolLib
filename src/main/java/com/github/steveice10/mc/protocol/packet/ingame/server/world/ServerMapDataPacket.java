@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.world.map.MapData;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIcon;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -48,7 +49,7 @@ public class ServerMapDataPacket implements Packet {
             int rotation = in.readUnsignedByte();
             Message displayName = null;
             if(in.readBoolean()) {
-                displayName = Message.fromString(in.readString());
+                displayName = MessageSerializer.fromString(in.readString());
             }
 
             this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
@@ -81,7 +82,7 @@ public class ServerMapDataPacket implements Packet {
             out.writeByte(icon.getIconRotation());
             if (icon.getDisplayName() != null) {
                 out.writeBoolean(false);
-                out.writeString(icon.getDisplayName().toJsonString());
+                out.writeString(MessageSerializer.toJsonString(icon.getDisplayName()));
             } else {
                 out.writeBoolean(true);
             }

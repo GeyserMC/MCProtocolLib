@@ -3,11 +3,11 @@ package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
-import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -40,6 +40,7 @@ public class EntityMetadata {
                     value = in.readByte();
                     break;
                 case INT:
+                case BLOCK_STATE:
                     value = in.readVarInt();
                     break;
                 case FLOAT:
@@ -56,7 +57,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    value = Message.fromString(in.readString());
+                    value = MessageSerializer.fromString(in.readString());
                     break;
                 case ITEM:
                     value = ItemStack.read(in);
@@ -86,9 +87,6 @@ public class EntityMetadata {
                         value = in.readUUID();
                     }
 
-                    break;
-                case BLOCK_STATE:
-                    value = BlockState.read(in);
                     break;
                 case NBT_TAG:
                     value = NBT.read(in);
@@ -142,7 +140,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    out.writeString(((Message) meta.getValue()).toJsonString());
+                    out.writeString(MessageSerializer.toJsonString((Message) meta.getValue()));
                     break;
                 case ITEM:
                     ItemStack.write(out, (ItemStack) meta.getValue());
@@ -174,7 +172,7 @@ public class EntityMetadata {
 
                     break;
                 case BLOCK_STATE:
-                    BlockState.write(out, (BlockState) meta.getValue());
+                    out.writeVarInt((int) meta.getValue());
                     break;
                 case NBT_TAG:
                     NBT.write(out, (CompoundTag) meta.getValue());

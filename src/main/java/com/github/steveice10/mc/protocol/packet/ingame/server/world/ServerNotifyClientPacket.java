@@ -7,6 +7,7 @@ import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotificati
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.RainStrengthValue;
+import com.github.steveice10.mc.protocol.data.game.world.notify.RespawnScreenValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ThunderStrengthValue;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -38,6 +39,8 @@ public class ServerNotifyClientPacket implements Packet {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
         } else if(this.notification == ClientNotification.ENTER_CREDITS) {
             this.value = MagicValues.key(EnterCreditsValue.class, (int) value);
+        } else if(this.notification == ClientNotification.ENABLE_RESPAWN_SCREEN) {
+            this.value = MagicValues.key(RespawnScreenValue.class, (int) value);
         } else if(this.notification == ClientNotification.RAIN_STRENGTH) {
             this.value = new RainStrengthValue(value);
         } else if(this.notification == ClientNotification.THUNDER_STRENGTH) {

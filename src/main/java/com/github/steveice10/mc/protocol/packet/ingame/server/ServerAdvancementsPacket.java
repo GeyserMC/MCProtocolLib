@@ -6,6 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.Displ
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -59,8 +60,8 @@ public class ServerAdvancementsPacket implements Packet {
             String parentId = in.readBoolean() ? in.readString() : null;
             DisplayData displayData = null;
             if(in.readBoolean()) {
-                Message title = Message.fromString(in.readString());
-                Message description = Message.fromString(in.readString());
+                Message title = MessageSerializer.fromString(in.readString());
+                Message description = MessageSerializer.fromString(in.readString());
                 ItemStack icon = ItemStack.read(in);
                 FrameType frameType = MagicValues.key(FrameType.class, in.readVarInt());
 
@@ -136,8 +137,8 @@ public class ServerAdvancementsPacket implements Packet {
             DisplayData displayData = advancement.getDisplayData();
             if(displayData != null) {
                 out.writeBoolean(true);
-                out.writeString(displayData.getTitle().toJsonString());
-                out.writeString(displayData.getDescription().toJsonString());
+                out.writeString(MessageSerializer.toJsonString(displayData.getTitle()));
+                out.writeString(MessageSerializer.toJsonString(displayData.getDescription()));
                 ItemStack.write(out, displayData.getIcon());
                 out.writeVarInt(MagicValues.value(Integer.class, displayData.getFrameType()));
                 String backgroundTexture = displayData.getBackgroundTexture();

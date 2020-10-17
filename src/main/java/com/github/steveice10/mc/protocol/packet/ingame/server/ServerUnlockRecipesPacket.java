@@ -25,12 +25,18 @@ public class ServerUnlockRecipesPacket implements Packet {
     private boolean activateCraftingFiltering;
     private boolean openSmeltingBook;
     private boolean activateSmeltingFiltering;
+    private boolean openBlastingBook;
+    private boolean activateBlastingFiltering;
+    private boolean openSmokingBook;
+    private boolean activateSmokingFiltering;
 
     private String[] alreadyKnownRecipes;
 
     public ServerUnlockRecipesPacket(@NonNull String[] recipes,
                                      boolean openCraftingBook, boolean activateCraftingFiltering,
                                      boolean openSmeltingBook, boolean activateSmeltingFiltering,
+                                     boolean openBlastingBook, boolean activateBlastingFiltering,
+                                     boolean openSmokingBook, boolean activateSmokingFiltering,
                                      @NonNull UnlockRecipesAction action) {
         if(action != UnlockRecipesAction.ADD && action != UnlockRecipesAction.REMOVE) {
             throw new IllegalArgumentException("Action must be ADD or REMOVE.");
@@ -42,11 +48,17 @@ public class ServerUnlockRecipesPacket implements Packet {
         this.activateCraftingFiltering = activateCraftingFiltering;
         this.openSmeltingBook = openSmeltingBook;
         this.activateSmeltingFiltering = activateSmeltingFiltering;
+        this.openBlastingBook = openBlastingBook;
+        this.activateBlastingFiltering = activateBlastingFiltering;
+        this.openSmokingBook = openSmokingBook;
+        this.activateSmokingFiltering = activateSmokingFiltering;
     }
 
     public ServerUnlockRecipesPacket(@NonNull String[] recipes,
                                      boolean openCraftingBook, boolean activateCraftingFiltering,
                                      boolean openSmeltingBook, boolean activateSmeltingFiltering,
+                                     boolean openBlastingBook, boolean activateBlastingFiltering,
+                                     boolean openSmokingBook, boolean activateSmokingFiltering,
                                      @NonNull String[] alreadyKnownRecipes) {
         this.action = UnlockRecipesAction.INIT;
         this.recipes = Arrays.copyOf(recipes, recipes.length);
@@ -54,6 +66,10 @@ public class ServerUnlockRecipesPacket implements Packet {
         this.activateCraftingFiltering = activateCraftingFiltering;
         this.openSmeltingBook = openSmeltingBook;
         this.activateSmeltingFiltering = activateSmeltingFiltering;
+        this.openBlastingBook = openBlastingBook;
+        this.activateBlastingFiltering = activateBlastingFiltering;
+        this.openSmokingBook = openSmokingBook;
+        this.activateSmokingFiltering = activateSmokingFiltering;
 
         this.alreadyKnownRecipes = Arrays.copyOf(alreadyKnownRecipes, alreadyKnownRecipes.length);
     }
@@ -66,6 +82,10 @@ public class ServerUnlockRecipesPacket implements Packet {
         this.activateCraftingFiltering = in.readBoolean();
         this.openSmeltingBook = in.readBoolean();
         this.activateSmeltingFiltering = in.readBoolean();
+        this.openBlastingBook = in.readBoolean();
+        this.activateBlastingFiltering = in.readBoolean();
+        this.openSmokingBook = in.readBoolean();
+        this.activateSmokingFiltering = in.readBoolean();
 
         if(this.action == UnlockRecipesAction.INIT) {
             this.alreadyKnownRecipes = new String[in.readVarInt()];
@@ -88,6 +108,10 @@ public class ServerUnlockRecipesPacket implements Packet {
         out.writeBoolean(this.activateCraftingFiltering);
         out.writeBoolean(this.openSmeltingBook);
         out.writeBoolean(this.activateSmeltingFiltering);
+        out.writeBoolean(this.openBlastingBook);
+        out.writeBoolean(this.activateBlastingFiltering);
+        out.writeBoolean(this.openSmokingBook);
+        out.writeBoolean(this.activateSmokingFiltering);
 
         if(this.action == UnlockRecipesAction.INIT) {
             out.writeVarInt(this.alreadyKnownRecipes.length);

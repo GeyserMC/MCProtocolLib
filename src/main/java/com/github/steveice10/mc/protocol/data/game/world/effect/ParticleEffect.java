@@ -13,5 +13,6 @@ public enum ParticleEffect implements WorldEffect {
     BONEMEAL_GROW,
     ENDERDRAGON_FIREBALL_EXPLODE,
     EXPLOSION,
+    EVAPORATE,
     END_GATEWAY_SPAWN;
 }

@@ -34,7 +34,7 @@ public class Advancement {
     public static class DisplayData {
         private final @NonNull Message title;
         private final @NonNull Message description;
-        private final @NonNull ItemStack icon;
+        private final ItemStack icon;
         private final @NonNull FrameType frameType;
         private final boolean showToast;
         private final boolean hidden;
@@ -42,7 +42,7 @@ public class Advancement {
         private final float posY;
         private final String backgroundTexture;
 
-        public DisplayData(@NonNull Message title, @NonNull Message description, @NonNull ItemStack icon, @NonNull FrameType frameType,
+        public DisplayData(@NonNull Message title, @NonNull Message description, ItemStack icon, @NonNull FrameType frameType,
                            boolean showToast, boolean hidden, float posX, float posY) {
             this(title, description, icon, frameType, showToast, hidden, posX, posY, null);
         }

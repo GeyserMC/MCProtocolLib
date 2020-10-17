@@ -9,5 +9,5 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class BlockChangeRecord {
     private final @NonNull Position position;
-    private final @NonNull BlockState block;
+    private final @NonNull int block;
 }

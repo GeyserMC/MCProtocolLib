@@ -22,12 +22,12 @@ public class LoginSuccessPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.profile = new GameProfile(in.readString(), in.readString());
+        this.profile = new GameProfile(in.readUUID(), in.readString());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(this.profile.getIdAsString());
+        out.writeUUID(this.profile.getId());
         out.writeString(this.profile.getName());
     }
 

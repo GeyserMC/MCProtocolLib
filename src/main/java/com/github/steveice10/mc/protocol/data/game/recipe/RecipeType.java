@@ -21,5 +21,6 @@ public enum RecipeType {
     BLASTING,
     SMOKING,
     CAMPFIRE_COOKING,
-    STONECUTTING;
+    STONECUTTING,
+    SMITHING
 }

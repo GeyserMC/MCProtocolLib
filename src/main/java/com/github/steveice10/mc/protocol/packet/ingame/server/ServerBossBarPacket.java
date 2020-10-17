@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -91,7 +92,7 @@ public class ServerBossBarPacket implements Packet {
         this.action = MagicValues.key(BossBarAction.class, in.readVarInt());
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            this.title = Message.fromString(in.readString());
+            this.title = MessageSerializer.fromString(in.readString());
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -117,7 +118,7 @@ public class ServerBossBarPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            out.writeString(this.title.toJsonString());
+            out.writeString(MessageSerializer.toJsonString(this.title));
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {

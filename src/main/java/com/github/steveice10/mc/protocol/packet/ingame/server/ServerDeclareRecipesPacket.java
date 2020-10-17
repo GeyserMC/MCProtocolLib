@@ -6,11 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.CookedRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.RecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.*;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -85,6 +81,14 @@ public class ServerDeclareRecipesPacket implements Packet {
                     data = new StoneCuttingRecipeData(group, ingredient, result);
                     break;
                 }
+                case SMITHING: {
+                    Ingredient base = this.readIngredient(in);
+                    Ingredient addition = this.readIngredient(in);
+                    ItemStack result = ItemStack.read(in);
+
+                    data = new SmithingRecipeData(base, addition, result);
+                    break;
+                }
                 default:
                     break;
             }
@@ -155,6 +159,14 @@ public class ServerDeclareRecipesPacket implements Packet {
 
                     out.writeString(data.getGroup());
                     this.writeIngredient(out, data.getIngredient());
+                    ItemStack.write(out, data.getResult());
+                    break;
+                }
+                case SMITHING: {
+                    SmithingRecipeData data = (SmithingRecipeData) recipe.getData();
+
+                    this.writeIngredient(out, data.getBase());
+                    this.writeIngredient(out, data.getAddition());
                     ItemStack.write(out, data.getResult());
                     break;
                 }

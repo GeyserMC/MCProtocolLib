@@ -2,11 +2,11 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.world.block.BlockState;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BonemealGrowEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakBlockEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.BreakPotionEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ComposterEffectData;
+import com.github.steveice10.mc.protocol.data.game.world.effect.DragonFireballEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.ParticleEffect;
 import com.github.steveice10.mc.protocol.data.game.world.effect.RecordEffectData;
 import com.github.steveice10.mc.protocol.data.game.world.effect.SmokeEffectData;
@@ -47,15 +47,17 @@ public class ServerPlayEffectPacket implements Packet {
         if(this.effect == SoundEffect.RECORD) {
             this.data = new RecordEffectData(value);
         } else if(this.effect == ParticleEffect.SMOKE) {
-            this.data = MagicValues.key(SmokeEffectData.class, value % 9);
+            this.data = MagicValues.key(SmokeEffectData.class, value % 6);
         } else if(this.effect == ParticleEffect.BREAK_BLOCK) {
-            this.data = new BreakBlockEffectData(new BlockState(value));
+            this.data = new BreakBlockEffectData(value);
         } else if(this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
             this.data = new BreakPotionEffectData(value);
         } else if(this.effect == ParticleEffect.BONEMEAL_GROW) {
             this.data = new BonemealGrowEffectData(value);
         } else if(this.effect == ParticleEffect.COMPOSTER) {
             this.data = value > 0 ? ComposterEffectData.FILL_SUCCESS : ComposterEffectData.FILL;
+        } else if(this.effect == ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE) {
+            this.data = value == 1 ? DragonFireballEffectData.HAS_SOUND : DragonFireballEffectData.NO_SOUND;
         }
 
         this.broadcast = in.readBoolean();
@@ -71,12 +73,14 @@ public class ServerPlayEffectPacket implements Packet {
         } else if(this.data instanceof SmokeEffectData) {
             value = MagicValues.value(Integer.class, (SmokeEffectData) this.data);
         } else if(this.data instanceof BreakBlockEffectData) {
-            value = ((BreakBlockEffectData) this.data).getBlockState().getId();
+            value = ((BreakBlockEffectData) this.data).getBlockState();
         } else if(this.data instanceof BreakPotionEffectData) {
             value = ((BreakPotionEffectData) this.data).getPotionId();
         } else if(this.data instanceof BonemealGrowEffectData) {
             value = ((BonemealGrowEffectData) this.data).getParticleCount();
         } else if(this.data instanceof ComposterEffectData) {
+            value = MagicValues.value(Integer.class, this.data);
+        } else if(this.data instanceof DragonFireballEffectData) {
             value = MagicValues.value(Integer.class, this.data);
         }
 

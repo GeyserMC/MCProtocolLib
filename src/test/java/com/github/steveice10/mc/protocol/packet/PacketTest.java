@@ -28,7 +28,7 @@ public abstract class PacketTest {
             Packet decoded = this.createPacket(packet.getClass());
             decoded.read(new StreamNetInput(new ByteArrayInputStream(encoded)));
 
-            assertEquals("Decoded packet does not match original.", packet, decoded);
+            assertEquals("Decoded packet does not match original: " + packet + " vs " + decoded, packet, decoded);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.client.window;
 
+import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -20,17 +22,20 @@ import java.io.IOException;
 public class ClientEditBookPacket implements Packet {
     private @NonNull ItemStack book;
     private boolean signing;
+    private @NonNull Hand hand;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.book = ItemStack.read(in);
         this.signing = in.readBoolean();
+        this.hand = MagicValues.key(Hand.class, in.readVarInt());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         ItemStack.write(out, this.book);
         out.writeBoolean(this.signing);
+        out.writeVarInt(MagicValues.value(Integer.class, hand));
     }
 
     @Override

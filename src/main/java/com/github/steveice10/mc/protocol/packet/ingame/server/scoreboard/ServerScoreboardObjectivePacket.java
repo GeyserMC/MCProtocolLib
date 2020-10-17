@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import com.github.steveice10.mc.protocol.data.message.Message;
+import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -46,7 +47,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
         this.name = in.readString();
         this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
         if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            this.displayName = Message.fromString(in.readString());
+            this.displayName = MessageSerializer.fromString(in.readString());
             this.type = MagicValues.key(ScoreType.class, in.readVarInt());
         }
     }
@@ -56,7 +57,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
         out.writeString(this.name);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            out.writeString(this.displayName.toJsonString());
+            out.writeString(MessageSerializer.toJsonString(this.displayName));
             out.writeVarInt(MagicValues.value(Integer.class, this.type));
         }
     }

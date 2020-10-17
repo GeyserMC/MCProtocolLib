@@ -2,18 +2,18 @@ package com.github.steveice10.mc.protocol.test;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
+import com.github.steveice10.mc.auth.service.AuthenticationService;
+import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.world.WorldType;
-import com.github.steveice10.mc.protocol.data.message.ChatColor;
-import com.github.steveice10.mc.protocol.data.message.ChatFormat;
 import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageStyle;
 import com.github.steveice10.mc.protocol.data.message.TextMessage;
-import com.github.steveice10.mc.protocol.data.message.TranslationMessage;
+import com.github.steveice10.mc.protocol.data.message.style.ChatColor;
+import com.github.steveice10.mc.protocol.data.message.style.ChatFormat;
+import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -23,7 +23,14 @@ import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandl
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.opennbt.tag.builtin.ByteTag;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.FloatTag;
+import com.github.steveice10.opennbt.tag.builtin.IntTag;
+import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.packetlib.Client;
+import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.server.ServerAdapter;
@@ -43,15 +50,18 @@ public class MinecraftProtocolTest {
     private static final boolean VERIFY_USERS = false;
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 25565;
-    private static final Proxy PROXY = Proxy.NO_PROXY;
+    private static final ProxyInfo PROXY = null;
     private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
 
     public static void main(String[] args) {
         if(SPAWN_SERVER) {
-            Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory(PROXY));
-            server.setGlobalFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+            SessionService sessionService = new SessionService();
+            sessionService.setProxy(AUTH_PROXY);
+
+            Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
+            server.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
                 @Override
@@ -59,7 +69,7 @@ public class MinecraftProtocolTest {
                     return new ServerStatusInfo(
                             new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION),
                             new PlayerInfo(100, 0, new GameProfile[0]),
-                            new TextMessage("Hello world!"),
+                            new TextMessage.Builder().text("Hello world!").build(),
                             null
                     );
                 }
@@ -68,7 +78,24 @@ public class MinecraftProtocolTest {
             server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, new ServerLoginHandler() {
                 @Override
                 public void loggedIn(Session session) {
-                    session.send(new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, 0, 0, 100, WorldType.DEFAULT, 16, false, true));
+                    session.send(new ServerJoinGamePacket(
+                            0,
+                            false,
+                            GameMode.SURVIVAL,
+                            GameMode.SURVIVAL,
+                            1,
+                            new String[] {"minecraft:world"},
+                            getDimensionTag(),
+                            getOverworldTag(),
+                            "minecraft:world",
+                            100,
+                            0,
+                            16,
+                            false,
+                            false,
+                            false,
+                            false
+                    ));
                 }
             });
 
@@ -88,11 +115,28 @@ public class MinecraftProtocolTest {
                                 ClientChatPacket packet = event.getPacket();
                                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                                 System.out.println(profile.getName() + ": " + packet.getMessage());
-                                Message msg = new TextMessage("Hello, ").setStyle(new MessageStyle().setColor(ChatColor.GREEN));
-                                Message name = new TextMessage(profile.getName()).setStyle(new MessageStyle().setColor(ChatColor.AQUA).addFormat(ChatFormat.UNDERLINED));
-                                Message end = new TextMessage("!");
-                                msg.addExtra(name);
-                                msg.addExtra(end);
+
+                                MessageStyle green = new MessageStyle.Builder()
+                                        .color(ChatColor.GREEN)
+                                        .build();
+                                MessageStyle aquaUnderline = new MessageStyle.Builder()
+                                        .color(ChatColor.AQUA)
+                                        .formats(ChatFormat.UNDERLINED)
+                                        .build();
+
+                                Message msg = new TextMessage.Builder()
+                                        .text("Hello, ")
+                                        .style(green)
+                                        .extra(new TextMessage.Builder()
+                                                .text(profile.getName())
+                                                .style(aquaUnderline)
+                                                .build())
+                                        .extra(new TextMessage.Builder()
+                                                .text("!")
+                                                .style(green)
+                                                .build())
+                                        .build();
+
                                 event.getSession().send(new ServerChatPacket(msg));
                             }
                         }
@@ -117,17 +161,20 @@ public class MinecraftProtocolTest {
     }
 
     private static void status() {
+        SessionService sessionService = new SessionService();
+        sessionService.setProxy(AUTH_PROXY);
+
         MinecraftProtocol protocol = new MinecraftProtocol(SubProtocol.STATUS);
         Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+        client.getSession().setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
             @Override
             public void handle(Session session, ServerStatusInfo info) {
                 System.out.println("Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
                 System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
                 System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
-                System.out.println("Description: " + info.getDescription().getFullText());
-                System.out.println("Icon: " + info.getIcon());
+                System.out.println("Description: " + info.getDescription());
+                System.out.println("Icon: " + info.getIconPng());
             }
         });
 
@@ -152,7 +199,15 @@ public class MinecraftProtocolTest {
         MinecraftProtocol protocol = null;
         if(VERIFY_USERS) {
             try {
-                protocol = new MinecraftProtocol(USERNAME, PASSWORD);
+                AuthenticationService authService = new AuthenticationService();
+                authService.setUsername(USERNAME);
+                authService.setPassword(PASSWORD);
+                authService.setProxy(AUTH_PROXY);
+                authService.login();
+
+                // Can also use "new MinecraftProtocol(USERNAME, PASSWORD)"
+                // if you don't need a proxy or any other customizations.
+                protocol = new MinecraftProtocol(authService);
                 System.out.println("Successfully authenticated user.");
             } catch(RequestException e) {
                 e.printStackTrace();
@@ -162,8 +217,11 @@ public class MinecraftProtocolTest {
             protocol = new MinecraftProtocol(USERNAME);
         }
 
+        SessionService sessionService = new SessionService();
+        sessionService.setProxy(AUTH_PROXY);
+
         Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(MinecraftConstants.AUTH_PROXY_KEY, AUTH_PROXY);
+        client.getSession().setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.getSession().addListener(new SessionAdapter() {
             @Override
             public void packetReceived(PacketReceivedEvent event) {
@@ -171,18 +229,14 @@ public class MinecraftProtocolTest {
                     event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
                 } else if(event.getPacket() instanceof ServerChatPacket) {
                     Message message = event.<ServerChatPacket>getPacket().getMessage();
-                    System.out.println("Received Message: " + message.getFullText());
-                    if(message instanceof TranslationMessage) {
-                        System.out.println("Received Translation Components: " + Arrays.toString(((TranslationMessage) message).getTranslationParams()));
-                    }
-
+                    System.out.println("Received Message: " + message);
                     event.getSession().disconnect("Finished");
                 }
             }
 
             @Override
             public void disconnected(DisconnectedEvent event) {
-                System.out.println("Disconnected: " + Message.fromString(event.getReason()).getFullText());
+                System.out.println("Disconnected: " + event.getReason());
                 if(event.getCause() != null) {
                     event.getCause().printStackTrace();
                 }
@@ -190,5 +244,86 @@ public class MinecraftProtocolTest {
         });
 
         client.getSession().connect();
+    }
+
+    private static CompoundTag getDimensionTag() {
+        CompoundTag tag = new CompoundTag("");
+
+        CompoundTag dimensionTypes = new CompoundTag("minecraft:dimension_type");
+        dimensionTypes.put(new StringTag("type", "minecraft:dimension_type"));
+        ListTag dimensionTag = new ListTag("value");
+        CompoundTag overworldTag = convertToValue("minecraft:overworld", 0, getOverworldTag().getValue());
+        dimensionTag.add(overworldTag);
+        dimensionTypes.put(dimensionTag);
+        tag.put(dimensionTypes);
+
+        CompoundTag biomeTypes = new CompoundTag("minecraft:worldgen/biome");
+        biomeTypes.put(new StringTag("type", "minecraft:worldgen/biome"));
+        ListTag biomeTag = new ListTag("value");
+        CompoundTag plainsTag = convertToValue("minecraft:plains", 0, getPlainsTag().getValue());
+        biomeTag.add(plainsTag);
+        biomeTypes.put(biomeTag);
+        tag.put(biomeTypes);
+
+        return tag;
+    }
+
+    private static CompoundTag getOverworldTag() {
+        CompoundTag overworldTag = new CompoundTag("");
+        overworldTag.put(new StringTag("name", "minecraft:overworld"));
+        overworldTag.put(new ByteTag("piglin_safe", (byte) 0));
+        overworldTag.put(new ByteTag("natural", (byte) 1));
+        overworldTag.put(new FloatTag("ambient_light", 0f));
+        overworldTag.put(new StringTag("infiniburn", "minecraft:infiniburn_overworld"));
+        overworldTag.put(new ByteTag("respawn_anchor_works", (byte) 0));
+        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
+        overworldTag.put(new ByteTag("bed_works", (byte) 1));
+        overworldTag.put(new StringTag("effects", "minecraft:overworld"));
+        overworldTag.put(new ByteTag("has_raids", (byte) 1));
+        overworldTag.put(new IntTag("logical_height", 256));
+        overworldTag.put(new FloatTag("coordinate_scale", 1f));
+        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
+        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
+        return overworldTag;
+    }
+
+    private static CompoundTag getPlainsTag() {
+        CompoundTag plainsTag = new CompoundTag("");
+        plainsTag.put(new StringTag("name", "minecraft:plains"));
+        plainsTag.put(new StringTag("precipitation", "rain"));
+        plainsTag.put(new FloatTag("depth", 0.125f));
+        plainsTag.put(new FloatTag("temperature", 0.8f));
+        plainsTag.put(new FloatTag("scale", 0.05f));
+        plainsTag.put(new FloatTag("downfall", 0.4f));
+        plainsTag.put(new StringTag("category", "plains"));
+
+        CompoundTag effects = new CompoundTag("effects");
+        effects.put(new LongTag("sky_color", 7907327));
+        effects.put(new LongTag("water_fog_color", 329011));
+        effects.put(new LongTag("fog_color", 12638463));
+        effects.put(new LongTag("water_color", 4159204));
+
+        CompoundTag moodSound = new CompoundTag("mood_sound");
+        moodSound.put(new IntTag("tick_delay", 6000));
+        moodSound.put(new FloatTag("offset", 2.0f));
+        moodSound.put(new StringTag("sound", "minecraft:ambient.cave"));
+        moodSound.put(new IntTag("block_search_extent", 8));
+
+        effects.put(moodSound);
+
+        plainsTag.put(effects);
+
+        return plainsTag;
+    }
+
+    private static CompoundTag convertToValue(String name, int id, Map<String, Tag> values) {
+        CompoundTag tag = new CompoundTag(name);
+        tag.put(new StringTag("name", name));
+        tag.put(new IntTag("id", id));
+        CompoundTag element = new CompoundTag("element");
+        element.setValue(values);
+        tag.put(element);
+
+        return tag;
     }
 }

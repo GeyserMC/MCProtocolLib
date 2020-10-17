@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeModifier;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
@@ -41,7 +42,7 @@ public class ServerEntityPropertiesPacket implements Packet {
                 modifiers.add(new AttributeModifier(in.readUUID(), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
             }
 
-            this.attributes.add(new Attribute(MagicValues.key(AttributeType.class, key), value, modifiers));
+            this.attributes.add(new Attribute(MagicValues.key(AttributeType.class, Identifier.formalize(key)), value, modifiers));
         }
     }
 

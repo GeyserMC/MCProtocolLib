@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.UnmappedValueException;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -25,7 +26,7 @@ public class AttributeModifier {
         ModifierType type = null;
         try {
             type = MagicValues.key(ModifierType.class, uuid);
-        } catch(IllegalArgumentException e) {
+        } catch(UnmappedValueException e) {
         }
 
         this.type = type;
