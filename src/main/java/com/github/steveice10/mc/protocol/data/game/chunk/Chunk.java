@@ -33,13 +33,7 @@ public class Chunk {
         int blockCount = in.readShort();
         int bitsPerEntry = in.readUnsignedByte();
 
-        Palette palette = createPalette(bitsPerEntry);
-        if(!(palette instanceof GlobalPalette)) {
-            int paletteLength = in.readVarInt();
-            for(int i = 0; i < paletteLength; i++) {
-                palette.stateToId(in.readVarInt());
-            }
-        }
+        Palette palette = readPalette(bitsPerEntry, in);
 
         BitStorage storage = new BitStorage(bitsPerEntry, CHUNK_SIZE, in.readLongs(in.readVarInt()));
         return new Chunk(blockCount, palette, storage);
@@ -115,6 +109,16 @@ public class Chunk {
             return new ListPalette(bitsPerEntry);
         } else if(bitsPerEntry <= MAX_PALETTE_BITS_PER_ENTRY) {
             return new MapPalette(bitsPerEntry);
+        } else {
+            return new GlobalPalette();
+        }
+    }
+
+    private static Palette readPalette(int bitsPerEntry, NetInput in) throws IOException {
+        if(bitsPerEntry <= MIN_PALETTE_BITS_PER_ENTRY) {
+            return new ListPalette(bitsPerEntry, in);
+        } else if(bitsPerEntry <= MAX_PALETTE_BITS_PER_ENTRY) {
+            return new MapPalette(bitsPerEntry, in);
         } else {
             return new GlobalPalette();
         }

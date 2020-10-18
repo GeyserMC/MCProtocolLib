@@ -1,6 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
+import com.github.steveice10.packetlib.io.NetInput;
 import lombok.EqualsAndHashCode;
+
+import java.io.IOException;
 
 /**
  * A palette backed by a List.
@@ -16,6 +19,16 @@ public class ListPalette implements Palette {
         this.maxId = (1 << bitsPerEntry) - 1;
 
         this.data = new int[this.maxId + 1];
+    }
+
+    public ListPalette(int bitsPerEntry, NetInput in) throws IOException {
+        this(bitsPerEntry);
+
+        int paletteLength = in.readVarInt();
+        for(int i = 0; i < paletteLength; i++) {
+            this.data[i] = in.readVarInt();
+        }
+        this.nextId = paletteLength;
     }
 
     @Override
