@@ -10,19 +10,7 @@ public enum GameMode implements ClientNotificationValue {
     SURVIVAL,
     CREATIVE,
     ADVENTURE,
-    SPECTATOR;
+    SPECTATOR,
+    UNKNOWN
 
-    public static GameMode readPreviousGameMode(int gamemode) {
-        if (gamemode == 255) // https://bugs.mojang.com/browse/MC-189885
-            return null; // Undefined gamemode; we're treating it as null
-        return MagicValues.key(GameMode.class, gamemode);
-    }
-
-    public static void writePreviousGameMode(NetOutput out, GameMode gamemode) throws IOException {
-        if (gamemode == null) {
-            out.writeByte(255);
-        } else {
-            out.writeByte(MagicValues.value(Integer.class, gamemode));
-        }
-    }
 }

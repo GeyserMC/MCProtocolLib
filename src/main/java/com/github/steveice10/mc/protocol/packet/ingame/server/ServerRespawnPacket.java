@@ -36,7 +36,7 @@ public class ServerRespawnPacket implements Packet {
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-        this.previousGamemode = GameMode.readPreviousGameMode(in.readUnsignedByte());
+        this.previousGamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
         this.debug = in.readBoolean();
         this.flat = in.readBoolean();
         this.copyMetadata = in.readBoolean();
@@ -48,7 +48,7 @@ public class ServerRespawnPacket implements Packet {
         out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
-        GameMode.writePreviousGameMode(out, this.previousGamemode);
+        out.writeByte(MagicValues.value(Integer.class, this.previousGamemode));
         out.writeBoolean(this.debug);
         out.writeBoolean(this.flat);
         out.writeBoolean(this.copyMetadata);
