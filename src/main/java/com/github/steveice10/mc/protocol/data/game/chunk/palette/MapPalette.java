@@ -1,8 +1,11 @@
 package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
+import com.github.steveice10.packetlib.io.NetInput;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
 import lombok.EqualsAndHashCode;
+
+import java.io.IOException;
 
 /**
  * A palette backed by a map.
@@ -13,13 +16,24 @@ public class MapPalette implements Palette {
 
     private final int[] idToState;
     private final IntObjectMap<Integer> stateToId = new IntObjectHashMap<>();
-    private int nextId = 1;
+    private int nextId = 0;
 
     public MapPalette(int bitsPerEntry) {
         this.maxId = (1 << bitsPerEntry) - 1;
 
         this.idToState = new int[this.maxId + 1];
-        this.stateToId.put(0, (Integer) 0);
+    }
+
+    public MapPalette(int bitsPerEntry, NetInput in) throws IOException {
+        this(bitsPerEntry);
+
+        int paletteLength = in.readVarInt();
+        for(int i = 0; i < paletteLength; i++) {
+            int state = in.readVarInt();
+            this.idToState[i] = state;
+            this.stateToId.putIfAbsent(state, i);
+        }
+        this.nextId = paletteLength;
     }
 
     @Override

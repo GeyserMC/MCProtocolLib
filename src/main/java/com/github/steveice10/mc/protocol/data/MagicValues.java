@@ -262,6 +262,7 @@ public class MagicValues {
         register(CombatState.END_COMBAT, 1);
         register(CombatState.ENTITY_DEAD, 2);
 
+        register(GameMode.UNKNOWN, 255); // https://bugs.mojang.com/browse/MC-189885 - should be -1
         register(GameMode.SURVIVAL, 0);
         register(GameMode.CREATIVE, 1);
         register(GameMode.ADVENTURE, 2);
