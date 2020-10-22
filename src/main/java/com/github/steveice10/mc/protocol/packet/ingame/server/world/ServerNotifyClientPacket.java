@@ -34,7 +34,7 @@ public class ServerNotifyClientPacket implements Packet {
         this.notification = MagicValues.key(ClientNotification.class, in.readUnsignedByte());
         float value = in.readFloat();
         if(this.notification == ClientNotification.CHANGE_GAMEMODE) {
-            this.value = MagicValues.key(GameMode.class, (int) value);
+            this.value = MagicValues.key(GameMode.class, ((int) value == -1) ? 255 : (int) value); // https://bugs.mojang.com/browse/MC-189885 - since we read as a float this bug doesn't apply here
         } else if(this.notification == ClientNotification.DEMO_MESSAGE) {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
         } else if(this.notification == ClientNotification.ENTER_CREDITS) {
@@ -52,7 +52,9 @@ public class ServerNotifyClientPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeByte(MagicValues.value(Integer.class, this.notification));
         float value = 0;
-        if(this.value instanceof Enum<?>) {
+        if (this.value instanceof GameMode && this.value == GameMode.UNKNOWN) {
+            value = -1;
+        } else if(this.value instanceof Enum<?>) {
             value = MagicValues.value(Integer.class, (Enum<?>) this.value);
         } else if(this.value instanceof RainStrengthValue) {
             value = ((RainStrengthValue) this.value).getStrength();
