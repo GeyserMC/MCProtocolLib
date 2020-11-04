@@ -13,13 +13,13 @@ public class Column {
     private final @NonNull Chunk[] chunks;
     private final @NonNull CompoundTag[] tileEntities;
     private final @NonNull CompoundTag heightMaps;
-    private final int[] biomeData;
+    private final @NonNull int[] biomeData;
 
     public Column(int x, int z, @NonNull Chunk[] chunks, @NonNull CompoundTag[] tileEntities, @NonNull CompoundTag heightMaps) {
-        this(x, z, chunks, tileEntities, heightMaps, null);
+        this(x, z, chunks, tileEntities, heightMaps, new int[0]);
     }
 
-    public Column(int x, int z, @NonNull Chunk[] chunks, @NonNull CompoundTag[] tileEntities, @NonNull CompoundTag heightMaps, int[] biomeData) {
+    public Column(int x, int z, @NonNull Chunk[] chunks, @NonNull CompoundTag[] tileEntities, @NonNull CompoundTag heightMaps, @NonNull int[] biomeData) {
         if(chunks.length != 16) {
             throw new IllegalArgumentException("Chunk array length must be 16.");
         }

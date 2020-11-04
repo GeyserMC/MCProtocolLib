@@ -31,14 +31,11 @@ public class ServerChunkDataPacket implements Packet {
     public void read(NetInput in) throws IOException {
         int x = in.readInt();
         int z = in.readInt();
-        boolean fullChunk = in.readBoolean();
         int chunkMask = in.readVarInt();
         CompoundTag heightMaps = NBT.read(in);
-        int[] biomeData = fullChunk ? new int[in.readVarInt()] : null;
-        if (fullChunk) {
-            for (int index = 0; index < biomeData.length; index++) {
-                biomeData[index] = in.readVarInt();
-            }
+        int[] biomeData = new int[in.readVarInt()];
+        for (int index = 0; index < biomeData.length; index++) {
+            biomeData[index] = in.readVarInt();
         }
         byte[] data = in.readBytes(in.readVarInt());
 
@@ -73,18 +70,13 @@ public class ServerChunkDataPacket implements Packet {
             }
         }
 
-        boolean fullChunk = this.column.getBiomeData() != null;
-
         out.writeInt(this.column.getX());
         out.writeInt(this.column.getZ());
-        out.writeBoolean(fullChunk);
         out.writeVarInt(mask);
         NBT.write(out, this.column.getHeightMaps());
-        if (fullChunk) {
-            out.writeVarInt(this.column.getBiomeData().length);
-            for (int biomeData : this.column.getBiomeData()) {
-                out.writeVarInt(biomeData);
-            }
+        out.writeVarInt(this.column.getBiomeData().length);
+        for (int biomeData : this.column.getBiomeData()) {
+            out.writeVarInt(biomeData);
         }
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());

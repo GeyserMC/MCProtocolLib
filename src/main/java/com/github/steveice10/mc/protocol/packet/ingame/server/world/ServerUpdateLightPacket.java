@@ -49,10 +49,10 @@ public class ServerUpdateLightPacket implements Packet {
         this.z = in.readVarInt();
         this.trustEdges = in.readBoolean();
 
-        int skyLightMask = in.readVarInt();
-        int blockLightMask = in.readVarInt();
-        int emptySkyLightMask = in.readVarInt();
-        int emptyBlockLightMask = in.readVarInt();
+        long skyLightMask = in.readVarLong();
+        long blockLightMask = in.readVarLong();
+        long emptySkyLightMask = in.readVarLong();
+        long emptyBlockLightMask = in.readVarLong();
 
         this.skyLight = new NibbleArray3d[NUM_ENTRIES];
         for (int i = 0; i < NUM_ENTRIES; i++) {
@@ -108,10 +108,10 @@ public class ServerUpdateLightPacket implements Packet {
             }
         }
 
-        out.writeVarInt(skyLightMask);
-        out.writeVarInt(blockLightMask);
-        out.writeVarInt(emptySkyLightMask);
-        out.writeVarInt(emptyBlockLightMask);
+        out.writeVarLong(skyLightMask);
+        out.writeVarLong(blockLightMask);
+        out.writeVarLong(emptySkyLightMask);
+        out.writeVarLong(emptyBlockLightMask);
 
         for(int i = 0; i < NUM_ENTRIES; i++) {
             if((skyLightMask & 1 << i) != 0) {

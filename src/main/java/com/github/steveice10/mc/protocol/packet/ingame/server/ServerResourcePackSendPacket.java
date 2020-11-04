@@ -19,17 +19,20 @@ import java.io.IOException;
 public class ServerResourcePackSendPacket implements Packet {
     private @NonNull String url;
     private @NonNull String hash;
+    private boolean mustAcceptPack;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.url = in.readString();
         this.hash = in.readString();
+        this.mustAcceptPack = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.url);
         out.writeString(this.hash);
+        out.writeBoolean(this.mustAcceptPack);
     }
 
     @Override
