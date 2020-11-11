@@ -11,7 +11,7 @@ import lombok.NonNull;
 public class CookedRecipeData implements RecipeData {
     private final @NonNull String group;
     private final @NonNull Ingredient ingredient;
-    private final @NonNull ItemStack result;
+    private final ItemStack result;
     private final float experience;
     private final int cookingTime;
 }
