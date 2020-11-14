@@ -11,5 +11,5 @@ import lombok.NonNull;
 public class SmithingRecipeData implements RecipeData {
     private final @NonNull Ingredient base;
     private final @NonNull Ingredient addition;
-    private final @NonNull ItemStack result;
+    private final ItemStack result;
 }
