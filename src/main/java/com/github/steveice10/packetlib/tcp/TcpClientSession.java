@@ -146,11 +146,14 @@ public class TcpClientSession extends TcpSession {
             System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
         }
 
+        DnsNameResolver resolver = null;
         AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
-        try(DnsNameResolver resolver = new DnsNameResolverBuilder(this.group.next())
-                .channelType(NioDatagramChannel.class)
-                .build()) {
+        try {
+            resolver = new DnsNameResolverBuilder(this.group.next())
+                    .channelType(NioDatagramChannel.class)
+                    .build();
             envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+
             DnsResponse response = envelope.content();
             if(response.count(DnsSection.ANSWER) > 0) {
                 DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
@@ -184,6 +187,10 @@ public class TcpClientSession extends TcpSession {
         } finally {
             if(envelope != null) {
                 envelope.release();
+            }
+
+            if(resolver != null) {
+                resolver.close();
             }
         }
     }
