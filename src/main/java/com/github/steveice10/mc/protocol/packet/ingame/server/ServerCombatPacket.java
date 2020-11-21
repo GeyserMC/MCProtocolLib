@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -10,7 +11,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 
@@ -52,7 +52,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.combatState == CombatState.ENTITY_DEAD) {
             this.playerId = in.readVarInt();
             this.entityId = in.readInt();
-            this.message = GsonComponentSerializer.gson().deserialize(in.readString());
+            this.message = DefaultComponentSerializer.get().deserialize(in.readString());
         }
     }
 
@@ -65,7 +65,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.combatState == CombatState.ENTITY_DEAD) {
             out.writeVarInt(this.playerId);
             out.writeInt(this.entityId);
-            out.writeString(GsonComponentSerializer.gson().serialize(this.message));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.message));
         }
     }
 

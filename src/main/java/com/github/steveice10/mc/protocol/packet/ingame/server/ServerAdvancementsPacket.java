@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData;
@@ -15,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,8 +60,8 @@ public class ServerAdvancementsPacket implements Packet {
             String parentId = in.readBoolean() ? in.readString() : null;
             DisplayData displayData = null;
             if(in.readBoolean()) {
-                Component title = GsonComponentSerializer.gson().deserialize(in.readString());
-                Component description = GsonComponentSerializer.gson().deserialize(in.readString());
+                Component title = DefaultComponentSerializer.get().deserialize(in.readString());
+                Component description = DefaultComponentSerializer.get().deserialize(in.readString());
                 ItemStack icon = ItemStack.read(in);
                 FrameType frameType = MagicValues.key(FrameType.class, in.readVarInt());
 
@@ -137,8 +137,8 @@ public class ServerAdvancementsPacket implements Packet {
             DisplayData displayData = advancement.getDisplayData();
             if(displayData != null) {
                 out.writeBoolean(true);
-                out.writeString(GsonComponentSerializer.gson().serialize(displayData.getTitle()));
-                out.writeString(GsonComponentSerializer.gson().serialize(displayData.getDescription()));
+                out.writeString(DefaultComponentSerializer.get().serialize(displayData.getTitle()));
+                out.writeString(DefaultComponentSerializer.get().serialize(displayData.getDescription()));
                 ItemStack.write(out, displayData.getIcon());
                 out.writeVarInt(MagicValues.value(Integer.class, displayData.getFrameType()));
                 String backgroundTexture = displayData.getBackgroundTexture();

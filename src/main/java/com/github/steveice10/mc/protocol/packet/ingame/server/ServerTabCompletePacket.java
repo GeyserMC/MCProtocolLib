@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -9,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -46,7 +46,7 @@ public class ServerTabCompletePacket implements Packet {
         for(int index = 0; index < this.matches.length; index++) {
             this.matches[index] = in.readString();
             if (in.readBoolean()) {
-                this.tooltips[index] = GsonComponentSerializer.gson().deserialize(in.readString());
+                this.tooltips[index] = DefaultComponentSerializer.get().deserialize(in.readString());
             }
         }
     }
@@ -62,7 +62,7 @@ public class ServerTabCompletePacket implements Packet {
             Component tooltip = this.tooltips[index];
             if (tooltip != null) {
                 out.writeBoolean(true);
-                out.writeString(GsonComponentSerializer.gson().serialize(tooltip));
+                out.writeString(DefaultComponentSerializer.get().serialize(tooltip));
             } else {
                 out.writeBoolean(false);
             }

@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.TitleAction;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -11,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 
@@ -59,7 +59,7 @@ public class ServerTitlePacket implements Packet {
             case TITLE:
             case SUBTITLE:
             case ACTION_BAR:
-                this.title = GsonComponentSerializer.gson().deserialize(in.readString());
+                this.title = DefaultComponentSerializer.get().deserialize(in.readString());
                 break;
             case TIMES:
                 this.fadeIn = in.readInt();
@@ -79,7 +79,7 @@ public class ServerTitlePacket implements Packet {
             case TITLE:
             case SUBTITLE:
             case ACTION_BAR:
-                out.writeString(GsonComponentSerializer.gson().serialize(this.title));
+                out.writeString(DefaultComponentSerializer.get().serialize(this.title));
                 break;
             case TIMES:
                 out.writeInt(this.fadeIn);

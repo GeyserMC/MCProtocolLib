@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntry;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
@@ -15,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                     int ping = in.readVarInt();
                     Component displayName = null;
                     if(in.readBoolean()) {
-                        displayName = GsonComponentSerializer.gson().deserialize(in.readString());
+                        displayName = DefaultComponentSerializer.get().deserialize(in.readString());
                     }
 
                     entry = new PlayerListEntry(profile, gameMode, ping, displayName);
@@ -88,7 +88,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                 case UPDATE_DISPLAY_NAME: {
                     Component displayName = null;
                     if(in.readBoolean()) {
-                        displayName = GsonComponentSerializer.gson().deserialize(in.readString());
+                        displayName = DefaultComponentSerializer.get().deserialize(in.readString());
                     }
 
                     entry = new PlayerListEntry(profile, displayName);
@@ -126,7 +126,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                     out.writeVarInt(entry.getPing());
                     out.writeBoolean(entry.getDisplayName() != null);
                     if(entry.getDisplayName() != null) {
-                        out.writeString(GsonComponentSerializer.gson().serialize(entry.getDisplayName()));
+                        out.writeString(DefaultComponentSerializer.get().serialize(entry.getDisplayName()));
                     }
 
                     break;
@@ -139,7 +139,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                 case UPDATE_DISPLAY_NAME:
                     out.writeBoolean(entry.getDisplayName() != null);
                     if(entry.getDisplayName() != null) {
-                        out.writeString(GsonComponentSerializer.gson().serialize(entry.getDisplayName()));
+                        out.writeString(DefaultComponentSerializer.get().serialize(entry.getDisplayName()));
                     }
 
                     break;

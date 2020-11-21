@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
@@ -13,7 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    value = GsonComponentSerializer.gson().deserialize(in.readString());
+                    value = DefaultComponentSerializer.get().deserialize(in.readString());
                     break;
                 case ITEM:
                     value = ItemStack.read(in);
@@ -140,7 +140,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    out.writeString(GsonComponentSerializer.gson().serialize((Component) meta.getValue()));
+                    out.writeString(DefaultComponentSerializer.get().serialize((Component) meta.getValue()));
                     break;
                 case ITEM:
                     ItemStack.write(out, (ItemStack) meta.getValue());

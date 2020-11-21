@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
@@ -13,7 +14,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -92,7 +92,7 @@ public class ServerBossBarPacket implements Packet {
         this.action = MagicValues.key(BossBarAction.class, in.readVarInt());
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            this.title = GsonComponentSerializer.gson().deserialize(in.readString());
+            this.title = DefaultComponentSerializer.get().deserialize(in.readString());
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -118,7 +118,7 @@ public class ServerBossBarPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            out.writeString(GsonComponentSerializer.gson().serialize(this.title));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.title));
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {

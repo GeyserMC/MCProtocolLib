@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -10,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 
@@ -24,14 +24,14 @@ public class ServerPlayerListDataPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.header = GsonComponentSerializer.gson().deserialize(in.readString());
-        this.footer = GsonComponentSerializer.gson().deserialize(in.readString());
+        this.header = DefaultComponentSerializer.get().deserialize(in.readString());
+        this.footer = DefaultComponentSerializer.get().deserialize(in.readString());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(GsonComponentSerializer.gson().serialize(this.header));
-        out.writeString(GsonComponentSerializer.gson().serialize(this.footer));
+        out.writeString(DefaultComponentSerializer.get().serialize(this.header));
+        out.writeString(DefaultComponentSerializer.get().serialize(this.footer));
     }
 
     @Override

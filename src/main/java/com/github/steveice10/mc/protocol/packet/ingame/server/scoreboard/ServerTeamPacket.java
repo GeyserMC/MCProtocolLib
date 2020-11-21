@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.UnmappedValueException;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
@@ -15,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -93,7 +93,7 @@ public class ServerTeamPacket implements Packet {
         this.teamName = in.readString();
         this.action = MagicValues.key(TeamAction.class, in.readByte());
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            this.displayName = GsonComponentSerializer.gson().deserialize(in.readString());
+            this.displayName = DefaultComponentSerializer.get().deserialize(in.readString());
             byte flags = in.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
@@ -106,8 +106,8 @@ public class ServerTeamPacket implements Packet {
                 this.color = TeamColor.NONE;
             }
 
-            this.prefix = GsonComponentSerializer.gson().deserialize(in.readString());
-            this.suffix = GsonComponentSerializer.gson().deserialize(in.readString());
+            this.prefix = DefaultComponentSerializer.get().deserialize(in.readString());
+            this.suffix = DefaultComponentSerializer.get().deserialize(in.readString());
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
@@ -123,13 +123,13 @@ public class ServerTeamPacket implements Packet {
         out.writeString(this.teamName);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            out.writeString(GsonComponentSerializer.gson().serialize(this.displayName));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.displayName));
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
             out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
             out.writeString(MagicValues.value(String.class, this.collisionRule));
             out.writeVarInt(MagicValues.value(Integer.class, this.color));
-            out.writeString(GsonComponentSerializer.gson().serialize(this.prefix));
-            out.writeString(GsonComponentSerializer.gson().serialize(this.suffix));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.prefix));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.suffix));
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {

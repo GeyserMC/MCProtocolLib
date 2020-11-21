@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 
@@ -47,7 +47,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
         this.name = in.readString();
         this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
         if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            this.displayName = GsonComponentSerializer.gson().deserialize(in.readString());
+            this.displayName = DefaultComponentSerializer.get().deserialize(in.readString());
             this.type = MagicValues.key(ScoreType.class, in.readVarInt());
         }
     }
@@ -57,7 +57,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
         out.writeString(this.name);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            out.writeString(GsonComponentSerializer.gson().serialize(this.displayName));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.displayName));
             out.writeVarInt(MagicValues.value(Integer.class, this.type));
         }
     }
