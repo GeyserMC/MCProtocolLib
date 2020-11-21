@@ -6,14 +6,14 @@ import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    value = MessageSerializer.fromString(in.readString());
+                    value = GsonComponentSerializer.gson().deserialize(in.readString());
                     break;
                 case ITEM:
                     value = ItemStack.read(in);
@@ -140,7 +140,7 @@ public class EntityMetadata {
 
                     // Intentional fall-through
                 case CHAT:
-                    out.writeString(MessageSerializer.toJsonString((Message) meta.getValue()));
+                    out.writeString(GsonComponentSerializer.gson().serialize((Component) meta.getValue()));
                     break;
                 case ITEM:
                     ItemStack.write(out, (ItemStack) meta.getValue());

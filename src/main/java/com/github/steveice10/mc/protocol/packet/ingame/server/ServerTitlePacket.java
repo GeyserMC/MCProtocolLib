@@ -2,8 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.TitleAction;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -12,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ import java.io.IOException;
 public class ServerTitlePacket implements Packet {
     private @NonNull TitleAction action;
 
-    private Message title;
+    private Component title;
 
     private int fadeIn;
     private int stay;
@@ -35,13 +35,12 @@ public class ServerTitlePacket implements Packet {
         this.action = action;
     }
 
-    public ServerTitlePacket(TitleAction action, Message title) {
+    public ServerTitlePacket(TitleAction action, Component title) {
         if(action != TitleAction.TITLE && action != TitleAction.SUBTITLE && action != TitleAction.ACTION_BAR) {
             throw new IllegalArgumentException("Constructor (action, title) only accepts TITLE, SUBTITLE, and ACTION_BAR.");
         }
 
         this.action = action;
-
         this.title = title;
     }
 
@@ -60,7 +59,7 @@ public class ServerTitlePacket implements Packet {
             case TITLE:
             case SUBTITLE:
             case ACTION_BAR:
-                this.title = MessageSerializer.fromString(in.readString());
+                this.title = GsonComponentSerializer.gson().deserialize(in.readString());
                 break;
             case TIMES:
                 this.fadeIn = in.readInt();
@@ -80,7 +79,7 @@ public class ServerTitlePacket implements Packet {
             case TITLE:
             case SUBTITLE:
             case ACTION_BAR:
-                out.writeString(MessageSerializer.toJsonString(this.title));
+                out.writeString(GsonComponentSerializer.gson().serialize(this.title));
                 break;
             case TIMES:
                 out.writeInt(this.fadeIn);

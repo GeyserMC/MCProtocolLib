@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -14,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class ServerBossBarPacket implements Packet {
     private @NonNull UUID uuid;
     private @NonNull BossBarAction action;
 
-    private Message title;
+    private Component title;
 
     private float health;
 
@@ -41,7 +41,7 @@ public class ServerBossBarPacket implements Packet {
         this.action = BossBarAction.REMOVE;
     }
 
-    public ServerBossBarPacket(@NonNull UUID uuid, @NonNull Message title) {
+    public ServerBossBarPacket(@NonNull UUID uuid, @NonNull Component title) {
         this.uuid = uuid;
         this.action = BossBarAction.UPDATE_TITLE;
 
@@ -72,7 +72,7 @@ public class ServerBossBarPacket implements Packet {
         this.showFog = showFog;
     }
 
-    public ServerBossBarPacket(@NonNull UUID uuid, @NonNull Message title, float health, @NonNull BossBarColor color,
+    public ServerBossBarPacket(@NonNull UUID uuid, @NonNull Component title, float health, @NonNull BossBarColor color,
                                @NonNull BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this.uuid = uuid;
         this.action = BossBarAction.ADD;
@@ -92,7 +92,7 @@ public class ServerBossBarPacket implements Packet {
         this.action = MagicValues.key(BossBarAction.class, in.readVarInt());
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            this.title = MessageSerializer.fromString(in.readString());
+            this.title = GsonComponentSerializer.gson().deserialize(in.readString());
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -118,7 +118,7 @@ public class ServerBossBarPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            out.writeString(MessageSerializer.toJsonString(this.title));
+            out.writeString(GsonComponentSerializer.gson().serialize(this.title));
         }
 
         if(this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {

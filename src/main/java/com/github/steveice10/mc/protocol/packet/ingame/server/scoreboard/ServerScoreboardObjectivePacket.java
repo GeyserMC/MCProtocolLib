@@ -3,8 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -13,6 +11,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
     private @NonNull String name;
     private @NonNull ObjectiveAction action;
 
-    private Message displayName;
+    private Component displayName;
     private ScoreType type;
 
     public ServerScoreboardObjectivePacket(@NonNull String name) {
@@ -31,7 +31,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
         this.action = ObjectiveAction.REMOVE;
     }
 
-    public ServerScoreboardObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, @NonNull Message displayName, @NonNull ScoreType type) {
+    public ServerScoreboardObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, @NonNull Component displayName, @NonNull ScoreType type) {
         if(action != ObjectiveAction.ADD && action != ObjectiveAction.UPDATE) {
             throw new IllegalArgumentException("(name, action, displayName, type) constructor only valid for adding and updating objectives.");
         }
@@ -47,7 +47,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
         this.name = in.readString();
         this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
         if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            this.displayName = MessageSerializer.fromString(in.readString());
+            this.displayName = GsonComponentSerializer.gson().deserialize(in.readString());
             this.type = MagicValues.key(ScoreType.class, in.readVarInt());
         }
     }
@@ -57,7 +57,7 @@ public class ServerScoreboardObjectivePacket implements Packet {
         out.writeString(this.name);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if(this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            out.writeString(MessageSerializer.toJsonString(this.displayName));
+            out.writeString(GsonComponentSerializer.gson().serialize(this.displayName));
             out.writeVarInt(MagicValues.value(Integer.class, this.type));
         }
     }

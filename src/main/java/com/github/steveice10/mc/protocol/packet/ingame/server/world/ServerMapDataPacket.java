@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapData;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIcon;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -15,6 +13,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 import java.io.IOException;
 
@@ -47,9 +47,9 @@ public class ServerMapDataPacket implements Packet {
             int x = in.readUnsignedByte();
             int z = in.readUnsignedByte();
             int rotation = in.readUnsignedByte();
-            Message displayName = null;
+            Component displayName = null;
             if(in.readBoolean()) {
-                displayName = MessageSerializer.fromString(in.readString());
+                displayName = GsonComponentSerializer.gson().deserialize(in.readString());
             }
 
             this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
@@ -82,7 +82,7 @@ public class ServerMapDataPacket implements Packet {
             out.writeByte(icon.getIconRotation());
             if (icon.getDisplayName() != null) {
                 out.writeBoolean(false);
-                out.writeString(MessageSerializer.toJsonString(icon.getDisplayName()));
+                out.writeString(GsonComponentSerializer.gson().serialize(icon.getDisplayName()));
             } else {
                 out.writeBoolean(true);
             }
