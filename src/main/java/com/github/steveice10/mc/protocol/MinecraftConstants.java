@@ -12,12 +12,12 @@ public final class MinecraftConstants {
     /**
      * Current supported game version.
      */
-    public static final String GAME_VERSION = "20w46a";
+    public static final String GAME_VERSION = "20w49a";
 
     /**
      * Current supported protocol version.
      */
-    public static final int PROTOCOL_VERSION = (1 << 30) | 6;
+    public static final int PROTOCOL_VERSION = (1 << 30) | 8;
 
     // General Key Constants
 

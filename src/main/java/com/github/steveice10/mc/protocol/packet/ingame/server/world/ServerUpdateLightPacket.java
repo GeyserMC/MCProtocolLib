@@ -16,8 +16,8 @@ import java.util.Arrays;
 @Data
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+//TODO: Actually, like, make this work, instead of hacked together.
 public class ServerUpdateLightPacket implements Packet {
-    private static final int NUM_ENTRIES = 18;
     private static final int EMPTY_SIZE = 4096;
     private static final NibbleArray3d EMPTY = new NibbleArray3d(EMPTY_SIZE);
 
@@ -28,14 +28,6 @@ public class ServerUpdateLightPacket implements Packet {
     private @NonNull NibbleArray3d[] blockLight;
 
     public ServerUpdateLightPacket(int x, int z, boolean trustEdges, @NonNull NibbleArray3d[] skyLight, @NonNull NibbleArray3d[] blockLight) {
-        if(skyLight.length != NUM_ENTRIES) {
-            throw new IllegalArgumentException("skyLight must have exactly " + NUM_ENTRIES + " entries (null entries are permitted)");
-        }
-
-        if(blockLight.length != NUM_ENTRIES) {
-            throw new IllegalArgumentException("blockLight must have exactly " + NUM_ENTRIES + " entries (null entries are permitted)");
-        }
-
         this.x = x;
         this.z = z;
         this.trustEdges = trustEdges;
@@ -49,27 +41,27 @@ public class ServerUpdateLightPacket implements Packet {
         this.z = in.readVarInt();
         this.trustEdges = in.readBoolean();
 
-        long skyLightMask = in.readVarLong();
-        long blockLightMask = in.readVarLong();
-        long emptySkyLightMask = in.readVarLong();
-        long emptyBlockLightMask = in.readVarLong();
+        long[] skyLightMask = in.readLongs(in.readVarInt());
+        long[] blockLightMask = in.readLongs(in.readVarInt());
+        long[] emptySkyLightMask = in.readLongs(in.readVarInt());
+        long[] emptyBlockLightMask = in.readLongs(in.readVarInt());
 
-        this.skyLight = new NibbleArray3d[NUM_ENTRIES];
-        for (int i = 0; i < NUM_ENTRIES; i++) {
-            if ((skyLightMask & 1 << i) != 0) {
+        this.skyLight = new NibbleArray3d[in.readVarInt()];
+        for (int i = 0; i < this.skyLight.length; i++) {
+            if ((skyLightMask[0] & 1 << i) != 0) {
                 this.skyLight[i] = new NibbleArray3d(in, in.readVarInt());
-            } else if ((emptySkyLightMask & 1 << i) != 0) {
+            } else if ((emptySkyLightMask[0] & 1 << i) != 0) {
                 this.skyLight[i] = new NibbleArray3d(EMPTY_SIZE);
             } else {
                 this.skyLight[i] = null;
             }
         }
 
-        this.blockLight = new NibbleArray3d[NUM_ENTRIES];
-        for (int i = 0; i < NUM_ENTRIES; i++) {
-            if ((blockLightMask & 1 << i) != 0) {
+        this.blockLight = new NibbleArray3d[in.readVarInt()];
+        for (int i = 0; i < this.blockLight.length; i++) {
+            if ((blockLightMask[0] & 1 << i) != 0) {
                 this.blockLight[i] = new NibbleArray3d(in, in.readVarInt());
-            } else if ((emptyBlockLightMask & 1 << i) != 0) {
+            } else if ((emptyBlockLightMask[0] & 1 << i) != 0) {
                 this.blockLight[i] = new NibbleArray3d(EMPTY_SIZE);
             } else {
                 this.blockLight[i] = null;
@@ -88,7 +80,7 @@ public class ServerUpdateLightPacket implements Packet {
         int emptySkyLightMask = 0;
         int emptyBlockLightMask = 0;
 
-        for (int i = 0; i < NUM_ENTRIES; i++) {
+        for (int i = 0; i < this.skyLight.length; i++) {
             NibbleArray3d skyLight = this.skyLight[i];
             if(skyLight != null) {
                 if(EMPTY.equals(skyLight)) {
@@ -97,7 +89,9 @@ public class ServerUpdateLightPacket implements Packet {
                     skyLightMask |= 1 << i;
                 }
             }
+        }
 
+        for (int i = 0; i < this.blockLight.length; i++) {
             NibbleArray3d blockLight = this.blockLight[i];
             if(blockLight != null) {
                 if(EMPTY.equals(blockLight)) {
@@ -108,19 +102,25 @@ public class ServerUpdateLightPacket implements Packet {
             }
         }
 
-        out.writeVarLong(skyLightMask);
-        out.writeVarLong(blockLightMask);
-        out.writeVarLong(emptySkyLightMask);
-        out.writeVarLong(emptyBlockLightMask);
+        out.writeVarInt(1);
+        out.writeLong(skyLightMask);
+        out.writeVarInt(1);
+        out.writeLong(blockLightMask);
+        out.writeVarInt(1);
+        out.writeLong(emptySkyLightMask);
+        out.writeVarInt(1);
+        out.writeLong(emptyBlockLightMask);
 
-        for(int i = 0; i < NUM_ENTRIES; i++) {
+        out.writeVarInt(this.skyLight.length);
+        for(int i = 0; i < this.skyLight.length; i++) {
             if((skyLightMask & 1 << i) != 0) {
                 out.writeVarInt(this.skyLight[i].getData().length);
                 this.skyLight[i].write(out);
             }
         }
 
-        for(int i = 0; i < NUM_ENTRIES; i++) {
+        out.writeVarInt(this.blockLight.length);
+        for(int i = 0; i < this.blockLight.length; i++) {
             if((blockLightMask & 1 << i) != 0) {
                 out.writeVarInt(this.blockLight[i].getData().length);
                 this.blockLight[i].write(out);
