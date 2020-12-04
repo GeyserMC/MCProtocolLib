@@ -30,9 +30,9 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientAdvan
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientClickWindowButtonPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCloseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientConfirmTransactionPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientDisplayedRecipePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCraftingBookStatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientCreativeInventoryActionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientDisplayedRecipePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientEditBookPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientMoveItemToHotbarPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.window.ClientPrepareCraftingGridPacket;

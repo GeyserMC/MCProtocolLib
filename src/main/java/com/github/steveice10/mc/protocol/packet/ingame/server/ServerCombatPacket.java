@@ -1,9 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -11,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class ServerCombatPacket implements Packet {
     private int entityId;
     private int duration;
     private int playerId;
-    private Message message;
+    private Component message;
 
     public ServerCombatPacket() {
         this.combatState = CombatState.ENTER_COMBAT;
@@ -35,7 +35,7 @@ public class ServerCombatPacket implements Packet {
         this.duration = duration;
     }
 
-    public ServerCombatPacket(int entityId, int playerId, @NonNull Message message) {
+    public ServerCombatPacket(int entityId, int playerId, @NonNull Component message) {
         this.combatState = CombatState.ENTITY_DEAD;
 
         this.entityId = entityId;
@@ -52,7 +52,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.combatState == CombatState.ENTITY_DEAD) {
             this.playerId = in.readVarInt();
             this.entityId = in.readInt();
-            this.message = MessageSerializer.fromString(in.readString());
+            this.message = DefaultComponentSerializer.get().deserialize(in.readString());
         }
     }
 
@@ -65,7 +65,7 @@ public class ServerCombatPacket implements Packet {
         } else if(this.combatState == CombatState.ENTITY_DEAD) {
             out.writeVarInt(this.playerId);
             out.writeInt(this.entityId);
-            out.writeString(MessageSerializer.toJsonString(this.message));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.message));
         }
     }
 

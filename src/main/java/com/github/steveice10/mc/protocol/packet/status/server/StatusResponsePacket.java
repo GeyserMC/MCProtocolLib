@@ -2,8 +2,7 @@ package com.github.steveice10.mc.protocol.packet.status.server;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.util.Base64;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -20,6 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +51,7 @@ public class StatusResponsePacket implements Packet {
 
         PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
         JsonElement desc = obj.get("description");
-        Message description = MessageSerializer.fromJson(desc);
+        Component description = DefaultComponentSerializer.get().deserialize(desc.toString());
         byte[] icon = null;
         if(obj.has("favicon")) {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
@@ -83,7 +83,7 @@ public class StatusResponsePacket implements Packet {
 
         obj.add("version", ver);
         obj.add("players", plrs);
-        obj.add("description", MessageSerializer.toJson(this.info.getDescription()));
+        obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(this.info.getDescription()), JsonElement.class));
         if(this.info.getIconPng() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }

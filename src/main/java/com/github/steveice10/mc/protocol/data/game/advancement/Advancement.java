@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.data.game.advancement;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.message.Message;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
@@ -32,8 +32,8 @@ public class Advancement {
     @Data
     @AllArgsConstructor
     public static class DisplayData {
-        private final @NonNull Message title;
-        private final @NonNull Message description;
+        private final @NonNull Component title;
+        private final @NonNull Component description;
         private final ItemStack icon;
         private final @NonNull FrameType frameType;
         private final boolean showToast;
@@ -42,7 +42,7 @@ public class Advancement {
         private final float posY;
         private final String backgroundTexture;
 
-        public DisplayData(@NonNull Message title, @NonNull Message description, ItemStack icon, @NonNull FrameType frameType,
+        public DisplayData(@NonNull Component title, @NonNull Component description, ItemStack icon, @NonNull FrameType frameType,
                            boolean showToast, boolean hidden, float posX, float posY) {
             this(title, description, icon, frameType, showToast, hidden, posX, posY, null);
         }

@@ -9,11 +9,6 @@ import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.TextMessage;
-import com.github.steveice10.mc.protocol.data.message.style.ChatColor;
-import com.github.steveice10.mc.protocol.data.message.style.ChatFormat;
-import com.github.steveice10.mc.protocol.data.message.style.MessageStyle;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -43,6 +38,9 @@ import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import java.net.Proxy;
 import java.util.Arrays;
@@ -72,7 +70,7 @@ public class MinecraftProtocolTest {
                     return new ServerStatusInfo(
                             new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION),
                             new PlayerInfo(100, 0, new GameProfile[0]),
-                            new TextMessage.Builder().text("Hello world!").build(),
+                            Component.text("Hello world!"),
                             null
                     );
                 }
@@ -119,26 +117,13 @@ public class MinecraftProtocolTest {
                                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                                 System.out.println(profile.getName() + ": " + packet.getMessage());
 
-                                MessageStyle green = new MessageStyle.Builder()
-                                        .color(ChatColor.GREEN)
-                                        .build();
-                                MessageStyle aquaUnderline = new MessageStyle.Builder()
-                                        .color(ChatColor.AQUA)
-                                        .formats(ChatFormat.UNDERLINED)
-                                        .build();
-
-                                Message msg = new TextMessage.Builder()
-                                        .text("Hello, ")
-                                        .style(green)
-                                        .extra(new TextMessage.Builder()
-                                                .text(profile.getName())
-                                                .style(aquaUnderline)
-                                                .build())
-                                        .extra(new TextMessage.Builder()
-                                                .text("!")
-                                                .style(green)
-                                                .build())
-                                        .build();
+                                Component msg = Component.text("Hello, ")
+                                        .color(NamedTextColor.GREEN)
+                                        .append(Component.text(profile.getName())
+                                            .color(NamedTextColor.AQUA)
+                                            .decorate(TextDecoration.UNDERLINED))
+                                        .append(Component.text("!")
+                                                .color(NamedTextColor.GREEN));
 
                                 event.getSession().send(new ServerChatPacket(msg));
                             }
@@ -231,7 +216,7 @@ public class MinecraftProtocolTest {
                 if(event.getPacket() instanceof ServerJoinGamePacket) {
                     event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
                 } else if(event.getPacket() instanceof ServerChatPacket) {
-                    Message message = event.<ServerChatPacket>getPacket().getMessage();
+                    Component message = event.<ServerChatPacket>getPacket().getMessage();
                     System.out.println("Received Message: " + message);
                     event.getSession().disconnect("Finished");
                 }

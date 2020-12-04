@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.UnmappedValueException;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -16,6 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -27,9 +27,9 @@ public class ServerTeamPacket implements Packet {
     private @NonNull String teamName;
     private @NonNull TeamAction action;
 
-    private Message displayName;
-    private Message prefix;
-    private Message suffix;
+    private Component displayName;
+    private Component prefix;
+    private Component suffix;
     private boolean friendlyFire;
     private boolean seeFriendlyInvisibles;
     private NameTagVisibility nameTagVisibility;
@@ -43,7 +43,7 @@ public class ServerTeamPacket implements Packet {
         this.action = TeamAction.REMOVE;
     }
 
-    public ServerTeamPacket(@NonNull String teamName, @NonNull Message displayName, @NonNull Message prefix, @NonNull Message suffix,
+    public ServerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
                             boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
                             @NonNull CollisionRule collisionRule, @NonNull TeamColor color) {
         this.teamName = teamName;
@@ -70,7 +70,7 @@ public class ServerTeamPacket implements Packet {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    public ServerTeamPacket(@NonNull String teamName, @NonNull Message displayName, @NonNull Message prefix, @NonNull Message suffix,
+    public ServerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
                             boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
                             @NonNull CollisionRule collisionRule, @NonNull TeamColor color, @NonNull String[] players) {
         this.teamName = teamName;
@@ -93,7 +93,7 @@ public class ServerTeamPacket implements Packet {
         this.teamName = in.readString();
         this.action = MagicValues.key(TeamAction.class, in.readByte());
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            this.displayName = MessageSerializer.fromString(in.readString());
+            this.displayName = DefaultComponentSerializer.get().deserialize(in.readString());
             byte flags = in.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
@@ -106,8 +106,8 @@ public class ServerTeamPacket implements Packet {
                 this.color = TeamColor.NONE;
             }
 
-            this.prefix = MessageSerializer.fromString(in.readString());
-            this.suffix = MessageSerializer.fromString(in.readString());
+            this.prefix = DefaultComponentSerializer.get().deserialize(in.readString());
+            this.suffix = DefaultComponentSerializer.get().deserialize(in.readString());
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
@@ -123,13 +123,13 @@ public class ServerTeamPacket implements Packet {
         out.writeString(this.teamName);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            out.writeString(MessageSerializer.toJsonString(this.displayName));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.displayName));
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
             out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
             out.writeString(MagicValues.value(String.class, this.collisionRule));
             out.writeVarInt(MagicValues.value(Integer.class, this.color));
-            out.writeString(MessageSerializer.toJsonString(this.prefix));
-            out.writeString(MessageSerializer.toJsonString(this.suffix));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.prefix));
+            out.writeString(DefaultComponentSerializer.get().serialize(this.suffix));
         }
 
         if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {

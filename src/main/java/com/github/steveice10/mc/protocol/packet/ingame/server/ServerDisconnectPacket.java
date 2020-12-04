@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -11,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 
@@ -19,20 +19,20 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerDisconnectPacket implements Packet {
-    private @NonNull Message reason;
+    private @NonNull Component reason;
 
     public ServerDisconnectPacket(@NonNull String reason) {
-        this(MessageSerializer.fromString(reason));
+        this(DefaultComponentSerializer.get().deserialize(reason));
     }
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.reason = MessageSerializer.fromString(in.readString());
+        this.reason = DefaultComponentSerializer.get().deserialize(in.readString());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(MessageSerializer.toJsonString(this.reason));
+        out.writeString(DefaultComponentSerializer.get().serialize(this.reason));
     }
 
     @Override

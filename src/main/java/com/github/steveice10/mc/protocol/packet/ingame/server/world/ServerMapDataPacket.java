@@ -1,11 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapData;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIcon;
 import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -15,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 
@@ -47,9 +47,9 @@ public class ServerMapDataPacket implements Packet {
             int x = in.readUnsignedByte();
             int z = in.readUnsignedByte();
             int rotation = in.readUnsignedByte();
-            Message displayName = null;
+            Component displayName = null;
             if(in.readBoolean()) {
-                displayName = MessageSerializer.fromString(in.readString());
+                displayName = DefaultComponentSerializer.get().deserialize(in.readString());
             }
 
             this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
@@ -75,6 +75,7 @@ public class ServerMapDataPacket implements Packet {
         out.writeByte(this.scale);
         out.writeBoolean(this.trackingPosition);
         out.writeBoolean(this.locked);
+<<<<<<< HEAD
         if(this.trackingPosition) {
             out.writeVarInt(this.icons.length);
             for(int index = 0; index < this.icons.length; index++) {
@@ -90,6 +91,21 @@ public class ServerMapDataPacket implements Packet {
                 } else {
                     out.writeBoolean(true);
                 }
+=======
+        out.writeVarInt(this.icons.length);
+        for(int index = 0; index < this.icons.length; index++) {
+            MapIcon icon = this.icons[index];
+            int type = MagicValues.value(Integer.class, icon.getIconType());
+            out.writeVarInt(type);
+            out.writeByte(icon.getCenterX());
+            out.writeByte(icon.getCenterZ());
+            out.writeByte(icon.getIconRotation());
+            if (icon.getDisplayName() != null) {
+                out.writeBoolean(false);
+                out.writeString(DefaultComponentSerializer.get().serialize(icon.getDisplayName()));
+            } else {
+                out.writeBoolean(true);
+>>>>>>> fa0aaccb611429a19e5df66016b3d99a95304888
             }
         }
 

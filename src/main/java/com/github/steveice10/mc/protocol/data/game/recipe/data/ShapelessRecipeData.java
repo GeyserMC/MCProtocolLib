@@ -11,5 +11,5 @@ import lombok.NonNull;
 public class ShapelessRecipeData implements RecipeData {
     private final @NonNull String group;
     private final @NonNull Ingredient[] ingredients;
-    private final @NonNull ItemStack result;
+    private final ItemStack result;
 }

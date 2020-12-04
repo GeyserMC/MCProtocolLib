@@ -13,5 +13,5 @@ public class ShapedRecipeData implements RecipeData {
     private final int height;
     private final @NonNull String group;
     private final @NonNull Ingredient[] ingredients;
-    private final @NonNull ItemStack result;
+    private final ItemStack result;
 }

@@ -1,12 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -16,6 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,8 +60,8 @@ public class ServerAdvancementsPacket implements Packet {
             String parentId = in.readBoolean() ? in.readString() : null;
             DisplayData displayData = null;
             if(in.readBoolean()) {
-                Message title = MessageSerializer.fromString(in.readString());
-                Message description = MessageSerializer.fromString(in.readString());
+                Component title = DefaultComponentSerializer.get().deserialize(in.readString());
+                Component description = DefaultComponentSerializer.get().deserialize(in.readString());
                 ItemStack icon = ItemStack.read(in);
                 FrameType frameType = MagicValues.key(FrameType.class, in.readVarInt());
 
@@ -137,8 +137,8 @@ public class ServerAdvancementsPacket implements Packet {
             DisplayData displayData = advancement.getDisplayData();
             if(displayData != null) {
                 out.writeBoolean(true);
-                out.writeString(MessageSerializer.toJsonString(displayData.getTitle()));
-                out.writeString(MessageSerializer.toJsonString(displayData.getDescription()));
+                out.writeString(DefaultComponentSerializer.get().serialize(displayData.getTitle()));
+                out.writeString(DefaultComponentSerializer.get().serialize(displayData.getDescription()));
                 ItemStack.write(out, displayData.getIcon());
                 out.writeVarInt(MagicValues.value(Integer.class, displayData.getFrameType()));
                 String backgroundTexture = displayData.getBackgroundTexture();

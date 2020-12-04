@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.message.TextMessage;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -23,6 +22,7 @@ import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import net.kyori.adventure.text.Component;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class MinecraftProtocolTest {
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
             VersionInfo.CURRENT,
             new PlayerInfo(100, 0, new GameProfile[0]),
-            new TextMessage.Builder().text("Hello world!").build(),
+            Component.text("Hello world!"),
             null
     );
     private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), getOverworldTag(), "minecraft:world", 100, 0, 16, false, false, false, false);

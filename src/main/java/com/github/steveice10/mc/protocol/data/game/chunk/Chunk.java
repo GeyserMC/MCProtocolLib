@@ -6,7 +6,11 @@ import com.github.steveice10.mc.protocol.data.game.chunk.palette.MapPalette;
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.Palette;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.io.IOException;
 

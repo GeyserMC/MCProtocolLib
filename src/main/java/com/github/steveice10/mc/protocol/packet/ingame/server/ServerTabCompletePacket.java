@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
-import com.github.steveice10.mc.protocol.data.message.Message;
-import com.github.steveice10.mc.protocol.data.message.MessageSerializer;
+import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -10,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,9 +22,9 @@ public class ServerTabCompletePacket implements Packet {
     private int start;
     private int length;
     private @NonNull String[] matches;
-    private @NonNull Message[] tooltips;
+    private @NonNull Component[] tooltips;
 
-    public ServerTabCompletePacket(int transactionId, int start, int length, @NonNull String[] matches, @NonNull Message[] tooltips) {
+    public ServerTabCompletePacket(int transactionId, int start, int length, @NonNull String[] matches, @NonNull Component[] tooltips) {
         if(tooltips.length != matches.length) {
             throw new IllegalArgumentException("Length of matches and tooltips must be equal.");
         }
@@ -42,11 +42,11 @@ public class ServerTabCompletePacket implements Packet {
         this.start = in.readVarInt();
         this.length = in.readVarInt();
         this.matches = new String[in.readVarInt()];
-        this.tooltips = new Message[this.matches.length];
+        this.tooltips = new Component[this.matches.length];
         for(int index = 0; index < this.matches.length; index++) {
             this.matches[index] = in.readString();
             if (in.readBoolean()) {
-                this.tooltips[index] = MessageSerializer.fromString(in.readString());
+                this.tooltips[index] = DefaultComponentSerializer.get().deserialize(in.readString());
             }
         }
     }
@@ -59,10 +59,10 @@ public class ServerTabCompletePacket implements Packet {
         out.writeVarInt(this.matches.length);
         for(int index = 0; index < this.matches.length; index++) {
             out.writeString(this.matches[index]);
-            Message tooltip = this.tooltips[index];
+            Component tooltip = this.tooltips[index];
             if (tooltip != null) {
                 out.writeBoolean(true);
-                out.writeString(MessageSerializer.toJsonString(tooltip));
+                out.writeString(DefaultComponentSerializer.get().serialize(tooltip));
             } else {
                 out.writeBoolean(false);
             }

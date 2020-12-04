@@ -4,7 +4,6 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
-import com.github.steveice10.mc.protocol.data.message.TextMessage;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -29,6 +28,7 @@ import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.PacketSentEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
+import net.kyori.adventure.text.Component;
 
 import javax.crypto.SecretKey;
 import java.security.KeyPair;
@@ -129,7 +129,7 @@ public class ServerListener extends SessionAdapter {
                     builder = session -> new ServerStatusInfo(
                             VersionInfo.CURRENT,
                             new PlayerInfo(0, 20, new GameProfile[0]),
-                            new TextMessage.Builder().text("A Minecraft Server").build(),
+                            Component.text("A Minecraft Server"),
                             null
                     );
                 }

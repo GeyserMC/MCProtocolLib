@@ -5,7 +5,12 @@ import com.github.steveice10.mc.protocol.data.game.window.CraftingBookStateType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 
 import java.io.IOException;
 
