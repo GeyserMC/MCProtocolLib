@@ -55,15 +55,18 @@ public class ServerMapDataPacket implements Packet {
             this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
         }
 
-        int columns = in.readUnsignedByte();
-        if(columns > 0) {
-            int rows = in.readUnsignedByte();
-            int x = in.readUnsignedByte();
-            int y = in.readUnsignedByte();
-            byte[] data = in.readBytes(in.readVarInt());
+        if(trackingPosition) {
+            int columns = in.readUnsignedByte();
+            if(columns > 0) {
+                int rows = in.readUnsignedByte();
+                int x = in.readUnsignedByte();
+                int y = in.readUnsignedByte();
+                byte[] data = in.readBytes(in.readVarInt());
 
-            this.data = new MapData(columns, rows, x, y, data);
+                this.data = new MapData(columns, rows, x, y, data);
+            }
         }
+
     }
 
     @Override
@@ -72,19 +75,21 @@ public class ServerMapDataPacket implements Packet {
         out.writeByte(this.scale);
         out.writeBoolean(this.trackingPosition);
         out.writeBoolean(this.locked);
-        out.writeVarInt(this.icons.length);
-        for(int index = 0; index < this.icons.length; index++) {
-            MapIcon icon = this.icons[index];
-            int type = MagicValues.value(Integer.class, icon.getIconType());
-            out.writeVarInt(type);
-            out.writeByte(icon.getCenterX());
-            out.writeByte(icon.getCenterZ());
-            out.writeByte(icon.getIconRotation());
-            if (icon.getDisplayName() != null) {
-                out.writeBoolean(false);
-                out.writeString(MessageSerializer.toJsonString(icon.getDisplayName()));
-            } else {
-                out.writeBoolean(true);
+        if(this.trackingPosition) {
+            out.writeVarInt(this.icons.length);
+            for(int index = 0; index < this.icons.length; index++) {
+                MapIcon icon = this.icons[index];
+                int type = MagicValues.value(Integer.class, icon.getIconType());
+                out.writeVarInt(type);
+                out.writeByte(icon.getCenterX());
+                out.writeByte(icon.getCenterZ());
+                out.writeByte(icon.getIconRotation());
+                if (icon.getDisplayName() != null) {
+                    out.writeBoolean(false);
+                    out.writeString(MessageSerializer.toJsonString(icon.getDisplayName()));
+                } else {
+                    out.writeBoolean(true);
+                }
             }
         }
 
