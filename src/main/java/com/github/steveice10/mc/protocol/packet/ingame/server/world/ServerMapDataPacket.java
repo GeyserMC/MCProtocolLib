@@ -75,7 +75,6 @@ public class ServerMapDataPacket implements Packet {
         out.writeByte(this.scale);
         out.writeBoolean(this.trackingPosition);
         out.writeBoolean(this.locked);
-<<<<<<< HEAD
         if(this.trackingPosition) {
             out.writeVarInt(this.icons.length);
             for(int index = 0; index < this.icons.length; index++) {
@@ -87,25 +86,10 @@ public class ServerMapDataPacket implements Packet {
                 out.writeByte(icon.getIconRotation());
                 if (icon.getDisplayName() != null) {
                     out.writeBoolean(false);
-                    out.writeString(MessageSerializer.toJsonString(icon.getDisplayName()));
+                    out.writeString(DefaultComponentSerializer.get().serialize(icon.getDisplayName()));
                 } else {
                     out.writeBoolean(true);
                 }
-=======
-        out.writeVarInt(this.icons.length);
-        for(int index = 0; index < this.icons.length; index++) {
-            MapIcon icon = this.icons[index];
-            int type = MagicValues.value(Integer.class, icon.getIconType());
-            out.writeVarInt(type);
-            out.writeByte(icon.getCenterX());
-            out.writeByte(icon.getCenterZ());
-            out.writeByte(icon.getIconRotation());
-            if (icon.getDisplayName() != null) {
-                out.writeBoolean(false);
-                out.writeString(DefaultComponentSerializer.get().serialize(icon.getDisplayName()));
-            } else {
-                out.writeBoolean(true);
->>>>>>> fa0aaccb611429a19e5df66016b3d99a95304888
             }
         }
 
