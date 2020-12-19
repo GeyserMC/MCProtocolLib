@@ -28,7 +28,9 @@ import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class TcpClientSession extends TcpSession {
     private Client client;
@@ -110,8 +112,8 @@ public class TcpClientSession extends TcpSession {
                 @Override
                 public void run() {
                     try {
-                        resolveAddress();
-                        bootstrap.remoteAddress(getHost(), getPort());
+                        InetSocketAddress remoteAddress = resolveAddress();
+                        bootstrap.remoteAddress(remoteAddress);
 
                         ChannelFuture future = bootstrap.connect().sync();
                         if(future.isSuccess()) {
@@ -138,7 +140,7 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    private void resolveAddress() {
+    private InetSocketAddress resolveAddress() {
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
         String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
@@ -192,6 +194,21 @@ public class TcpClientSession extends TcpSession {
             if(resolver != null) {
                 resolver.close();
             }
+        }
+
+        // Resolve host here
+        try {
+            InetAddress resolved = InetAddress.getByName(getHost());
+            if (debug) {
+                System.out.printf("[PacketLib] Resolved %s -> %s%n", getHost(), resolved.getHostAddress());
+            }
+            return new InetSocketAddress(resolved, getPort());
+        } catch (UnknownHostException e) {
+            if (debug) {
+                System.out.println("[PacketLib] Failed to resolve host, letting Netty do it instead.");
+                e.printStackTrace();
+            }
+            return InetSocketAddress.createUnresolved(getHost(), getPort());
         }
     }
 
