@@ -9,6 +9,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -22,13 +24,21 @@ import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
 import io.netty.handler.codec.dns.DnsRecordType;
 import io.netty.handler.codec.dns.DnsResponse;
 import io.netty.handler.codec.dns.DnsSection;
+import io.netty.handler.codec.haproxy.HAProxyCommand;
+import io.netty.handler.codec.haproxy.HAProxyMessage;
+import io.netty.handler.codec.haproxy.HAProxyMessageEncoder;
+import io.netty.handler.codec.haproxy.HAProxyProtocolVersion;
+import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class TcpClientSession extends TcpSession {
     private Client client;
@@ -103,6 +113,26 @@ public class TcpClientSession extends TcpSession {
                     pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this));
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this));
                     pipeline.addLast("manager", TcpClientSession.this);
+
+                    InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
+                    if (getFlag(BuiltinFlags.ENABLE_CLIENT_PROXY_PROTOCOL, false) && clientAddress != null) {
+                        pipeline.addFirst("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
+                            @Override
+                            public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
+                                InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+                                ctx.channel().writeAndFlush(new HAProxyMessage(
+                                        HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
+                                        clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
+                                        clientAddress.getPort(), remoteAddress.getPort()
+                                ));
+                                ctx.pipeline().remove(this);
+                                ctx.pipeline().remove("proxy-protocol-encoder");
+                                super.channelActive(ctx);
+                            }
+                        });
+                        pipeline.addFirst("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
+                    }
                 }
             }).group(this.group).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
 
@@ -110,8 +140,8 @@ public class TcpClientSession extends TcpSession {
                 @Override
                 public void run() {
                     try {
-                        resolveAddress();
-                        bootstrap.remoteAddress(getHost(), getPort());
+                        InetSocketAddress remoteAddress = resolveAddress();
+                        bootstrap.remoteAddress(remoteAddress);
 
                         ChannelFuture future = bootstrap.connect().sync();
                         if(future.isSuccess()) {
@@ -138,7 +168,7 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    private void resolveAddress() {
+    private InetSocketAddress resolveAddress() {
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
         String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
@@ -192,6 +222,21 @@ public class TcpClientSession extends TcpSession {
             if(resolver != null) {
                 resolver.close();
             }
+        }
+
+        // Resolve host here
+        try {
+            InetAddress resolved = InetAddress.getByName(getHost());
+            if (debug) {
+                System.out.printf("[PacketLib] Resolved %s -> %s%n", getHost(), resolved.getHostAddress());
+            }
+            return new InetSocketAddress(resolved, getPort());
+        } catch (UnknownHostException e) {
+            if (debug) {
+                System.out.println("[PacketLib] Failed to resolve host, letting Netty do it instead.");
+                e.printStackTrace();
+            }
+            return InetSocketAddress.createUnresolved(getHost(), getPort());
         }
     }
 
