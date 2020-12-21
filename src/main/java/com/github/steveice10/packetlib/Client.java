@@ -8,14 +8,22 @@ import com.github.steveice10.packetlib.packet.PacketProtocol;
 public class Client {
     private String host;
     private int port;
+    private String bindAddress;
+    private int bindPort;
     private PacketProtocol protocol;
     private Session session;
 
-    public Client(String host, int port, PacketProtocol protocol, SessionFactory factory) {
+    public Client(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, SessionFactory factory) {
         this.host = host;
         this.port = port;
+        this.bindAddress = bindAddress;
+        this.bindPort = bindPort;
         this.protocol = protocol;
         this.session = factory.createClientSession(this);
+    }
+    
+    public Client(String host, int port, PacketProtocol protocol, SessionFactory factory) {
+        new Client(host, port, null, 0, protocol, factory);
     }
 
     /**
@@ -35,7 +43,25 @@ public class Client {
     public int getPort() {
         return this.port;
     }
-
+    
+    /**
+     * Gets the the local address the client is connecting from.
+     *
+     * @return Client's local IP address or null if default.
+     */
+    public String getBindAddress() {
+        return this.bindAddress;
+    }
+    
+    /**
+     * Gets the the local port the client is connecting from.
+     *
+     * @return Client's local port or 0 if default.
+     */
+    public int getBindPort() {
+        return this.bindPort;
+    }
+    
     /**
      * Gets the packet protocol of the client.
      *
