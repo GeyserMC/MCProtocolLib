@@ -142,6 +142,7 @@ public class TcpClientSession extends TcpSession {
                     try {
                         InetSocketAddress remoteAddress = resolveAddress();
                         bootstrap.remoteAddress(remoteAddress);
+                        bootstrap.localAddress(client.getBindAddress(), client.getBindPort());
 
                         ChannelFuture future = bootstrap.connect().sync();
                         if(future.isSuccess()) {
