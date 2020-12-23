@@ -1,7 +1,7 @@
 package com.github.steveice10.packetlib;
 
 import com.github.steveice10.packetlib.packet.PacketProtocol;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 
 /**
