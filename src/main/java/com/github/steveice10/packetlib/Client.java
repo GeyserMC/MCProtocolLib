@@ -1,6 +1,8 @@
 package com.github.steveice10.packetlib;
 
 import com.github.steveice10.packetlib.packet.PacketProtocol;
+import com.sun.istack.internal.Nullable;
+import java.net.InetSocketAddress;
 
 /**
  * A client that may connect to a server.
@@ -45,21 +47,28 @@ public class Client {
     }
     
     /**
-     * Gets the the local address the client is connecting from.
+     * Gets the the local address the client is connected from/will be binding to.
      *
-     * @return Client's local IP address or null if default.
+     * @return Client's local IP address, or null if default and not connected.
      */
+    @Nullable
     public String getBindAddress() {
-        return this.bindAddress;
+        final Session session = this.getSession();
+        return session.isConnected()
+            ? ((InetSocketAddress) session.getLocalAddress()).getAddress().getHostAddress()
+            : this.bindAddress;
     }
     
     /**
-     * Gets the the local port the client is connecting from.
+     * Gets the the local port the client is connected from/will be binding to.
      *
-     * @return Client's local port or 0 if default.
+     * @return Client's local port, or 0 if default and not connected.
      */
     public int getBindPort() {
-        return this.bindPort;
+        final Session session = this.getSession();
+        return session.isConnected()
+            ? ((InetSocketAddress) session.getLocalAddress()).getPort()
+            : this.bindPort;
     }
     
     /**
