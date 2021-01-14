@@ -98,8 +98,8 @@ public class ServerWorldBorderPacket implements Packet {
             this.newSize = in.readDouble();
             this.lerpTime = in.readVarLong();
             this.newAbsoluteMaxSize = in.readVarInt();
-            this.warningTime = in.readVarInt();
             this.warningBlocks = in.readVarInt();
+            this.warningTime = in.readVarInt();
         } else if(this.action == WorldBorderAction.SET_WARNING_TIME) {
             this.warningTime = in.readVarInt();
         } else if(this.action == WorldBorderAction.SET_WARNING_BLOCKS) {
@@ -126,8 +126,8 @@ public class ServerWorldBorderPacket implements Packet {
             out.writeDouble(this.newSize);
             out.writeVarLong(this.lerpTime);
             out.writeVarInt(this.newAbsoluteMaxSize);
-            out.writeVarInt(this.warningTime);
             out.writeVarInt(this.warningBlocks);
+            out.writeVarInt(this.warningTime);
         } else if(this.action == WorldBorderAction.SET_WARNING_TIME) {
             out.writeVarInt(this.warningTime);
         } else if(this.action == WorldBorderAction.SET_WARNING_BLOCKS) {
