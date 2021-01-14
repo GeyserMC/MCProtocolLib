@@ -126,8 +126,8 @@ public class ServerWorldBorderPacket implements Packet {
             out.writeDouble(this.newSize);
             out.writeVarLong(this.lerpTime);
             out.writeVarInt(this.newAbsoluteMaxSize);
-            out.writeVarInt(this.warningTime);
             out.writeVarInt(this.warningBlocks);
+            out.writeVarInt(this.warningTime);
         } else if(this.action == WorldBorderAction.SET_WARNING_TIME) {
             out.writeVarInt(this.warningTime);
         } else if(this.action == WorldBorderAction.SET_WARNING_BLOCKS) {
