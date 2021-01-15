@@ -1,125 +1,49 @@
 package com.github.steveice10.packetlib;
 
-import com.github.steveice10.packetlib.event.server.ServerBoundEvent;
-import com.github.steveice10.packetlib.event.server.ServerClosedEvent;
-import com.github.steveice10.packetlib.event.server.ServerClosingEvent;
-import com.github.steveice10.packetlib.event.server.ServerEvent;
 import com.github.steveice10.packetlib.event.server.ServerListener;
-import com.github.steveice10.packetlib.event.server.SessionAddedEvent;
-import com.github.steveice10.packetlib.event.server.SessionRemovedEvent;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * A server that listens for connections.
+ * Listens for new sessions to connect.
  */
-public class Server {
-    private String host;
-    private int port;
-    private Class<? extends PacketProtocol> protocol;
-    private SessionFactory factory;
-    private ConnectionListener listener;
-    private List<Session> sessions = new ArrayList<Session>();
-
-    private Map<String, Object> flags = new HashMap<String, Object>();
-    private List<ServerListener> listeners = new ArrayList<ServerListener>();
-
-    public Server(String host, int port, Class<? extends PacketProtocol> protocol, SessionFactory factory) {
-        this.host = host;
-        this.port = port;
-        this.protocol = protocol;
-        this.factory = factory;
-    }
+public interface Server {
+    /**
+     * Gets the host the session is listening on.
+     *
+     * @return The listening host.
+     */
+    public String getHost();
 
     /**
-     * Binds and initializes the server.
+     * Gets the port the session is listening on.
      *
-     * @return The server after being bound.
+     * @return The listening port.
      */
-    public Server bind() {
-        return this.bind(true);
-    }
-
-    /**
-     * Binds and initializes the server.
-     *
-     * @param wait Whether to wait for the server to finish binding.
-     * @return The server after being bound.
-     */
-    public Server bind(boolean wait) {
-        this.listener = this.factory.createServerListener(this);
-        this.listener.bind(wait, new Runnable() {
-            @Override
-            public void run() {
-                callEvent(new ServerBoundEvent(Server.this));
-            }
-        });
-
-        return this;
-    }
-
-    /**
-     * Gets the host this server is bound to.
-     *
-     * @return The server's host.
-     */
-    public String getHost() {
-        return this.host;
-    }
-
-    /**
-     * Gets the port this server is bound to.
-     *
-     * @return The server's port.
-     */
-    public int getPort() {
-        return this.port;
-    }
+    public int getPort();
 
     /**
      * Gets the packet protocol of the server.
      *
      * @return The server's packet protocol.
      */
-    public Class<? extends PacketProtocol> getPacketProtocol() {
-        return this.protocol;
-    }
+    public Class<? extends PacketProtocol> getPacketProtocol();
 
     /**
-     * Creates a new packet protocol instance from this server's protocol class.
+     * Returns true if the listener is listening.
      *
-     * @return The created protocol instance.
-     * @throws IllegalStateException If the protocol does not have a no-params constructor or cannot be instantiated.
+     * @return True if the listener is listening.
      */
-    public PacketProtocol createPacketProtocol() {
-        try {
-            Constructor<? extends PacketProtocol> constructor = this.protocol.getDeclaredConstructor();
-            if(!constructor.isAccessible()) {
-                constructor.setAccessible(true);
-            }
-
-            return constructor.newInstance();
-        } catch(NoSuchMethodError e) {
-            throw new IllegalStateException("PacketProtocol \"" + this.protocol.getName() + "\" does not have a no-params constructor for instantiation.");
-        } catch(Exception e) {
-            throw new IllegalStateException("Failed to instantiate PacketProtocol " + this.protocol.getName() + ".", e);
-        }
-    }
+    public boolean isListening();
 
     /**
      * Gets this server's set flags.
      *
      * @return This server's flags.
      */
-    public Map<String, Object> getGlobalFlags() {
-        return Collections.unmodifiableMap(this.flags);
-    }
+    public Map<String, Object> getGlobalFlags();
 
     /**
      * Checks whether this server has a flag set.
@@ -127,9 +51,7 @@ public class Server {
      * @param key Key of the flag to check for.
      * @return Whether this server has a flag set.
      */
-    public boolean hasGlobalFlag(String key) {
-        return this.flags.containsKey(key);
-    }
+    public boolean hasGlobalFlag(String key);
 
     /**
      * Gets the value of the given flag as an instance of the given type.
@@ -139,9 +61,7 @@ public class Server {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    public <T> T getGlobalFlag(String key) {
-        return this.getGlobalFlag(key, null);
-    }
+    public <T> T getGlobalFlag(String key);
 
     /**
      * Gets the value of the given flag as an instance of the given type.
@@ -154,18 +74,7 @@ public class Server {
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
     @SuppressWarnings("unchecked")
-    public <T> T getGlobalFlag(String key, T def) {
-        Object value = this.flags.get(key);
-        if(value == null) {
-            return def;
-        }
-
-        try {
-            return (T) value;
-        } catch(ClassCastException e) {
-            throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
-        }
-    }
+    public <T> T getGlobalFlag(String key, T def);
 
     /**
      * Sets the value of a flag. The flag will be used in sessions if a session does
@@ -174,115 +83,73 @@ public class Server {
      * @param key   Key of the flag.
      * @param value Value to set the flag to.
      */
-    public void setGlobalFlag(String key, Object value) {
-        this.flags.put(key, value);
-    }
+    public void setGlobalFlag(String key, Object value);
 
     /**
      * Gets the listeners listening on this session.
      *
      * @return This server's listeners.
      */
-    public List<ServerListener> getListeners() {
-        return Collections.unmodifiableList(this.listeners);
-    }
+    public List<ServerListener> getListeners();
 
     /**
      * Adds a listener to this server.
      *
      * @param listener Listener to add.
      */
-    public void addListener(ServerListener listener) {
-        this.listeners.add(listener);
-    }
+    public void addListener(ServerListener listener);
 
     /**
      * Removes a listener from this server.
      *
      * @param listener Listener to remove.
      */
-    public void removeListener(ServerListener listener) {
-        this.listeners.remove(listener);
-    }
-
-    /**
-     * Calls an event on the listeners of this server.
-     *
-     * @param event Event to call.
-     */
-    public void callEvent(ServerEvent event) {
-        for(ServerListener listener : this.listeners) {
-            event.call(listener);
-        }
-    }
+    public void removeListener(ServerListener listener);
 
     /**
      * Gets all sessions belonging to this server.
      *
      * @return Sessions belonging to this server.
      */
-    public List<Session> getSessions() {
-        return new ArrayList<Session>(this.sessions);
-    }
+    public List<Session> getSessions();
 
     /**
-     * Adds the given session to this server.
+     * Binds the listener to its host and port.
+     */
+    public AbstractServer bind();
+
+    /**
+     * Binds the listener to its host and port.
      *
-     * @param session Session to add.
+     * @param wait Whether to wait for the listener to finish binding.
      */
-    public void addSession(Session session) {
-        this.sessions.add(session);
-        this.callEvent(new SessionAddedEvent(this, session));
-    }
+    public AbstractServer bind(boolean wait);
 
     /**
-     * Removes the given session from this server.
+     * Binds the listener to its host and port.
      *
-     * @param session Session to remove.
+     * @param wait     Whether to wait for the listener to finish binding.
+     * @param callback Callback to call when the listener has finished binding.
      */
-    public void removeSession(Session session) {
-        this.sessions.remove(session);
-        if(session.isConnected()) {
-            session.disconnect("Connection closed.");
-        }
-
-        this.callEvent(new SessionRemovedEvent(this, session));
-    }
+    public AbstractServer bind(boolean wait, Runnable callback);
 
     /**
-     * Gets whether the server is listening.
+     * Closes the listener.
+     */
+    public void close();
+
+    /**
+     * Closes the listener.
      *
-     * @return Whether the server is listening.
+     * @param wait Whether to wait for the listener to finish closing.
      */
-    public boolean isListening() {
-        return this.listener != null && this.listener.isListening();
-    }
+    public void close(boolean wait);
 
     /**
-     * Closes the server.
-     */
-    public void close() {
-        this.close(true);
-    }
-
-    /**
-     * Closes the server.
+     * Closes the listener.
      *
-     * @param wait Whether to wait for the server to finish closing.
+     * @param wait     Whether to wait for the listener to finish closing.
+     * @param callback Callback to call when the listener has finished closing.
      */
-    public void close(boolean wait) {
-        this.callEvent(new ServerClosingEvent(this));
-        for(Session session : this.getSessions()) {
-            if(session.isConnected()) {
-                session.disconnect("Server closed.");
-            }
-        }
-
-        this.listener.close(wait, new Runnable() {
-            @Override
-            public void run() {
-                callEvent(new ServerClosedEvent(Server.this));
-            }
-        });
-    }
+    public void close(boolean wait, Runnable callback);
 }

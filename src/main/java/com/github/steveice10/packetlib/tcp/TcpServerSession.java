@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TcpServerSession extends TcpSession {
-    private Server server;
+    private TcpServer server;
 
-    public TcpServerSession(String host, int port, PacketProtocol protocol, Server server) {
+    public TcpServerSession(String host, int port, PacketProtocol protocol, TcpServer server) {
         super(host, port, protocol);
         this.server = server;
     }

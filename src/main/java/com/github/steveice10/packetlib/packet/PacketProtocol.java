@@ -1,6 +1,5 @@
 package com.github.steveice10.packetlib.packet;
 
-import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.crypt.PacketEncryption;
@@ -43,10 +42,9 @@ public abstract class PacketProtocol {
     /**
      * Called when a client session is created with this protocol.
      *
-     * @param client  The client that the session belongs to.
      * @param session The created session.
      */
-    public abstract void newClientSession(Client client, Session session);
+    public abstract void newClientSession(Session session);
 
     /**
      * Called when a server session is created with this protocol.

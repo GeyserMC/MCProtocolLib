@@ -40,6 +40,6 @@ public class ServerListener extends ServerAdapter {
     @Override
     public void sessionRemoved(SessionRemovedEvent event) {
         System.out.println("SERVER Session Removed: " + event.getSession().getHost() + ":" + event.getSession().getPort());
-        event.getServer().close();
+        event.getServer().close(false);
     }
 }

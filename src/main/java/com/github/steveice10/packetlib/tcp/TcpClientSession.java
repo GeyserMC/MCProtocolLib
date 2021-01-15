@@ -1,7 +1,6 @@
 package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.BuiltinFlags;
-import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
@@ -41,14 +40,28 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 public class TcpClientSession extends TcpSession {
-    private Client client;
+    private String bindAddress;
+    private int bindPort;
     private ProxyInfo proxy;
 
     private EventLoopGroup group;
 
-    public TcpClientSession(String host, int port, PacketProtocol protocol, Client client, ProxyInfo proxy) {
+    public TcpClientSession(String host, int port, PacketProtocol protocol) {
+        this(host, port, protocol, null);
+    }
+
+    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxy) {
+        this(host, port, "0.0.0.0", 0, protocol, proxy);
+    }
+
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol) {
+        this(host, port, bindAddress, bindPort, protocol, null);
+    }
+
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
         super(host, port, protocol);
-        this.client = client;
+        this.bindAddress = bindAddress;
+        this.bindPort = bindPort;
         this.proxy = proxy;
     }
 
@@ -67,8 +80,8 @@ public class TcpClientSession extends TcpSession {
             bootstrap.channel(NioSocketChannel.class);
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
-                public void initChannel(Channel channel) throws Exception {
-                    getPacketProtocol().newClientSession(client, TcpClientSession.this);
+                public void initChannel(Channel channel) {
+                    getPacketProtocol().newClientSession(TcpClientSession.this);
 
                     channel.config().setOption(ChannelOption.IP_TOS, 0x18);
                     channel.config().setOption(ChannelOption.TCP_NODELAY, false);
@@ -78,84 +91,34 @@ public class TcpClientSession extends TcpSession {
                     refreshReadTimeoutHandler(channel);
                     refreshWriteTimeoutHandler(channel);
 
-                    if(proxy != null) {
-                        switch(proxy.getType()) {
-                            case HTTP:
-                                if(proxy.isAuthenticated()) {
-                                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
-                                } else {
-                                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
-                                }
-
-                                break;
-                            case SOCKS4:
-                                if(proxy.isAuthenticated()) {
-                                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
-                                } else {
-                                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
-                                }
-
-                                break;
-                            case SOCKS5:
-                                if(proxy.isAuthenticated()) {
-                                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
-                                } else {
-                                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
-                                }
-
-                                break;
-                            default:
-                                throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
-                        }
-                    }
+                    addProxy(pipeline);
 
                     pipeline.addLast("encryption", new TcpPacketEncryptor(TcpClientSession.this));
                     pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this));
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this));
                     pipeline.addLast("manager", TcpClientSession.this);
 
-                    InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
-                    if (getFlag(BuiltinFlags.ENABLE_CLIENT_PROXY_PROTOCOL, false) && clientAddress != null) {
-                        pipeline.addFirst("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
-                            @Override
-                            public void channelActive(ChannelHandlerContext ctx) throws Exception {
-                                HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
-                                InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-                                ctx.channel().writeAndFlush(new HAProxyMessage(
-                                        HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
-                                        clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
-                                        clientAddress.getPort(), remoteAddress.getPort()
-                                ));
-                                ctx.pipeline().remove(this);
-                                ctx.pipeline().remove("proxy-protocol-encoder");
-                                super.channelActive(ctx);
-                            }
-                        });
-                        pipeline.addFirst("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
-                    }
+                    addHAProxySupport(pipeline);
                 }
             }).group(this.group).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
 
-            Runnable connectTask = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        InetSocketAddress remoteAddress = resolveAddress();
-                        bootstrap.remoteAddress(remoteAddress);
-                        bootstrap.localAddress(client.getBindAddress(), client.getBindPort());
+            Runnable connectTask = () -> {
+                try {
+                    InetSocketAddress remoteAddress = resolveAddress();
+                    bootstrap.remoteAddress(remoteAddress);
+                    bootstrap.localAddress(bindAddress, bindPort);
 
-                        ChannelFuture future = bootstrap.connect().sync();
-                        if(future.isSuccess()) {
-                            while(!isConnected() && !disconnected) {
-                                try {
-                                    Thread.sleep(5);
-                                } catch(InterruptedException e) {
-                                }
+                    ChannelFuture future = bootstrap.connect().sync();
+                    if(future.isSuccess()) {
+                        while(!isConnected() && !disconnected) {
+                            try {
+                                Thread.sleep(5);
+                            } catch(InterruptedException e) {
                             }
                         }
-                    } catch(Throwable t) {
-                        exceptionCaught(null, t);
                     }
+                } catch(Throwable t) {
+                    exceptionCaught(null, t);
                 }
             };
 
@@ -238,6 +201,61 @@ public class TcpClientSession extends TcpSession {
                 e.printStackTrace();
             }
             return InetSocketAddress.createUnresolved(getHost(), getPort());
+        }
+    }
+
+    private void addProxy(ChannelPipeline pipeline) {
+        if(proxy != null) {
+            switch(proxy.getType()) {
+                case HTTP:
+                    if(proxy.isAuthenticated()) {
+                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                    } else {
+                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
+                    }
+
+                    break;
+                case SOCKS4:
+                    if(proxy.isAuthenticated()) {
+                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
+                    } else {
+                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
+                    }
+
+                    break;
+                case SOCKS5:
+                    if(proxy.isAuthenticated()) {
+                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                    } else {
+                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
+                    }
+
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
+            }
+        }
+    }
+
+    private void addHAProxySupport(ChannelPipeline pipeline) {
+        InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
+        if (getFlag(BuiltinFlags.ENABLE_CLIENT_PROXY_PROTOCOL, false) && clientAddress != null) {
+            pipeline.addFirst("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
+                @Override
+                public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                    HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
+                    InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+                    ctx.channel().writeAndFlush(new HAProxyMessage(
+                            HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
+                            clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
+                            clientAddress.getPort(), remoteAddress.getPort()
+                    ));
+                    ctx.pipeline().remove(this);
+                    ctx.pipeline().remove("proxy-protocol-encoder");
+                    super.channelActive(ctx);
+                }
+            });
+            pipeline.addFirst("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
         }
     }
 
