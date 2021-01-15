@@ -25,7 +25,7 @@ public class Client {
     }
     
     public Client(String host, int port, PacketProtocol protocol, SessionFactory factory) {
-        this(host, port, null, 0, protocol, factory);
+        this(host, port, "0.0.0.0", 0, protocol, factory);
     }
 
     /**
