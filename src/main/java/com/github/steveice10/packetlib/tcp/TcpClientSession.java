@@ -40,6 +40,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 public class TcpClientSession extends TcpSession {
+    private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+
     private String bindAddress;
     private int bindPort;
     private ProxyInfo proxy;
@@ -140,52 +142,56 @@ public class TcpClientSession extends TcpSession {
             System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
         }
 
-        DnsNameResolver resolver = null;
-        AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
-        try {
-            resolver = new DnsNameResolverBuilder(this.group.next())
-                    .channelType(NioDatagramChannel.class)
-                    .build();
-            envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+        if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
+            DnsNameResolver resolver = null;
+            AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
+            try {
+                resolver = new DnsNameResolverBuilder(this.group.next())
+                        .channelType(NioDatagramChannel.class)
+                        .build();
+                envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
-            DnsResponse response = envelope.content();
-            if(response.count(DnsSection.ANSWER) > 0) {
-                DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                if(record.type() == DnsRecordType.SRV) {
-                    ByteBuf buf = record.content();
-                    buf.skipBytes(4); // Skip priority and weight.
+                DnsResponse response = envelope.content();
+                if(response.count(DnsSection.ANSWER) > 0) {
+                    DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
+                    if(record.type() == DnsRecordType.SRV) {
+                        ByteBuf buf = record.content();
+                        buf.skipBytes(4); // Skip priority and weight.
 
-                    int port = buf.readUnsignedShort();
-                    String host = DefaultDnsRecordDecoder.decodeName(buf);
-                    if(host.endsWith(".")) {
-                        host = host.substring(0, host.length() - 1);
+                        int port = buf.readUnsignedShort();
+                        String host = DefaultDnsRecordDecoder.decodeName(buf);
+                        if(host.endsWith(".")) {
+                            host = host.substring(0, host.length() - 1);
+                        }
+
+                        if(debug) {
+                            System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
+                        }
+
+                        this.host = host;
+                        this.port = port;
+                    } else if(debug) {
+                        System.out.println("[PacketLib] Received non-SRV record in response.");
                     }
-
-                    if(debug) {
-                        System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
-                    }
-
-                    this.host = host;
-                    this.port = port;
                 } else if(debug) {
-                    System.out.println("[PacketLib] Received non-SRV record in response.");
+                    System.out.println("[PacketLib] No SRV record found.");
                 }
-            } else if(debug) {
-                System.out.println("[PacketLib] No SRV record found.");
-            }
-        } catch(Exception e) {
-            if(debug) {
-                System.out.println("[PacketLib] Failed to resolve SRV record.");
-                e.printStackTrace();
-            }
-        } finally {
-            if(envelope != null) {
-                envelope.release();
-            }
+            } catch(Exception e) {
+                if(debug) {
+                    System.out.println("[PacketLib] Failed to resolve SRV record.");
+                    e.printStackTrace();
+                }
+            } finally {
+                if(envelope != null) {
+                    envelope.release();
+                }
 
-            if(resolver != null) {
-                resolver.close();
+                if(resolver != null) {
+                    resolver.close();
+                }
             }
+        } else if(debug) {
+            System.out.println("[PacketLib] Not resolving SRV record for " + this.host);
         }
 
         // Resolve host here
