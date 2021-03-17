@@ -13,6 +13,11 @@ public class BuiltinFlags {
 
     public static final String CLIENT_PROXIED_ADDRESS = "client-proxied-address";
 
+    /**
+     * When set to false, an SRV record resolve is not attempted.
+     */
+    public static final String ATTEMPT_SRV_RESOLVE = "attempt-srv-resolve";
+
     private BuiltinFlags() {
     }
 }
