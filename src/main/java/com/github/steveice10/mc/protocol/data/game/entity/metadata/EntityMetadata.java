@@ -7,12 +7,12 @@ import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.particle.Particle;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleData;
 import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
@@ -175,7 +175,7 @@ public class EntityMetadata {
                     out.writeVarInt((int) meta.getValue());
                     break;
                 case NBT_TAG:
-                    NBT.write(out, (CompoundTag) meta.getValue());
+                    NBT.write(out, (CompoundBinaryTag) meta.getValue());
                     break;
                 case PARTICLE:
                     Particle particle = (Particle) meta.getValue();

@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 
 import com.github.steveice10.mc.protocol.data.game.NBT;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -11,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerNBTResponsePacket implements Packet {
     private int transactionId;
-    private @NonNull CompoundTag nbt;
+    private @NonNull CompoundBinaryTag nbt;
 
     @Override
     public void read(NetInput in) throws IOException {

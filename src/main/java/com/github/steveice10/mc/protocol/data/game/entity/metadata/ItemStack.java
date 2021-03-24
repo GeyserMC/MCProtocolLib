@@ -1,11 +1,11 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
 import com.github.steveice10.mc.protocol.data.game.NBT;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class ItemStack {
     private final int id;
     private final int amount;
-    private final CompoundTag nbt;
+    private final CompoundBinaryTag nbt;
 
     public ItemStack(int id) {
         this(id, 1);

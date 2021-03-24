@@ -8,12 +8,6 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
-import com.github.steveice10.opennbt.tag.builtin.ByteTag;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.FloatTag;
-import com.github.steveice10.opennbt.tag.builtin.IntTag;
-import com.github.steveice10.opennbt.tag.builtin.ListTag;
-import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
@@ -22,6 +16,11 @@ import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import net.kyori.adventure.nbt.ByteBinaryTag;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.nbt.FloatBinaryTag;
+import net.kyori.adventure.nbt.IntBinaryTag;
+import net.kyori.adventure.nbt.StringBinaryTag;
 import net.kyori.adventure.text.Component;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -146,31 +145,28 @@ public class MinecraftProtocolTest {
         }
     }
 
-    private static CompoundTag getDimensionTag() {
-        CompoundTag tag = new CompoundTag("");
-        ListTag dimensionTag = new ListTag("dimension");
-        CompoundTag overworldTag = getOverworldTag();
-        dimensionTag.add(overworldTag);
-        overworldTag.put(tag);
-        return tag;
+    private static CompoundBinaryTag getDimensionTag() {
+        return CompoundBinaryTag.builder()
+                .put("dimension", getOverworldTag())
+                .build();
     }
 
-    private static CompoundTag getOverworldTag() {
-        CompoundTag overworldTag = new CompoundTag("");
-        overworldTag.put(new StringTag("name", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("piglin_safe", (byte) 0));
-        overworldTag.put(new ByteTag("natural", (byte) 1));
-        overworldTag.put(new FloatTag("ambient_light", 0f));
-        overworldTag.put(new StringTag("infiniburn", "minecraft:infiniburn_overworld"));
-        overworldTag.put(new ByteTag("respawn_anchor_works", (byte) 0));
-        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
-        overworldTag.put(new ByteTag("bed_works", (byte) 1));
-        overworldTag.put(new StringTag("effects", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("has_raids", (byte) 1));
-        overworldTag.put(new IntTag("logical_height", 256));
-        overworldTag.put(new FloatTag("coordinate_scale", 1f));
-        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
-        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
+    private static CompoundBinaryTag getOverworldTag() {
+        CompoundBinaryTag overworldTag = CompoundBinaryTag.empty();
+        overworldTag.put("name", StringBinaryTag.of("minecraft:overworld"));
+        overworldTag.put("piglin_safe", ByteBinaryTag.of((byte) 0));
+        overworldTag.put("natural", ByteBinaryTag.of((byte)  1));
+        overworldTag.put("ambient_light", FloatBinaryTag.of(0f));
+        overworldTag.put("infiniburn", StringBinaryTag.of("minecraft:infiniburn_overworld"));
+        overworldTag.put("respawn_anchor_works", ByteBinaryTag.of((byte) 0));
+        overworldTag.put("has_skylight", ByteBinaryTag.of((byte) 1));
+        overworldTag.put("bed_works", ByteBinaryTag.of((byte) 1));
+        overworldTag.put("effects", StringBinaryTag.of("minecraft:overworld"));
+        overworldTag.put("has_raids", ByteBinaryTag.of((byte) 1));
+        overworldTag.put("logical_height", IntBinaryTag.of(256));
+        overworldTag.put("coordinate_scale", FloatBinaryTag.of(1f));
+        overworldTag.put("ultrawarm", ByteBinaryTag.of((byte) 0));
+        overworldTag.put("has_ceiling", ByteBinaryTag.of((byte) 0));
         return overworldTag;
     }
 }

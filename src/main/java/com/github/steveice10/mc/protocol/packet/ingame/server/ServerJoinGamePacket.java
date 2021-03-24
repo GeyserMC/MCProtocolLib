@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -12,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.io.IOException;
 
@@ -29,8 +28,8 @@ public class ServerJoinGamePacket implements Packet {
     private GameMode previousGamemode;
     private int worldCount;
     private @NonNull String[] worldNames;
-    private @NonNull CompoundTag dimensionCodec;
-    private @NonNull CompoundTag dimension;
+    private @NonNull CompoundBinaryTag dimensionCodec;
+    private @NonNull CompoundBinaryTag dimension;
     private @NonNull String worldName;
     private long hashedSeed;
     private int maxPlayers;

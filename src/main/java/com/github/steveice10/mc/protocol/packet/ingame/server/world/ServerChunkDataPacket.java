@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.server.world;
 import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
 import com.github.steveice10.mc.protocol.data.game.chunk.Column;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.io.stream.StreamNetInput;
@@ -15,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,7 +33,7 @@ public class ServerChunkDataPacket implements Packet {
         int z = in.readInt();
         boolean fullChunk = in.readBoolean();
         int chunkMask = in.readVarInt();
-        CompoundTag heightMaps = NBT.read(in);
+        CompoundBinaryTag heightMaps = NBT.read(in);
         int[] biomeData = fullChunk ? new int[in.readVarInt()] : null;
         if (fullChunk) {
             for (int index = 0; index < biomeData.length; index++) {
@@ -50,7 +50,7 @@ public class ServerChunkDataPacket implements Packet {
             }
         }
 
-        CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
+        CompoundBinaryTag[] tileEntities = new CompoundBinaryTag[in.readVarInt()];
         for(int i = 0; i < tileEntities.length; i++) {
             tileEntities[i] = NBT.read(in);
         }
@@ -89,7 +89,7 @@ public class ServerChunkDataPacket implements Packet {
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());
         out.writeVarInt(this.column.getTileEntities().length);
-        for(CompoundTag tag : this.column.getTileEntities()) {
+        for(CompoundBinaryTag tag : this.column.getTileEntities()) {
             NBT.write(out, tag);
         }
     }

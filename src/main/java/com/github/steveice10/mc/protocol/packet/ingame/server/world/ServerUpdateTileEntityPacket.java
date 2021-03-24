@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.world.block.UpdatedTileType;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -14,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ import java.io.IOException;
 public class ServerUpdateTileEntityPacket implements Packet {
     private @NonNull Position position;
     private @NonNull UpdatedTileType type;
-    private @NonNull CompoundTag nbt;
+    private @NonNull CompoundBinaryTag nbt;
 
     @Override
     public void read(NetInput in) throws IOException {

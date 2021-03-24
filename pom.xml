@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <argLine></argLine>
+        <adventure.version>4.7.0</adventure.version>
     </properties>
 
     <licenses>
@@ -55,12 +55,6 @@
     <dependencies>
         <dependency>
             <groupId>com.github.steveice10</groupId>
-            <artifactId>opennbt</artifactId>
-            <version>1.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.steveice10</groupId>
             <artifactId>packetlib</artifactId>
             <version>1.8</version>
             <scope>compile</scope>
@@ -74,7 +68,12 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-gson</artifactId>
-            <version>4.2.0</version>
+            <version>${adventure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-nbt</artifactId>
+            <version>${adventure.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game;
 
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import net.kyori.adventure.nbt.BinaryTagIO;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +13,8 @@ public class NBT {
     private NBT() {
     }
 
-    public static CompoundTag read(NetInput in) throws IOException {
-        return (CompoundTag) NBTIO.readTag(new InputStream() {
+    public static CompoundBinaryTag read(NetInput in) throws IOException {
+        return BinaryTagIO.reader().read(new InputStream() {
             @Override
             public int read() throws IOException {
                 return in.readUnsignedByte();
@@ -22,12 +22,12 @@ public class NBT {
         });
     }
 
-    public static void write(NetOutput out, CompoundTag tag) throws IOException {
-        NBTIO.writeTag(new OutputStream() {
+    public static void write(NetOutput out, CompoundBinaryTag nbt) throws IOException {
+        BinaryTagIO.writer().write(nbt, new OutputStream() {
             @Override
             public void write(int b) throws IOException {
                 out.writeByte(b);
             }
-        }, tag);
+        });
     }
 }
