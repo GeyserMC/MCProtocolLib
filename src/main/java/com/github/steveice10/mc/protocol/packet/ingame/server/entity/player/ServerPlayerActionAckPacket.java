@@ -25,7 +25,7 @@ public class ServerPlayerActionAckPacket implements Packet {
     private @NonNull PlayerAction action;
     private boolean successful;
     private @NonNull Position position;
-    private @NonNull int newState;
+    private int newState;
 
     @Override
     public void read(NetInput in) throws IOException {

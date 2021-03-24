@@ -4,6 +4,7 @@ import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,17 +16,13 @@ import java.io.IOException;
 @With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class LoginPluginResponsePacket implements Packet {
     private int messageId;
     private byte[] data;
 
     public LoginPluginResponsePacket(int messageId) {
         this(messageId, null);
-    }
-
-    public LoginPluginResponsePacket(int messageId, byte[] data) {
-        this.messageId = messageId;
-        this.data = data;
     }
 
     @Override
