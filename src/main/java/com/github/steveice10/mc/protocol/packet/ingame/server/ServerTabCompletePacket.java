@@ -9,12 +9,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerTabCompletePacket implements Packet {

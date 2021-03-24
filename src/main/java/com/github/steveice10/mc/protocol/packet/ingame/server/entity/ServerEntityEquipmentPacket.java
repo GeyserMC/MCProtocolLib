@@ -13,12 +13,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
