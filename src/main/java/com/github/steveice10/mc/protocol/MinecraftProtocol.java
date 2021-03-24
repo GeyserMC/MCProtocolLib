@@ -192,12 +192,6 @@ public class MinecraftProtocol extends PacketProtocol {
     private GameProfile profile = null;
 
     /**
-     * Authentication client token.
-     */
-    @Getter
-    private String clientToken = "";
-
-    /**
      * Authentication access token.
      */
     @Getter
@@ -240,6 +234,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param password Password to log in with.
      * @throws RequestException If the log in request fails.
      */
+    @Deprecated
     public MinecraftProtocol(String username, String password) throws RequestException {
         this(createAuthServiceForPasswordLogin(username, password));
     }
@@ -251,6 +246,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param accessToken Access token to log in with.
      * @throws RequestException If the log in request fails.
      */
+    @Deprecated
     public MinecraftProtocol(String username, String clientToken, String accessToken) throws RequestException {
         this(createAuthServiceForTokenLogin(username, clientToken, accessToken));
     }
@@ -261,7 +257,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param authService {@link AuthenticationService} to copy from.
      */
     public MinecraftProtocol(AuthenticationService authService) {
-        this(authService.getSelectedProfile(), authService.getClientToken(), authService.getAccessToken());
+        this(authService.getSelectedProfile(), authService.getAccessToken());
     }
 
     /**
@@ -270,10 +266,21 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param clientToken Client token to use.
      * @param accessToken Access token to use.
      */
+    @Deprecated
     public MinecraftProtocol(GameProfile profile, String clientToken, String accessToken) {
         this(SubProtocol.LOGIN);
         this.profile = profile;
-        this.clientToken = clientToken;
+        this.accessToken = accessToken;
+    }
+
+    /**
+     * Constructs a new MinecraftProtocol from authentication information.
+     * @param profile GameProfile to use.
+     * @param accessToken Access token to use.
+     */
+    public MinecraftProtocol(GameProfile profile, String accessToken) {
+        this(SubProtocol.LOGIN);
+        this.profile = profile;
         this.accessToken = accessToken;
     }
 
