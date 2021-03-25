@@ -11,18 +11,21 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 
 import java.io.IOException;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerBlockBreakAnimPacket implements Packet {
     private int breakerEntityId;
-    private Position position;
-    private BlockBreakStage stage;
+    private @NonNull Position position;
+    private @NonNull BlockBreakStage stage;
 
     @Override
     public void read(NetInput in) throws IOException {

@@ -6,9 +6,12 @@ import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class ServerPlayerPositionRotationPacket implements Packet {
     private double x;
     private double y;
@@ -25,16 +30,10 @@ public class ServerPlayerPositionRotationPacket implements Packet {
     private float yaw;
     private float pitch;
     private int teleportId;
-    private List<PositionElement> relative;
+    private @NonNull List<PositionElement> relative;
 
     public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, int teleportId, PositionElement... relative) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        this.teleportId = teleportId;
-        this.relative = Arrays.asList(relative != null ? relative : new PositionElement[0]);
+        this(x, y, z, yaw, pitch, teleportId, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
     @Override

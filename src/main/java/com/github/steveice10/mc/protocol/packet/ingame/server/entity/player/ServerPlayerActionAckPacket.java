@@ -12,10 +12,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 
 import java.io.IOException;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -23,7 +25,7 @@ public class ServerPlayerActionAckPacket implements Packet {
     private @NonNull PlayerAction action;
     private boolean successful;
     private @NonNull Position position;
-    private @NonNull int newState;
+    private int newState;
 
     @Override
     public void read(NetInput in) throws IOException {

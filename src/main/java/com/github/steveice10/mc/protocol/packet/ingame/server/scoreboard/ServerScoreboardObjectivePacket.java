@@ -12,11 +12,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerScoreboardObjectivePacket implements Packet {
@@ -26,14 +28,24 @@ public class ServerScoreboardObjectivePacket implements Packet {
     private Component displayName;
     private ScoreType type;
 
+    /**
+     * Constructs a ServerScoreboardObjectivePacket for removing an objective.
+     * @param name Name of the objective.
+     */
     public ServerScoreboardObjectivePacket(@NonNull String name) {
-        this.name = name;
-        this.action = ObjectiveAction.REMOVE;
+        this(name, ObjectiveAction.REMOVE, null, null);
     }
 
-    public ServerScoreboardObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, @NonNull Component displayName, @NonNull ScoreType type) {
-        if(action != ObjectiveAction.ADD && action != ObjectiveAction.UPDATE) {
-            throw new IllegalArgumentException("(name, action, displayName, type) constructor only valid for adding and updating objectives.");
+    /**
+     * Constructs a ServerScoreboardObjectivePacket for adding or updating an objective.
+     * @param name Name of the objective.
+     * @param action Action to perform.
+     * @param displayName Display name of the objective.
+     * @param type Type of score.
+     */
+    public ServerScoreboardObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, Component displayName, ScoreType type) {
+        if((action == ObjectiveAction.ADD || action == ObjectiveAction.UPDATE) && (displayName == null || type == null)) {
+            throw new IllegalArgumentException("ADD and UPDATE actions require display name and type.");
         }
 
         this.name = name;

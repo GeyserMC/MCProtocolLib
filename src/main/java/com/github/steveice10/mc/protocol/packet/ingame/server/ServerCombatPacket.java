@@ -7,15 +7,19 @@ import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerCombatPacket implements Packet {
     private CombatState combatState;
 

@@ -6,16 +6,20 @@ import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.With;
 
 import java.io.IOException;
 
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerWorldBorderPacket implements Packet {
     private @NonNull WorldBorderAction action;
 
@@ -98,8 +102,8 @@ public class ServerWorldBorderPacket implements Packet {
             this.newSize = in.readDouble();
             this.lerpTime = in.readVarLong();
             this.newAbsoluteMaxSize = in.readVarInt();
-            this.warningTime = in.readVarInt();
             this.warningBlocks = in.readVarInt();
+            this.warningTime = in.readVarInt();
         } else if(this.action == WorldBorderAction.SET_WARNING_TIME) {
             this.warningTime = in.readVarInt();
         } else if(this.action == WorldBorderAction.SET_WARNING_BLOCKS) {
@@ -126,8 +130,8 @@ public class ServerWorldBorderPacket implements Packet {
             out.writeDouble(this.newSize);
             out.writeVarLong(this.lerpTime);
             out.writeVarInt(this.newAbsoluteMaxSize);
-            out.writeVarInt(this.warningTime);
             out.writeVarInt(this.warningBlocks);
+            out.writeVarInt(this.warningTime);
         } else if(this.action == WorldBorderAction.SET_WARNING_TIME) {
             out.writeVarInt(this.warningTime);
         } else if(this.action == WorldBorderAction.SET_WARNING_BLOCKS) {

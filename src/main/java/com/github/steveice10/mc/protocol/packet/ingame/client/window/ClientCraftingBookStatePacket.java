@@ -6,18 +6,20 @@ import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.ToString;
+import lombok.Setter;
+import lombok.With;
 
 import java.io.IOException;
 
 @Data
-@ToString
-@EqualsAndHashCode
+@With
+@Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class ClientCraftingBookStatePacket implements Packet {
     private @NonNull CraftingBookStateType type;
     private boolean bookOpen;

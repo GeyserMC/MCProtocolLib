@@ -892,9 +892,9 @@ public class MagicValues {
 
         register(PistonValue.DOWN, 0);
         register(PistonValue.UP, 1);
-        register(PistonValue.SOUTH, 2);
-        register(PistonValue.WEST, 3);
-        register(PistonValue.NORTH, 4);
+        register(PistonValue.NORTH, 2);
+        register(PistonValue.SOUTH, 3);
+        register(PistonValue.WEST, 4);
         register(PistonValue.EAST, 5);
 
         register(SoundEffect.BLOCK_DISPENSER_DISPENSE, 1000);
