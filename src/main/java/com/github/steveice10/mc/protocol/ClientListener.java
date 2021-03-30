@@ -48,6 +48,13 @@ public class ClientListener extends SessionAdapter {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
         if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
             if(event.getPacket() instanceof EncryptionRequestPacket) {
+                GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
+                String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
+
+                if(profile == null || accessToken == null) {
+                    throw new IllegalStateException("Cannot reply to EncryptionRequestPacket without profile and access token.");
+                }
+
                 EncryptionRequestPacket packet = event.getPacket();
                 SecretKey key;
                 try {
@@ -59,9 +66,7 @@ public class ClientListener extends SessionAdapter {
                 }
 
                 SessionService sessionService = event.getSession().getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
-                GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                 String serverId = sessionService.getServerId(packet.getServerId(), packet.getPublicKey(), key);
-                String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
                 try {
                     sessionService.joinServer(profile, accessToken, serverId);
                 } catch(ServiceUnavailableException e) {
@@ -78,12 +83,9 @@ public class ClientListener extends SessionAdapter {
                 event.getSession().send(new EncryptionResponsePacket(packet.getPublicKey(), key, packet.getVerifyToken()));
                 protocol.enableEncryption(key);
             } else if(event.getPacket() instanceof LoginSuccessPacket) {
-                LoginSuccessPacket packet = event.getPacket();
-                event.getSession().setFlag(MinecraftConstants.PROFILE_KEY, packet.getProfile());
                 protocol.setSubProtocol(SubProtocol.GAME, true, event.getSession());
             } else if(event.getPacket() instanceof LoginDisconnectPacket) {
-                LoginDisconnectPacket packet = event.getPacket();
-                event.getSession().disconnect(packet.getReason().toString());
+                event.getSession().disconnect(event.<LoginDisconnectPacket>getPacket().getReason().toString());
             } else if(event.getPacket() instanceof LoginSetCompressionPacket) {
                 event.getSession().setCompressionThreshold(event.<LoginSetCompressionPacket>getPacket().getThreshold());
             }
@@ -125,7 +127,7 @@ public class ClientListener extends SessionAdapter {
 
             if(this.targetSubProtocol == SubProtocol.LOGIN) {
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
-                event.getSession().send(new LoginStartPacket(profile != null ? profile.getName() : ""));
+                event.getSession().send(new LoginStartPacket(profile.getName()));
             } else {
                 event.getSession().send(new StatusQueryPacket());
             }

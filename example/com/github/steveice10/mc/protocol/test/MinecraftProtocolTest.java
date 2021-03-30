@@ -152,7 +152,7 @@ public class MinecraftProtocolTest {
         SessionService sessionService = new SessionService();
         sessionService.setProxy(AUTH_PROXY);
 
-        MinecraftProtocol protocol = new MinecraftProtocol(SubProtocol.STATUS);
+        MinecraftProtocol protocol = new MinecraftProtocol();
         Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
         client.getSession().setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
@@ -193,9 +193,7 @@ public class MinecraftProtocolTest {
                 authService.setProxy(AUTH_PROXY);
                 authService.login();
 
-                // Can also use "new MinecraftProtocol(USERNAME, PASSWORD)"
-                // if you don't need a proxy or any other customizations.
-                protocol = new MinecraftProtocol(authService);
+                protocol = new MinecraftProtocol(authService.getSelectedProfile(), authService.getAccessToken());
                 System.out.println("Successfully authenticated user.");
             } catch(RequestException e) {
                 e.printStackTrace();
