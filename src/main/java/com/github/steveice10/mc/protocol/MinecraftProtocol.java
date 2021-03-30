@@ -559,8 +559,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerOutgoing(0x1B, ClientPlayerActionPacket.class);
         this.registerOutgoing(0x1C, ClientPlayerStatePacket.class);
         this.registerOutgoing(0x1D, ClientSteerVehiclePacket.class);
-        this.registerOutgoing(0x1E, ClientDisplayedRecipePacket.class);
-        this.registerOutgoing(0x1F, ClientCraftingBookStatePacket.class);
+        this.registerOutgoing(0x1E, ClientCraftingBookStatePacket.class);
+        this.registerOutgoing(0x1F, ClientDisplayedRecipePacket.class);
         this.registerOutgoing(0x20, ClientRenameItemPacket.class);
         this.registerOutgoing(0x21, ClientResourcePackStatusPacket.class);
         this.registerOutgoing(0x22, ClientAdvancementTabPacket.class);
@@ -610,8 +610,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.registerIncoming(0x1B, ClientPlayerActionPacket.class);
         this.registerIncoming(0x1C, ClientPlayerStatePacket.class);
         this.registerIncoming(0x1D, ClientSteerVehiclePacket.class);
-        this.registerIncoming(0x1E, ClientDisplayedRecipePacket.class);
-        this.registerIncoming(0x1F, ClientCraftingBookStatePacket.class);
+        this.registerIncoming(0x1E, ClientCraftingBookStatePacket.class);
+        this.registerIncoming(0x1F, ClientDisplayedRecipePacket.class);
         this.registerIncoming(0x20, ClientRenameItemPacket.class);
         this.registerIncoming(0x21, ClientResourcePackStatusPacket.class);
         this.registerIncoming(0x22, ClientAdvancementTabPacket.class);
