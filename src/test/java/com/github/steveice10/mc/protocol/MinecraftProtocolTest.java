@@ -14,14 +14,14 @@ import com.github.steveice10.opennbt.tag.builtin.FloatTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
-import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
-import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import com.github.steveice10.packetlib.tcp.TcpClientSession;
+import com.github.steveice10.packetlib.tcp.TcpServer;
 import net.kyori.adventure.text.Component;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -34,7 +34,6 @@ import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_B
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
-import static com.github.steveice10.mc.protocol.data.SubProtocol.STATUS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -56,7 +55,7 @@ public class MinecraftProtocolTest {
 
     @BeforeClass
     public static void setupServer() {
-        server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
+        server = new TcpServer(HOST, PORT, MinecraftProtocol.class);
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
         server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
         server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session -> SERVER_INFO);
@@ -75,10 +74,8 @@ public class MinecraftProtocolTest {
 
     @Test
     public void testStatus() throws InterruptedException {
-        Client client = new Client(HOST, PORT, new MinecraftProtocol(STATUS), new TcpSessionFactory());
+        Session session = new TcpClientSession(HOST, PORT, new MinecraftProtocol());
         try {
-            Session session = client.getSession();
-
             ServerInfoHandlerTest handler = new ServerInfoHandlerTest();
             session.setFlag(SERVER_INFO_HANDLER_KEY, handler);
             session.addListener(new DisconnectListener());
@@ -88,16 +85,14 @@ public class MinecraftProtocolTest {
             assertNotNull("Failed to get server info.", handler.info);
             assertEquals("Received incorrect server info.", SERVER_INFO, handler.info);
         } finally {
-            client.getSession().disconnect("Status test complete.");
+            session.disconnect("Status test complete.");
         }
     }
 
     @Test
     public void testLogin() throws InterruptedException {
-        Client client = new Client(HOST, PORT, new MinecraftProtocol("Username"), new TcpSessionFactory());
+        Session session = new TcpClientSession(HOST, PORT, new MinecraftProtocol("Username"));
         try {
-            Session session = client.getSession();
-
             LoginListenerTest listener = new LoginListenerTest();
             session.addListener(listener);
             session.addListener(new DisconnectListener());
@@ -107,7 +102,7 @@ public class MinecraftProtocolTest {
             assertNotNull("Failed to log in.", listener.packet);
             assertEquals("Received incorrect join packet.", JOIN_GAME_PACKET, listener.packet);
         } finally {
-            client.getSession().disconnect("Login test complete.");
+            session.disconnect("Login test complete.");
         }
     }
 

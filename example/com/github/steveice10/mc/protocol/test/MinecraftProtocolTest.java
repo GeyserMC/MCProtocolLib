@@ -26,7 +26,6 @@ import com.github.steveice10.opennbt.tag.builtin.ListTag;
 import com.github.steveice10.opennbt.tag.builtin.LongTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
-import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
@@ -37,7 +36,8 @@ import com.github.steveice10.packetlib.event.server.SessionRemovedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
-import com.github.steveice10.packetlib.tcp.TcpSessionFactory;
+import com.github.steveice10.packetlib.tcp.TcpClientSession;
+import com.github.steveice10.packetlib.tcp.TcpServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -61,24 +61,19 @@ public class MinecraftProtocolTest {
             SessionService sessionService = new SessionService();
             sessionService.setProxy(AUTH_PROXY);
 
-            Server server = new Server(HOST, PORT, MinecraftProtocol.class, new TcpSessionFactory());
+            Server server = new TcpServer(HOST, PORT, MinecraftProtocol.class);
             server.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
-            server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, new ServerInfoBuilder() {
-                @Override
-                public ServerStatusInfo buildInfo(Session session) {
-                    return new ServerStatusInfo(
+            server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session ->
+                    new ServerStatusInfo(
                             new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION),
                             new PlayerInfo(100, 0, new GameProfile[0]),
                             Component.text("Hello world!"),
                             null
-                    );
-                }
-            });
+                    )
+            );
 
-            server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, new ServerLoginHandler() {
-                @Override
-                public void loggedIn(Session session) {
+            server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, (ServerLoginHandler) session ->
                     session.send(new ServerJoinGamePacket(
                             0,
                             false,
@@ -96,9 +91,8 @@ public class MinecraftProtocolTest {
                             false,
                             false,
                             false
-                    ));
-                }
-            });
+                    ))
+            );
 
             server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 100);
             server.addListener(new ServerAdapter() {
@@ -153,28 +147,23 @@ public class MinecraftProtocolTest {
         sessionService.setProxy(AUTH_PROXY);
 
         MinecraftProtocol protocol = new MinecraftProtocol();
-        Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
-        client.getSession().setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, new ServerInfoHandler() {
-            @Override
-            public void handle(Session session, ServerStatusInfo info) {
-                System.out.println("Version: " + info.getVersionInfo().getVersionName() + ", " + info.getVersionInfo().getProtocolVersion());
-                System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers() + " / " + info.getPlayerInfo().getMaxPlayers());
-                System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
-                System.out.println("Description: " + info.getDescription());
-                System.out.println("Icon: " + info.getIconPng());
-            }
+        Session client = new TcpClientSession(HOST, PORT, protocol, PROXY);
+        client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
+        client.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, (ServerInfoHandler) (session, info) -> {
+            System.out.println("Version: " + info.getVersionInfo().getVersionName()
+                    + ", " + info.getVersionInfo().getProtocolVersion());
+            System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers()
+                    + " / " + info.getPlayerInfo().getMaxPlayers());
+            System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
+            System.out.println("Description: " + info.getDescription());
+            System.out.println("Icon: " + info.getIconPng());
         });
 
-        client.getSession().setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, new ServerPingTimeHandler() {
-            @Override
-            public void handle(Session session, long pingTime) {
-                System.out.println("Server ping took " + pingTime + "ms");
-            }
-        });
+        client.setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, (ServerPingTimeHandler) (session, pingTime) ->
+                System.out.println("Server ping took " + pingTime + "ms"));
 
-        client.getSession().connect();
-        while(client.getSession().isConnected()) {
+        client.connect();
+        while(client.isConnected()) {
             try {
                 Thread.sleep(5);
             } catch(InterruptedException e) {
@@ -206,9 +195,9 @@ public class MinecraftProtocolTest {
         SessionService sessionService = new SessionService();
         sessionService.setProxy(AUTH_PROXY);
 
-        Client client = new Client(HOST, PORT, protocol, new TcpSessionFactory(PROXY));
-        client.getSession().setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
-        client.getSession().addListener(new SessionAdapter() {
+        Session client = new TcpClientSession(HOST, PORT, protocol, PROXY);
+        client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
+        client.addListener(new SessionAdapter() {
             @Override
             public void packetReceived(PacketReceivedEvent event) {
                 if(event.getPacket() instanceof ServerJoinGamePacket) {
@@ -229,7 +218,7 @@ public class MinecraftProtocolTest {
             }
         });
 
-        client.getSession().connect();
+        client.connect();
     }
 
     private static CompoundTag getDimensionTag() {
