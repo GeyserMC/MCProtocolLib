@@ -1,8 +1,6 @@
 package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.exception.request.RequestException;
-import com.github.steveice10.mc.auth.service.AuthenticationService;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
@@ -225,87 +223,6 @@ public class MinecraftProtocol extends PacketProtocol {
         this.targetSubProtocol = SubProtocol.LOGIN;
         this.profile = profile;
         this.accessToken = accessToken;
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol instance, starting with a specific {@link SubProtocol}.
-     * @param subProtocol {@link SubProtocol} to start with.
-     * @deprecated Use the no-args constructor for status queries or the appropriate constructor for logging in.
-     */
-    @Deprecated
-    public MinecraftProtocol(SubProtocol subProtocol) {
-        if(subProtocol != SubProtocol.LOGIN && subProtocol != SubProtocol.STATUS) {
-            throw new IllegalArgumentException("Only login and status modes are permitted.");
-        }
-
-        this.targetSubProtocol = subProtocol;
-        if(subProtocol == SubProtocol.LOGIN) {
-            this.profile = new GameProfile((UUID) null, "Player");
-        }
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol instance, logging in with the given password credentials.
-     * @param username Username to log in as. Must be the same as when the access token was generated.
-     * @param password Password to log in with.
-     * @throws RequestException If the log in request fails.
-     * @deprecated Login beforehand and use the (profile, accessToken) constructor.
-     */
-    @Deprecated
-    public MinecraftProtocol(String username, String password) throws RequestException {
-        this(createAuthServiceForPasswordLogin(username, password));
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol instance, logging in with the given token credentials.
-     * @param username Username to log in as. Must be the same as when the access token was generated.
-     * @param clientToken Client token to log in as. Must be the same as when the access token was generated.
-     * @param accessToken Access token to log in with.
-     * @throws RequestException If the log in request fails.
-     * @deprecated Login beforehand and use the (profile, accessToken) constructor.
-     */
-    @Deprecated
-    public MinecraftProtocol(String username, String clientToken, String accessToken) throws RequestException {
-        this(createAuthServiceForTokenLogin(username, clientToken, accessToken));
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol instance, copying authentication information
-     * from a logged-in {@link AuthenticationService}.
-     * @param authService {@link AuthenticationService} to copy from.
-     * @deprecated Use the (profile, accessToken) constructor.
-     */
-    @Deprecated
-    public MinecraftProtocol(AuthenticationService authService) {
-        this(authService.getSelectedProfile(), authService.getAccessToken());
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol from authentication information.
-     * @param profile GameProfile to use.
-     * @param clientToken Client token to use.
-     * @param accessToken Access token to use.
-     * @deprecated Use the (profile, accessToken) constructor.
-     */
-    @Deprecated
-    public MinecraftProtocol(GameProfile profile, String clientToken, String accessToken) {
-        this(profile, accessToken);
-    }
-
-    private static AuthenticationService createAuthServiceForPasswordLogin(String username, String password) throws RequestException {
-        AuthenticationService auth = new AuthenticationService(UUID.randomUUID().toString());
-        auth.setUsername(username);
-        auth.setPassword(password);
-        auth.login();
-        return auth;
-    }
-
-    private static AuthenticationService createAuthServiceForTokenLogin(String username, String clientToken, String accessToken) throws RequestException {
-        AuthenticationService auth = new AuthenticationService(clientToken);
-        auth.setUsername(username);
-        auth.setAccessToken(accessToken);
-        auth.login();
-        return auth;
     }
 
     @Override
