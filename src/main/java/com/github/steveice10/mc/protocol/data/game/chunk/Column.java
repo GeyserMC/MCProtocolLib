@@ -20,10 +20,6 @@ public class Column {
     }
 
     public Column(int x, int z, @NonNull Chunk[] chunks, @NonNull CompoundTag[] tileEntities, @NonNull CompoundTag heightMaps, @NonNull int[] biomeData) {
-        if(chunks.length != 16) {
-            throw new IllegalArgumentException("Chunk array length must be 16.");
-        }
-
         this.x = x;
         this.z = z;
         this.chunks = Arrays.copyOf(chunks, chunks.length);

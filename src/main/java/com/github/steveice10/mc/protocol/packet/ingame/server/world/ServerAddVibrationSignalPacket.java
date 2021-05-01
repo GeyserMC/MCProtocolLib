@@ -4,32 +4,35 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.IOException;
 
 //TODO
 @Data
+@With
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ServerSculkSensorPacket implements Packet {
-    private Position position;
+@AllArgsConstructor
+public class ServerAddVibrationSignalPacket implements Packet {
+    private Position origin;
     private String identifier;
+    private int arrivalInTicks;
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.position = Position.read(in);
+        this.origin = Position.read(in);
         this.identifier = in.readString();
         // more to do
+        this.arrivalInTicks = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        Position.write(out, this.position);
+        Position.write(out, this.origin);
         out.writeString(this.identifier);
+        // ...
+        out.writeVarInt(this.arrivalInTicks);
     }
 
     @Override

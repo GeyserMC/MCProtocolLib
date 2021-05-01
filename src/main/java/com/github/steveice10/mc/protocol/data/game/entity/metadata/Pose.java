@@ -7,5 +7,6 @@ public enum Pose {
     SWIMMING,
     SPIN_ATTACK,
     SNEAKING,
+    LONG_JUMPING,
     DYING;
 }

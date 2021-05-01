@@ -14,13 +14,12 @@ import com.github.steveice10.mc.protocol.data.game.window.WindowActionParam;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.With;
+import io.netty.util.collection.IntObjectHashMap;
+import io.netty.util.collection.IntObjectMap;
+import lombok.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Data
 @With
@@ -30,13 +29,13 @@ public class ClientWindowActionPacket implements Packet {
     public static final int CLICK_OUTSIDE_NOT_HOLDING_SLOT = -999;
 
     private int windowId;
-    private int actionId;
     private int slot;
-    private ItemStack clickedItem;
     private WindowAction action;
     private WindowActionParam param;
+    private ItemStack carriedItem;
+    private @NonNull Map<Integer, ItemStack> changedSlots;
 
-    public ClientWindowActionPacket(int windowId, int actionId, int slot, ItemStack clickedItem, WindowAction action, WindowActionParam param) {
+    public ClientWindowActionPacket(int windowId, int slot, WindowAction action, WindowActionParam param, ItemStack carriedItem, Map<Integer, ItemStack> changedSlots) {
         if((param == DropItemParam.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemParam.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
@@ -44,11 +43,11 @@ public class ClientWindowActionPacket implements Packet {
         }
 
         this.windowId = windowId;
-        this.actionId = actionId;
         this.slot = slot;
-        this.clickedItem = clickedItem;
         this.action = action;
         this.param = param;
+        this.carriedItem = carriedItem;
+        this.changedSlots = changedSlots;
     }
 
     @Override
@@ -56,9 +55,7 @@ public class ClientWindowActionPacket implements Packet {
         this.windowId = in.readByte();
         this.slot = in.readShort();
         byte param = in.readByte();
-        this.actionId = in.readShort();
         this.action = MagicValues.key(WindowAction.class, in.readByte());
-        this.clickedItem = ItemStack.read(in);
         if(this.action == WindowAction.CLICK_ITEM) {
             this.param = MagicValues.key(ClickItemParam.class, param);
         } else if(this.action == WindowAction.SHIFT_CLICK_ITEM) {
@@ -74,6 +71,16 @@ public class ClientWindowActionPacket implements Packet {
         } else if(this.action == WindowAction.FILL_STACK) {
             this.param = MagicValues.key(FillStackParam.class, param);
         }
+
+        int changedItemsSize = in.readVarInt();
+        this.changedSlots = new IntObjectHashMap<>(changedItemsSize);
+        for (int i = 0; i < changedItemsSize; i++) {
+            int key = in.readShort();
+            ItemStack value = ItemStack.read(in);
+            this.changedSlots.put(key, value);
+        }
+
+        this.carriedItem = ItemStack.read(in);
     }
 
     @Override
@@ -87,9 +94,15 @@ public class ClientWindowActionPacket implements Packet {
         }
 
         out.writeByte(param);
-        out.writeShort(this.actionId);
         out.writeByte(MagicValues.value(Integer.class, this.action));
-        ItemStack.write(out, this.clickedItem);
+
+        out.writeVarInt(this.changedSlots.size());
+        for (Map.Entry<Integer, ItemStack> pair : this.changedSlots.entrySet()) {
+            out.writeShort(pair.getKey());
+            ItemStack.write(out, pair.getValue());
+        }
+
+        ItemStack.write(out, this.carriedItem);
     }
 
     @Override

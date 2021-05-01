@@ -34,7 +34,7 @@ public class ServerEntityPropertiesPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.attributes = new ArrayList<>();
-        int length = in.readInt();
+        int length = in.readVarInt();
         for(int index = 0; index < length; index++) {
             String key = in.readString();
             double value = in.readDouble();
@@ -51,7 +51,7 @@ public class ServerEntityPropertiesPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        out.writeInt(this.attributes.size());
+        out.writeVarInt(this.attributes.size());
         for(Attribute attribute : this.attributes) {
             out.writeString(MagicValues.value(String.class, attribute.getType()));
             out.writeDouble(attribute.getValue());

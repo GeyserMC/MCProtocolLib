@@ -30,10 +30,11 @@ public class ServerPlayerPositionRotationPacket implements Packet {
     private float yaw;
     private float pitch;
     private int teleportId;
+    private boolean dismountVehicle;
     private @NonNull List<PositionElement> relative;
 
-    public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, int teleportId, PositionElement... relative) {
-        this(x, y, z, yaw, pitch, teleportId, Arrays.asList(relative != null ? relative : new PositionElement[0]));
+    public ServerPlayerPositionRotationPacket(double x, double y, double z, float yaw, float pitch, int teleportId, boolean dismountVehicle, PositionElement... relative) {
+        this(x, y, z, yaw, pitch, teleportId, dismountVehicle, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
     @Override
@@ -54,6 +55,7 @@ public class ServerPlayerPositionRotationPacket implements Packet {
         }
 
         this.teleportId = in.readVarInt();
+        this.dismountVehicle = in.readBoolean();
     }
 
     @Override
@@ -72,6 +74,7 @@ public class ServerPlayerPositionRotationPacket implements Packet {
         out.writeByte(flags);
 
         out.writeVarInt(this.teleportId);
+        out.writeBoolean(this.dismountVehicle);
     }
 
     @Override

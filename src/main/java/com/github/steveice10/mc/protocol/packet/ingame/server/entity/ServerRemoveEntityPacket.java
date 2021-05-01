@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.packet.ingame.client.window;
+package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.With;
 
@@ -17,23 +18,17 @@ import java.io.IOException;
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class ClientConfirmTransactionPacket implements Packet {
-    private int windowId;
-    private int actionId;
-    private boolean accepted;
+public class ServerRemoveEntityPacket implements Packet {
+    private int entityId;
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.windowId = in.readByte();
-        this.actionId = in.readShort();
-        this.accepted = in.readBoolean();
+        this.entityId = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeByte(this.windowId);
-        out.writeShort(this.actionId);
-        out.writeBoolean(this.accepted);
+        out.writeVarInt(this.entityId);
     }
 
     @Override
