@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server;
 
+import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -29,7 +30,7 @@ public class ServerDeclareTagsPacket implements Packet {
         int totalTagCount = in.readVarInt();
         for(int i = 0; i < totalTagCount; i++) {
             Map<String, int[]> tag = new HashMap<>();
-            String tagName = in.readString();
+            String tagName = Identifier.formalize(in.readString());
             int tagsCount = in.readVarInt();
             for(int j = 0; j < tagsCount; j++) {
                 String name = in.readString();
