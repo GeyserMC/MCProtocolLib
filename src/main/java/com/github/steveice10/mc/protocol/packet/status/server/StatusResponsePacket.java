@@ -53,7 +53,7 @@ public class StatusResponsePacket implements Packet {
 
         PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
         JsonElement desc = obj.get("description");
-        Component description = DefaultComponentSerializer.get().deserialize(desc.toString());
+        Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
         byte[] icon = null;
         if(obj.has("favicon")) {
             icon = this.stringToIcon(obj.get("favicon").getAsString());

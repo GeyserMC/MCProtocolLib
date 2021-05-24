@@ -1,8 +1,6 @@
 package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.exception.request.RequestException;
-import com.github.steveice10.mc.auth.service.AuthenticationService;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.*;
@@ -97,7 +95,6 @@ import com.github.steveice10.mc.protocol.packet.status.client.StatusPingPacket;
 import com.github.steveice10.mc.protocol.packet.status.client.StatusQueryPacket;
 import com.github.steveice10.mc.protocol.packet.status.server.StatusPongPacket;
 import com.github.steveice10.mc.protocol.packet.status.server.StatusResponsePacket;
-import com.github.steveice10.packetlib.Client;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.crypt.AESEncryption;
@@ -106,9 +103,8 @@ import com.github.steveice10.packetlib.packet.DefaultPacketHeader;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketHeader;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.security.GeneralSecurityException;
@@ -119,11 +115,10 @@ import java.util.function.BiConsumer;
 /**
  * Implements the Minecraft protocol.
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MinecraftProtocol extends PacketProtocol {
     private SubProtocol subProtocol = SubProtocol.HANDSHAKE;
     private final PacketHeader packetHeader = new DefaultPacketHeader();
-    private AESEncryption encryption = null;
+    private AESEncryption encryption;
 
     private SubProtocol targetSubProtocol;
 
@@ -131,13 +126,13 @@ public class MinecraftProtocol extends PacketProtocol {
      * The player's identity.
      */
     @Getter
-    private GameProfile profile = null;
+    private GameProfile profile;
 
     /**
      * Authentication access token.
      */
     @Getter
-    private String accessToken = "";
+    private String accessToken;
 
     /**
      * Whether to add the default client and server listeners for performing initial login.
@@ -147,99 +142,29 @@ public class MinecraftProtocol extends PacketProtocol {
     private boolean useDefaultListeners = true;
 
     /**
-     * Constructs a new MinecraftProtocol instance, starting with a specific {@link SubProtocol}.
-     * @param subProtocol {@link SubProtocol} to start with.
+     * Constructs a new MinecraftProtocol instance for making status queries.
      */
-    public MinecraftProtocol(SubProtocol subProtocol) {
-        if(subProtocol != SubProtocol.LOGIN && subProtocol != SubProtocol.STATUS) {
-            throw new IllegalArgumentException("Only login and status modes are permitted.");
-        }
-
-        this.targetSubProtocol = subProtocol;
-        if(subProtocol == SubProtocol.LOGIN) {
-            this.profile = new GameProfile((UUID) null, "Player");
-        }
+    public MinecraftProtocol() {
+        this.targetSubProtocol = SubProtocol.STATUS;
     }
 
     /**
-     * Constructs a new MinecraftProtocol instance, adopting the given username.
-     * @param username Username to adopt.
+     * Constructs a new MinecraftProtocol instance for logging in using offline mode.
+     * @param username Username to use.
      */
-    public MinecraftProtocol(String username) {
-        this(SubProtocol.LOGIN);
-        this.profile = new GameProfile((UUID) null, username);
+    public MinecraftProtocol(@NonNull String username) {
+        this(new GameProfile((UUID) null, username), null);
     }
 
     /**
-     * Constructs a new MinecraftProtocol instance, logging in with the given password credentials.
-     * @param username Username to log in as. Must be the same as when the access token was generated.
-     * @param password Password to log in with.
-     * @throws RequestException If the log in request fails.
-     */
-    @Deprecated
-    public MinecraftProtocol(String username, String password) throws RequestException {
-        this(createAuthServiceForPasswordLogin(username, password));
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol instance, logging in with the given token credentials.
-     * @param username Username to log in as. Must be the same as when the access token was generated.
-     * @param clientToken Client token to log in as. Must be the same as when the access token was generated.
-     * @param accessToken Access token to log in with.
-     * @throws RequestException If the log in request fails.
-     */
-    @Deprecated
-    public MinecraftProtocol(String username, String clientToken, String accessToken) throws RequestException {
-        this(createAuthServiceForTokenLogin(username, clientToken, accessToken));
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol instance, copying authentication information
-     * from a logged-in {@link AuthenticationService}.
-     * @param authService {@link AuthenticationService} to copy from.
-     */
-    public MinecraftProtocol(AuthenticationService authService) {
-        this(authService.getSelectedProfile(), authService.getAccessToken());
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol from authentication information.
+     * Constructs a new MinecraftProtocol instance for logging in.
      * @param profile GameProfile to use.
-     * @param clientToken Client token to use.
-     * @param accessToken Access token to use.
+     * @param accessToken Access token to use, or null if using offline mode.
      */
-    @Deprecated
-    public MinecraftProtocol(GameProfile profile, String clientToken, String accessToken) {
-        this(SubProtocol.LOGIN);
+    public MinecraftProtocol(@NonNull GameProfile profile, String accessToken) {
+        this.targetSubProtocol = SubProtocol.LOGIN;
         this.profile = profile;
         this.accessToken = accessToken;
-    }
-
-    /**
-     * Constructs a new MinecraftProtocol from authentication information.
-     * @param profile GameProfile to use.
-     * @param accessToken Access token to use.
-     */
-    public MinecraftProtocol(GameProfile profile, String accessToken) {
-        this(SubProtocol.LOGIN);
-        this.profile = profile;
-        this.accessToken = accessToken;
-    }
-
-    private static AuthenticationService createAuthServiceForPasswordLogin(String username, String password) throws RequestException {
-        AuthenticationService auth = new AuthenticationService(UUID.randomUUID().toString());
-        auth.setUsername(username);
-        auth.setPassword(password);
-        auth.login();
-        return auth;
-    }
-
-    private static AuthenticationService createAuthServiceForTokenLogin(String username, String clientToken, String accessToken) throws RequestException {
-        AuthenticationService auth = new AuthenticationService(clientToken);
-        auth.setUsername(username);
-        auth.setAccessToken(accessToken);
-        auth.login();
-        return auth;
     }
 
     @Override
@@ -258,11 +183,9 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public void newClientSession(Client client, Session session) {
-        if(this.profile != null) {
-            session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
-            session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
-        }
+    public void newClientSession(Session session) {
+        session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
+        session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
 
         this.setSubProtocol(SubProtocol.HANDSHAKE, true, session);
 
