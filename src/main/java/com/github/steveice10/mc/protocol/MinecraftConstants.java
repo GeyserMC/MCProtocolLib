@@ -17,7 +17,7 @@ public final class MinecraftConstants {
     /**
      * Current supported protocol version.
      */
-    public static final int PROTOCOL_VERSION = (1 << 31) | 29;
+    public static final int PROTOCOL_VERSION = (1 << 30) | 31;
 
     // General Key Constants
 
