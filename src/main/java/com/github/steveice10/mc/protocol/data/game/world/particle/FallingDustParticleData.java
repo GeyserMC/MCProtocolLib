@@ -7,5 +7,5 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 public class FallingDustParticleData implements ParticleData {
-    private final @NonNull int blockState;
+    private final int blockState;
 }
