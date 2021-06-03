@@ -72,7 +72,7 @@ public class ServerSpawnEntityPacket implements Packet {
         int data = in.readInt();
         if(this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
-        } else if(this.type == EntityType.ITEM_FRAME) {
+        } else if(this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME) {
             this.data = MagicValues.key(HangingDirection.class, data);
         } else if(this.type == EntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);
