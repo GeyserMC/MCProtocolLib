@@ -1117,22 +1117,22 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T key(Class<T> keyType, Object value) {
-        for(Object key : VALUES.keySet()) {
-            if(keyType.isAssignableFrom(key.getClass())) {
-                for(Object val : VALUES.get(key)) {
+        for(Map.Entry<Object, List<Object>> entry : VALUES.entrySet()) {
+            if(keyType.isAssignableFrom(entry.getKey().getClass())) {
+                for(Object val : entry.getValue()) {
                     if(val == value || val.equals(value)) {
-                        return (T) key;
+                        return (T) entry.getKey();
                     } else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
                         Number num = (Number) val;
                         Number num2 = (Number) value;
                         if(num.doubleValue() == num2.doubleValue()) {
-                            return (T) key;
+                            return (T) entry.getKey();
                         }
                     } else if(String.class.isAssignableFrom(val.getClass()) && String.class.isAssignableFrom(value.getClass())) {
                         String str = (String) val;
                         String str2 = (String) value;
                         if(str.equalsIgnoreCase(str2)) {
-                            return (T) key;
+                            return (T) entry.getKey();
                         }
                     }
                 }
@@ -1144,8 +1144,9 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T value(Class<T> valueType, Object key) {
-        if(VALUES.containsKey(key)) {
-            for(Object val : VALUES.get(key)) {
+        List<Object> values = VALUES.get(key);
+        if(values != null) {
+            for(Object val : values) {
                 if(valueType.isAssignableFrom(val.getClass())) {
                     return (T) val;
                 } else if(Number.class.isAssignableFrom(val.getClass())) {
