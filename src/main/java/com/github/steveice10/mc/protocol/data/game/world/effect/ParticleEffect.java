@@ -14,5 +14,9 @@ public enum ParticleEffect implements WorldEffect {
     ENDERDRAGON_FIREBALL_EXPLODE,
     EXPLOSION,
     EVAPORATE,
-    END_GATEWAY_SPAWN;
+    END_GATEWAY_SPAWN,
+    ELECTRIC_SPARK,
+    WAX_ON,
+    WAX_OFF,
+    SCRAPE
 }

@@ -888,6 +888,10 @@ public class MagicValues {
         register(ParticleEffect.EXPLOSION, 2008);
         register(ParticleEffect.EVAPORATE, 2009);
         register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
+        register(ParticleEffect.ELECTRIC_SPARK, 3002);
+        register(ParticleEffect.WAX_ON, 3003);
+        register(ParticleEffect.WAX_OFF, 3004);
+        register(ParticleEffect.SCRAPE, 3005);
 
         register(SmokeEffectData.DOWN, 0);
         register(SmokeEffectData.UP, 1);
