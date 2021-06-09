@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public class DustColorTransitionParticleData extends DustParticleData {
-    private final double newRed;
-    private final double newGreen;
-    private final double newBlue;
+    private final float newRed;
+    private final float newGreen;
+    private final float newBlue;
 
-    public DustColorTransitionParticleData(double red, double green, double blue, float scale, double newRed, double newGreen, double newBlue) {
+    public DustColorTransitionParticleData(float red, float green, float blue, float scale, float newRed, float newGreen, float newBlue) {
         super(red, green, blue, scale);
         this.newRed = newRed;
         this.newGreen = newGreen;
