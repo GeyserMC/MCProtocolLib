@@ -54,7 +54,7 @@ public class ServerPlayEffectPacket implements Packet {
             this.data = new BreakBlockEffectData(value);
         } else if(this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
             this.data = new BreakPotionEffectData(value);
-        } else if(this.effect == ParticleEffect.BONEMEAL_GROW) {
+        } else if(this.effect == ParticleEffect.BONEMEAL_GROW || this.effect == ParticleEffect.BONEMEAL_GROW_WITH_SOUND) {
             this.data = new BonemealGrowEffectData(value);
         } else if(this.effect == ParticleEffect.COMPOSTER) {
             this.data = value > 0 ? ComposterEffectData.FILL_SUCCESS : ComposterEffectData.FILL;

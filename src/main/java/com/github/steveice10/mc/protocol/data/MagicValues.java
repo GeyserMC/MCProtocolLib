@@ -871,12 +871,18 @@ public class MagicValues {
         register(SoundEffect.BLOCK_GRINDSTONE_USE, 1042);
         register(SoundEffect.ITEM_BOOK_PAGE_TURN, 1043);
         register(SoundEffect.BLOCK_SMITHING_TABLE_USE, 1044);
+        register(SoundEffect.POINTED_DRIPSTONE_LAND, 1045);
+        register(SoundEffect.DRIP_LAVA_INTO_CAULDRON, 1046);
+        register(SoundEffect.DRIP_WATER_INTO_CAULDRON, 1047);
+        register(SoundEffect.ENTITY_SKELETON_CONVERTED_TO_STRAY, 1048);
         register(SoundEffect.ENTITY_ENDERDRAGON_GROWL, 3001);
 
         register(ParticleEffect.COMPOSTER, 1500);
         register(ParticleEffect.BLOCK_LAVA_EXTINGUISH, 1501);
         register(ParticleEffect.BLOCK_REDSTONE_TORCH_BURNOUT, 1502);
         register(ParticleEffect.BLOCK_END_PORTAL_FRAME_FILL, 1503);
+        register(ParticleEffect.DRIPSTONE_DRIP, 1504);
+        register(ParticleEffect.BONEMEAL_GROW_WITH_SOUND, 1505);
         register(ParticleEffect.SMOKE, 2000);
         register(ParticleEffect.BREAK_BLOCK, 2001);
         register(ParticleEffect.BREAK_SPLASH_POTION, 2002);
