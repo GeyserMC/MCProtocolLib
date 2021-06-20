@@ -17,6 +17,7 @@ import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Map;
@@ -29,13 +30,14 @@ public class ClientWindowActionPacket implements Packet {
     public static final int CLICK_OUTSIDE_NOT_HOLDING_SLOT = -999;
 
     private int windowId;
+    private int stateId;
     private int slot;
     private WindowAction action;
     private WindowActionParam param;
     private ItemStack carriedItem;
     private @NonNull Map<Integer, ItemStack> changedSlots;
 
-    public ClientWindowActionPacket(int windowId, int slot, WindowAction action, WindowActionParam param, ItemStack carriedItem, Map<Integer, ItemStack> changedSlots) {
+    public ClientWindowActionPacket(int windowId, int stateId, int slot, WindowAction action, WindowActionParam param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
         if((param == DropItemParam.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemParam.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
@@ -43,6 +45,7 @@ public class ClientWindowActionPacket implements Packet {
         }
 
         this.windowId = windowId;
+        this.stateId = stateId;
         this.slot = slot;
         this.action = action;
         this.param = param;
@@ -53,6 +56,7 @@ public class ClientWindowActionPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.windowId = in.readByte();
+        this.stateId = in.readVarInt();
         this.slot = in.readShort();
         byte param = in.readByte();
         this.action = MagicValues.key(WindowAction.class, in.readByte());
@@ -86,6 +90,7 @@ public class ClientWindowActionPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
+        out.writeVarInt(this.stateId);
         out.writeShort(this.slot);
 
         int param = MagicValues.value(Integer.class, this.param);

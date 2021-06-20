@@ -21,24 +21,30 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerWindowItemsPacket implements Packet {
     private int windowId;
+    private int stateId;
     private @NonNull ItemStack[] items;
+    private ItemStack carriedItem;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.windowId = in.readUnsignedByte();
-        this.items = new ItemStack[in.readShort()];
+        this.stateId = in.readVarInt();
+        this.items = new ItemStack[in.readVarInt()];
         for(int index = 0; index < this.items.length; index++) {
             this.items[index] = ItemStack.read(in);
         }
+        this.carriedItem = ItemStack.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
-        out.writeShort(this.items.length);
+        out.writeVarInt(this.stateId);
+        out.writeVarInt(this.items.length);
         for(ItemStack item : this.items) {
             ItemStack.write(out, item);
         }
+        ItemStack.write(out, this.carriedItem);
     }
 
     @Override
