@@ -16,13 +16,19 @@ public class ServerChunkDataPacketTest extends PacketTest {
                 new ServerChunkDataPacket(
                         new Column(0, 0, new Chunk[] {
                                 null, null, null, null, null, null, null, chunk,
-                                null, chunk, null, null, null, chunk, null, null
-                        }, new CompoundTag[0], new CompoundTag("HeightMaps"))
+                                null, chunk, null, null, null, chunk, null, null, null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, null, null, null, null
+                        }, new CompoundTag[0], new CompoundTag("HeightMaps"), new int[1024])
                 ),
                 new ServerChunkDataPacket(
                         new Column(1, 1, new Chunk[] {
                                 chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk,
-                                chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk
+                                chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk, null, null, null, null, null,
+                                null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null
                         }, new CompoundTag[] {
                                 new CompoundTag("TileEntity")
                         }, new CompoundTag("HeightMaps"), new int[1024])

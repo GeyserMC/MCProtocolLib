@@ -165,7 +165,6 @@ public class MagicValuesTest {
         this.register(EnterCreditsValue.class, Integer.class);
         this.register(GenericStatistic.class, Integer.class);
         this.register(StatisticCategory.class, Integer.class);
-        this.register(ParticleType.class, Integer.class);
         this.register(NoteBlockValueType.class, Integer.class);
         this.register(PistonValueType.class, Integer.class);
         this.register(MobSpawnerValueType.class, Integer.class);

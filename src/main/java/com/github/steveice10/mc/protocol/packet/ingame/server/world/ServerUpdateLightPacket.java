@@ -17,15 +17,17 @@ import java.util.List;
 public class ServerUpdateLightPacket implements Packet {
     private int x;
     private int z;
-    private BitSet skyYMask;
-    private BitSet blockYMask;
-    private BitSet emptySkyYMask;
-    private BitSet emptyBlockYMask;
-    private List<byte[]> skyUpdates;
-    private List<byte[]> blockUpdates;
+    private @NonNull BitSet skyYMask;
+    private @NonNull BitSet blockYMask;
+    private @NonNull BitSet emptySkyYMask;
+    private @NonNull BitSet emptyBlockYMask;
+    private @NonNull List<byte[]> skyUpdates;
+    private @NonNull List<byte[]> blockUpdates;
     private boolean trustEdges;
 
-    public ServerUpdateLightPacket(int x, int z, BitSet skyYMask, BitSet blockYMask, BitSet emptySkyYMask, BitSet emptyBlockYMask, List<byte[]> skyUpdates, List<byte[]> blockUpdates, boolean trustEdges) {
+    public ServerUpdateLightPacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
+                                   @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
+                                   @NonNull List<byte[]> skyUpdates, @NonNull List<byte[]> blockUpdates, boolean trustEdges) {
         for (byte[] content : skyUpdates) {
             if (content.length != 2048) {
                 throw new IllegalArgumentException("All arrays in skyUpdates must be length of 2048!");

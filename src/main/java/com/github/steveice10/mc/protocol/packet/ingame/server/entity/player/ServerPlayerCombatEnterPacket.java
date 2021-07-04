@@ -10,7 +10,6 @@ import java.io.IOException;
 @Data
 @With
 @Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerPlayerCombatEnterPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
