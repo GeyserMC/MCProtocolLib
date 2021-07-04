@@ -46,7 +46,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.*;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityAnimationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityAttachPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityCollectItemPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerRemoveEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerRemoveEntitiesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityEffectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityEquipmentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityHeadLookPacket;
@@ -338,7 +338,7 @@ public class MinecraftProtocol extends PacketProtocol {
         clientboundPackets.accept(0x37, ServerPlayerFacingPacket.class);
         clientboundPackets.accept(0x38, ServerPlayerPositionRotationPacket.class);
         clientboundPackets.accept(0x39, ServerUnlockRecipesPacket.class);
-        clientboundPackets.accept(0x3A, ServerRemoveEntityPacket.class);
+        clientboundPackets.accept(0x3A, ServerRemoveEntitiesPacket.class);
         clientboundPackets.accept(0x3B, ServerEntityRemoveEffectPacket.class);
         clientboundPackets.accept(0x3C, ServerResourcePackSendPacket.class);
         clientboundPackets.accept(0x3D, ServerRespawnPacket.class);

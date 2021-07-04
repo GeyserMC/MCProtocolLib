@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.With;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 @Data
@@ -17,17 +18,23 @@ import java.io.IOException;
 @Setter(AccessLevel.NONE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class ServerRemoveEntityPacket implements Packet {
-    private int entityId;
+public class ServerRemoveEntitiesPacket implements Packet {
+    private @Nonnull int[] entityIds;
 
     @Override
     public void read(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
+        this.entityIds = new int[in.readVarInt()];
+        for (int i = 0; i < this.entityIds.length; i++) {
+            this.entityIds[i] = in.readVarInt();
+        }
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
+        out.writeVarInt(this.entityIds.length);
+        for(int entityId : this.entityIds) {
+            out.writeVarInt(entityId);
+        }
     }
 
     @Override
