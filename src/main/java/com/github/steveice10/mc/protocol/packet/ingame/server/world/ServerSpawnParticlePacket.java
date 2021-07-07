@@ -36,7 +36,7 @@ public class ServerSpawnParticlePacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        ParticleType type = MagicValues.key(ParticleType.class, in.readInt());
+        ParticleType type = ParticleType.VALUES[in.readInt()];
         this.longDistance = in.readBoolean();
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -51,7 +51,7 @@ public class ServerSpawnParticlePacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeInt(MagicValues.value(Integer.class, this.particle.getType()));
+        out.writeInt(particle.getType().ordinal());
         out.writeBoolean(this.longDistance);
         out.writeDouble(this.x);
         out.writeDouble(this.y);

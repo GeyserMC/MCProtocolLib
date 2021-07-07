@@ -27,34 +27,35 @@ import java.io.IOException;
 public class ServerMapDataPacket implements Packet {
     private int mapId;
     private byte scale;
-    private boolean trackingPosition;
     private boolean locked;
     private @NonNull MapIcon[] icons;
 
     private MapData data;
 
-    public ServerMapDataPacket(int mapId, byte scale, boolean trackingPosition, boolean locked, @NonNull MapIcon[] icons) {
-        this(mapId, scale, trackingPosition, locked, icons, null);
+    public ServerMapDataPacket(int mapId, byte scale, boolean locked, @NonNull MapIcon[] icons) {
+        this(mapId, scale, locked, icons, null);
     }
 
     @Override
     public void read(NetInput in) throws IOException {
         this.mapId = in.readVarInt();
         this.scale = in.readByte();
-        this.trackingPosition = in.readBoolean();
         this.locked = in.readBoolean();
-        this.icons = new MapIcon[in.readVarInt()];
-        for(int index = 0; index < this.icons.length; index++) {
-            int type = in.readVarInt();
-            int x = in.readUnsignedByte();
-            int z = in.readUnsignedByte();
-            int rotation = in.readUnsignedByte();
-            Component displayName = null;
-            if(in.readBoolean()) {
-                displayName = DefaultComponentSerializer.get().deserialize(in.readString());
-            }
+        boolean hasIcons = in.readBoolean();
+        this.icons = new MapIcon[hasIcons ? in.readVarInt() : 0];
+        if (hasIcons) {
+            for(int index = 0; index < this.icons.length; index++) {
+                int type = in.readVarInt();
+                int x = in.readUnsignedByte();
+                int z = in.readUnsignedByte();
+                int rotation = in.readUnsignedByte();
+                Component displayName = null;
+                if(in.readBoolean()) {
+                    displayName = DefaultComponentSerializer.get().deserialize(in.readString());
+                }
 
-            this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
+                this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
+            }
         }
 
         int columns = in.readUnsignedByte();
@@ -66,28 +67,32 @@ public class ServerMapDataPacket implements Packet {
 
             this.data = new MapData(columns, rows, x, y, data);
         }
+
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.mapId);
         out.writeByte(this.scale);
-        out.writeBoolean(this.trackingPosition);
         out.writeBoolean(this.locked);
-        out.writeVarInt(this.icons.length);
-        for(int index = 0; index < this.icons.length; index++) {
-            MapIcon icon = this.icons[index];
-            int type = MagicValues.value(Integer.class, icon.getIconType());
-            out.writeVarInt(type);
-            out.writeByte(icon.getCenterX());
-            out.writeByte(icon.getCenterZ());
-            out.writeByte(icon.getIconRotation());
-            if (icon.getDisplayName() != null) {
-                out.writeBoolean(false);
-                out.writeString(DefaultComponentSerializer.get().serialize(icon.getDisplayName()));
-            } else {
-                out.writeBoolean(true);
+        if(this.icons.length != 0) {
+            out.writeBoolean(true);
+            out.writeVarInt(this.icons.length);
+            for(MapIcon icon : this.icons) {
+                int type = MagicValues.value(Integer.class, icon.getIconType());
+                out.writeVarInt(type);
+                out.writeByte(icon.getCenterX());
+                out.writeByte(icon.getCenterZ());
+                out.writeByte(icon.getIconRotation());
+                if (icon.getDisplayName() != null) {
+                    out.writeBoolean(true);
+                    out.writeString(DefaultComponentSerializer.get().serialize(icon.getDisplayName()));
+                } else {
+                    out.writeBoolean(false);
+                }
             }
+        } else {
+            out.writeBoolean(false);
         }
 
         if(this.data != null && this.data.getColumns() != 0) {

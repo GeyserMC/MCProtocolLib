@@ -31,6 +31,7 @@ public class ClientSettingsPacket implements Packet {
     private boolean useChatColors;
     private @NonNull List<SkinPart> visibleParts;
     private @NonNull HandPreference mainHand;
+    private boolean textFilteringEnabled;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -49,6 +50,7 @@ public class ClientSettingsPacket implements Packet {
         }
 
         this.mainHand = MagicValues.key(HandPreference.class, in.readVarInt());
+        this.textFilteringEnabled = in.readBoolean();
     }
 
     @Override
@@ -66,6 +68,7 @@ public class ClientSettingsPacket implements Packet {
         out.writeByte(flags);
 
         out.writeVarInt(MagicValues.value(Integer.class, this.mainHand));
+        out.writeBoolean(this.textFilteringEnabled);
     }
 
     @Override

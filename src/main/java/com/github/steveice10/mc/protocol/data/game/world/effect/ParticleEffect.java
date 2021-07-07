@@ -5,6 +5,8 @@ public enum ParticleEffect implements WorldEffect {
     BLOCK_LAVA_EXTINGUISH,
     BLOCK_REDSTONE_TORCH_BURNOUT,
     BLOCK_END_PORTAL_FRAME_FILL,
+    DRIPSTONE_DRIP,
+    BONEMEAL_GROW_WITH_SOUND,
     SMOKE,
     BREAK_BLOCK,
     BREAK_SPLASH_POTION,
@@ -14,5 +16,9 @@ public enum ParticleEffect implements WorldEffect {
     ENDERDRAGON_FIREBALL_EXPLODE,
     EXPLOSION,
     EVAPORATE,
-    END_GATEWAY_SPAWN;
+    END_GATEWAY_SPAWN,
+    ELECTRIC_SPARK,
+    WAX_ON,
+    WAX_OFF,
+    SCRAPE
 }

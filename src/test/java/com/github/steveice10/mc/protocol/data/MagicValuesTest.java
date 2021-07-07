@@ -7,7 +7,6 @@ import com.github.steveice10.mc.protocol.data.game.ClientRequest;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
-import com.github.steveice10.mc.protocol.data.game.TitleAction;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
@@ -27,7 +26,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirectio
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
-import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
@@ -68,7 +66,6 @@ import com.github.steveice10.mc.protocol.data.game.window.property.AnvilProperty
 import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
-import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
@@ -135,7 +132,6 @@ public class MagicValuesTest {
         this.register(SpreadItemParam.class, Integer.class);
         this.register(FillStackParam.class, Integer.class);
         this.register(MessageType.class, Integer.class);
-        this.register(CombatState.class, Integer.class);
         this.register(GameMode.class, Integer.class);
         this.register(Difficulty.class, Integer.class);
         this.register(Animation.class, Integer.class);
@@ -169,7 +165,6 @@ public class MagicValuesTest {
         this.register(EnterCreditsValue.class, Integer.class);
         this.register(GenericStatistic.class, Integer.class);
         this.register(StatisticCategory.class, Integer.class);
-        this.register(ParticleType.class, Integer.class);
         this.register(NoteBlockValueType.class, Integer.class);
         this.register(PistonValueType.class, Integer.class);
         this.register(MobSpawnerValueType.class, Integer.class);
@@ -186,9 +181,7 @@ public class MagicValuesTest {
         this.register(TeamColor.class, Integer.class);
         this.register(ScoreType.class, Integer.class);
         this.register(Advancement.DisplayData.FrameType.class, Integer.class);
-        this.register(WorldBorderAction.class, Integer.class);
         this.register(PlayerListEntryAction.class, Integer.class);
-        this.register(TitleAction.class, Integer.class);
         this.register(UnlockRecipesAction.class, Integer.class);
         this.register(CraftingBookStateType.class, Integer.class);
         this.register(AdvancementTabAction.class, Integer.class);

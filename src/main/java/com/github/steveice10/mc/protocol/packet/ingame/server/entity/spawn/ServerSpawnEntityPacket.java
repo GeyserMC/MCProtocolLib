@@ -29,6 +29,8 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerSpawnEntityPacket implements Packet {
+    private static final GenericObjectData EMPTY_DATA = new GenericObjectData(0);
+
     private int entityId;
     private @NonNull UUID uuid;
     private @NonNull EntityType type;
@@ -44,7 +46,7 @@ public class ServerSpawnEntityPacket implements Packet {
 
     public ServerSpawnEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
                                    double x, double y, double z, float yaw, float pitch) {
-        this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, 0, 0, 0);
+        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, pitch, 0, 0, 0);
     }
 
     public ServerSpawnEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type, @NonNull ObjectData data,
@@ -55,7 +57,7 @@ public class ServerSpawnEntityPacket implements Packet {
     public ServerSpawnEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
                                    double x, double y, double z, float yaw, float pitch,
                                    double motionX, double motionY, double motionZ) {
-        this(entityId, uuid, type, new GenericObjectData(0), x, y, z, yaw, pitch, motionX, motionY, motionZ);
+        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, pitch, motionX, motionY, motionZ);
     }
 
     @Override
@@ -72,7 +74,7 @@ public class ServerSpawnEntityPacket implements Packet {
         int data = in.readInt();
         if(this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
-        } else if(this.type == EntityType.ITEM_FRAME) {
+        } else if(this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME) {
             this.data = MagicValues.key(HangingDirection.class, data);
         } else if(this.type == EntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);
@@ -82,7 +84,11 @@ public class ServerSpawnEntityPacket implements Packet {
                 || this.type == EntityType.DRAGON_FIREBALL || this.type == EntityType.WITHER_SKULL || this.type == EntityType.FISHING_BOBBER) {
             this.data = new ProjectileData(data);
         } else {
-            this.data = new GenericObjectData(data);
+            if (data == 0) {
+                this.data = EMPTY_DATA;
+            } else {
+                this.data = new GenericObjectData(data);
+            }
         }
 
         this.motionX = in.readShort() / 8000D;

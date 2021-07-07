@@ -21,15 +21,18 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerSpawnPositionPacket implements Packet {
     private @NonNull Position position;
+    private float angle;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.position = Position.read(in);
+        this.angle = in.readFloat();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         Position.write(out, this.position);
+        out.writeFloat(this.angle);
     }
 
     @Override

@@ -20,12 +20,14 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerSetSlotPacket implements Packet {
     private int windowId;
+    private int stateId;
     private int slot;
     private ItemStack item;
 
     @Override
     public void read(NetInput in) throws IOException {
         this.windowId = in.readUnsignedByte();
+        this.stateId = in.readVarInt();
         this.slot = in.readShort();
         this.item = ItemStack.read(in);
     }
@@ -33,6 +35,7 @@ public class ServerSetSlotPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
+        out.writeVarInt(this.stateId);
         out.writeShort(this.slot);
         ItemStack.write(out, this.item);
     }

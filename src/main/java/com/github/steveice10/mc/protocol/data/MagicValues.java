@@ -7,7 +7,6 @@ import com.github.steveice10.mc.protocol.data.game.ClientRequest;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
-import com.github.steveice10.mc.protocol.data.game.TitleAction;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
@@ -27,7 +26,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirectio
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
-import com.github.steveice10.mc.protocol.data.game.entity.player.CombatState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
@@ -68,7 +66,6 @@ import com.github.steveice10.mc.protocol.data.game.window.property.AnvilProperty
 import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
-import com.github.steveice10.mc.protocol.data.game.world.WorldBorderAction;
 import com.github.steveice10.mc.protocol.data.game.world.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.world.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.world.block.StructureMirror;
@@ -91,7 +88,6 @@ import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotificati
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.RespawnScreenValue;
-import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
@@ -112,7 +108,8 @@ public class MagicValues {
         register(Pose.SWIMMING, 3);
         register(Pose.SPIN_ATTACK, 4);
         register(Pose.SNEAKING, 5);
-        register(Pose.DYING, 6);
+        register(Pose.LONG_JUMPING, 6);
+        register(Pose.DYING, 7);
 
         register(AttributeType.GENERIC_MAX_HEALTH, "minecraft:generic.max_health");
         register(AttributeType.GENERIC_FOLLOW_RANGE, "minecraft:generic.follow_range");
@@ -258,10 +255,6 @@ public class MagicValues {
         register(MessageType.SYSTEM, 1);
         register(MessageType.NOTIFICATION, 2);
 
-        register(CombatState.ENTER_COMBAT, 0);
-        register(CombatState.END_COMBAT, 1);
-        register(CombatState.ENTITY_DEAD, 2);
-
         register(GameMode.UNKNOWN, 255); // https://bugs.mojang.com/browse/MC-189885 - should be -1
         register(GameMode.SURVIVAL, 0);
         register(GameMode.CREATIVE, 1);
@@ -369,6 +362,10 @@ public class MagicValues {
         register(EntityStatus.HONEY_BLOCK_LAND, 54);
         register(EntityStatus.PLAYER_SWAP_SAME_ITEM, 55);
         register(EntityStatus.WOLF_SHAKE_WATER_STOP, 56);
+        register(EntityStatus.LIVING_FREEZE, 57);
+        register(EntityStatus.GOAT_LOWERING_HEAD, 58);
+        register(EntityStatus.GOAT_STOP_LOWERING_HEAD, 59);
+        register(EntityStatus.MAKE_POOF_PARTICLES, 60);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);
@@ -381,111 +378,116 @@ public class MagicValues {
         register(EntityType.AREA_EFFECT_CLOUD, 0);
         register(EntityType.ARMOR_STAND, 1);
         register(EntityType.ARROW, 2);
-        register(EntityType.BAT, 3);
-        register(EntityType.BEE, 4);
-        register(EntityType.BLAZE, 5);
-        register(EntityType.BOAT, 6);
-        register(EntityType.CAT, 7);
-        register(EntityType.CAVE_SPIDER, 8);
-        register(EntityType.CHICKEN, 9);
-        register(EntityType.COD, 10);
-        register(EntityType.COW, 11);
-        register(EntityType.CREEPER, 12);
-        register(EntityType.DOLPHIN, 13);
-        register(EntityType.DONKEY, 14);
-        register(EntityType.DRAGON_FIREBALL, 15);
-        register(EntityType.DROWNED, 16);
-        register(EntityType.ELDER_GUARDIAN, 17);
-        register(EntityType.END_CRYSTAL, 18);
-        register(EntityType.ENDER_DRAGON, 19);
-        register(EntityType.ENDERMAN, 20);
-        register(EntityType.ENDERMITE, 21);
-        register(EntityType.EVOKER, 22);
-        register(EntityType.EVOKER_FANGS, 23);
-        register(EntityType.EXPERIENCE_ORB, 24);
-        register(EntityType.EYE_OF_ENDER, 25);
-        register(EntityType.FALLING_BLOCK, 26);
-        register(EntityType.FIREWORK_ROCKET, 27);
-        register(EntityType.FOX, 28);
-        register(EntityType.GHAST, 29);
-        register(EntityType.GIANT, 30);
-        register(EntityType.GUARDIAN, 31);
-        register(EntityType.HOGLIN, 32);
-        register(EntityType.HORSE, 33);
-        register(EntityType.HUSK, 34);
-        register(EntityType.ILLUSIONER, 35);
-        register(EntityType.IRON_GOLEM, 36);
-        register(EntityType.ITEM, 37);
-        register(EntityType.ITEM_FRAME, 38);
-        register(EntityType.FIREBALL, 39);
-        register(EntityType.LEASH_KNOT, 40);
-        register(EntityType.LIGHTNING_BOLT, 41);
-        register(EntityType.LLAMA, 42);
-        register(EntityType.LLAMA_SPIT, 43);
-        register(EntityType.MAGMA_CUBE, 44);
-        register(EntityType.MINECART, 45);
-        register(EntityType.MINECART_CHEST, 46);
-        register(EntityType.MINECART_COMMAND_BLOCK, 47);
-        register(EntityType.MINECART_FURNACE, 48);
-        register(EntityType.MINECART_HOPPER, 49);
-        register(EntityType.MINECART_SPAWNER, 50);
-        register(EntityType.MINECART_TNT, 51);
-        register(EntityType.MULE, 52);
-        register(EntityType.MOOSHROOM, 53);
-        register(EntityType.OCELOT, 54);
-        register(EntityType.PAINTING, 55);
-        register(EntityType.PANDA, 56);
-        register(EntityType.PARROT, 57);
-        register(EntityType.PHANTOM, 58);
-        register(EntityType.PIG, 59);
-        register(EntityType.PIGLIN, 60);
-        register(EntityType.PIGLIN_BRUTE, 61);
-        register(EntityType.PILLAGER, 62);
-        register(EntityType.POLAR_BEAR, 63);
-        register(EntityType.PRIMED_TNT, 64);
-        register(EntityType.PUFFERFISH, 65);
-        register(EntityType.RABBIT, 66);
-        register(EntityType.RAVAGER, 67);
-        register(EntityType.SALMON, 68);
-        register(EntityType.SHEEP, 69);
-        register(EntityType.SHULKER, 70);
-        register(EntityType.SHULKER_BULLET, 71);
-        register(EntityType.SILVERFISH, 72);
-        register(EntityType.SKELETON, 73);
-        register(EntityType.SKELETON_HORSE, 74);
-        register(EntityType.SLIME, 75);
-        register(EntityType.SMALL_FIREBALL, 76);
-        register(EntityType.SNOW_GOLEM, 77);
-        register(EntityType.SNOWBALL, 78);
-        register(EntityType.SPECTRAL_ARROW, 79);
-        register(EntityType.SPIDER, 80);
-        register(EntityType.SQUID, 81);
-        register(EntityType.STRAY, 82);
-        register(EntityType.STRIDER, 83);
-        register(EntityType.THROWN_EGG, 84);
-        register(EntityType.THROWN_ENDERPEARL, 85);
-        register(EntityType.THROWN_EXP_BOTTLE, 86);
-        register(EntityType.THROWN_POTION, 87);
-        register(EntityType.TRIDENT, 88);
-        register(EntityType.TRADER_LLAMA, 89);
-        register(EntityType.TROPICAL_FISH, 90);
-        register(EntityType.TURTLE, 91);
-        register(EntityType.VEX, 92);
-        register(EntityType.VILLAGER, 93);
-        register(EntityType.VINDICATOR, 94);
-        register(EntityType.WANDERING_TRADER, 95);
-        register(EntityType.WITCH, 96);
-        register(EntityType.WITHER, 97);
-        register(EntityType.WITHER_SKELETON, 98);
-        register(EntityType.WITHER_SKULL, 99);
-        register(EntityType.WOLF, 100);
-        register(EntityType.ZOGLIN, 101);
-        register(EntityType.ZOMBIE, 102);
-        register(EntityType.ZOMBIE_HORSE, 103);
-        register(EntityType.ZOMBIE_VILLAGER, 104);
-        register(EntityType.ZOMBIFIED_PIGLIN, 105);
-        register(EntityType.PLAYER, 106);
-        register(EntityType.FISHING_BOBBER, 107);
+        register(EntityType.AXOLOTL, 3);
+        register(EntityType.BAT, 4);
+        register(EntityType.BEE, 5);
+        register(EntityType.BLAZE, 6);
+        register(EntityType.BOAT, 7);
+        register(EntityType.CAT, 8);
+        register(EntityType.CAVE_SPIDER, 9);
+        register(EntityType.CHICKEN, 10);
+        register(EntityType.COD, 11);
+        register(EntityType.COW, 12);
+        register(EntityType.CREEPER, 13);
+        register(EntityType.DOLPHIN, 14);
+        register(EntityType.DONKEY, 15);
+        register(EntityType.DRAGON_FIREBALL, 16);
+        register(EntityType.DROWNED, 17);
+        register(EntityType.ELDER_GUARDIAN, 18);
+        register(EntityType.END_CRYSTAL, 19);
+        register(EntityType.ENDER_DRAGON, 20);
+        register(EntityType.ENDERMAN, 21);
+        register(EntityType.ENDERMITE, 22);
+        register(EntityType.EVOKER, 23);
+        register(EntityType.EVOKER_FANGS, 24);
+        register(EntityType.EXPERIENCE_ORB, 25);
+        register(EntityType.EYE_OF_ENDER, 26);
+        register(EntityType.FALLING_BLOCK, 27);
+        register(EntityType.FIREWORK_ROCKET, 28);
+        register(EntityType.FOX, 29);
+        register(EntityType.GHAST, 30);
+        register(EntityType.GIANT, 31);
+        register(EntityType.GLOW_ITEM_FRAME, 32);
+        register(EntityType.GLOW_SQUID, 33);
+        register(EntityType.GOAT, 34);
+        register(EntityType.GUARDIAN, 35);
+        register(EntityType.HOGLIN, 36);
+        register(EntityType.HORSE, 37);
+        register(EntityType.HUSK, 38);
+        register(EntityType.ILLUSIONER, 39);
+        register(EntityType.IRON_GOLEM, 40);
+        register(EntityType.ITEM, 41);
+        register(EntityType.ITEM_FRAME, 42);
+        register(EntityType.FIREBALL, 43);
+        register(EntityType.LEASH_KNOT, 44);
+        register(EntityType.LIGHTNING_BOLT, 45);
+        register(EntityType.LLAMA, 46);
+        register(EntityType.LLAMA_SPIT, 47);
+        register(EntityType.MAGMA_CUBE, 48);
+        register(EntityType.MARKER, 49);
+        register(EntityType.MINECART, 50);
+        register(EntityType.MINECART_CHEST, 51);
+        register(EntityType.MINECART_COMMAND_BLOCK, 52);
+        register(EntityType.MINECART_FURNACE, 53);
+        register(EntityType.MINECART_HOPPER, 54);
+        register(EntityType.MINECART_SPAWNER, 55);
+        register(EntityType.MINECART_TNT, 56);
+        register(EntityType.MULE, 57);
+        register(EntityType.MOOSHROOM, 58);
+        register(EntityType.OCELOT, 59);
+        register(EntityType.PAINTING, 60);
+        register(EntityType.PANDA, 61);
+        register(EntityType.PARROT, 62);
+        register(EntityType.PHANTOM, 63);
+        register(EntityType.PIG, 64);
+        register(EntityType.PIGLIN, 65);
+        register(EntityType.PIGLIN_BRUTE, 66);
+        register(EntityType.PILLAGER, 67);
+        register(EntityType.POLAR_BEAR, 68);
+        register(EntityType.PRIMED_TNT, 69);
+        register(EntityType.PUFFERFISH, 70);
+        register(EntityType.RABBIT, 71);
+        register(EntityType.RAVAGER, 72);
+        register(EntityType.SALMON, 73);
+        register(EntityType.SHEEP, 74);
+        register(EntityType.SHULKER, 75);
+        register(EntityType.SHULKER_BULLET, 76);
+        register(EntityType.SILVERFISH, 77);
+        register(EntityType.SKELETON, 78);
+        register(EntityType.SKELETON_HORSE, 79);
+        register(EntityType.SLIME, 80);
+        register(EntityType.SMALL_FIREBALL, 81);
+        register(EntityType.SNOW_GOLEM, 82);
+        register(EntityType.SNOWBALL, 83);
+        register(EntityType.SPECTRAL_ARROW, 84);
+        register(EntityType.SPIDER, 85);
+        register(EntityType.SQUID, 86);
+        register(EntityType.STRAY, 87);
+        register(EntityType.STRIDER, 88);
+        register(EntityType.THROWN_EGG, 89);
+        register(EntityType.THROWN_ENDERPEARL, 90);
+        register(EntityType.THROWN_EXP_BOTTLE, 91);
+        register(EntityType.THROWN_POTION, 92);
+        register(EntityType.TRIDENT, 93);
+        register(EntityType.TRADER_LLAMA, 94);
+        register(EntityType.TROPICAL_FISH, 95);
+        register(EntityType.TURTLE, 96);
+        register(EntityType.VEX, 97);
+        register(EntityType.VILLAGER, 98);
+        register(EntityType.VINDICATOR, 99);
+        register(EntityType.WANDERING_TRADER, 100);
+        register(EntityType.WITCH, 101);
+        register(EntityType.WITHER, 102);
+        register(EntityType.WITHER_SKELETON, 103);
+        register(EntityType.WITHER_SKULL, 104);
+        register(EntityType.WOLF, 105);
+        register(EntityType.ZOGLIN, 106);
+        register(EntityType.ZOMBIE, 107);
+        register(EntityType.ZOMBIE_HORSE, 108);
+        register(EntityType.ZOMBIE_VILLAGER, 109);
+        register(EntityType.ZOMBIFIED_PIGLIN, 110);
+        register(EntityType.PLAYER, 111);
+        register(EntityType.FISHING_BOBBER, 112);
 
         register(MinecartType.NORMAL, 0);
         register(MinecartType.CHEST, 1);
@@ -787,79 +789,6 @@ public class MagicValues {
         register(StatisticCategory.KILLED_BY_ENTITY, 7);
         register(StatisticCategory.GENERIC, 8);
 
-        register(ParticleType.AMBIENT_ENTITY_EFFECT, 0);
-        register(ParticleType.ANGRY_VILLAGER, 1);
-        register(ParticleType.BARRIER, 2);
-        register(ParticleType.BLOCK, 3);
-        register(ParticleType.BUBBLE, 4);
-        register(ParticleType.CLOUD, 5);
-        register(ParticleType.CRIT, 6);
-        register(ParticleType.DAMAGE_INDICATOR, 7);
-        register(ParticleType.DRAGON_BREATH, 8);
-        register(ParticleType.DRIPPING_LAVA, 9);
-        register(ParticleType.FALLING_LAVA, 10);
-        register(ParticleType.LANDING_LAVA, 11);
-        register(ParticleType.DRIPPING_WATER, 12);
-        register(ParticleType.FALLING_WATER, 13);
-        register(ParticleType.DUST, 14);
-        register(ParticleType.EFFECT, 15);
-        register(ParticleType.ELDER_GUARDIAN, 16);
-        register(ParticleType.ENCHANTED_HIT, 17);
-        register(ParticleType.ENCHANT, 18);
-        register(ParticleType.END_ROD, 19);
-        register(ParticleType.ENTITY_EFFECT, 20);
-        register(ParticleType.EXPLOSION_EMITTER, 21);
-        register(ParticleType.EXPLOSION, 22);
-        register(ParticleType.FALLING_DUST, 23);
-        register(ParticleType.FIREWORK, 24);
-        register(ParticleType.FISHING, 25);
-        register(ParticleType.FLAME, 26);
-        register(ParticleType.SOUL_FLAME, 27);
-        register(ParticleType.SOUL, 28);
-        register(ParticleType.FLASH, 29);
-        register(ParticleType.HAPPY_VILLAGER, 30);
-        register(ParticleType.COMPOSTER, 31);
-        register(ParticleType.HEART, 32);
-        register(ParticleType.INSTANT_EFFECT, 33);
-        register(ParticleType.ITEM, 34);
-        register(ParticleType.ITEM_SLIME, 35);
-        register(ParticleType.ITEM_SNOWBALL, 36);
-        register(ParticleType.LARGE_SMOKE, 37);
-        register(ParticleType.LAVA, 38);
-        register(ParticleType.MYCELIUM, 39);
-        register(ParticleType.NOTE, 40);
-        register(ParticleType.POOF, 41);
-        register(ParticleType.PORTAL, 42);
-        register(ParticleType.RAIN, 43);
-        register(ParticleType.SMOKE, 44);
-        register(ParticleType.SNEEZE, 45);
-        register(ParticleType.SPIT, 46);
-        register(ParticleType.SQUID_INK, 47);
-        register(ParticleType.SWEEP_ATTACK, 48);
-        register(ParticleType.TOTEM_OF_UNDYING, 49);
-        register(ParticleType.UNDERWATER, 50);
-        register(ParticleType.SPLASH, 51);
-        register(ParticleType.WITCH, 52);
-        register(ParticleType.BUBBLE_POP, 53);
-        register(ParticleType.CURRENT_DOWN, 54);
-        register(ParticleType.BUBBLE_COLUMN_UP, 55);
-        register(ParticleType.NAUTILUS, 56);
-        register(ParticleType.DOLPHIN, 57);
-        register(ParticleType.CAMPFIRE_COSY_SMOKE, 58);
-        register(ParticleType.CAMPFIRE_SIGNAL_SMOKE, 59);
-        register(ParticleType.DRIPPING_HONEY, 60);
-        register(ParticleType.FALLING_HONEY, 61);
-        register(ParticleType.LANDING_HONEY, 62);
-        register(ParticleType.FALLING_NECTAR, 63);
-        register(ParticleType.ASH, 64);
-        register(ParticleType.CRIMSON_SPORE, 65);
-        register(ParticleType.WARPED_SPORE, 66);
-        register(ParticleType.DRIPPING_OBBSIDIAN_TEAR, 67);
-        register(ParticleType.FALLING_OBSIDIAN_TEAR, 68);
-        register(ParticleType.LANDING_OBSIDIAN_TEAR, 69);
-        register(ParticleType.REVERSE_PORTAL, 70);
-        register(ParticleType.WHITE_ASH, 71);
-
         register(NoteBlockValueType.HARP, 0);
         register(NoteBlockValueType.DOUBLE_BASS, 1);
         register(NoteBlockValueType.SNARE_DRUM, 2);
@@ -942,12 +871,18 @@ public class MagicValues {
         register(SoundEffect.BLOCK_GRINDSTONE_USE, 1042);
         register(SoundEffect.ITEM_BOOK_PAGE_TURN, 1043);
         register(SoundEffect.BLOCK_SMITHING_TABLE_USE, 1044);
+        register(SoundEffect.POINTED_DRIPSTONE_LAND, 1045);
+        register(SoundEffect.DRIP_LAVA_INTO_CAULDRON, 1046);
+        register(SoundEffect.DRIP_WATER_INTO_CAULDRON, 1047);
+        register(SoundEffect.ENTITY_SKELETON_CONVERTED_TO_STRAY, 1048);
         register(SoundEffect.ENTITY_ENDERDRAGON_GROWL, 3001);
 
         register(ParticleEffect.COMPOSTER, 1500);
         register(ParticleEffect.BLOCK_LAVA_EXTINGUISH, 1501);
         register(ParticleEffect.BLOCK_REDSTONE_TORCH_BURNOUT, 1502);
         register(ParticleEffect.BLOCK_END_PORTAL_FRAME_FILL, 1503);
+        register(ParticleEffect.DRIPSTONE_DRIP, 1504);
+        register(ParticleEffect.BONEMEAL_GROW_WITH_SOUND, 1505);
         register(ParticleEffect.SMOKE, 2000);
         register(ParticleEffect.BREAK_BLOCK, 2001);
         register(ParticleEffect.BREAK_SPLASH_POTION, 2002);
@@ -959,6 +894,10 @@ public class MagicValues {
         register(ParticleEffect.EXPLOSION, 2008);
         register(ParticleEffect.EVAPORATE, 2009);
         register(ParticleEffect.END_GATEWAY_SPAWN, 3000);
+        register(ParticleEffect.ELECTRIC_SPARK, 3002);
+        register(ParticleEffect.WAX_ON, 3003);
+        register(ParticleEffect.WAX_OFF, 3004);
+        register(ParticleEffect.SCRAPE, 3005);
 
         register(SmokeEffectData.DOWN, 0);
         register(SmokeEffectData.UP, 1);
@@ -1015,25 +954,11 @@ public class MagicValues {
         register(Advancement.DisplayData.FrameType.CHALLENGE, 1);
         register(Advancement.DisplayData.FrameType.GOAL, 2);
 
-        register(WorldBorderAction.SET_SIZE, 0);
-        register(WorldBorderAction.LERP_SIZE, 1);
-        register(WorldBorderAction.SET_CENTER, 2);
-        register(WorldBorderAction.INITIALIZE, 3);
-        register(WorldBorderAction.SET_WARNING_TIME, 4);
-        register(WorldBorderAction.SET_WARNING_BLOCKS, 5);
-
         register(PlayerListEntryAction.ADD_PLAYER, 0);
         register(PlayerListEntryAction.UPDATE_GAMEMODE, 1);
         register(PlayerListEntryAction.UPDATE_LATENCY, 2);
         register(PlayerListEntryAction.UPDATE_DISPLAY_NAME, 3);
         register(PlayerListEntryAction.REMOVE_PLAYER, 4);
-
-        register(TitleAction.TITLE, 0);
-        register(TitleAction.SUBTITLE, 1);
-        register(TitleAction.ACTION_BAR, 2);
-        register(TitleAction.TIMES, 3);
-        register(TitleAction.CLEAR, 4);
-        register(TitleAction.RESET, 5);
 
         register(UnlockRecipesAction.INIT, 0);
         register(UnlockRecipesAction.ADD, 1);
@@ -1206,22 +1131,22 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T key(Class<T> keyType, Object value) {
-        for(Object key : VALUES.keySet()) {
-            if(keyType.isAssignableFrom(key.getClass())) {
-                for(Object val : VALUES.get(key)) {
+        for(Map.Entry<Object, List<Object>> entry : VALUES.entrySet()) {
+            if(keyType.isAssignableFrom(entry.getKey().getClass())) {
+                for(Object val : entry.getValue()) {
                     if(val == value || val.equals(value)) {
-                        return (T) key;
+                        return (T) entry.getKey();
                     } else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
                         Number num = (Number) val;
                         Number num2 = (Number) value;
                         if(num.doubleValue() == num2.doubleValue()) {
-                            return (T) key;
+                            return (T) entry.getKey();
                         }
                     } else if(String.class.isAssignableFrom(val.getClass()) && String.class.isAssignableFrom(value.getClass())) {
                         String str = (String) val;
                         String str2 = (String) value;
                         if(str.equalsIgnoreCase(str2)) {
-                            return (T) key;
+                            return (T) entry.getKey();
                         }
                     }
                 }
@@ -1233,8 +1158,9 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T value(Class<T> valueType, Object key) {
-        if(VALUES.containsKey(key)) {
-            for(Object val : VALUES.get(key)) {
+        List<Object> values = VALUES.get(key);
+        if(values != null) {
+            for(Object val : values) {
                 if(valueType.isAssignableFrom(val.getClass())) {
                     return (T) val;
                 } else if(Number.class.isAssignableFrom(val.getClass())) {

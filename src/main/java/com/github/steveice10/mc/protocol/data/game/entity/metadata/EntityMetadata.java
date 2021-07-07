@@ -92,7 +92,7 @@ public class EntityMetadata {
                     value = NBT.read(in);
                     break;
                 case PARTICLE:
-                    ParticleType particleType = MagicValues.key(ParticleType.class, in.readVarInt());
+                    ParticleType particleType = ParticleType.values()[in.readVarInt()];
                     value = new Particle(particleType, ParticleData.read(in, particleType));
                     break;
                 case VILLAGER_DATA:
@@ -179,7 +179,7 @@ public class EntityMetadata {
                     break;
                 case PARTICLE:
                     Particle particle = (Particle) meta.getValue();
-                    out.writeVarInt(MagicValues.value(Integer.class, particle.getType()));
+                    out.writeVarInt(particle.getType().ordinal());
                     ParticleData.write(out, particle.getType(), particle.getData());
                     break;
                 case VILLAGER_DATA:
