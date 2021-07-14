@@ -24,7 +24,7 @@ public class Position {
         long val = in.readLong();
 
         int x = (int) (val >> POSITION_X_SIZE);
-        int y = (int) (val  & POSITION_Y_SHIFT);
+        int y = (int) (val << 52 >> 52);
         int z = (int) (val << 26 >> POSITION_Z_SIZE);
 
         return new Position(x, y, z);
