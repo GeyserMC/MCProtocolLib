@@ -10,7 +10,7 @@ public class DoubleProperties implements CommandProperties {
     private final double max;
 
     public DoubleProperties() {
-        this.min = -Double.MAX_VALUE;
+        this.min = Double.MIN_VALUE;
         this.max = Double.MAX_VALUE;
     }
 }
