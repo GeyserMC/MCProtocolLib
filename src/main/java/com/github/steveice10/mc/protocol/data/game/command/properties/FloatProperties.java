@@ -10,7 +10,7 @@ public class FloatProperties implements CommandProperties {
     private final float max;
 
     public FloatProperties() {
-        this.min = -Float.MAX_VALUE;
+        this.min = Float.MIN_VALUE;
         this.max = Float.MAX_VALUE;
     }
 }
