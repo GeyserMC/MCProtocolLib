@@ -19,6 +19,7 @@ import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -37,6 +38,7 @@ import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.incubator.channel.uring.IOUring;
+import io.netty.incubator.channel.uring.IOUringDatagramChannel;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
@@ -56,7 +58,7 @@ public class TcpClientSession extends TcpSession {
 
     private EventLoopGroup group;
     private Class<? extends SocketChannel> socketChannel;
-    private final boolean epollAvailable = Epoll.isAvailable();
+    private Class<? extends DatagramChannel> datagramChannel;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
         this(host, port, protocol, null);
@@ -101,19 +103,22 @@ public class TcpClientSession extends TcpSession {
                 case IO_URING:
                     this.group = new IOUringEventLoopGroup();
                     this.socketChannel = IOUringSocketChannel.class;
+                    this.datagramChannel = IOUringDatagramChannel.class;
                     break;
                 case EPOLL:
                     this.group = new EpollEventLoopGroup();
                     this.socketChannel = EpollSocketChannel.class;
+                    this.datagramChannel = EpollDatagramChannel.class;
                     break;
                 case NIO:
                     this.group = new NioEventLoopGroup();
                     this.socketChannel = NioSocketChannel.class;
+                    this.datagramChannel = NioDatagramChannel.class;
                     break;
             }
 
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(socketChannel);
+            bootstrap.channel(this.socketChannel);
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
                 public void initChannel(Channel channel) {
@@ -181,7 +186,7 @@ public class TcpClientSession extends TcpSession {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try {
                 resolver = new DnsNameResolverBuilder(this.group.next())
-                        .channelType(epollAvailable ? EpollDatagramChannel.class : NioDatagramChannel.class)
+                        .channelType(this.datagramChannel)
                         .build();
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
