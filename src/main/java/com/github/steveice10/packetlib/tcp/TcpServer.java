@@ -2,7 +2,7 @@ package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.AbstractServer;
 import com.github.steveice10.packetlib.BuiltinFlags;
-import com.github.steveice10.packetlib.Server;
+import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -12,8 +12,13 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
+import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -21,6 +26,7 @@ import java.net.InetSocketAddress;
 
 public class TcpServer extends AbstractServer {
     private EventLoopGroup group;
+    private Class<? extends ServerSocketChannel> serverSocketChannel;
     private Channel channel;
 
     public TcpServer(String host, int port, Class<? extends PacketProtocol> protocol) {
@@ -38,8 +44,22 @@ public class TcpServer extends AbstractServer {
             return;
         }
 
-        this.group = new NioEventLoopGroup();
-        ChannelFuture future = new ServerBootstrap().channel(NioServerSocketChannel.class).childHandler(new ChannelInitializer<Channel>() {
+        switch (TransportHelper.determineTransportMethod()) {
+            case IO_URING:
+                this.group = new IOUringEventLoopGroup();
+                this.serverSocketChannel = IOUringServerSocketChannel.class;
+                break;
+            case EPOLL:
+                this.group = new EpollEventLoopGroup();
+                this.serverSocketChannel = EpollServerSocketChannel.class;
+                break;
+            case NIO:
+                this.group = new NioEventLoopGroup();
+                this.serverSocketChannel = NioServerSocketChannel.class;
+                break;
+        }
+
+        ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<Channel>() {
             @Override
             public void initChannel(Channel channel) throws Exception {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
