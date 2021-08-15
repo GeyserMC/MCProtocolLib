@@ -19,8 +19,8 @@ import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
 import io.netty.handler.codec.dns.DefaultDnsRawRecord;
 import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
@@ -35,6 +35,9 @@ import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
+import io.netty.incubator.channel.uring.IOUring;
+import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
+import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 
@@ -51,6 +54,7 @@ public class TcpClientSession extends TcpSession {
     private ProxyInfo proxy;
 
     private EventLoopGroup group;
+    private Class<? extends SocketChannel> socketChannel;
     private final boolean epollAvailable = Epoll.isAvailable();
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
@@ -72,6 +76,17 @@ public class TcpClientSession extends TcpSession {
         this.proxy = proxy;
     }
 
+    public enum TransportMethod {
+        NIO, EPOLL, IO_URING;
+    }
+
+    private TransportMethod determineTransportMethod() {
+        if (IOUring.isAvailable()) return TransportMethod.IO_URING;
+        if (Epoll.isAvailable()) return TransportMethod.EPOLL;
+        return TransportMethod.NIO;
+    }
+
+
     @Override
     public void connect(boolean wait) {
         if(this.disconnected) {
@@ -81,10 +96,23 @@ public class TcpClientSession extends TcpSession {
         }
 
         try {
-            this.group = epollAvailable ? new EpollEventLoopGroup() : new NioEventLoopGroup();
+            switch (determineTransportMethod()) {
+                case IO_URING:
+                    this.group = new IOUringEventLoopGroup();
+                    this.socketChannel = IOUringSocketChannel.class;
+                    break;
+                case EPOLL:
+                    this.group = new EpollEventLoopGroup();
+                    this.socketChannel = EpollSocketChannel.class;
+                    break;
+                case NIO:
+                    this.group = new NioEventLoopGroup();
+                    this.socketChannel = EpollSocketChannel.class;
+                    break;
+            }
 
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(epollAvailable ? EpollSocketChannel.class : NioSocketChannel.class);
+            bootstrap.channel(socketChannel);
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
                 public void initChannel(Channel channel) {
