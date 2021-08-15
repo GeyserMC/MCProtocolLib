@@ -14,9 +14,13 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
 import io.netty.handler.codec.dns.DefaultDnsRawRecord;
 import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
@@ -47,6 +51,7 @@ public class TcpClientSession extends TcpSession {
     private ProxyInfo proxy;
 
     private EventLoopGroup group;
+    private final boolean epollAvailable = Epoll.isAvailable();
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
         this(host, port, protocol, null);
@@ -76,10 +81,10 @@ public class TcpClientSession extends TcpSession {
         }
 
         try {
-            this.group = new NioEventLoopGroup();
+            this.group = epollAvailable ? new EpollEventLoopGroup() : new NioEventLoopGroup();
 
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(NioSocketChannel.class);
+            bootstrap.channel(epollAvailable ? EpollServerSocketChannel.class : NioServerSocketChannel.class);
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
                 public void initChannel(Channel channel) {
@@ -147,7 +152,7 @@ public class TcpClientSession extends TcpSession {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try {
                 resolver = new DnsNameResolverBuilder(this.group.next())
-                        .channelType(NioDatagramChannel.class)
+                        .channelType(epollAvailable ? EpollDatagramChannel.class : NioDatagramChannel.class)
                         .build();
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
