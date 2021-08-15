@@ -21,6 +21,7 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
 import io.netty.handler.codec.dns.DefaultDnsRawRecord;
 import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
@@ -107,7 +108,7 @@ public class TcpClientSession extends TcpSession {
                     break;
                 case NIO:
                     this.group = new NioEventLoopGroup();
-                    this.socketChannel = EpollSocketChannel.class;
+                    this.socketChannel = NioSocketChannel.class;
                     break;
             }
 
