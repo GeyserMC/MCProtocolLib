@@ -2,6 +2,7 @@ package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.BuiltinFlags;
 import com.github.steveice10.packetlib.ProxyInfo;
+import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -14,7 +15,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
@@ -37,7 +37,6 @@ import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import io.netty.incubator.channel.uring.IOUring;
 import io.netty.incubator.channel.uring.IOUringDatagramChannel;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringSocketChannel;
@@ -79,17 +78,6 @@ public class TcpClientSession extends TcpSession {
         this.proxy = proxy;
     }
 
-    public enum TransportMethod {
-        NIO, EPOLL, IO_URING;
-    }
-
-    private TransportMethod determineTransportMethod() {
-        if (IOUring.isAvailable()) return TransportMethod.IO_URING;
-        if (Epoll.isAvailable()) return TransportMethod.EPOLL;
-        return TransportMethod.NIO;
-    }
-
-
     @Override
     public void connect(boolean wait) {
         if(this.disconnected) {
@@ -99,7 +87,7 @@ public class TcpClientSession extends TcpSession {
         }
 
         try {
-            switch (determineTransportMethod()) {
+            switch (TransportHelper.determineTransportMethod()) {
                 case IO_URING:
                     this.group = new IOUringEventLoopGroup();
                     this.socketChannel = IOUringSocketChannel.class;

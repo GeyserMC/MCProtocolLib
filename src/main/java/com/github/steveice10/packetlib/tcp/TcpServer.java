@@ -2,16 +2,21 @@ package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.AbstractServer;
 import com.github.steveice10.packetlib.BuiltinFlags;
+import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
-import io.netty.channel.epoll.Epoll;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.incubator.channel.uring.IOUring;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
 import io.netty.util.concurrent.Future;
@@ -33,23 +38,13 @@ public class TcpServer extends AbstractServer {
         return this.channel != null && this.channel.isOpen();
     }
 
-    public enum TransportMethod {
-        NIO, EPOLL, IO_URING;
-    }
-
-    private TransportMethod determineTransportMethod() {
-        if (IOUring.isAvailable()) return TransportMethod.IO_URING;
-        if (Epoll.isAvailable()) return TransportMethod.EPOLL;
-        return TransportMethod.NIO;
-    }
-
     @Override
     public void bindImpl(boolean wait, final Runnable callback) {
         if(this.group != null || this.channel != null) {
             return;
         }
 
-        switch (determineTransportMethod()) {
+        switch (TransportHelper.determineTransportMethod()) {
             case IO_URING:
                 this.group = new IOUringEventLoopGroup();
                 this.serverSocketChannel = IOUringServerSocketChannel.class;
