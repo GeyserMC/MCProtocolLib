@@ -17,10 +17,10 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
 import io.netty.handler.codec.dns.DefaultDnsRawRecord;
 import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
@@ -84,7 +84,7 @@ public class TcpClientSession extends TcpSession {
             this.group = epollAvailable ? new EpollEventLoopGroup() : new NioEventLoopGroup();
 
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(epollAvailable ? EpollServerSocketChannel.class : NioServerSocketChannel.class);
+            bootstrap.channel(epollAvailable ? EpollSocketChannel.class : NioSocketChannel.class);
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
                 public void initChannel(Channel channel) {
