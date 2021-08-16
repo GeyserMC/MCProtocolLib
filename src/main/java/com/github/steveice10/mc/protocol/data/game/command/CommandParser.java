@@ -6,6 +6,7 @@ public enum CommandParser {
     DOUBLE,
     FLOAT,
     INTEGER,
+    LONG,
     STRING,
     ENTITY,
     GAME_PROFILE,
