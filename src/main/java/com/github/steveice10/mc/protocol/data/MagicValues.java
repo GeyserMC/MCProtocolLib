@@ -1053,6 +1053,7 @@ public class MagicValues {
         register(CommandParser.DOUBLE, "brigadier:double");
         register(CommandParser.FLOAT, "brigadier:float");
         register(CommandParser.INTEGER, "brigadier:integer");
+        register(CommandParser.LONG, "brigadier:long");
         register(CommandParser.STRING, "brigadier:string");
         register(CommandParser.ENTITY, "minecraft:entity");
         register(CommandParser.GAME_PROFILE, "minecraft:game_profile");

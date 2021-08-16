@@ -6,14 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
 import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
-import com.github.steveice10.mc.protocol.data.game.command.properties.CommandProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.DoubleProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.EntityProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.FloatProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.IntegerProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.RangeProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.ScoreHolderProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.*;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -120,6 +113,25 @@ public class ServerDeclareCommandsPacket implements Packet {
                         }
 
                         properties = new IntegerProperties(min, max);
+                        break;
+                    }
+                    case LONG: {
+                        byte numberFlags = in.readByte();
+                        long min;
+                        long max;
+                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                            min = in.readLong();
+                        } else {
+                            min = Long.MIN_VALUE;
+                        }
+
+                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                            max = in.readLong();
+                        } else {
+                            max = Long.MAX_VALUE;
+                        }
+
+                        properties = new LongProperties(min, max);
                         break;
                     }
                     case STRING:
@@ -253,6 +265,29 @@ public class ServerDeclareCommandsPacket implements Packet {
 
                         if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeInt(properties.getMax());
+                        }
+
+                        break;
+                    }
+                    case LONG: {
+                        LongProperties properties = (LongProperties) node.getProperties();
+
+                        int numberFlags = 0;
+                        if(properties.getMin() != Long.MIN_VALUE) {
+                            numberFlags |= NUMBER_FLAG_MIN_DEFINED;
+                        }
+
+                        if(properties.getMax() != Long.MAX_VALUE) {
+                            numberFlags |= NUMBER_FLAG_MAX_DEFINED;
+                        }
+
+                        out.writeByte(numberFlags);
+                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                            out.writeLong(properties.getMin());
+                        }
+
+                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                            out.writeLong(properties.getMax());
                         }
 
                         break;
