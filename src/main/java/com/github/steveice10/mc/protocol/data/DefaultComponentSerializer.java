@@ -1,9 +1,12 @@
 package com.github.steveice10.mc.protocol.data;
 
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.gson.legacyimpl.NBTLegacyHoverEventSerializer;
 
 public final class DefaultComponentSerializer {
-    private static GsonComponentSerializer serializer = GsonComponentSerializer.gson();
+    private static GsonComponentSerializer serializer = GsonComponentSerializer.builder()
+            .legacyHoverEventSerializer(NBTLegacyHoverEventSerializer.get())
+            .build();
 
     public static GsonComponentSerializer get() {
         return serializer;
