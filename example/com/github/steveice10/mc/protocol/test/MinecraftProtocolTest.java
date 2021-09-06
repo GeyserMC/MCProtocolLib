@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.test;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.AuthenticationService;
+import com.github.steveice10.mc.auth.service.MojangAuthenticationService;
 import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
@@ -176,7 +177,7 @@ public class MinecraftProtocolTest {
         MinecraftProtocol protocol = null;
         if(VERIFY_USERS) {
             try {
-                AuthenticationService authService = new AuthenticationService();
+                AuthenticationService authService = new MojangAuthenticationService();
                 authService.setUsername(USERNAME);
                 authService.setPassword(PASSWORD);
                 authService.setProxy(AUTH_PROXY);
