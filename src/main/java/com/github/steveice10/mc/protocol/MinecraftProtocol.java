@@ -414,8 +414,8 @@ public class MinecraftProtocol extends PacketProtocol {
         serverboundPackets.accept(0x1B, ClientPlayerStatePacket.class);
         serverboundPackets.accept(0x1C, ClientSteerVehiclePacket.class);
         serverboundPackets.accept(0x1D, ClientPongPacket.class);
-        serverboundPackets.accept(0x1E, ClientDisplayedRecipePacket.class);
-        serverboundPackets.accept(0x1F, ClientCraftingBookStatePacket.class);
+        serverboundPackets.accept(0x1E, ClientCraftingBookStatePacket.class);
+        serverboundPackets.accept(0x1F, ClientDisplayedRecipePacket.class);
         serverboundPackets.accept(0x20, ClientRenameItemPacket.class);
         serverboundPackets.accept(0x21, ClientResourcePackStatusPacket.class);
         serverboundPackets.accept(0x22, ClientAdvancementTabPacket.class);
