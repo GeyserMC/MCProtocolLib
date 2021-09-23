@@ -14,7 +14,6 @@ import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket
 import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerSetCompressionPacket;
 import com.github.steveice10.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import com.github.steveice10.mc.protocol.packet.login.client.LoginStartPacket;
 import com.github.steveice10.mc.protocol.packet.login.server.EncryptionRequestPacket;
@@ -112,8 +111,6 @@ public class ClientListener extends SessionAdapter {
                 event.getSession().send(new ClientKeepAlivePacket(event.<ServerKeepAlivePacket>getPacket().getPingId()));
             } else if(event.getPacket() instanceof ServerDisconnectPacket) {
                 event.getSession().disconnect(event.<ServerDisconnectPacket>getPacket().getReason().toString());
-            } else if(event.getPacket() instanceof ServerSetCompressionPacket) {
-                event.getSession().setCompressionThreshold(event.<ServerSetCompressionPacket>getPacket().getThreshold());
             }
         }
     }
