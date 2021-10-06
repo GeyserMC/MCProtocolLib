@@ -7,7 +7,7 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.FloatTag;
@@ -49,7 +49,7 @@ public class MinecraftProtocolTest {
             Component.text("Hello world!"),
             null
     );
-    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), getOverworldTag(), "minecraft:world", 100, 0, 16, false, false, false, false);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), getOverworldTag(), "minecraft:world", 100, 0, 16, false, false, false, false);
 
     private static Server server;
 
@@ -119,13 +119,13 @@ public class MinecraftProtocolTest {
 
     private static class LoginListenerTest extends SessionAdapter {
         public CountDownLatch login = new CountDownLatch(1);
-        public ServerJoinGamePacket packet;
+        public ClientboundLoginPacket packet;
 
         @Override
         public void packetReceived(PacketReceivedEvent event) {
             Packet packet = event.getPacket();
-            if(packet instanceof ServerJoinGamePacket) {
-                this.packet = (ServerJoinGamePacket) packet;
+            if(packet instanceof ClientboundLoginPacket) {
+                this.packet = (ClientboundLoginPacket) packet;
                 this.login.countDown();
             }
         }
