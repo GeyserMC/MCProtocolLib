@@ -6,6 +6,7 @@ import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.exception.request.ServiceUnavailableException;
 import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
+import com.github.steveice10.mc.protocol.data.UnexpectedEncryptionException;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
@@ -45,13 +46,13 @@ public class ClientListener extends SessionAdapter {
     @Override
     public void packetReceived(PacketReceivedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-        if(protocol.getSubProtocol() == SubProtocol.LOGIN) {
+        if (protocol.getSubProtocol() == SubProtocol.LOGIN) {
             if(event.getPacket() instanceof ClientboundHelloPacket) {
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
 
-                if(profile == null || accessToken == null) {
-                    throw new IllegalStateException("Cannot reply to EncryptionRequestPacket without profile and access token.");
+                if (profile == null || accessToken == null) {
+                    throw new UnexpectedEncryptionException();
                 }
 
                 ClientboundHelloPacket packet = event.getPacket();
