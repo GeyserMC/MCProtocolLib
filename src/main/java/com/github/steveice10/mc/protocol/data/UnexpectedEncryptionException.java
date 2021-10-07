@@ -6,6 +6,6 @@ package com.github.steveice10.mc.protocol.data;
  */
 public class UnexpectedEncryptionException extends IllegalStateException {
     public UnexpectedEncryptionException() {
-        super("Cannot reply to EncryptionRequestPacket without profile and access token.");
+        super("Cannot reply to ClientboundHelloPacket without profile and access token.");
     }
 }
