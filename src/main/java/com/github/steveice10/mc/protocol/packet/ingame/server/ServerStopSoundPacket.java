@@ -34,17 +34,17 @@ public class ServerStopSoundPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         int flags = in.readByte();
-        if((flags & FLAG_CATEGORY) != 0) {
+        if ((flags & FLAG_CATEGORY) != 0) {
             this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
         } else {
             this.category = null;
         }
 
-        if((flags & FLAG_SOUND) != 0) {
+        if ((flags & FLAG_SOUND) != 0) {
             String value = in.readString();
             try {
                 this.sound = MagicValues.key(BuiltinSound.class, value);
-            } catch(UnmappedValueException e) {
+            } catch (UnmappedValueException e) {
                 this.sound = new CustomSound(value);
             }
         } else {
@@ -55,24 +55,24 @@ public class ServerStopSoundPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         int flags = 0;
-        if(this.category != null) {
+        if (this.category != null) {
             flags |= FLAG_CATEGORY;
         }
 
-        if(this.sound != null) {
+        if (this.sound != null) {
             flags |= FLAG_SOUND;
         }
 
         out.writeByte(flags);
-        if(this.category != null) {
+        if (this.category != null) {
             out.writeByte(MagicValues.value(Integer.class, this.category));
         }
 
-        if(this.sound != null) {
+        if (this.sound != null) {
             String value = "";
-            if(this.sound instanceof CustomSound) {
+            if (this.sound instanceof CustomSound) {
                 value = ((CustomSound) this.sound).getName();
-            } else if(this.sound instanceof BuiltinSound) {
+            } else if (this.sound instanceof BuiltinSound) {
                 value = MagicValues.value(String.class, this.sound);
             }
 

@@ -40,7 +40,7 @@ public class ServerStatisticsPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         int length = in.readVarInt();
-        for(int index = 0; index < length; index++) {
+        for (int index = 0; index < length; index++) {
             int categoryId = in.readVarInt();
             int statisticId = in.readVarInt();
             Statistic statistic;
@@ -86,39 +86,39 @@ public class ServerStatisticsPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.statistics.size());
-        for(Statistic statistic : this.statistics.keySet()) {
+        for (Statistic statistic : this.statistics.keySet()) {
             int categoryId;
             int statisticId;
-            if(statistic instanceof CustomStatistic) {
+            if (statistic instanceof CustomStatistic) {
                 categoryId = ((CustomStatistic) statistic).getCategory();
                 statisticId = ((CustomStatistic) statistic).getId();
             } else {
                 StatisticCategory category;
-                if(statistic instanceof CraftItemStatistic) {
+                if (statistic instanceof CraftItemStatistic) {
                     category = StatisticCategory.CRAFT_ITEM;
                     statisticId = ((CraftItemStatistic) statistic).getId();
-                } else if(statistic instanceof BreakBlockStatistic) {
+                } else if (statistic instanceof BreakBlockStatistic) {
                     category = StatisticCategory.BREAK_BLOCK;
                     statisticId = ((BreakBlockStatistic) statistic).getId();
-                } else if(statistic instanceof UseItemStatistic) {
+                } else if (statistic instanceof UseItemStatistic) {
                     category = StatisticCategory.USE_ITEM;
                     statisticId = ((UseItemStatistic) statistic).getId();
-                } else if(statistic instanceof BreakItemStatistic) {
+                } else if (statistic instanceof BreakItemStatistic) {
                     category = StatisticCategory.BREAK_ITEM;
                     statisticId = ((BreakItemStatistic) statistic).getId();
-                } else if(statistic instanceof KillEntityStatistic) {
+                } else if (statistic instanceof KillEntityStatistic) {
                     category = StatisticCategory.KILL_ENTITY;
                     statisticId = ((KillEntityStatistic) statistic).getId();
-                } else if(statistic instanceof KilledByEntityStatistic) {
+                } else if (statistic instanceof KilledByEntityStatistic) {
                     category = StatisticCategory.KILLED_BY_ENTITY;
                     statisticId = ((KilledByEntityStatistic) statistic).getId();
-                } else if(statistic instanceof DropItemStatistic) {
+                } else if (statistic instanceof DropItemStatistic) {
                     category = StatisticCategory.DROP_ITEM;
                     statisticId = ((DropItemStatistic) statistic).getId();
-                } else if(statistic instanceof PickupItemStatistic) {
+                } else if (statistic instanceof PickupItemStatistic) {
                     category = StatisticCategory.PICKED_UP_ITEM;
                     statisticId = ((PickupItemStatistic) statistic).getId();
-                } else if(statistic instanceof GenericStatistic) {
+                } else if (statistic instanceof GenericStatistic) {
                     category = StatisticCategory.GENERIC;
                     statisticId = MagicValues.value(Integer.class, statistic);
                 } else {

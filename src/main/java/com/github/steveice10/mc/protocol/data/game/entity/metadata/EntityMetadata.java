@@ -31,11 +31,11 @@ public class EntityMetadata {
     public static EntityMetadata[] read(NetInput in) throws IOException {
         List<EntityMetadata> ret = new ArrayList<EntityMetadata>();
         int id;
-        while((id = in.readUnsignedByte()) != 255) {
+        while ((id = in.readUnsignedByte()) != 255) {
             int typeId = in.readVarInt();
             MetadataType type = MagicValues.key(MetadataType.class, typeId);
             Object value = null;
-            switch(type) {
+            switch (type) {
                 case BYTE:
                     value = in.readByte();
                     break;
@@ -51,7 +51,7 @@ public class EntityMetadata {
                     break;
                 case OPTIONAL_CHAT:
                     boolean chatPresent = in.readBoolean();
-                    if(!chatPresent) {
+                    if (!chatPresent) {
                         break;
                     }
 
@@ -70,7 +70,7 @@ public class EntityMetadata {
                     break;
                 case OPTIONAL_POSITION:
                     boolean positionPresent = in.readBoolean();
-                    if(!positionPresent) {
+                    if (!positionPresent) {
                         break;
                     }
 
@@ -83,7 +83,7 @@ public class EntityMetadata {
                     break;
                 case OPTIONAL_UUID:
                     boolean uuidPresent = in.readBoolean();
-                    if(uuidPresent) {
+                    if (uuidPresent) {
                         value = in.readUUID();
                     }
 
@@ -116,10 +116,10 @@ public class EntityMetadata {
     }
 
     public static void write(NetOutput out, EntityMetadata[] metadata) throws IOException {
-        for(EntityMetadata meta : metadata) {
+        for (EntityMetadata meta : metadata) {
             out.writeByte(meta.getId());
             out.writeVarInt(MagicValues.value(Integer.class, meta.getType()));
-            switch(meta.getType()) {
+            switch (meta.getType()) {
                 case BYTE:
                     out.writeByte((Byte) meta.getValue());
                     break;
@@ -134,7 +134,7 @@ public class EntityMetadata {
                     break;
                 case OPTIONAL_CHAT:
                     out.writeBoolean(meta.getValue() != null);
-                    if(meta.getValue() == null) {
+                    if (meta.getValue() == null) {
                         break;
                     }
 
@@ -153,7 +153,7 @@ public class EntityMetadata {
                     break;
                 case OPTIONAL_POSITION:
                     out.writeBoolean(meta.getValue() != null);
-                    if(meta.getValue() == null) {
+                    if (meta.getValue() == null) {
                         break;
                     }
 
@@ -166,7 +166,7 @@ public class EntityMetadata {
                     break;
                 case OPTIONAL_UUID:
                     out.writeBoolean(meta.getValue() != null);
-                    if(meta.getValue() != null) {
+                    if (meta.getValue() != null) {
                         out.writeUUID((UUID) meta.getValue());
                     }
 

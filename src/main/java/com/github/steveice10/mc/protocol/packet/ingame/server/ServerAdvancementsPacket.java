@@ -45,7 +45,7 @@ public class ServerAdvancementsPacket implements Packet {
 
     public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
         Map<String, Long> progress = this.getProgress(advancementId);
-        if(progress == null || !progress.containsKey(criterionId)) {
+        if (progress == null || !progress.containsKey(criterionId)) {
             return -1;
         }
 
@@ -57,11 +57,11 @@ public class ServerAdvancementsPacket implements Packet {
         this.reset = in.readBoolean();
 
         this.advancements = new Advancement[in.readVarInt()];
-        for(int i = 0; i < this.advancements.length; i++) {
+        for (int i = 0; i < this.advancements.length; i++) {
             String id = in.readString();
             String parentId = in.readBoolean() ? in.readString() : null;
             DisplayData displayData = null;
-            if(in.readBoolean()) {
+            if (in.readBoolean()) {
                 Component title = DefaultComponentSerializer.get().deserialize(in.readString());
                 Component description = DefaultComponentSerializer.get().deserialize(in.readString());
                 ItemStack icon = ItemStack.read(in);
@@ -81,16 +81,16 @@ public class ServerAdvancementsPacket implements Packet {
 
             List<String> criteria = new ArrayList<>();
             int criteriaCount = in.readVarInt();
-            for(int j = 0; j < criteriaCount; j++) {
+            for (int j = 0; j < criteriaCount; j++) {
                 criteria.add(in.readString());
             }
 
             List<List<String>> requirements = new ArrayList<>();
             int requirementCount = in.readVarInt();
-            for(int j = 0; j < requirementCount; j++) {
+            for (int j = 0; j < requirementCount; j++) {
                 List<String> requirement = new ArrayList<>();
                 int componentCount = in.readVarInt();
-                for(int k = 0; k < componentCount; k++) {
+                for (int k = 0; k < componentCount; k++) {
                     requirement.add(in.readString());
                 }
 
@@ -101,18 +101,18 @@ public class ServerAdvancementsPacket implements Packet {
         }
 
         this.removedAdvancements = new String[in.readVarInt()];
-        for(int i = 0; i < this.removedAdvancements.length; i++) {
+        for (int i = 0; i < this.removedAdvancements.length; i++) {
             this.removedAdvancements[i] = in.readString();
         }
 
         this.progress = new HashMap<>();
         int progressCount = in.readVarInt();
-        for(int i = 0; i < progressCount; i++) {
+        for (int i = 0; i < progressCount; i++) {
             String advancementId = in.readString();
 
             Map<String, Long> advancementProgress = new HashMap<>();
             int criterionCount = in.readVarInt();
-            for(int j = 0; j < criterionCount; j++) {
+            for (int j = 0; j < criterionCount; j++) {
                 String criterionId = in.readString();
                 long achievedDate = in.readBoolean() ? in.readLong() : -1;
                 advancementProgress.put(criterionId, achievedDate);
@@ -127,9 +127,9 @@ public class ServerAdvancementsPacket implements Packet {
         out.writeBoolean(this.reset);
 
         out.writeVarInt(this.advancements.length);
-        for(Advancement advancement : this.advancements) {
+        for (Advancement advancement : this.advancements) {
             out.writeString(advancement.getId());
-            if(advancement.getParentId() != null) {
+            if (advancement.getParentId() != null) {
                 out.writeBoolean(true);
                 out.writeString(advancement.getParentId());
             } else {
@@ -137,7 +137,7 @@ public class ServerAdvancementsPacket implements Packet {
             }
 
             DisplayData displayData = advancement.getDisplayData();
-            if(displayData != null) {
+            if (displayData != null) {
                 out.writeBoolean(true);
                 out.writeString(DefaultComponentSerializer.get().serialize(displayData.getTitle()));
                 out.writeString(DefaultComponentSerializer.get().serialize(displayData.getDescription()));
@@ -146,21 +146,21 @@ public class ServerAdvancementsPacket implements Packet {
                 String backgroundTexture = displayData.getBackgroundTexture();
 
                 int flags = 0;
-                if(backgroundTexture != null) {
+                if (backgroundTexture != null) {
                     flags |= FLAG_HAS_BACKGROUND_TEXTURE;
                 }
 
-                if(displayData.isShowToast()) {
+                if (displayData.isShowToast()) {
                     flags |= FLAG_SHOW_TOAST;
                 }
 
-                if(displayData.isHidden()) {
+                if (displayData.isHidden()) {
                     flags |= FLAG_HIDDEN;
                 }
 
                 out.writeInt(flags);
 
-                if(backgroundTexture != null) {
+                if (backgroundTexture != null) {
                     out.writeString(backgroundTexture);
                 }
 
@@ -171,32 +171,32 @@ public class ServerAdvancementsPacket implements Packet {
             }
 
             out.writeVarInt(advancement.getCriteria().size());
-            for(String criterion : advancement.getCriteria()) {
+            for (String criterion : advancement.getCriteria()) {
                 out.writeString(criterion);
             }
 
             out.writeVarInt(advancement.getRequirements().size());
-            for(List<String> requirement : advancement.getRequirements()) {
+            for (List<String> requirement : advancement.getRequirements()) {
                 out.writeVarInt(requirement.size());
-                for(String criterion : requirement) {
+                for (String criterion : requirement) {
                     out.writeString(criterion);
                 }
             }
         }
 
         out.writeVarInt(this.removedAdvancements.length);
-        for(String id : this.removedAdvancements) {
+        for (String id : this.removedAdvancements) {
             out.writeString(id);
         }
 
         out.writeVarInt(this.progress.size());
-        for(Map.Entry<String, Map<String, Long>> advancement : this.progress.entrySet()) {
+        for (Map.Entry<String, Map<String, Long>> advancement : this.progress.entrySet()) {
             out.writeString(advancement.getKey());
             Map<String, Long> advancementProgress = advancement.getValue();
             out.writeVarInt(advancementProgress.size());
-            for(Map.Entry<String, Long> criterion : advancementProgress.entrySet()) {
+            for (Map.Entry<String, Long> criterion : advancementProgress.entrySet()) {
                 out.writeString(criterion.getKey());
-                if(criterion.getValue() != -1) {
+                if (criterion.getValue() != -1) {
                     out.writeBoolean(true);
                     out.writeLong(criterion.getValue());
                 } else {

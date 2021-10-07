@@ -3,7 +3,16 @@ package com.github.steveice10.mc.protocol;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.SubProtocol;
 import com.github.steveice10.mc.protocol.packet.handshake.client.HandshakePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.client.*;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientLockDifficultyPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientPongPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientRequestPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientResourcePackStatusPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientSetDifficultyPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientSettingsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerAbilitiesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.player.ClientPlayerChangeHeldItemPacket;
@@ -42,11 +51,33 @@ import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientSteerV
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientTeleportConfirmPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientUpdateSignPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.client.world.ClientVehicleMovePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.*;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancementTabPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerAdvancementsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerBossBarPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareCommandsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareRecipesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDeclareTagsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDifficultyPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerEntitySoundEffectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerPingPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerPlayerListDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerPlayerListEntryPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerResourcePackSendPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerRespawnPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerSetCooldownPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerStatisticsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerStopSoundPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerSwitchCameraPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerTabCompletePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.ServerUnlockRecipesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityAnimationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityAttachPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityCollectItemPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerRemoveEntitiesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityEffectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityEquipmentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityHeadLookPacket;
@@ -60,8 +91,18 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntit
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityStatusPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityTeleportPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerEntityVelocityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerRemoveEntitiesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.ServerVehicleMovePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.*;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerAbilitiesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerActionAckPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerChangeHeldItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerCombatEndPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerCombatEnterPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerCombatKillPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerFacingPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerHealthPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerPositionRotationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.entity.player.ServerPlayerSetExperiencePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnExpOrbPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.entity.spawn.ServerSpawnLivingEntityPacket;
@@ -71,7 +112,11 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerD
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerScoreboardObjectivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerTeamPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.scoreboard.ServerUpdateScorePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.title.*;
+import com.github.steveice10.mc.protocol.packet.ingame.server.title.ServerClearTitlesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.title.ServerSetActionBarTextPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.title.ServerSetSubtitleTextPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.title.ServerSetTitleTextPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.title.ServerSetTitlesAnimationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerCloseWindowPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenBookPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerOpenHorseWindowPacket;
@@ -81,8 +126,34 @@ import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerSetSl
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerTradeListPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowItemsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.server.window.ServerWindowPropertyPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.*;
-import com.github.steveice10.mc.protocol.packet.ingame.server.world.border.*;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerAddVibrationSignalPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockBreakAnimPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockChangePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerBlockValuePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerChunkDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerExplosionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMapDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerMultiBlockChangePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerNBTResponsePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerNotifyClientPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerOpenTileEntityEditorPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerPlayBuiltinSoundPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerPlayEffectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerPlaySoundPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerSpawnParticlePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerSpawnPositionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUnloadChunkPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateLightPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTileEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateTimePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateViewDistancePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.ServerUpdateViewPositionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.border.ServerInitializeBorderPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.border.ServerSetBorderCenterPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.border.ServerSetBorderLerpSizePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.border.ServerSetBorderSizePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.border.ServerSetBorderWarningDelayPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.server.world.border.ServerSetBorderWarningDistancePacket;
 import com.github.steveice10.mc.protocol.packet.login.client.EncryptionResponsePacket;
 import com.github.steveice10.mc.protocol.packet.login.client.LoginPluginResponsePacket;
 import com.github.steveice10.mc.protocol.packet.login.client.LoginStartPacket;
@@ -150,6 +221,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
     /**
      * Constructs a new MinecraftProtocol instance for logging in using offline mode.
+     *
      * @param username Username to use.
      */
     public MinecraftProtocol(@NonNull String username) {
@@ -158,7 +230,8 @@ public class MinecraftProtocol extends PacketProtocol {
 
     /**
      * Constructs a new MinecraftProtocol instance for logging in.
-     * @param profile GameProfile to use.
+     *
+     * @param profile     GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
     public MinecraftProtocol(@NonNull GameProfile profile, String accessToken) {
@@ -189,7 +262,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
         this.setSubProtocol(SubProtocol.HANDSHAKE, true, session);
 
-        if(this.useDefaultListeners) {
+        if (this.useDefaultListeners) {
             session.addListener(new ClientListener(this.targetSubProtocol));
         }
     }
@@ -198,7 +271,7 @@ public class MinecraftProtocol extends PacketProtocol {
     public void newServerSession(Server server, Session session) {
         this.setSubProtocol(SubProtocol.HANDSHAKE, false, session);
 
-        if(this.useDefaultListeners) {
+        if (this.useDefaultListeners) {
             session.addListener(new ServerListener());
         }
     }
@@ -206,13 +279,14 @@ public class MinecraftProtocol extends PacketProtocol {
     protected void enableEncryption(Key key) {
         try {
             this.encryption = new AESEncryption(key);
-        } catch(GeneralSecurityException e) {
+        } catch (GeneralSecurityException e) {
             throw new Error("Failed to enable protocol encryption.", e);
         }
     }
 
     /**
      * Gets the current {@link SubProtocol} the client is in.
+     *
      * @return The current {@link SubProtocol}.
      */
     public SubProtocol getSubProtocol() {
@@ -221,9 +295,9 @@ public class MinecraftProtocol extends PacketProtocol {
 
     protected void setSubProtocol(SubProtocol subProtocol, boolean client, Session session) {
         this.clearPackets();
-        switch(subProtocol) {
+        switch (subProtocol) {
             case HANDSHAKE:
-                if(client) {
+                if (client) {
                     this.initClientHandshake();
                 } else {
                     this.initServerHandshake();
@@ -231,7 +305,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case LOGIN:
-                if(client) {
+                if (client) {
                     this.initLogin(this::registerIncoming, this::registerOutgoing);
                 } else {
                     this.initLogin(this::registerOutgoing, this::registerIncoming);
@@ -239,7 +313,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case GAME:
-                if(client) {
+                if (client) {
                     this.initGame(this::registerIncoming, this::registerOutgoing);
                 } else {
                     this.initGame(this::registerOutgoing, this::registerIncoming);
@@ -247,7 +321,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case STATUS:
-                if(client) {
+                if (client) {
                     this.initStatus(this::registerIncoming, this::registerOutgoing);
                 } else {
                     this.initStatus(this::registerOutgoing, this::registerIncoming);

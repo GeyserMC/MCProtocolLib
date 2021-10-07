@@ -72,15 +72,15 @@ public class ServerSpawnEntityPacket implements Packet {
         this.yaw = in.readByte() * 360 / 256f;
 
         int data = in.readInt();
-        if(this.type == EntityType.MINECART) {
+        if (this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
-        } else if(this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME) {
+        } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME) {
             this.data = MagicValues.key(HangingDirection.class, data);
-        } else if(this.type == EntityType.FALLING_BLOCK) {
+        } else if (this.type == EntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);
-        } else if(this.type == EntityType.THROWN_POTION) {
+        } else if (this.type == EntityType.THROWN_POTION) {
             this.data = new SplashPotionData(data);
-        } else if(this.type == EntityType.SPECTRAL_ARROW || this.type == EntityType.FIREBALL || this.type == EntityType.SMALL_FIREBALL
+        } else if (this.type == EntityType.SPECTRAL_ARROW || this.type == EntityType.FIREBALL || this.type == EntityType.SMALL_FIREBALL
                 || this.type == EntityType.DRAGON_FIREBALL || this.type == EntityType.WITHER_SKULL || this.type == EntityType.FISHING_BOBBER) {
             this.data = new ProjectileData(data);
         } else {
@@ -108,17 +108,17 @@ public class ServerSpawnEntityPacket implements Packet {
         out.writeByte((byte) (this.yaw * 256 / 360));
 
         int data = 0;
-        if(this.data instanceof MinecartType) {
+        if (this.data instanceof MinecartType) {
             data = MagicValues.value(Integer.class, this.data);
-        } else if(this.data instanceof HangingDirection) {
+        } else if (this.data instanceof HangingDirection) {
             data = MagicValues.value(Integer.class, this.data);
-        } else if(this.data instanceof FallingBlockData) {
+        } else if (this.data instanceof FallingBlockData) {
             data = ((FallingBlockData) this.data).getId() | ((FallingBlockData) this.data).getMetadata() << 16;
-        } else if(this.data instanceof SplashPotionData) {
+        } else if (this.data instanceof SplashPotionData) {
             data = ((SplashPotionData) this.data).getPotionData();
-        } else if(this.data instanceof ProjectileData) {
+        } else if (this.data instanceof ProjectileData) {
             data = ((ProjectileData) this.data).getOwnerId();
-        } else if(this.data instanceof GenericObjectData) {
+        } else if (this.data instanceof GenericObjectData) {
             data = ((GenericObjectData) this.data).getValue();
         }
 

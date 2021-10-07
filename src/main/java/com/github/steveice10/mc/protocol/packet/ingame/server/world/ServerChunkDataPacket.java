@@ -44,14 +44,14 @@ public class ServerChunkDataPacket implements Packet {
 
         NetInput dataIn = new StreamNetInput(new ByteArrayInputStream(data));
         Chunk[] chunks = new Chunk[chunkMask.size()];
-        for(int index = 0; index < chunks.length; index++) {
-            if(chunkMask.get(index)) {
+        for (int index = 0; index < chunks.length; index++) {
+            if (chunkMask.get(index)) {
                 chunks[index] = Chunk.read(dataIn);
             }
         }
 
         CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
-        for(int i = 0; i < tileEntities.length; i++) {
+        for (int i = 0; i < tileEntities.length; i++) {
             tileEntities[i] = NBT.read(in);
         }
 
@@ -65,9 +65,9 @@ public class ServerChunkDataPacket implements Packet {
 
         BitSet bitSet = new BitSet();
         Chunk[] chunks = this.column.getChunks();
-        for(int index = 0; index < chunks.length; index++) {
+        for (int index = 0; index < chunks.length; index++) {
             Chunk chunk = chunks[index];
-            if(chunk != null && !chunk.isEmpty()) {
+            if (chunk != null && !chunk.isEmpty()) {
                 bitSet.set(index);
                 Chunk.write(dataOut, chunk);
             }
@@ -88,7 +88,7 @@ public class ServerChunkDataPacket implements Packet {
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());
         out.writeVarInt(this.column.getTileEntities().length);
-        for(CompoundTag tag : this.column.getTileEntities()) {
+        for (CompoundTag tag : this.column.getTileEntities()) {
             NBT.write(out, tag);
         }
     }

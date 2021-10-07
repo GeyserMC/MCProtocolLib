@@ -12,13 +12,12 @@ public class ServerEntityEquipmentPacketTest extends PacketTest {
     @Before
     public void setup() {
         this.setPackets(
-                new ServerEntityEquipmentPacket(1, new Equipment[] {
+                new ServerEntityEquipmentPacket(1, new Equipment[]{
                         new Equipment(EquipmentSlot.BOOTS, new ItemStack(1))}),
-                new ServerEntityEquipmentPacket(2, new Equipment[] {
+                new ServerEntityEquipmentPacket(2, new Equipment[]{
                         new Equipment(EquipmentSlot.CHESTPLATE, new ItemStack(2)),
                         new Equipment(EquipmentSlot.HELMET, new ItemStack(3))
                 })
         );
     }
-
 }

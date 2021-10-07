@@ -45,19 +45,19 @@ public class ServerPlayerAbilitiesPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         int flags = 0;
-        if(this.invincible) {
+        if (this.invincible) {
             flags |= FLAG_INVINCIBLE;
         }
 
-        if(this.canFly) {
+        if (this.canFly) {
             flags |= FLAG_CAN_FLY;
         }
 
-        if(this.flying) {
+        if (this.flying) {
             flags |= FLAG_FLYING;
         }
 
-        if(this.creative) {
+        if (this.creative) {
             flags |= FLAG_CREATIVE;
         }
 

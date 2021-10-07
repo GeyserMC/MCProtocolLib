@@ -4,7 +4,11 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.*;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.CookedRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.SmithingRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import org.junit.Before;
 
@@ -13,14 +17,14 @@ public class ServerDeclareRecipesTest extends PacketTest {
     public void setup() {
         this.setPackets(
                 new ServerDeclareRecipesPacket(
-                        new Recipe[] {
+                        new Recipe[]{
                                 new Recipe(
                                         RecipeType.CRAFTING_SHAPELESS,
                                         "Recipe1",
                                         new ShapelessRecipeData(
                                                 "Group1",
-                                                new Ingredient[] {
-                                                        new Ingredient(new ItemStack[] {
+                                                new Ingredient[]{
+                                                        new Ingredient(new ItemStack[]{
                                                                 new ItemStack(0)
                                                         })
                                                 },
@@ -34,7 +38,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                                 2,
                                                 3,
                                                 "Group2",
-                                                new Ingredient[] {
+                                                new Ingredient[]{
                                                         new Ingredient(new ItemStack[]{
                                                                 new ItemStack(1)
                                                         }),
@@ -50,7 +54,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                                         new Ingredient(new ItemStack[]{
                                                                 new ItemStack(5)
                                                         }),
-                                                        new Ingredient(new ItemStack[] {
+                                                        new Ingredient(new ItemStack[]{
                                                                 new ItemStack(6)
                                                         })
                                                 },
@@ -62,7 +66,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                         "Recipe3",
                                         new CookedRecipeData(
                                                 "Group3",
-                                                new Ingredient(new ItemStack[] {
+                                                new Ingredient(new ItemStack[]{
                                                         new ItemStack(7)
                                                 }),
                                                 new ItemStack(30),
@@ -75,7 +79,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                         "Recipe4",
                                         new StoneCuttingRecipeData(
                                                 "Group4",
-                                                new Ingredient(new ItemStack[] {
+                                                new Ingredient(new ItemStack[]{
                                                         new ItemStack(8),
                                                         new ItemStack(9)
                                                 }),
@@ -86,10 +90,10 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                         RecipeType.SMITHING,
                                         "Recipe5",
                                         new SmithingRecipeData(
-                                                new Ingredient(new ItemStack[] {
+                                                new Ingredient(new ItemStack[]{
                                                         new ItemStack(10)
                                                 }),
-                                                new Ingredient(new ItemStack[] {
+                                                new Ingredient(new ItemStack[]{
                                                         new ItemStack(11)
                                                 }),
                                                 new ItemStack(12)

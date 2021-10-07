@@ -44,13 +44,13 @@ public class ServerMapDataPacket implements Packet {
         boolean hasIcons = in.readBoolean();
         this.icons = new MapIcon[hasIcons ? in.readVarInt() : 0];
         if (hasIcons) {
-            for(int index = 0; index < this.icons.length; index++) {
+            for (int index = 0; index < this.icons.length; index++) {
                 int type = in.readVarInt();
                 int x = in.readUnsignedByte();
                 int z = in.readUnsignedByte();
                 int rotation = in.readUnsignedByte();
                 Component displayName = null;
-                if(in.readBoolean()) {
+                if (in.readBoolean()) {
                     displayName = DefaultComponentSerializer.get().deserialize(in.readString());
                 }
 
@@ -59,7 +59,7 @@ public class ServerMapDataPacket implements Packet {
         }
 
         int columns = in.readUnsignedByte();
-        if(columns > 0) {
+        if (columns > 0) {
             int rows = in.readUnsignedByte();
             int x = in.readUnsignedByte();
             int y = in.readUnsignedByte();
@@ -67,7 +67,6 @@ public class ServerMapDataPacket implements Packet {
 
             this.data = new MapData(columns, rows, x, y, data);
         }
-
     }
 
     @Override
@@ -75,10 +74,10 @@ public class ServerMapDataPacket implements Packet {
         out.writeVarInt(this.mapId);
         out.writeByte(this.scale);
         out.writeBoolean(this.locked);
-        if(this.icons.length != 0) {
+        if (this.icons.length != 0) {
             out.writeBoolean(true);
             out.writeVarInt(this.icons.length);
-            for(MapIcon icon : this.icons) {
+            for (MapIcon icon : this.icons) {
                 int type = MagicValues.value(Integer.class, icon.getIconType());
                 out.writeVarInt(type);
                 out.writeByte(icon.getCenterX());
@@ -95,7 +94,7 @@ public class ServerMapDataPacket implements Packet {
             out.writeBoolean(false);
         }
 
-        if(this.data != null && this.data.getColumns() != 0) {
+        if (this.data != null && this.data.getColumns() != 0) {
             out.writeByte(this.data.getColumns());
             out.writeByte(this.data.getRows());
             out.writeByte(this.data.getX());

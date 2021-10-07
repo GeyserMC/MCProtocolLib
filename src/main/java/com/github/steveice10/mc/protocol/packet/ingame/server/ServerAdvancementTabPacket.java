@@ -22,7 +22,7 @@ public class ServerAdvancementTabPacket implements Packet {
 
     @Override
     public void read(NetInput in) throws IOException {
-        if(in.readBoolean()) {
+        if (in.readBoolean()) {
             this.tabId = in.readString();
         } else {
             this.tabId = null;
@@ -31,7 +31,7 @@ public class ServerAdvancementTabPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        if(this.tabId != null) {
+        if (this.tabId != null) {
             out.writeBoolean(true);
             out.writeString(this.tabId);
         } else {

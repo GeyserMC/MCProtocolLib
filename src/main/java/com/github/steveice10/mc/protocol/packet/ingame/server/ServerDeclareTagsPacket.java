@@ -13,7 +13,6 @@ import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,15 +27,15 @@ public class ServerDeclareTagsPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         int totalTagCount = in.readVarInt();
-        for(int i = 0; i < totalTagCount; i++) {
+        for (int i = 0; i < totalTagCount; i++) {
             Map<String, int[]> tag = new HashMap<>();
             String tagName = Identifier.formalize(in.readString());
             int tagsCount = in.readVarInt();
-            for(int j = 0; j < tagsCount; j++) {
+            for (int j = 0; j < tagsCount; j++) {
                 String name = in.readString();
                 int entriesCount = in.readVarInt();
                 int[] entries = new int[entriesCount];
-                for(int index = 0; index < entriesCount; index++) {
+                for (int index = 0; index < entriesCount; index++) {
                     entries[index] = in.readVarInt();
                 }
 
@@ -49,13 +48,13 @@ public class ServerDeclareTagsPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(tags.size());
-        for(Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
+        for (Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
             out.writeString(tagSet.getKey());
             out.writeVarInt(tagSet.getValue().size());
-            for(Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
+            for (Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
                 out.writeString(tag.getKey());
                 out.writeVarInt(tag.getValue().length);
-                for(int id : tag.getValue()) {
+                for (int id : tag.getValue()) {
                     out.writeVarInt(id);
                 }
             }

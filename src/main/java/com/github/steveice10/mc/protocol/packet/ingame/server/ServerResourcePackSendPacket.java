@@ -25,7 +25,8 @@ public class ServerResourcePackSendPacket implements Packet {
     private @NonNull String url;
     private @NonNull String hash;
     private boolean required;
-    private @Nullable Component prompt;
+    private @Nullable
+    Component prompt;
 
     @Override
     public void read(NetInput in) throws IOException {

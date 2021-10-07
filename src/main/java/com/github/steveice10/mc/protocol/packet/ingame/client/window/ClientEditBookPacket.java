@@ -23,7 +23,8 @@ import java.util.List;
 public class ClientEditBookPacket implements Packet {
     private int slot;
     private List<String> pages;
-    private @Nullable String title;
+    private @Nullable
+    String title;
 
     @Override
     public void read(NetInput in) throws IOException {

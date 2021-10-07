@@ -13,11 +13,11 @@ public class ServerDeclareCommandsPacketTest extends PacketTest {
     @Before
     public void setup() {
         this.setPackets(new ServerDeclareCommandsPacket(
-                new CommandNode[] {
+                new CommandNode[]{
                         new CommandNode(
                                 CommandType.ROOT,
                                 true,
-                                new int[] { 1, 2 },
+                                new int[]{1, 2},
                                 -1,
                                 null,
                                 null,
@@ -27,7 +27,7 @@ public class ServerDeclareCommandsPacketTest extends PacketTest {
                         new CommandNode(
                                 CommandType.LITERAL,
                                 false,
-                                new int[] { 3, 4 },
+                                new int[]{3, 4},
                                 -1,
                                 "Literal",
                                 null,

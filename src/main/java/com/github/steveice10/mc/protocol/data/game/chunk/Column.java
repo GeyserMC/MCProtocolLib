@@ -4,7 +4,6 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.Data;
 import lombok.NonNull;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 
 @Data

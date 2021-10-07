@@ -1117,7 +1117,7 @@ public class MagicValues {
         register(SoundCategory.AMBIENT, 8);
         register(SoundCategory.VOICE, 9);
 
-        for(BuiltinSound sound : BuiltinSound.values()) {
+        for (BuiltinSound sound : BuiltinSound.values()) {
             register(sound, sound.ordinal());
             register(sound, sound.getName());
         }
@@ -1132,21 +1132,21 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T key(Class<T> keyType, Object value) {
-        for(Map.Entry<Object, List<Object>> entry : VALUES.entrySet()) {
-            if(keyType.isAssignableFrom(entry.getKey().getClass())) {
-                for(Object val : entry.getValue()) {
-                    if(val == value || val.equals(value)) {
+        for (Map.Entry<Object, List<Object>> entry : VALUES.entrySet()) {
+            if (keyType.isAssignableFrom(entry.getKey().getClass())) {
+                for (Object val : entry.getValue()) {
+                    if (val == value || val.equals(value)) {
                         return (T) entry.getKey();
-                    } else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
+                    } else if (Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
                         Number num = (Number) val;
                         Number num2 = (Number) value;
-                        if(num.doubleValue() == num2.doubleValue()) {
+                        if (num.doubleValue() == num2.doubleValue()) {
                             return (T) entry.getKey();
                         }
-                    } else if(String.class.isAssignableFrom(val.getClass()) && String.class.isAssignableFrom(value.getClass())) {
+                    } else if (String.class.isAssignableFrom(val.getClass()) && String.class.isAssignableFrom(value.getClass())) {
                         String str = (String) val;
                         String str2 = (String) value;
-                        if(str.equalsIgnoreCase(str2)) {
+                        if (str.equalsIgnoreCase(str2)) {
                             return (T) entry.getKey();
                         }
                     }
@@ -1160,22 +1160,22 @@ public class MagicValues {
     @SuppressWarnings("unchecked")
     public static <T> T value(Class<T> valueType, Object key) {
         List<Object> values = VALUES.get(key);
-        if(values != null) {
-            for(Object val : values) {
-                if(valueType.isAssignableFrom(val.getClass())) {
+        if (values != null) {
+            for (Object val : values) {
+                if (valueType.isAssignableFrom(val.getClass())) {
                     return (T) val;
-                } else if(Number.class.isAssignableFrom(val.getClass())) {
-                    if(valueType == Byte.class) {
+                } else if (Number.class.isAssignableFrom(val.getClass())) {
+                    if (valueType == Byte.class) {
                         return (T) (Object) ((Number) val).byteValue();
-                    } else if(valueType == Short.class) {
+                    } else if (valueType == Short.class) {
                         return (T) (Object) ((Number) val).shortValue();
-                    } else if(valueType == Integer.class) {
+                    } else if (valueType == Integer.class) {
                         return (T) (Object) ((Number) val).intValue();
-                    } else if(valueType == Long.class) {
+                    } else if (valueType == Long.class) {
                         return (T) (Object) ((Number) val).longValue();
-                    } else if(valueType == Float.class) {
+                    } else if (valueType == Float.class) {
                         return (T) (Object) ((Number) val).floatValue();
-                    } else if(valueType == Double.class) {
+                    } else if (valueType == Double.class) {
                         return (T) (Object) ((Number) val).doubleValue();
                     }
                 }

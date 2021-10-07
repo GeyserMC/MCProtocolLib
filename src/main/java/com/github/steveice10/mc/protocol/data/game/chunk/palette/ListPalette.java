@@ -25,7 +25,7 @@ public class ListPalette implements Palette {
         this(bitsPerEntry);
 
         int paletteLength = in.readVarInt();
-        for(int i = 0; i < paletteLength; i++) {
+        for (int i = 0; i < paletteLength; i++) {
             this.data[i] = in.readVarInt();
         }
         this.nextId = paletteLength;
@@ -39,13 +39,13 @@ public class ListPalette implements Palette {
     @Override
     public int stateToId(int state) {
         int id = -1;
-        for(int i = 0; i < this.nextId; i++) { // Linear search for state
-            if(this.data[i] == state) {
+        for (int i = 0; i < this.nextId; i++) { // Linear search for state
+            if (this.data[i] == state) {
                 id = i;
                 break;
             }
         }
-        if(id == -1 && this.size() < this.maxId + 1) {
+        if (id == -1 && this.size() < this.maxId + 1) {
             id = this.nextId++;
             this.data[id] = state;
         }
@@ -55,7 +55,7 @@ public class ListPalette implements Palette {
 
     @Override
     public int idToState(int id) {
-        if(id >= 0 && id < this.size()) {
+        if (id >= 0 && id < this.size()) {
             return this.data[id];
         } else {
             return 0;

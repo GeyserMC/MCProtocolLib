@@ -29,7 +29,7 @@ public class ClientAdvancementTabPacket implements Packet {
     }
 
     public String getTabId() {
-        if(this.action != AdvancementTabAction.OPENED_TAB) {
+        if (this.action != AdvancementTabAction.OPENED_TAB) {
             throw new IllegalStateException("tabId is only set if action is " + AdvancementTabAction.OPENED_TAB
                     + " but it was " + this.action);
         }
@@ -40,7 +40,7 @@ public class ClientAdvancementTabPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.action = MagicValues.key(AdvancementTabAction.class, in.readVarInt());
-        switch(this.action) {
+        switch (this.action) {
             case CLOSED_SCREEN:
                 break;
             case OPENED_TAB:
@@ -54,7 +54,7 @@ public class ClientAdvancementTabPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
-        switch(this.action) {
+        switch (this.action) {
             case CLOSED_SCREEN:
                 break;
             case OPENED_TAB:

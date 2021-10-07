@@ -13,5 +13,4 @@ public class ServerMultiBlockChangePacketTest extends PacketTest {
                 new ServerMultiBlockChangePacket(3, 4, 12, false, new BlockChangeRecord(new Position(50, 65, 200), 3))
         );
     }
-
 }

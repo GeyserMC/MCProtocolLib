@@ -6,6 +6,7 @@ package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 public interface Palette {
     /**
      * Gets the number of block states known by this palette.
+     *
      * @return The palette's size.
      */
     int size();

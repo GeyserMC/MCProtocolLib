@@ -35,17 +35,17 @@ public class ServerNotifyClientPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.notification = MagicValues.key(ClientNotification.class, in.readUnsignedByte());
         float value = in.readFloat();
-        if(this.notification == ClientNotification.CHANGE_GAMEMODE) {
+        if (this.notification == ClientNotification.CHANGE_GAMEMODE) {
             this.value = MagicValues.key(GameMode.class, ((int) value == -1) ? 255 : (int) value); // https://bugs.mojang.com/browse/MC-189885 - since we read as a float this bug doesn't apply here
-        } else if(this.notification == ClientNotification.DEMO_MESSAGE) {
+        } else if (this.notification == ClientNotification.DEMO_MESSAGE) {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
-        } else if(this.notification == ClientNotification.ENTER_CREDITS) {
+        } else if (this.notification == ClientNotification.ENTER_CREDITS) {
             this.value = MagicValues.key(EnterCreditsValue.class, (int) value);
-        } else if(this.notification == ClientNotification.ENABLE_RESPAWN_SCREEN) {
+        } else if (this.notification == ClientNotification.ENABLE_RESPAWN_SCREEN) {
             this.value = MagicValues.key(RespawnScreenValue.class, (int) value);
-        } else if(this.notification == ClientNotification.RAIN_STRENGTH) {
+        } else if (this.notification == ClientNotification.RAIN_STRENGTH) {
             this.value = new RainStrengthValue(value);
-        } else if(this.notification == ClientNotification.THUNDER_STRENGTH) {
+        } else if (this.notification == ClientNotification.THUNDER_STRENGTH) {
             this.value = new ThunderStrengthValue(value);
         }
     }
@@ -56,11 +56,11 @@ public class ServerNotifyClientPacket implements Packet {
         float value = 0;
         if (this.value instanceof GameMode && this.value == GameMode.UNKNOWN) {
             value = -1;
-        } else if(this.value instanceof Enum<?>) {
+        } else if (this.value instanceof Enum<?>) {
             value = MagicValues.value(Integer.class, (Enum<?>) this.value);
-        } else if(this.value instanceof RainStrengthValue) {
+        } else if (this.value instanceof RainStrengthValue) {
             value = ((RainStrengthValue) this.value).getStrength();
-        } else if(this.value instanceof ThunderStrengthValue) {
+        } else if (this.value instanceof ThunderStrengthValue) {
             value = ((ThunderStrengthValue) this.value).getStrength();
         }
 

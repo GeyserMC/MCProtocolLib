@@ -12,7 +12,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class EncryptionResponsePacketTest extends PacketTest {
     private KeyPair keyPair;
@@ -30,7 +29,7 @@ public class EncryptionResponsePacketTest extends PacketTest {
             KeyGenerator secretKeyGen = KeyGenerator.getInstance("AES");
             secretKeyGen.init(128);
             this.secretKey = secretKeyGen.generateKey();
-        } catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Failed to generate test keys.", e);
         }
 

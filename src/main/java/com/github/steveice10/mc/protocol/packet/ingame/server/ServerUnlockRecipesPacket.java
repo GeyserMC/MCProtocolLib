@@ -42,7 +42,7 @@ public class ServerUnlockRecipesPacket implements Packet {
                                      boolean openBlastingBook, boolean activateBlastingFiltering,
                                      boolean openSmokingBook, boolean activateSmokingFiltering,
                                      @NonNull UnlockRecipesAction action) {
-        if(action != UnlockRecipesAction.ADD && action != UnlockRecipesAction.REMOVE) {
+        if (action != UnlockRecipesAction.ADD && action != UnlockRecipesAction.REMOVE) {
             throw new IllegalArgumentException("Action must be ADD or REMOVE.");
         }
 
@@ -91,15 +91,15 @@ public class ServerUnlockRecipesPacket implements Packet {
         this.openSmokingBook = in.readBoolean();
         this.activateSmokingFiltering = in.readBoolean();
 
-        if(this.action == UnlockRecipesAction.INIT) {
+        if (this.action == UnlockRecipesAction.INIT) {
             this.alreadyKnownRecipes = new String[in.readVarInt()];
-            for(int i = 0; i < this.alreadyKnownRecipes.length; i++) {
+            for (int i = 0; i < this.alreadyKnownRecipes.length; i++) {
                 this.alreadyKnownRecipes[i] = in.readString();
             }
         }
 
         this.recipes = new String[in.readVarInt()];
-        for(int i = 0; i < this.recipes.length; i++) {
+        for (int i = 0; i < this.recipes.length; i++) {
             this.recipes[i] = in.readString();
         }
     }
@@ -117,15 +117,15 @@ public class ServerUnlockRecipesPacket implements Packet {
         out.writeBoolean(this.openSmokingBook);
         out.writeBoolean(this.activateSmokingFiltering);
 
-        if(this.action == UnlockRecipesAction.INIT) {
+        if (this.action == UnlockRecipesAction.INIT) {
             out.writeVarInt(this.alreadyKnownRecipes.length);
-            for(String recipeId : this.alreadyKnownRecipes) {
+            for (String recipeId : this.alreadyKnownRecipes) {
                 out.writeString(recipeId);
             }
         }
 
         out.writeVarInt(this.recipes.length);
-        for(String recipeId : this.recipes) {
+        for (String recipeId : this.recipes) {
             out.writeString(recipeId);
         }
     }

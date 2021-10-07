@@ -19,7 +19,8 @@ import java.io.IOException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerRemoveEntitiesPacket implements Packet {
-    private @Nonnull int[] entityIds;
+    private @Nonnull
+    int[] entityIds;
 
     @Override
     public void read(NetInput in) throws IOException {
@@ -32,7 +33,7 @@ public class ServerRemoveEntitiesPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityIds.length);
-        for(int entityId : this.entityIds) {
+        for (int entityId : this.entityIds) {
             out.writeVarInt(entityId);
         }
     }

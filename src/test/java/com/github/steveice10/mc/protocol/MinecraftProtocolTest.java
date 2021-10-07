@@ -35,7 +35,6 @@ import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_H
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -66,7 +65,7 @@ public class MinecraftProtocolTest {
 
     @AfterClass
     public static void tearDownServer() {
-        if(server != null) {
+        if (server != null) {
             server.close(true);
             server = null;
         }
@@ -124,7 +123,7 @@ public class MinecraftProtocolTest {
         @Override
         public void packetReceived(PacketReceivedEvent event) {
             Packet packet = event.getPacket();
-            if(packet instanceof ServerJoinGamePacket) {
+            if (packet instanceof ServerJoinGamePacket) {
                 this.packet = (ServerJoinGamePacket) packet;
                 this.login.countDown();
             }
@@ -135,7 +134,7 @@ public class MinecraftProtocolTest {
         @Override
         public void disconnected(DisconnectedEvent event) {
             System.err.println("Disconnected: " + event.getReason());
-            if(event.getCause() != null) {
+            if (event.getCause() != null) {
                 event.getCause().printStackTrace();
             }
         }

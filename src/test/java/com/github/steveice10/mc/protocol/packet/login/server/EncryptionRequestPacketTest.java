@@ -16,7 +16,7 @@ public class EncryptionRequestPacketTest extends PacketTest {
             KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
             keyPairGen.initialize(1024);
             keyPair = keyPairGen.generateKeyPair();
-        } catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Failed to generate test key pair.", e);
         }
 

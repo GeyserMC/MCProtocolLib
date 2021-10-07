@@ -9,6 +9,7 @@ import com.github.steveice10.packetlib.Session;
 public interface ServerLoginHandler {
     /**
      * Called when a session completes the initial login process and is now in the {@link SubProtocol}.GAME.
+     *
      * @param session Session that logged in.
      */
     public void loggedIn(Session session);

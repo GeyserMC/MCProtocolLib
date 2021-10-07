@@ -32,7 +32,7 @@ public class ClientPlayerAbilitiesPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         int flags = 0;
 
-        if(this.flying) {
+        if (this.flying) {
             flags |= FLAG_FLYING;
         }
 

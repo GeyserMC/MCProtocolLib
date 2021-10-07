@@ -36,25 +36,25 @@ public class ServerPlayerListEntryPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.action = MagicValues.key(PlayerListEntryAction.class, in.readVarInt());
         this.entries = new PlayerListEntry[in.readVarInt()];
-        for(int count = 0; count < this.entries.length; count++) {
+        for (int count = 0; count < this.entries.length; count++) {
             UUID uuid = in.readUUID();
             GameProfile profile;
-            if(this.action == PlayerListEntryAction.ADD_PLAYER) {
+            if (this.action == PlayerListEntryAction.ADD_PLAYER) {
                 profile = new GameProfile(uuid, in.readString());
             } else {
                 profile = new GameProfile(uuid, null);
             }
 
             PlayerListEntry entry = null;
-            switch(this.action) {
+            switch (this.action) {
                 case ADD_PLAYER: {
                     int properties = in.readVarInt();
                     List<GameProfile.Property> propertyList = new ArrayList<>();
-                    for(int index = 0; index < properties; index++) {
+                    for (int index = 0; index < properties; index++) {
                         String propertyName = in.readString();
                         String value = in.readString();
                         String signature = null;
-                        if(in.readBoolean()) {
+                        if (in.readBoolean()) {
                             signature = in.readString();
                         }
 
@@ -67,7 +67,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                     GameMode gameMode = MagicValues.key(GameMode.class, Math.max(rawGameMode, 0));
                     int ping = in.readVarInt();
                     Component displayName = null;
-                    if(in.readBoolean()) {
+                    if (in.readBoolean()) {
                         displayName = DefaultComponentSerializer.get().deserialize(in.readString());
                     }
 
@@ -89,7 +89,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                 }
                 case UPDATE_DISPLAY_NAME: {
                     Component displayName = null;
-                    if(in.readBoolean()) {
+                    if (in.readBoolean()) {
                         displayName = DefaultComponentSerializer.get().deserialize(in.readString());
                     }
 
@@ -109,17 +109,17 @@ public class ServerPlayerListEntryPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         out.writeVarInt(this.entries.length);
-        for(PlayerListEntry entry : this.entries) {
+        for (PlayerListEntry entry : this.entries) {
             out.writeUUID(entry.getProfile().getId());
-            switch(this.action) {
+            switch (this.action) {
                 case ADD_PLAYER:
                     out.writeString(entry.getProfile().getName());
                     out.writeVarInt(entry.getProfile().getProperties().size());
-                    for(GameProfile.Property property : entry.getProfile().getProperties()) {
+                    for (GameProfile.Property property : entry.getProfile().getProperties()) {
                         out.writeString(property.getName());
                         out.writeString(property.getValue());
                         out.writeBoolean(property.hasSignature());
-                        if(property.hasSignature()) {
+                        if (property.hasSignature()) {
                             out.writeString(property.getSignature());
                         }
                     }
@@ -127,7 +127,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                     out.writeVarInt(MagicValues.value(Integer.class, entry.getGameMode()));
                     out.writeVarInt(entry.getPing());
                     out.writeBoolean(entry.getDisplayName() != null);
-                    if(entry.getDisplayName() != null) {
+                    if (entry.getDisplayName() != null) {
                         out.writeString(DefaultComponentSerializer.get().serialize(entry.getDisplayName()));
                     }
 
@@ -140,7 +140,7 @@ public class ServerPlayerListEntryPacket implements Packet {
                     break;
                 case UPDATE_DISPLAY_NAME:
                     out.writeBoolean(entry.getDisplayName() != null);
-                    if(entry.getDisplayName() != null) {
+                    if (entry.getDisplayName() != null) {
                         out.writeString(DefaultComponentSerializer.get().serialize(entry.getDisplayName()));
                     }
 

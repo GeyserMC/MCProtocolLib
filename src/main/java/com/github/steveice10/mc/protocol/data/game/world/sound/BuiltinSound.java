@@ -1197,6 +1197,6 @@ public enum BuiltinSound implements Sound {
     ENTITY_ZOMBIE_VILLAGER_DEATH("entity.zombie_villager.death"),
     ENTITY_ZOMBIE_VILLAGER_HURT("entity.zombie_villager.hurt"),
     ENTITY_ZOMBIE_VILLAGER_STEP("entity.zombie_villager.step");
-    
+
     private final @NonNull String name;
 }
