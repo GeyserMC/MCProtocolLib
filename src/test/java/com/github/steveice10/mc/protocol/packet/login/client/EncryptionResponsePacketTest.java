@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class EncryptionResponsePacketTest extends PacketTest {
     private KeyPair keyPair;

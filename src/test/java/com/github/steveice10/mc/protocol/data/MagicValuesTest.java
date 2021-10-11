@@ -99,6 +99,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MagicValuesTest {
@@ -205,26 +206,24 @@ public class MagicValuesTest {
 
     @Test
     public void testMagicValues() {
-        this.typeMappings.forEach((keyClass, valueClasses) -> {
-            valueClasses.forEach(valueClass -> {
-                try {
-                    Method valuesMethod = keyClass.getDeclaredMethod("values");
-                    Enum<?>[] keys = (Enum<?>[]) valuesMethod.invoke(null);
+        this.typeMappings.forEach((keyClass, valueClasses) -> valueClasses.forEach(valueClass -> {
+            try {
+                Method valuesMethod = keyClass.getDeclaredMethod("values");
+                Enum<?>[] keys = (Enum<?>[]) valuesMethod.invoke(null);
 
-                    for (Enum<?> key : keys) {
-                        try {
-                            Object value = MagicValues.value(valueClass, key);
-                            Object mappedKey = MagicValues.key(keyClass, value);
+                for (Enum<?> key : keys) {
+                    try {
+                        Object value = MagicValues.value(valueClass, key);
+                        Object mappedKey = MagicValues.key(keyClass, value);
 
-                            assertThat("Mapped key did not match original key.", mappedKey, is(key));
-                        } catch (IllegalArgumentException e) {
-                            throw new AssertionError("Key \"" + key + "\" of type \"" + keyClass.getName() + "\" is not properly mapped to value type \"" + valueClass.getName() + "\".");
-                        }
+                        assertThat("Mapped key did not match original key.", mappedKey, is(key));
+                    } catch (IllegalArgumentException e) {
+                        throw new AssertionError("Key \"" + key + "\" of type \"" + keyClass.getName() + "\" is not properly mapped to value type \"" + valueClass.getName() + "\".");
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to test magic values for class pair (" + keyClass.getName() + ", " + valueClass.getName() + ").", e);
                 }
-            });
-        });
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to test magic values for class pair (" + keyClass.getName() + ", " + valueClass.getName() + ").", e);
+            }
+        }));
     }
 }

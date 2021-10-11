@@ -9,6 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 
+import static org.junit.Assert.assertEquals;
+
 public abstract class PacketTest {
     private Packet[] packets;
 

@@ -35,6 +35,7 @@ import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_H
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
