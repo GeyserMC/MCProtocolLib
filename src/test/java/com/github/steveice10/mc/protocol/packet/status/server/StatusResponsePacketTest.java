@@ -16,7 +16,7 @@ public class StatusResponsePacketTest extends PacketTest {
         this.setPackets(new StatusResponsePacket(
                 new ServerStatusInfo(
                         VersionInfo.CURRENT,
-                        new PlayerInfo(100, 10, new GameProfile[] {
+                        new PlayerInfo(100, 10, new GameProfile[]{
                                 new GameProfile(UUID.randomUUID(), "Username")
                         }),
                         Component.text("Description"),

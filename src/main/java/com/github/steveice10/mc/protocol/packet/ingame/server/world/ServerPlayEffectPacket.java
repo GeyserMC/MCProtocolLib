@@ -46,19 +46,19 @@ public class ServerPlayEffectPacket implements Packet {
         this.effect = MagicValues.key(WorldEffect.class, in.readInt());
         this.position = Position.read(in);
         int value = in.readInt();
-        if(this.effect == SoundEffect.RECORD) {
+        if (this.effect == SoundEffect.RECORD) {
             this.data = new RecordEffectData(value);
-        } else if(this.effect == ParticleEffect.SMOKE) {
+        } else if (this.effect == ParticleEffect.SMOKE) {
             this.data = MagicValues.key(SmokeEffectData.class, value % 6);
-        } else if(this.effect == ParticleEffect.BREAK_BLOCK) {
+        } else if (this.effect == ParticleEffect.BREAK_BLOCK) {
             this.data = new BreakBlockEffectData(value);
-        } else if(this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
+        } else if (this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
             this.data = new BreakPotionEffectData(value);
-        } else if(this.effect == ParticleEffect.BONEMEAL_GROW || this.effect == ParticleEffect.BONEMEAL_GROW_WITH_SOUND) {
+        } else if (this.effect == ParticleEffect.BONEMEAL_GROW || this.effect == ParticleEffect.BONEMEAL_GROW_WITH_SOUND) {
             this.data = new BonemealGrowEffectData(value);
-        } else if(this.effect == ParticleEffect.COMPOSTER) {
+        } else if (this.effect == ParticleEffect.COMPOSTER) {
             this.data = value > 0 ? ComposterEffectData.FILL_SUCCESS : ComposterEffectData.FILL;
-        } else if(this.effect == ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE) {
+        } else if (this.effect == ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE) {
             this.data = value == 1 ? DragonFireballEffectData.HAS_SOUND : DragonFireballEffectData.NO_SOUND;
         }
 
@@ -70,19 +70,19 @@ public class ServerPlayEffectPacket implements Packet {
         out.writeInt(MagicValues.value(Integer.class, this.effect));
         Position.write(out, this.position);
         int value = 0;
-        if(this.data instanceof RecordEffectData) {
+        if (this.data instanceof RecordEffectData) {
             value = ((RecordEffectData) this.data).getRecordId();
-        } else if(this.data instanceof SmokeEffectData) {
+        } else if (this.data instanceof SmokeEffectData) {
             value = MagicValues.value(Integer.class, (SmokeEffectData) this.data);
-        } else if(this.data instanceof BreakBlockEffectData) {
+        } else if (this.data instanceof BreakBlockEffectData) {
             value = ((BreakBlockEffectData) this.data).getBlockState();
-        } else if(this.data instanceof BreakPotionEffectData) {
+        } else if (this.data instanceof BreakPotionEffectData) {
             value = ((BreakPotionEffectData) this.data).getPotionId();
-        } else if(this.data instanceof BonemealGrowEffectData) {
+        } else if (this.data instanceof BonemealGrowEffectData) {
             value = ((BonemealGrowEffectData) this.data).getParticleCount();
-        } else if(this.data instanceof ComposterEffectData) {
+        } else if (this.data instanceof ComposterEffectData) {
             value = MagicValues.value(Integer.class, this.data);
-        } else if(this.data instanceof DragonFireballEffectData) {
+        } else if (this.data instanceof DragonFireballEffectData) {
             value = MagicValues.value(Integer.class, this.data);
         }
 

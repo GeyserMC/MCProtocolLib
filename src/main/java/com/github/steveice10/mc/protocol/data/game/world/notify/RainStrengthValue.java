@@ -7,11 +7,11 @@ public class RainStrengthValue implements ClientNotificationValue {
     private final float strength;
 
     public RainStrengthValue(float strength) {
-        if(strength > 1) {
+        if (strength > 1) {
             strength = 1;
         }
 
-        if(strength < 0) {
+        if (strength < 0) {
             strength = 0;
         }
 

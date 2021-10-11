@@ -64,7 +64,7 @@ public class ServerTeamPacket implements Packet {
     }
 
     public ServerTeamPacket(@NonNull String teamName, @NonNull TeamAction action, @NonNull String[] players) {
-        if(action != TeamAction.ADD_PLAYER && action != TeamAction.REMOVE_PLAYER) {
+        if (action != TeamAction.ADD_PLAYER && action != TeamAction.REMOVE_PLAYER) {
             throw new IllegalArgumentException("(name, action, players) constructor only valid for adding and removing players.");
         }
 
@@ -96,7 +96,7 @@ public class ServerTeamPacket implements Packet {
     public void read(NetInput in) throws IOException {
         this.teamName = in.readString();
         this.action = MagicValues.key(TeamAction.class, in.readByte());
-        if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
+        if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             this.displayName = DefaultComponentSerializer.get().deserialize(in.readString());
             byte flags = in.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
@@ -106,7 +106,7 @@ public class ServerTeamPacket implements Packet {
 
             try {
                 this.color = MagicValues.key(TeamColor.class, in.readVarInt());
-            } catch(UnmappedValueException e) {
+            } catch (UnmappedValueException e) {
                 this.color = TeamColor.NONE;
             }
 
@@ -114,9 +114,9 @@ public class ServerTeamPacket implements Packet {
             this.suffix = DefaultComponentSerializer.get().deserialize(in.readString());
         }
 
-        if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
+        if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
             this.players = new String[in.readVarInt()];
-            for(int index = 0; index < this.players.length; index++) {
+            for (int index = 0; index < this.players.length; index++) {
                 this.players[index] = in.readString();
             }
         }
@@ -126,7 +126,7 @@ public class ServerTeamPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeString(this.teamName);
         out.writeByte(MagicValues.value(Integer.class, this.action));
-        if(this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
+        if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             out.writeString(DefaultComponentSerializer.get().serialize(this.displayName));
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
             out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
@@ -136,10 +136,10 @@ public class ServerTeamPacket implements Packet {
             out.writeString(DefaultComponentSerializer.get().serialize(this.suffix));
         }
 
-        if(this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
+        if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
             out.writeVarInt(this.players.length);
-            for(String player : this.players) {
-                if(player != null) {
+            for (String player : this.players) {
+                if (player != null) {
                     out.writeString(player);
                 }
             }

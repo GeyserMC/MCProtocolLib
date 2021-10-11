@@ -30,7 +30,7 @@ public class EncryptionResponsePacketTest extends PacketTest {
             KeyGenerator secretKeyGen = KeyGenerator.getInstance("AES");
             secretKeyGen.init(128);
             this.secretKey = secretKeyGen.generateKey();
-        } catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("Failed to generate test keys.", e);
         }
 

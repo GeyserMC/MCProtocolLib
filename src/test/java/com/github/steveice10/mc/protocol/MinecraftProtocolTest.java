@@ -66,7 +66,7 @@ public class MinecraftProtocolTest {
 
     @AfterClass
     public static void tearDownServer() {
-        if(server != null) {
+        if (server != null) {
             server.close(true);
             server = null;
         }
@@ -124,7 +124,7 @@ public class MinecraftProtocolTest {
         @Override
         public void packetReceived(PacketReceivedEvent event) {
             Packet packet = event.getPacket();
-            if(packet instanceof ServerJoinGamePacket) {
+            if (packet instanceof ServerJoinGamePacket) {
                 this.packet = (ServerJoinGamePacket) packet;
                 this.login.countDown();
             }
@@ -135,7 +135,7 @@ public class MinecraftProtocolTest {
         @Override
         public void disconnected(DisconnectedEvent event) {
             System.err.println("Disconnected: " + event.getReason());
-            if(event.getCause() != null) {
+            if (event.getCause() != null) {
                 event.getCause().printStackTrace();
             }
         }

@@ -42,9 +42,9 @@ public class ClientSettingsPacket implements Packet {
         this.visibleParts = new ArrayList<>();
 
         int flags = in.readUnsignedByte();
-        for(SkinPart part : SkinPart.values()) {
+        for (SkinPart part : SkinPart.values()) {
             int bit = 1 << part.ordinal();
-            if((flags & bit) == bit) {
+            if ((flags & bit) == bit) {
                 this.visibleParts.add(part);
             }
         }
@@ -61,7 +61,7 @@ public class ClientSettingsPacket implements Packet {
         out.writeBoolean(this.useChatColors);
 
         int flags = 0;
-        for(SkinPart part : this.visibleParts) {
+        for (SkinPart part : this.visibleParts) {
             flags |= 1 << part.ordinal();
         }
 

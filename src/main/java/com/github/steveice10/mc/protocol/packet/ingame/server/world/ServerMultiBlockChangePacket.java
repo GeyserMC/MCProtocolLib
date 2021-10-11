@@ -29,7 +29,7 @@ public class ServerMultiBlockChangePacket implements Packet {
     private @NonNull BlockChangeRecord[] records;
 
     public ServerMultiBlockChangePacket(int chunkX, int chunkY, int chunkZ, boolean ignoreOldLight, BlockChangeRecord... records) {
-        if(records == null || records.length == 0) {
+        if (records == null || records.length == 0) {
             throw new IllegalArgumentException("Records must contain at least 1 value.");
         }
 

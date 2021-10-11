@@ -52,15 +52,15 @@ public class ClientUpdateCommandBlockPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.mode));
 
         int flags = 0;
-        if(this.doesTrackOutput) {
+        if (this.doesTrackOutput) {
             flags |= FLAG_TRACK_OUTPUT;
         }
 
-        if(this.conditional) {
+        if (this.conditional) {
             flags |= FLAG_CONDITIONAL;
         }
 
-        if(this.automatic) {
+        if (this.automatic) {
             flags |= FLAG_AUTOMATIC;
         }
 

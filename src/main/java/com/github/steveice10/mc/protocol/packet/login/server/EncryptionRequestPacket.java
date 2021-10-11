@@ -35,7 +35,7 @@ public class EncryptionRequestPacket implements Packet {
 
         try {
             this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
-        } catch(GeneralSecurityException e) {
+        } catch (GeneralSecurityException e) {
             throw new IOException("Could not decode public key.", e);
         }
     }

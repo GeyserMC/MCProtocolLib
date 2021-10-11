@@ -30,7 +30,7 @@ public class ServerWindowItemsPacket implements Packet {
         this.windowId = in.readUnsignedByte();
         this.stateId = in.readVarInt();
         this.items = new ItemStack[in.readVarInt()];
-        for(int index = 0; index < this.items.length; index++) {
+        for (int index = 0; index < this.items.length; index++) {
             this.items[index] = ItemStack.read(in);
         }
         this.carriedItem = ItemStack.read(in);
@@ -41,7 +41,7 @@ public class ServerWindowItemsPacket implements Packet {
         out.writeByte(this.windowId);
         out.writeVarInt(this.stateId);
         out.writeVarInt(this.items.length);
-        for(ItemStack item : this.items) {
+        for (ItemStack item : this.items) {
             ItemStack.write(out, item);
         }
         ItemStack.write(out, this.carriedItem);

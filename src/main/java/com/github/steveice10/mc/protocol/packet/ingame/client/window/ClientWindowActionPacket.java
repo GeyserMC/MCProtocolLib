@@ -15,8 +15,12 @@ import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -38,7 +42,7 @@ public class ClientWindowActionPacket implements Packet {
     private @NonNull Map<Integer, ItemStack> changedSlots;
 
     public ClientWindowActionPacket(int windowId, int stateId, int slot, WindowAction action, WindowActionParam param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
-        if((param == DropItemParam.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemParam.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
+        if ((param == DropItemParam.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemParam.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
                     + " with param LEFT_CLICK_OUTSIDE_NOT_HOLDING or RIGHT_CLICK_OUTSIDE_NOT_HOLDING");
@@ -60,19 +64,19 @@ public class ClientWindowActionPacket implements Packet {
         this.slot = in.readShort();
         byte param = in.readByte();
         this.action = MagicValues.key(WindowAction.class, in.readByte());
-        if(this.action == WindowAction.CLICK_ITEM) {
+        if (this.action == WindowAction.CLICK_ITEM) {
             this.param = MagicValues.key(ClickItemParam.class, param);
-        } else if(this.action == WindowAction.SHIFT_CLICK_ITEM) {
+        } else if (this.action == WindowAction.SHIFT_CLICK_ITEM) {
             this.param = MagicValues.key(ShiftClickItemParam.class, param);
-        } else if(this.action == WindowAction.MOVE_TO_HOTBAR_SLOT) {
+        } else if (this.action == WindowAction.MOVE_TO_HOTBAR_SLOT) {
             this.param = MagicValues.key(MoveToHotbarParam.class, param);
-        } else if(this.action == WindowAction.CREATIVE_GRAB_MAX_STACK) {
+        } else if (this.action == WindowAction.CREATIVE_GRAB_MAX_STACK) {
             this.param = MagicValues.key(CreativeGrabParam.class, param);
-        } else if(this.action == WindowAction.DROP_ITEM) {
+        } else if (this.action == WindowAction.DROP_ITEM) {
             this.param = MagicValues.key(DropItemParam.class, param + (this.slot != -999 ? 2 : 0));
-        } else if(this.action == WindowAction.SPREAD_ITEM) {
+        } else if (this.action == WindowAction.SPREAD_ITEM) {
             this.param = MagicValues.key(SpreadItemParam.class, param);
-        } else if(this.action == WindowAction.FILL_STACK) {
+        } else if (this.action == WindowAction.FILL_STACK) {
             this.param = MagicValues.key(FillStackParam.class, param);
         }
 
@@ -94,7 +98,7 @@ public class ClientWindowActionPacket implements Packet {
         out.writeShort(this.slot);
 
         int param = MagicValues.value(Integer.class, this.param);
-        if(this.action == WindowAction.DROP_ITEM) {
+        if (this.action == WindowAction.DROP_ITEM) {
             param %= 2;
         }
 

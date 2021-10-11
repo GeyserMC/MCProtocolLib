@@ -35,12 +35,12 @@ public class ServerEntityPropertiesPacket implements Packet {
         this.entityId = in.readVarInt();
         this.attributes = new ArrayList<>();
         int length = in.readVarInt();
-        for(int index = 0; index < length; index++) {
+        for (int index = 0; index < length; index++) {
             String key = in.readString();
             double value = in.readDouble();
             List<AttributeModifier> modifiers = new ArrayList<AttributeModifier>();
             int len = in.readVarInt();
-            for(int ind = 0; ind < len; ind++) {
+            for (int ind = 0; ind < len; ind++) {
                 modifiers.add(new AttributeModifier(in.readUUID(), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
             }
 
@@ -52,11 +52,11 @@ public class ServerEntityPropertiesPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeVarInt(this.attributes.size());
-        for(Attribute attribute : this.attributes) {
+        for (Attribute attribute : this.attributes) {
             out.writeString(MagicValues.value(String.class, attribute.getType()));
             out.writeDouble(attribute.getValue());
             out.writeVarInt(attribute.getModifiers().size());
-            for(AttributeModifier modifier : attribute.getModifiers()) {
+            for (AttributeModifier modifier : attribute.getModifiers()) {
                 out.writeUUID(modifier.getUuid());
                 out.writeDouble(modifier.getAmount());
                 out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));

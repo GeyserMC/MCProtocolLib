@@ -38,7 +38,7 @@ public class ServerPlaySoundPacket implements Packet {
         String value = in.readString();
         try {
             this.sound = MagicValues.key(BuiltinSound.class, value);
-        } catch(UnmappedValueException e) {
+        } catch (UnmappedValueException e) {
             this.sound = new CustomSound(value);
         }
 
@@ -53,9 +53,9 @@ public class ServerPlaySoundPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         String value = "";
-        if(this.sound instanceof CustomSound) {
+        if (this.sound instanceof CustomSound) {
             value = ((CustomSound) this.sound).getName();
-        } else if(this.sound instanceof BuiltinSound) {
+        } else if (this.sound instanceof BuiltinSound) {
             value = MagicValues.value(String.class, this.sound);
         }
 

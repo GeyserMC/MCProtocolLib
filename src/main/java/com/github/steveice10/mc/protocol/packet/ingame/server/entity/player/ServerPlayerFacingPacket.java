@@ -40,7 +40,7 @@ public class ServerPlayerFacingPacket implements Packet {
         this.y = in.readDouble();
         this.z = in.readDouble();
 
-        if(in.readBoolean()) {
+        if (in.readBoolean()) {
             this.targetEntityId = in.readVarInt();
             this.targetEntityOrigin = MagicValues.key(RotationOrigin.class, in.readVarInt());
         }
@@ -53,7 +53,7 @@ public class ServerPlayerFacingPacket implements Packet {
         out.writeDouble(this.y);
         out.writeDouble(this.z);
 
-        if(this.targetEntityOrigin != null) {
+        if (this.targetEntityOrigin != null) {
             out.writeBoolean(true);
             out.writeVarInt(this.targetEntityId);
             out.writeVarInt(MagicValues.value(Integer.class, this.targetEntityOrigin));

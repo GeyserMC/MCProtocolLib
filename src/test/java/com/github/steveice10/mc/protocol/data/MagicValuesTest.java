@@ -86,7 +86,6 @@ import com.github.steveice10.mc.protocol.data.game.world.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.game.world.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.world.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.world.notify.EnterCreditsValue;
-import com.github.steveice10.mc.protocol.data.game.world.particle.ParticleType;
 import com.github.steveice10.mc.protocol.data.game.world.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.world.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
@@ -100,8 +99,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 public class MagicValuesTest {
     private Map<Class<? extends Enum<?>>, List<Class<?>>> typeMappings = new HashMap<>();
@@ -207,26 +206,24 @@ public class MagicValuesTest {
 
     @Test
     public void testMagicValues() {
-        this.typeMappings.forEach((keyClass, valueClasses) -> {
-            valueClasses.forEach(valueClass -> {
-                try {
-                    Method valuesMethod = keyClass.getDeclaredMethod("values");
-                    Enum<?>[] keys = (Enum<?>[]) valuesMethod.invoke(null);
+        this.typeMappings.forEach((keyClass, valueClasses) -> valueClasses.forEach(valueClass -> {
+            try {
+                Method valuesMethod = keyClass.getDeclaredMethod("values");
+                Enum<?>[] keys = (Enum<?>[]) valuesMethod.invoke(null);
 
-                    for(Enum<?> key : keys) {
-                        try {
-                            Object value = MagicValues.value(valueClass, key);
-                            Object mappedKey = MagicValues.key(keyClass, value);
+                for (Enum<?> key : keys) {
+                    try {
+                        Object value = MagicValues.value(valueClass, key);
+                        Object mappedKey = MagicValues.key(keyClass, value);
 
-                            assertThat("Mapped key did not match original key.", mappedKey, is(key));
-                        } catch(IllegalArgumentException e) {
-                            throw new AssertionError("Key \"" + key + "\" of type \"" + keyClass.getName() + "\" is not properly mapped to value type \"" + valueClass.getName() + "\".");
-                        }
+                        assertThat("Mapped key did not match original key.", mappedKey, is(key));
+                    } catch (IllegalArgumentException e) {
+                        throw new AssertionError("Key \"" + key + "\" of type \"" + keyClass.getName() + "\" is not properly mapped to value type \"" + valueClass.getName() + "\".");
                     }
-                } catch(Exception e) {
-                    throw new RuntimeException("Failed to test magic values for class pair (" + keyClass.getName() + ", " + valueClass.getName() + ").", e);
                 }
-            });
-        });
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to test magic values for class pair (" + keyClass.getName() + ", " + valueClass.getName() + ").", e);
+            }
+        }));
     }
 }

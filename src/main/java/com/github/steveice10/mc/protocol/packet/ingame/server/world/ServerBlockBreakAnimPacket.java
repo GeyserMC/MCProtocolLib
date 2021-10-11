@@ -33,7 +33,7 @@ public class ServerBlockBreakAnimPacket implements Packet {
         this.position = Position.read(in);
         try {
             this.stage = MagicValues.key(BlockBreakStage.class, in.readUnsignedByte());
-        } catch(UnmappedValueException e) {
+        } catch (UnmappedValueException e) {
             this.stage = BlockBreakStage.RESET;
         }
     }

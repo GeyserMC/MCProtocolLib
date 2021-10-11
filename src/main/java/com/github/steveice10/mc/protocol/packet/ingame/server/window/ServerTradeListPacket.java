@@ -34,12 +34,12 @@ public class ServerTradeListPacket implements Packet {
 
         byte size = in.readByte();
         this.trades = new VillagerTrade[size];
-        for(int i = 0; i < trades.length; i++) {
+        for (int i = 0; i < trades.length; i++) {
             ItemStack firstInput = ItemStack.read(in);
             ItemStack output = ItemStack.read(in);
 
             ItemStack secondInput = null;
-            if(in.readBoolean()) {
+            if (in.readBoolean()) {
                 secondInput = ItemStack.read(in);
             }
 
@@ -65,7 +65,7 @@ public class ServerTradeListPacket implements Packet {
         out.writeVarInt(this.windowId);
 
         out.writeByte(this.trades.length);
-        for(int i = 0; i < this.trades.length; i++) {
+        for (int i = 0; i < this.trades.length; i++) {
             VillagerTrade trade = this.trades[i];
 
             ItemStack.write(out, trade.getFirstInput());
@@ -73,7 +73,7 @@ public class ServerTradeListPacket implements Packet {
 
             boolean hasSecondItem = trade.getSecondInput() != null;
             out.writeBoolean(hasSecondItem);
-            if(hasSecondItem) {
+            if (hasSecondItem) {
                 ItemStack.write(out, trade.getSecondInput());
             }
 

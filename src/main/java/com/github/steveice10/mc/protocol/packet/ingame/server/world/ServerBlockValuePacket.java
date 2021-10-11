@@ -58,20 +58,20 @@ public class ServerBlockValuePacket implements Packet {
         int value = in.readUnsignedByte();
         this.blockId = in.readVarInt() & 0xFFF;
 
-        if(this.blockId == NOTE_BLOCK) {
+        if (this.blockId == NOTE_BLOCK) {
             this.type = MagicValues.key(NoteBlockValueType.class, type);
             this.value = new NoteBlockValue(value);
-        } else if(this.blockId == STICKY_PISTON || this.blockId == PISTON) {
+        } else if (this.blockId == STICKY_PISTON || this.blockId == PISTON) {
             this.type = MagicValues.key(PistonValueType.class, type);
             this.value = MagicValues.key(PistonValue.class, value);
-        } else if(this.blockId == MOB_SPAWNER) {
+        } else if (this.blockId == MOB_SPAWNER) {
             this.type = MagicValues.key(MobSpawnerValueType.class, type);
             this.value = new MobSpawnerValue();
-        } else if(this.blockId == CHEST || this.blockId == ENDER_CHEST || this.blockId == TRAPPED_CHEST
+        } else if (this.blockId == CHEST || this.blockId == ENDER_CHEST || this.blockId == TRAPPED_CHEST
                 || (this.blockId >= SHULKER_BOX_LOWER && this.blockId <= SHULKER_BOX_HIGHER)) {
             this.type = MagicValues.key(ChestValueType.class, type);
             this.value = new ChestValue(value);
-        } else if(this.blockId == END_GATEWAY) {
+        } else if (this.blockId == END_GATEWAY) {
             this.type = MagicValues.key(EndGatewayValueType.class, type);
             this.value = new EndGatewayValue();
         } else {
@@ -83,13 +83,13 @@ public class ServerBlockValuePacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         int val = 0;
-        if(this.type instanceof NoteBlockValueType) {
+        if (this.type instanceof NoteBlockValueType) {
             val = ((NoteBlockValue) this.value).getPitch();
-        } else if(this.type instanceof PistonValueType) {
+        } else if (this.type instanceof PistonValueType) {
             val = MagicValues.value(Integer.class, this.value);
-        } else if(this.type instanceof ChestValueType) {
+        } else if (this.type instanceof ChestValueType) {
             val = ((ChestValue) this.value).getViewers();
-        } else if(this.type instanceof GenericBlockValueType) {
+        } else if (this.type instanceof GenericBlockValueType) {
             val = ((GenericBlockValue) this.value).getValue();
         }
 

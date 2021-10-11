@@ -40,11 +40,11 @@ public class StatusResponsePacket implements Packet {
         VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
         JsonObject plrs = obj.get("players").getAsJsonObject();
         GameProfile[] profiles = new GameProfile[0];
-        if(plrs.has("sample")) {
+        if (plrs.has("sample")) {
             JsonArray prof = plrs.get("sample").getAsJsonArray();
-            if(prof.size() > 0) {
+            if (prof.size() > 0) {
                 profiles = new GameProfile[prof.size()];
-                for(int index = 0; index < prof.size(); index++) {
+                for (int index = 0; index < prof.size(); index++) {
                     JsonObject o = prof.get(index).getAsJsonObject();
                     profiles[index] = new GameProfile(o.get("id").getAsString(), o.get("name").getAsString());
                 }
@@ -55,7 +55,7 @@ public class StatusResponsePacket implements Packet {
         JsonElement desc = obj.get("description");
         Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
         byte[] icon = null;
-        if(obj.has("favicon")) {
+        if (obj.has("favicon")) {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
         }
 
@@ -71,9 +71,9 @@ public class StatusResponsePacket implements Packet {
         JsonObject plrs = new JsonObject();
         plrs.addProperty("max", this.info.getPlayerInfo().getMaxPlayers());
         plrs.addProperty("online", this.info.getPlayerInfo().getOnlinePlayers());
-        if(this.info.getPlayerInfo().getPlayers().length > 0) {
+        if (this.info.getPlayerInfo().getPlayers().length > 0) {
             JsonArray array = new JsonArray();
-            for(GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
+            for (GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
                 JsonObject o = new JsonObject();
                 o.addProperty("name", profile.getName());
                 o.addProperty("id", profile.getIdAsString());
@@ -86,7 +86,7 @@ public class StatusResponsePacket implements Packet {
         obj.add("version", ver);
         obj.add("players", plrs);
         obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(this.info.getDescription()), JsonElement.class));
-        if(this.info.getIconPng() != null) {
+        if (this.info.getIconPng() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }
 
@@ -99,7 +99,7 @@ public class StatusResponsePacket implements Packet {
     }
 
     private byte[] stringToIcon(String str) {
-        if(str.startsWith("data:image/png;base64,")) {
+        if (str.startsWith("data:image/png;base64,")) {
             str = str.substring("data:image/png;base64,".length());
         }
 

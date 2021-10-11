@@ -6,7 +6,15 @@ import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
 import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
-import com.github.steveice10.mc.protocol.data.game.command.properties.*;
+import com.github.steveice10.mc.protocol.data.game.command.properties.CommandProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.DoubleProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.EntityProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.FloatProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.IntegerProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.LongProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.RangeProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.ScoreHolderProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -43,42 +51,42 @@ public class ServerDeclareCommandsPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.nodes = new CommandNode[in.readVarInt()];
-        for(int i = 0; i < this.nodes.length; i++) {
+        for (int i = 0; i < this.nodes.length; i++) {
             byte flags = in.readByte();
             CommandType type = MagicValues.key(CommandType.class, flags & FLAG_TYPE_MASK);
             boolean executable = (flags & FLAG_EXECUTABLE) != 0;
 
             int[] children = new int[in.readVarInt()];
-            for(int j = 0; j < children.length; j++) {
+            for (int j = 0; j < children.length; j++) {
                 children[j] = in.readVarInt();
             }
 
             int redirectIndex = -1;
-            if((flags & FLAG_REDIRECT) != 0) {
+            if ((flags & FLAG_REDIRECT) != 0) {
                 redirectIndex = in.readVarInt();
             }
 
             String name = null;
-            if(type == CommandType.LITERAL || type == CommandType.ARGUMENT) {
+            if (type == CommandType.LITERAL || type == CommandType.ARGUMENT) {
                 name = in.readString();
             }
 
             CommandParser parser = null;
             CommandProperties properties = null;
-            if(type == CommandType.ARGUMENT) {
+            if (type == CommandType.ARGUMENT) {
                 String identifier = Identifier.formalize(in.readString());
                 if (identifier.equals("minecraft:")) continue;
                 parser = MagicValues.key(CommandParser.class, identifier);
-                switch(parser) {
+                switch (parser) {
                     case DOUBLE: {
                         byte numberFlags = in.readByte();
                         double min = -Double.MAX_VALUE;
                         double max = Double.MAX_VALUE;
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             min = in.readDouble();
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             max = in.readDouble();
                         }
 
@@ -89,11 +97,11 @@ public class ServerDeclareCommandsPacket implements Packet {
                         byte numberFlags = in.readByte();
                         float min = -Float.MAX_VALUE;
                         float max = Float.MAX_VALUE;
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             min = in.readFloat();
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             max = in.readFloat();
                         }
 
@@ -104,11 +112,11 @@ public class ServerDeclareCommandsPacket implements Packet {
                         byte numberFlags = in.readByte();
                         int min = Integer.MIN_VALUE;
                         int max = Integer.MAX_VALUE;
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             min = in.readInt();
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             max = in.readInt();
                         }
 
@@ -119,13 +127,13 @@ public class ServerDeclareCommandsPacket implements Packet {
                         byte numberFlags = in.readByte();
                         long min;
                         long max;
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             min = in.readLong();
                         } else {
                             min = Long.MIN_VALUE;
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             max = in.readLong();
                         } else {
                             max = Long.MAX_VALUE;
@@ -155,7 +163,7 @@ public class ServerDeclareCommandsPacket implements Packet {
             }
 
             SuggestionType suggestionType = null;
-            if((flags & FLAG_SUGGESTION_TYPE) != 0) {
+            if ((flags & FLAG_SUGGESTION_TYPE) != 0) {
                 suggestionType = MagicValues.key(SuggestionType.class, Identifier.formalize(in.readString()));
             }
 
@@ -168,56 +176,56 @@ public class ServerDeclareCommandsPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.nodes.length);
-        for(CommandNode node : this.nodes) {
+        for (CommandNode node : this.nodes) {
             int flags = MagicValues.value(Integer.class, node.getType()) & FLAG_TYPE_MASK;
-            if(node.isExecutable()) {
+            if (node.isExecutable()) {
                 flags |= FLAG_EXECUTABLE;
             }
 
-            if(node.getRedirectIndex() != -1) {
+            if (node.getRedirectIndex() != -1) {
                 flags |= FLAG_REDIRECT;
             }
 
-            if(node.getSuggestionType() != null) {
+            if (node.getSuggestionType() != null) {
                 flags |= FLAG_SUGGESTION_TYPE;
             }
 
             out.writeByte(flags);
 
             out.writeVarInt(node.getChildIndices().length);
-            for(int childIndex : node.getChildIndices()) {
+            for (int childIndex : node.getChildIndices()) {
                 out.writeVarInt(childIndex);
             }
 
-            if(node.getRedirectIndex() != -1) {
+            if (node.getRedirectIndex() != -1) {
                 out.writeVarInt(node.getRedirectIndex());
             }
 
-            if(node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
+            if (node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
                 out.writeString(node.getName());
             }
 
-            if(node.getType() == CommandType.ARGUMENT) {
+            if (node.getType() == CommandType.ARGUMENT) {
                 out.writeString(MagicValues.value(String.class, node.getParser()));
-                switch(node.getParser()) {
+                switch (node.getParser()) {
                     case DOUBLE: {
                         DoubleProperties properties = (DoubleProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if(properties.getMin() != -Double.MAX_VALUE) {
+                        if (properties.getMin() != -Double.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if(properties.getMax() != Double.MAX_VALUE) {
+                        if (properties.getMax() != Double.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             out.writeDouble(properties.getMin());
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeDouble(properties.getMax());
                         }
 
@@ -227,20 +235,20 @@ public class ServerDeclareCommandsPacket implements Packet {
                         FloatProperties properties = (FloatProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if(properties.getMin() != -Float.MAX_VALUE) {
+                        if (properties.getMin() != -Float.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if(properties.getMax() != Float.MAX_VALUE) {
+                        if (properties.getMax() != Float.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             out.writeFloat(properties.getMin());
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeFloat(properties.getMax());
                         }
 
@@ -250,20 +258,20 @@ public class ServerDeclareCommandsPacket implements Packet {
                         IntegerProperties properties = (IntegerProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if(properties.getMin() != Integer.MIN_VALUE) {
+                        if (properties.getMin() != Integer.MIN_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if(properties.getMax() != Integer.MAX_VALUE) {
+                        if (properties.getMax() != Integer.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             out.writeInt(properties.getMin());
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeInt(properties.getMax());
                         }
 
@@ -273,20 +281,20 @@ public class ServerDeclareCommandsPacket implements Packet {
                         LongProperties properties = (LongProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if(properties.getMin() != Long.MIN_VALUE) {
+                        if (properties.getMin() != Long.MIN_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if(properties.getMax() != Long.MAX_VALUE) {
+                        if (properties.getMax() != Long.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
-                        if((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             out.writeLong(properties.getMin());
                         }
 
-                        if((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
+                        if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeLong(properties.getMax());
                         }
 
@@ -298,11 +306,11 @@ public class ServerDeclareCommandsPacket implements Packet {
                     case ENTITY: {
                         EntityProperties properties = (EntityProperties) node.getProperties();
                         int entityFlags = 0;
-                        if(properties.isSingleTarget()) {
+                        if (properties.isSingleTarget()) {
                             entityFlags |= ENTITY_FLAG_SINGLE_TARGET;
                         }
 
-                        if(properties.isPlayersOnly()) {
+                        if (properties.isPlayersOnly()) {
                             entityFlags |= ENTITY_FLAG_PLAYERS_ONLY;
                         }
 
@@ -320,7 +328,7 @@ public class ServerDeclareCommandsPacket implements Packet {
                 }
             }
 
-            if(node.getSuggestionType() != null) {
+            if (node.getSuggestionType() != null) {
                 out.writeString(MagicValues.value(String.class, node.getSuggestionType()));
             }
         }

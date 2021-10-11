@@ -26,7 +26,7 @@ public class AttributeModifier {
         ModifierType type = null;
         try {
             type = MagicValues.key(ModifierType.class, uuid);
-        } catch(UnmappedValueException e) {
+        } catch (UnmappedValueException e) {
         }
 
         this.type = type;

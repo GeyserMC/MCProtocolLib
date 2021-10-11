@@ -27,7 +27,7 @@ public class ServerTabCompletePacket implements Packet {
     private @NonNull Component[] tooltips;
 
     public ServerTabCompletePacket(int transactionId, int start, int length, @NonNull String[] matches, @NonNull Component[] tooltips) {
-        if(tooltips.length != matches.length) {
+        if (tooltips.length != matches.length) {
             throw new IllegalArgumentException("Length of matches and tooltips must be equal.");
         }
 
@@ -45,7 +45,7 @@ public class ServerTabCompletePacket implements Packet {
         this.length = in.readVarInt();
         this.matches = new String[in.readVarInt()];
         this.tooltips = new Component[this.matches.length];
-        for(int index = 0; index < this.matches.length; index++) {
+        for (int index = 0; index < this.matches.length; index++) {
             this.matches[index] = in.readString();
             if (in.readBoolean()) {
                 this.tooltips[index] = DefaultComponentSerializer.get().deserialize(in.readString());
@@ -59,7 +59,7 @@ public class ServerTabCompletePacket implements Packet {
         out.writeVarInt(this.start);
         out.writeVarInt(this.length);
         out.writeVarInt(this.matches.length);
-        for(int index = 0; index < this.matches.length; index++) {
+        for (int index = 0; index < this.matches.length; index++) {
             out.writeString(this.matches[index]);
             Component tooltip = this.tooltips[index];
             if (tooltip != null) {

@@ -62,7 +62,7 @@ public class EncryptionResponsePacket implements Packet {
             Cipher cipher = Cipher.getInstance(key.getAlgorithm().equals("RSA") ? "RSA/ECB/PKCS1Padding" : "AES/CFB8/NoPadding");
             cipher.init(mode, key);
             return cipher.doFinal(data);
-        } catch(GeneralSecurityException e) {
+        } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to " + (mode == Cipher.DECRYPT_MODE ? "decrypt" : "encrypt") + " data.", e);
         }
     }

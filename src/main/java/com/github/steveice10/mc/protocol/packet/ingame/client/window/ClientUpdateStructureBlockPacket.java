@@ -83,15 +83,15 @@ public class ClientUpdateStructureBlockPacket implements Packet {
         out.writeVarLong(this.seed);
 
         int flags = 0;
-        if(this.ignoreEntities) {
+        if (this.ignoreEntities) {
             flags |= FLAG_IGNORE_ENTITIES;
         }
 
-        if(this.showAir) {
+        if (this.showAir) {
             flags |= FLAG_SHOW_AIR;
         }
 
-        if(this.showBoundingBox) {
+        if (this.showBoundingBox) {
             flags |= FLAG_SHOW_BOUNDING_BOX;
         }
 
