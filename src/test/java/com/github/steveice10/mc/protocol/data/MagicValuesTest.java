@@ -134,7 +134,6 @@ public class MagicValuesTest {
         this.register(GameMode.class, Integer.class);
         this.register(Difficulty.class, Integer.class);
         this.register(Animation.class, Integer.class);
-        this.register(Effect.class, Integer.class);
         this.register(EntityStatus.class, Integer.class);
         this.register(PositionElement.class, Integer.class);
         this.register(WeatherEntityType.class, Integer.class);

@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.server.entity;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -34,7 +33,7 @@ public class ServerEntityEffectPacket implements Packet {
     @Override
     public void read(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.effect = MagicValues.key(Effect.class, in.readByte());
+        this.effect = Effect.fromNetworkId(in.readByte());
         this.amplifier = in.readByte();
         this.duration = in.readVarInt();
 
@@ -46,7 +45,7 @@ public class ServerEntityEffectPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        out.writeByte(MagicValues.value(Integer.class, this.effect));
+        out.writeByte(Effect.toNetworkId(this.effect));
         out.writeByte(this.amplifier);
         out.writeVarInt(this.duration);
 

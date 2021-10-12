@@ -1,15 +1,15 @@
 package com.github.steveice10.mc.protocol.data.game.entity;
 
 public enum Effect {
-    FASTER_MOVEMENT,
-    SLOWER_MOVEMENT,
-    FASTER_DIG,
-    SLOWER_DIG,
-    INCREASE_DAMAGE,
-    HEAL,
-    HARM,
-    JUMP,
-    CONFUSION,
+    SPEED,
+    SLOWNESS,
+    HASTE,
+    MINING_FATIGUE,
+    STRENGTH,
+    INSTANT_HEALTH,
+    INSTANT_DAMAGE,
+    JUMP_BOOST,
+    NAUSEA,
     REGENERATION,
     RESISTANCE,
     FIRE_RESISTANCE,
@@ -22,7 +22,7 @@ public enum Effect {
     POISON,
     WITHER,
     HEALTH_BOOST,
-    ABSORBTION,
+    ABSORPTION,
     SATURATION,
     GLOWING,
     LEVITATION,
@@ -33,4 +33,14 @@ public enum Effect {
     DOLPHINS_GRACE,
     BAD_OMEN,
     HERO_OF_THE_VILLAGE;
+
+    public static final Effect[] VALUES = values();
+
+    public static Effect fromNetworkId(int id) {
+        return VALUES[id - 1];
+    }
+
+    public static int toNetworkId(Effect effect) {
+        return effect.ordinal() + 1;
+    }
 }
