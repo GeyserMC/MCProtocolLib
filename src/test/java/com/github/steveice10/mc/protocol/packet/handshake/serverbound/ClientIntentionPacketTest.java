@@ -13,7 +13,7 @@ public class ClientIntentionPacketTest extends PacketTest {
     @Before
     public void setup() {
         List<Packet> packets = new ArrayList<>();
-        for(HandshakeIntent intent : HandshakeIntent.values()) {
+        for (HandshakeIntent intent : HandshakeIntent.values()) {
             packets.add(new ClientIntentionPacket(MinecraftConstants.PROTOCOL_VERSION, "localhost", 25565, intent));
         }
 

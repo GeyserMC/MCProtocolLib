@@ -13,7 +13,6 @@ import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
 import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
-import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
@@ -36,6 +35,28 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.WeatherEntityType;
+import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
+import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
+import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
+import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
+import com.github.steveice10.mc.protocol.data.game.level.block.UpdatedTileType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
+import com.github.steveice10.mc.protocol.data.game.level.effect.ComposterEffectData;
+import com.github.steveice10.mc.protocol.data.game.level.effect.ParticleEffect;
+import com.github.steveice10.mc.protocol.data.game.level.effect.SmokeEffectData;
+import com.github.steveice10.mc.protocol.data.game.level.effect.SoundEffect;
+import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
+import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotification;
+import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
+import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
+import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
@@ -66,28 +87,6 @@ import com.github.steveice10.mc.protocol.data.game.window.property.AnvilProperty
 import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
-import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
-import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
-import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
-import com.github.steveice10.mc.protocol.data.game.level.block.UpdatedTileType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
-import com.github.steveice10.mc.protocol.data.game.level.effect.ComposterEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.ParticleEffect;
-import com.github.steveice10.mc.protocol.data.game.level.effect.SmokeEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.SoundEffect;
-import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
-import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotification;
-import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
-import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
-import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
-import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,8 +98,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 public class MagicValuesTest {
     private Map<Class<? extends Enum<?>>, List<Class<?>>> typeMappings = new HashMap<>();
@@ -134,7 +133,6 @@ public class MagicValuesTest {
         this.register(GameMode.class, Integer.class);
         this.register(Difficulty.class, Integer.class);
         this.register(Animation.class, Integer.class);
-        this.register(Effect.class, Integer.class);
         this.register(EntityStatus.class, Integer.class);
         this.register(PositionElement.class, Integer.class);
         this.register(WeatherEntityType.class, Integer.class);
@@ -206,26 +204,24 @@ public class MagicValuesTest {
 
     @Test
     public void testMagicValues() {
-        this.typeMappings.forEach((keyClass, valueClasses) -> {
-            valueClasses.forEach(valueClass -> {
-                try {
-                    Method valuesMethod = keyClass.getDeclaredMethod("values");
-                    Enum<?>[] keys = (Enum<?>[]) valuesMethod.invoke(null);
+        this.typeMappings.forEach((keyClass, valueClasses) -> valueClasses.forEach(valueClass -> {
+            try {
+                Method valuesMethod = keyClass.getDeclaredMethod("values");
+                Enum<?>[] keys = (Enum<?>[]) valuesMethod.invoke(null);
 
-                    for(Enum<?> key : keys) {
-                        try {
-                            Object value = MagicValues.value(valueClass, key);
-                            Object mappedKey = MagicValues.key(keyClass, value);
+                for (Enum<?> key : keys) {
+                    try {
+                        Object value = MagicValues.value(valueClass, key);
+                        Object mappedKey = MagicValues.key(keyClass, value);
 
-                            assertThat("Mapped key did not match original key.", mappedKey, is(key));
-                        } catch(IllegalArgumentException e) {
-                            throw new AssertionError("Key \"" + key + "\" of type \"" + keyClass.getName() + "\" is not properly mapped to value type \"" + valueClass.getName() + "\".");
-                        }
+                        assertThat("Mapped key did not match original key.", mappedKey, is(key));
+                    } catch (IllegalArgumentException e) {
+                        throw new AssertionError("Key \"" + key + "\" of type \"" + keyClass.getName() + "\" is not properly mapped to value type \"" + valueClass.getName() + "\".");
                     }
-                } catch(Exception e) {
-                    throw new RuntimeException("Failed to test magic values for class pair (" + keyClass.getName() + ", " + valueClass.getName() + ").", e);
                 }
-            });
-        });
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to test magic values for class pair (" + keyClass.getName() + ", " + valueClass.getName() + ").", e);
+            }
+        }));
     }
 }

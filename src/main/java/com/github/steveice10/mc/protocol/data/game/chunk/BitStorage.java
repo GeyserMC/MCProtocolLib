@@ -47,7 +47,7 @@ public class BitStorage {
     }
 
     public BitStorage(int bitsPerEntry, int size, long[] data) {
-        if(bitsPerEntry < 1 || bitsPerEntry > 32) {
+        if (bitsPerEntry < 1 || bitsPerEntry > 32) {
             throw new IllegalArgumentException("bitsPerEntry must be between 1 and 32, inclusive.");
         }
 
@@ -57,8 +57,8 @@ public class BitStorage {
         this.maxValue = (1L << bitsPerEntry) - 1L;
         this.valuesPerLong = (char) (64 / bitsPerEntry);
         int expectedLength = (size + this.valuesPerLong - 1) / this.valuesPerLong;
-        if(data != null) {
-            if(data.length != expectedLength) {
+        if (data != null) {
+            if (data.length != expectedLength) {
                 throw new IllegalArgumentException("Expected " + expectedLength + " longs but got " + data.length + " longs");
             }
 
@@ -74,7 +74,7 @@ public class BitStorage {
     }
 
     public int get(int index) {
-        if(index < 0 || index > this.size - 1) {
+        if (index < 0 || index > this.size - 1) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -84,11 +84,11 @@ public class BitStorage {
     }
 
     public void set(int index, int value) {
-        if(index < 0 || index > this.size - 1) {
+        if (index < 0 || index > this.size - 1) {
             throw new IndexOutOfBoundsException();
         }
 
-        if(value < 0 || value > this.maxValue) {
+        if (value < 0 || value > this.maxValue) {
             throw new IllegalArgumentException("Value cannot be outside of accepted range.");
         }
 
@@ -100,8 +100,8 @@ public class BitStorage {
     public int[] toIntArray() {
         int[] result = new int[this.size];
         int index = 0;
-        for(long cell : this.data) {
-            for(int bitIndex = 0; bitIndex < this.valuesPerLong; bitIndex++) {
+        for (long cell : this.data) {
+            for (int bitIndex = 0; bitIndex < this.valuesPerLong; bitIndex++) {
                 result[index++] = (int) (cell & this.maxValue);
                 cell >>= this.bitsPerEntry;
 

@@ -47,9 +47,9 @@ public class ClientboundPlayerPositionPacket implements Packet {
 
         this.relative = new ArrayList<>();
         int flags = in.readUnsignedByte();
-        for(PositionElement element : PositionElement.values()) {
+        for (PositionElement element : PositionElement.values()) {
             int bit = 1 << MagicValues.value(Integer.class, element);
-            if((flags & bit) == bit) {
+            if ((flags & bit) == bit) {
                 this.relative.add(element);
             }
         }
@@ -67,7 +67,7 @@ public class ClientboundPlayerPositionPacket implements Packet {
         out.writeFloat(this.pitch);
 
         int flags = 0;
-        for(PositionElement element : this.relative) {
+        for (PositionElement element : this.relative) {
             flags |= 1 << MagicValues.value(Integer.class, element);
         }
 

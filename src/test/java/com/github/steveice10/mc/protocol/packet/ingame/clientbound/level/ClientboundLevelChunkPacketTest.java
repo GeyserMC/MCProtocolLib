@@ -14,7 +14,7 @@ public class ClientboundLevelChunkPacketTest extends PacketTest {
 
         this.setPackets(
                 new ClientboundLevelChunkPacket(
-                        new Column(0, 0, new Chunk[] {
+                        new Column(0, 0, new Chunk[]{
                                 null, null, null, null, null, null, null, chunk,
                                 null, chunk, null, null, null, chunk, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
@@ -23,13 +23,13 @@ public class ClientboundLevelChunkPacketTest extends PacketTest {
                         }, new CompoundTag[0], new CompoundTag("HeightMaps"), new int[1024])
                 ),
                 new ClientboundLevelChunkPacket(
-                        new Column(1, 1, new Chunk[] {
+                        new Column(1, 1, new Chunk[]{
                                 chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk,
                                 chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null
-                        }, new CompoundTag[] {
+                        }, new CompoundTag[]{
                                 new CompoundTag("TileEntity")
                         }, new CompoundTag("HeightMaps"), new int[1024])
                 )

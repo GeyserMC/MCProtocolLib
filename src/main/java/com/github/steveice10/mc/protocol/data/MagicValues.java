@@ -13,7 +13,6 @@ import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
 import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
-import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
@@ -36,6 +35,30 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.WeatherEntityType;
+import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
+import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
+import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
+import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
+import com.github.steveice10.mc.protocol.data.game.level.block.UpdatedTileType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
+import com.github.steveice10.mc.protocol.data.game.level.effect.ComposterEffectData;
+import com.github.steveice10.mc.protocol.data.game.level.effect.DragonFireballEffectData;
+import com.github.steveice10.mc.protocol.data.game.level.effect.ParticleEffect;
+import com.github.steveice10.mc.protocol.data.game.level.effect.SmokeEffectData;
+import com.github.steveice10.mc.protocol.data.game.level.effect.SoundEffect;
+import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
+import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotification;
+import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
+import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
+import com.github.steveice10.mc.protocol.data.game.level.notify.RespawnScreenValue;
+import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
@@ -66,30 +89,6 @@ import com.github.steveice10.mc.protocol.data.game.window.property.AnvilProperty
 import com.github.steveice10.mc.protocol.data.game.window.property.BrewingStandProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.EnchantmentTableProperty;
 import com.github.steveice10.mc.protocol.data.game.window.property.FurnaceProperty;
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
-import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
-import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
-import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
-import com.github.steveice10.mc.protocol.data.game.level.block.UpdatedTileType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
-import com.github.steveice10.mc.protocol.data.game.level.effect.ComposterEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.DragonFireballEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.ParticleEffect;
-import com.github.steveice10.mc.protocol.data.game.level.effect.SmokeEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.SoundEffect;
-import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
-import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotification;
-import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
-import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
-import com.github.steveice10.mc.protocol.data.game.level.notify.RespawnScreenValue;
-import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
-import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 
 import java.util.ArrayList;
@@ -272,39 +271,6 @@ public class MagicValues {
         register(Animation.EAT_FOOD, 3);
         register(Animation.CRITICAL_HIT, 4);
         register(Animation.ENCHANTMENT_CRITICAL_HIT, 5);
-
-        register(Effect.FASTER_MOVEMENT, 1);
-        register(Effect.SLOWER_MOVEMENT, 2);
-        register(Effect.FASTER_DIG, 3);
-        register(Effect.SLOWER_DIG, 4);
-        register(Effect.INCREASE_DAMAGE, 5);
-        register(Effect.HEAL, 6);
-        register(Effect.HARM, 7);
-        register(Effect.JUMP, 8);
-        register(Effect.CONFUSION, 9);
-        register(Effect.REGENERATION, 10);
-        register(Effect.RESISTANCE, 11);
-        register(Effect.FIRE_RESISTANCE, 12);
-        register(Effect.WATER_BREATHING, 13);
-        register(Effect.INVISIBILITY, 14);
-        register(Effect.BLINDNESS, 15);
-        register(Effect.NIGHT_VISION, 16);
-        register(Effect.HUNGER, 17);
-        register(Effect.WEAKNESS, 18);
-        register(Effect.POISON, 19);
-        register(Effect.WITHER, 20);
-        register(Effect.HEALTH_BOOST, 21);
-        register(Effect.ABSORBTION, 22);
-        register(Effect.SATURATION, 23);
-        register(Effect.GLOWING, 24);
-        register(Effect.LEVITATION, 25);
-        register(Effect.LUCK, 26);
-        register(Effect.UNLUCK, 27);
-        register(Effect.SLOW_FALLING, 28);
-        register(Effect.CONDUIT_POWER, 29);
-        register(Effect.DOLPHINS_GRACE, 30);
-        register(Effect.BAD_OMEN, 31);
-        register(Effect.HERO_OF_THE_VILLAGE, 32);
 
         register(EntityStatus.TIPPED_ARROW_EMIT_PARTICLES, 0);
         register(EntityStatus.RABBIT_JUMP_OR_MINECART_SPAWNER_DELAY_RESET, 1);
@@ -1117,7 +1083,7 @@ public class MagicValues {
         register(SoundCategory.AMBIENT, 8);
         register(SoundCategory.VOICE, 9);
 
-        for(BuiltinSound sound : BuiltinSound.values()) {
+        for (BuiltinSound sound : BuiltinSound.values()) {
             register(sound, sound.ordinal());
             register(sound, sound.getName());
         }
@@ -1132,21 +1098,21 @@ public class MagicValues {
 
     @SuppressWarnings("unchecked")
     public static <T> T key(Class<T> keyType, Object value) {
-        for(Map.Entry<Object, List<Object>> entry : VALUES.entrySet()) {
-            if(keyType.isAssignableFrom(entry.getKey().getClass())) {
-                for(Object val : entry.getValue()) {
-                    if(val == value || val.equals(value)) {
+        for (Map.Entry<Object, List<Object>> entry : VALUES.entrySet()) {
+            if (keyType.isAssignableFrom(entry.getKey().getClass())) {
+                for (Object val : entry.getValue()) {
+                    if (val == value || val.equals(value)) {
                         return (T) entry.getKey();
-                    } else if(Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
+                    } else if (Number.class.isAssignableFrom(val.getClass()) && Number.class.isAssignableFrom(value.getClass())) {
                         Number num = (Number) val;
                         Number num2 = (Number) value;
-                        if(num.doubleValue() == num2.doubleValue()) {
+                        if (num.doubleValue() == num2.doubleValue()) {
                             return (T) entry.getKey();
                         }
-                    } else if(String.class.isAssignableFrom(val.getClass()) && String.class.isAssignableFrom(value.getClass())) {
+                    } else if (String.class.isAssignableFrom(val.getClass()) && String.class.isAssignableFrom(value.getClass())) {
                         String str = (String) val;
                         String str2 = (String) value;
-                        if(str.equalsIgnoreCase(str2)) {
+                        if (str.equalsIgnoreCase(str2)) {
                             return (T) entry.getKey();
                         }
                     }
@@ -1160,22 +1126,22 @@ public class MagicValues {
     @SuppressWarnings("unchecked")
     public static <T> T value(Class<T> valueType, Object key) {
         List<Object> values = VALUES.get(key);
-        if(values != null) {
-            for(Object val : values) {
-                if(valueType.isAssignableFrom(val.getClass())) {
+        if (values != null) {
+            for (Object val : values) {
+                if (valueType.isAssignableFrom(val.getClass())) {
                     return (T) val;
-                } else if(Number.class.isAssignableFrom(val.getClass())) {
-                    if(valueType == Byte.class) {
+                } else if (Number.class.isAssignableFrom(val.getClass())) {
+                    if (valueType == Byte.class) {
                         return (T) (Object) ((Number) val).byteValue();
-                    } else if(valueType == Short.class) {
+                    } else if (valueType == Short.class) {
                         return (T) (Object) ((Number) val).shortValue();
-                    } else if(valueType == Integer.class) {
+                    } else if (valueType == Integer.class) {
                         return (T) (Object) ((Number) val).intValue();
-                    } else if(valueType == Long.class) {
+                    } else if (valueType == Long.class) {
                         return (T) (Object) ((Number) val).longValue();
-                    } else if(valueType == Float.class) {
+                    } else if (valueType == Float.class) {
                         return (T) (Object) ((Number) val).floatValue();
-                    } else if(valueType == Double.class) {
+                    } else if (valueType == Double.class) {
                         return (T) (Object) ((Number) val).doubleValue();
                     }
                 }

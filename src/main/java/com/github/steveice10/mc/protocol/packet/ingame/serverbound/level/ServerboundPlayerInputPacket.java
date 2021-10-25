@@ -42,11 +42,11 @@ public class ServerboundPlayerInputPacket implements Packet {
         out.writeFloat(this.forward);
 
         int flags = 0;
-        if(this.jump) {
+        if (this.jump) {
             flags |= FLAG_JUMP;
         }
 
-        if(this.dismount) {
+        if (this.dismount) {
             flags |= FLAG_DISMOUNT;
         }
 

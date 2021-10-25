@@ -20,7 +20,7 @@ public abstract class PacketTest {
 
     @Test
     public void testPackets() throws Exception {
-        for(Packet packet : this.packets) {
+        for (Packet packet : this.packets) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             packet.write(new StreamNetOutput(out));
             byte[] encoded = out.toByteArray();
@@ -35,14 +35,14 @@ public abstract class PacketTest {
     private Packet createPacket(Class<? extends Packet> clazz) {
         try {
             Constructor<? extends Packet> constructor = clazz.getDeclaredConstructor();
-            if(!constructor.isAccessible()) {
+            if (!constructor.isAccessible()) {
                 constructor.setAccessible(true);
             }
 
             return constructor.newInstance();
-        } catch(NoSuchMethodError e) {
+        } catch (NoSuchMethodError e) {
             throw new IllegalStateException("Packet \"" + clazz.getName() + "\" does not have a no-params constructor for instantiation.");
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new IllegalStateException("Failed to instantiate packet \"" + clazz.getName() + "\".", e);
         }
     }

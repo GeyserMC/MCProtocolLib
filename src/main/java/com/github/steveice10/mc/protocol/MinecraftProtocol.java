@@ -221,6 +221,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
     /**
      * Constructs a new MinecraftProtocol instance for logging in using offline mode.
+     *
      * @param username Username to use.
      */
     public MinecraftProtocol(@NonNull String username) {
@@ -229,7 +230,8 @@ public class MinecraftProtocol extends PacketProtocol {
 
     /**
      * Constructs a new MinecraftProtocol instance for logging in.
-     * @param profile GameProfile to use.
+     *
+     * @param profile     GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
     public MinecraftProtocol(@NonNull GameProfile profile, String accessToken) {
@@ -260,7 +262,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
         this.setSubProtocol(SubProtocol.HANDSHAKE, true, session);
 
-        if(this.useDefaultListeners) {
+        if (this.useDefaultListeners) {
             session.addListener(new ClientListener(this.targetSubProtocol));
         }
     }
@@ -269,7 +271,7 @@ public class MinecraftProtocol extends PacketProtocol {
     public void newServerSession(Server server, Session session) {
         this.setSubProtocol(SubProtocol.HANDSHAKE, false, session);
 
-        if(this.useDefaultListeners) {
+        if (this.useDefaultListeners) {
             session.addListener(new ServerListener());
         }
     }
@@ -277,13 +279,14 @@ public class MinecraftProtocol extends PacketProtocol {
     protected void enableEncryption(Key key) {
         try {
             this.encryption = new AESEncryption(key);
-        } catch(GeneralSecurityException e) {
+        } catch (GeneralSecurityException e) {
             throw new Error("Failed to enable protocol encryption.", e);
         }
     }
 
     /**
      * Gets the current {@link SubProtocol} the client is in.
+     *
      * @return The current {@link SubProtocol}.
      */
     public SubProtocol getSubProtocol() {
@@ -292,9 +295,9 @@ public class MinecraftProtocol extends PacketProtocol {
 
     protected void setSubProtocol(SubProtocol subProtocol, boolean client, Session session) {
         this.clearPackets();
-        switch(subProtocol) {
+        switch (subProtocol) {
             case HANDSHAKE:
-                if(client) {
+                if (client) {
                     this.initClientHandshake();
                 } else {
                     this.initServerHandshake();
@@ -302,7 +305,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case LOGIN:
-                if(client) {
+                if (client) {
                     this.initLogin(this::registerIncoming, this::registerOutgoing);
                 } else {
                     this.initLogin(this::registerOutgoing, this::registerIncoming);
@@ -310,7 +313,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case GAME:
-                if(client) {
+                if (client) {
                     this.initGame(this::registerIncoming, this::registerOutgoing);
                 } else {
                     this.initGame(this::registerOutgoing, this::registerIncoming);
@@ -318,7 +321,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
                 break;
             case STATUS:
-                if(client) {
+                if (client) {
                     this.initStatus(this::registerIncoming, this::registerOutgoing);
                 } else {
                     this.initStatus(this::registerOutgoing, this::registerIncoming);

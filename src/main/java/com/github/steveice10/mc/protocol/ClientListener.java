@@ -12,19 +12,19 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundKeyPacket;
-import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
-import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
-import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
+import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundKeyPacket;
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundPongResponsePacket;
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
+import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
+import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.PacketSentEvent;
@@ -47,7 +47,7 @@ public class ClientListener extends SessionAdapter {
     public void packetReceived(PacketReceivedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
         if (protocol.getSubProtocol() == SubProtocol.LOGIN) {
-            if(event.getPacket() instanceof ClientboundHelloPacket) {
+            if (event.getPacket() instanceof ClientboundHelloPacket) {
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                 String accessToken = event.getSession().getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
 
@@ -61,7 +61,7 @@ public class ClientListener extends SessionAdapter {
                     KeyGenerator gen = KeyGenerator.getInstance("AES");
                     gen.init(128);
                     key = gen.generateKey();
-                } catch(NoSuchAlgorithmException e) {
+                } catch (NoSuchAlgorithmException e) {
                     throw new IllegalStateException("Failed to generate shared key.", e);
                 }
 
@@ -69,48 +69,48 @@ public class ClientListener extends SessionAdapter {
                 String serverId = sessionService.getServerId(packet.getServerId(), packet.getPublicKey(), key);
                 try {
                     sessionService.joinServer(profile, accessToken, serverId);
-                } catch(ServiceUnavailableException e) {
+                } catch (ServiceUnavailableException e) {
                     event.getSession().disconnect("Login failed: Authentication service unavailable.", e);
                     return;
-                } catch(InvalidCredentialsException e) {
+                } catch (InvalidCredentialsException e) {
                     event.getSession().disconnect("Login failed: Invalid login session.", e);
                     return;
-                } catch(RequestException e) {
+                } catch (RequestException e) {
                     event.getSession().disconnect("Login failed: Authentication error: " + e.getMessage(), e);
                     return;
                 }
 
                 event.getSession().send(new ServerboundKeyPacket(packet.getPublicKey(), key, packet.getVerifyToken()));
                 protocol.enableEncryption(key);
-            } else if(event.getPacket() instanceof ClientboundGameProfilePacket) {
+            } else if (event.getPacket() instanceof ClientboundGameProfilePacket) {
                 protocol.setSubProtocol(SubProtocol.GAME, true, event.getSession());
-            } else if(event.getPacket() instanceof ClientboundLoginDisconnectPacket) {
+            } else if (event.getPacket() instanceof ClientboundLoginDisconnectPacket) {
                 event.getSession().disconnect(event.<ClientboundLoginDisconnectPacket>getPacket().getReason().toString());
-            } else if(event.getPacket() instanceof ClientboundLoginCompressionPacket) {
+            } else if (event.getPacket() instanceof ClientboundLoginCompressionPacket) {
                 event.getSession().setCompressionThreshold(event.<ClientboundLoginCompressionPacket>getPacket().getThreshold());
             }
-        } else if(protocol.getSubProtocol() == SubProtocol.STATUS) {
-            if(event.getPacket() instanceof ClientboundStatusResponsePacket) {
+        } else if (protocol.getSubProtocol() == SubProtocol.STATUS) {
+            if (event.getPacket() instanceof ClientboundStatusResponsePacket) {
                 ServerStatusInfo info = event.<ClientboundStatusResponsePacket>getPacket().getInfo();
                 ServerInfoHandler handler = event.getSession().getFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY);
-                if(handler != null) {
+                if (handler != null) {
                     handler.handle(event.getSession(), info);
                 }
 
                 event.getSession().send(new ServerboundPingRequestPacket(System.currentTimeMillis()));
-            } else if(event.getPacket() instanceof ClientboundPongResponsePacket) {
+            } else if (event.getPacket() instanceof ClientboundPongResponsePacket) {
                 long time = System.currentTimeMillis() - event.<ClientboundPongResponsePacket>getPacket().getPingTime();
                 ServerPingTimeHandler handler = event.getSession().getFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY);
-                if(handler != null) {
+                if (handler != null) {
                     handler.handle(event.getSession(), time);
                 }
 
                 event.getSession().disconnect("Finished");
             }
-        } else if(protocol.getSubProtocol() == SubProtocol.GAME) {
-            if(event.getPacket() instanceof ClientboundKeepAlivePacket && event.getSession().getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+        } else if (protocol.getSubProtocol() == SubProtocol.GAME) {
+            if (event.getPacket() instanceof ClientboundKeepAlivePacket && event.getSession().getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
                 event.getSession().send(new ServerboundKeepAlivePacket(event.<ClientboundKeepAlivePacket>getPacket().getPingId()));
-            } else if(event.getPacket() instanceof ClientboundDisconnectPacket) {
+            } else if (event.getPacket() instanceof ClientboundDisconnectPacket) {
                 event.getSession().disconnect(event.<ClientboundDisconnectPacket>getPacket().getReason().toString());
             }
         }
@@ -118,12 +118,12 @@ public class ClientListener extends SessionAdapter {
 
     @Override
     public void packetSent(PacketSentEvent event) {
-        if(event.getPacket() instanceof ClientIntentionPacket) {
+        if (event.getPacket() instanceof ClientIntentionPacket) {
             // Once the HandshakePacket has been sent, switch to the next protocol mode.
             MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
             protocol.setSubProtocol(this.targetSubProtocol, true, event.getSession());
 
-            if(this.targetSubProtocol == SubProtocol.LOGIN) {
+            if (this.targetSubProtocol == SubProtocol.LOGIN) {
                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                 event.getSession().send(new ServerboundHelloPacket(profile.getName()));
             } else {
@@ -134,9 +134,9 @@ public class ClientListener extends SessionAdapter {
 
     @Override
     public void connected(ConnectedEvent event) {
-        if(this.targetSubProtocol == SubProtocol.LOGIN) {
+        if (this.targetSubProtocol == SubProtocol.LOGIN) {
             event.getSession().send(new ClientIntentionPacket(MinecraftConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
-        } else if(this.targetSubProtocol == SubProtocol.STATUS) {
+        } else if (this.targetSubProtocol == SubProtocol.STATUS) {
             event.getSession().send(new ClientIntentionPacket(MinecraftConstants.PROTOCOL_VERSION, event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
         }
     }

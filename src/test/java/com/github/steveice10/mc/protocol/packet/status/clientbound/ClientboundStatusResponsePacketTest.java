@@ -16,7 +16,7 @@ public class ClientboundStatusResponsePacketTest extends PacketTest {
         this.setPackets(new ClientboundStatusResponsePacket(
                 new ServerStatusInfo(
                         VersionInfo.CURRENT,
-                        new PlayerInfo(100, 10, new GameProfile[] {
+                        new PlayerInfo(100, 10, new GameProfile[]{
                                 new GameProfile(UUID.randomUUID(), "Username")
                         }),
                         Component.text("Description"),

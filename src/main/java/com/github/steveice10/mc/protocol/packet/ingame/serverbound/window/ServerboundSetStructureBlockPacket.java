@@ -2,10 +2,10 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.window;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockAction;
-import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
+import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockAction;
+import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockMode;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -83,15 +83,15 @@ public class ServerboundSetStructureBlockPacket implements Packet {
         out.writeVarLong(this.seed);
 
         int flags = 0;
-        if(this.ignoreEntities) {
+        if (this.ignoreEntities) {
             flags |= FLAG_IGNORE_ENTITIES;
         }
 
-        if(this.showAir) {
+        if (this.showAir) {
             flags |= FLAG_SHOW_AIR;
         }
 
-        if(this.showBoundingBox) {
+        if (this.showBoundingBox) {
             flags |= FLAG_SHOW_BOUNDING_BOX;
         }
 

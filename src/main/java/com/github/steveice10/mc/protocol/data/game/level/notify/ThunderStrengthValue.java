@@ -7,11 +7,11 @@ public class ThunderStrengthValue implements ClientNotificationValue {
     private final float strength;
 
     public ThunderStrengthValue(float strength) {
-        if(strength > 1) {
+        if (strength > 1) {
             strength = 1;
         }
 
-        if(strength < 0) {
+        if (strength < 0) {
             strength = 0;
         }
 
