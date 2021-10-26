@@ -26,6 +26,14 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     }
 
     @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        super.handlerRemoved(ctx);
+
+        this.deflater.end();
+        this.inflater.end();
+    }
+
+    @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
         int readable = in.readableBytes();
         ByteBufNetOutput output = new ByteBufNetOutput(out);
