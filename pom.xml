@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <adventure.version>4.9.2</adventure.version>
+        <adventure.version>4.9.3</adventure.version>
         <argLine></argLine>
     </properties>
 
