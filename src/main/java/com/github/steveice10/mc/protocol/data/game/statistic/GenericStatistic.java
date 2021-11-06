@@ -2,7 +2,8 @@ package com.github.steveice10.mc.protocol.data.game.statistic;
 
 public enum GenericStatistic implements Statistic {
     LEAVE_GAME,
-    PLAY_ONE_MINUTE,
+    PLAY_TIME,
+    TOTAL_WORLD_TIME,
     TIME_SINCE_DEATH,
     TIME_SINCE_REST,
     SNEAK_TIME,
@@ -20,6 +21,7 @@ public enum GenericStatistic implements Statistic {
     HORSE_ONE_CM,
     AVIATE_ONE_CM,
     SWIM_ONE_CM,
+    STRIDER_ONE_CM,
     JUMP,
     DROP,
     DAMAGE_DEALT,
@@ -69,5 +71,9 @@ public enum GenericStatistic implements Statistic {
     INTERACT_WITH_STONECUTTER,
     BELL_RING,
     RAID_TRIGGER,
-    RAID_WIN;
+    RAID_WIN,
+    INTERACT_WITH_ANVIL,
+    INTERACT_WITH_GRINDSTONE,
+    TARGET_HIT,
+    INTERACT_WITH_SMITHING_TABLE
 }
