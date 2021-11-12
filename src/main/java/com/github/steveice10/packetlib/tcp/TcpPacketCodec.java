@@ -15,7 +15,7 @@ import io.netty.handler.codec.ByteToMessageCodec;
 import java.util.List;
 
 public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
-    private Session session;
+    private final Session session;
 
     public TcpPacketCodec(Session session) {
         this.session = session;

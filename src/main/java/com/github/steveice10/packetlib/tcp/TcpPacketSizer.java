@@ -12,7 +12,7 @@ import io.netty.handler.codec.CorruptedFrameException;
 import java.util.List;
 
 public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
-    private Session session;
+    private final Session session;
 
     public TcpPacketSizer(Session session) {
         this.session = session;

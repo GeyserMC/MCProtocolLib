@@ -14,6 +14,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -61,7 +62,7 @@ public class TcpServer extends AbstractServer {
 
         ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<Channel>() {
             @Override
-            public void initChannel(Channel channel) throws Exception {
+            public void initChannel(Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
                 PacketProtocol protocol = createPacketProtocol();
 
@@ -69,7 +70,10 @@ public class TcpServer extends AbstractServer {
                 session.getPacketProtocol().newServerSession(TcpServer.this, session);
 
                 channel.config().setOption(ChannelOption.IP_TOS, 0x18);
-                channel.config().setOption(ChannelOption.TCP_NODELAY, false);
+                try {
+                    channel.config().setOption(ChannelOption.TCP_NODELAY, true);
+                } catch (ChannelException ignored) {
+                }
 
                 ChannelPipeline pipeline = channel.pipeline();
 
@@ -94,19 +98,16 @@ public class TcpServer extends AbstractServer {
                 callback.run();
             }
         } else {
-            future.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if(future.isSuccess()) {
-                        channel = future.channel();
-                        if(callback != null) {
-                            callback.run();
-                        }
-                    } else {
-                        System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
-                        if(future.cause() != null) {
-                            future.cause().printStackTrace();
-                        }
+            future.addListener((ChannelFutureListener) future1 -> {
+                if(future1.isSuccess()) {
+                    channel = future1.channel();
+                    if(callback != null) {
+                        callback.run();
+                    }
+                } else {
+                    System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
+                    if(future1.cause() != null) {
+                        future1.cause().printStackTrace();
                     }
                 }
             });

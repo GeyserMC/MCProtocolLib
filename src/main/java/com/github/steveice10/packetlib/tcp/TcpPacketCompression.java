@@ -16,10 +16,10 @@ import java.util.zip.Inflater;
 public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     private static final int MAX_COMPRESSED_SIZE = 2097152;
 
-    private Session session;
-    private Deflater deflater = new Deflater();
-    private Inflater inflater = new Inflater();
-    private byte buf[] = new byte[8192];
+    private final Session session;
+    private final Deflater deflater = new Deflater();
+    private final Inflater inflater = new Inflater();
+    private final byte[] buf = new byte[8192];
 
     public TcpPacketCompression(Session session) {
         this.session = session;

@@ -23,7 +23,7 @@ public interface Packet {
      * @param out The output destination to write to.
      * @throws IOException If an I/O error occurs.
      */
-    public void write(NetOutput out) throws IOException;
+    void write(NetOutput out) throws IOException;
 
     /**
      * Gets whether the packet has handling priority.
@@ -32,5 +32,7 @@ public interface Packet {
      *
      * @return Whether the packet has priority.
      */
-    public boolean isPriority();
+    default boolean isPriority() {
+        return false;
+    }
 }

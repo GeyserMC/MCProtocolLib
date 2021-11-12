@@ -8,7 +8,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -20,7 +19,10 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramChannel;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.*;
+import io.netty.channel.kqueue.KQueueDatagramChannel;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
@@ -42,22 +44,17 @@ import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
-
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
+import java.net.*;
 
 public class TcpClientSession extends TcpSession {
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+    private static Class<? extends Channel> CHANNEL_CLASS;
+    private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
+    private static EventLoopGroup EVENT_LOOP_GROUP;
 
-    private String bindAddress;
-    private int bindPort;
-    private ProxyInfo proxy;
-
-    private EventLoopGroup group;
-    private Class<? extends SocketChannel> socketChannel;
-    private Class<? extends DatagramChannel> datagramChannel;
+    private final String bindAddress;
+    private final int bindPort;
+    private final ProxyInfo proxy;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
         this(host, port, protocol, null);
@@ -82,38 +79,31 @@ public class TcpClientSession extends TcpSession {
     public void connect(boolean wait) {
         if(this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
-        } else if(this.group != null) {
-            return;
+        }
+
+        boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
+
+        if (CHANNEL_CLASS == null) {
+            createTcpEventLoopGroup();
         }
 
         try {
-            switch (TransportHelper.determineTransportMethod()) {
-                case IO_URING:
-                    this.group = new IOUringEventLoopGroup();
-                    this.socketChannel = IOUringSocketChannel.class;
-                    this.datagramChannel = IOUringDatagramChannel.class;
-                    break;
-                case EPOLL:
-                    this.group = new EpollEventLoopGroup();
-                    this.socketChannel = EpollSocketChannel.class;
-                    this.datagramChannel = EpollDatagramChannel.class;
-                    break;
-                case NIO:
-                    this.group = new NioEventLoopGroup();
-                    this.socketChannel = NioSocketChannel.class;
-                    this.datagramChannel = NioDatagramChannel.class;
-                    break;
-            }
-
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(this.socketChannel);
+            bootstrap.channel(CHANNEL_CLASS);
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
                 public void initChannel(Channel channel) {
                     getPacketProtocol().newClientSession(TcpClientSession.this);
 
                     channel.config().setOption(ChannelOption.IP_TOS, 0x18);
-                    channel.config().setOption(ChannelOption.TCP_NODELAY, false);
+                    try {
+                        channel.config().setOption(ChannelOption.TCP_NODELAY, true);
+                    } catch (ChannelException e) {
+                        if(debug) {
+                            System.out.println("Exception while trying to set TCP_NODELAY");
+                            e.printStackTrace();
+                        }
+                    }
 
                     ChannelPipeline pipeline = channel.pipeline();
 
@@ -129,33 +119,17 @@ public class TcpClientSession extends TcpSession {
 
                     addHAProxySupport(pipeline);
                 }
-            }).group(this.group).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
+            }).group(EVENT_LOOP_GROUP).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
 
-            Runnable connectTask = () -> {
-                try {
-                    InetSocketAddress remoteAddress = resolveAddress();
-                    bootstrap.remoteAddress(remoteAddress);
-                    bootstrap.localAddress(bindAddress, bindPort);
+            InetSocketAddress remoteAddress = resolveAddress();
+            bootstrap.remoteAddress(remoteAddress);
+            bootstrap.localAddress(bindAddress, bindPort);
 
-                    ChannelFuture future = bootstrap.connect().sync();
-                    if(future.isSuccess()) {
-                        while(!isConnected() && !disconnected) {
-                            try {
-                                Thread.sleep(5);
-                            } catch(InterruptedException e) {
-                            }
-                        }
-                    }
-                } catch(Throwable t) {
-                    exceptionCaught(null, t);
+            bootstrap.connect().addListener((future) -> {
+                if (!future.isSuccess()) {
+                    exceptionCaught(null, future.cause());
                 }
-            };
-
-            if(wait) {
-                connectTask.run();
-            } else {
-                new Thread(connectTask).start();
-            }
+            });
         } catch(Throwable t) {
             exceptionCaught(null, t);
         }
@@ -165,7 +139,7 @@ public class TcpClientSession extends TcpSession {
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
         String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
-        if(debug) {
+        if (debug) {
             System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
         }
 
@@ -173,21 +147,21 @@ public class TcpClientSession extends TcpSession {
             DnsNameResolver resolver = null;
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try {
-                resolver = new DnsNameResolverBuilder(this.group.next())
-                        .channelType(this.datagramChannel)
+                resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
+                        .channelType(DATAGRAM_CHANNEL_CLASS)
                         .build();
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
                 DnsResponse response = envelope.content();
-                if(response.count(DnsSection.ANSWER) > 0) {
+                if (response.count(DnsSection.ANSWER) > 0) {
                     DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                    if(record.type() == DnsRecordType.SRV) {
+                    if (record.type() == DnsRecordType.SRV) {
                         ByteBuf buf = record.content();
                         buf.skipBytes(4); // Skip priority and weight.
 
                         int port = buf.readUnsignedShort();
                         String host = DefaultDnsRecordDecoder.decodeName(buf);
-                        if(host.endsWith(".")) {
+                        if (host.endsWith(".")) {
                             host = host.substring(0, host.length() - 1);
                         }
 
@@ -197,23 +171,23 @@ public class TcpClientSession extends TcpSession {
 
                         this.host = host;
                         this.port = port;
-                    } else if(debug) {
+                    } else if (debug) {
                         System.out.println("[PacketLib] Received non-SRV record in response.");
                     }
-                } else if(debug) {
+                } else if (debug) {
                     System.out.println("[PacketLib] No SRV record found.");
                 }
             } catch(Exception e) {
-                if(debug) {
+                if (debug) {
                     System.out.println("[PacketLib] Failed to resolve SRV record.");
                     e.printStackTrace();
                 }
             } finally {
-                if(envelope != null) {
+                if (envelope != null) {
                     envelope.release();
                 }
 
-                if(resolver != null) {
+                if (resolver != null) {
                     resolver.close();
                 }
             }
@@ -241,7 +215,7 @@ public class TcpClientSession extends TcpSession {
         if(proxy != null) {
             switch(proxy.getType()) {
                 case HTTP:
-                    if(proxy.isAuthenticated()) {
+                    if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
@@ -249,7 +223,7 @@ public class TcpClientSession extends TcpSession {
 
                     break;
                 case SOCKS4:
-                    if(proxy.isAuthenticated()) {
+                    if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
                     } else {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
@@ -257,7 +231,7 @@ public class TcpClientSession extends TcpSession {
 
                     break;
                 case SOCKS5:
-                    if(proxy.isAuthenticated()) {
+                    if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
@@ -295,9 +269,33 @@ public class TcpClientSession extends TcpSession {
     @Override
     public void disconnect(String reason, Throwable cause) {
         super.disconnect(reason, cause);
-        if(this.group != null) {
-            this.group.shutdownGracefully();
-            this.group = null;
+    }
+
+    private static void createTcpEventLoopGroup() {
+        if (CHANNEL_CLASS != null) {
+            return;
+        }
+
+        switch (TransportHelper.determineTransportMethod()) {
+            case IO_URING:
+                EVENT_LOOP_GROUP = new IOUringEventLoopGroup();
+                CHANNEL_CLASS = IOUringSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
+                break;
+            case EPOLL:
+                EVENT_LOOP_GROUP = new EpollEventLoopGroup();
+                CHANNEL_CLASS = EpollSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
+                break;
+            case KQUEUE:
+                EVENT_LOOP_GROUP = new KQueueEventLoopGroup();
+                CHANNEL_CLASS = KQueueSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
+            case NIO:
+                EVENT_LOOP_GROUP = new NioEventLoopGroup();
+                CHANNEL_CLASS = NioSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
+                break;
         }
     }
 }
