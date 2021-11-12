@@ -18,20 +18,15 @@ import com.github.steveice10.mc.protocol.data.game.command.properties.StringProp
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundCommandsPacket implements Packet {
     private static final int FLAG_TYPE_MASK = 0x03;
@@ -45,11 +40,10 @@ public class ClientboundCommandsPacket implements Packet {
     private static final int ENTITY_FLAG_SINGLE_TARGET = 0x01;
     private static final int ENTITY_FLAG_PLAYERS_ONLY = 0x02;
 
-    private @NonNull CommandNode[] nodes;
-    private int firstNodeIndex;
+    private final @NonNull CommandNode[] nodes;
+    private final int firstNodeIndex;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundCommandsPacket(NetInput in) throws IOException {
         this.nodes = new CommandNode[in.readVarInt()];
         for (int i = 0; i < this.nodes.length; i++) {
             byte flags = in.readByte();
@@ -334,10 +328,5 @@ public class ClientboundCommandsPacket implements Packet {
         }
 
         out.writeVarInt(this.firstNodeIndex);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

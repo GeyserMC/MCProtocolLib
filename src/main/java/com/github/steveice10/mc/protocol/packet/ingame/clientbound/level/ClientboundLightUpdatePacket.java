@@ -17,18 +17,16 @@ import java.util.List;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundLightUpdatePacket implements Packet {
-    private int x;
-    private int z;
-    private @NonNull BitSet skyYMask;
-    private @NonNull BitSet blockYMask;
-    private @NonNull BitSet emptySkyYMask;
-    private @NonNull BitSet emptyBlockYMask;
-    private @NonNull List<byte[]> skyUpdates;
-    private @NonNull List<byte[]> blockUpdates;
-    private boolean trustEdges;
+    private final int x;
+    private final int z;
+    private final @NonNull BitSet skyYMask;
+    private final @NonNull BitSet blockYMask;
+    private final @NonNull BitSet emptySkyYMask;
+    private final @NonNull BitSet emptyBlockYMask;
+    private final @NonNull List<byte[]> skyUpdates;
+    private final @NonNull List<byte[]> blockUpdates;
+    private final boolean trustEdges;
 
     public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
                                         @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
@@ -54,8 +52,7 @@ public class ClientboundLightUpdatePacket implements Packet {
         this.trustEdges = trustEdges;
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundLightUpdatePacket(NetInput in) throws IOException {
         this.x = in.readVarInt();
         this.z = in.readVarInt();
         this.trustEdges = in.readBoolean();

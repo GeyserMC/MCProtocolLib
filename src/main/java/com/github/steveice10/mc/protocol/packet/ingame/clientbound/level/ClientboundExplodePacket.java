@@ -4,12 +4,9 @@ import com.github.steveice10.mc.protocol.data.game.level.block.ExplodedBlockReco
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -18,21 +15,18 @@ import java.util.List;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundExplodePacket implements Packet {
-    private float x;
-    private float y;
-    private float z;
-    private float radius;
-    private @NonNull List<ExplodedBlockRecord> exploded;
-    private float pushX;
-    private float pushY;
-    private float pushZ;
+    private final float x;
+    private final float y;
+    private final float z;
+    private final float radius;
+    private final @NonNull List<ExplodedBlockRecord> exploded;
+    private final float pushX;
+    private final float pushY;
+    private final float pushZ;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundExplodePacket(NetInput in) throws IOException {
         this.x = in.readFloat();
         this.y = in.readFloat();
         this.z = in.readFloat();
@@ -64,10 +58,5 @@ public class ClientboundExplodePacket implements Packet {
         out.writeFloat(this.pushX);
         out.writeFloat(this.pushY);
         out.writeFloat(this.pushZ);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

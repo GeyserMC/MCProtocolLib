@@ -14,19 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundCustomQueryPacket implements Packet {
-    private int messageId;
-    private byte[] data;
+    private final int messageId;
+    private final byte[] data;
 
     public ServerboundCustomQueryPacket(int messageId) {
         this(messageId, null);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundCustomQueryPacket(NetInput in) throws IOException {
         this.messageId = in.readVarInt();
         if (in.readBoolean()) {
             this.data = in.readBytes(in.available());
@@ -44,10 +41,5 @@ public class ServerboundCustomQueryPacket implements Packet {
         } else {
             out.writeBoolean(false);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -16,16 +16,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundPlayerCombatKillPacket implements Packet {
-    private int playerId;
-    private int killerId;
-    private Component message;
+    private final int playerId;
+    private final int killerId;
+    private final Component message;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundPlayerCombatKillPacket(NetInput in) throws IOException {
         this.playerId = in.readVarInt();
         this.killerId = in.readInt();
         this.message = DefaultComponentSerializer.get().deserialize(in.readString());
@@ -36,10 +33,5 @@ public class ClientboundPlayerCombatKillPacket implements Packet {
         out.writeVarInt(this.playerId);
         out.writeInt(this.killerId);
         out.writeString(DefaultComponentSerializer.get().serialize(this.message));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

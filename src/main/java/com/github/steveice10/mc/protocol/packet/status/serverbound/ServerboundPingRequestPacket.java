@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundPingRequestPacket implements Packet {
-    private long pingTime;
+    private final long pingTime;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundPingRequestPacket(NetInput in) throws IOException {
         this.pingTime = in.readLong();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeLong(this.pingTime);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

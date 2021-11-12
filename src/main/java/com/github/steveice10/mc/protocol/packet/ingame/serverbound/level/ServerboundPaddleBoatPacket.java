@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundPaddleBoatPacket implements Packet {
-    private boolean rightPaddleTurning;
-    private boolean leftPaddleTurning;
+    private final boolean rightPaddleTurning;
+    private final boolean leftPaddleTurning;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundPaddleBoatPacket(NetInput in) throws IOException {
         this.rightPaddleTurning = in.readBoolean();
         this.leftPaddleTurning = in.readBoolean();
     }
@@ -31,10 +28,5 @@ public class ServerboundPaddleBoatPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeBoolean(this.rightPaddleTurning);
         out.writeBoolean(this.leftPaddleTurning);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

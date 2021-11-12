@@ -7,33 +7,27 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundRespawnPacket implements Packet {
-    private @NonNull CompoundTag dimension;
-    private @NonNull String worldName;
-    private long hashedSeed;
-    private @NonNull GameMode gamemode;
-    private @NonNull GameMode previousGamemode;
-    private boolean debug;
-    private boolean flat;
-    private boolean copyMetadata;
+    private final @NonNull CompoundTag dimension;
+    private final @NonNull String worldName;
+    private final long hashedSeed;
+    private final @NonNull GameMode gamemode;
+    private final @NonNull GameMode previousGamemode;
+    private final boolean debug;
+    private final boolean flat;
+    private final boolean copyMetadata;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundRespawnPacket(NetInput in) throws IOException {
         this.dimension = NBT.read(in);
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
@@ -54,10 +48,5 @@ public class ClientboundRespawnPacket implements Packet {
         out.writeBoolean(this.debug);
         out.writeBoolean(this.flat);
         out.writeBoolean(this.copyMetadata);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

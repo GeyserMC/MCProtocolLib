@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetBorderLerpSizePacket implements Packet {
-    private double oldSize;
-    private double newSize;
-    private long lerpTime;
+    private final double oldSize;
+    private final double newSize;
+    private final long lerpTime;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetBorderLerpSizePacket(NetInput in) throws IOException {
         this.oldSize = in.readDouble();
         this.newSize = in.readDouble();
         this.lerpTime = in.readVarLong();
@@ -34,10 +31,5 @@ public class ClientboundSetBorderLerpSizePacket implements Packet {
         out.writeDouble(this.oldSize);
         out.writeDouble(this.newSize);
         out.writeVarLong(this.lerpTime);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

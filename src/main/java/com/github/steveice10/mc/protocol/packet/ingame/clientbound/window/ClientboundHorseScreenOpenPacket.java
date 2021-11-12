@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundHorseScreenOpenPacket implements Packet {
-    private int windowId;
-    private int numberOfSlots;
-    private int entityId;
+    private final int windowId;
+    private final int numberOfSlots;
+    private final int entityId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundHorseScreenOpenPacket(NetInput in) throws IOException {
         this.windowId = in.readByte();
         this.numberOfSlots = in.readVarInt();
         this.entityId = in.readInt();
@@ -34,10 +31,5 @@ public class ClientboundHorseScreenOpenPacket implements Packet {
         out.writeByte(this.windowId);
         out.writeVarInt(this.numberOfSlots);
         out.writeInt(this.entityId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

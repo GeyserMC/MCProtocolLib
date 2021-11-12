@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetBorderCenterPacket implements Packet {
-    private double newCenterX;
-    private double newCenterZ;
+    private final double newCenterX;
+    private final double newCenterZ;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetBorderCenterPacket(NetInput in) throws IOException {
         this.newCenterX = in.readDouble();
         this.newCenterZ = in.readDouble();
     }
@@ -31,10 +28,5 @@ public class ClientboundSetBorderCenterPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeDouble(this.newCenterX);
         out.writeDouble(this.newCenterZ);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

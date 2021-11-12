@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundContainerClosePacket implements Packet {
-    private int windowId;
+    private final int windowId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundContainerClosePacket(NetInput in) throws IOException {
         this.windowId = in.readUnsignedByte();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

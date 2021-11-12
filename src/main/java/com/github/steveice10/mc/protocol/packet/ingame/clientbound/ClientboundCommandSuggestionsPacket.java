@@ -4,11 +4,8 @@ import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -17,14 +14,12 @@ import java.util.Arrays;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundCommandSuggestionsPacket implements Packet {
-    private int transactionId;
-    private int start;
-    private int length;
-    private @NonNull String[] matches;
-    private @NonNull Component[] tooltips;
+    private final int transactionId;
+    private final int start;
+    private final int length;
+    private final @NonNull String[] matches;
+    private final @NonNull Component[] tooltips;
 
     public ClientboundCommandSuggestionsPacket(int transactionId, int start, int length, @NonNull String[] matches, @NonNull Component[] tooltips) {
         if (tooltips.length != matches.length) {
@@ -38,8 +33,7 @@ public class ClientboundCommandSuggestionsPacket implements Packet {
         this.tooltips = Arrays.copyOf(tooltips, tooltips.length);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundCommandSuggestionsPacket(NetInput in) throws IOException {
         this.transactionId = in.readVarInt();
         this.start = in.readVarInt();
         this.length = in.readVarInt();
@@ -69,10 +63,5 @@ public class ClientboundCommandSuggestionsPacket implements Packet {
                 out.writeBoolean(false);
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

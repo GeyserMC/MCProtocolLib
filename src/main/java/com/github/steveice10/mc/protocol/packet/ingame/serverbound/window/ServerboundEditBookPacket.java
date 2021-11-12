@@ -17,17 +17,13 @@ import java.util.List;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundEditBookPacket implements Packet {
-    private int slot;
-    private List<String> pages;
-    private @Nullable
-    String title;
+    private final int slot;
+    private final List<String> pages;
+    private final @Nullable String title;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundEditBookPacket(NetInput in) throws IOException {
         this.slot = in.readVarInt();
         this.pages = new ArrayList<>();
         int pagesSize = in.readVarInt();
@@ -52,10 +48,5 @@ public class ServerboundEditBookPacket implements Packet {
         if (this.title != null) {
             out.writeString(title);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

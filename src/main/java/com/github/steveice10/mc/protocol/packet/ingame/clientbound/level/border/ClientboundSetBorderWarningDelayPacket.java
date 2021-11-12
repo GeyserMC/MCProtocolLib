@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetBorderWarningDelayPacket implements Packet {
-    private int warningDelay;
+    private final int warningDelay;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetBorderWarningDelayPacket(NetInput in) throws IOException {
         this.warningDelay = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.warningDelay);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

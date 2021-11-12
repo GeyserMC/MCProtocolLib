@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundMovePlayerRotPacket implements Packet {
-    private boolean onGround;
-    private float yaw;
-    private float pitch;
+    private final boolean onGround;
+    private final float yaw;
+    private final float pitch;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundMovePlayerRotPacket(NetInput in) throws IOException {
         this.yaw = in.readFloat();
         this.pitch = in.readFloat();
         this.onGround = in.readBoolean();
@@ -34,10 +31,5 @@ public class ServerboundMovePlayerRotPacket implements Packet {
         out.writeFloat(this.yaw);
         out.writeFloat(this.pitch);
         out.writeBoolean(this.onGround);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

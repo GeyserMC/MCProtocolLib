@@ -14,20 +14,17 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundTeleportEntityPacket implements Packet {
-    private int entityId;
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
-    private boolean onGround;
+    private final int entityId;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float yaw;
+    private final float pitch;
+    private final boolean onGround;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundTeleportEntityPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -46,10 +43,5 @@ public class ClientboundTeleportEntityPacket implements Packet {
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeBoolean(this.onGround);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

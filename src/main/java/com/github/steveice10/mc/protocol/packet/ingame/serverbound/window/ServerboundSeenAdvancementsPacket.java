@@ -16,11 +16,12 @@ import java.io.IOException;
 @EqualsAndHashCode
 public class ServerboundSeenAdvancementsPacket implements Packet {
     @Getter
-    private @NonNull AdvancementTabAction action;
-    private String tabId;
+    private final @NonNull AdvancementTabAction action;
+    private final String tabId;
 
     public ServerboundSeenAdvancementsPacket() {
         this.action = AdvancementTabAction.CLOSED_SCREEN;
+        this.tabId = null;
     }
 
     public ServerboundSeenAdvancementsPacket(@NonNull String tabId) {
@@ -28,6 +29,9 @@ public class ServerboundSeenAdvancementsPacket implements Packet {
         this.tabId = tabId;
     }
 
+    /**
+     * @throws IllegalStateException if {@link #getAction()} is not {@link AdvancementTabAction#OPENED_TAB}.
+     */
     public String getTabId() {
         if (this.action != AdvancementTabAction.OPENED_TAB) {
             throw new IllegalStateException("tabId is only set if action is " + AdvancementTabAction.OPENED_TAB
@@ -37,11 +41,11 @@ public class ServerboundSeenAdvancementsPacket implements Packet {
         return this.tabId;
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundSeenAdvancementsPacket(NetInput in) throws IOException {
         this.action = MagicValues.key(AdvancementTabAction.class, in.readVarInt());
         switch (this.action) {
             case CLOSED_SCREEN:
+                this.tabId = null;
                 break;
             case OPENED_TAB:
                 this.tabId = in.readString();
@@ -63,10 +67,5 @@ public class ServerboundSeenAdvancementsPacket implements Packet {
             default:
                 throw new IOException("Unknown advancement tab action: " + this.action);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

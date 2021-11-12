@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundEntityTagQuery implements Packet {
-    private int transactionId;
-    private int entityId;
+    private final int transactionId;
+    private final int entityId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundEntityTagQuery(NetInput in) throws IOException {
         this.transactionId = in.readVarInt();
         this.entityId = in.readVarInt();
     }
@@ -31,10 +28,5 @@ public class ServerboundEntityTagQuery implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.transactionId);
         out.writeVarInt(this.entityId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

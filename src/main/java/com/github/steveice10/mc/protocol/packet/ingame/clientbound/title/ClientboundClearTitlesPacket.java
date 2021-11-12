@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundClearTitlesPacket implements Packet {
-    private boolean resetTimes;
+    private final boolean resetTimes;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundClearTitlesPacket(NetInput in) throws IOException {
         this.resetTimes = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeBoolean(this.resetTimes);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

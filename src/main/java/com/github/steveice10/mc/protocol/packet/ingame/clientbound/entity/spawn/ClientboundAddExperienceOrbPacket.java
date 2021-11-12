@@ -14,18 +14,15 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundAddExperienceOrbPacket implements Packet {
-    private int entityId;
-    private double x;
-    private double y;
-    private double z;
-    private int exp;
+    private final int entityId;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final int exp;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundAddExperienceOrbPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -40,10 +37,5 @@ public class ClientboundAddExperienceOrbPacket implements Packet {
         out.writeDouble(this.y);
         out.writeDouble(this.z);
         out.writeShort(this.exp);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

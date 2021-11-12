@@ -4,29 +4,23 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundContainerSetContentPacket implements Packet {
-    private int windowId;
-    private int stateId;
-    private @NonNull ItemStack[] items;
-    private ItemStack carriedItem;
+    private final int windowId;
+    private final int stateId;
+    private final @NonNull ItemStack[] items;
+    private final ItemStack carriedItem;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundContainerSetContentPacket(NetInput in) throws IOException {
         this.windowId = in.readUnsignedByte();
         this.stateId = in.readVarInt();
         this.items = new ItemStack[in.readVarInt()];
@@ -45,10 +39,5 @@ public class ClientboundContainerSetContentPacket implements Packet {
             ItemStack.write(out, item);
         }
         ItemStack.write(out, this.carriedItem);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

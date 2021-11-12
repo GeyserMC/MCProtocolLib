@@ -9,36 +9,31 @@ import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundCustomSoundPacket implements Packet {
-    private @NonNull Sound sound;
-    private @NonNull SoundCategory category;
-    private double x;
-    private double y;
-    private double z;
-    private float volume;
-    private float pitch;
+    private final @NonNull Sound sound;
+    private final @NonNull SoundCategory category;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float volume;
+    private final float pitch;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundCustomSoundPacket(NetInput in) throws IOException {
         String value = in.readString();
-        try {
-            this.sound = MagicValues.key(BuiltinSound.class, value);
-        } catch (UnmappedValueException e) {
+        Sound sound = BuiltinSound.NAME_TO_SOUND.get(value);
+        if (sound != null) {
+            this.sound = sound;
+        } else {
             this.sound = new CustomSound(value);
         }
 
@@ -56,7 +51,7 @@ public class ClientboundCustomSoundPacket implements Packet {
         if (this.sound instanceof CustomSound) {
             value = ((CustomSound) this.sound).getName();
         } else if (this.sound instanceof BuiltinSound) {
-            value = MagicValues.value(String.class, this.sound);
+            value = ((BuiltinSound) this.sound).getName();
         }
 
         out.writeString(value);
@@ -66,10 +61,5 @@ public class ClientboundCustomSoundPacket implements Packet {
         out.writeInt((int) (this.z * 8));
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

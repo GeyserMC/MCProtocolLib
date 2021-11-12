@@ -15,15 +15,11 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundRemoveEntitiesPacket implements Packet {
-    private @Nonnull
-    int[] entityIds;
+    private final @Nonnull int[] entityIds;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundRemoveEntitiesPacket(NetInput in) throws IOException {
         this.entityIds = new int[in.readVarInt()];
         for (int i = 0; i < this.entityIds.length; i++) {
             this.entityIds[i] = in.readVarInt();
@@ -36,10 +32,5 @@ public class ClientboundRemoveEntitiesPacket implements Packet {
         for (int entityId : this.entityIds) {
             out.writeVarInt(entityId);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

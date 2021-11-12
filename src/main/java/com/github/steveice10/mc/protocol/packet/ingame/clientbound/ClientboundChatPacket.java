@@ -6,12 +6,9 @@ import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -20,13 +17,11 @@ import java.util.UUID;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundChatPacket implements Packet {
-    private @NonNull Component message;
-    private @NonNull MessageType type;
-    private @NonNull UUID senderUuid;
+    private final @NonNull Component message;
+    private final @NonNull MessageType type;
+    private final @NonNull UUID senderUuid;
 
     public ClientboundChatPacket(@NonNull String text) {
         this(DefaultComponentSerializer.get().deserialize(text));
@@ -48,8 +43,7 @@ public class ClientboundChatPacket implements Packet {
         this(DefaultComponentSerializer.get().deserialize(text), type, uuid);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundChatPacket(NetInput in) throws IOException {
         this.message = DefaultComponentSerializer.get().deserialize(in.readString());
         this.type = MagicValues.key(MessageType.class, in.readByte());
         this.senderUuid = in.readUUID();
@@ -60,10 +54,5 @@ public class ClientboundChatPacket implements Packet {
         out.writeString(DefaultComponentSerializer.get().serialize(this.message));
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeUUID(this.senderUuid);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

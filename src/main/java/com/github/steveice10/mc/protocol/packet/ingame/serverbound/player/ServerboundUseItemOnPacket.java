@@ -7,32 +7,26 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundUseItemOnPacket implements Packet {
-    private @NonNull Position position;
-    private @NonNull BlockFace face;
-    private @NonNull Hand hand;
-    private float cursorX;
-    private float cursorY;
-    private float cursorZ;
-    private boolean insideBlock;
+    private final @NonNull Position position;
+    private final @NonNull BlockFace face;
+    private final @NonNull Hand hand;
+    private final float cursorX;
+    private final float cursorY;
+    private final float cursorZ;
+    private final boolean insideBlock;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundUseItemOnPacket(NetInput in) throws IOException {
         this.hand = MagicValues.key(Hand.class, in.readVarInt());
         this.position = Position.read(in);
         this.face = MagicValues.key(BlockFace.class, in.readVarInt());
@@ -51,10 +45,5 @@ public class ServerboundUseItemOnPacket implements Packet {
         out.writeFloat(this.cursorY);
         out.writeFloat(this.cursorZ);
         out.writeBoolean(this.insideBlock);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

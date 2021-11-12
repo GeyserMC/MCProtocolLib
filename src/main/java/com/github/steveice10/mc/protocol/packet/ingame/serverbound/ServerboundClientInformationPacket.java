@@ -7,12 +7,9 @@ import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -21,20 +18,17 @@ import java.util.List;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundClientInformationPacket implements Packet {
-    private @NonNull String locale;
-    private int renderDistance;
-    private @NonNull ChatVisibility chatVisibility;
-    private boolean useChatColors;
-    private @NonNull List<SkinPart> visibleParts;
-    private @NonNull HandPreference mainHand;
-    private boolean textFilteringEnabled;
+    private final @NonNull String locale;
+    private final int renderDistance;
+    private final @NonNull ChatVisibility chatVisibility;
+    private final boolean useChatColors;
+    private final @NonNull List<SkinPart> visibleParts;
+    private final @NonNull HandPreference mainHand;
+    private final boolean textFilteringEnabled;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundClientInformationPacket(NetInput in) throws IOException {
         this.locale = in.readString();
         this.renderDistance = in.readByte();
         this.chatVisibility = MagicValues.key(ChatVisibility.class, in.readVarInt());
@@ -42,7 +36,7 @@ public class ServerboundClientInformationPacket implements Packet {
         this.visibleParts = new ArrayList<>();
 
         int flags = in.readUnsignedByte();
-        for (SkinPart part : SkinPart.values()) {
+        for (SkinPart part : SkinPart.VALUES) {
             int bit = 1 << part.ordinal();
             if ((flags & bit) == bit) {
                 this.visibleParts.add(part);
@@ -69,10 +63,5 @@ public class ServerboundClientInformationPacket implements Packet {
 
         out.writeVarInt(MagicValues.value(Integer.class, this.mainHand));
         out.writeBoolean(this.textFilteringEnabled);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

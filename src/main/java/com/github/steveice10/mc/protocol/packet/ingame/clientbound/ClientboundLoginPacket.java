@@ -7,43 +7,37 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundLoginPacket implements Packet {
     private static final int GAMEMODE_MASK = 0x07;
 
-    private int entityId;
-    private boolean hardcore;
-    private @NonNull GameMode gameMode;
-    private GameMode previousGamemode;
-    private int worldCount;
-    private @NonNull String[] worldNames;
-    private @NonNull CompoundTag dimensionCodec;
-    private @NonNull CompoundTag dimension;
-    private @NonNull String worldName;
-    private long hashedSeed;
-    private int maxPlayers;
-    private int viewDistance;
-    private boolean reducedDebugInfo;
-    private boolean enableRespawnScreen;
-    private boolean debug;
-    private boolean flat;
+    private final int entityId;
+    private final boolean hardcore;
+    private final @NonNull GameMode gameMode;
+    private final GameMode previousGamemode;
+    private final int worldCount;
+    private final @NonNull String[] worldNames;
+    private final @NonNull CompoundTag dimensionCodec;
+    private final @NonNull CompoundTag dimension;
+    private final @NonNull String worldName;
+    private final long hashedSeed;
+    private final int maxPlayers;
+    private final int viewDistance;
+    private final boolean reducedDebugInfo;
+    private final boolean enableRespawnScreen;
+    private final boolean debug;
+    private final boolean flat;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundLoginPacket(NetInput in) throws IOException {
         this.entityId = in.readInt();
 
         this.hardcore = in.readBoolean();
@@ -90,10 +84,5 @@ public class ClientboundLoginPacket implements Packet {
         out.writeBoolean(this.enableRespawnScreen);
         out.writeBoolean(this.debug);
         out.writeBoolean(this.flat);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

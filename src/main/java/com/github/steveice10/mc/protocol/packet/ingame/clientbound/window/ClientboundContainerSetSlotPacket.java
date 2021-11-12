@@ -15,17 +15,14 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundContainerSetSlotPacket implements Packet {
-    private int windowId;
-    private int stateId;
-    private int slot;
-    private ItemStack item;
+    private final int windowId;
+    private final int stateId;
+    private final int slot;
+    private final ItemStack item;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundContainerSetSlotPacket(NetInput in) throws IOException {
         this.windowId = in.readUnsignedByte();
         this.stateId = in.readVarInt();
         this.slot = in.readShort();
@@ -38,10 +35,5 @@ public class ClientboundContainerSetSlotPacket implements Packet {
         out.writeVarInt(this.stateId);
         out.writeShort(this.slot);
         ItemStack.write(out, this.item);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

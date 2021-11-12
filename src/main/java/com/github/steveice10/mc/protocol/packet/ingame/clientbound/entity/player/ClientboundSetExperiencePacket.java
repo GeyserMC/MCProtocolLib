@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetExperiencePacket implements Packet {
-    private float experience;
-    private int level;
-    private int totalExperience;
+    private final float experience;
+    private final int level;
+    private final int totalExperience;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetExperiencePacket(NetInput in) throws IOException {
         this.experience = in.readFloat();
         this.level = in.readVarInt();
         this.totalExperience = in.readVarInt();
@@ -34,10 +31,5 @@ public class ClientboundSetExperiencePacket implements Packet {
         out.writeFloat(this.experience);
         out.writeVarInt(this.level);
         out.writeVarInt(this.totalExperience);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

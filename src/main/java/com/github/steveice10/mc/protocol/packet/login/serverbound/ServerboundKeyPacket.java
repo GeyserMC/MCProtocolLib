@@ -5,7 +5,6 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 
@@ -20,10 +19,9 @@ import java.security.PublicKey;
 
 @ToString
 @EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerboundKeyPacket implements Packet {
-    private @NonNull byte[] sharedKey;
-    private @NonNull byte[] verifyToken;
+    private final @NonNull byte[] sharedKey;
+    private final @NonNull byte[] verifyToken;
 
     public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] verifyToken) {
         this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
@@ -38,8 +36,7 @@ public class ServerboundKeyPacket implements Packet {
         return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.verifyToken);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundKeyPacket(NetInput in) throws IOException {
         this.sharedKey = in.readBytes(in.readVarInt());
         this.verifyToken = in.readBytes(in.readVarInt());
     }

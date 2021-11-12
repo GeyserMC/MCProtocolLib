@@ -8,28 +8,22 @@ import com.github.steveice10.mc.protocol.data.game.level.vibration.VibrationSour
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundAddVibrationSignalPacket implements Packet {
-    private @NonNull Position origin;
-    private @NonNull VibrationSource destination;
-    private int arrivalInTicks;
+    private final @NonNull Position origin;
+    private final @NonNull VibrationSource destination;
+    private final int arrivalInTicks;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundAddVibrationSignalPacket(NetInput in) throws IOException {
         this.origin = Position.read(in);
         String identifier = Identifier.formalize(in.readString());
         switch (identifier) {
@@ -56,10 +50,5 @@ public class ClientboundAddVibrationSignalPacket implements Packet {
             EntityVibrationSource.write(out, (EntityVibrationSource) this.destination);
         }
         out.writeVarInt(this.arrivalInTicks);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

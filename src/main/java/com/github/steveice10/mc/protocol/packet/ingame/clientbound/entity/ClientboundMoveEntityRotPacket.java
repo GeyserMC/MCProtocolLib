@@ -14,17 +14,14 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundMoveEntityRotPacket implements Packet {
-    private int entityId;
-    private float yaw;
-    private float pitch;
-    private boolean onGround;
+    private final int entityId;
+    private final float yaw;
+    private final float pitch;
+    private final boolean onGround;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundMoveEntityRotPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.yaw = in.readByte() * 360 / 256f;
         this.pitch = in.readByte() * 360 / 256f;
@@ -37,10 +34,5 @@ public class ClientboundMoveEntityRotPacket implements Packet {
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeBoolean(this.onGround);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

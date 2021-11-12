@@ -8,12 +8,9 @@ import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -21,23 +18,20 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundMapItemDataPacket implements Packet {
-    private int mapId;
-    private byte scale;
-    private boolean locked;
-    private @NonNull MapIcon[] icons;
+    private final int mapId;
+    private final byte scale;
+    private final boolean locked;
+    private final @NonNull MapIcon[] icons;
 
-    private MapData data;
+    private final MapData data;
 
     public ClientboundMapItemDataPacket(int mapId, byte scale, boolean locked, @NonNull MapIcon[] icons) {
         this(mapId, scale, locked, icons, null);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundMapItemDataPacket(NetInput in) throws IOException {
         this.mapId = in.readVarInt();
         this.scale = in.readByte();
         this.locked = in.readBoolean();
@@ -66,6 +60,8 @@ public class ClientboundMapItemDataPacket implements Packet {
             byte[] data = in.readBytes(in.readVarInt());
 
             this.data = new MapData(columns, rows, x, y, data);
+        } else {
+            this.data = null;
         }
     }
 
@@ -104,10 +100,5 @@ public class ClientboundMapItemDataPacket implements Packet {
         } else {
             out.writeByte(0);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

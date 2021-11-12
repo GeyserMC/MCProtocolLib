@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetChunkCacheCenterPacket implements Packet {
-    private int chunkX;
-    private int chunkZ;
+    private final int chunkX;
+    private final int chunkZ;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetChunkCacheCenterPacket(NetInput in) throws IOException {
         this.chunkX = in.readVarInt();
         this.chunkZ = in.readVarInt();
     }
@@ -31,10 +28,5 @@ public class ClientboundSetChunkCacheCenterPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.chunkX);
         out.writeVarInt(this.chunkZ);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

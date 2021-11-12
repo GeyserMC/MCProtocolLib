@@ -4,12 +4,9 @@ import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -18,14 +15,11 @@ import java.util.Map;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundUpdateTagsPacket implements Packet {
-    private @NonNull Map<String, Map<String, int[]>> tags = new HashMap<>();
+    private final @NonNull Map<String, Map<String, int[]>> tags = new HashMap<>();
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundUpdateTagsPacket(NetInput in) throws IOException {
         int totalTagCount = in.readVarInt();
         for (int i = 0; i < totalTagCount; i++) {
             Map<String, int[]> tag = new HashMap<>();
@@ -59,10 +53,5 @@ public class ClientboundUpdateTagsPacket implements Packet {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

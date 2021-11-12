@@ -16,24 +16,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetActionBarTextPacket implements Packet {
-    private Component text;
+    private final Component text;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetActionBarTextPacket(NetInput in) throws IOException {
         this.text = DefaultComponentSerializer.get().deserialize(in.readString());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(DefaultComponentSerializer.get().serialize(this.text));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -14,17 +14,14 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetEntityMotionPacket implements Packet {
-    private int entityId;
-    private double motionX;
-    private double motionY;
-    private double motionZ;
+    private final int entityId;
+    private final double motionX;
+    private final double motionY;
+    private final double motionZ;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetEntityMotionPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.motionX = in.readShort() / 8000D;
         this.motionY = in.readShort() / 8000D;
@@ -37,10 +34,5 @@ public class ClientboundSetEntityMotionPacket implements Packet {
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));
         out.writeShort((int) (this.motionZ * 8000));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

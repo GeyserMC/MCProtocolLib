@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetEntityLinkPacket implements Packet {
-    private int entityId;
-    private int attachedToId;
+    private final int entityId;
+    private final int attachedToId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetEntityLinkPacket(NetInput in) throws IOException {
         this.entityId = in.readInt();
         this.attachedToId = in.readInt();
     }
@@ -31,10 +28,5 @@ public class ClientboundSetEntityLinkPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.entityId);
         out.writeInt(this.attachedToId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

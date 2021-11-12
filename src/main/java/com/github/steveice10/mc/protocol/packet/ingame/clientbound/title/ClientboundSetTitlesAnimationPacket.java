@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetTitlesAnimationPacket implements Packet {
-    private int fadeIn;
-    private int stay;
-    private int fadeOut;
+    private final int fadeIn;
+    private final int stay;
+    private final int fadeOut;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetTitlesAnimationPacket(NetInput in) throws IOException {
         this.fadeIn = in.readInt();
         this.stay = in.readInt();
         this.fadeOut = in.readInt();
@@ -34,10 +31,5 @@ public class ClientboundSetTitlesAnimationPacket implements Packet {
         out.writeInt(this.fadeIn);
         out.writeInt(this.stay);
         out.writeInt(this.fadeOut);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

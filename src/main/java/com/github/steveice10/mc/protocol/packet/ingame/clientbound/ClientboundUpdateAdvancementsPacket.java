@@ -9,12 +9,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -26,18 +23,16 @@ import java.util.Map;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundUpdateAdvancementsPacket implements Packet {
     private static final int FLAG_HAS_BACKGROUND_TEXTURE = 0x01;
     private static final int FLAG_SHOW_TOAST = 0x02;
     private static final int FLAG_HIDDEN = 0x04;
 
-    private boolean reset;
-    private @NonNull Advancement[] advancements;
-    private @NonNull String[] removedAdvancements;
-    private @NonNull Map<String, Map<String, Long>> progress;
+    private final boolean reset;
+    private final @NonNull Advancement[] advancements;
+    private final @NonNull String[] removedAdvancements;
+    private final @NonNull Map<String, Map<String, Long>> progress;
 
     public Map<String, Long> getProgress(@NonNull String advancementId) {
         return this.progress.get(advancementId);
@@ -52,8 +47,7 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
         return progress.get(criterionId);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundUpdateAdvancementsPacket(NetInput in) throws IOException {
         this.reset = in.readBoolean();
 
         this.advancements = new Advancement[in.readVarInt()];
@@ -204,10 +198,5 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -16,17 +16,15 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSectionBlocksUpdatePacket implements Packet {
-    private int chunkX;
-    private int chunkY;
-    private int chunkZ;
-    private boolean ignoreOldLight;
+    private final int chunkX;
+    private final int chunkY;
+    private final int chunkZ;
+    private final boolean ignoreOldLight;
     /**
      * The server sends the record position in terms of the local chunk coordinate but it is stored here in terms of global coordinates.
      */
-    private @NonNull BlockChangeRecord[] records;
+    private final @NonNull BlockChangeRecord[] records;
 
     public ClientboundSectionBlocksUpdatePacket(int chunkX, int chunkY, int chunkZ, boolean ignoreOldLight, BlockChangeRecord... records) {
         if (records == null || records.length == 0) {
@@ -40,8 +38,7 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
         this.records = records;
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSectionBlocksUpdatePacket(NetInput in) throws IOException {
         long chunkPosition = in.readLong();
         this.chunkX = (int) (chunkPosition >> 42);
         this.chunkY = (int) (chunkPosition << 44 >> 44);
@@ -70,10 +67,5 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
             short position = (short) ((record.getPosition().getX() - (this.chunkX << 4)) << 8 | (record.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (record.getPosition().getY() - (this.chunkY << 4)));
             out.writeVarLong((long) record.getBlock() << 12 | position);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

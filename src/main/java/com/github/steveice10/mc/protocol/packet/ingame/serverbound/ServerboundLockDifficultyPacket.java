@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundLockDifficultyPacket implements Packet {
-    private boolean locked;
+    private final boolean locked;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundLockDifficultyPacket(NetInput in) throws IOException {
         this.locked = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeBoolean(this.locked);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

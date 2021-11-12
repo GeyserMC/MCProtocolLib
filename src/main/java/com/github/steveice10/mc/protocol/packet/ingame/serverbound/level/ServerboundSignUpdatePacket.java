@@ -6,9 +6,7 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -16,11 +14,9 @@ import java.util.Arrays;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerboundSignUpdatePacket implements Packet {
-    private @NonNull Position position;
-    private @NonNull String lines[];
+    private final @NonNull Position position;
+    private final @NonNull String lines[];
 
     public ServerboundSignUpdatePacket(@NonNull Position position, @NonNull String lines[]) {
         if (lines.length != 4) {
@@ -31,8 +27,7 @@ public class ServerboundSignUpdatePacket implements Packet {
         this.lines = Arrays.copyOf(lines, lines.length);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundSignUpdatePacket(NetInput in) throws IOException {
         this.position = Position.read(in);
         this.lines = new String[4];
         for (int count = 0; count < this.lines.length; count++) {
@@ -46,10 +41,5 @@ public class ServerboundSignUpdatePacket implements Packet {
         for (String line : this.lines) {
             out.writeString(line);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

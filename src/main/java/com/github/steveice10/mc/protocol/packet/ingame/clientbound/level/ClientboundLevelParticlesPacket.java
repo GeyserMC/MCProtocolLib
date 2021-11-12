@@ -6,35 +6,29 @@ import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundLevelParticlesPacket implements Packet {
-    private @NonNull Particle particle;
-    private boolean longDistance;
-    private double x;
-    private double y;
-    private double z;
-    private float offsetX;
-    private float offsetY;
-    private float offsetZ;
-    private float velocityOffset;
-    private int amount;
+    private final @NonNull Particle particle;
+    private final boolean longDistance;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float offsetX;
+    private final float offsetY;
+    private final float offsetZ;
+    private final float velocityOffset;
+    private final int amount;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundLevelParticlesPacket(NetInput in) throws IOException {
         ParticleType type = ParticleType.VALUES[in.readInt()];
         this.longDistance = in.readBoolean();
         this.x = in.readDouble();
@@ -61,10 +55,5 @@ public class ClientboundLevelParticlesPacket implements Packet {
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
         ParticleData.write(out, this.particle.getType(), this.particle.getData());
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

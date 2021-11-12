@@ -157,7 +157,7 @@ public class ServerListener extends SessionAdapter {
         Session session = event.getSession();
         if (event.getPacket() instanceof ClientboundLoginCompressionPacket) {
             session.setCompressionThreshold(event.<ClientboundLoginCompressionPacket>getPacket().getThreshold());
-            session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY)));
+            session.send(new ClientboundGameProfilePacket((GameProfile) session.getFlag(MinecraftConstants.PROFILE_KEY)));
         } else if (event.getPacket() instanceof ClientboundGameProfilePacket) {
             ((MinecraftProtocol) session.getPacketProtocol()).setSubProtocol(SubProtocol.GAME, false, session);
             ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);

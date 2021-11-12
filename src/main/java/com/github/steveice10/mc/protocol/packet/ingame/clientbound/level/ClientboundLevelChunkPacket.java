@@ -9,12 +9,9 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.io.stream.StreamNetInput;
 import com.github.steveice10.packetlib.io.stream.StreamNetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.ByteArrayInputStream;
@@ -24,14 +21,11 @@ import java.util.BitSet;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundLevelChunkPacket implements Packet {
-    private @NonNull Column column;
+    private final @NonNull Column column;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundLevelChunkPacket(NetInput in) throws IOException {
         int x = in.readInt();
         int z = in.readInt();
         BitSet chunkMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
@@ -91,10 +85,5 @@ public class ClientboundLevelChunkPacket implements Packet {
         for (CompoundTag tag : this.column.getTileEntities()) {
             NBT.write(out, tag);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

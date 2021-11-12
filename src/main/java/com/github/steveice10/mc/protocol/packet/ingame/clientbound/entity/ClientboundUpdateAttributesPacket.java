@@ -9,12 +9,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOper
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -23,15 +20,12 @@ import java.util.List;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundUpdateAttributesPacket implements Packet {
-    private int entityId;
-    private @NonNull List<Attribute> attributes;
+    private final int entityId;
+    private final @NonNull List<Attribute> attributes;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundUpdateAttributesPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.attributes = new ArrayList<>();
         int length = in.readVarInt();
@@ -62,10 +56,5 @@ public class ClientboundUpdateAttributesPacket implements Packet {
                 out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

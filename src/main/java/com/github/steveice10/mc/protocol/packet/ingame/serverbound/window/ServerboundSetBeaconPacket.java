@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundSetBeaconPacket implements Packet {
-    private int primaryEffect;
-    private int secondaryEffect;
+    private final int primaryEffect;
+    private final int secondaryEffect;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundSetBeaconPacket(NetInput in) throws IOException {
         this.primaryEffect = in.readVarInt();
         this.secondaryEffect = in.readVarInt();
     }
@@ -31,10 +28,5 @@ public class ServerboundSetBeaconPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.primaryEffect);
         out.writeVarInt(this.secondaryEffect);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

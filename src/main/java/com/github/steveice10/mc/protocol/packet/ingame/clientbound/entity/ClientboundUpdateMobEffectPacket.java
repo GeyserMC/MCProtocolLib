@@ -4,34 +4,28 @@ import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundUpdateMobEffectPacket implements Packet {
     private static final int FLAG_AMBIENT = 0x01;
     private static final int FLAG_SHOW_PARTICLES = 0x02;
 
-    private int entityId;
-    private @NonNull Effect effect;
-    private int amplifier;
-    private int duration;
-    private boolean ambient;
-    private boolean showParticles;
+    private final int entityId;
+    private final @NonNull Effect effect;
+    private final int amplifier;
+    private final int duration;
+    private final boolean ambient;
+    private final boolean showParticles;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundUpdateMobEffectPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.effect = Effect.fromNetworkId(in.readByte());
         this.amplifier = in.readByte();
@@ -59,10 +53,5 @@ public class ClientboundUpdateMobEffectPacket implements Packet {
         }
 
         out.writeByte(flags);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

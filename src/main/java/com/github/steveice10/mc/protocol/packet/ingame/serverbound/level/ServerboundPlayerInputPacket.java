@@ -14,20 +14,17 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundPlayerInputPacket implements Packet {
     private static final int FLAG_JUMP = 0x01;
     private static final int FLAG_DISMOUNT = 0x02;
 
-    private float sideways;
-    private float forward;
-    private boolean jump;
-    private boolean dismount;
+    private final float sideways;
+    private final float forward;
+    private final boolean jump;
+    private final boolean dismount;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundPlayerInputPacket(NetInput in) throws IOException {
         this.sideways = in.readFloat();
         this.forward = in.readFloat();
 
@@ -51,10 +48,5 @@ public class ServerboundPlayerInputPacket implements Packet {
         }
 
         out.writeByte(flags);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

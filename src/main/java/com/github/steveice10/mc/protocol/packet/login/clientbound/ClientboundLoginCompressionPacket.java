@@ -14,14 +14,11 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundLoginCompressionPacket implements Packet {
-    private int threshold;
+    private final int threshold;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundLoginCompressionPacket(NetInput in) throws IOException {
         this.threshold = in.readVarInt();
     }
 

@@ -5,36 +5,28 @@ import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.With;
+import lombok.*;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundRecipePacket implements Packet {
-    private @NonNull UnlockRecipesAction action;
+    private final @NonNull UnlockRecipesAction action;
 
-    private @NonNull String[] recipes;
-    private boolean openCraftingBook;
-    private boolean activateCraftingFiltering;
-    private boolean openSmeltingBook;
-    private boolean activateSmeltingFiltering;
-    private boolean openBlastingBook;
-    private boolean activateBlastingFiltering;
-    private boolean openSmokingBook;
-    private boolean activateSmokingFiltering;
+    private final @NonNull String[] recipes;
+    private final boolean openCraftingBook;
+    private final boolean activateCraftingFiltering;
+    private final boolean openSmeltingBook;
+    private final boolean activateSmeltingFiltering;
+    private final boolean openBlastingBook;
+    private final boolean activateBlastingFiltering;
+    private final boolean openSmokingBook;
+    private final boolean activateSmokingFiltering;
 
-    private String[] alreadyKnownRecipes;
+    private final String[] alreadyKnownRecipes;
 
     public ClientboundRecipePacket(@NonNull String[] recipes,
                                    boolean openCraftingBook, boolean activateCraftingFiltering,
@@ -56,6 +48,8 @@ public class ClientboundRecipePacket implements Packet {
         this.activateBlastingFiltering = activateBlastingFiltering;
         this.openSmokingBook = openSmokingBook;
         this.activateSmokingFiltering = activateSmokingFiltering;
+
+        this.alreadyKnownRecipes = null;
     }
 
     public ClientboundRecipePacket(@NonNull String[] recipes,
@@ -78,8 +72,7 @@ public class ClientboundRecipePacket implements Packet {
         this.alreadyKnownRecipes = Arrays.copyOf(alreadyKnownRecipes, alreadyKnownRecipes.length);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundRecipePacket(NetInput in) throws IOException {
         this.action = MagicValues.key(UnlockRecipesAction.class, in.readVarInt());
 
         this.openCraftingBook = in.readBoolean();
@@ -96,6 +89,8 @@ public class ClientboundRecipePacket implements Packet {
             for (int i = 0; i < this.alreadyKnownRecipes.length; i++) {
                 this.alreadyKnownRecipes[i] = in.readString();
             }
+        } else {
+            this.alreadyKnownRecipes = null;
         }
 
         this.recipes = new String[in.readVarInt()];
@@ -128,10 +123,5 @@ public class ClientboundRecipePacket implements Packet {
         for (String recipeId : this.recipes) {
             out.writeString(recipeId);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

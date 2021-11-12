@@ -55,7 +55,6 @@ import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotification;
 import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
-import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
@@ -65,7 +64,6 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardPosition;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
-import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
@@ -150,7 +148,6 @@ public class MagicValuesTest {
         this.register(EnchantmentTableProperty.class, Integer.class);
         this.register(FurnaceProperty.class, Integer.class);
         this.register(AnvilProperty.class, Integer.class);
-        this.register(BlockBreakStage.class, Integer.class);
         this.register(UpdatedTileType.class, Integer.class);
         this.register(ClientNotification.class, Integer.class);
         this.register(CommandBlockMode.class, Integer.class);
@@ -175,7 +172,6 @@ public class MagicValuesTest {
         this.register(ComposterEffectData.class, Integer.class);
         this.register(NameTagVisibility.class, String.class);
         this.register(CollisionRule.class, String.class);
-        this.register(TeamColor.class, Integer.class);
         this.register(ScoreType.class, Integer.class);
         this.register(Advancement.DisplayData.FrameType.class, Integer.class);
         this.register(PlayerListEntryAction.class, Integer.class);
@@ -198,8 +194,6 @@ public class MagicValuesTest {
         this.register(SuggestionType.class, String.class);
         this.register(StringProperties.class, Integer.class);
         this.register(SoundCategory.class, Integer.class);
-        this.register(BuiltinSound.class, Integer.class);
-        this.register(BuiltinSound.class, String.class);
     }
 
     @Test

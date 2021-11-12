@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundContainerButtonClickPacket implements Packet {
-    private int windowId;
-    private int buttonId;
+    private final int windowId;
+    private final int buttonId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundContainerButtonClickPacket(NetInput in) throws IOException {
         this.windowId = in.readByte();
         this.buttonId = in.readByte();
     }
@@ -31,10 +28,5 @@ public class ServerboundContainerButtonClickPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.windowId);
         out.writeByte(this.buttonId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -15,11 +15,8 @@ import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.util.collection.IntObjectHashMap;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,18 +25,16 @@ import java.util.Map;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerboundContainerClickPacket implements Packet {
     public static final int CLICK_OUTSIDE_NOT_HOLDING_SLOT = -999;
 
-    private int windowId;
-    private int stateId;
-    private int slot;
-    private WindowAction action;
-    private WindowActionParam param;
-    private ItemStack carriedItem;
-    private @NonNull Map<Integer, ItemStack> changedSlots;
+    private final int windowId;
+    private final int stateId;
+    private final int slot;
+    private final WindowAction action;
+    private final WindowActionParam param;
+    private final ItemStack carriedItem;
+    private final @NonNull Map<Integer, ItemStack> changedSlots;
 
     public ServerboundContainerClickPacket(int windowId, int stateId, int slot, WindowAction action, WindowActionParam param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
         if ((param == DropItemParam.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemParam.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
@@ -57,8 +52,7 @@ public class ServerboundContainerClickPacket implements Packet {
         this.changedSlots = changedSlots;
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundContainerClickPacket(NetInput in) throws IOException {
         this.windowId = in.readByte();
         this.stateId = in.readVarInt();
         this.slot = in.readShort();
@@ -78,6 +72,8 @@ public class ServerboundContainerClickPacket implements Packet {
             this.param = MagicValues.key(SpreadItemParam.class, param);
         } else if (this.action == WindowAction.FILL_STACK) {
             this.param = MagicValues.key(FillStackParam.class, param);
+        } else {
+            throw new IllegalStateException();
         }
 
         int changedItemsSize = in.readVarInt();
@@ -112,10 +108,5 @@ public class ServerboundContainerClickPacket implements Packet {
         }
 
         ItemStack.write(out, this.carriedItem);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

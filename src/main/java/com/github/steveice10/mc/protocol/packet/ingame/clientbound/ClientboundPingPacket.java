@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundPingPacket implements Packet {
-    private int id;
+    private final int id;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundPingPacket(NetInput in) throws IOException {
         this.id = in.readInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.id);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

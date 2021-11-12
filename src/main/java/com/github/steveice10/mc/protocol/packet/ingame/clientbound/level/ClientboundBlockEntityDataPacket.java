@@ -8,28 +8,22 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundBlockEntityDataPacket implements Packet {
-    private @NonNull Position position;
-    private @NonNull UpdatedTileType type;
-    private @NonNull CompoundTag nbt;
+    private final @NonNull Position position;
+    private final @NonNull UpdatedTileType type;
+    private final @NonNull CompoundTag nbt;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundBlockEntityDataPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
         this.type = MagicValues.key(UpdatedTileType.class, in.readUnsignedByte());
         this.nbt = NBT.read(in);
@@ -40,10 +34,5 @@ public class ClientboundBlockEntityDataPacket implements Packet {
         Position.write(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.type));
         NBT.write(out, this.nbt);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

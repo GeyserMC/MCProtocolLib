@@ -4,12 +4,9 @@ import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -18,23 +15,21 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundResourcePackPacket implements Packet {
-    private @NonNull String url;
-    private @NonNull String hash;
-    private boolean required;
-    private @Nullable
-    Component prompt;
+    private final @NonNull String url;
+    private final @NonNull String hash;
+    private final boolean required;
+    private final @Nullable Component prompt;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundResourcePackPacket(NetInput in) throws IOException {
         this.url = in.readString();
         this.hash = in.readString();
         this.required = in.readBoolean();
         if (in.readBoolean()) {
             this.prompt = DefaultComponentSerializer.get().deserialize(in.readString());
+        } else {
+            this.prompt = null;
         }
     }
 
@@ -47,10 +42,5 @@ public class ClientboundResourcePackPacket implements Packet {
         if (this.prompt != null) {
             out.writeString(DefaultComponentSerializer.get().serialize(this.prompt));
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

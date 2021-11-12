@@ -14,21 +14,18 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundInitializeBorderPacket implements Packet {
-    private double newCenterX;
-    private double newCenterZ;
-    private double oldSize;
-    private double newSize;
-    private long lerpTime;
-    private int newAbsoluteMaxSize;
-    private int warningBlocks;
-    private int warningTime;
+    private final double newCenterX;
+    private final double newCenterZ;
+    private final double oldSize;
+    private final double newSize;
+    private final long lerpTime;
+    private final int newAbsoluteMaxSize;
+    private final int warningBlocks;
+    private final int warningTime;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundInitializeBorderPacket(NetInput in) throws IOException {
         this.newCenterX = in.readDouble();
         this.newCenterZ = in.readDouble();
         this.oldSize = in.readDouble();
@@ -49,10 +46,5 @@ public class ClientboundInitializeBorderPacket implements Packet {
         out.writeVarInt(this.newAbsoluteMaxSize);
         out.writeVarInt(this.warningBlocks);
         out.writeVarInt(this.warningTime);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

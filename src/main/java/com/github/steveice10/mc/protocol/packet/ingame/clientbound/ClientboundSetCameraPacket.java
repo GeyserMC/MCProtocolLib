@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetCameraPacket implements Packet {
-    private int cameraEntityId;
+    private final int cameraEntityId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetCameraPacket(NetInput in) throws IOException {
         this.cameraEntityId = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.cameraEntityId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

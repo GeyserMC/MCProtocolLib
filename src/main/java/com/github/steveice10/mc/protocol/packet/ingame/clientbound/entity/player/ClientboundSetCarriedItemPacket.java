@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetCarriedItemPacket implements Packet {
-    private int slot;
+    private final int slot;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetCarriedItemPacket(NetInput in) throws IOException {
         this.slot = in.readByte();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeByte(this.slot);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

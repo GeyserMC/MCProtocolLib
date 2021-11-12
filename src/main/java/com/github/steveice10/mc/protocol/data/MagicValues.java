@@ -57,7 +57,6 @@ import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotificati
 import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.RespawnScreenValue;
-import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
@@ -67,7 +66,6 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardPosition;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
-import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
@@ -600,19 +598,6 @@ public class MagicValues {
 
         register(AnvilProperty.MAXIMUM_COST, 0);
 
-        register(BlockBreakStage.RESET, -1);
-        register(BlockBreakStage.STAGE_1, 0);
-        register(BlockBreakStage.STAGE_2, 1);
-        register(BlockBreakStage.STAGE_3, 2);
-        register(BlockBreakStage.STAGE_4, 3);
-        register(BlockBreakStage.STAGE_5, 4);
-        register(BlockBreakStage.STAGE_6, 5);
-        register(BlockBreakStage.STAGE_7, 6);
-        register(BlockBreakStage.STAGE_8, 7);
-        register(BlockBreakStage.STAGE_9, 8);
-        register(BlockBreakStage.STAGE_10, 9);
-        register(BlockBreakStage.RESET, 255);
-
         register(UpdatedTileType.MOB_SPAWNER, 1);
         register(UpdatedTileType.COMMAND_BLOCK, 2);
         register(UpdatedTileType.BEACON, 3);
@@ -896,29 +881,6 @@ public class MagicValues {
         register(CollisionRule.PUSH_OTHER_TEAMS, "pushOtherTeams");
         register(CollisionRule.PUSH_OWN_TEAM, "pushOwnTeam");
 
-        register(TeamColor.BLACK, 0);
-        register(TeamColor.DARK_BLUE, 1);
-        register(TeamColor.DARK_GREEN, 2);
-        register(TeamColor.DARK_AQUA, 3);
-        register(TeamColor.DARK_RED, 4);
-        register(TeamColor.DARK_PURPLE, 5);
-        register(TeamColor.GOLD, 6);
-        register(TeamColor.GRAY, 7);
-        register(TeamColor.DARK_GRAY, 8);
-        register(TeamColor.BLUE, 9);
-        register(TeamColor.GREEN, 10);
-        register(TeamColor.AQUA, 11);
-        register(TeamColor.RED, 12);
-        register(TeamColor.LIGHT_PURPLE, 13);
-        register(TeamColor.YELLOW, 14);
-        register(TeamColor.WHITE, 15);
-        register(TeamColor.OBFUSCATED, 16);
-        register(TeamColor.BOLD, 17);
-        register(TeamColor.STRIKETHROUGH, 18);
-        register(TeamColor.UNDERLINED, 19);
-        register(TeamColor.ITALIC, 20);
-        register(TeamColor.NONE, 21);
-
         register(ScoreType.INTEGER, 0);
         register(ScoreType.HEARTS, 1);
 
@@ -1088,11 +1050,6 @@ public class MagicValues {
         register(SoundCategory.PLAYER, 7);
         register(SoundCategory.AMBIENT, 8);
         register(SoundCategory.VOICE, 9);
-
-        for (BuiltinSound sound : BuiltinSound.values()) {
-            register(sound, sound.ordinal());
-            register(sound, sound.getName());
-        }
     }
 
     private MagicValues() {

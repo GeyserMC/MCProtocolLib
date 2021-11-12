@@ -9,9 +9,7 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -19,14 +17,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetObjectivePacket implements Packet {
-    private @NonNull String name;
-    private @NonNull ObjectiveAction action;
+    private final @NonNull String name;
+    private final @NonNull ObjectiveAction action;
 
-    private Component displayName;
-    private ScoreType type;
+    private final Component displayName;
+    private final ScoreType type;
 
     /**
      * Constructs a ServerScoreboardObjectivePacket for removing an objective.
@@ -56,13 +52,15 @@ public class ClientboundSetObjectivePacket implements Packet {
         this.type = type;
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetObjectivePacket(NetInput in) throws IOException {
         this.name = in.readString();
         this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
             this.displayName = DefaultComponentSerializer.get().deserialize(in.readString());
             this.type = MagicValues.key(ScoreType.class, in.readVarInt());
+        } else {
+            this.displayName = null;
+            this.type = null;
         }
     }
 
@@ -74,10 +72,5 @@ public class ClientboundSetObjectivePacket implements Packet {
             out.writeString(DefaultComponentSerializer.get().serialize(this.displayName));
             out.writeVarInt(MagicValues.value(Integer.class, this.type));
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

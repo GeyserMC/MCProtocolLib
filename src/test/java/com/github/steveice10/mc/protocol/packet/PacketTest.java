@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.packet;
 
+import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.stream.StreamNetInput;
 import com.github.steveice10.packetlib.io.stream.StreamNetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -25,21 +26,17 @@ public abstract class PacketTest {
             packet.write(new StreamNetOutput(out));
             byte[] encoded = out.toByteArray();
 
-            Packet decoded = this.createPacket(packet.getClass());
-            decoded.read(new StreamNetInput(new ByteArrayInputStream(encoded)));
+            Packet decoded = this.createPacket(packet.getClass(), new StreamNetInput(new ByteArrayInputStream(encoded)));
 
             assertEquals("Decoded packet does not match original: " + packet + " vs " + decoded, packet, decoded);
         }
     }
 
-    private Packet createPacket(Class<? extends Packet> clazz) {
+    private Packet createPacket(Class<? extends Packet> clazz, NetInput in) {
         try {
-            Constructor<? extends Packet> constructor = clazz.getDeclaredConstructor();
-            if (!constructor.isAccessible()) {
-                constructor.setAccessible(true);
-            }
+            Constructor<? extends Packet> constructor = clazz.getConstructor(NetInput.class);
 
-            return constructor.newInstance();
+            return constructor.newInstance(in);
         } catch (NoSuchMethodError e) {
             throw new IllegalStateException("Packet \"" + clazz.getName() + "\" does not have a no-params constructor for instantiation.");
         } catch (Exception e) {

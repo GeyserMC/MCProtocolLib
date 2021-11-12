@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundPlayerAbilitiesPacket implements Packet {
     private static final int FLAG_FLYING = 0x02;
 
-    private boolean flying;
+    private final boolean flying;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundPlayerAbilitiesPacket(NetInput in) throws IOException {
         byte flags = in.readByte();
         this.flying = (flags & FLAG_FLYING) > 0;
     }
@@ -37,10 +34,5 @@ public class ServerboundPlayerAbilitiesPacket implements Packet {
         }
 
         out.writeByte(flags);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

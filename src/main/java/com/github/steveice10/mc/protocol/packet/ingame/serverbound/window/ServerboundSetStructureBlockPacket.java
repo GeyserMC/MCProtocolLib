@@ -9,43 +9,37 @@ import com.github.steveice10.mc.protocol.data.game.window.UpdateStructureBlockMo
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundSetStructureBlockPacket implements Packet {
     private static final int FLAG_IGNORE_ENTITIES = 0x01;
     private static final int FLAG_SHOW_AIR = 0x02;
     private static final int FLAG_SHOW_BOUNDING_BOX = 0x04;
 
-    private @NonNull Position position;
-    private @NonNull UpdateStructureBlockAction action;
-    private @NonNull UpdateStructureBlockMode mode;
-    private @NonNull String name;
-    private @NonNull Position offset;
-    private @NonNull Position size;
-    private @NonNull StructureMirror mirror;
-    private @NonNull StructureRotation rotation;
-    private @NonNull String metadata;
-    private float integrity;
-    private long seed;
-    private boolean ignoreEntities;
-    private boolean showAir;
-    private boolean showBoundingBox;
+    private final @NonNull Position position;
+    private final @NonNull UpdateStructureBlockAction action;
+    private final @NonNull UpdateStructureBlockMode mode;
+    private final @NonNull String name;
+    private final @NonNull Position offset;
+    private final @NonNull Position size;
+    private final @NonNull StructureMirror mirror;
+    private final @NonNull StructureRotation rotation;
+    private final @NonNull String metadata;
+    private final float integrity;
+    private final long seed;
+    private final boolean ignoreEntities;
+    private final boolean showAir;
+    private final boolean showBoundingBox;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundSetStructureBlockPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
         this.action = MagicValues.key(UpdateStructureBlockAction.class, in.readVarInt());
         this.mode = MagicValues.key(UpdateStructureBlockMode.class, in.readVarInt());
@@ -96,10 +90,5 @@ public class ServerboundSetStructureBlockPacket implements Packet {
         }
 
         out.writeByte(flags);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

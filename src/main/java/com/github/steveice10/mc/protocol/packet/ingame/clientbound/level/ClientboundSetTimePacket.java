@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetTimePacket implements Packet {
-    private long worldAge;
-    private long time;
+    private final long worldAge;
+    private final long time;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetTimePacket(NetInput in) throws IOException {
         this.worldAge = in.readLong();
         this.time = in.readLong();
     }
@@ -31,10 +28,5 @@ public class ClientboundSetTimePacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeLong(this.worldAge);
         out.writeLong(this.time);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

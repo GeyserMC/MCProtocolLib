@@ -3,12 +3,9 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -16,20 +13,17 @@ import java.util.UUID;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundAddPlayerPacket implements Packet {
-    private int entityId;
-    private @NonNull UUID uuid;
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
+    private final int entityId;
+    private final @NonNull UUID uuid;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float yaw;
+    private final float pitch;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundAddPlayerPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
         this.x = in.readDouble();
@@ -48,10 +42,5 @@ public class ClientboundAddPlayerPacket implements Packet {
         out.writeDouble(this.z);
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -7,12 +7,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -20,18 +17,15 @@ import java.util.UUID;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundAddPaintingPacket implements Packet {
-    private int entityId;
-    private @NonNull UUID uuid;
-    private @NonNull PaintingType paintingType;
-    private @NonNull Position position;
-    private @NonNull HangingDirection direction;
+    private final int entityId;
+    private final @NonNull UUID uuid;
+    private final @NonNull PaintingType paintingType;
+    private final @NonNull Position position;
+    private final @NonNull HangingDirection direction;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundAddPaintingPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
         this.paintingType = MagicValues.key(PaintingType.class, in.readVarInt());
@@ -46,10 +40,5 @@ public class ClientboundAddPaintingPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.paintingType));
         Position.write(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.direction));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -10,13 +10,7 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.With;
+import lombok.*;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
@@ -24,27 +18,36 @@ import java.util.Arrays;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetPlayerTeamPacket implements Packet {
-    private @NonNull String teamName;
-    private @NonNull TeamAction action;
+    private final @NonNull String teamName;
+    private final @NonNull TeamAction action;
 
-    private Component displayName;
-    private Component prefix;
-    private Component suffix;
-    private boolean friendlyFire;
-    private boolean seeFriendlyInvisibles;
-    private NameTagVisibility nameTagVisibility;
-    private CollisionRule collisionRule;
-    private TeamColor color;
+    private final Component displayName;
+    private final Component prefix;
+    private final Component suffix;
+    private final boolean friendlyFire;
+    private final boolean seeFriendlyInvisibles;
+    private final NameTagVisibility nameTagVisibility;
+    private final CollisionRule collisionRule;
+    private final TeamColor color;
 
-    private String[] players;
+    private final String[] players;
 
     public ClientboundSetPlayerTeamPacket(@NonNull String teamName) {
         this.teamName = teamName;
         this.action = TeamAction.REMOVE;
+
+        this.displayName = null;
+        this.prefix = null;
+        this.suffix = null;
+        this.friendlyFire = false;
+        this.seeFriendlyInvisibles = false;
+        this.nameTagVisibility = null;
+        this.collisionRule = null;
+        this.color = null;
+
+        this.players = null;
     }
 
     public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
@@ -61,6 +64,8 @@ public class ClientboundSetPlayerTeamPacket implements Packet {
         this.nameTagVisibility = nameTagVisibility;
         this.collisionRule = collisionRule;
         this.color = color;
+
+        this.players = null;
     }
 
     public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull TeamAction action, @NonNull String[] players) {
@@ -70,6 +75,15 @@ public class ClientboundSetPlayerTeamPacket implements Packet {
 
         this.teamName = teamName;
         this.action = action;
+
+        this.displayName = null;
+        this.prefix = null;
+        this.suffix = null;
+        this.friendlyFire = false;
+        this.seeFriendlyInvisibles = false;
+        this.nameTagVisibility = null;
+        this.collisionRule = null;
+        this.color = null;
 
         this.players = Arrays.copyOf(players, players.length);
     }
@@ -92,8 +106,7 @@ public class ClientboundSetPlayerTeamPacket implements Packet {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetPlayerTeamPacket(NetInput in) throws IOException {
         this.teamName = in.readString();
         this.action = MagicValues.key(TeamAction.class, in.readByte());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
@@ -104,14 +117,19 @@ public class ClientboundSetPlayerTeamPacket implements Packet {
             this.nameTagVisibility = MagicValues.key(NameTagVisibility.class, in.readString());
             this.collisionRule = MagicValues.key(CollisionRule.class, in.readString());
 
-            try {
-                this.color = MagicValues.key(TeamColor.class, in.readVarInt());
-            } catch (UnmappedValueException e) {
-                this.color = TeamColor.NONE;
-            }
+            this.color = TeamColor.VALUES[in.readVarInt()];
 
             this.prefix = DefaultComponentSerializer.get().deserialize(in.readString());
             this.suffix = DefaultComponentSerializer.get().deserialize(in.readString());
+        } else {
+            this.displayName = null;
+            this.prefix = null;
+            this.suffix = null;
+            this.friendlyFire = false;
+            this.seeFriendlyInvisibles = false;
+            this.nameTagVisibility = null;
+            this.collisionRule = null;
+            this.color = null;
         }
 
         if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
@@ -119,6 +137,8 @@ public class ClientboundSetPlayerTeamPacket implements Packet {
             for (int index = 0; index < this.players.length; index++) {
                 this.players[index] = in.readString();
             }
+        } else {
+            this.players = null;
         }
     }
 
@@ -131,7 +151,7 @@ public class ClientboundSetPlayerTeamPacket implements Packet {
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
             out.writeString(MagicValues.value(String.class, this.nameTagVisibility));
             out.writeString(MagicValues.value(String.class, this.collisionRule));
-            out.writeVarInt(MagicValues.value(Integer.class, this.color));
+            out.writeVarInt(this.color.ordinal());
             out.writeString(DefaultComponentSerializer.get().serialize(this.prefix));
             out.writeString(DefaultComponentSerializer.get().serialize(this.suffix));
         }
@@ -144,10 +164,5 @@ public class ClientboundSetPlayerTeamPacket implements Packet {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -6,35 +6,29 @@ import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundSetCommandBlockPacket implements Packet {
     private static final int FLAG_TRACK_OUTPUT = 0x01;
     private static final int FLAG_CONDITIONAL = 0x02;
     private static final int FLAG_AUTOMATIC = 0x04;
 
-    private @NonNull Position position;
-    private @NonNull String command;
-    private @NonNull CommandBlockMode mode;
-    private boolean doesTrackOutput;
-    private boolean conditional;
-    private boolean automatic;
+    private final @NonNull Position position;
+    private final @NonNull String command;
+    private final @NonNull CommandBlockMode mode;
+    private final boolean doesTrackOutput;
+    private final boolean conditional;
+    private final boolean automatic;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundSetCommandBlockPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
         this.command = in.readString();
         this.mode = MagicValues.key(CommandBlockMode.class, in.readVarInt());
@@ -65,10 +59,5 @@ public class ServerboundSetCommandBlockPacket implements Packet {
         }
 
         out.writeByte(flags);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

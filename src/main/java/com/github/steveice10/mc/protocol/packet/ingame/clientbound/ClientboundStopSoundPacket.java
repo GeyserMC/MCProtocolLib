@@ -9,30 +9,25 @@ import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundStopSoundPacket implements Packet {
     private static final int FLAG_CATEGORY = 0x01;
     private static final int FLAG_SOUND = 0x02;
 
-    private @NonNull SoundCategory category;
-    private @NonNull Sound sound;
+    private final @Nullable SoundCategory category;
+    private final @NonNull Sound sound;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundStopSoundPacket(NetInput in) throws IOException {
         int flags = in.readByte();
         if ((flags & FLAG_CATEGORY) != 0) {
             this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
@@ -42,9 +37,10 @@ public class ClientboundStopSoundPacket implements Packet {
 
         if ((flags & FLAG_SOUND) != 0) {
             String value = in.readString();
-            try {
-                this.sound = MagicValues.key(BuiltinSound.class, value);
-            } catch (UnmappedValueException e) {
+            Sound sound = BuiltinSound.NAME_TO_SOUND.get(value);
+            if (sound != null) {
+                this.sound = sound;
+            } else {
                 this.sound = new CustomSound(value);
             }
         } else {
@@ -73,15 +69,10 @@ public class ClientboundStopSoundPacket implements Packet {
             if (this.sound instanceof CustomSound) {
                 value = ((CustomSound) this.sound).getName();
             } else if (this.sound instanceof BuiltinSound) {
-                value = MagicValues.value(String.class, this.sound);
+                value = ((BuiltinSound) this.sound).getName();
             }
 
             out.writeString(value);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

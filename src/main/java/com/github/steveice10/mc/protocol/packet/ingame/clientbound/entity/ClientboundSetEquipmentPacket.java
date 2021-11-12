@@ -7,12 +7,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -21,15 +18,12 @@ import java.util.List;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetEquipmentPacket implements Packet {
-    private int entityId;
-    private @NonNull Equipment[] equipment;
+    private final int entityId;
+    private final @NonNull Equipment[] equipment;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetEquipmentPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         boolean hasNextEntry = true;
         List<Equipment> list = new ArrayList<>();
@@ -54,10 +48,5 @@ public class ClientboundSetEquipmentPacket implements Packet {
             out.writeByte(rawSlot);
             ItemStack.write(out, this.equipment[i].getItem());
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -15,26 +15,20 @@ import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecip
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundUpdateRecipesPacket implements Packet {
-    private @NonNull Recipe[] recipes;
+    private final @NonNull Recipe[] recipes;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundUpdateRecipesPacket(NetInput in) throws IOException {
         this.recipes = new Recipe[in.readVarInt()];
         for (int i = 0; i < this.recipes.length; i++) {
             RecipeType type = MagicValues.key(RecipeType.class, Identifier.formalize(in.readString()));
@@ -188,10 +182,5 @@ public class ClientboundUpdateRecipesPacket implements Packet {
         for (ItemStack option : ingredient.getOptions()) {
             ItemStack.write(out, option);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

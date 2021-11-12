@@ -14,14 +14,11 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundKeepAlivePacket implements Packet {
-    private long pingId;
+    private final long pingId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundKeepAlivePacket(NetInput in) throws IOException {
         this.pingId = in.readLong();
     }
 
@@ -30,8 +27,4 @@ public class ServerboundKeepAlivePacket implements Packet {
         out.writeLong(this.pingId);
     }
 
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
 }

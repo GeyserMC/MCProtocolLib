@@ -5,29 +5,23 @@ import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientIntentionPacket implements Packet {
-    private int protocolVersion;
-    private @NonNull String hostname;
-    private int port;
-    private @NonNull HandshakeIntent intent;
+    private final int protocolVersion;
+    private final @NonNull String hostname;
+    private final int port;
+    private final @NonNull HandshakeIntent intent;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientIntentionPacket(NetInput in) throws IOException {
         this.protocolVersion = in.readVarInt();
         this.hostname = in.readString();
         this.port = in.readUnsignedShort();

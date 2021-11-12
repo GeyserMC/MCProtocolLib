@@ -5,30 +5,24 @@ import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSoundEntityPacket implements Packet {
-    private int soundId;
-    private @NonNull SoundCategory soundCategory;
-    private int entityId;
-    private float volume;
-    private float pitch;
+    private final int soundId;
+    private final @NonNull SoundCategory soundCategory;
+    private final int entityId;
+    private final float volume;
+    private final float pitch;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSoundEntityPacket(NetInput in) throws IOException {
         this.soundId = in.readVarInt();
         this.soundCategory = MagicValues.key(SoundCategory.class, in.readVarInt());
         this.entityId = in.readVarInt();
@@ -43,10 +37,5 @@ public class ClientboundSoundEntityPacket implements Packet {
         out.writeVarInt(this.entityId);
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

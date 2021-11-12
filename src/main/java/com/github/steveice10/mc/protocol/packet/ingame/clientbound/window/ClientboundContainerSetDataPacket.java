@@ -16,13 +16,11 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundContainerSetDataPacket implements Packet {
-    private int windowId;
-    private int rawProperty;
-    private int value;
+    private final int windowId;
+    private final int rawProperty;
+    private final int value;
 
     public ClientboundContainerSetDataPacket(int windowId, WindowProperty rawProperty, int value) {
         this(windowId, MagicValues.value(Integer.class, rawProperty), value);
@@ -32,8 +30,7 @@ public class ClientboundContainerSetDataPacket implements Packet {
         return MagicValues.key(type, this.value);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundContainerSetDataPacket(NetInput in) throws IOException {
         this.windowId = in.readUnsignedByte();
         this.rawProperty = in.readShort();
         this.value = in.readShort();
@@ -44,10 +41,5 @@ public class ClientboundContainerSetDataPacket implements Packet {
         out.writeByte(this.windowId);
         out.writeShort(this.rawProperty);
         out.writeShort(this.value);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

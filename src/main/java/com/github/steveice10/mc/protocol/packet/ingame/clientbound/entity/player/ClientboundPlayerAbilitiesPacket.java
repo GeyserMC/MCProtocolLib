@@ -14,8 +14,6 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundPlayerAbilitiesPacket implements Packet {
     private static final int FLAG_INVINCIBLE = 0x01;
@@ -23,15 +21,14 @@ public class ClientboundPlayerAbilitiesPacket implements Packet {
     private static final int FLAG_CAN_FLY = 0x04;
     private static final int FLAG_CREATIVE = 0x08;
 
-    private boolean invincible;
-    private boolean canFly;
-    private boolean flying;
-    private boolean creative;
-    private float flySpeed;
-    private float walkSpeed;
+    private final boolean invincible;
+    private final boolean canFly;
+    private final boolean flying;
+    private final boolean creative;
+    private final float flySpeed;
+    private final float walkSpeed;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundPlayerAbilitiesPacket(NetInput in) throws IOException {
         byte flags = in.readByte();
         this.invincible = (flags & FLAG_INVINCIBLE) > 0;
         this.canFly = (flags & FLAG_CAN_FLY) > 0;
@@ -65,10 +62,5 @@ public class ClientboundPlayerAbilitiesPacket implements Packet {
 
         out.writeFloat(this.flySpeed);
         out.writeFloat(this.walkSpeed);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

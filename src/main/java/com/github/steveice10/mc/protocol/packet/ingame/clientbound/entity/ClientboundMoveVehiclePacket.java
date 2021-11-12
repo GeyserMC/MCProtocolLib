@@ -14,18 +14,15 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundMoveVehiclePacket implements Packet {
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float yaw;
+    private final float pitch;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundMoveVehiclePacket(NetInput in) throws IOException {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -40,10 +37,5 @@ public class ClientboundMoveVehiclePacket implements Packet {
         out.writeDouble(this.z);
         out.writeFloat(this.yaw);
         out.writeFloat(this.pitch);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

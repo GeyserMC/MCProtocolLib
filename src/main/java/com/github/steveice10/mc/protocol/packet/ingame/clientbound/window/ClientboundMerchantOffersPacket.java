@@ -5,31 +5,25 @@ import com.github.steveice10.mc.protocol.data.game.window.VillagerTrade;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundMerchantOffersPacket implements Packet {
-    private int windowId;
-    private @NonNull VillagerTrade[] trades;
-    private int villagerLevel;
-    private int experience;
-    private boolean regularVillager;
-    private boolean canRestock;
+    private final int windowId;
+    private final @NonNull VillagerTrade[] trades;
+    private final int villagerLevel;
+    private final int experience;
+    private final boolean regularVillager;
+    private final boolean canRestock;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundMerchantOffersPacket(NetInput in) throws IOException {
         this.windowId = in.readVarInt();
 
         byte size = in.readByte();
@@ -90,10 +84,5 @@ public class ClientboundMerchantOffersPacket implements Packet {
         out.writeVarInt(this.experience);
         out.writeBoolean(this.regularVillager);
         out.writeBoolean(this.canRestock);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

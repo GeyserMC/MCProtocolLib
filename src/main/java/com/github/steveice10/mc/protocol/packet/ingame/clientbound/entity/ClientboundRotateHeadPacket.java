@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundRotateHeadPacket implements Packet {
-    private int entityId;
-    private float headYaw;
+    private final int entityId;
+    private final float headYaw;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundRotateHeadPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.headYaw = in.readByte() * 360 / 256f;
     }
@@ -31,10 +28,5 @@ public class ClientboundRotateHeadPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeByte((byte) (this.headYaw * 256 / 360));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

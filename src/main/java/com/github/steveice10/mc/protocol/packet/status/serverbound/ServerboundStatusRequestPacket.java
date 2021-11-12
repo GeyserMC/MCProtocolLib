@@ -3,27 +3,19 @@ package com.github.steveice10.mc.protocol.packet.status.serverbound;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.IOException;
 
 @Data
-@Setter(AccessLevel.NONE)
 @NoArgsConstructor
 public class ServerboundStatusRequestPacket implements Packet {
-    @Override
-    public void read(NetInput in) throws IOException {
+
+    public ServerboundStatusRequestPacket(NetInput in) {
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

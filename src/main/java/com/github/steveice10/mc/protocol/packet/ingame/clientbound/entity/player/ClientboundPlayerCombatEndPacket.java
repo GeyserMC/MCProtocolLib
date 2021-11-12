@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundPlayerCombatEndPacket implements Packet {
-    private int killerId;
-    private int duration;
+    private final int killerId;
+    private final int duration;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundPlayerCombatEndPacket(NetInput in) throws IOException {
         this.duration = in.readVarInt();
         this.killerId = in.readInt();
     }
@@ -31,10 +28,5 @@ public class ClientboundPlayerCombatEndPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.duration);
         out.writeInt(this.killerId);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

@@ -8,13 +8,7 @@ import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.With;
+import lombok.*;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
@@ -22,58 +16,40 @@ import java.util.UUID;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundBossEventPacket implements Packet {
-    private @NonNull UUID uuid;
-    private @NonNull BossBarAction action;
+    private final @NonNull UUID uuid;
+    private final @NonNull BossBarAction action;
 
-    private Component title;
+    private final Component title;
 
-    private float health;
+    private final float health;
 
-    private BossBarColor color;
-    private BossBarDivision division;
+    private final BossBarColor color;
+    private final BossBarDivision division;
 
-    private boolean darkenSky;
-    private boolean playEndMusic;
-    private boolean showFog;
+    private final boolean darkenSky;
+    private final boolean playEndMusic;
+    private final boolean showFog;
 
     public ClientboundBossEventPacket(@NonNull UUID uuid) {
-        this.uuid = uuid;
-        this.action = BossBarAction.REMOVE;
+        this(uuid, BossBarAction.REMOVE, null, 0f, null, null, false, false, false);
     }
 
     public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull Component title) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_TITLE;
-
-        this.title = title;
+        this(uuid, BossBarAction.UPDATE_TITLE, title, 0f, null, null, false, false, false);
     }
 
     public ClientboundBossEventPacket(@NonNull UUID uuid, float health) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_HEALTH;
-
-        this.health = health;
+        this(uuid, BossBarAction.UPDATE_HEALTH, null, health, null, null, false, false, false);
     }
 
     public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull BossBarColor color, @NonNull BossBarDivision division) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_STYLE;
-
-        this.color = color;
-        this.division = division;
+        this(uuid, BossBarAction.UPDATE_STYLE, null, 0f, color, division, false, false, false);
     }
 
     public ClientboundBossEventPacket(@NonNull UUID uuid, boolean darkenSky, boolean playEndMusic, boolean showFog) {
-        this.uuid = uuid;
-        this.action = BossBarAction.UPDATE_FLAGS;
-
-        this.darkenSky = darkenSky;
-        this.playEndMusic = playEndMusic;
-        this.showFog = showFog;
+        this(uuid, BossBarAction.UPDATE_FLAGS, null, 0f, null, null, darkenSky, playEndMusic, showFog);
     }
 
     public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull Component title, float health, @NonNull BossBarColor color,
@@ -90,22 +66,28 @@ public class ClientboundBossEventPacket implements Packet {
         this.showFog = showFog;
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundBossEventPacket(NetInput in) throws IOException {
         this.uuid = in.readUUID();
         this.action = MagicValues.key(BossBarAction.class, in.readVarInt());
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
             this.title = DefaultComponentSerializer.get().deserialize(in.readString());
+        } else {
+            this.title = null;
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
             this.health = in.readFloat();
+        } else {
+            this.health = 0f;
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
             this.color = MagicValues.key(BossBarColor.class, in.readVarInt());
             this.division = MagicValues.key(BossBarDivision.class, in.readVarInt());
+        } else {
+            this.color = null;
+            this.division = null;
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {
@@ -113,6 +95,10 @@ public class ClientboundBossEventPacket implements Packet {
             this.darkenSky = (flags & 0x1) == 0x1;
             this.playEndMusic = (flags & 0x2) == 0x2;
             this.showFog = (flags & 0x4) == 0x4;
+        } else {
+            this.darkenSky = false;
+            this.playEndMusic = false;
+            this.showFog = false;
         }
     }
 
@@ -150,10 +136,5 @@ public class ClientboundBossEventPacket implements Packet {
 
             out.writeByte(flags);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

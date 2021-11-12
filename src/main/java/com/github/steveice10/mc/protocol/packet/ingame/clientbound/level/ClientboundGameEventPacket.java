@@ -12,27 +12,21 @@ import com.github.steveice10.mc.protocol.data.game.level.notify.ThunderStrengthV
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundGameEventPacket implements Packet {
-    private @NonNull ClientNotification notification;
-    private @NonNull ClientNotificationValue value;
+    private final @NonNull ClientNotification notification;
+    private final ClientNotificationValue value;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundGameEventPacket(NetInput in) throws IOException {
         this.notification = MagicValues.key(ClientNotification.class, in.readUnsignedByte());
         float value = in.readFloat();
         if (this.notification == ClientNotification.CHANGE_GAMEMODE) {
@@ -47,6 +41,8 @@ public class ClientboundGameEventPacket implements Packet {
             this.value = new RainStrengthValue(value);
         } else if (this.notification == ClientNotification.THUNDER_STRENGTH) {
             this.value = new ThunderStrengthValue(value);
+        } else {
+            this.value = null;
         }
     }
 
@@ -65,10 +61,5 @@ public class ClientboundGameEventPacket implements Packet {
         }
 
         out.writeFloat(value);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

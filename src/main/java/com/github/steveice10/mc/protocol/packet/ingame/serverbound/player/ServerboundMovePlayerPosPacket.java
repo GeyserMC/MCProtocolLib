@@ -14,17 +14,14 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundMovePlayerPosPacket implements Packet {
-    private boolean onGround;
-    private double x;
-    private double y;
-    private double z;
+    private final boolean onGround;
+    private final double x;
+    private final double y;
+    private final double z;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundMovePlayerPosPacket(NetInput in) throws IOException {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -37,10 +34,5 @@ public class ServerboundMovePlayerPosPacket implements Packet {
         out.writeDouble(this.y);
         out.writeDouble(this.z);
         out.writeBoolean(this.onGround);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

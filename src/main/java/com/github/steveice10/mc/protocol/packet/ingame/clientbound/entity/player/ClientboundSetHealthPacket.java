@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetHealthPacket implements Packet {
-    private float health;
-    private int food;
-    private float saturation;
+    private final float health;
+    private final int food;
+    private final float saturation;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetHealthPacket(NetInput in) throws IOException {
         this.health = in.readFloat();
         this.food = in.readVarInt();
         this.saturation = in.readFloat();
@@ -34,10 +31,5 @@ public class ClientboundSetHealthPacket implements Packet {
         out.writeFloat(this.health);
         out.writeVarInt(this.food);
         out.writeFloat(this.saturation);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

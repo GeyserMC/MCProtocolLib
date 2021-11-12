@@ -5,12 +5,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -20,25 +17,22 @@ import java.util.List;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundPlayerPositionPacket implements Packet {
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
-    private int teleportId;
-    private boolean dismountVehicle;
-    private @NonNull List<PositionElement> relative;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float yaw;
+    private final float pitch;
+    private final int teleportId;
+    private final boolean dismountVehicle;
+    private final @NonNull List<PositionElement> relative;
 
     public ClientboundPlayerPositionPacket(double x, double y, double z, float yaw, float pitch, int teleportId, boolean dismountVehicle, PositionElement... relative) {
         this(x, y, z, yaw, pitch, teleportId, dismountVehicle, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundPlayerPositionPacket(NetInput in) throws IOException {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -75,10 +69,5 @@ public class ClientboundPlayerPositionPacket implements Packet {
 
         out.writeVarInt(this.teleportId);
         out.writeBoolean(this.dismountVehicle);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

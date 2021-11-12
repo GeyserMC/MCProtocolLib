@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundCooldownPacket implements Packet {
-    private int itemId;
-    private int cooldownTicks;
+    private final int itemId;
+    private final int cooldownTicks;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundCooldownPacket(NetInput in) throws IOException {
         this.itemId = in.readVarInt();
         this.cooldownTicks = in.readVarInt();
     }
@@ -31,10 +28,5 @@ public class ClientboundCooldownPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.itemId);
         out.writeVarInt(this.cooldownTicks);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

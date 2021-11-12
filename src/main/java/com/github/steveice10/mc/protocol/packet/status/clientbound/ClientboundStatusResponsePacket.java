@@ -13,12 +13,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -27,14 +24,11 @@ import java.nio.charset.StandardCharsets;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundStatusResponsePacket implements Packet {
-    private @NonNull ServerStatusInfo info;
+    private final @NonNull ServerStatusInfo info;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundStatusResponsePacket(NetInput in) throws IOException {
         JsonObject obj = new Gson().fromJson(in.readString(), JsonObject.class);
         JsonObject ver = obj.get("version").getAsJsonObject();
         VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());

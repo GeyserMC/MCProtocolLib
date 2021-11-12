@@ -5,12 +5,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -18,25 +15,22 @@ import java.util.UUID;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundAddMobPacket implements Packet {
-    private int entityId;
-    private @NonNull UUID uuid;
-    private @NonNull EntityType type;
-    private double x;
-    private double y;
-    private double z;
-    private float pitch;
-    private float yaw;
-    private float headYaw;
-    private double motionX;
-    private double motionY;
-    private double motionZ;
+    private final int entityId;
+    private final @NonNull UUID uuid;
+    private final @NonNull EntityType type;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float pitch;
+    private final float yaw;
+    private final float headYaw;
+    private final double motionX;
+    private final double motionY;
+    private final double motionZ;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundAddMobPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
         this.type = MagicValues.key(EntityType.class, in.readVarInt());
@@ -65,10 +59,5 @@ public class ClientboundAddMobPacket implements Packet {
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));
         out.writeShort((int) (this.motionZ * 8000));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

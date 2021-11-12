@@ -3,12 +3,9 @@ package com.github.steveice10.mc.protocol.packet.login.clientbound;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -19,16 +16,13 @@ import java.security.spec.X509EncodedKeySpec;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundHelloPacket implements Packet {
-    private @NonNull String serverId;
-    private @NonNull PublicKey publicKey;
-    private @NonNull byte[] verifyToken;
+    private final @NonNull String serverId;
+    private final @NonNull PublicKey publicKey;
+    private final @NonNull byte[] verifyToken;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundHelloPacket(NetInput in) throws IOException {
         this.serverId = in.readString();
         byte[] publicKey = in.readBytes(in.readVarInt());
         this.verifyToken = in.readBytes(in.readVarInt());

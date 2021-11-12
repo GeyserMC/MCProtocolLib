@@ -4,31 +4,25 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundSetJigsawBlockPacket implements Packet {
-    private @NonNull Position position;
-    private @NonNull String name;
-    private @NonNull String target;
-    private @NonNull String pool;
-    private @NonNull String finalState;
-    private @NonNull String jointType;
+    private final @NonNull Position position;
+    private final @NonNull String name;
+    private final @NonNull String target;
+    private final @NonNull String pool;
+    private final @NonNull String finalState;
+    private final @NonNull String jointType;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundSetJigsawBlockPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
         this.name = in.readString();
         this.target = in.readString();
@@ -45,10 +39,5 @@ public class ServerboundSetJigsawBlockPacket implements Packet {
         out.writeString(this.pool);
         out.writeString(this.finalState);
         out.writeString(this.jointType);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

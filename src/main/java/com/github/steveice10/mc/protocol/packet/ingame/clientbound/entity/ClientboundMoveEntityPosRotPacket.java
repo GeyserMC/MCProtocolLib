@@ -14,20 +14,17 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundMoveEntityPosRotPacket implements Packet {
-    private int entityId;
-    private double moveX;
-    private double moveY;
-    private double moveZ;
-    private float yaw;
-    private float pitch;
-    private boolean onGround;
+    private final int entityId;
+    private final double moveX;
+    private final double moveY;
+    private final double moveZ;
+    private final float yaw;
+    private final float pitch;
+    private final boolean onGround;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundMoveEntityPosRotPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.moveX = in.readShort() / 4096D;
         this.moveY = in.readShort() / 4096D;
@@ -46,10 +43,5 @@ public class ClientboundMoveEntityPosRotPacket implements Packet {
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeBoolean(this.onGround);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

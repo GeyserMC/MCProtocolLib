@@ -16,33 +16,27 @@ import com.github.steveice10.mc.protocol.data.game.level.effect.WorldEffectData;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundLevelEventPacket implements Packet {
-    private @NonNull WorldEffect effect;
-    private @NonNull Position position;
-    private @NonNull WorldEffectData data;
-    private boolean broadcast;
+    private final @NonNull WorldEffect effect;
+    private final @NonNull Position position;
+    private final WorldEffectData data;
+    private final boolean broadcast;
 
     public ClientboundLevelEventPacket(@NonNull WorldEffect effect, @NonNull Position position, @NonNull WorldEffectData data) {
         this(effect, position, data, false);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundLevelEventPacket(NetInput in) throws IOException {
         this.effect = MagicValues.key(WorldEffect.class, in.readInt());
         this.position = Position.read(in);
         int value = in.readInt();
@@ -60,6 +54,8 @@ public class ClientboundLevelEventPacket implements Packet {
             this.data = value > 0 ? ComposterEffectData.FILL_SUCCESS : ComposterEffectData.FILL;
         } else if (this.effect == ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE) {
             this.data = value == 1 ? DragonFireballEffectData.HAS_SOUND : DragonFireballEffectData.NO_SOUND;
+        } else {
+            this.data = null;
         }
 
         this.broadcast = in.readBoolean();
@@ -88,10 +84,5 @@ public class ClientboundLevelEventPacket implements Packet {
 
         out.writeInt(value);
         out.writeBoolean(this.broadcast);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

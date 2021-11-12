@@ -14,14 +14,11 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSelectAdvancementsTabPacket implements Packet {
-    private String tabId;
+    private final String tabId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSelectAdvancementsTabPacket(NetInput in) throws IOException {
         if (in.readBoolean()) {
             this.tabId = in.readString();
         } else {
@@ -37,10 +34,5 @@ public class ClientboundSelectAdvancementsTabPacket implements Packet {
         } else {
             out.writeBoolean(false);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

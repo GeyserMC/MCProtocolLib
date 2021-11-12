@@ -9,12 +9,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -25,15 +22,12 @@ import java.util.UUID;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundPlayerInfoPacket implements Packet {
-    private @NonNull PlayerListEntryAction action;
-    private @NonNull PlayerListEntry[] entries;
+    private final @NonNull PlayerListEntryAction action;
+    private final @NonNull PlayerListEntry[] entries;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundPlayerInfoPacket(NetInput in) throws IOException {
         this.action = MagicValues.key(PlayerListEntryAction.class, in.readVarInt());
         this.entries = new PlayerListEntry[in.readVarInt()];
         for (int count = 0; count < this.entries.length; count++) {
@@ -149,10 +143,5 @@ public class ClientboundPlayerInfoPacket implements Packet {
                     break;
             }
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

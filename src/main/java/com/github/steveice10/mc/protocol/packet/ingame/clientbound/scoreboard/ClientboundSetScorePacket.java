@@ -5,33 +5,32 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.With;
+import lombok.*;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetScorePacket implements Packet {
-    private @NonNull String entry;
-    private @NonNull ScoreboardAction action;
-    private @NonNull String objective;
-    private int value;
+    private final @NonNull String entry;
+    private final @NonNull ScoreboardAction action;
+    private final @NonNull String objective;
+    private final int value;
 
+    /**
+     * Creates a set score packet that removes the entry.
+     */
     public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective) {
         this.entry = entry;
         this.action = ScoreboardAction.REMOVE;
         this.objective = objective;
+        this.value = 0;
     }
 
+    /**
+     * Creates a set score packet that adds or updates the entry.
+     */
     public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective, int value) {
         this.entry = entry;
         this.action = ScoreboardAction.ADD_OR_UPDATE;
@@ -40,13 +39,14 @@ public class ClientboundSetScorePacket implements Packet {
         this.value = value;
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetScorePacket(NetInput in) throws IOException {
         this.entry = in.readString();
         this.action = MagicValues.key(ScoreboardAction.class, in.readVarInt());
         this.objective = in.readString();
         if (this.action == ScoreboardAction.ADD_OR_UPDATE) {
             this.value = in.readVarInt();
+        } else {
+            this.value = 0;
         }
     }
 
@@ -58,10 +58,5 @@ public class ClientboundSetScorePacket implements Packet {
         if (this.action == ScoreboardAction.ADD_OR_UPDATE) {
             out.writeVarInt(this.value);
         }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

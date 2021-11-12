@@ -12,12 +12,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
@@ -25,24 +22,22 @@ import java.util.UUID;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundAddEntityPacket implements Packet {
     private static final GenericObjectData EMPTY_DATA = new GenericObjectData(0);
 
-    private int entityId;
-    private @NonNull UUID uuid;
-    private @NonNull EntityType type;
-    private @NonNull ObjectData data;
-    private double x;
-    private double y;
-    private double z;
-    private float yaw;
-    private float pitch;
-    private double motionX;
-    private double motionY;
-    private double motionZ;
+    private final int entityId;
+    private final @NonNull UUID uuid;
+    private final @NonNull EntityType type;
+    private final @NonNull ObjectData data;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final float yaw;
+    private final float pitch;
+    private final double motionX;
+    private final double motionY;
+    private final double motionZ;
 
     public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
                                       double x, double y, double z, float yaw, float pitch) {
@@ -60,8 +55,7 @@ public class ClientboundAddEntityPacket implements Packet {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, pitch, motionX, motionY, motionZ);
     }
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundAddEntityPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
         this.type = MagicValues.key(EntityType.class, in.readVarInt());
@@ -127,10 +121,5 @@ public class ClientboundAddEntityPacket implements Packet {
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));
         out.writeShort((int) (this.motionZ * 8000));
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

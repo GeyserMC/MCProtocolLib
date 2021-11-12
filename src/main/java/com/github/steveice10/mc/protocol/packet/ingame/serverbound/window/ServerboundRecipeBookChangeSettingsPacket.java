@@ -5,28 +5,22 @@ import com.github.steveice10.mc.protocol.data.game.window.CraftingBookStateType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundRecipeBookChangeSettingsPacket implements Packet {
-    private @NonNull CraftingBookStateType type;
-    private boolean bookOpen;
-    private boolean filterActive;
+    private final @NonNull CraftingBookStateType type;
+    private final boolean bookOpen;
+    private final boolean filterActive;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundRecipeBookChangeSettingsPacket(NetInput in) throws IOException {
         this.type = MagicValues.key(CraftingBookStateType.class, in.readVarInt());
         this.bookOpen = in.readBoolean();
         this.filterActive = in.readBoolean();
@@ -37,10 +31,5 @@ public class ServerboundRecipeBookChangeSettingsPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.type));
         out.writeBoolean(this.bookOpen);
         out.writeBoolean(this.filterActive);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

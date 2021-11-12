@@ -14,15 +14,12 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundForgetLevelChunkPacket implements Packet {
-    private int x;
-    private int z;
+    private final int x;
+    private final int z;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundForgetLevelChunkPacket(NetInput in) throws IOException {
         this.x = in.readInt();
         this.z = in.readInt();
     }
@@ -31,10 +28,5 @@ public class ClientboundForgetLevelChunkPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.x);
         out.writeInt(this.z);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

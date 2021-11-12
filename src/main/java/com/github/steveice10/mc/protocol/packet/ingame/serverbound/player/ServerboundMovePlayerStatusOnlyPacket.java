@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ServerboundMovePlayerStatusOnlyPacket implements Packet {
-    private boolean onGround;
+    private final boolean onGround;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ServerboundMovePlayerStatusOnlyPacket(NetInput in) throws IOException {
         this.onGround = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeBoolean(this.onGround);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

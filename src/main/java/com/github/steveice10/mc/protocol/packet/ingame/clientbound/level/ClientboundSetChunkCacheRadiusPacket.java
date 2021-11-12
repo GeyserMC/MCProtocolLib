@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetChunkCacheRadiusPacket implements Packet {
-    private int viewDistance;
+    private final int viewDistance;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetChunkCacheRadiusPacket(NetInput in) throws IOException {
         this.viewDistance = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.viewDistance);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

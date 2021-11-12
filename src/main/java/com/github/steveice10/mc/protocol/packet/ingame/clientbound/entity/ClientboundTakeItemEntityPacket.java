@@ -14,16 +14,13 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundTakeItemEntityPacket implements Packet {
-    private int collectedEntityId;
-    private int collectorEntityId;
-    private int itemCount;
+    private final int collectedEntityId;
+    private final int collectorEntityId;
+    private final int itemCount;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundTakeItemEntityPacket(NetInput in) throws IOException {
         this.collectedEntityId = in.readVarInt();
         this.collectorEntityId = in.readVarInt();
         this.itemCount = in.readVarInt();
@@ -34,10 +31,5 @@ public class ClientboundTakeItemEntityPacket implements Packet {
         out.writeVarInt(this.collectedEntityId);
         out.writeVarInt(this.collectorEntityId);
         out.writeVarInt(this.itemCount);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

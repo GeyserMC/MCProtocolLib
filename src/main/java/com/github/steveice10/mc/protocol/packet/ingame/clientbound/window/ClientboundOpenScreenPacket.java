@@ -5,28 +5,22 @@ import com.github.steveice10.mc.protocol.data.game.window.WindowType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundOpenScreenPacket implements Packet {
-    private int windowId;
-    private @NonNull WindowType type;
-    private @NonNull String name;
+    private final int windowId;
+    private final @NonNull WindowType type;
+    private final @NonNull String name;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundOpenScreenPacket(NetInput in) throws IOException {
         this.windowId = in.readVarInt();
         this.type = MagicValues.key(WindowType.class, in.readVarInt());
         this.name = in.readString();
@@ -37,10 +31,5 @@ public class ClientboundOpenScreenPacket implements Packet {
         out.writeVarInt(this.windowId);
         out.writeVarInt(MagicValues.value(Integer.class, this.type));
         out.writeString(this.name);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

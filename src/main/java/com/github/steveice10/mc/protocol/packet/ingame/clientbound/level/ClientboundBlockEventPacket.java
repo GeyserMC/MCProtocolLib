@@ -19,20 +19,15 @@ import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
 import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundBlockEventPacket implements Packet {
     private static final int NOTE_BLOCK = 80;
@@ -46,13 +41,12 @@ public class ClientboundBlockEventPacket implements Packet {
     private static final int SHULKER_BOX_LOWER = 523;
     private static final int SHULKER_BOX_HIGHER = 539;
 
-    private @NonNull Position position;
-    private @NonNull BlockValueType type;
-    private @NonNull BlockValue value;
-    private int blockId;
+    private final @NonNull Position position;
+    private final @NonNull BlockValueType type;
+    private final @NonNull BlockValue value;
+    private final int blockId;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundBlockEventPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
         int type = in.readUnsignedByte();
         int value = in.readUnsignedByte();
@@ -97,10 +91,5 @@ public class ClientboundBlockEventPacket implements Packet {
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeByte(val);
         out.writeVarInt(this.blockId & 4095);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }

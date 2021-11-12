@@ -14,24 +14,16 @@ import java.io.IOException;
 
 @Data
 @With
-@Setter(AccessLevel.NONE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ClientboundSetBorderSizePacket implements Packet {
-    private double size;
+    private final double size;
 
-    @Override
-    public void read(NetInput in) throws IOException {
+    public ClientboundSetBorderSizePacket(NetInput in) throws IOException {
         this.size = in.readDouble();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeDouble(this.size);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 }
