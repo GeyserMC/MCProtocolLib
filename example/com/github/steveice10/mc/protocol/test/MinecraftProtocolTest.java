@@ -16,9 +16,9 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ClientChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ServerChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.FloatTag;
@@ -75,7 +75,7 @@ public class MinecraftProtocolTest {
             );
 
             server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, (ServerLoginHandler) session ->
-                    session.send(new ServerJoinGamePacket(
+                    session.send(new ClientboundLoginPacket(
                             0,
                             false,
                             GameMode.SURVIVAL,
@@ -107,8 +107,8 @@ public class MinecraftProtocolTest {
                     event.getSession().addListener(new SessionAdapter() {
                         @Override
                         public void packetReceived(PacketReceivedEvent event) {
-                            if (event.getPacket() instanceof ClientChatPacket) {
-                                ClientChatPacket packet = event.getPacket();
+                            if (event.getPacket() instanceof ServerboundChatPacket) {
+                                ServerboundChatPacket packet = event.getPacket();
                                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                                 System.out.println(profile.getName() + ": " + packet.getMessage());
 
@@ -120,7 +120,7 @@ public class MinecraftProtocolTest {
                                         .append(Component.text("!")
                                                 .color(NamedTextColor.GREEN));
 
-                                event.getSession().send(new ServerChatPacket(msg));
+                                event.getSession().send(new ClientboundChatPacket(msg));
                             }
                         }
                     });
@@ -201,10 +201,10 @@ public class MinecraftProtocolTest {
         client.addListener(new SessionAdapter() {
             @Override
             public void packetReceived(PacketReceivedEvent event) {
-                if (event.getPacket() instanceof ServerJoinGamePacket) {
-                    event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
-                } else if (event.getPacket() instanceof ServerChatPacket) {
-                    Component message = event.<ServerChatPacket>getPacket().getMessage();
+                if (event.getPacket() instanceof ClientboundLoginPacket) {
+                    event.getSession().send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib."));
+                } else if (event.getPacket() instanceof ClientboundChatPacket) {
+                    Component message = event.<ClientboundChatPacket>getPacket().getMessage();
                     System.out.println("Received Message: " + message);
                     event.getSession().disconnect("Finished");
                 }
