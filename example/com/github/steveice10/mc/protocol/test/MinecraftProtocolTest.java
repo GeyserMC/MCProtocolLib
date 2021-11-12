@@ -16,9 +16,9 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
-import com.github.steveice10.mc.protocol.packet.ingame.client.ClientChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ClientChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ServerChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ServerJoinGamePacket;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.FloatTag;
@@ -58,7 +58,7 @@ public class MinecraftProtocolTest {
     private static final String PASSWORD = "Password";
 
     public static void main(String[] args) {
-        if(SPAWN_SERVER) {
+        if (SPAWN_SERVER) {
             SessionService sessionService = new SessionService();
             sessionService.setProxy(AUTH_PROXY);
 
@@ -81,7 +81,7 @@ public class MinecraftProtocolTest {
                             GameMode.SURVIVAL,
                             GameMode.SURVIVAL,
                             1,
-                            new String[] {"minecraft:world"},
+                            new String[]{"minecraft:world"},
                             getDimensionTag(),
                             getOverworldTag(),
                             "minecraft:world",
@@ -107,7 +107,7 @@ public class MinecraftProtocolTest {
                     event.getSession().addListener(new SessionAdapter() {
                         @Override
                         public void packetReceived(PacketReceivedEvent event) {
-                            if(event.getPacket() instanceof ClientChatPacket) {
+                            if (event.getPacket() instanceof ClientChatPacket) {
                                 ClientChatPacket packet = event.getPacket();
                                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
                                 System.out.println(profile.getName() + ": " + packet.getMessage());
@@ -115,8 +115,8 @@ public class MinecraftProtocolTest {
                                 Component msg = Component.text("Hello, ")
                                         .color(NamedTextColor.GREEN)
                                         .append(Component.text(profile.getName())
-                                            .color(NamedTextColor.AQUA)
-                                            .decorate(TextDecoration.UNDERLINED))
+                                                .color(NamedTextColor.AQUA)
+                                                .decorate(TextDecoration.UNDERLINED))
                                         .append(Component.text("!")
                                                 .color(NamedTextColor.GREEN));
 
@@ -129,7 +129,7 @@ public class MinecraftProtocolTest {
                 @Override
                 public void sessionRemoved(SessionRemovedEvent event) {
                     MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-                    if(protocol.getSubProtocol() == SubProtocol.GAME) {
+                    if (protocol.getSubProtocol() == SubProtocol.GAME) {
                         System.out.println("Closing server.");
                         event.getServer().close(false);
                     }
@@ -164,10 +164,10 @@ public class MinecraftProtocolTest {
                 System.out.println("Server ping took " + pingTime + "ms"));
 
         client.connect();
-        while(client.isConnected()) {
+        while (client.isConnected()) {
             try {
                 Thread.sleep(5);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -175,7 +175,7 @@ public class MinecraftProtocolTest {
 
     private static void login() {
         MinecraftProtocol protocol = null;
-        if(VERIFY_USERS) {
+        if (VERIFY_USERS) {
             try {
                 AuthenticationService authService = new MojangAuthenticationService();
                 authService.setUsername(USERNAME);
@@ -185,7 +185,7 @@ public class MinecraftProtocolTest {
 
                 protocol = new MinecraftProtocol(authService.getSelectedProfile(), authService.getAccessToken());
                 System.out.println("Successfully authenticated user.");
-            } catch(RequestException e) {
+            } catch (RequestException e) {
                 e.printStackTrace();
                 return;
             }
@@ -201,9 +201,9 @@ public class MinecraftProtocolTest {
         client.addListener(new SessionAdapter() {
             @Override
             public void packetReceived(PacketReceivedEvent event) {
-                if(event.getPacket() instanceof ServerJoinGamePacket) {
+                if (event.getPacket() instanceof ServerJoinGamePacket) {
                     event.getSession().send(new ClientChatPacket("Hello, this is a test of MCProtocolLib."));
-                } else if(event.getPacket() instanceof ServerChatPacket) {
+                } else if (event.getPacket() instanceof ServerChatPacket) {
                     Component message = event.<ServerChatPacket>getPacket().getMessage();
                     System.out.println("Received Message: " + message);
                     event.getSession().disconnect("Finished");
@@ -213,7 +213,7 @@ public class MinecraftProtocolTest {
             @Override
             public void disconnected(DisconnectedEvent event) {
                 System.out.println("Disconnected: " + event.getReason());
-                if(event.getCause() != null) {
+                if (event.getCause() != null) {
                     event.getCause().printStackTrace();
                 }
             }
