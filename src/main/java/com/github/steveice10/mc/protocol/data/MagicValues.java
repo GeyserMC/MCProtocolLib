@@ -24,7 +24,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
 import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
-import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
@@ -266,7 +265,7 @@ public class MagicValues {
         register(Animation.SWING_ARM, 0);
         register(Animation.DAMAGE, 1);
         register(Animation.LEAVE_BED, 2);
-        register(Animation.EAT_FOOD, 3);
+        register(Animation.SWING_OFFHAND, 3);
         register(Animation.CRITICAL_HIT, 4);
         register(Animation.ENCHANTMENT_CRITICAL_HIT, 5);
 
