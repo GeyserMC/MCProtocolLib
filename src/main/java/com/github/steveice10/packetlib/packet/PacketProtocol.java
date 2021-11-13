@@ -142,7 +142,7 @@ public abstract class PacketProtocol {
      * @throws IOException if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    public final Packet createClientboundPacket(int id, NetInput in) throws IOException {
+    public Packet createClientboundPacket(int id, NetInput in) throws IOException {
         PacketDefinition<?> definition = this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
@@ -158,7 +158,7 @@ public abstract class PacketProtocol {
      * @return The packet's registered id.
      * @throws IllegalArgumentException If the packet is not registered.
      */
-    public final int getClientboundId(Class<? extends Packet> packetClass) {
+    public int getClientboundId(Class<? extends Packet> packetClass) {
         Integer packetId = this.clientboundIds.get(packetClass);
         if(packetId == null) {
             throw new IllegalArgumentException("Unregistered clientbound packet class: " + packetClass.getName());
@@ -174,7 +174,7 @@ public abstract class PacketProtocol {
      * @return The packet's registered id.
      * @throws IllegalArgumentException If the packet is not registered.
      */
-    public final int getClientboundId(Packet packet) {
+    public int getClientboundId(Packet packet) {
         if (packet instanceof BufferedPacket) {
             return getClientboundId(((BufferedPacket) packet).getPacketClass());
         }
@@ -188,7 +188,7 @@ public abstract class PacketProtocol {
      * @return The registered packet's class
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    public final Class<? extends Packet> getClientboundClass(int id) {
+    public Class<? extends Packet> getClientboundClass(int id) {
         PacketDefinition<?> definition = this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
@@ -205,7 +205,7 @@ public abstract class PacketProtocol {
      * @throws IOException if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    public final Packet createServerboundPacket(int id, NetInput in) throws IOException {
+    public Packet createServerboundPacket(int id, NetInput in) throws IOException {
         PacketDefinition<?> definition = this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
@@ -221,7 +221,7 @@ public abstract class PacketProtocol {
      * @return The packet's registered id.
      * @throws IllegalArgumentException If the packet is not registered.
      */
-    public final int getServerboundId(Class<? extends Packet> packetClass) {
+    public int getServerboundId(Class<? extends Packet> packetClass) {
         Integer packetId = this.serverboundIds.get(packetClass);
         if(packetId == null) {
             throw new IllegalArgumentException("Unregistered serverbound packet class: " + packetClass.getName());
@@ -237,7 +237,7 @@ public abstract class PacketProtocol {
      * @return The packet's registered id.
      * @throws IllegalArgumentException If the packet is not registered.
      */
-    public final int getServerboundId(Packet packet) {
+    public int getServerboundId(Packet packet) {
         if (packet instanceof BufferedPacket) {
             return getServerboundId(((BufferedPacket) packet).getPacketClass());
         }
@@ -251,7 +251,7 @@ public abstract class PacketProtocol {
      * @return The registered packet's class
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    public final Class<? extends Packet> getServerboundClass(int id) {
+    public Class<? extends Packet> getServerboundClass(int id) {
         PacketDefinition<?> definition = this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
