@@ -6,8 +6,6 @@ import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import com.github.steveice10.packetlib.io.NetInput;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -70,21 +68,6 @@ public abstract class PacketProtocol {
     /**
      * Registers a packet to this protocol as both incoming and outgoing.
      *
-     * @param id     Id to register the packet to.
-     * @param packet Packet to register.
-     * @throws IllegalArgumentException If the packet fails a test creation when being registered as incoming.
-     *
-     * @deprecated replaced with {@link #register(int, Class, PacketFactory)}
-     */
-    @Deprecated
-    public final void register(int id, Class<? extends Packet> packet) {
-        this.registerIncoming(id, packet);
-        this.registerOutgoing(id, packet);
-    }
-
-    /**
-     * Registers a packet to this protocol as both incoming and outgoing.
-     *
      * @param id      Id to register the packet to.
      * @param packet  Packet to register.
      * @param factory The packet factory.
@@ -98,26 +81,6 @@ public abstract class PacketProtocol {
     /**
      * Registers an incoming packet to this protocol.
      *
-     * @param id     Id to register the packet to.
-     * @param packet Packet to register.
-     * @throws IllegalArgumentException If the packet fails a test creation.
-     *
-     * @deprecated replaced with {@link #registerIncoming(int, Class, PacketFactory)}
-     */
-    @Deprecated
-    public final <T extends Packet> void registerIncoming(int id, Class<T> packet) {
-        Constructor<T> constructor;
-        try {
-            constructor = packet.getConstructor(NetInput.class);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Packet does not have a constructor that takes in NetInput!");
-        }
-        this.registerIncoming(id, packet, (input) -> this.constructPacketWithReflection(constructor, id, input));
-    }
-
-    /**
-     * Registers an incoming packet to this protocol.
-     *
      * @param id      Id to register the packet to.
      * @param packet  Packet to register.
      * @param factory The packet factory.
@@ -125,26 +88,6 @@ public abstract class PacketProtocol {
      */
     public final <T extends Packet> void registerIncoming(int id, Class<T> packet, PacketFactory<T> factory) {
         this.incoming.put(id, new PacketDefinition<>(id, packet, factory));
-    }
-
-    /**
-     * Registers an outgoing packet to this protocol.
-     *
-     * @param id     Id to register the packet to.
-     * @param packet  Packet to register.
-     *
-     * @deprecated replaced with {@link #registerOutgoing(int, Class, PacketFactory)}
-     */
-    @Deprecated
-    public final <T extends Packet> void registerOutgoing(int id, Class<T> packet) {
-        Constructor<T> constructor;
-        try {
-            constructor = packet.getConstructor(NetInput.class);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Packet does not have a constructor that takes in NetInput!");
-        }
-
-        this.registerOutgoing(id, packet, input -> this.constructPacketWithReflection(constructor, id, input));
     }
 
     /**
@@ -237,18 +180,5 @@ public abstract class PacketProtocol {
         }
 
         return definition.getPacketClass();
-    }
-
-    private <T extends Packet> T constructPacketWithReflection(Constructor<T> constructor, int id, NetInput in) throws IOException {
-        try {
-            return constructor.newInstance(in);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException("Packet \"" + id + ", " + constructor.getDeclaringClass().getName() + "\" could not be instantiated.");
-        } catch (InvocationTargetException e) {
-            if (e.getCause() instanceof IOException) {
-                throw (IOException) e.getCause();
-            }
-            throw new IllegalStateException("Failed to instantiate packet \"" + id + ", " + constructor.getDeclaringClass().getName() + "\".", e);
-        }
     }
 }
