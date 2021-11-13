@@ -16,9 +16,11 @@ import java.util.List;
 
 public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     private final Session session;
+    private final boolean client;
 
     public TcpPacketCodec(Session session) {
         this.session = session;
+        this.client = session instanceof TcpClientSession;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         try {
             NetOutput out = new ByteBufNetOutput(buf);
 
-            this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet));
+            this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.client ? this.session.getPacketProtocol().getServerboundId(packet) : this.session.getPacketProtocol().getClientboundId(packet));
             packet.write(out);
         } catch (Throwable t) {
             // Reset writer index to make sure incomplete data is not written out.
@@ -55,7 +57,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 return;
             }
 
-            Packet packet = this.session.getPacketProtocol().createIncomingPacket(id, in);
+            Packet packet = this.client ? this.session.getPacketProtocol().createClientboundPacket(id, in) : this.session.getPacketProtocol().createServerboundPacket(id, in);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");

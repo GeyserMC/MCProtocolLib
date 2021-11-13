@@ -15,10 +15,11 @@ import java.util.Map;
  * All implementations must have a constructor that takes in a {@link NetInput}.
  */
 public abstract class PacketProtocol {
-    private final Map<Integer, PacketDefinition<? extends Packet>> incoming = new HashMap<>();
-    private final Map<Integer, PacketDefinition<? extends Packet>> outgoing = new HashMap<>();
+    private final Map<Integer, PacketDefinition<? extends Packet>> serverbound = new HashMap<>();
+    private final Map<Integer, PacketDefinition<? extends Packet>> clientbound = new HashMap<>();
 
-    private final Map<Class<? extends Packet>, Integer> outgoingIds = new IdentityHashMap<>();
+    private final Map<Class<? extends Packet>, Integer> clientboundIds = new IdentityHashMap<>();
+    private final Map<Class<? extends Packet>, Integer> serverboundIds = new IdentityHashMap<>();
 
     /**
      * Gets the prefix used when locating SRV records for this protocol.
@@ -60,87 +61,89 @@ public abstract class PacketProtocol {
      * Clears all currently registered packets.
      */
     public final void clearPackets() {
-        this.incoming.clear();
-        this.outgoing.clear();
-        this.outgoingIds.clear();
+        this.serverbound.clear();
+        this.clientbound.clear();
+        this.clientboundIds.clear();
+        this.serverboundIds.clear();
     }
 
     /**
-     * Registers a packet to this protocol as both incoming and outgoing.
+     * Registers a packet to this protocol as both serverbound and clientbound.
      *
      * @param id      Id to register the packet to.
      * @param packet  Packet to register.
      * @param factory The packet factory.
-     * @throws IllegalArgumentException If the packet fails a test creation when being registered as incoming.
+     * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
      */
     public final <T extends Packet> void register(int id, Class<T> packet, PacketFactory<T> factory) {
-        this.registerIncoming(id, packet, factory);
-        this.registerOutgoing(id, packet, factory);
+        this.registerServerbound(id, packet, factory);
+        this.registerClientbound(id, packet, factory);
     }
 
     /**
-     * Registers a packet to this protocol as both incoming and outgoing.
+     * Registers a packet to this protocol as both serverbound and clientbound.
      *
      * @param definition The packet definition.
-     * @throws IllegalArgumentException If the packet fails a test creation when being registered as incoming.
+     * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
      */
     public final void register(PacketDefinition<? extends Packet> definition) {
-        this.registerIncoming(definition);
-        this.registerOutgoing(definition);
+        this.registerServerbound(definition);
+        this.registerClientbound(definition);
     }
 
     /**
-     * Registers an incoming packet to this protocol.
+     * Registers a serverbound packet to this protocol.
      *
      * @param id      Id to register the packet to.
      * @param packet  Packet to register.
      * @param factory The packet factory.
      * @throws IllegalArgumentException If the packet fails a test creation.
      */
-    public final <T extends Packet> void registerIncoming(int id, Class<T> packet, PacketFactory<T> factory) {
-        this.registerIncoming(new PacketDefinition<>(id, packet, factory));
+    public final <T extends Packet> void registerServerbound(int id, Class<T> packet, PacketFactory<T> factory) {
+        this.registerServerbound(new PacketDefinition<>(id, packet, factory));
     }
 
     /**
-     * Registers an incoming packet to this protocol.
+     * Registers a serverbound packet to this protocol.
      *
      * @param definition The packet definition.
      */
-    public final void registerIncoming(PacketDefinition<? extends Packet> definition) {
-        this.incoming.put(definition.getId(), definition);
+    public final void registerServerbound(PacketDefinition<? extends Packet> definition) {
+        this.serverbound.put(definition.getId(), definition);
+        this.serverboundIds.put(definition.getPacketClass(), definition.getId());
     }
 
     /**
-     * Registers an outgoing packet to this protocol.
+     * Registers a clientbound packet to this protocol.
      *
      * @param id     Id to register the packet to.
      * @param packet  Packet to register.
      * @param factory The packet factory.
      */
-    public final <T extends Packet> void registerOutgoing(int id, Class<T> packet, PacketFactory<T> factory) {
-        this.registerOutgoing(new PacketDefinition<>(id, packet, factory));
+    public final <T extends Packet> void registerClientbound(int id, Class<T> packet, PacketFactory<T> factory) {
+        this.registerClientbound(new PacketDefinition<>(id, packet, factory));
     }
 
     /**
-     * Registers an outgoing packet to this protocol.
+     * Registers a clientbound packet to this protocol.
      *
      * @param definition The packet definition.
      */
-    public final void registerOutgoing(PacketDefinition<? extends Packet> definition) {
-        this.outgoing.put(definition.getId(), definition);
-        this.outgoingIds.put(definition.getPacketClass(), definition.getId());
+    public final void registerClientbound(PacketDefinition<? extends Packet> definition) {
+        this.clientbound.put(definition.getId(), definition);
+        this.clientboundIds.put(definition.getPacketClass(), definition.getId());
     }
 
     /**
-     * Creates a new instance of an incoming packet with the given id and read the incoming input.
+     * Creates a new instance of a clientbound packet with the given id and read the clientbound input.
      *
      * @param id Id of the packet to create.
      * @return The created packet.
      * @throws IOException if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    public final Packet createIncomingPacket(int id, NetInput in) throws IOException {
-        PacketDefinition<?> definition = this.incoming.get(id);
+    public final Packet createClientboundPacket(int id, NetInput in) throws IOException {
+        PacketDefinition<?> definition = this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
@@ -149,51 +152,34 @@ public abstract class PacketProtocol {
     }
 
     /**
-     * Creates a new instance of an outgoing packet with the given id and read the outgoing input.
-     *
-     * @param id Id of the packet to create.
-     * @return The created packet.
-     * @throws IOException if there was an IO error whilst reading the packet.
-     * @throws IllegalArgumentException If the packet ID is not registered.
-     */
-    public final Packet createOutgoingPacket(int id, NetInput in) throws IOException {
-        PacketDefinition<?> definition = this.outgoing.get(id);
-        if (definition == null) {
-            throw new IllegalArgumentException("Invalid packet id: " + id);
-        }
-
-        return definition.getFactory().construct(in);
-    }
-
-    /**
-     * Gets the registered id of an outgoing packet class.
+     * Gets the registered id of a clientbound packet class.
      *
      * @param packetClass Class of the packet to get the id for.
      * @return The packet's registered id.
      * @throws IllegalArgumentException If the packet is not registered.
      */
-    public final int getOutgoingId(Class<? extends Packet> packetClass) {
-        Integer packetId = this.outgoingIds.get(packetClass);
+    public final int getClientboundId(Class<? extends Packet> packetClass) {
+        Integer packetId = this.clientboundIds.get(packetClass);
         if(packetId == null) {
-            throw new IllegalArgumentException("Unregistered outgoing packet class: " + packetClass.getName());
+            throw new IllegalArgumentException("Unregistered clientbound packet class: " + packetClass.getName());
         }
 
         return packetId;
     }
 
     /**
-     * Gets the registered id of an outgoing {@link Packet} instance.
+     * Gets the registered id of a clientbound {@link Packet} instance.
      *
      * @param packet Instance of {@link Packet} to get the id for.
      * @return The packet's registered id.
      * @throws IllegalArgumentException If the packet is not registered.
      */
-    public final int getOutgoingId(Packet packet) {
+    public final int getClientboundId(Packet packet) {
         if (packet instanceof BufferedPacket) {
-            return getOutgoingId(((BufferedPacket) packet).getPacketClass());
+            return getClientboundId(((BufferedPacket) packet).getPacketClass());
         }
 
-        return getOutgoingId(packet.getClass());
+        return getClientboundId(packet.getClass());
     }
 
     /**
@@ -202,8 +188,71 @@ public abstract class PacketProtocol {
      * @return The registered packet's class
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    public final Class<? extends Packet> getOutgoingClass(int id) {
-        PacketDefinition<?> definition = this.outgoing.get(id);
+    public final Class<? extends Packet> getClientboundClass(int id) {
+        PacketDefinition<?> definition = this.clientbound.get(id);
+        if (definition == null) {
+            throw new IllegalArgumentException("Invalid packet id: " + id);
+        }
+
+        return definition.getPacketClass();
+    }
+
+    /**
+     * Creates a new instance of a serverbound packet with the given id and read the serverbound input.
+     *
+     * @param id Id of the packet to create.
+     * @return The created packet.
+     * @throws IOException if there was an IO error whilst reading the packet.
+     * @throws IllegalArgumentException If the packet ID is not registered.
+     */
+    public final Packet createServerboundPacket(int id, NetInput in) throws IOException {
+        PacketDefinition<?> definition = this.serverbound.get(id);
+        if (definition == null) {
+            throw new IllegalArgumentException("Invalid packet id: " + id);
+        }
+
+        return definition.getFactory().construct(in);
+    }
+
+    /**
+     * Gets the registered id of a serverbound packet class.
+     *
+     * @param packetClass Class of the packet to get the id for.
+     * @return The packet's registered id.
+     * @throws IllegalArgumentException If the packet is not registered.
+     */
+    public final int getServerboundId(Class<? extends Packet> packetClass) {
+        Integer packetId = this.serverboundIds.get(packetClass);
+        if(packetId == null) {
+            throw new IllegalArgumentException("Unregistered serverbound packet class: " + packetClass.getName());
+        }
+
+        return packetId;
+    }
+
+    /**
+     * Gets the registered id of a server {@link Packet} instance.
+     *
+     * @param packet Instance of {@link Packet} to get the id for.
+     * @return The packet's registered id.
+     * @throws IllegalArgumentException If the packet is not registered.
+     */
+    public final int getServerboundId(Packet packet) {
+        if (packet instanceof BufferedPacket) {
+            return getServerboundId(((BufferedPacket) packet).getPacketClass());
+        }
+
+        return getServerboundId(packet.getClass());
+    }
+
+    /**
+     * Gets the packet class for a packet id.
+     * @param id The packet id.
+     * @return The registered packet's class
+     * @throws IllegalArgumentException If the packet ID is not registered.
+     */
+    public final Class<? extends Packet> getServerboundClass(int id) {
+        PacketDefinition<?> definition = this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
