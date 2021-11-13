@@ -2,17 +2,17 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.level.effect.BonemealGrowEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.BreakBlockEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.BreakPotionEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.ComposterEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.DragonFireballEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.ParticleEffect;
-import com.github.steveice10.mc.protocol.data.game.level.effect.RecordEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.SmokeEffectData;
-import com.github.steveice10.mc.protocol.data.game.level.effect.SoundEffect;
-import com.github.steveice10.mc.protocol.data.game.level.effect.WorldEffect;
-import com.github.steveice10.mc.protocol.data.game.level.effect.WorldEffectData;
+import com.github.steveice10.mc.protocol.data.game.level.event.BonemealGrowEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.BreakBlockEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.BreakPotionEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.ComposterEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.DragonFireballEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.ParticleEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.RecordEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.SmokeEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.SoundEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventData;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -27,33 +27,33 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundLevelEventPacket implements Packet {
-    private final @NonNull WorldEffect effect;
+    private final @NonNull LevelEvent event;
     private final @NonNull Position position;
-    private final WorldEffectData data;
+    private final LevelEventData data;
     private final boolean broadcast;
 
-    public ClientboundLevelEventPacket(@NonNull WorldEffect effect, @NonNull Position position, @NonNull WorldEffectData data) {
-        this(effect, position, data, false);
+    public ClientboundLevelEventPacket(@NonNull LevelEvent event, @NonNull Position position, @NonNull LevelEventData data) {
+        this(event, position, data, false);
     }
 
     public ClientboundLevelEventPacket(NetInput in) throws IOException {
-        this.effect = MagicValues.key(WorldEffect.class, in.readInt());
+        this.event = MagicValues.key(LevelEvent.class, in.readInt());
         this.position = Position.read(in);
         int value = in.readInt();
-        if (this.effect == SoundEffect.RECORD) {
-            this.data = new RecordEffectData(value);
-        } else if (this.effect == ParticleEffect.SMOKE) {
-            this.data = MagicValues.key(SmokeEffectData.class, value % 6);
-        } else if (this.effect == ParticleEffect.BREAK_BLOCK) {
-            this.data = new BreakBlockEffectData(value);
-        } else if (this.effect == ParticleEffect.BREAK_SPLASH_POTION) {
-            this.data = new BreakPotionEffectData(value);
-        } else if (this.effect == ParticleEffect.BONEMEAL_GROW || this.effect == ParticleEffect.BONEMEAL_GROW_WITH_SOUND) {
-            this.data = new BonemealGrowEffectData(value);
-        } else if (this.effect == ParticleEffect.COMPOSTER) {
-            this.data = value > 0 ? ComposterEffectData.FILL_SUCCESS : ComposterEffectData.FILL;
-        } else if (this.effect == ParticleEffect.ENDERDRAGON_FIREBALL_EXPLODE) {
-            this.data = value == 1 ? DragonFireballEffectData.HAS_SOUND : DragonFireballEffectData.NO_SOUND;
+        if (this.event == SoundEvent.RECORD) {
+            this.data = new RecordEventData(value);
+        } else if (this.event == ParticleEvent.SMOKE) {
+            this.data = MagicValues.key(SmokeEventData.class, value % 6);
+        } else if (this.event == ParticleEvent.BREAK_BLOCK) {
+            this.data = new BreakBlockEventData(value);
+        } else if (this.event == ParticleEvent.BREAK_SPLASH_POTION) {
+            this.data = new BreakPotionEventData(value);
+        } else if (this.event == ParticleEvent.BONEMEAL_GROW || this.event == ParticleEvent.BONEMEAL_GROW_WITH_SOUND) {
+            this.data = new BonemealGrowEventData(value);
+        } else if (this.event == ParticleEvent.COMPOSTER) {
+            this.data = value > 0 ? ComposterEventData.FILL_SUCCESS : ComposterEventData.FILL;
+        } else if (this.event == ParticleEvent.ENDERDRAGON_FIREBALL_EXPLODE) {
+            this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
         } else {
             this.data = null;
         }
@@ -63,22 +63,22 @@ public class ClientboundLevelEventPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeInt(MagicValues.value(Integer.class, this.effect));
+        out.writeInt(MagicValues.value(Integer.class, this.event));
         Position.write(out, this.position);
         int value = 0;
-        if (this.data instanceof RecordEffectData) {
-            value = ((RecordEffectData) this.data).getRecordId();
-        } else if (this.data instanceof SmokeEffectData) {
-            value = MagicValues.value(Integer.class, (SmokeEffectData) this.data);
-        } else if (this.data instanceof BreakBlockEffectData) {
-            value = ((BreakBlockEffectData) this.data).getBlockState();
-        } else if (this.data instanceof BreakPotionEffectData) {
-            value = ((BreakPotionEffectData) this.data).getPotionId();
-        } else if (this.data instanceof BonemealGrowEffectData) {
-            value = ((BonemealGrowEffectData) this.data).getParticleCount();
-        } else if (this.data instanceof ComposterEffectData) {
+        if (this.data instanceof RecordEventData) {
+            value = ((RecordEventData) this.data).getRecordId();
+        } else if (this.data instanceof SmokeEventData) {
+            value = MagicValues.value(Integer.class, (SmokeEventData) this.data);
+        } else if (this.data instanceof BreakBlockEventData) {
+            value = ((BreakBlockEventData) this.data).getBlockState();
+        } else if (this.data instanceof BreakPotionEventData) {
+            value = ((BreakPotionEventData) this.data).getPotionId();
+        } else if (this.data instanceof BonemealGrowEventData) {
+            value = ((BonemealGrowEventData) this.data).getParticleCount();
+        } else if (this.data instanceof ComposterEventData) {
             value = MagicValues.value(Integer.class, this.data);
-        } else if (this.data instanceof DragonFireballEffectData) {
+        } else if (this.data instanceof DragonFireballEventData) {
             value = MagicValues.value(Integer.class, this.data);
         }
 

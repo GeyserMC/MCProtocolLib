@@ -1,7 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.EntityStatus;
+import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -17,11 +17,11 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundEntityEventPacket implements Packet {
     private final int entityId;
-    private final @NonNull EntityStatus status;
+    private final @NonNull EntityEvent status;
 
     public ClientboundEntityEventPacket(NetInput in) throws IOException {
         this.entityId = in.readInt();
-        this.status = MagicValues.key(EntityStatus.class, in.readByte());
+        this.status = MagicValues.key(EntityEvent.class, in.readByte());
     }
 
     @Override

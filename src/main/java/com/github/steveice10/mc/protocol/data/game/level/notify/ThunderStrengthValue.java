@@ -3,7 +3,7 @@ package com.github.steveice10.mc.protocol.data.game.level.notify;
 import lombok.Data;
 
 @Data
-public class ThunderStrengthValue implements ClientNotificationValue {
+public class ThunderStrengthValue implements GameEventValue {
     private final float strength;
 
     public ThunderStrengthValue(float strength) {
