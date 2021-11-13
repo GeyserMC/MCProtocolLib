@@ -79,6 +79,17 @@ public abstract class PacketProtocol {
     }
 
     /**
+     * Registers a packet to this protocol as both incoming and outgoing.
+     *
+     * @param definition The packet definition.
+     * @throws IllegalArgumentException If the packet fails a test creation when being registered as incoming.
+     */
+    public final void register(PacketDefinition<? extends Packet> definition) {
+        this.registerIncoming(definition);
+        this.registerOutgoing(definition);
+    }
+
+    /**
      * Registers an incoming packet to this protocol.
      *
      * @param id      Id to register the packet to.
@@ -87,7 +98,16 @@ public abstract class PacketProtocol {
      * @throws IllegalArgumentException If the packet fails a test creation.
      */
     public final <T extends Packet> void registerIncoming(int id, Class<T> packet, PacketFactory<T> factory) {
-        this.incoming.put(id, new PacketDefinition<>(id, packet, factory));
+        this.registerIncoming(new PacketDefinition<>(id, packet, factory));
+    }
+
+    /**
+     * Registers an incoming packet to this protocol.
+     *
+     * @param definition The packet definition.
+     */
+    public final void registerIncoming(PacketDefinition<? extends Packet> definition) {
+        this.incoming.put(definition.getId(), definition);
     }
 
     /**
@@ -98,8 +118,17 @@ public abstract class PacketProtocol {
      * @param factory The packet factory.
      */
     public final <T extends Packet> void registerOutgoing(int id, Class<T> packet, PacketFactory<T> factory) {
-        this.outgoing.put(id, new PacketDefinition<>(id, packet, factory));
-        this.outgoingIds.put(packet, id);
+        this.registerOutgoing(new PacketDefinition<>(id, packet, factory));
+    }
+
+    /**
+     * Registers an outgoing packet to this protocol.
+     *
+     * @param definition The packet definition.
+     */
+    public final void registerOutgoing(PacketDefinition<? extends Packet> definition) {
+        this.outgoing.put(definition.getId(), definition);
+        this.outgoingIds.put(definition.getPacketClass(), definition.getId());
     }
 
     /**
