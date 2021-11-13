@@ -25,7 +25,6 @@ import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundSt
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
-import com.github.steveice10.packetlib.event.session.PacketErrorEvent;
 import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.PacketSentEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
@@ -180,11 +179,6 @@ public class ServerListener extends SessionAdapter {
         } else if (protocol.getState() == ProtocolState.GAME) {
             event.getSession().send(new ClientboundDisconnectPacket(event.getReason()));
         }
-    }
-
-    @Override
-    public void packetError(PacketErrorEvent event) {
-        event.getCause().printStackTrace();
     }
 
     private class UserAuthTask implements Runnable {
