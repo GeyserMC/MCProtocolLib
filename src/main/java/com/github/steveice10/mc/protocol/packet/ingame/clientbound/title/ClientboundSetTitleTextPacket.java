@@ -27,6 +27,6 @@ public class ClientboundSetTitleTextPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(DefaultComponentSerializer.get().serializeOrNull(this.text));
+        out.writeString(DefaultComponentSerializer.get().serializeOr(this.text, "null"));
     }
 }
