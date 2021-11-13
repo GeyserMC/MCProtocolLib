@@ -30,13 +30,13 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
             this.session.getPacketProtocol().getPacketHeader().writePacketId(out, this.session.getPacketProtocol().getOutgoingId(packet));
             packet.write(out);
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             // Reset writer index to make sure incomplete data is not written out.
             buf.writerIndex(initial);
 
             PacketErrorEvent e = new PacketErrorEvent(this.session, t);
             this.session.callEvent(e);
-            if(!e.shouldSuppress()) {
+            if (!e.shouldSuppress()) {
                 throw t;
             }
         }
@@ -50,26 +50,25 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             NetInput in = new ByteBufNetInput(buf);
 
             int id = this.session.getPacketProtocol().getPacketHeader().readPacketId(in);
-            if(id == -1) {
+            if (id == -1) {
                 buf.readerIndex(initial);
                 return;
             }
 
-            Packet packet = this.session.getPacketProtocol().createIncomingPacket(id);
-            packet.read(in);
+            Packet packet = this.session.getPacketProtocol().createIncomingPacket(id, in);
 
-            if(buf.readableBytes() > 0) {
+            if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");
             }
 
             out.add(packet);
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             // Advance buffer to end to make sure remaining data in this packet is skipped.
             buf.readerIndex(buf.readerIndex() + buf.readableBytes());
 
             PacketErrorEvent e = new PacketErrorEvent(this.session, t);
             this.session.callEvent(e);
-            if(!e.shouldSuppress()) {
+            if (!e.shouldSuppress()) {
                 throw t;
             }
         }

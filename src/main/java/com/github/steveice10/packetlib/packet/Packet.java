@@ -6,17 +6,9 @@ import com.github.steveice10.packetlib.io.NetOutput;
 import java.io.IOException;
 
 /**
- * A network packet.
+ * A network packet. Any given packet must have a constructor that takes in a {@link NetInput}.
  */
 public interface Packet {
-    /**
-     * Reads the packet from the given input buffer.
-     *
-     * @param in The input source to read from.
-     * @throws IOException If an I/O error occurs.
-     */
-    public void read(NetInput in) throws IOException;
-
     /**
      * Writes the packet to the given output buffer.
      *

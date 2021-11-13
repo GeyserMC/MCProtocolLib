@@ -3,17 +3,21 @@ package com.github.steveice10.packetlib.packet;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.crypt.PacketEncryption;
+import com.github.steveice10.packetlib.io.NetInput;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * A protocol for packet sending and receiving.
  * All implementations must have a no-params constructor for server protocol creation.
  */
 public abstract class PacketProtocol {
-    private final Map<Integer, Class<? extends Packet>> incoming = new HashMap<>();
+    private final Map<Integer, Constructor<? extends Packet>> incoming = new HashMap<>();
     private final Map<Class<? extends Packet>, Integer> outgoing = new HashMap<>();
 
     private final Map<Integer, Class<? extends Packet>> outgoingClasses = new HashMap<>();
@@ -83,13 +87,13 @@ public abstract class PacketProtocol {
      * @throws IllegalArgumentException If the packet fails a test creation.
      */
     public final void registerIncoming(int id, Class<? extends Packet> packet) {
-        this.incoming.put(id, packet);
+        Constructor<? extends Packet> constructor;
         try {
-            this.createIncomingPacket(id);
-        } catch(IllegalStateException e) {
-            this.incoming.remove(id);
-            throw new IllegalArgumentException(e.getMessage(), e.getCause());
+            constructor = packet.getConstructor(NetInput.class);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("Packet does not have a constructor that takes in NetInput!");
         }
+        this.incoming.put(id, constructor);
     }
 
     /**
@@ -104,30 +108,28 @@ public abstract class PacketProtocol {
     }
 
     /**
-     * Creates a new instance of an incoming packet with the given id.
+     * Creates a new instance of an incoming packet with the given id and read the incoming input.
      *
      * @param id Id of the packet to create.
      * @return The created packet.
+     * @throws IOException if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
-     * @throws IllegalStateException    If the packet does not have a no-params constructor or cannot be instantiated.
      */
-    public final Packet createIncomingPacket(int id) {
-        Class<? extends Packet> packet = this.incoming.get(id);
-        if (packet == null) {
+    public final Packet createIncomingPacket(int id, NetInput in) throws IOException {
+        Constructor<? extends Packet> constructor = this.incoming.get(id);
+        if (constructor == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
 
         try {
-            Constructor<? extends Packet> constructor = packet.getDeclaredConstructor();
-            if(!constructor.isAccessible()) {
-                constructor.setAccessible(true);
+            return constructor.newInstance(in);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new IllegalStateException("Packet \"" + id + ", " + constructor.getDeclaringClass().getName() + "\" could not be instantiated.");
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof IOException) {
+                throw (IOException) e.getCause();
             }
-
-            return constructor.newInstance();
-        } catch(NoSuchMethodError e) {
-            throw new IllegalStateException("Packet \"" + id + ", " + packet.getName() + "\" does not have a no-params constructor for instantiation.");
-        } catch(Exception e) {
-            throw new IllegalStateException("Failed to instantiate packet \"" + id + ", " + packet.getName() + "\".", e);
+            throw new IllegalStateException("Failed to instantiate packet \"" + id + ", " + constructor.getDeclaringClass().getName() + "\".", e);
         }
     }
 
