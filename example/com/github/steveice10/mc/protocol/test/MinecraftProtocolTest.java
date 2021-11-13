@@ -8,7 +8,9 @@ import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
-import com.github.steveice10.mc.protocol.data.SubProtocol;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
+import com.github.steveice10.mc.protocol.data.ProtocolState;
+import com.github.steveice10.mc.protocol.data.State;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
@@ -67,7 +69,7 @@ public class MinecraftProtocolTest {
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session ->
                     new ServerStatusInfo(
-                            new VersionInfo(MinecraftConstants.GAME_VERSION, MinecraftConstants.PROTOCOL_VERSION),
+                            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
                             new PlayerInfo(100, 0, new GameProfile[0]),
                             Component.text("Hello world!"),
                             null
@@ -129,7 +131,7 @@ public class MinecraftProtocolTest {
                 @Override
                 public void sessionRemoved(SessionRemovedEvent event) {
                     MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-                    if (protocol.getSubProtocol() == SubProtocol.GAME) {
+                    if (protocol.getState() == ProtocolState.GAME) {
                         System.out.println("Closing server.");
                         event.getServer().close(false);
                     }
