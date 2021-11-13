@@ -231,7 +231,7 @@ public abstract class PacketProtocol {
     }
 
     /**
-     * Gets the registered id of a server {@link Packet} instance.
+     * Gets the registered id of a serverbound {@link Packet} instance.
      *
      * @param packet Instance of {@link Packet} to get the id for.
      * @return The packet's registered id.
