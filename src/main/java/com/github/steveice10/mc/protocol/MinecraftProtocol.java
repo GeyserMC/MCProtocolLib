@@ -465,7 +465,6 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     private void initStatus(PacketRegisterFactory clientboundPackets, PacketRegisterFactory serverboundPackets) {
-        clientboundPackets.register(0x01, ClientboundStatusResponsePacket.class, ClientboundStatusResponsePacket::new);
         clientboundPackets.register(0x00, ClientboundStatusResponsePacket.class, ClientboundStatusResponsePacket::new);
         clientboundPackets.register(0x01, ClientboundPongResponsePacket.class, ClientboundPongResponsePacket::new);
 
