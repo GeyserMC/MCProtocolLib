@@ -12,13 +12,14 @@ import lombok.Setter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetTitleTextPacket implements Packet {
-    private final Component text;
+    private final @Nullable Component text;
 
     public ClientboundSetTitleTextPacket(NetInput in) throws IOException {
         this.text = DefaultComponentSerializer.get().deserialize(in.readString());
@@ -26,6 +27,6 @@ public class ClientboundSetTitleTextPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeString(DefaultComponentSerializer.get().serialize(this.text));
+        out.writeString(DefaultComponentSerializer.get().serializeOrNull(this.text));
     }
 }
