@@ -7,10 +7,10 @@ import com.github.steveice10.packetlib.packet.Packet;
 import java.io.IOException;
 
 public class PingPacket implements Packet {
-    private String id;
+    private final String id;
 
-    @SuppressWarnings("unused")
-    private PingPacket() {
+    public PingPacket(NetInput in) throws IOException {
+        this.id = in.readString();
     }
 
     public PingPacket(String id) {
@@ -19,11 +19,6 @@ public class PingPacket implements Packet {
 
     public String getPingId() {
         return this.id;
-    }
-
-    @Override
-    public void read(NetInput in) throws IOException {
-        this.id = in.readString();
     }
 
     @Override

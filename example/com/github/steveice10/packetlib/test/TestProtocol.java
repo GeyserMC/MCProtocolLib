@@ -12,7 +12,7 @@ import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
 
 public class TestProtocol extends PacketProtocol {
-    private PacketHeader header = new DefaultPacketHeader();
+    private final PacketHeader header = new DefaultPacketHeader();
     private AESEncryption encrypt;
 
     @SuppressWarnings("unused")
@@ -24,7 +24,7 @@ public class TestProtocol extends PacketProtocol {
     }
 
     public void setSecretKey(SecretKey key) {
-        this.register(0, PingPacket.class);
+        this.register(0, PingPacket.class, PingPacket::new);
         try {
             this.encrypt = new AESEncryption(key);
         } catch(GeneralSecurityException e) {
