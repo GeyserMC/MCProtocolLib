@@ -21,18 +21,18 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
     /**
      * The server sends the record position in terms of the local chunk coordinate but it is stored here in terms of global coordinates.
      */
-    private final @NonNull BlockChangeEntry[] records;
+    private final @NonNull BlockChangeEntry[] entries;
 
-    public ClientboundSectionBlocksUpdatePacket(int chunkX, int chunkY, int chunkZ, boolean ignoreOldLight, BlockChangeEntry... records) {
-        if (records == null || records.length == 0) {
-            throw new IllegalArgumentException("Records must contain at least 1 value.");
+    public ClientboundSectionBlocksUpdatePacket(int chunkX, int chunkY, int chunkZ, boolean ignoreOldLight, BlockChangeEntry... entries) {
+        if (entries == null || entries.length == 0) {
+            throw new IllegalArgumentException("Entries must contain at least 1 value.");
         }
 
         this.chunkX = chunkX;
         this.chunkY = chunkY;
         this.chunkZ = chunkZ;
         this.ignoreOldLight = ignoreOldLight;
-        this.records = records;
+        this.entries = entries;
     }
 
     public ClientboundSectionBlocksUpdatePacket(NetInput in) throws IOException {
@@ -41,14 +41,14 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
         this.chunkY = (int) (chunkPosition << 44 >> 44);
         this.chunkZ = (int) (chunkPosition << 22 >> 42);
         this.ignoreOldLight = in.readBoolean();
-        this.records = new BlockChangeEntry[in.readVarInt()];
-        for (int index = 0; index < this.records.length; index++) {
+        this.entries = new BlockChangeEntry[in.readVarInt()];
+        for (int index = 0; index < this.entries.length; index++) {
             long blockData = in.readVarLong();
             short position = (short) (blockData & 0xFFFL);
             int x = (this.chunkX << 4) + (position >>> 8 & 0xF);
             int y = (this.chunkY << 4) + (position & 0xF);
             int z = (this.chunkZ << 4) + (position >>> 4 & 0xF);
-            this.records[index] = new BlockChangeEntry(new Position(x, y, z), (int) (blockData >>> 12));
+            this.entries[index] = new BlockChangeEntry(new Position(x, y, z), (int) (blockData >>> 12));
         }
     }
 
@@ -59,10 +59,10 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
         chunkPosition |= (this.chunkZ & 0x3FFFFFL) << 20;
         out.writeLong(chunkPosition | (this.chunkY & 0xFFFFFL));
         out.writeBoolean(this.ignoreOldLight);
-        out.writeVarInt(this.records.length);
-        for (BlockChangeEntry record : this.records) {
-            short position = (short) ((record.getPosition().getX() - (this.chunkX << 4)) << 8 | (record.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (record.getPosition().getY() - (this.chunkY << 4)));
-            out.writeVarLong((long) record.getBlock() << 12 | position);
+        out.writeVarInt(this.entries.length);
+        for (BlockChangeEntry entry : this.entries) {
+            short position = (short) ((entry.getPosition().getX() - (this.chunkX << 4)) << 8 | (entry.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (entry.getPosition().getY() - (this.chunkY << 4)));
+            out.writeVarLong((long) entry.getBlock() << 12 | position);
         }
     }
 }

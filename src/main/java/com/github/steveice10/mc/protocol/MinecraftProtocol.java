@@ -344,7 +344,7 @@ public class MinecraftProtocol extends PacketProtocol {
         clientboundPackets.register(0x1F, ClientboundHorseScreenOpenPacket.class, ClientboundHorseScreenOpenPacket::new);
         clientboundPackets.register(0x20, ClientboundInitializeBorderPacket.class, ClientboundInitializeBorderPacket::new);
         clientboundPackets.register(0x21, ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new);
-        clientboundPackets.register(0x22, ClientboundLevelChunkPacket.class, ClientboundLevelChunkPacket::new);
+        clientboundPackets.register(0x22, ClientboundLevelChunkWithLightPacket.class, ClientboundLevelChunkWithLightPacket::new);
         clientboundPackets.register(0x23, ClientboundLevelEventPacket.class, ClientboundLevelEventPacket::new);
         clientboundPackets.register(0x24, ClientboundLevelParticlesPacket.class, ClientboundLevelParticlesPacket::new);
         clientboundPackets.register(0x25, ClientboundLightUpdatePacket.class, ClientboundLightUpdatePacket::new);

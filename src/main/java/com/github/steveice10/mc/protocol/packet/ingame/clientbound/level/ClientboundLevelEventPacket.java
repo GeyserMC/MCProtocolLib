@@ -69,7 +69,7 @@ public class ClientboundLevelEventPacket implements Packet {
         if (this.data instanceof RecordEventData) {
             value = ((RecordEventData) this.data).getRecordId();
         } else if (this.data instanceof SmokeEventData) {
-            value = MagicValues.value(Integer.class, (SmokeEventData) this.data);
+            value = MagicValues.value(Integer.class, this.data);
         } else if (this.data instanceof BreakBlockEventData) {
             value = ((BreakBlockEventData) this.data).getBlockState();
         } else if (this.data instanceof BreakPotionEventData) {

@@ -16,15 +16,15 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundBlockUpdatePacket implements Packet {
-    private final @NonNull BlockChangeEntry record;
+    private final @NonNull BlockChangeEntry entry;
 
     public ClientboundBlockUpdatePacket(NetInput in) throws IOException {
-        this.record = new BlockChangeEntry(Position.read(in), in.readVarInt());
+        this.entry = new BlockChangeEntry(Position.read(in), in.readVarInt());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
-        Position.write(out, this.record.getPosition());
-        out.writeVarInt(this.record.getBlock());
+        Position.write(out, this.entry.getPosition());
+        out.writeVarInt(this.entry.getBlock());
     }
 }

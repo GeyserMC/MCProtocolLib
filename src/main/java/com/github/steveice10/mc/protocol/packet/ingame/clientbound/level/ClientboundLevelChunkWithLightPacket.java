@@ -22,10 +22,10 @@ import java.util.BitSet;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundLevelChunkPacket implements Packet {
+public class ClientboundLevelChunkWithLightPacket implements Packet {
     private final @NonNull Chunk chunk;
 
-    public ClientboundLevelChunkPacket(NetInput in) throws IOException {
+    public ClientboundLevelChunkWithLightPacket(NetInput in) throws IOException {
         int x = in.readInt();
         int z = in.readInt();
         BitSet chunkMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
