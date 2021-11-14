@@ -15,14 +15,6 @@ public class Chunk {
     private final @NonNull CompoundTag heightMaps;
     private final @NonNull int[] biomeData;
 
-    /**
-     * @deprecated Non-full chunks no longer exist since 1.17.
-     */
-    @Deprecated
-    public Chunk(int x, int z, @NonNull ChunkSection[] sections, @NonNull CompoundTag[] blockEntities, @NonNull CompoundTag heightMaps) {
-        this(x, z, sections, blockEntities, heightMaps, new int[1024]);
-    }
-
     public Chunk(int x, int z, @NonNull ChunkSection[] sections, @NonNull CompoundTag[] blockEntities, @NonNull CompoundTag heightMaps, @NonNull int[] biomeData) {
         this.x = x;
         this.z = z;
