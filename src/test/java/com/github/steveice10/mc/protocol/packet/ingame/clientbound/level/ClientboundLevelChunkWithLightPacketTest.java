@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
@@ -14,9 +13,6 @@ import java.util.Collections;
 public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
     @Before
     public void setup() throws IOException {
-        ChunkSection chunk = new ChunkSection();
-        chunk.setBlock(0, 0, 0, 10);
-
         this.setPackets(
                 new ClientboundLevelChunkWithLightPacket(0, 0,
                         new byte[0], new CompoundTag("HeightMaps"), new BlockEntityInfo[0],
