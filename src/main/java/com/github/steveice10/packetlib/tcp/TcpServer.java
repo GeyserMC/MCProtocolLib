@@ -24,13 +24,14 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.InetSocketAddress;
+import java.util.function.Supplier;
 
 public class TcpServer extends AbstractServer {
     private EventLoopGroup group;
     private Class<? extends ServerSocketChannel> serverSocketChannel;
     private Channel channel;
 
-    public TcpServer(String host, int port, Class<? extends PacketProtocol> protocol) {
+    public TcpServer(String host, int port, Supplier<? extends PacketProtocol> protocol) {
         super(host, port, protocol);
     }
 
