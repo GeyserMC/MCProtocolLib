@@ -32,6 +32,7 @@ public class ClientboundLoginPacket implements Packet {
     private final long hashedSeed;
     private final int maxPlayers;
     private final int viewDistance;
+    private final int simulationDistance;
     private final boolean reducedDebugInfo;
     private final boolean enableRespawnScreen;
     private final boolean debug;
@@ -55,6 +56,7 @@ public class ClientboundLoginPacket implements Packet {
         this.hashedSeed = in.readLong();
         this.maxPlayers = in.readVarInt();
         this.viewDistance = in.readVarInt();
+        this.simulationDistance = in.readVarInt();
         this.reducedDebugInfo = in.readBoolean();
         this.enableRespawnScreen = in.readBoolean();
         this.debug = in.readBoolean();
@@ -80,6 +82,7 @@ public class ClientboundLoginPacket implements Packet {
         out.writeLong(this.hashedSeed);
         out.writeVarInt(this.maxPlayers);
         out.writeVarInt(this.viewDistance);
+        out.writeVarInt(this.simulationDistance);
         out.writeBoolean(this.reducedDebugInfo);
         out.writeBoolean(this.enableRespawnScreen);
         out.writeBoolean(this.debug);

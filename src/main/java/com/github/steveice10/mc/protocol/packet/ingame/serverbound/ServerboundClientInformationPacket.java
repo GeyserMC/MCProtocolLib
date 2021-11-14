@@ -27,6 +27,10 @@ public class ServerboundClientInformationPacket implements Packet {
     private final @NonNull List<SkinPart> visibleParts;
     private final @NonNull HandPreference mainHand;
     private final boolean textFilteringEnabled;
+    /**
+     * Whether the client permits being shown in server ping responses.
+     */
+    private final boolean allowsListing;
 
     public ServerboundClientInformationPacket(NetInput in) throws IOException {
         this.locale = in.readString();
@@ -45,6 +49,7 @@ public class ServerboundClientInformationPacket implements Packet {
 
         this.mainHand = MagicValues.key(HandPreference.class, in.readVarInt());
         this.textFilteringEnabled = in.readBoolean();
+        this.allowsListing = in.readBoolean();
     }
 
     @Override
@@ -63,5 +68,6 @@ public class ServerboundClientInformationPacket implements Packet {
 
         out.writeVarInt(MagicValues.value(Integer.class, this.mainHand));
         out.writeBoolean(this.textFilteringEnabled);
+        out.writeBoolean(allowsListing);
     }
 }

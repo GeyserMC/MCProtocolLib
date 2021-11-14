@@ -1,32 +1,26 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
+import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.With;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
 @Data
 @With
+@AllArgsConstructor
 public class ClientboundLightUpdatePacket implements Packet {
     private final int x;
     private final int z;
-    private final @NonNull BitSet skyYMask;
-    private final @NonNull BitSet blockYMask;
-    private final @NonNull BitSet emptySkyYMask;
-    private final @NonNull BitSet emptyBlockYMask;
-    private final @NonNull List<byte[]> skyUpdates;
-    private final @NonNull List<byte[]> blockUpdates;
-    private final boolean trustEdges;
+    private final @Nonnull LightUpdateData lightData;
 
     public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
                                         @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
@@ -43,72 +37,19 @@ public class ClientboundLightUpdatePacket implements Packet {
         }
         this.x = x;
         this.z = z;
-        this.skyYMask = skyYMask;
-        this.blockYMask = blockYMask;
-        this.emptySkyYMask = emptySkyYMask;
-        this.emptyBlockYMask = emptyBlockYMask;
-        this.skyUpdates = skyUpdates;
-        this.blockUpdates = blockUpdates;
-        this.trustEdges = trustEdges;
+        this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates, trustEdges);
     }
 
     public ClientboundLightUpdatePacket(NetInput in) throws IOException {
         this.x = in.readVarInt();
         this.z = in.readVarInt();
-        this.trustEdges = in.readBoolean();
-
-        this.skyYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
-        this.blockYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
-        this.emptySkyYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
-        this.emptyBlockYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
-
-        int skyUpdateSize = in.readVarInt();
-        skyUpdates = new ArrayList<>(skyUpdateSize);
-        for (int i = 0; i < skyUpdateSize; i++) {
-            skyUpdates.add(in.readBytes(in.readVarInt()));
-        }
-
-        int blockUpdateSize = in.readVarInt();
-        blockUpdates = new ArrayList<>(blockUpdateSize);
-        for (int i = 0; i < blockUpdateSize; i++) {
-            blockUpdates.add(in.readBytes(in.readVarInt()));
-        }
+        this.lightData = LightUpdateData.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.x);
         out.writeVarInt(this.z);
-        out.writeBoolean(this.trustEdges);
-
-        writeBitSet(out, this.skyYMask);
-        writeBitSet(out, this.blockYMask);
-        writeBitSet(out, this.emptySkyYMask);
-        writeBitSet(out, this.emptyBlockYMask);
-
-        out.writeVarInt(this.skyUpdates.size());
-        for (byte[] array : this.skyUpdates) {
-            out.writeVarInt(array.length);
-            out.writeBytes(array);
-        }
-
-        out.writeVarInt(this.blockUpdates.size());
-        for (byte[] array : this.blockUpdates) {
-            out.writeVarInt(array.length);
-            out.writeBytes(array);
-        }
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
-    private void writeBitSet(NetOutput out, BitSet bitSet) throws IOException {
-        long[] array = bitSet.toLongArray();
-        out.writeVarInt(array.length);
-        for (long content : array) {
-            out.writeLong(content);
-        }
+        LightUpdateData.write(out, this.lightData);
     }
 }

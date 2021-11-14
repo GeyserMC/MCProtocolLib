@@ -38,7 +38,7 @@ public abstract class PacketTest {
 
             return constructor.newInstance(in);
         } catch (NoSuchMethodError e) {
-            throw new IllegalStateException("Packet \"" + clazz.getName() + "\" does not have a no-params constructor for instantiation.");
+            throw new IllegalStateException("Packet \"" + clazz.getName() + "\" does not have a NetInput constructor for instantiation.");
         } catch (Exception e) {
             throw new IllegalStateException("Failed to instantiate packet \"" + clazz.getName() + "\".", e);
         }
