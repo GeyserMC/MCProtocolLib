@@ -38,7 +38,6 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
@@ -147,7 +146,6 @@ public class MagicValuesTest {
         this.register(EnchantmentTableProperty.class, Integer.class);
         this.register(FurnaceProperty.class, Integer.class);
         this.register(AnvilProperty.class, Integer.class);
-        this.register(BlockEntityType.class, Integer.class);
         this.register(GameEvent.class, Integer.class);
         this.register(CommandBlockMode.class, Integer.class);
         this.register(UpdateStructureBlockAction.class, Integer.class);

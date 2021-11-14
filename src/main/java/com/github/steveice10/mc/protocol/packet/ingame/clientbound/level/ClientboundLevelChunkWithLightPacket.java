@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
+import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -37,7 +38,7 @@ public class ClientboundLevelChunkWithLightPacket implements Packet {
             int blockEntityX = (xz >> 4) & 15;
             int blockEntityZ = xz & 15;
             int blockEntityY = in.readShort();
-            int type = in.readVarInt();
+            BlockEntityType type = BlockEntityType.read(in);
             CompoundTag tag = NBT.read(in);
             this.blockEntities[i] = new BlockEntityInfo(blockEntityX, blockEntityY, blockEntityZ, type, tag);
         }
@@ -57,7 +58,7 @@ public class ClientboundLevelChunkWithLightPacket implements Packet {
         for (BlockEntityInfo blockEntity : this.blockEntities) {
             out.writeByte(((blockEntity.getX() & 15) << 4) | blockEntity.getZ() & 15);
             out.writeShort(blockEntity.getY());
-            out.writeVarInt(blockEntity.getId());
+            BlockEntityType.write(out, blockEntity.getType());
             NBT.write(out, blockEntity.getNbt());
         }
 

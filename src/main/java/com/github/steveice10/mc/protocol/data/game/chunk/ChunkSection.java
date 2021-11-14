@@ -2,18 +2,14 @@ package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.IOException;
 
 @Data
 @Setter(AccessLevel.NONE)
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ChunkSection {
     private static final int MAX_PALETTE_BITS_PER_ENTRY = 8;
     private static final int MAX_BIOME_BITS_PER_ENTRY = 2;
@@ -26,7 +22,7 @@ public class ChunkSection {
     private @NonNull DataPalette biomeData;
 
     public ChunkSection() {
-        this(0, DataPalette.createEmpty(MAX_PALETTE_BITS_PER_ENTRY, DataPalette.CHUNK_SIZE), DataPalette.createEmpty(MAX_BIOME_BITS_PER_ENTRY, DataPalette.BIOME_SIZE));
+        this(0, DataPalette.createForChunk(), DataPalette.createForBiome());
     }
 
     public static ChunkSection read(NetInput in) throws IOException {

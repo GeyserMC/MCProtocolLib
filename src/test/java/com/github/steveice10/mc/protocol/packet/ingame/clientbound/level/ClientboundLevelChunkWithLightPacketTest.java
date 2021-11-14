@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
+import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import org.junit.Before;
@@ -19,8 +20,8 @@ public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
                         new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList(), false)
                 ),
                 new ClientboundLevelChunkWithLightPacket(1, 1,
-                        new byte[256], new CompoundTag("HeightMaps"), new BlockEntityInfo[]{
-                        new BlockEntityInfo(1, 0, 1, 0, null)
+                        new byte[256], new CompoundTag("HeightMaps"), new BlockEntityInfo[] {
+                        new BlockEntityInfo(1, 0, 1, BlockEntityType.CHEST, null)
                 }, new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList(), true)
                 )
         );

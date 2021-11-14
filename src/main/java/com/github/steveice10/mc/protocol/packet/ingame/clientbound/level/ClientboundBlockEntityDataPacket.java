@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
@@ -25,14 +24,14 @@ public class ClientboundBlockEntityDataPacket implements Packet {
 
     public ClientboundBlockEntityDataPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
-        this.type = MagicValues.key(BlockEntityType.class, in.readVarInt());
+        this.type = BlockEntityType.read(in);
         this.nbt = NBT.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         Position.write(out, this.position);
-        out.writeVarInt(MagicValues.value(Integer.class, this.type));
+        BlockEntityType.write(out, this.type);
         NBT.write(out, this.nbt);
     }
 }

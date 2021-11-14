@@ -11,6 +11,7 @@ import java.io.IOException;
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class DataPalette {
     static final int BIOME_SIZE = 64;
     static final int CHUNK_SIZE = 4096;
@@ -29,7 +30,7 @@ public class DataPalette {
     }
 
     public static DataPalette createForBiome() {
-        return createEmpty(MAX_BIOME_BITS_PER_ENTRY, CHUNK_SIZE);
+        return createEmpty(MAX_BIOME_BITS_PER_ENTRY, BIOME_SIZE);
     }
 
     public static DataPalette createEmpty(int maxBitsForType, int maxStorageSize) {
@@ -52,13 +53,14 @@ public class DataPalette {
     }
 
     public static void write(NetOutput out, DataPalette palette) throws IOException {
-        out.writeByte(palette.storage.getBitsPerEntry());
-
         if (palette.palette instanceof SingletonPalette) {
+            out.writeByte(0); // Bits per entry
             out.writeVarInt(palette.palette.idToState(0));
             out.writeVarInt(0); // Data length
             return;
         }
+
+        out.writeByte(palette.storage.getBitsPerEntry());
 
         if (!(palette.palette instanceof GlobalPalette)) {
             int paletteLength = palette.palette.size();

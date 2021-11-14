@@ -38,7 +38,6 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
@@ -596,21 +595,6 @@ public class MagicValues {
         register(FurnaceProperty.TOTAL_COOK_TIME, 3);
 
         register(AnvilProperty.MAXIMUM_COST, 0);
-
-        register(BlockEntityType.MOB_SPAWNER, 1);
-        register(BlockEntityType.COMMAND_BLOCK, 2);
-        register(BlockEntityType.BEACON, 3);
-        register(BlockEntityType.SKULL, 4);
-        register(BlockEntityType.CONDUIT, 5);
-        register(BlockEntityType.BANNER, 6);
-        register(BlockEntityType.STRUCTURE_BLOCK, 7);
-        register(BlockEntityType.END_GATEWAY, 8);
-        register(BlockEntityType.SIGN, 9);
-        register(BlockEntityType.SHULKER_BOX, 10);
-        register(BlockEntityType.BED, 11);
-        register(BlockEntityType.JIGSAW_BLOCK, 12);
-        register(BlockEntityType.CAMPFIRE, 13);
-        register(BlockEntityType.BEEHIVE, 14);
 
         register(GameEvent.INVALID_BED, 0);
         register(GameEvent.STOP_RAIN, 1);
