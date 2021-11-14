@@ -2,8 +2,8 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotification;
-import com.github.steveice10.mc.protocol.data.game.level.notify.ClientNotificationValue;
+import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
+import com.github.steveice10.mc.protocol.data.game.level.notify.GameEventValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.RainStrengthValue;
@@ -23,23 +23,23 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundGameEventPacket implements Packet {
-    private final @NonNull ClientNotification notification;
-    private final ClientNotificationValue value;
+    private final @NonNull GameEvent notification;
+    private final GameEventValue value;
 
     public ClientboundGameEventPacket(NetInput in) throws IOException {
-        this.notification = MagicValues.key(ClientNotification.class, in.readUnsignedByte());
+        this.notification = MagicValues.key(GameEvent.class, in.readUnsignedByte());
         float value = in.readFloat();
-        if (this.notification == ClientNotification.CHANGE_GAMEMODE) {
+        if (this.notification == GameEvent.CHANGE_GAMEMODE) {
             this.value = MagicValues.key(GameMode.class, ((int) value == -1) ? 255 : (int) value); // https://bugs.mojang.com/browse/MC-189885 - since we read as a float this bug doesn't apply here
-        } else if (this.notification == ClientNotification.DEMO_MESSAGE) {
+        } else if (this.notification == GameEvent.DEMO_MESSAGE) {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
-        } else if (this.notification == ClientNotification.ENTER_CREDITS) {
+        } else if (this.notification == GameEvent.ENTER_CREDITS) {
             this.value = MagicValues.key(EnterCreditsValue.class, (int) value);
-        } else if (this.notification == ClientNotification.ENABLE_RESPAWN_SCREEN) {
+        } else if (this.notification == GameEvent.ENABLE_RESPAWN_SCREEN) {
             this.value = MagicValues.key(RespawnScreenValue.class, (int) value);
-        } else if (this.notification == ClientNotification.RAIN_STRENGTH) {
+        } else if (this.notification == GameEvent.RAIN_STRENGTH) {
             this.value = new RainStrengthValue(value);
-        } else if (this.notification == ClientNotification.THUNDER_STRENGTH) {
+        } else if (this.notification == GameEvent.THUNDER_STRENGTH) {
             this.value = new ThunderStrengthValue(value);
         } else {
             this.value = null;

@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.game.NBT;
+import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
-import com.github.steveice10.mc.protocol.data.game.chunk.Column;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -23,7 +23,7 @@ import java.util.BitSet;
 @With
 @AllArgsConstructor
 public class ClientboundLevelChunkPacket implements Packet {
-    private final @NonNull Column column;
+    private final @NonNull Chunk chunk;
 
     public ClientboundLevelChunkPacket(NetInput in) throws IOException {
         int x = in.readInt();
@@ -37,19 +37,19 @@ public class ClientboundLevelChunkPacket implements Packet {
         byte[] data = in.readBytes(in.readVarInt());
 
         NetInput dataIn = new StreamNetInput(new ByteArrayInputStream(data));
-        Chunk[] chunks = new Chunk[chunkMask.size()];
-        for (int index = 0; index < chunks.length; index++) {
+        ChunkSection[] sections = new ChunkSection[chunkMask.size()];
+        for (int index = 0; index < sections.length; index++) {
             if (chunkMask.get(index)) {
-                chunks[index] = Chunk.read(dataIn);
+                sections[index] = ChunkSection.read(dataIn);
             }
         }
 
-        CompoundTag[] tileEntities = new CompoundTag[in.readVarInt()];
-        for (int i = 0; i < tileEntities.length; i++) {
-            tileEntities[i] = NBT.read(in);
+        CompoundTag[] blockEntities = new CompoundTag[in.readVarInt()];
+        for (int i = 0; i < blockEntities.length; i++) {
+            blockEntities[i] = NBT.read(in);
         }
 
-        this.column = new Column(x, z, chunks, tileEntities, heightMaps, biomeData);
+        this.chunk = new Chunk(x, z, sections, blockEntities, heightMaps, biomeData);
     }
 
     @Override
@@ -58,31 +58,31 @@ public class ClientboundLevelChunkPacket implements Packet {
         NetOutput dataOut = new StreamNetOutput(dataBytes);
 
         BitSet bitSet = new BitSet();
-        Chunk[] chunks = this.column.getChunks();
-        for (int index = 0; index < chunks.length; index++) {
-            Chunk chunk = chunks[index];
-            if (chunk != null && !chunk.isEmpty()) {
+        ChunkSection[] sections = this.chunk.getSections();
+        for (int index = 0; index < sections.length; index++) {
+            ChunkSection section = sections[index];
+            if (sections != null && !section.isEmpty()) {
                 bitSet.set(index);
-                Chunk.write(dataOut, chunk);
+                ChunkSection.write(dataOut, section);
             }
         }
 
-        out.writeInt(this.column.getX());
-        out.writeInt(this.column.getZ());
+        out.writeInt(this.chunk.getX());
+        out.writeInt(this.chunk.getZ());
         long[] longArray = bitSet.toLongArray();
         out.writeVarInt(longArray.length);
         for (long content : longArray) {
             out.writeLong(content);
         }
-        NBT.write(out, this.column.getHeightMaps());
-        out.writeVarInt(this.column.getBiomeData().length);
-        for (int biomeData : this.column.getBiomeData()) {
+        NBT.write(out, this.chunk.getHeightMaps());
+        out.writeVarInt(this.chunk.getBiomeData().length);
+        for (int biomeData : this.chunk.getBiomeData()) {
             out.writeVarInt(biomeData);
         }
         out.writeVarInt(dataBytes.size());
         out.writeBytes(dataBytes.toByteArray(), dataBytes.size());
-        out.writeVarInt(this.column.getTileEntities().length);
-        for (CompoundTag tag : this.column.getTileEntities()) {
+        out.writeVarInt(this.chunk.getBlockEntities().length);
+        for (CompoundTag tag : this.chunk.getBlockEntities()) {
             NBT.write(out, tag);
         }
     }

@@ -64,7 +64,7 @@ public class MinecraftProtocolTest {
             SessionService sessionService = new SessionService();
             sessionService.setProxy(AUTH_PROXY);
 
-            Server server = new TcpServer(HOST, PORT, MinecraftProtocol.class);
+            Server server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
             server.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session ->
