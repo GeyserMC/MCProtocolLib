@@ -265,7 +265,7 @@ public class MagicValues {
         register(Animation.SWING_ARM, 0);
         register(Animation.DAMAGE, 1);
         register(Animation.LEAVE_BED, 2);
-        register(Animation.EAT_FOOD, 3);
+        register(Animation.SWING_OFFHAND, 3);
         register(Animation.CRITICAL_HIT, 4);
         register(Animation.ENCHANTMENT_CRITICAL_HIT, 5);
 

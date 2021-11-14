@@ -25,14 +25,14 @@ public class ClientboundBlockEntityDataPacket implements Packet {
 
     public ClientboundBlockEntityDataPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
-        this.type = MagicValues.key(BlockEntityType.class, in.readUnsignedByte());
+        this.type = MagicValues.key(BlockEntityType.class, in.readVarInt());
         this.nbt = NBT.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         Position.write(out, this.position);
-        out.writeByte(MagicValues.value(Integer.class, this.type));
+        out.writeVarInt(MagicValues.value(Integer.class, this.type));
         NBT.write(out, this.nbt);
     }
 }

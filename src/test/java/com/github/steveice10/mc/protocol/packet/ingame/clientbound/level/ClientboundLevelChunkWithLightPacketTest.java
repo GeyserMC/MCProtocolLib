@@ -1,37 +1,31 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
-import com.github.steveice10.mc.protocol.data.game.chunk.Chunk;
+import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
+import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import org.junit.Before;
 
+import java.io.IOException;
+import java.util.BitSet;
+import java.util.Collections;
+
 public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
     @Before
-    public void setup() {
-        ChunkSection chunkSection = new ChunkSection();
-        chunkSection.set(0, 0, 0, 10);
+    public void setup() throws IOException {
+        ChunkSection chunk = new ChunkSection();
+        chunk.setBlock(0, 0, 0, 10);
 
         this.setPackets(
-                new ClientboundLevelChunkWithLightPacket(
-                        new Chunk(0, 0, new ChunkSection[]{
-                                null, null, null, null, null, null, null, chunkSection,
-                                null, chunkSection, null, null, null, chunkSection, null, null, null, null, null, null, null, null, null,
-                                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                                null, null, null, null, null, null, null, null, null, null, null
-                        }, new CompoundTag[0], new CompoundTag("HeightMaps"), new int[1024])
+                new ClientboundLevelChunkWithLightPacket(0, 0,
+                        new byte[0], new CompoundTag("HeightMaps"), new BlockEntityInfo[0],
+                        new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList(), false)
                 ),
-                new ClientboundLevelChunkWithLightPacket(
-                        new Chunk(1, 1, new ChunkSection[]{
-                                chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection,
-                                chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, null, null, null, null, null,
-                                null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                                null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null
-                        }, new CompoundTag[]{
-                                new CompoundTag("TileEntity")
-                        }, new CompoundTag("HeightMaps"), new int[1024])
+                new ClientboundLevelChunkWithLightPacket(1, 1,
+                        new byte[256], new CompoundTag("HeightMaps"), new BlockEntityInfo[]{
+                        new BlockEntityInfo(1, 0, 1, 0, null)
+                }, new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList(), true)
                 )
         );
     }

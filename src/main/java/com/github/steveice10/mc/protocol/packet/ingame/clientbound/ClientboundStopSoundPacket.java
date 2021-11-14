@@ -25,7 +25,7 @@ public class ClientboundStopSoundPacket implements Packet {
     private static final int FLAG_SOUND = 0x02;
 
     private final @Nullable SoundCategory category;
-    private final @NonNull Sound sound;
+    private final @Nullable Sound sound;
 
     public ClientboundStopSoundPacket(NetInput in) throws IOException {
         int flags = in.readByte();
