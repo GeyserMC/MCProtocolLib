@@ -61,7 +61,7 @@ public class ClientboundLevelChunkWithLightPacket implements Packet {
         ChunkSection[] sections = this.chunk.getSections();
         for (int index = 0; index < sections.length; index++) {
             ChunkSection section = sections[index];
-            if (sections != null && !section.isEmpty()) {
+            if (section != null && !section.isEmpty()) {
                 bitSet.set(index);
                 ChunkSection.write(dataOut, section);
             }

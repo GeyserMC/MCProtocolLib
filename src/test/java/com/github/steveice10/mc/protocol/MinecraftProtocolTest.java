@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
@@ -44,7 +45,7 @@ public class MinecraftProtocolTest {
     private static final int PORT = 25560;
 
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
-            VersionInfo.CURRENT,
+            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
             new PlayerInfo(100, 0, new GameProfile[0]),
             Component.text("Hello world!"),
             null
@@ -55,7 +56,7 @@ public class MinecraftProtocolTest {
 
     @BeforeClass
     public static void setupServer() {
-        server = new TcpServer(HOST, PORT, MinecraftProtocol.class);
+        server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
         server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
         server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session -> SERVER_INFO);

@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data;
 
-public enum SubProtocol {
+public enum ProtocolState {
     HANDSHAKE,
     LOGIN,
     GAME,

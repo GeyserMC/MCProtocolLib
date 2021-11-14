@@ -9,14 +9,14 @@ import org.junit.Before;
 public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
     @Before
     public void setup() {
-        ChunkSection chunk = new ChunkSection();
-        chunk.set(0, 0, 0, 10);
+        ChunkSection chunkSection = new ChunkSection();
+        chunkSection.set(0, 0, 0, 10);
 
         this.setPackets(
                 new ClientboundLevelChunkWithLightPacket(
                         new Chunk(0, 0, new ChunkSection[]{
-                                null, null, null, null, null, null, null, chunk,
-                                null, chunk, null, null, null, chunk, null, null, null, null, null, null, null, null, null,
+                                null, null, null, null, null, null, null, chunkSection,
+                                null, chunkSection, null, null, null, chunkSection, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null
@@ -24,8 +24,8 @@ public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
                 ),
                 new ClientboundLevelChunkWithLightPacket(
                         new Chunk(1, 1, new ChunkSection[]{
-                                chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk,
-                                chunk, chunk, chunk, chunk, chunk, chunk, chunk, chunk, null, null, null, null, null,
+                                chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection,
+                                chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, chunkSection, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null
