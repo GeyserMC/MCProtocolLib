@@ -38,7 +38,7 @@ public class ClientboundLevelChunkWithLightPacket implements Packet {
             int blockEntityX = (xz >> 4) & 15;
             int blockEntityZ = xz & 15;
             int blockEntityY = in.readShort();
-            BlockEntityType type = BlockEntityType.read(in);
+            BlockEntityType type = in.readEnum(BlockEntityType.VALUES);
             CompoundTag tag = NBT.read(in);
             this.blockEntities[i] = new BlockEntityInfo(blockEntityX, blockEntityY, blockEntityZ, type, tag);
         }
@@ -58,7 +58,7 @@ public class ClientboundLevelChunkWithLightPacket implements Packet {
         for (BlockEntityInfo blockEntity : this.blockEntities) {
             out.writeByte(((blockEntity.getX() & 15) << 4) | blockEntity.getZ() & 15);
             out.writeShort(blockEntity.getY());
-            BlockEntityType.write(out, blockEntity.getType());
+            out.writeEnum(blockEntity.getType());
             NBT.write(out, blockEntity.getNbt());
         }
 

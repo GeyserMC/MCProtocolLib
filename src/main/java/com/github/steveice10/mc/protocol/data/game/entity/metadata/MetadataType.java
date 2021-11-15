@@ -12,7 +12,7 @@ public enum MetadataType {
     ROTATION,
     POSITION,
     OPTIONAL_POSITION,
-    BLOCK_FACE,
+    DIRECTION,
     OPTIONAL_UUID,
     BLOCK_STATE,
     NBT_TAG,
@@ -20,4 +20,6 @@ public enum MetadataType {
     VILLAGER_DATA,
     OPTIONAL_VARINT,
     POSE;
+
+    public static final MetadataType[] VALUES = values();
 }

@@ -9,4 +9,6 @@ public enum Pose {
     SNEAKING,
     LONG_JUMPING,
     DYING;
+
+    public static final Pose[] VALUES = values();
 }

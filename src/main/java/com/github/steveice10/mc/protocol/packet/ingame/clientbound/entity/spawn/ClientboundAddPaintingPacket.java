@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
+import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -23,14 +23,14 @@ public class ClientboundAddPaintingPacket implements Packet {
     private final @NonNull UUID uuid;
     private final @NonNull PaintingType paintingType;
     private final @NonNull Position position;
-    private final @NonNull HangingDirection direction;
+    private final @NonNull Direction direction;
 
     public ClientboundAddPaintingPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
         this.paintingType = MagicValues.key(PaintingType.class, in.readVarInt());
         this.position = Position.read(in);
-        this.direction = MagicValues.key(HangingDirection.class, in.readUnsignedByte());
+        this.direction = Direction.getByHorizontalIndex(in.readUnsignedByte());
     }
 
     @Override
@@ -39,6 +39,6 @@ public class ClientboundAddPaintingPacket implements Packet {
         out.writeUUID(this.uuid);
         out.writeVarInt(MagicValues.value(Integer.class, this.paintingType));
         Position.write(out, this.position);
-        out.writeByte(MagicValues.value(Integer.class, this.direction));
+        out.writeByte(this.direction.getHorizontalIndex());
     }
 }

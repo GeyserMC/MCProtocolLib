@@ -2,8 +2,8 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.player;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -20,18 +20,18 @@ import java.io.IOException;
 public class ServerboundPlayerActionPacket implements Packet {
     private final @NonNull PlayerAction action;
     private final @NonNull Position position;
-    private final @NonNull BlockFace face;
+    private final @NonNull Direction face;
 
     public ServerboundPlayerActionPacket(NetInput in) throws IOException {
         this.action = MagicValues.key(PlayerAction.class, in.readVarInt());
         this.position = Position.read(in);
-        this.face = MagicValues.key(BlockFace.class, in.readUnsignedByte());
+        this.face = Direction.VALUES[in.readUnsignedByte()];
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         Position.write(out, this.position);
-        out.writeByte(MagicValues.value(Integer.class, this.face));
+        out.writeByte(this.face.ordinal());
     }
 }

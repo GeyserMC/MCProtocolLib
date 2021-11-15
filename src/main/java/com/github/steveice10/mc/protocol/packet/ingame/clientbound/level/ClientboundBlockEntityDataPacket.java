@@ -24,14 +24,14 @@ public class ClientboundBlockEntityDataPacket implements Packet {
 
     public ClientboundBlockEntityDataPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
-        this.type = BlockEntityType.read(in);
+        this.type = in.readEnum(BlockEntityType.VALUES);
         this.nbt = NBT.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         Position.write(out, this.position);
-        BlockEntityType.write(out, this.type);
+        out.writeEnum(this.type);
         NBT.write(out, this.nbt);
     }
 }

@@ -3,7 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.object.FallingBlockData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.GenericObjectData;
-import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
+import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.object.ObjectData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.ProjectileData;
@@ -69,7 +69,7 @@ public class ClientboundAddEntityPacket implements Packet {
         if (this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
         } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME) {
-            this.data = MagicValues.key(HangingDirection.class, data);
+            this.data = Direction.VALUES[data];
         } else if (this.type == EntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);
         } else if (this.type == EntityType.THROWN_POTION) {
@@ -104,8 +104,8 @@ public class ClientboundAddEntityPacket implements Packet {
         int data = 0;
         if (this.data instanceof MinecartType) {
             data = MagicValues.value(Integer.class, this.data);
-        } else if (this.data instanceof HangingDirection) {
-            data = MagicValues.value(Integer.class, this.data);
+        } else if (this.data instanceof Direction) {
+            data = ((Direction) this.data).ordinal();
         } else if (this.data instanceof FallingBlockData) {
             data = ((FallingBlockData) this.data).getId() | ((FallingBlockData) this.data).getMetadata() << 16;
         } else if (this.data instanceof SplashPotionData) {

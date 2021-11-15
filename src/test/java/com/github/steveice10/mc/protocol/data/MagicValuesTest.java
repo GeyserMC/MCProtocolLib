@@ -19,9 +19,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
-import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
@@ -34,7 +31,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.WeatherEntityType;
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
@@ -106,11 +102,9 @@ public class MagicValuesTest {
 
     @Before
     public void setup() {
-        this.register(Pose.class, Integer.class);
         this.register(AttributeType.class, String.class);
         this.register(ModifierType.class, UUID.class);
         this.register(ModifierOperation.class, Integer.class);
-        this.register(MetadataType.class, Integer.class);
         this.register(HandshakeIntent.class, Integer.class);
         this.register(ClientCommand.class, Integer.class);
         this.register(ChatVisibility.class, Integer.class);
@@ -134,7 +128,6 @@ public class MagicValuesTest {
         this.register(WeatherEntityType.class, Integer.class);
         this.register(EntityType.class, Integer.class);
         this.register(MinecartType.class, Integer.class);
-        this.register(HangingDirection.class, Integer.class);
         this.register(PaintingType.class, Integer.class);
         this.register(ScoreboardPosition.class, Integer.class);
         this.register(ObjectiveAction.class, Integer.class);
@@ -181,7 +174,6 @@ public class MagicValuesTest {
         this.register(BossBarAction.class, Integer.class);
         this.register(BossBarColor.class, Integer.class);
         this.register(BossBarDivision.class, Integer.class);
-        this.register(BlockFace.class, Integer.class);
         this.register(EquipmentSlot.class, Integer.class);
         this.register(RotationOrigin.class, Integer.class);
         this.register(RotationOrigin.class, Integer.class);

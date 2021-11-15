@@ -19,9 +19,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
-import com.github.steveice10.mc.protocol.data.game.entity.object.HangingDirection;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
@@ -34,7 +31,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.WeatherEntityType;
-import com.github.steveice10.mc.protocol.data.game.level.block.BlockFace;
 import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
@@ -97,15 +93,6 @@ public class MagicValues {
     private static final Map<Object, List<Object>> VALUES = new HashMap<>();
 
     static {
-        register(Pose.STANDING, 0);
-        register(Pose.FALL_FLYING, 1);
-        register(Pose.SLEEPING, 2);
-        register(Pose.SWIMMING, 3);
-        register(Pose.SPIN_ATTACK, 4);
-        register(Pose.SNEAKING, 5);
-        register(Pose.LONG_JUMPING, 6);
-        register(Pose.DYING, 7);
-
         register(AttributeType.GENERIC_MAX_HEALTH, "minecraft:generic.max_health");
         register(AttributeType.GENERIC_FOLLOW_RANGE, "minecraft:generic.follow_range");
         register(AttributeType.GENERIC_KNOCKBACK_RESISTANCE, "minecraft:generic.knockback_resistance");
@@ -150,26 +137,6 @@ public class MagicValues {
         register(ModifierOperation.ADD, 0);
         register(ModifierOperation.ADD_MULTIPLIED, 1);
         register(ModifierOperation.MULTIPLY, 2);
-
-        register(MetadataType.BYTE, 0);
-        register(MetadataType.INT, 1);
-        register(MetadataType.FLOAT, 2);
-        register(MetadataType.STRING, 3);
-        register(MetadataType.CHAT, 4);
-        register(MetadataType.OPTIONAL_CHAT, 5);
-        register(MetadataType.ITEM, 6);
-        register(MetadataType.BOOLEAN, 7);
-        register(MetadataType.ROTATION, 8);
-        register(MetadataType.POSITION, 9);
-        register(MetadataType.OPTIONAL_POSITION, 10);
-        register(MetadataType.BLOCK_FACE, 11);
-        register(MetadataType.OPTIONAL_UUID, 12);
-        register(MetadataType.BLOCK_STATE, 13);
-        register(MetadataType.NBT_TAG, 14);
-        register(MetadataType.PARTICLE, 15);
-        register(MetadataType.VILLAGER_DATA, 16);
-        register(MetadataType.OPTIONAL_VARINT, 17);
-        register(MetadataType.POSE, 18);
 
         register(HandshakeIntent.STATUS, 1);
         register(HandshakeIntent.LOGIN, 2);
@@ -458,13 +425,6 @@ public class MagicValues {
         register(MinecartType.MOB_SPAWNER, 4);
         register(MinecartType.HOPPER, 5);
         register(MinecartType.COMMAND_BLOCK, 6);
-
-        register(HangingDirection.DOWN, 0);
-        register(HangingDirection.UP, 1);
-        register(HangingDirection.NORTH, 2);
-        register(HangingDirection.SOUTH, 3);
-        register(HangingDirection.WEST, 4);
-        register(HangingDirection.EAST, 5);
 
         register(PaintingType.KEBAB, 0);
         register(PaintingType.AZTEC, 1);
@@ -920,14 +880,6 @@ public class MagicValues {
         register(BossBarDivision.NOTCHES_10, 2);
         register(BossBarDivision.NOTCHES_12, 3);
         register(BossBarDivision.NOTCHES_20, 4);
-
-        register(BlockFace.DOWN, 0);
-        register(BlockFace.UP, 1);
-        register(BlockFace.NORTH, 2);
-        register(BlockFace.SOUTH, 3);
-        register(BlockFace.WEST, 4);
-        register(BlockFace.EAST, 5);
-        register(BlockFace.SPECIAL, 255);
 
         register(EquipmentSlot.MAIN_HAND, 0);
         register(EquipmentSlot.OFF_HAND, 1);

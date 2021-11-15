@@ -16,7 +16,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundSetEntityDataPacket implements Packet {
     private final int entityId;
-    private final @NonNull EntityMetadata[] metadata;
+    private final @NonNull EntityMetadata<?>[] metadata;
 
     public ClientboundSetEntityDataPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
