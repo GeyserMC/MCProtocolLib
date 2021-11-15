@@ -13,7 +13,7 @@ public interface NetInput {
      * @return The next boolean.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public boolean readBoolean() throws IOException;
+    boolean readBoolean() throws IOException;
 
     /**
      * Reads the next byte.
@@ -21,7 +21,7 @@ public interface NetInput {
      * @return The next byte.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public byte readByte() throws IOException;
+    byte readByte() throws IOException;
 
     /**
      * Reads the next unsigned byte.
@@ -29,7 +29,7 @@ public interface NetInput {
      * @return The next unsigned byte.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readUnsignedByte() throws IOException;
+    int readUnsignedByte() throws IOException;
 
     /**
      * Reads the next short.
@@ -45,7 +45,7 @@ public interface NetInput {
      * @return The next unsigned short.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readUnsignedShort() throws IOException;
+    int readUnsignedShort() throws IOException;
 
     /**
      * Reads the next char.
@@ -53,7 +53,7 @@ public interface NetInput {
      * @return The next char.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public char readChar() throws IOException;
+    char readChar() throws IOException;
 
     /**
      * Reads the next integer.
@@ -61,7 +61,7 @@ public interface NetInput {
      * @return The next integer.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readInt() throws IOException;
+    int readInt() throws IOException;
 
     /**
      * Reads the next varint. A varint is a form of integer where only necessary bytes are written. This is done to save bandwidth.
@@ -69,7 +69,7 @@ public interface NetInput {
      * @return The next varint.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readVarInt() throws IOException;
+    int readVarInt() throws IOException;
 
     /**
      * Reads the next long.
@@ -77,7 +77,7 @@ public interface NetInput {
      * @return The next long.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public long readLong() throws IOException;
+    long readLong() throws IOException;
 
     /**
      * Reads the next varlong. A varlong is a form of long where only necessary bytes are written. This is done to save bandwidth.
@@ -85,7 +85,7 @@ public interface NetInput {
      * @return The next varlong.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public long readVarLong() throws IOException;
+    long readVarLong() throws IOException;
 
     /**
      * Reads the next float.
@@ -93,7 +93,7 @@ public interface NetInput {
      * @return The next float.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public float readFloat() throws IOException;
+    float readFloat() throws IOException;
 
     /**
      * Reads the next double.
@@ -101,7 +101,7 @@ public interface NetInput {
      * @return The next double.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public double readDouble() throws IOException;
+    double readDouble() throws IOException;
 
     /**
      * Reads the next byte array.
@@ -110,7 +110,7 @@ public interface NetInput {
      * @return The next byte array.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public byte[] readBytes(int length) throws IOException;
+    byte[] readBytes(int length) throws IOException;
 
     /**
      * Reads as much data as possible into the given byte array.
@@ -119,7 +119,7 @@ public interface NetInput {
      * @return The amount of bytes read, or -1 if no bytes could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readBytes(byte b[]) throws IOException;
+    int readBytes(byte b[]) throws IOException;
 
     /**
      * Reads the given amount of bytes into the given array at the given offset.
@@ -130,7 +130,7 @@ public interface NetInput {
      * @return The amount of bytes read, or -1 if no bytes could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readBytes(byte b[], int offset, int length) throws IOException;
+    int readBytes(byte b[], int offset, int length) throws IOException;
 
     /**
      * Reads the next short array.
@@ -139,7 +139,7 @@ public interface NetInput {
      * @return The next short array.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public short[] readShorts(int length) throws IOException;
+    short[] readShorts(int length) throws IOException;
 
     /**
      * Reads as much data as possible into the given short array.
@@ -148,7 +148,7 @@ public interface NetInput {
      * @return The amount of shorts read, or -1 if no shorts could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readShorts(short s[]) throws IOException;
+    int readShorts(short s[]) throws IOException;
 
     /**
      * Reads the given amount of shorts into the given array at the given offset.
@@ -159,7 +159,7 @@ public interface NetInput {
      * @return The amount of shorts read, or -1 if no shorts could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readShorts(short s[], int offset, int length) throws IOException;
+    int readShorts(short s[], int offset, int length) throws IOException;
 
     /**
      * Reads the next int array.
@@ -168,7 +168,7 @@ public interface NetInput {
      * @return The next int array.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int[] readInts(int length) throws IOException;
+    int[] readInts(int length) throws IOException;
 
     /**
      * Reads as much data as possible into the given int array.
@@ -177,7 +177,7 @@ public interface NetInput {
      * @return The amount of ints read, or -1 if no ints could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readInts(int i[]) throws IOException;
+    int readInts(int i[]) throws IOException;
 
     /**
      * Reads the given amount of ints into the given array at the given offset.
@@ -188,7 +188,7 @@ public interface NetInput {
      * @return The amount of ints read, or -1 if no ints could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readInts(int i[], int offset, int length) throws IOException;
+    int readInts(int i[], int offset, int length) throws IOException;
 
     /**
      * Reads the next long array.
@@ -197,7 +197,7 @@ public interface NetInput {
      * @return The next long array.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public long[] readLongs(int length) throws IOException;
+    long[] readLongs(int length) throws IOException;
 
     /**
      * Reads as much data as possible into the given long array.
@@ -206,7 +206,7 @@ public interface NetInput {
      * @return The amount of longs read, or -1 if no longs could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readLongs(long l[]) throws IOException;
+    int readLongs(long l[]) throws IOException;
 
     /**
      * Reads the given amount of longs into the given array at the given offset.
@@ -217,7 +217,7 @@ public interface NetInput {
      * @return The amount of longs read, or -1 if no longs could be read.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readLongs(long l[], int offset, int length) throws IOException;
+    int readLongs(long l[], int offset, int length) throws IOException;
 
     /**
      * Reads the next string.
@@ -225,7 +225,7 @@ public interface NetInput {
      * @return The next string.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public String readString() throws IOException;
+    String readString() throws IOException;
 
     /**
      * Reads the next UUID.
@@ -233,7 +233,22 @@ public interface NetInput {
      * @return The next UUID.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public UUID readUUID() throws IOException;
+    UUID readUUID() throws IOException;
+
+    /**
+     * Reads the next enum.
+     *
+     * @param values the collection of enums to read from
+     * @return the next enum.
+     * @throws IOException If an I/O error occurs.
+     */
+    default <T extends Enum<T>> T readEnum(T[] values) throws IOException {
+        int index = readVarInt();
+        if (index >= values.length) {
+            throw new IndexOutOfBoundsException("Enum class " + values.getClass() + " does not have a value with index " + index);
+        }
+        return values[index];
+    }
 
     /**
      * Gets the number of available bytes.
@@ -241,5 +256,5 @@ public interface NetInput {
      * @return The number of available bytes.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int available() throws IOException;
+    int available() throws IOException;
 }
