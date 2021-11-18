@@ -219,4 +219,21 @@ public abstract class EntityMetadata<T> {
     public String toString() {
         return "EntityMetadata(id=" + id + ", type=" + type + ", value=" + getValue().toString() + ")";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof EntityMetadata)) {
+            return false;
+        }
+        EntityMetadata<?> that = (EntityMetadata<?>) o;
+        return this.id == that.id && this.type == that.type && Objects.equals(this.getValue(), that.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, getValue());
+    }
 }
