@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.data;
 
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
 import com.github.steveice10.packetlib.io.stream.StreamNetInput;
 import com.github.steveice10.packetlib.io.stream.StreamNetOutput;
@@ -27,8 +28,8 @@ public class ChunkTest {
         chunkSectionsToTest.add(section);
 
         SingletonPalette singletonPalette = new SingletonPalette(20);
-        DataPalette dataPalette = new DataPalette(singletonPalette, null, 8, 4096);
-        DataPalette biomePalette = new DataPalette(singletonPalette, null, 2, 64);
+        DataPalette dataPalette = new DataPalette(singletonPalette, null, PaletteType.CHUNK, DataPalette.GLOBAL_PALETTE_BITS_PER_ENTRY);
+        DataPalette biomePalette = new DataPalette(singletonPalette, null, PaletteType.BIOME, 4);
         section = new ChunkSection(4096, dataPalette, biomePalette);
         chunkSectionsToTest.add(section);
     }
@@ -38,11 +39,11 @@ public class ChunkTest {
         for (ChunkSection section : chunkSectionsToTest) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             StreamNetOutput out = new StreamNetOutput(stream);
-            ChunkSection.write(out, section);
+            ChunkSection.write(out, section, 4);
             StreamNetInput in = new StreamNetInput(new ByteArrayInputStream(stream.toByteArray()));
             ChunkSection decoded;
             try {
-                decoded = ChunkSection.read(in);
+                decoded = ChunkSection.read(in, 4);
             } catch (Exception e) {
                 System.out.println(section);
                 e.printStackTrace();

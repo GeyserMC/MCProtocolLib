@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.*;
@@ -11,8 +12,6 @@ import java.io.IOException;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ChunkSection {
-    private static final int MAX_PALETTE_BITS_PER_ENTRY = 8;
-    private static final int MAX_BIOME_BITS_PER_ENTRY = 2;
 
     private static final int AIR = 0;
 
@@ -22,18 +21,18 @@ public class ChunkSection {
     private @NonNull DataPalette biomeData;
 
     public ChunkSection() {
-        this(0, DataPalette.createForChunk(), DataPalette.createForBiome());
+        this(0, DataPalette.createForChunk(), DataPalette.createForBiome(4));
     }
 
-    public static ChunkSection read(NetInput in) throws IOException {
+    public static ChunkSection read(NetInput in, int globalBiomePaletteBits) throws IOException {
         int blockCount = in.readShort();
 
-        DataPalette chunkPalette = DataPalette.read(in, MAX_PALETTE_BITS_PER_ENTRY, DataPalette.CHUNK_SIZE);
-        DataPalette biomePalette = DataPalette.read(in, MAX_BIOME_BITS_PER_ENTRY, DataPalette.BIOME_SIZE);
+        DataPalette chunkPalette = DataPalette.read(in, PaletteType.CHUNK, DataPalette.GLOBAL_PALETTE_BITS_PER_ENTRY);
+        DataPalette biomePalette = DataPalette.read(in, PaletteType.BIOME, globalBiomePaletteBits);
         return new ChunkSection(blockCount, chunkPalette, biomePalette);
     }
 
-    public static void write(NetOutput out, ChunkSection section) throws IOException {
+    public static void write(NetOutput out, ChunkSection section, int globalBiomePaletteBits) throws IOException {
         out.writeShort(section.blockCount);
         DataPalette.write(out, section.chunkData);
         DataPalette.write(out, section.biomeData);
