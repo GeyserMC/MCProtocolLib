@@ -19,10 +19,10 @@ public class ClientboundSetEntityDataPacketTest extends PacketTest {
                         new ObjectEntityMetadata<>(1, MetadataType.STRING, "Hello!")
                 }),
                 new ClientboundSetEntityDataPacket(2, new EntityMetadata[] {
-                        new BooleanEntityMetadata(0, true),
-                        new ByteEntityMetadata(4, (byte) 45),
+                        new BooleanEntityMetadata(0, MetadataType.BOOLEAN, true),
+                        new ByteEntityMetadata(4, MetadataType.BYTE, (byte) 45),
                         new IntEntityMetadata(2, MetadataType.INT, 555),
-                        new FloatEntityMetadata(3, 3.0f),
+                        new FloatEntityMetadata(3, MetadataType.FLOAT, 3.0f),
                         new ObjectEntityMetadata<>(5, MetadataType.POSITION, new Position(0, 1, 0)),
                         new IntEntityMetadata(2, MetadataType.BLOCK_STATE, 60),
                         new ObjectEntityMetadata<>(6, MetadataType.DIRECTION, Direction.EAST)

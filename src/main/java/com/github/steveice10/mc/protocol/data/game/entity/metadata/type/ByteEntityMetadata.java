@@ -1,16 +1,18 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata.type;
 
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.ByteMetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.packetlib.io.NetOutput;
+import lombok.NonNull;
 
 import java.io.IOException;
 
-public class ByteEntityMetadata extends EntityMetadata<Byte> {
+public class ByteEntityMetadata extends EntityMetadata<Byte, ByteMetadataType> {
     private final byte value;
 
-    public ByteEntityMetadata(int id, byte value) {
-        super(id, MetadataType.BYTE);
+    public ByteEntityMetadata(int id, @NonNull ByteMetadataType type, byte value) {
+        super(id, type);
         this.value = value;
     }
 
@@ -26,6 +28,6 @@ public class ByteEntityMetadata extends EntityMetadata<Byte> {
 
     @Override
     protected void write(NetOutput out) throws IOException {
-        out.writeByte(this.value);
+        this.type.writeMetadataPrimitive(out, this.value);
     }
 }

@@ -13,7 +13,6 @@ import java.io.IOException;
 @EqualsAndHashCode
 @ToString
 public class DataPalette {
-    private static final int MIN_PALETTE_BITS_PER_ENTRY = 4;
     public static final int GLOBAL_PALETTE_BITS_PER_ENTRY = 14;
 
     private @NonNull Palette palette;
@@ -25,7 +24,6 @@ public class DataPalette {
         return createForChunk(GLOBAL_PALETTE_BITS_PER_ENTRY);
     }
 
-
     public static DataPalette createForChunk(int globalPaletteBits) {
         return createEmpty(PaletteType.CHUNK, globalPaletteBits);
     }
@@ -35,16 +33,17 @@ public class DataPalette {
     }
 
     public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
-        return new DataPalette(new ListPalette(MIN_PALETTE_BITS_PER_ENTRY),
-                new BitStorage(MIN_PALETTE_BITS_PER_ENTRY, paletteType.getMaxBitsPerEntry()), paletteType, globalPaletteBits);
+        return new DataPalette(new ListPalette(paletteType.getMinBitsPerEntry()),
+                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType, globalPaletteBits);
     }
 
     public static DataPalette read(NetInput in, PaletteType paletteType, int globalPaletteBits) throws IOException {
         int bitsPerEntry = in.readByte();
-        Palette palette = readPalette(bitsPerEntry, paletteType.getMaxBitsPerEntry(), in);
+        Palette palette = readPalette(paletteType, bitsPerEntry, in);
         BitStorage storage;
         if (!(palette instanceof SingletonPalette)) {
-            storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize(), in.readLongs(in.readVarInt()));
+            int length = in.readVarInt();
+            storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize(), in.readLongs(length));
         } else {
             in.readVarInt();
             storage = null;
@@ -102,14 +101,14 @@ public class DataPalette {
         return curr;
     }
 
-    private static Palette readPalette(int bitsPerEntry, int maxBitsPerEntry, NetInput in) throws IOException {
-        if (bitsPerEntry > maxBitsPerEntry) {
+    private static Palette readPalette(PaletteType paletteType, int bitsPerEntry, NetInput in) throws IOException {
+        if (bitsPerEntry > paletteType.getMaxBitsPerEntry()) {
             return new GlobalPalette();
         }
         if (bitsPerEntry == 0) {
             return new SingletonPalette(in);
         }
-        if (bitsPerEntry <= MIN_PALETTE_BITS_PER_ENTRY) {
+        if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
             return new ListPalette(bitsPerEntry, in);
         } else {
             return new MapPalette(bitsPerEntry, in);
@@ -117,8 +116,8 @@ public class DataPalette {
     }
 
     private int sanitizeBitsPerEntry(int bitsPerEntry) {
-        if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
-            return Math.max(MIN_PALETTE_BITS_PER_ENTRY, bitsPerEntry);
+        if (bitsPerEntry <= this.paletteType.getMaxBitsPerEntry()) {
+            return Math.max(this.paletteType.getMinBitsPerEntry(), bitsPerEntry);
         } else {
             return GLOBAL_PALETTE_BITS_PER_ENTRY;
         }
@@ -129,7 +128,7 @@ public class DataPalette {
         BitStorage oldData = this.storage;
 
         int bitsPerEntry = sanitizeBitsPerEntry(oldPalette instanceof SingletonPalette ? 1 : oldData.getBitsPerEntry() + 1);
-        this.palette = createPalette(bitsPerEntry, paletteType.getMaxBitsPerEntry());
+        this.palette = createPalette(bitsPerEntry, paletteType);
         this.storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize());
 
         if (oldPalette instanceof SingletonPalette) {
@@ -144,10 +143,10 @@ public class DataPalette {
         }
     }
 
-    private static Palette createPalette(int bitsPerEntry, int maxBitsPerEntry) {
-        if (bitsPerEntry <= MIN_PALETTE_BITS_PER_ENTRY) {
+    private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {
+        if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
             return new ListPalette(bitsPerEntry);
-        } else if (bitsPerEntry <= maxBitsPerEntry) {
+        } else if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
             return new MapPalette(bitsPerEntry);
         } else {
             return new GlobalPalette();
