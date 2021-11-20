@@ -16,11 +16,12 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
 
         @Override
         public OptionalInt read(NetInput input) throws IOException {
-            if (!input.readBoolean()) {
+            int value = input.readVarInt();
+            if (value == 0) {
                 return OptionalInt.empty();
             }
 
-            return OptionalInt.of(input.readVarInt());
+            return OptionalInt.of(value - 1);
         }
     }
 
@@ -29,9 +30,10 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
 
         @Override
         public void write(NetOutput output, OptionalInt value) throws IOException {
-            output.writeBoolean(value.isPresent());
             if (value.isPresent()) {
-                output.writeVarInt(value.getAsInt());
+                output.writeVarInt(value.getAsInt() + 1);
+            } else {
+                output.writeVarInt(0);
             }
         }
     }
