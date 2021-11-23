@@ -16,9 +16,6 @@ import com.github.steveice10.mc.protocol.data.game.command.properties.StringProp
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
-import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
-import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierType;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
@@ -102,9 +99,6 @@ public class MagicValuesTest {
 
     @Before
     public void setup() {
-        this.register(AttributeType.class, String.class);
-        this.register(ModifierType.class, UUID.class);
-        this.register(ModifierOperation.class, Integer.class);
         this.register(HandshakeIntent.class, Integer.class);
         this.register(ClientCommand.class, Integer.class);
         this.register(ChatVisibility.class, Integer.class);

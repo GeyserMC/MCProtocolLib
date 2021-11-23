@@ -15,10 +15,10 @@ public class Attribute {
     private final @NonNull List<AttributeModifier> modifiers;
 
     public Attribute(@NonNull AttributeType type) {
-        this(type, type.getDef());
+        this(type, 0);
     }
 
     public Attribute(@NonNull AttributeType type, double value) {
-        this(type, value, new ArrayList<AttributeModifier>());
+        this(type, value, new ArrayList<>());
     }
 }

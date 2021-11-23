@@ -32,13 +32,14 @@ public class ClientboundUpdateAttributesPacket implements Packet {
         for (int index = 0; index < length; index++) {
             String key = in.readString();
             double value = in.readDouble();
-            List<AttributeModifier> modifiers = new ArrayList<AttributeModifier>();
+            List<AttributeModifier> modifiers = new ArrayList<>();
             int len = in.readVarInt();
             for (int ind = 0; ind < len; ind++) {
-                modifiers.add(new AttributeModifier(in.readUUID(), in.readDouble(), MagicValues.key(ModifierOperation.class, in.readByte())));
+                modifiers.add(new AttributeModifier(in.readUUID(), in.readDouble(), ModifierOperation.read(in)));
             }
 
-            this.attributes.add(new Attribute(MagicValues.key(AttributeType.class, Identifier.formalize(key)), value, modifiers));
+            AttributeType type = AttributeType.Builtin.BUILTIN.computeIfAbsent(Identifier.formalize(key), AttributeType.Custom::new);
+            this.attributes.add(new Attribute(type, value, modifiers));
         }
     }
 
@@ -47,13 +48,13 @@ public class ClientboundUpdateAttributesPacket implements Packet {
         out.writeVarInt(this.entityId);
         out.writeVarInt(this.attributes.size());
         for (Attribute attribute : this.attributes) {
-            out.writeString(MagicValues.value(String.class, attribute.getType()));
+            out.writeString(attribute.getType().getIdentifier());
             out.writeDouble(attribute.getValue());
             out.writeVarInt(attribute.getModifiers().size());
             for (AttributeModifier modifier : attribute.getModifiers()) {
                 out.writeUUID(modifier.getUuid());
                 out.writeDouble(modifier.getAmount());
-                out.writeByte(MagicValues.value(Integer.class, modifier.getOperation()));
+                out.writeByte(modifier.getOperation().ordinal());
             }
         }
     }
