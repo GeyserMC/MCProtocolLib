@@ -94,11 +94,16 @@ public class DataPalette {
             id = this.palette.stateToId(state);
         }
 
-        int index = index(x, y, z);
-        int curr = this.storage.get(index);
+        if (this.storage != null) {
+            int index = index(x, y, z);
+            int curr = this.storage.get(index);
 
-        this.storage.set(index, id);
-        return curr;
+            this.storage.set(index, id);
+            return curr;
+        } else {
+            // Singleton palette and the block has not changed because the palette hasn't resized
+            return state;
+        }
     }
 
     private static Palette readPalette(PaletteType paletteType, int bitsPerEntry, NetInput in) throws IOException {
