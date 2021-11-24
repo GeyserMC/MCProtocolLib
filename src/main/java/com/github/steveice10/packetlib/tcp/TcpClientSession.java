@@ -114,7 +114,7 @@ public class TcpClientSession extends TcpSession {
 
                     pipeline.addLast("encryption", new TcpPacketEncryptor(TcpClientSession.this));
                     pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this));
-                    pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this));
+                    pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
                     pipeline.addLast("manager", TcpClientSession.this);
 
                     addHAProxySupport(pipeline);

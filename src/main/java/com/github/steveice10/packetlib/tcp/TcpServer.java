@@ -83,7 +83,7 @@ public class TcpServer extends AbstractServer {
 
                 pipeline.addLast("encryption", new TcpPacketEncryptor(session));
                 pipeline.addLast("sizer", new TcpPacketSizer(session));
-                pipeline.addLast("codec", new TcpPacketCodec(session));
+                pipeline.addLast("codec", new TcpPacketCodec(session, false));
                 pipeline.addLast("manager", session);
             }
         }).group(this.group).localAddress(this.getHost(), this.getPort()).bind();

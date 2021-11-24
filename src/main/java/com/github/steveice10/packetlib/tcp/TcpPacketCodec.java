@@ -18,9 +18,9 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     private final Session session;
     private final boolean client;
 
-    public TcpPacketCodec(Session session) {
+    public TcpPacketCodec(Session session, boolean client) {
         this.session = session;
-        this.client = session instanceof TcpClientSession;
+        this.client = client;
     }
 
     @Override
