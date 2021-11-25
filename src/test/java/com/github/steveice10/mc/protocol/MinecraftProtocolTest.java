@@ -18,7 +18,6 @@ import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
-import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
@@ -123,8 +122,7 @@ public class MinecraftProtocolTest {
         public ClientboundLoginPacket packet;
 
         @Override
-        public void packetReceived(PacketReceivedEvent event) {
-            Packet packet = event.getPacket();
+        public void packetReceived(Session session, Packet packet) {
             if (packet instanceof ClientboundLoginPacket) {
                 this.packet = (ClientboundLoginPacket) packet;
                 this.login.countDown();
