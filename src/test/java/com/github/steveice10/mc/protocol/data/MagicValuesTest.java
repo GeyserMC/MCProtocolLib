@@ -25,9 +25,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
-import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
-import com.github.steveice10.mc.protocol.data.game.entity.type.WeatherEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
@@ -85,7 +83,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -119,8 +116,6 @@ public class MagicValuesTest {
         this.register(Animation.class, Integer.class);
         this.register(EntityEvent.class, Integer.class);
         this.register(PositionElement.class, Integer.class);
-        this.register(WeatherEntityType.class, Integer.class);
-        this.register(EntityType.class, Integer.class);
         this.register(MinecartType.class, Integer.class);
         this.register(PaintingType.class, Integer.class);
         this.register(ScoreboardPosition.class, Integer.class);
