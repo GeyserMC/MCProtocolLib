@@ -36,7 +36,6 @@ public class MinecraftProtocol extends PacketProtocol {
 
     private ProtocolState state;
     private PacketStateCodec stateCodec;
-    private AESEncryption encryption;
 
     private final ProtocolState targetState;
 
@@ -133,12 +132,6 @@ public class MinecraftProtocol extends PacketProtocol {
         return MinecraftConstants.PACKET_HEADER;
     }
 
-    @Nullable
-    @Override
-    public PacketEncryption getEncryption() {
-        return this.encryption;
-    }
-
     @Override
     public void newClientSession(Session session) {
         session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
@@ -160,9 +153,9 @@ public class MinecraftProtocol extends PacketProtocol {
         }
     }
 
-    protected void enableEncryption(Key key) {
+    protected PacketEncryption enableEncryption(Key key) {
         try {
-            this.encryption = new AESEncryption(key);
+            return new AESEncryption(key);
         } catch (GeneralSecurityException e) {
             throw new Error("Failed to enable protocol encryption.", e);
         }

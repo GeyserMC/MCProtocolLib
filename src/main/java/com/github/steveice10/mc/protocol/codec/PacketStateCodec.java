@@ -30,11 +30,6 @@ public class PacketStateCodec extends PacketProtocol {
     }
 
     @Override
-    public PacketEncryption getEncryption() {
-        throw new UnsupportedOperationException("Not supported!");
-    }
-
-    @Override
     public void newClientSession(Session session) {
         throw new UnsupportedOperationException("Not supported!");
     }
