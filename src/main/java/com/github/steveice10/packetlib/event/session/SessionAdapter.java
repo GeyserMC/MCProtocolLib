@@ -1,11 +1,14 @@
 package com.github.steveice10.packetlib.event.session;
 
+import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.packet.Packet;
+
 /**
  * An adapter for picking session events to listen for.
  */
 public class SessionAdapter implements SessionListener {
     @Override
-    public void packetReceived(PacketReceivedEvent event) {
+    public void packetReceived(Session session, Packet packet) {
     }
 
     @Override
@@ -13,7 +16,7 @@ public class SessionAdapter implements SessionListener {
     }
 
     @Override
-    public void packetSent(PacketSentEvent event) {
+    public void packetSent(Session session, Packet packet) {
     }
 
     @Override

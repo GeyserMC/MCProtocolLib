@@ -5,9 +5,7 @@ import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
-import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.PacketSendingEvent;
-import com.github.steveice10.packetlib.event.session.PacketSentEvent;
 import com.github.steveice10.packetlib.event.session.SessionEvent;
 import com.github.steveice10.packetlib.event.session.SessionListener;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -21,14 +19,11 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import javax.annotation.Nullable;
 import java.net.ConnectException;
 import java.net.SocketAddress;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
     /**
@@ -149,7 +144,29 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             for (SessionListener listener : this.listeners) {
                 event.call(listener);
             }
-        } catch(Throwable t) {
+        } catch (Throwable t) {
+            exceptionCaught(null, t);
+        }
+    }
+
+    @Override
+    public void callPacketReceived(Packet packet) {
+        try {
+            for (SessionListener listener : this.listeners) {
+                listener.packetReceived(this, packet);
+            }
+        } catch (Throwable t) {
+            exceptionCaught(null, t);
+        }
+    }
+
+    @Override
+    public void callPacketSent(Packet packet) {
+        try {
+            for (SessionListener listener : this.listeners) {
+                listener.packetSent(this, packet);
+            }
+        } catch (Throwable t) {
             exceptionCaught(null, t);
         }
     }
@@ -175,6 +192,9 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void enableEncryption(PacketEncryption encryption) {
+        if (channel == null) {
+            throw new IllegalStateException("Connect the client before initializing encryption!");
+        }
         channel.pipeline().addBefore("sizer", "encryption", new TcpPacketEncryptor(encryption));
     }
 
@@ -228,7 +248,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             final Packet toSend = sendingEvent.getPacket();
             this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
                 if(future.isSuccess()) {
-                    callEvent(new PacketSentEvent(TcpSession.this, toSend));
+                    callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
                 }
@@ -352,9 +372,9 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
         if (!packet.isPriority() && eventLoop != null) {
-            eventLoop.execute(() -> this.callEvent(new PacketReceivedEvent(this, packet)));
+            eventLoop.execute(() -> this.callPacketReceived(packet));
         } else {
-            this.callEvent(new PacketReceivedEvent(this, packet));
+            this.callPacketReceived(packet);
         }
     }
 }

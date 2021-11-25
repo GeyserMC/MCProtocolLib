@@ -1,32 +1,32 @@
 package com.github.steveice10.packetlib.test;
 
+import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
-import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
-import com.github.steveice10.packetlib.event.session.PacketSentEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
+import com.github.steveice10.packetlib.packet.Packet;
 
 public class ClientSessionListener extends SessionAdapter {
     @Override
-    public void packetReceived(PacketReceivedEvent event) {
-        if(event.getPacket() instanceof PingPacket) {
-            PingPacket packet = event.getPacket();
+    public void packetReceived(Session session, Packet packet) {
+        if (packet instanceof PingPacket) {
+            String id = ((PingPacket) packet).getPingId();
 
-            System.out.println("CLIENT Received: " + packet.getPingId());
+            System.out.println("CLIENT Received: " + id);
 
-            if(packet.getPingId().equals("hello")) {
-                event.getSession().send(new PingPacket("exit"));
-            } else if(packet.getPingId().equals("exit")) {
-                event.getSession().disconnect("Finished");
+            if (id.equals("hello")) {
+                session.send(new PingPacket("exit"));
+            } else if (id.equals("exit")) {
+                session.disconnect("Finished");
             }
         }
     }
 
     @Override
-    public void packetSent(PacketSentEvent event) {
-        if(event.getPacket() instanceof PingPacket) {
-            System.out.println("CLIENT Sent: " + event.<PingPacket>getPacket().getPingId());
+    public void packetSent(Session session, Packet packet) {
+        if (packet instanceof PingPacket) {
+            System.out.println("CLIENT Sent: " + ((PingPacket) packet).getPingId());
         }
     }
 
@@ -34,6 +34,7 @@ public class ClientSessionListener extends SessionAdapter {
     public void connected(ConnectedEvent event) {
         System.out.println("CLIENT Connected");
 
+        event.getSession().enableEncryption(((TestProtocol) event.getSession().getPacketProtocol()).getEncryption());
         event.getSession().send(new PingPacket("hello"));
     }
 

@@ -35,6 +35,7 @@ public class ServerListener extends ServerAdapter {
     public void sessionAdded(SessionAddedEvent event) {
         System.out.println("SERVER Session Added: " + event.getSession().getHost() + ":" + event.getSession().getPort());
         ((TestProtocol) event.getSession().getPacketProtocol()).setSecretKey(this.key);
+        event.getSession().enableEncryption(((TestProtocol) event.getSession().getPacketProtocol()).getEncryption());
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.github.steveice10.packetlib.event.session;
 
+import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.packet.Packet;
+
 /**
  * A listener for listening to session events.
  */
@@ -7,9 +10,9 @@ public interface SessionListener {
     /**
      * Called when a session receives a packet.
      *
-     * @param event Data relating to the event.
+     * @param packet the packet that was just received.
      */
-    public void packetReceived(PacketReceivedEvent event);
+    void packetReceived(Session session, Packet packet);
 
     /**
      * Called when a session is sending a packet.
@@ -21,9 +24,9 @@ public interface SessionListener {
     /**
      * Called when a session sends a packet.
      *
-     * @param event Data relating to the event.
+     * @param packet Packet just sent.
      */
-    public void packetSent(PacketSentEvent event);
+    void packetSent(Session session, Packet packet);
 
     /**
      * Called when a session encounters an error while reading or writing packet data.

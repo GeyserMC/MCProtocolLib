@@ -16,7 +16,7 @@ public class TestProtocol extends PacketProtocol {
     private AESEncryption encrypt;
 
     @SuppressWarnings("unused")
-    private TestProtocol() {
+    public TestProtocol() {
     }
 
     public TestProtocol(SecretKey key) {
@@ -42,7 +42,6 @@ public class TestProtocol extends PacketProtocol {
         return this.header;
     }
 
-    @Override
     public PacketEncryption getEncryption() {
         return this.encrypt;
     }

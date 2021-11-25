@@ -138,7 +138,21 @@ public interface Session {
      *
      * @param event Event to call.
      */
-    public void callEvent(SessionEvent event);
+    void callEvent(SessionEvent event);
+
+    /**
+     * Notifies all listeners that a packet was just received.
+     *
+     * @param packet Packet to notify.
+     */
+    void callPacketReceived(Packet packet);
+
+    /**
+     * Notifies all listeners that a packet was just sent.
+     *
+     * @param packet Packet to notify.
+     */
+    void callPacketSent(Packet packet);
 
     /**
      * Gets the compression packet length threshold for this session (-1 = disabled).
