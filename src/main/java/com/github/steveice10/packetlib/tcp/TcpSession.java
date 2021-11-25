@@ -1,6 +1,7 @@
 package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
@@ -170,6 +171,11 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
                 this.channel.pipeline().remove("compression");
             }
         }
+    }
+
+    @Override
+    public void enableEncryption(PacketEncryption encryption) {
+        channel.pipeline().addBefore("sizer", "encryption", new TcpPacketEncryptor(encryption));
     }
 
     @Override

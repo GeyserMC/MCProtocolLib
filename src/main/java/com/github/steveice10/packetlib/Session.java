@@ -1,5 +1,6 @@
 package com.github.steveice10.packetlib;
 
+import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import com.github.steveice10.packetlib.event.session.SessionEvent;
 import com.github.steveice10.packetlib.event.session.SessionListener;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -152,6 +153,13 @@ public interface Session {
      * @param threshold The new compression threshold.
      */
     public void setCompressionThreshold(int threshold);
+
+    /**
+     * Enables encryption for this session.
+     *
+     * @param encryption the encryption to encrypt with
+     */
+    void enableEncryption(PacketEncryption encryption);
 
     /**
      * Gets the connect timeout for this session in seconds.

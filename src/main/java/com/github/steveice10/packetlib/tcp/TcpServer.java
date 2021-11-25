@@ -81,8 +81,11 @@ public class TcpServer extends AbstractServer {
                 session.refreshReadTimeoutHandler(channel);
                 session.refreshWriteTimeoutHandler(channel);
 
-                pipeline.addLast("encryption", new TcpPacketEncryptor(session));
-                pipeline.addLast("sizer", new TcpPacketSizer(session));
+                int size = protocol.getPacketHeader().getLengthSize();
+                if (size > 0) {
+                    pipeline.addLast("sizer", new TcpPacketSizer(session, size));
+                }
+
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));
                 pipeline.addLast("manager", session);
             }

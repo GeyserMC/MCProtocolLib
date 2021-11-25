@@ -93,7 +93,8 @@ public class TcpClientSession extends TcpSession {
             bootstrap.handler(new ChannelInitializer<Channel>() {
                 @Override
                 public void initChannel(Channel channel) {
-                    getPacketProtocol().newClientSession(TcpClientSession.this);
+                    PacketProtocol protocol = getPacketProtocol();
+                    protocol.newClientSession(TcpClientSession.this);
 
                     channel.config().setOption(ChannelOption.IP_TOS, 0x18);
                     try {
@@ -112,8 +113,11 @@ public class TcpClientSession extends TcpSession {
 
                     addProxy(pipeline);
 
-                    pipeline.addLast("encryption", new TcpPacketEncryptor(TcpClientSession.this));
-                    pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this));
+                    int size = protocol.getPacketHeader().getLengthSize();
+                    if (size > 0) {
+                        pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this, size));
+                    }
+
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
                     pipeline.addLast("manager", TcpClientSession.this);
 

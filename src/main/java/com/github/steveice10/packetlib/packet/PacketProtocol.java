@@ -36,13 +36,6 @@ public abstract class PacketProtocol {
     public abstract PacketHeader getPacketHeader();
 
     /**
-     * Gets this protocol's active packet encryption.
-     *
-     * @return The protocol's packet encryption, or null if packets should not be encrypted.
-     */
-    public abstract PacketEncryption getEncryption();
-
-    /**
      * Called when a client session is created with this protocol.
      *
      * @param session The created session.
