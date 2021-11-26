@@ -122,6 +122,6 @@ public enum EntityType {
     private static final EntityType[] VALUES = values();
 
     public static EntityType read(NetInput in) throws IOException {
-        return VALUES[in.readVarInt()];
+        return in.readEnum(VALUES);
     }
 }
