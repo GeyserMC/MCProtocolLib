@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -33,7 +32,7 @@ public class ClientboundAddMobPacket implements Packet {
     public ClientboundAddMobPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.type = MagicValues.key(EntityType.class, in.readVarInt());
+        this.type = EntityType.read(in);
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -49,7 +48,7 @@ public class ClientboundAddMobPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeUUID(this.uuid);
-        out.writeVarInt(MagicValues.value(Integer.class, this.type));
+        out.writeVarInt(this.type.ordinal());
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

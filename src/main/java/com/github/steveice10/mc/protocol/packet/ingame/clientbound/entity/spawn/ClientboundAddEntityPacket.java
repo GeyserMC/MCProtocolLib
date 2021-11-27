@@ -58,7 +58,7 @@ public class ClientboundAddEntityPacket implements Packet {
     public ClientboundAddEntityPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
         this.uuid = in.readUUID();
-        this.type = MagicValues.key(EntityType.class, in.readVarInt());
+        this.type = EntityType.read(in);
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -72,7 +72,7 @@ public class ClientboundAddEntityPacket implements Packet {
             this.data = Direction.VALUES[data];
         } else if (this.type == EntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);
-        } else if (this.type == EntityType.THROWN_POTION) {
+        } else if (this.type == EntityType.POTION) {
             this.data = new SplashPotionData(data);
         } else if (this.type == EntityType.SPECTRAL_ARROW || this.type == EntityType.FIREBALL || this.type == EntityType.SMALL_FIREBALL
                 || this.type == EntityType.DRAGON_FIREBALL || this.type == EntityType.WITHER_SKULL || this.type == EntityType.FISHING_BOBBER) {
@@ -94,7 +94,7 @@ public class ClientboundAddEntityPacket implements Packet {
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
         out.writeUUID(this.uuid);
-        out.writeVarInt(MagicValues.value(Integer.class, this.type));
+        out.writeVarInt(this.type.ordinal());
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
