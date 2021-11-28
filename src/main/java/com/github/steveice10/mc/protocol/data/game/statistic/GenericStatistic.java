@@ -1,5 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
+import com.github.steveice10.packetlib.io.NetInput;
+
+import java.io.IOException;
+
 public enum GenericStatistic implements Statistic {
     LEAVE_GAME,
     PLAY_TIME,
@@ -75,5 +79,15 @@ public enum GenericStatistic implements Statistic {
     INTERACT_WITH_ANVIL,
     INTERACT_WITH_GRINDSTONE,
     TARGET_HIT,
-    INTERACT_WITH_SMITHING_TABLE
+    INTERACT_WITH_SMITHING_TABLE;
+
+    private static final GenericStatistic[] VALUES = values();
+
+    public static GenericStatistic read(NetInput in) throws IOException {
+        return in.readEnum(VALUES);
+    }
+
+    public static GenericStatistic fromId(int id) {
+        return VALUES[id];
+    }
 }

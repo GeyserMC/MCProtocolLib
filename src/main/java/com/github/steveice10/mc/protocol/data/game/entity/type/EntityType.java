@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type;
 
+import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
 import com.github.steveice10.packetlib.io.NetInput;
 
 import java.io.IOException;
@@ -123,5 +124,9 @@ public enum EntityType {
 
     public static EntityType read(NetInput in) throws IOException {
         return in.readEnum(VALUES);
+    }
+
+    public static EntityType fromId(int id) {
+        return VALUES[id];
     }
 }
