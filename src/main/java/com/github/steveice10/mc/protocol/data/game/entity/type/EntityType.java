@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type;
 
-import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
 import com.github.steveice10.packetlib.io.NetInput;
 
 import java.io.IOException;
