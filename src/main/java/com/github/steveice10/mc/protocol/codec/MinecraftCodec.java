@@ -124,8 +124,8 @@ import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundSt
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 59)
-            .minecraftVersion("1.18-rc3")
+            .protocolVersion(757)
+            .minecraftVersion("1.18")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(0x00, ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
