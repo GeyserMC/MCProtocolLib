@@ -10,6 +10,7 @@ public interface ParticleData {
     static ParticleData read(NetInput in, ParticleType type) throws IOException {
         switch (type) {
             case BLOCK:
+            case BLOCK_MARKER:
                 return new BlockParticleData(in.readVarInt());
             case DUST:
                 float red = in.readFloat();
@@ -38,6 +39,7 @@ public interface ParticleData {
     static void write(NetOutput out, ParticleType type, ParticleData data) throws IOException {
         switch (type) {
             case BLOCK:
+            case BLOCK_MARKER:
                 out.writeVarInt(((BlockParticleData) data).getBlockState());
                 break;
             case DUST:
