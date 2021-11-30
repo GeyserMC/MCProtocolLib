@@ -4,7 +4,7 @@ public enum Animation {
     SWING_ARM,
     DAMAGE,
     LEAVE_BED,
-    EAT_FOOD,
+    SWING_OFFHAND,
     CRITICAL_HIT,
     ENCHANTMENT_CRITICAL_HIT;
 }

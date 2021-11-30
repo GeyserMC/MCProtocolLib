@@ -2,23 +2,13 @@ package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.service.SessionService;
+import com.github.steveice10.packetlib.packet.DefaultPacketHeader;
+import com.github.steveice10.packetlib.packet.PacketHeader;
 
 /**
  * Class containing various constants for Minecraft sessions.
  */
 public final class MinecraftConstants {
-    // General Constants
-
-    /**
-     * Current supported game version.
-     */
-    public static final String GAME_VERSION = "1.17.1";
-
-    /**
-     * Current supported protocol version.
-     */
-    public static final int PROTOCOL_VERSION = 756;
-
     // General Key Constants
 
     /**
@@ -82,6 +72,16 @@ public final class MinecraftConstants {
      * Session flag for determining the packet compression threshold. Server only.
      */
     public static final String SERVER_COMPRESSION_THRESHOLD = "compression-threshold";
+
+    /**
+     * The packet header used by Minecraft.
+     */
+    public static final PacketHeader PACKET_HEADER = new DefaultPacketHeader();
+
+    /**
+     * The SRV Record prefix used by Minecraft.
+     */
+    public static final String SRV_RECORD_PREFIX = "_minecraft";
 
     private MinecraftConstants() {
     }

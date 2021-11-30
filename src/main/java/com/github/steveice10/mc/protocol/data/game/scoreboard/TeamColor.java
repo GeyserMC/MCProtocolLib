@@ -22,5 +22,8 @@ public enum TeamColor {
     BOLD,
     STRIKETHROUGH,
     UNDERLINED,
-    ITALIC;
+    ITALIC,
+    RESET;
+
+    public static final TeamColor[] VALUES = values();
 }

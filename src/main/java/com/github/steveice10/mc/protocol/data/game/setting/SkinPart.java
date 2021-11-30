@@ -8,4 +8,6 @@ public enum SkinPart {
     LEFT_PANTS_LEG,
     RIGHT_PANTS_LEG,
     HAT;
+
+    public static final SkinPart[] VALUES = values();
 }

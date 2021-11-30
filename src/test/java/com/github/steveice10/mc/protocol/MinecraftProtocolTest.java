@@ -1,13 +1,14 @@
 package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
-import com.github.steveice10.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.FloatTag;
@@ -17,7 +18,6 @@ import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
-import com.github.steveice10.packetlib.event.session.PacketReceivedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
@@ -44,18 +44,18 @@ public class MinecraftProtocolTest {
     private static final int PORT = 25560;
 
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
-            VersionInfo.CURRENT,
+            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
             new PlayerInfo(100, 0, new GameProfile[0]),
             Component.text("Hello world!"),
             null
     );
-    private static final ServerJoinGamePacket JOIN_GAME_PACKET = new ServerJoinGamePacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), getOverworldTag(), "minecraft:world", 100, 0, 16, false, false, false, false);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), getOverworldTag(), "minecraft:world", 100, 0, 16, 16, false, false, false, false);
 
     private static Server server;
 
     @BeforeClass
     public static void setupServer() {
-        server = new TcpServer(HOST, PORT, MinecraftProtocol.class);
+        server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
         server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
         server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session -> SERVER_INFO);
@@ -119,13 +119,12 @@ public class MinecraftProtocolTest {
 
     private static class LoginListenerTest extends SessionAdapter {
         public CountDownLatch login = new CountDownLatch(1);
-        public ServerJoinGamePacket packet;
+        public ClientboundLoginPacket packet;
 
         @Override
-        public void packetReceived(PacketReceivedEvent event) {
-            Packet packet = event.getPacket();
-            if (packet instanceof ServerJoinGamePacket) {
-                this.packet = (ServerJoinGamePacket) packet;
+        public void packetReceived(Session session, Packet packet) {
+            if (packet instanceof ClientboundLoginPacket) {
+                this.packet = (ClientboundLoginPacket) packet;
                 this.login.countDown();
             }
         }
