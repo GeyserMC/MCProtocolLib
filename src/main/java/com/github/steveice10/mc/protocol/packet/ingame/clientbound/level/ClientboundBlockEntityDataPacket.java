@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 @Data
@@ -19,19 +20,19 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundBlockEntityDataPacket implements Packet {
     private final @NonNull Position position;
-    private final @NonNull BlockEntityType type;
-    private final @NonNull CompoundTag nbt;
+    private final BlockEntityType type;
+    private final @Nullable CompoundTag nbt;
 
     public ClientboundBlockEntityDataPacket(NetInput in) throws IOException {
         this.position = Position.read(in);
-        this.type = in.readEnum(BlockEntityType.VALUES);
+        this.type = BlockEntityType.read(in);
         this.nbt = NBT.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         Position.write(out, this.position);
-        out.writeEnum(this.type);
+        BlockEntityType.write(out, this.type);
         NBT.write(out, this.nbt);
     }
 }

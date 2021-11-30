@@ -42,5 +42,22 @@ public enum BlockEntityType {
     BEEHIVE,
     SCULK_SENSOR;
 
-    public static final BlockEntityType[] VALUES = values();
+    private static final BlockEntityType[] VALUES = values();
+
+    public static BlockEntityType read(NetInput in) throws IOException {
+        int id = in.readVarInt();
+        if (id >= 0 && id < VALUES.length) {
+            return VALUES[id];
+        } else {
+            return null;
+        }
+    }
+
+    public static void write(NetOutput out, BlockEntityType type) throws IOException {
+        if (type == null) {
+            out.writeVarInt(-1);
+        } else {
+            out.writeVarInt(type.ordinal());
+        }
+    }
 }
