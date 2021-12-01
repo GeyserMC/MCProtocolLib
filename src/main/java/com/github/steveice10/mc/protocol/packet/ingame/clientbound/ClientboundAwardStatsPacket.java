@@ -5,7 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.statistic.BreakBlockStatistic
 import com.github.steveice10.mc.protocol.data.game.statistic.BreakItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.CraftItemStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.DropItemStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.GenericStatistic;
+import com.github.steveice10.mc.protocol.data.game.statistic.CustomStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.KillEntityStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.KilledByEntityStatistic;
 import com.github.steveice10.mc.protocol.data.game.statistic.PickupItemStatistic;
@@ -62,7 +62,7 @@ public class ClientboundAwardStatsPacket implements Packet {
                     statistic = new KilledByEntityStatistic(EntityType.fromId(statisticId));
                     break;
                 case GENERIC:
-                    statistic = GenericStatistic.fromId(statisticId);
+                    statistic = CustomStatistic.fromId(statisticId);
                     break;
                 default:
                     throw new IllegalStateException();
@@ -74,7 +74,9 @@ public class ClientboundAwardStatsPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.statistics.size());
-        for (Statistic statistic : this.statistics.keySet()) {
+        for (Map.Entry<Statistic, Integer> entry : statistics.entrySet()) {
+            Statistic statistic = entry.getKey();
+
             StatisticCategory category;
             int statisticId;
             if (statistic instanceof BreakBlockStatistic) {
@@ -101,15 +103,15 @@ public class ClientboundAwardStatsPacket implements Packet {
             } else if (statistic instanceof KilledByEntityStatistic) {
                 category = StatisticCategory.KILLED_BY_ENTITY;
                 statisticId = ((KilledByEntityStatistic) statistic).getEntity().ordinal();
-            } else if (statistic instanceof GenericStatistic) {
+            } else if (statistic instanceof CustomStatistic) {
                 category = StatisticCategory.GENERIC;
-                statisticId = ((GenericStatistic) statistic).ordinal();
+                statisticId = ((CustomStatistic) statistic).ordinal();
             } else {
                 throw new IllegalStateException();
             }
             out.writeVarInt(category.ordinal());
             out.writeVarInt(statisticId);
-            out.writeVarInt(this.statistics.get(statistic));
+            out.writeVarInt(entry.getValue());
         }
     }
 }

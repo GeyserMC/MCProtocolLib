@@ -4,7 +4,11 @@ import com.github.steveice10.packetlib.io.NetInput;
 
 import java.io.IOException;
 
-public enum GenericStatistic implements Statistic {
+/**
+ * "Custom" statistics in Minecraft that don't belong to any
+ * specific category.
+ */
+public enum CustomStatistic implements Statistic {
     LEAVE_GAME,
     PLAY_TIME,
     TOTAL_WORLD_TIME,
@@ -81,13 +85,13 @@ public enum GenericStatistic implements Statistic {
     TARGET_HIT,
     INTERACT_WITH_SMITHING_TABLE;
 
-    private static final GenericStatistic[] VALUES = values();
+    private static final CustomStatistic[] VALUES = values();
 
-    public static GenericStatistic read(NetInput in) throws IOException {
+    public static CustomStatistic read(NetInput in) throws IOException {
         return in.readEnum(VALUES);
     }
 
-    public static GenericStatistic fromId(int id) {
+    public static CustomStatistic fromId(int id) {
         return VALUES[id];
     }
 }
