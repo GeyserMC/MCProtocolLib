@@ -61,7 +61,7 @@ public class ClientboundAwardStatsPacket implements Packet {
                 case KILLED_BY_ENTITY:
                     statistic = new KilledByEntityStatistic(EntityType.fromId(statisticId));
                     break;
-                case GENERIC:
+                case CUSTOM:
                     statistic = CustomStatistic.fromId(statisticId);
                     break;
                 default:
@@ -104,7 +104,7 @@ public class ClientboundAwardStatsPacket implements Packet {
                 category = StatisticCategory.KILLED_BY_ENTITY;
                 statisticId = ((KilledByEntityStatistic) statistic).getEntity().ordinal();
             } else if (statistic instanceof CustomStatistic) {
-                category = StatisticCategory.GENERIC;
+                category = StatisticCategory.CUSTOM;
                 statisticId = ((CustomStatistic) statistic).ordinal();
             } else {
                 throw new IllegalStateException();

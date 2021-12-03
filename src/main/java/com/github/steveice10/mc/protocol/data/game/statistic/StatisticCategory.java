@@ -13,7 +13,7 @@ public enum StatisticCategory {
     DROP_ITEM,
     KILL_ENTITY,
     KILLED_BY_ENTITY,
-    GENERIC;
+    CUSTOM;
 
     private static final StatisticCategory[] VALUES = values();
 
