@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
 import com.github.steveice10.packetlib.io.NetInput;
+import lombok.Getter;
 
 import java.io.IOException;
 
@@ -10,35 +11,35 @@ import java.io.IOException;
  */
 public enum CustomStatistic implements Statistic {
     LEAVE_GAME,
-    PLAY_TIME,
-    TOTAL_WORLD_TIME,
-    TIME_SINCE_DEATH,
-    TIME_SINCE_REST,
-    SNEAK_TIME,
-    WALK_ONE_CM,
-    CROUCH_ONE_CM,
-    SPRINT_ONE_CM,
-    WALK_ON_WATER_ONE_CM,
-    FALL_ONE_CM,
-    CLIMB_ONE_CM,
-    FLY_ONE_CM,
-    WALK_UNDER_WATER_ONE_CM,
-    MINECART_ONE_CM,
-    BOAT_ONE_CM,
-    PIG_ONE_CM,
-    HORSE_ONE_CM,
-    AVIATE_ONE_CM,
-    SWIM_ONE_CM,
-    STRIDER_ONE_CM,
+    PLAY_TIME(StatisticFormat.TIME),
+    TOTAL_WORLD_TIME(StatisticFormat.TIME),
+    TIME_SINCE_DEATH(StatisticFormat.TIME),
+    TIME_SINCE_REST(StatisticFormat.TIME),
+    SNEAK_TIME(StatisticFormat.TIME),
+    WALK_ONE_CM(StatisticFormat.DISTANCE),
+    CROUCH_ONE_CM(StatisticFormat.DISTANCE),
+    SPRINT_ONE_CM(StatisticFormat.DISTANCE),
+    WALK_ON_WATER_ONE_CM(StatisticFormat.DISTANCE),
+    FALL_ONE_CM(StatisticFormat.DISTANCE),
+    CLIMB_ONE_CM(StatisticFormat.DISTANCE),
+    FLY_ONE_CM(StatisticFormat.DISTANCE),
+    WALK_UNDER_WATER_ONE_CM(StatisticFormat.DISTANCE),
+    MINECART_ONE_CM(StatisticFormat.DISTANCE),
+    BOAT_ONE_CM(StatisticFormat.DISTANCE),
+    PIG_ONE_CM(StatisticFormat.DISTANCE),
+    HORSE_ONE_CM(StatisticFormat.DISTANCE),
+    AVIATE_ONE_CM(StatisticFormat.DISTANCE),
+    SWIM_ONE_CM(StatisticFormat.DISTANCE),
+    STRIDER_ONE_CM(StatisticFormat.DISTANCE),
     JUMP,
     DROP,
-    DAMAGE_DEALT,
-    DAMAGE_DEALT_ABSORBED,
-    DAMAGE_DEALT_RESISTED,
-    DAMAGE_TAKEN,
-    DAMAGE_BLOCKED_BY_SHIELD,
-    DAMAGE_ABSORBED,
-    DAMAGE_RESISTED,
+    DAMAGE_DEALT(StatisticFormat.TENTHS),
+    DAMAGE_DEALT_ABSORBED(StatisticFormat.TENTHS),
+    DAMAGE_DEALT_RESISTED(StatisticFormat.TENTHS),
+    DAMAGE_TAKEN(StatisticFormat.TENTHS),
+    DAMAGE_BLOCKED_BY_SHIELD(StatisticFormat.TENTHS),
+    DAMAGE_ABSORBED(StatisticFormat.TENTHS),
+    DAMAGE_RESISTED(StatisticFormat.TENTHS),
     DEATHS,
     MOB_KILLS,
     ANIMALS_BRED,
@@ -86,6 +87,17 @@ public enum CustomStatistic implements Statistic {
     INTERACT_WITH_SMITHING_TABLE;
 
     private static final CustomStatistic[] VALUES = values();
+
+    @Getter
+    private final StatisticFormat format;
+
+    CustomStatistic() {
+        format = StatisticFormat.INTEGER;
+    }
+
+    CustomStatistic(StatisticFormat format) {
+        this.format = format;
+    }
 
     public static CustomStatistic read(NetInput in) throws IOException {
         return in.readEnum(VALUES);
