@@ -124,4 +124,8 @@ public enum EntityType {
     public static EntityType read(NetInput in) throws IOException {
         return in.readEnum(VALUES);
     }
+
+    public static EntityType fromId(int id) {
+        return VALUES[id];
+    }
 }
