@@ -261,6 +261,8 @@ public class MinecraftProtocolTest {
         overworldTag.put(new FloatTag("coordinate_scale", 1f));
         overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
         overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
+        overworldTag.put(new IntTag("height", 256));
+        overworldTag.put(new IntTag("min_y", 0));
         return overworldTag;
     }
 
