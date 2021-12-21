@@ -87,7 +87,7 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundLoginDisconnectPacket) {
                 session.disconnect(((ClientboundLoginDisconnectPacket) packet).getReason().toString());
             } else if (packet instanceof ClientboundLoginCompressionPacket) {
-                session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold());
+                session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), false);
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
             if (packet instanceof ClientboundStatusResponsePacket) {
