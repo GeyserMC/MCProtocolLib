@@ -159,14 +159,15 @@ public interface Session {
      *
      * @return This session's compression threshold.
      */
-    public int getCompressionThreshold();
+    int getCompressionThreshold();
 
     /**
      * Sets the compression packet length threshold for this session (-1 = disabled).
      *
      * @param threshold The new compression threshold.
+     * @param validateDecompression whether to validate that the decompression fits within size checks.
      */
-    public void setCompressionThreshold(int threshold);
+    void setCompressionThreshold(int threshold, boolean validateDecompression);
 
     /**
      * Enables encryption for this session.

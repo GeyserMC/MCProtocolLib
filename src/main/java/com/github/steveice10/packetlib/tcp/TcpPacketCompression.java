@@ -20,9 +20,11 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     private final Deflater deflater = new Deflater();
     private final Inflater inflater = new Inflater();
     private final byte[] buf = new byte[8192];
+    private final boolean validateDecompression;
 
-    public TcpPacketCompression(Session session) {
+    public TcpPacketCompression(Session session, boolean validateDecompression) {
         this.session = session;
+        this.validateDecompression = validateDecompression;
     }
 
     @Override
@@ -63,12 +65,14 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
             if(size == 0) {
                 out.add(buf.readBytes(buf.readableBytes()));
             } else {
-                if(size < this.session.getCompressionThreshold()) {
-                    throw new DecoderException("Badly compressed packet: size of " + size + " is below threshold of " + this.session.getCompressionThreshold() + ".");
-                }
+                if (validateDecompression) { // This is sectioned off as of at least Java Edition 1.18
+                    if (size < this.session.getCompressionThreshold()) {
+                        throw new DecoderException("Badly compressed packet: size of " + size + " is below threshold of " + this.session.getCompressionThreshold() + ".");
+                    }
 
-                if(size > MAX_COMPRESSED_SIZE) {
-                    throw new DecoderException("Badly compressed packet: size of " + size + " is larger than protocol maximum of " + MAX_COMPRESSED_SIZE + ".");
+                    if (size > MAX_COMPRESSED_SIZE) {
+                        throw new DecoderException("Badly compressed packet: size of " + size + " is larger than protocol maximum of " + MAX_COMPRESSED_SIZE + ".");
+                    }
                 }
 
                 byte[] bytes = new byte[buf.readableBytes()];
