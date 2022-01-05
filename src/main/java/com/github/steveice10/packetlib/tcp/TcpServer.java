@@ -15,6 +15,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.*;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.kqueue.KQueueServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -54,6 +56,10 @@ public class TcpServer extends AbstractServer {
             case EPOLL:
                 this.group = new EpollEventLoopGroup();
                 this.serverSocketChannel = EpollServerSocketChannel.class;
+                break;
+            case KQUEUE:
+                this.group = new KQueueEventLoopGroup();
+                this.serverSocketChannel = KQueueServerSocketChannel.class;
                 break;
             case NIO:
                 this.group = new NioEventLoopGroup();
