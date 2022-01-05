@@ -129,9 +129,14 @@ public class TcpClientSession extends TcpSession {
             bootstrap.remoteAddress(remoteAddress);
             bootstrap.localAddress(bindAddress, bindPort);
 
-            bootstrap.connect().addListener((future) -> {
-                if (!future.isSuccess()) {
-                    exceptionCaught(null, future.cause());
+            ChannelFuture future = bootstrap.connect();
+            if (wait) {
+                future.sync();
+            }
+
+            future.addListener((futureListener) -> {
+                if (!futureListener.isSuccess()) {
+                    exceptionCaught(null, futureListener.cause());
                 }
             });
         } catch(Throwable t) {
