@@ -9,5 +9,6 @@ public enum MoveToHotbarAction implements ContainerAction {
     SLOT_6,
     SLOT_7,
     SLOT_8,
-    SLOT_9;
+    SLOT_9,
+    OFF_HAND;
 }
