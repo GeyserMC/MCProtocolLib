@@ -140,6 +140,7 @@ public class MagicValues {
         register(MoveToHotbarAction.SLOT_7, 6);
         register(MoveToHotbarAction.SLOT_8, 7);
         register(MoveToHotbarAction.SLOT_9, 8);
+        register(MoveToHotbarAction.OFF_HAND, 40);
 
         register(CreativeGrabAction.GRAB, 2);
 
