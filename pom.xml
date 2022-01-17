@@ -10,12 +10,12 @@
 
     <name>MCProtocolLib</name>
     <description>MCProtocolLib is a simple library for communicating with Minecraft clients and servers.</description>
-    <url>http://github.com/Steveice10/MCProtocolLib/</url>
+    <url>http://github.com/GeyserMC/MCProtocolLib/</url>
 
     <scm>
-        <connection>scm:git:git@github.com:Steveice10/MCProtocolLib.git</connection>
-        <developerConnection>scm:git:git@github.com:Steveice10/MCProtocolLib.git</developerConnection>
-        <url>git@github.com:Steveice10/MCProtocolLib/</url>
+        <connection>scm:git:git@github.com:GeyserMC/MCProtocolLib.git</connection>
+        <developerConnection>scm:git:git@github.com:GeyserMC/MCProtocolLib.git</developerConnection>
+        <url>git@github.com:GeyserMC/MCProtocolLib/</url>
     </scm>
 
     <properties>
@@ -43,7 +43,7 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Steveice10/MCProtocolLib/issues</url>
+        <url>https://github.com/GeyserMC/MCProtocolLib/issues</url>
     </issueManagement>
 
     <repositories>
@@ -75,19 +75,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
+            <groupId>com.github.GeyserMC</groupId>
             <artifactId>opennbt</artifactId>
             <version>1.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
+            <groupId>com.github.GeyserMC</groupId>
             <artifactId>packetlib</artifactId>
             <version>2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
+            <groupId>com.github.GeyserMC</groupId>
             <artifactId>mcauthlib</artifactId>
             <version>6f3d6aada5</version>
             <scope>compile</scope>
