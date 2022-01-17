@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
-    <description>A library for communicating with a Minecraft client or server.</description>
+    <description>MCProtocolLib is a simple library for communicating with Minecraft clients and servers.</description>
     <url>http://github.com/Steveice10/MCProtocolLib/</url>
 
     <scm>
