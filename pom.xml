@@ -39,6 +39,13 @@
             <name>Steveice10</name>
             <email>Steveice10@gmail.com</email>
         </developer>
+        <developer>
+            <id>GeyserMC</id>
+            <name>GeyserMC</name>
+            <url>https://geysermc.org/</url>
+            <organization>GeyserMC</organization>
+            <organizationUrl>https://github.com/GeyserMC</organizationUrl>
+        </developer>
     </developers>
 
     <issueManagement>
