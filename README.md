@@ -11,7 +11,7 @@ See [example/com/github/steveice10/mc/protocol/test/MinecraftProtocolTest.java](
 The recommended way of installing MCProtocolLib is through [JitPack](https://jitpack.io/). Visit [MCProtocolLib on JitPack](https://jitpack.io/#GeyserMC/MCProtocolLib) for more details on how to include MCProtocolLib in your
 project.
 
-Maven:
+### Maven
 
 ```xml
 <repositories>
@@ -28,7 +28,7 @@ Maven:
 </dependency>
 ```
 
-Gradle:
+### Gradle
 
 ```groovy
 allprojects {
@@ -44,7 +44,7 @@ dependencies {
 
 ## Building the Source
 
-MCProtocolLib uses Maven to manage dependencies. To build the source code, run 'mvn clean install' in the project root directory.
+MCProtocolLib uses Maven to manage dependencies. To build the source code, run `mvn clean install` in the project root directory.
 
 ## Support and Development
 
