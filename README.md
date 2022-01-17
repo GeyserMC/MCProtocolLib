@@ -22,7 +22,7 @@ project.
 </repositories>
 
 <dependency>
-    <groupId>com.github.Steveice10</groupId>
+    <groupId>com.github.GeyserMC</groupId>
     <artifactId>MCProtocolLib</artifactId>
     <version>(version here)</version>
 </dependency>
@@ -38,7 +38,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.Steveice10:MCProtocolLib:(version here)'
+    implementation 'com.github.GeyserMC:MCProtocolLib:(version here)'
 }
 ```
 
