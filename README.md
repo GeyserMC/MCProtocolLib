@@ -41,6 +41,10 @@ dependencies {
 }
 ```
 
+### Snapshots
+
+To use snapshot builds, switch the URL to `https://repo.opencollab.dev/maven-snapshots/`.
+
 ## Building the Source
 
 MCProtocolLib uses Maven to manage dependencies. To build the source code, run `mvn clean install` in the project root directory.
