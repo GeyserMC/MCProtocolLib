@@ -8,22 +8,21 @@ See [example/com/github/steveice10/mc/protocol/test/MinecraftProtocolTest.java](
 
 ## Adding as a Dependency
 
-The recommended way of installing MCProtocolLib is through [JitPack](https://jitpack.io/). Visit [MCProtocolLib on JitPack](https://jitpack.io/#GeyserMC/MCProtocolLib) for more details on how to include MCProtocolLib in your
-project.
+MCProtocolLib builds are published to the [Open Collaboration repository](https://repo.opencollab.dev/ui/packages/gav:%2F%2Fcom.github.steveice10:mcprotocollib). Follow the below steps to add MCProtocolLib as a dependency to your project.
 
 ### Maven
 
 ```xml
 <repositories>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+        <id>opencollab</id>
+        <url>https://repo.opencollab.dev/maven-releases/</url>
     </repository>
 </repositories>
 
 <dependency>
-    <groupId>com.github.GeyserMC</groupId>
-    <artifactId>MCProtocolLib</artifactId>
+    <groupId>com.github.steveice10</groupId>
+    <artifactId>mcprotocollib</artifactId>
     <version>(version here)</version>
 </dependency>
 ```
@@ -33,12 +32,12 @@ project.
 ```groovy
 allprojects {
     repositories {
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://repo.opencollab.dev/maven-releases/' }
     }
 }
 
 dependencies {
-    implementation 'com.github.GeyserMC:MCProtocolLib:(version here)'
+    implementation 'com.github.steveice10:mcprotocollib:(version here)'
 }
 ```
 
