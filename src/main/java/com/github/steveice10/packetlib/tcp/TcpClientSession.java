@@ -300,6 +300,7 @@ public class TcpClientSession extends TcpSession {
                 EVENT_LOOP_GROUP = new KQueueEventLoopGroup();
                 CHANNEL_CLASS = KQueueSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
+                break;
             case NIO:
                 EVENT_LOOP_GROUP = new NioEventLoopGroup();
                 CHANNEL_CLASS = NioSocketChannel.class;
