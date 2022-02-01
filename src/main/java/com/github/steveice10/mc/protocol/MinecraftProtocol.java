@@ -170,7 +170,7 @@ public class MinecraftProtocol extends PacketProtocol {
         return this.state;
     }
 
-    protected void setState(ProtocolState state) {
+    public void setState(ProtocolState state) {
         this.state = state;
         this.stateCodec = this.codec.getCodec(state);
     }
