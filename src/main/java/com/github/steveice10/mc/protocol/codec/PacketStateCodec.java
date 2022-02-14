@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.codec;
 import com.github.steveice10.mc.protocol.MinecraftConstants;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
-import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketDefinition;
 import com.github.steveice10.packetlib.packet.PacketFactory;

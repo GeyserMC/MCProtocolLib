@@ -2,10 +2,10 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
-import com.github.steveice10.mc.protocol.data.game.level.notify.GameEventValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
+import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
+import com.github.steveice10.mc.protocol.data.game.level.notify.GameEventValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.RainStrengthValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.RespawnScreenValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.ThunderStrengthValue;

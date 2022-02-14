@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.data.game.entity.metadata.type;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ByteMetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.NonNull;
 

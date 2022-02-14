@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.data.game.level.block;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public enum BlockEntityType {
