@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Key;

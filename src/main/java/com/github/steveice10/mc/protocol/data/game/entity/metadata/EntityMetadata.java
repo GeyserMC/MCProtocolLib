@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.*;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.AllArgsConstructor;

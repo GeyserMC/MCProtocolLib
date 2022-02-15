@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeModifier;

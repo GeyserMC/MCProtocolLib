@@ -7,7 +7,6 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
