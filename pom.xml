@@ -9,13 +9,13 @@
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
-    <description>A library for communicating with a Minecraft client or server.</description>
-    <url>http://github.com/Steveice10/MCProtocolLib/</url>
+    <description>MCProtocolLib is a simple library for communicating with Minecraft clients and servers.</description>
+    <url>http://github.com/GeyserMC/MCProtocolLib/</url>
 
     <scm>
-        <connection>scm:git:git@github.com:Steveice10/MCProtocolLib.git</connection>
-        <developerConnection>scm:git:git@github.com:Steveice10/MCProtocolLib.git</developerConnection>
-        <url>git@github.com:Steveice10/MCProtocolLib/</url>
+        <connection>scm:git:git@github.com:GeyserMC/MCProtocolLib.git</connection>
+        <developerConnection>scm:git:git@github.com:GeyserMC/MCProtocolLib.git</developerConnection>
+        <url>git@github.com:GeyserMC/MCProtocolLib/</url>
     </scm>
 
     <properties>
@@ -39,11 +39,18 @@
             <name>Steveice10</name>
             <email>Steveice10@gmail.com</email>
         </developer>
+        <developer>
+            <id>GeyserMC</id>
+            <name>GeyserMC</name>
+            <url>https://geysermc.org/</url>
+            <organization>GeyserMC</organization>
+            <organizationUrl>https://github.com/GeyserMC</organizationUrl>
+        </developer>
     </developers>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Steveice10/MCProtocolLib/issues</url>
+        <url>https://github.com/GeyserMC/MCProtocolLib/issues</url>
     </issueManagement>
 
     <repositories>
@@ -75,19 +82,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
+            <groupId>com.github.GeyserMC</groupId>
             <artifactId>opennbt</artifactId>
             <version>1.4</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
+            <groupId>com.github.GeyserMC</groupId>
             <artifactId>packetlib</artifactId>
             <version>2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
+            <groupId>com.github.GeyserMC</groupId>
             <artifactId>mcauthlib</artifactId>
             <version>6f3d6aada5</version>
             <scope>compile</scope>
