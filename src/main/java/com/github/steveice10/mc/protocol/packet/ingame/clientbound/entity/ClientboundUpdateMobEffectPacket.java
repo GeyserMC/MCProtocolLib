@@ -27,7 +27,7 @@ public class ClientboundUpdateMobEffectPacket implements Packet {
 
     public ClientboundUpdateMobEffectPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.effect = Effect.fromNetworkId(in.readByte());
+        this.effect = Effect.fromNetworkId(in.readVarInt());
         this.amplifier = in.readByte();
         this.duration = in.readVarInt();
 
@@ -39,7 +39,7 @@ public class ClientboundUpdateMobEffectPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        out.writeByte(Effect.toNetworkId(this.effect));
+        out.writeVarInt(Effect.toNetworkId(this.effect));
         out.writeByte(this.amplifier);
         out.writeVarInt(this.duration);
 

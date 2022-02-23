@@ -20,12 +20,12 @@ public class ClientboundRemoveMobEffectPacket implements Packet {
 
     public ClientboundRemoveMobEffectPacket(NetInput in) throws IOException {
         this.entityId = in.readVarInt();
-        this.effect = Effect.fromNetworkId(in.readUnsignedByte());
+        this.effect = Effect.fromNetworkId(in.readVarInt());
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.entityId);
-        out.writeByte(Effect.toNetworkId(this.effect));
+        out.writeVarInt(Effect.toNetworkId(this.effect));
     }
 }
