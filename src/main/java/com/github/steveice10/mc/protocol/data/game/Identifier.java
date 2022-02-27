@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game;
 
-public class Identifier {
+public final class Identifier {
     private Identifier() {
     }
 

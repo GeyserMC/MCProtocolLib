@@ -46,5 +46,7 @@ public enum CommandParser {
     ITEM_ENCHANTMENT,
     ENTITY_SUMMON,
     DIMENSION,
-    TIME;
+    TIME,
+    RESOURCE,
+    RESOURCE_OR_TAG
 }

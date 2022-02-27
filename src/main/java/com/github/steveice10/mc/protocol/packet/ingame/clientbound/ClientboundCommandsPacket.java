@@ -15,6 +15,7 @@ import com.github.steveice10.mc.protocol.data.game.command.properties.LongProper
 import com.github.steveice10.mc.protocol.data.game.command.properties.RangeProperties;
 import com.github.steveice10.mc.protocol.data.game.command.properties.ScoreHolderProperties;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
+import com.github.steveice10.mc.protocol.data.game.command.properties.ResourceProperties;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -150,6 +151,10 @@ public class ClientboundCommandsPacket implements Packet {
                         break;
                     case RANGE:
                         properties = new RangeProperties(in.readBoolean());
+                        break;
+                    case RESOURCE:
+                    case RESOURCE_OR_TAG:
+                        properties = new ResourceProperties(in.readString());
                         break;
                     default:
                         break;
@@ -316,6 +321,10 @@ public class ClientboundCommandsPacket implements Packet {
                         break;
                     case RANGE:
                         out.writeBoolean(((RangeProperties) node.getProperties()).isAllowDecimals());
+                        break;
+                    case RESOURCE:
+                    case RESOURCE_OR_TAG:
+                        out.writeString(((ResourceProperties) node.getProperties()).getRegistryKey());
                         break;
                     default:
                         break;

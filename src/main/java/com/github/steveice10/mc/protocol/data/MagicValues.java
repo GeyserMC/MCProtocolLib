@@ -710,6 +710,8 @@ public class MagicValues {
         register(CommandParser.NBT_COMPOUND_TAG, "minecraft:nbt_compound_tag");
         register(CommandParser.NBT_TAG, "minecraft:nbt_tag");
         register(CommandParser.ANGLE, "minecraft:angle");
+        register(CommandParser.RESOURCE, "minecraft:resource");
+        register(CommandParser.RESOURCE_OR_TAG, "minecraft:resource_or_tag");
 
         register(SuggestionType.ASK_SERVER, "minecraft:ask_server");
         register(SuggestionType.ALL_RECIPES, "minecraft:all_recipes");
