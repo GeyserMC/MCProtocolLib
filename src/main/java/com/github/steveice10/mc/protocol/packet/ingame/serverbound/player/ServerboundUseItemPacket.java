@@ -17,13 +17,16 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerboundUseItemPacket implements Packet {
     private final @NonNull Hand hand;
+    private final int sequence;
 
     public ServerboundUseItemPacket(NetInput in) throws IOException {
         this.hand = MagicValues.key(Hand.class, in.readVarInt());
+        this.sequence = in.readVarInt();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(MagicValues.value(Integer.class, this.hand));
+        out.writeVarInt(this.sequence);
     }
 }

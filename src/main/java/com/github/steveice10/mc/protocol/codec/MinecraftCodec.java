@@ -44,7 +44,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTeleportEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateAttributesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateMobEffectPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockBreakAckPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockChangedAckPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerAbilitiesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerCombatEndPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerCombatEnterPacket;
@@ -169,8 +169,8 @@ import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundSt
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion(758)
-            .minecraftVersion("1.18.2")
+            .protocolVersion((1 << 30) | 74)
+            .minecraftVersion("22w11a")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(0x00, ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -197,7 +197,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(0x05, ClientboundAddVibrationSignalPacket.class, ClientboundAddVibrationSignalPacket::new)
                     .registerClientboundPacket(0x06, ClientboundAnimatePacket.class, ClientboundAnimatePacket::new)
                     .registerClientboundPacket(0x07, ClientboundAwardStatsPacket.class, ClientboundAwardStatsPacket::new)
-                    .registerClientboundPacket(0x08, ClientboundBlockBreakAckPacket.class, ClientboundBlockBreakAckPacket::new)
+                    .registerClientboundPacket(0x08, ClientboundBlockChangedAckPacket.class, ClientboundBlockChangedAckPacket::new)
                     .registerClientboundPacket(0x09, ClientboundBlockDestructionPacket.class, ClientboundBlockDestructionPacket::new)
                     .registerClientboundPacket(0x0A, ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new)
                     .registerClientboundPacket(0x0B, ClientboundBlockEventPacket.class, ClientboundBlockEventPacket::new)

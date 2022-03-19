@@ -120,18 +120,14 @@ public class ClientboundCommandsPacket implements Packet {
                     }
                     case LONG: {
                         byte numberFlags = in.readByte();
-                        long min;
-                        long max;
+                        long min = Long.MIN_VALUE;
+                        long max = Long.MAX_VALUE;
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             min = in.readLong();
-                        } else {
-                            min = Long.MIN_VALUE;
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             max = in.readLong();
-                        } else {
-                            max = Long.MAX_VALUE;
                         }
 
                         properties = new LongProperties(min, max);
