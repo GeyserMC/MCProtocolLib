@@ -13,12 +13,14 @@ import java.io.IOException;
 @ToString
 public class EntityVibrationSource implements VibrationSource {
     private final int destinationEntityId;
+    private final float yOffset;
 
     public static EntityVibrationSource read(NetInput in) throws IOException {
-        return new EntityVibrationSource(in.readVarInt());
+        return new EntityVibrationSource(in.readVarInt(), in.readFloat());
     }
 
     public static void write(NetOutput out, EntityVibrationSource vibration) throws IOException {
         out.writeVarInt(vibration.getDestinationEntityId());
+        out.writeFloat(vibration.getYOffset());
     }
 }

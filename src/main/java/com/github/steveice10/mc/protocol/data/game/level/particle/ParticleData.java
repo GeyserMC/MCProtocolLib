@@ -1,6 +1,10 @@
 package com.github.steveice10.mc.protocol.data.game.level.particle;
 
+import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.level.vibration.BlockVibrationSource;
+import com.github.steveice10.mc.protocol.data.game.level.vibration.EntityVibrationSource;
+import com.github.steveice10.mc.protocol.data.game.level.vibration.VibrationSource;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 
@@ -31,6 +35,23 @@ public interface ParticleData {
                 return new FallingDustParticleData(in.readVarInt());
             case ITEM:
                 return new ItemParticleData(ItemStack.read(in));
+            case VIBRATION:
+                String identifier = Identifier.formalize(in.readString());
+                VibrationSource destination;
+                switch (identifier) {
+                    case "minecraft:block":
+                        destination = BlockVibrationSource.read(in);
+                        break;
+                    case "minecraft:entity":
+                        destination = EntityVibrationSource.read(in);
+                        break;
+                    default:
+                        throw new IllegalStateException();
+                }
+                int arrivalInTicks = in.readVarInt();
+                return new VibrationParticleData(destination, arrivalInTicks);
+            case SHRIEK:
+                return new ShriekParticleData(in.readVarInt());
             default:
                 return null;
         }
@@ -63,6 +84,17 @@ public interface ParticleData {
             case ITEM:
                 ItemStack.write(out, ((ItemParticleData) data).getItemStack());
                 break;
+            case VIBRATION:
+                if (((VibrationParticleData) data).getDestination() instanceof BlockVibrationSource) {
+                    out.writeString("minecraft:block");
+                    BlockVibrationSource.write(out, (BlockVibrationSource) ((VibrationParticleData) data).getDestination());
+                } else if (((VibrationParticleData) data).getDestination() instanceof EntityVibrationSource) {
+                    out.writeString("minecraft:entity");
+                    EntityVibrationSource.write(out, (EntityVibrationSource) ((VibrationParticleData) data).getDestination());
+                }
+                out.writeVarInt(((VibrationParticleData) data).getArrivalInTicks());
+            case SHRIEK:
+                out.writeVarInt(((ShriekParticleData) data).getDelay());
         }
     }
 }
