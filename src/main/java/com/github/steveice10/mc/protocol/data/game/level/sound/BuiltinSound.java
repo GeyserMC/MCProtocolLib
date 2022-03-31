@@ -10,6 +10,13 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum BuiltinSound implements Sound {
+    ENTITY_ALLAY_AMBIENT_WITH_ITEM("entity.allay.ambient_with_item"),
+    ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM("entity.allay.ambient_without_item"),
+    ENTITY_ALLAY_DEATH("entity.allay.death"),
+    ENTITY_ALLAY_FLAP("entity.allay.flap"),
+    ENTITY_ALLAY_HURT("entity.allay.hurt"),
+    ENTITY_ALLAY_ITEM_GIVEN("entity.allay.item_given"),
+    ENTITY_ALLAY_ITEM_TAKEN("entity.allay.item_taken"),
     AMBIENT_CAVE("ambient.cave"),
     AMBIENT_BASALT_DELTAS_ADDITIONS("ambient.basalt_deltas.additions"),
     AMBIENT_BASALT_DELTAS_LOOP("ambient.basalt_deltas.loop"),

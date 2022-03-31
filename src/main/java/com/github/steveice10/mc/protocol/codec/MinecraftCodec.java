@@ -168,8 +168,8 @@ import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundSt
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 75)
-            .minecraftVersion("22w12a")
+            .protocolVersion((1 << 30) | 76)
+            .minecraftVersion("22w13a")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(0x00, ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
