@@ -5,6 +5,7 @@ import com.github.steveice10.packetlib.io.NetInput;
 import java.io.IOException;
 
 public enum EntityType {
+    ALLAY,
     AREA_EFFECT_CLOUD,
     ARMOR_STAND,
     ARROW,
