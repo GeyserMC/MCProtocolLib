@@ -24,6 +24,7 @@ public class ClientboundSoundPacket implements Packet {
     private final double z;
     private final float volume;
     private final float pitch;
+    private final long seed;
 
     public ClientboundSoundPacket(NetInput in) throws IOException {
         this.sound = BuiltinSound.VALUES[in.readVarInt()];
@@ -33,6 +34,7 @@ public class ClientboundSoundPacket implements Packet {
         this.z = in.readInt() / 8D;
         this.volume = in.readFloat();
         this.pitch = in.readFloat();
+        this.seed = in.readLong();
     }
 
     @Override
@@ -44,5 +46,6 @@ public class ClientboundSoundPacket implements Packet {
         out.writeInt((int) (this.z * 8));
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
+        out.writeLong(this.seed);
     }
 }
