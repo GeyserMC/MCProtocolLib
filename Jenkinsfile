@@ -39,13 +39,14 @@ pipeline {
                 )
                 rtMavenRun(
                         pom: 'pom.xml',
-                        goals: 'javadoc:jar source:jar install -DskipTests',
+                        goals: 'javadoc:javadoc javadoc:jar source:jar install -DskipTests',
                         deployerId: "maven-deployer",
                         resolverId: "maven-resolver"
                 )
                 rtPublishBuildInfo(
                         serverId: "opencollab-artifactory"
                 )
+                step([$class: 'JavadocArchiver', javadocDir: 'target/site/apidocs', keepAll: false])
             }
         }
     }
