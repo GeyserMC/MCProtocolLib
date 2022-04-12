@@ -18,6 +18,10 @@ MCProtocolLib builds are published to the [Open Collaboration repository](https:
         <id>opencollab</id>
         <url>https://repo.opencollab.dev/maven-releases/</url>
     </repository>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io/</url>
+    </repository>
 </repositories>
 
 <dependency>
@@ -29,15 +33,29 @@ MCProtocolLib builds are published to the [Open Collaboration repository](https:
 
 ### Gradle
 
+#### Groovy
 ```groovy
 allprojects {
     repositories {
+        maven { url 'https://jitpack.io/' }
         maven { url 'https://repo.opencollab.dev/maven-releases/' }
     }
 }
 
 dependencies {
     implementation 'com.github.steveice10:mcprotocollib:(version here)'
+}
+```
+
+#### Kotlin
+```kotlin
+repositories {
+    maven("https://jitpack.io/")
+    maven("https://repo.opencollab.dev/maven-releases/")
+}
+
+dependencies {
+    implementation("com.github.steveice10", "mcprotocollib", "version here")
 }
 ```
 
