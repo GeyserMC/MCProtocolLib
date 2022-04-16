@@ -1233,6 +1233,8 @@ public enum BuiltinSound implements Sound {
     ENTITY_WARDEN_NEARBY_CLOSEST("entity.warden.nearby_closest"),
     ENTITY_WARDEN_ROAR("entity.warden.roar"),
     ENTITY_WARDEN_SNIFF("entity.warden.sniff"),
+    ENTITY_WARDEN_SONIC_BOOM("entity.warden.sonic_boom"),
+    ENTITY_WARDEN_SONIC_CHARGE("entity.warden.sonic_charge"),
     ENTITY_WARDEN_STEP("entity.warden.step"),
     ENTITY_WARDEN_TENDRIL_CLICKS("entity.warden.tendril_clicks"),
     BLOCK_WATER_AMBIENT("block.water.ambient"),

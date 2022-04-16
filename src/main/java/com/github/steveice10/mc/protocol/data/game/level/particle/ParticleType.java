@@ -25,6 +25,7 @@ public enum ParticleType {
     ENTITY_EFFECT,
     EXPLOSION_EMITTER,
     EXPLOSION,
+    SONIC_BOOM,
     FALLING_DUST,
     FIREWORK,
     FISHING,
