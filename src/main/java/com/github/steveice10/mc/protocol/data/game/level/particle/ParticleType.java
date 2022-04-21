@@ -90,8 +90,7 @@ public enum ParticleType {
     WAX_OFF,
     ELECTRIC_SPARK,
     SCRAPE,
-    SHRIEK,
-    ALLAY_DUST;
+    SHRIEK;
 
     public static final ParticleType[] VALUES = values();
 }
