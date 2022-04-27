@@ -284,6 +284,10 @@ public class MagicValues {
         register(PaintingType.BURNING_SKULL, 23);
         register(PaintingType.SKELETON, 24);
         register(PaintingType.DONKEY_KONG, 25);
+        register(PaintingType.EARTH, 26);
+        register(PaintingType.WIND, 27);
+        register(PaintingType.WATER, 28);
+        register(PaintingType.FIRE, 29);
 
         register(ScoreboardPosition.PLAYER_LIST, 0);
         register(ScoreboardPosition.SIDEBAR, 1);
