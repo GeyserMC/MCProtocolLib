@@ -248,6 +248,7 @@ public class MagicValues {
         register(EntityEvent.GOAT_LOWERING_HEAD, 58);
         register(EntityEvent.GOAT_STOP_LOWERING_HEAD, 59);
         register(EntityEvent.MAKE_POOF_PARTICLES, 60);
+        register(EntityEvent.WARDEN_RECEIVE_SIGNAL, 61);
 
         register(PositionElement.X, 0);
         register(PositionElement.Y, 1);
@@ -289,6 +290,10 @@ public class MagicValues {
         register(PaintingType.BURNING_SKULL, 23);
         register(PaintingType.SKELETON, 24);
         register(PaintingType.DONKEY_KONG, 25);
+        register(PaintingType.EARTH, 26);
+        register(PaintingType.WIND, 27);
+        register(PaintingType.WATER, 28);
+        register(PaintingType.FIRE, 29);
 
         register(ScoreboardPosition.PLAYER_LIST, 0);
         register(ScoreboardPosition.SIDEBAR, 1);
