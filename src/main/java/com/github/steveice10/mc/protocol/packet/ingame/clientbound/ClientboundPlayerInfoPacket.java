@@ -16,6 +16,10 @@ import lombok.With;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -65,7 +69,22 @@ public class ClientboundPlayerInfoPacket implements Packet {
                         displayName = DefaultComponentSerializer.get().deserialize(in.readString());
                     }
 
-                    entry = new PlayerListEntry(profile, gameMode, ping, displayName);
+                    Long expiresAt = null;
+                    PublicKey publicKey = null;
+                    byte[] keySignature = null;
+                    if (in.readBoolean()) {
+                        expiresAt = in.readLong();
+                        byte[] keyBytes = in.readBytes(in.readVarInt());
+                        keySignature = in.readBytes(in.readVarInt());
+
+                        try {
+                            publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
+                        } catch (GeneralSecurityException e) {
+                            throw new IOException("Could not decode public key.", e);
+                        }
+                    }
+
+                    entry = new PlayerListEntry(profile, gameMode, ping, displayName, expiresAt, publicKey, keySignature);
                     break;
                 }
                 case UPDATE_GAMEMODE: {
@@ -123,6 +142,15 @@ public class ClientboundPlayerInfoPacket implements Packet {
                     out.writeBoolean(entry.getDisplayName() != null);
                     if (entry.getDisplayName() != null) {
                         out.writeString(DefaultComponentSerializer.get().serialize(entry.getDisplayName()));
+                    }
+
+                    if (entry.getPublicKey() != null) {
+                        out.writeLong(entry.getExpiresAt());
+                        byte[] encoded = entry.getPublicKey().getEncoded();
+                        out.writeVarInt(encoded.length);
+                        out.writeBytes(encoded);
+                        out.writeVarInt(entry.getKeySignature().length);
+                        out.writeBytes(entry.getKeySignature());
                     }
 
                     break;

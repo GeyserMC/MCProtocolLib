@@ -27,7 +27,7 @@ public class ClientboundLoginPacket implements Packet {
     private final int worldCount;
     private final @NonNull String[] worldNames;
     private final @NonNull CompoundTag dimensionCodec;
-    private final @NonNull CompoundTag dimension;
+    private final @NonNull String dimension;
     private final @NonNull String worldName;
     private final long hashedSeed;
     private final int maxPlayers;
@@ -51,7 +51,7 @@ public class ClientboundLoginPacket implements Packet {
             this.worldNames[i] = in.readString();
         }
         this.dimensionCodec = NBT.read(in);
-        this.dimension = NBT.read(in);
+        this.dimension = in.readString();
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.maxPlayers = in.readVarInt();
@@ -77,7 +77,7 @@ public class ClientboundLoginPacket implements Packet {
             out.writeString(worldName);
         }
         NBT.write(out, this.dimensionCodec);
-        NBT.write(out, this.dimension);
+        out.writeString(this.dimension);
         out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeVarInt(this.maxPlayers);

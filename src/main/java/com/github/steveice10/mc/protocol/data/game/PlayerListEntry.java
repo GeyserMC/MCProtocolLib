@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 
+import java.security.PublicKey;
+
 @Data
 @AllArgsConstructor
 public class PlayerListEntry {
@@ -14,20 +16,23 @@ public class PlayerListEntry {
     private final GameMode gameMode;
     private final int ping;
     private final Component displayName;
+    private final long expiresAt;
+    private final PublicKey publicKey;
+    private final byte[] keySignature;
 
     public PlayerListEntry(GameProfile profile) {
-        this(profile, null, 0, null);
+        this(profile, null, 0, null, 0, null, null);
     }
 
     public PlayerListEntry(GameProfile profile, GameMode gameMode) {
-        this(profile, gameMode, 0, null);
+        this(profile, gameMode, 0, null, 0, null, null);
     }
 
     public PlayerListEntry(GameProfile profile, int ping) {
-        this(profile, null, ping, null);
+        this(profile, null, ping, null, 0, null, null);
     }
 
     public PlayerListEntry(GameProfile profile, Component displayName) {
-        this(profile, null, 0, displayName);
+        this(profile, null, 0, displayName, 0, null, null);
     }
 }

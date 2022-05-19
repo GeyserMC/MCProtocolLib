@@ -21,11 +21,13 @@ public class ServerboundPlayerActionPacket implements Packet {
     private final @NonNull PlayerAction action;
     private final @NonNull Position position;
     private final @NonNull Direction face;
+    private final int sequence;
 
     public ServerboundPlayerActionPacket(NetInput in) throws IOException {
         this.action = MagicValues.key(PlayerAction.class, in.readVarInt());
         this.position = Position.read(in);
         this.face = Direction.VALUES[in.readUnsignedByte()];
+        this.sequence = in.readVarInt();
     }
 
     @Override
@@ -33,5 +35,6 @@ public class ServerboundPlayerActionPacket implements Packet {
         out.writeVarInt(MagicValues.value(Integer.class, this.action));
         Position.write(out, this.position);
         out.writeByte(this.face.ordinal());
+        out.writeVarInt(this.sequence);
     }
 }

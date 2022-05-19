@@ -129,7 +129,8 @@ public class ServerListener extends SessionAdapter {
                             new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
                             new PlayerInfo(0, 20, new GameProfile[0]),
                             Component.text("A Minecraft Server"),
-                            null
+                            null,
+                            false
                     );
                 }
 

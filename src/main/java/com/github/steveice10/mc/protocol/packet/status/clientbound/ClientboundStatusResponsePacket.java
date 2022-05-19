@@ -53,7 +53,8 @@ public class ClientboundStatusResponsePacket implements Packet {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
         }
 
-        this.info = new ServerStatusInfo(version, players, description, icon);
+        boolean previewsChat = obj.get("previewsChat").getAsBoolean();
+        this.info = new ServerStatusInfo(version, players, description, icon, previewsChat);
     }
 
     @Override
@@ -83,6 +84,7 @@ public class ClientboundStatusResponsePacket implements Packet {
         if (this.info.getIconPng() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }
+        obj.addProperty("previewsChat", this.info.isPreviewsChat());
 
         out.writeString(obj.toString());
     }

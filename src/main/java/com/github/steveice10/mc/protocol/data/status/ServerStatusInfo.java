@@ -15,4 +15,5 @@ public class ServerStatusInfo {
     private @NonNull PlayerInfo playerInfo;
     private @NonNull Component description;
     private byte[] iconPng;
+    private boolean previewsChat;
 }

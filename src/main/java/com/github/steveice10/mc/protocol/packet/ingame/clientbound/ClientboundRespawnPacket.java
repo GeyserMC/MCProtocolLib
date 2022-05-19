@@ -18,7 +18,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundRespawnPacket implements Packet {
-    private final @NonNull CompoundTag dimension;
+    private final @NonNull String dimension;
     private final @NonNull String worldName;
     private final long hashedSeed;
     private final @NonNull GameMode gamemode;
@@ -28,7 +28,7 @@ public class ClientboundRespawnPacket implements Packet {
     private final boolean copyMetadata;
 
     public ClientboundRespawnPacket(NetInput in) throws IOException {
-        this.dimension = NBT.read(in);
+        this.dimension = in.readString();
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
@@ -40,7 +40,7 @@ public class ClientboundRespawnPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        NBT.write(out, this.dimension);
+        out.writeString(this.dimension);
         out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
