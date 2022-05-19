@@ -39,7 +39,6 @@ public enum CommandParser {
     MOB_EFFECT,
     FUNCTION,
     ENTITY_ANCHOR,
-    RANGE,
     INT_RANGE,
     FLOAT_RANGE,
     ITEM_ENCHANTMENT,

@@ -47,9 +47,10 @@ public class MinecraftProtocolTest {
             new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
             new PlayerInfo(100, 0, new GameProfile[0]),
             Component.text("Hello world!"),
-            null
+            null,
+            false
     );
-    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), getOverworldTag(), "minecraft:world", 100, 0, 16, 16, false, false, false, false);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), "dimension:overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false);
 
     private static Server server;
 

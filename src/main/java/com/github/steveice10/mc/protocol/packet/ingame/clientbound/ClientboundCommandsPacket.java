@@ -143,9 +143,6 @@ public class ClientboundCommandsPacket implements Packet {
                     case SCORE_HOLDER:
                         properties = new ScoreHolderProperties(in.readBoolean());
                         break;
-                    case RANGE:
-                        properties = new RangeProperties(in.readBoolean());
-                        break;
                     case RESOURCE:
                     case RESOURCE_OR_TAG:
                         properties = new ResourceProperties(in.readString());
@@ -312,9 +309,6 @@ public class ClientboundCommandsPacket implements Packet {
                     }
                     case SCORE_HOLDER:
                         out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
-                        break;
-                    case RANGE:
-                        out.writeBoolean(((RangeProperties) node.getProperties()).isAllowDecimals());
                         break;
                     case RESOURCE:
                     case RESOURCE_OR_TAG:

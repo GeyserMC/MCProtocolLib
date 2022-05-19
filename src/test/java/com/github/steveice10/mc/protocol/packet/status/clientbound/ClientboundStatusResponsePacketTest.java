@@ -21,7 +21,8 @@ public class ClientboundStatusResponsePacketTest extends PacketTest {
                                 new GameProfile(UUID.randomUUID(), "Username")
                         }),
                         Component.text("Description"),
-                        null
+                        null,
+                        false
                 )
         ));
     }
