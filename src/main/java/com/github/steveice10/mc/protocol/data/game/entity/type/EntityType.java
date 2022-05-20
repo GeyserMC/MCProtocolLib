@@ -5,6 +5,7 @@ import com.github.steveice10.packetlib.io.NetInput;
 import java.io.IOException;
 
 public enum EntityType {
+    ALLAY,
     AREA_EFFECT_CLOUD,
     ARMOR_STAND,
     ARROW,
@@ -13,6 +14,7 @@ public enum EntityType {
     BEE,
     BLAZE,
     BOAT,
+    CHEST_BOAT,
     CAT,
     CAVE_SPIDER,
     CHICKEN,
@@ -35,6 +37,7 @@ public enum EntityType {
     FALLING_BLOCK,
     FIREWORK_ROCKET,
     FOX,
+    FROG,
     GHAST,
     GIANT,
     GLOW_ITEM_FRAME,
@@ -94,6 +97,7 @@ public enum EntityType {
     SQUID,
     STRAY,
     STRIDER,
+    TADPOLE,
     EGG,
     ENDER_PEARL,
     EXPERIENCE_BOTTLE,
@@ -106,6 +110,7 @@ public enum EntityType {
     VILLAGER,
     VINDICATOR,
     WANDERING_TRADER,
+    WARDEN,
     WITCH,
     WITHER,
     WITHER_SKELETON,

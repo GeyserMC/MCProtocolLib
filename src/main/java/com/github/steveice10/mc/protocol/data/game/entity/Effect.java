@@ -32,7 +32,8 @@ public enum Effect {
     CONDUIT_POWER,
     DOLPHINS_GRACE,
     BAD_OMEN,
-    HERO_OF_THE_VILLAGE;
+    HERO_OF_THE_VILLAGE,
+    DARKNESS;
 
     public static final Effect[] VALUES = values();
 
