@@ -70,7 +70,7 @@ public class ClientboundAddEntityPacket implements Packet {
         int data = in.readVarInt();
         if (this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
-        } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME) {
+        } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME || this.type == EntityType.PAINTING) {
             this.data = Direction.VALUES[data];
         } else if (this.type == EntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);

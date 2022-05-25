@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -31,6 +32,24 @@ public class Position {
     }
 
     public static void write(NetOutput out, Position pos) throws IOException {
+        long x = pos.getX() & POSITION_WRITE_SHIFT;
+        long y = pos.getY() & POSITION_Y_SHIFT;
+        long z = pos.getZ() & POSITION_WRITE_SHIFT;
+
+        out.writeLong(x << POSITION_X_SIZE | z << POSITION_Y_SIZE | y);
+    }
+
+    public static Vector3i readNukkit(NetInput in) throws IOException {
+        long val = in.readLong();
+
+        int x = (int) (val >> POSITION_X_SIZE);
+        int y = (int) (val << 52 >> 52);
+        int z = (int) (val << 26 >> POSITION_Z_SIZE);
+
+        return Vector3i.from(x, y, z);
+    }
+
+    public static void write(NetOutput out, Vector3i pos) throws IOException {
         long x = pos.getX() & POSITION_WRITE_SHIFT;
         long y = pos.getY() & POSITION_Y_SHIFT;
         long z = pos.getZ() & POSITION_WRITE_SHIFT;

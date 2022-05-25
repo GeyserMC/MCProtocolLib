@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.NBT;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -39,8 +39,7 @@ public class ClientboundLoginPacket implements Packet {
     private final boolean enableRespawnScreen;
     private final boolean debug;
     private final boolean flat;
-    private final @Nullable String lastDeathDimension;
-    private final @Nullable Position lastDeathPos;
+    private final @Nullable GlobalPos lastDeathPos;
 
     public ClientboundLoginPacket(NetInput in) throws IOException {
         this.entityId = in.readInt();
@@ -66,10 +65,8 @@ public class ClientboundLoginPacket implements Packet {
         this.debug = in.readBoolean();
         this.flat = in.readBoolean();
         if (in.readBoolean()) {
-            this.lastDeathDimension = in.readString();
-            this.lastDeathPos = Position.read(in);
+            this.lastDeathPos = GlobalPos.read(in);
         } else {
-            this.lastDeathDimension = null;
             this.lastDeathPos = null;
         }
     }
@@ -100,8 +97,7 @@ public class ClientboundLoginPacket implements Packet {
         out.writeBoolean(this.flat);
         out.writeBoolean(this.lastDeathPos != null);
         if (this.lastDeathPos != null) {
-            out.writeString(this.lastDeathDimension);
-            Position.write(out, this.lastDeathPos);
+            GlobalPos.write(out, this.lastDeathPos);
         }
     }
 }

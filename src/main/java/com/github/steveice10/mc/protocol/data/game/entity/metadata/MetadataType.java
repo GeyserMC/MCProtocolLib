@@ -8,6 +8,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.FloatEnt
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.IntEntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
+import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -46,6 +47,10 @@ public class MetadataType<T> {
     public static final MetadataType<VillagerData> VILLAGER_DATA = new MetadataType<>(VillagerData::read, VillagerData::write, ObjectEntityMetadata::new);
     public static final OptionalIntMetadataType OPTIONAL_VARINT = new OptionalIntMetadataType(ObjectEntityMetadata::new);
     public static final MetadataType<Pose> POSE = new MetadataType<>(in -> in.readEnum(Pose.VALUES), NetOutput::writeEnum, ObjectEntityMetadata::new);
+    public static final IntMetadataType CAT_VARIANT = new IntMetadataType(NetInput::readVarInt, NetOutput::writeVarInt, IntEntityMetadata::new);
+    public static final IntMetadataType FROG_VARIANT = new IntMetadataType(NetInput::readVarInt, NetOutput::writeVarInt, IntEntityMetadata::new);
+    public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = new MetadataType<>(optionalReader(GlobalPos::read), optionalWriter(GlobalPos::write), ObjectEntityMetadata::new);
+    public static final MetadataType<PaintingType> PAINTING_VARIANT = new MetadataType<>(in -> in.readEnum(PaintingType.VALUES), NetOutput::writeEnum, ObjectEntityMetadata::new);
 
     protected final int id;
     protected final Reader<T> reader;

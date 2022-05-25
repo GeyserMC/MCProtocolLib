@@ -31,4 +31,6 @@ public enum PaintingType {
     WIND,
     WATER,
     FIRE;
+
+    public static final PaintingType[] VALUES = values();
 }
