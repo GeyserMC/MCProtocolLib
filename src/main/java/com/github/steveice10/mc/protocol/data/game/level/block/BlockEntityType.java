@@ -39,7 +39,9 @@ public enum BlockEntityType {
     JIGSAW,
     CAMPFIRE,
     BEEHIVE,
-    SCULK_SENSOR;
+    SCULK_SENSOR,
+    SCULK_CATALYST,
+    SCULK_SHRIEKER;
 
     private static final BlockEntityType[] VALUES = values();
 

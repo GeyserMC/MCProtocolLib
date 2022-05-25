@@ -15,13 +15,26 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerboundChatPacket implements Packet {
     private final @NonNull String message;
+    private final long timeStamp;
+    private final long salt;
+    private final byte[] signature;
+    private final boolean signedPreview;
 
     public ServerboundChatPacket(NetInput in) throws IOException {
         this.message = in.readString();
+        this.timeStamp = in.readLong();
+        this.salt = in.readLong();
+        this.signature = in.readBytes(in.readVarInt());
+        this.signedPreview = in.readBoolean();
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeString(this.message);
+        out.writeLong(this.timeStamp);
+        out.writeLong(this.salt);
+        out.writeVarInt(this.signature.length);
+        out.writeBytes(this.signature);
+        out.writeBoolean(this.signedPreview);
     }
 }

@@ -69,9 +69,7 @@ public class ClientboundCommandsPacket implements Packet {
             CommandParser parser = null;
             CommandProperties properties = null;
             if (type == CommandType.ARGUMENT) {
-                String identifier = Identifier.formalize(in.readString());
-                if (identifier.equals("minecraft:")) continue;
-                parser = MagicValues.key(CommandParser.class, identifier);
+                parser = MagicValues.key(CommandParser.class, in.readVarInt());
                 switch (parser) {
                     case DOUBLE: {
                         byte numberFlags = in.readByte();
@@ -120,18 +118,14 @@ public class ClientboundCommandsPacket implements Packet {
                     }
                     case LONG: {
                         byte numberFlags = in.readByte();
-                        long min;
-                        long max;
+                        long min = Long.MIN_VALUE;
+                        long max = Long.MAX_VALUE;
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
                             min = in.readLong();
-                        } else {
-                            min = Long.MIN_VALUE;
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             max = in.readLong();
-                        } else {
-                            max = Long.MAX_VALUE;
                         }
 
                         properties = new LongProperties(min, max);
@@ -148,9 +142,6 @@ public class ClientboundCommandsPacket implements Packet {
                     }
                     case SCORE_HOLDER:
                         properties = new ScoreHolderProperties(in.readBoolean());
-                        break;
-                    case RANGE:
-                        properties = new RangeProperties(in.readBoolean());
                         break;
                     case RESOURCE:
                     case RESOURCE_OR_TAG:
@@ -205,7 +196,7 @@ public class ClientboundCommandsPacket implements Packet {
             }
 
             if (node.getType() == CommandType.ARGUMENT) {
-                out.writeString(MagicValues.value(String.class, node.getParser()));
+                out.writeVarInt(MagicValues.value(Integer.class, node.getParser()));
                 switch (node.getParser()) {
                     case DOUBLE: {
                         DoubleProperties properties = (DoubleProperties) node.getProperties();
@@ -318,9 +309,6 @@ public class ClientboundCommandsPacket implements Packet {
                     }
                     case SCORE_HOLDER:
                         out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
-                        break;
-                    case RANGE:
-                        out.writeBoolean(((RangeProperties) node.getProperties()).isAllowDecimals());
                         break;
                     case RESOURCE:
                     case RESOURCE_OR_TAG:

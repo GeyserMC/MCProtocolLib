@@ -34,25 +34,26 @@ public class ClientboundAddEntityPacket implements Packet {
     private final double y;
     private final double z;
     private final float yaw;
+    private final float headYaw;
     private final float pitch;
     private final double motionX;
     private final double motionY;
     private final double motionZ;
 
     public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
-                                      double x, double y, double z, float yaw, float pitch) {
-        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, pitch, 0, 0, 0);
+                                      double x, double y, double z, float yaw, float pitch, float headYaw) {
+        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, 0, 0, 0);
     }
 
     public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type, @NonNull ObjectData data,
-                                      double x, double y, double z, float yaw, float pitch) {
-        this(entityId, uuid, type, data, x, y, z, yaw, pitch, 0, 0, 0);
+                                      double x, double y, double z, float yaw, float pitch, float headYaw) {
+        this(entityId, uuid, type, data, x, y, z, yaw, headYaw, pitch, 0, 0, 0);
     }
 
     public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
                                       double x, double y, double z, float yaw, float pitch,
-                                      double motionX, double motionY, double motionZ) {
-        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, pitch, motionX, motionY, motionZ);
+                                      float headYaw, double motionX, double motionY, double motionZ) {
+        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, motionX, motionY, motionZ);
     }
 
     public ClientboundAddEntityPacket(NetInput in) throws IOException {
@@ -64,8 +65,9 @@ public class ClientboundAddEntityPacket implements Packet {
         this.z = in.readDouble();
         this.pitch = in.readByte() * 360 / 256f;
         this.yaw = in.readByte() * 360 / 256f;
+        this.headYaw = in.readByte() * 360 / 256f;
 
-        int data = in.readInt();
+        int data = in.readVarInt();
         if (this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
         } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME) {
@@ -100,6 +102,7 @@ public class ClientboundAddEntityPacket implements Packet {
         out.writeDouble(this.z);
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeByte((byte) (this.yaw * 256 / 360));
+        out.writeByte((byte) (this.headYaw * 256 / 360));
 
         int data = 0;
         if (this.data instanceof MinecartType) {
@@ -116,7 +119,7 @@ public class ClientboundAddEntityPacket implements Packet {
             data = ((GenericObjectData) this.data).getValue();
         }
 
-        out.writeInt(data);
+        out.writeVarInt(data);
 
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));

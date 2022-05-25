@@ -6,6 +6,6 @@ import org.junit.Before;
 public class ServerboundHelloPacketTest extends PacketTest {
     @Before
     public void setup() {
-        this.setPackets(new ServerboundHelloPacket("Username"));
+        this.setPackets(new ServerboundHelloPacket("Username", null, null, null));
     }
 }

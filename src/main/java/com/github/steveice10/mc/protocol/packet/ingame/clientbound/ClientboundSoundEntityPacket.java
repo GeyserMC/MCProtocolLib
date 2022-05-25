@@ -21,6 +21,7 @@ public class ClientboundSoundEntityPacket implements Packet {
     private final int entityId;
     private final float volume;
     private final float pitch;
+    private final long seed;
 
     public ClientboundSoundEntityPacket(NetInput in) throws IOException {
         this.soundId = in.readVarInt();
@@ -28,6 +29,7 @@ public class ClientboundSoundEntityPacket implements Packet {
         this.entityId = in.readVarInt();
         this.volume = in.readFloat();
         this.pitch = in.readFloat();
+        this.seed = in.readLong();
     }
 
     @Override
@@ -37,5 +39,6 @@ public class ClientboundSoundEntityPacket implements Packet {
         out.writeVarInt(this.entityId);
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
+        out.writeLong(this.seed);
     }
 }

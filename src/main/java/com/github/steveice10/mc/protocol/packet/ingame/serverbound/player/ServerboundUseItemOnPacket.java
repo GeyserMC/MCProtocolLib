@@ -25,6 +25,7 @@ public class ServerboundUseItemOnPacket implements Packet {
     private final float cursorY;
     private final float cursorZ;
     private final boolean insideBlock;
+    private final int sequence;
 
     public ServerboundUseItemOnPacket(NetInput in) throws IOException {
         this.hand = MagicValues.key(Hand.class, in.readVarInt());
@@ -34,6 +35,7 @@ public class ServerboundUseItemOnPacket implements Packet {
         this.cursorY = in.readFloat();
         this.cursorZ = in.readFloat();
         this.insideBlock = in.readBoolean();
+        this.sequence = in.readVarInt();
     }
 
     @Override
@@ -45,5 +47,6 @@ public class ServerboundUseItemOnPacket implements Packet {
         out.writeFloat(this.cursorY);
         out.writeFloat(this.cursorZ);
         out.writeBoolean(this.insideBlock);
+        out.writeVarInt(this.sequence);
     }
 }

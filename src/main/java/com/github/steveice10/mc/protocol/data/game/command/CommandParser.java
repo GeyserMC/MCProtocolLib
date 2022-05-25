@@ -21,7 +21,6 @@ public enum CommandParser {
     COLOR,
     COMPONENT,
     MESSAGE,
-    NBT,
     NBT_COMPOUND_TAG,
     NBT_TAG,
     NBT_PATH,
@@ -40,7 +39,6 @@ public enum CommandParser {
     MOB_EFFECT,
     FUNCTION,
     ENTITY_ANCHOR,
-    RANGE,
     INT_RANGE,
     FLOAT_RANGE,
     ITEM_ENCHANTMENT,
@@ -48,5 +46,7 @@ public enum CommandParser {
     DIMENSION,
     TIME,
     RESOURCE,
-    RESOURCE_OR_TAG
+    RESOURCE_OR_TAG,
+    TEMPLATE_MIRROR,
+    TEMPLATE_ROTATION;
 }

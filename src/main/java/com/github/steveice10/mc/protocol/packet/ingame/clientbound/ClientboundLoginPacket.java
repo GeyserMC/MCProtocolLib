@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.NBT;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -12,6 +13,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 @Data
@@ -27,7 +29,7 @@ public class ClientboundLoginPacket implements Packet {
     private final int worldCount;
     private final @NonNull String[] worldNames;
     private final @NonNull CompoundTag dimensionCodec;
-    private final @NonNull CompoundTag dimension;
+    private final @NonNull String dimension;
     private final @NonNull String worldName;
     private final long hashedSeed;
     private final int maxPlayers;
@@ -37,6 +39,8 @@ public class ClientboundLoginPacket implements Packet {
     private final boolean enableRespawnScreen;
     private final boolean debug;
     private final boolean flat;
+    private final @Nullable String lastDeathDimension;
+    private final @Nullable Position lastDeathPos;
 
     public ClientboundLoginPacket(NetInput in) throws IOException {
         this.entityId = in.readInt();
@@ -51,7 +55,7 @@ public class ClientboundLoginPacket implements Packet {
             this.worldNames[i] = in.readString();
         }
         this.dimensionCodec = NBT.read(in);
-        this.dimension = NBT.read(in);
+        this.dimension = in.readString();
         this.worldName = in.readString();
         this.hashedSeed = in.readLong();
         this.maxPlayers = in.readVarInt();
@@ -61,6 +65,13 @@ public class ClientboundLoginPacket implements Packet {
         this.enableRespawnScreen = in.readBoolean();
         this.debug = in.readBoolean();
         this.flat = in.readBoolean();
+        if (in.readBoolean()) {
+            this.lastDeathDimension = in.readString();
+            this.lastDeathPos = Position.read(in);
+        } else {
+            this.lastDeathDimension = null;
+            this.lastDeathPos = null;
+        }
     }
 
     @Override
@@ -77,7 +88,7 @@ public class ClientboundLoginPacket implements Packet {
             out.writeString(worldName);
         }
         NBT.write(out, this.dimensionCodec);
-        NBT.write(out, this.dimension);
+        out.writeString(this.dimension);
         out.writeString(this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeVarInt(this.maxPlayers);
@@ -87,5 +98,10 @@ public class ClientboundLoginPacket implements Packet {
         out.writeBoolean(this.enableRespawnScreen);
         out.writeBoolean(this.debug);
         out.writeBoolean(this.flat);
+        out.writeBoolean(this.lastDeathPos != null);
+        if (this.lastDeathPos != null) {
+            out.writeString(this.lastDeathDimension);
+            Position.write(out, this.lastDeathPos);
+        }
     }
 }

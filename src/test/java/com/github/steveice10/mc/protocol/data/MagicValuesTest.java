@@ -164,7 +164,7 @@ public class MagicValuesTest {
         this.register(RotationOrigin.class, Integer.class);
         this.register(RecipeType.class, String.class);
         this.register(CommandType.class, Integer.class);
-        this.register(CommandParser.class, String.class);
+        this.register(CommandParser.class, Integer.class);
         this.register(SuggestionType.class, String.class);
         this.register(StringProperties.class, Integer.class);
         this.register(SoundCategory.class, Integer.class);

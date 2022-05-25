@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 
+import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -20,11 +21,22 @@ import java.security.PublicKey;
 @EqualsAndHashCode
 public class ServerboundKeyPacket implements Packet {
     private final @NonNull byte[] sharedKey;
-    private final @NonNull byte[] verifyToken;
+    private final @Nullable byte[] verifyToken;
+    private final @Nullable Long salt;
+    private final @Nullable byte[] signature;
 
     public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] verifyToken) {
         this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
         this.verifyToken = runEncryption(Cipher.ENCRYPT_MODE, publicKey, verifyToken);
+        this.salt = null;
+        this.signature = null;
+    }
+
+    public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, long salt, byte[] signature) {
+        this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
+        this.salt = salt;
+        this.signature = signature;
+        this.verifyToken = null;
     }
 
     public SecretKey getSecretKey(PrivateKey privateKey) {
@@ -37,15 +49,30 @@ public class ServerboundKeyPacket implements Packet {
 
     public ServerboundKeyPacket(NetInput in) throws IOException {
         this.sharedKey = in.readBytes(in.readVarInt());
-        this.verifyToken = in.readBytes(in.readVarInt());
+        if (in.readBoolean()) {
+            this.verifyToken = in.readBytes(in.readVarInt());
+            this.salt = null;
+            this.signature = null;
+        } else {
+            this.salt = in.readLong();
+            this.signature = in.readBytes(in.readVarInt());
+            this.verifyToken = null;
+        }
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.sharedKey.length);
         out.writeBytes(this.sharedKey);
-        out.writeVarInt(this.verifyToken.length);
-        out.writeBytes(this.verifyToken);
+        out.writeBoolean(this.verifyToken != null);
+        if (this.verifyToken != null) {
+            out.writeVarInt(this.verifyToken.length);
+            out.writeBytes(this.verifyToken);
+        } else {
+            out.writeLong(this.salt);
+            out.writeVarInt(this.signature.length);
+            out.writeBytes(this.signature);
+        }
     }
 
     @Override
