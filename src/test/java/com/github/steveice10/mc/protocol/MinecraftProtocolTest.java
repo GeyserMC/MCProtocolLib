@@ -11,6 +11,7 @@ import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.DoubleTag;
 import com.github.steveice10.opennbt.tag.builtin.FloatTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
@@ -41,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MinecraftProtocolTest {
     private static final String HOST = "localhost";
-    private static final int PORT = 25560;
+    private static final int PORT = 25562;
 
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
             new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
@@ -50,7 +51,7 @@ public class MinecraftProtocolTest {
             null,
             false
     );
-    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), "dimension:overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null, null);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), "overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null, null);
 
     private static Server server;
 
@@ -142,30 +143,44 @@ public class MinecraftProtocolTest {
     }
 
     private static CompoundTag getDimensionTag() {
-        CompoundTag tag = new CompoundTag("");
-        ListTag dimensionTag = new ListTag("dimension");
         CompoundTag overworldTag = getOverworldTag();
-        dimensionTag.add(overworldTag);
-        overworldTag.put(tag);
+        CompoundTag tag = new CompoundTag("minecraft:dimension_type");
+        tag.put(new StringTag("type", "minecraft:dimension_type"));
+        ListTag list = new ListTag("value");
+        list.add(overworldTag);
+        tag.put(list);
         return tag;
     }
 
     private static CompoundTag getOverworldTag() {
         CompoundTag overworldTag = new CompoundTag("");
+        CompoundTag element = new CompoundTag("element");
+        element.put(new FloatTag("ambient_light", 0f));
+        element.put(new ByteTag("bed_works", (byte) 1));
+        element.put(new DoubleTag("coordinate_scale", 1d));
+        element.put(new StringTag("effects", "minecraft:overworld"));
+        element.put(new ByteTag("has_ceiling", (byte) 0));
+        element.put(new ByteTag("has_raids", (byte) 1));
+        element.put(new ByteTag("has_skylight", (byte) 1));
+        element.put(new IntTag("height", 384));
+        element.put(new StringTag("infiniburn", "#minecraft:infiniburn_overworld"));
+        element.put(new IntTag("logical_height", 384));
+        element.put(new IntTag("min_y", -64));
+        element.put(new IntTag("monster_spawner_block_light_limit", 0));
+        CompoundTag spawnLightLevel = new CompoundTag("monster_spawn_light_level");
+        spawnLightLevel.put(new StringTag("type", "minecraft:uniform"));
+        CompoundTag value = new CompoundTag("value");
+        value.put(new IntTag("max_inclusive", 7));
+        value.put(new IntTag("min_inclusive", 0));
+        spawnLightLevel.put(value);
+        element.put(spawnLightLevel);
+        element.put(new ByteTag("natural", (byte) 1));
+        element.put(new ByteTag("piglin_safe", (byte) 0));
+        element.put(new ByteTag("respawn_anchor_works", (byte) 0));
+        element.put(new ByteTag("ultrawarm", (byte) 0));
+        overworldTag.put(element);
+        overworldTag.put(new IntTag("id", 0));
         overworldTag.put(new StringTag("name", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("piglin_safe", (byte) 0));
-        overworldTag.put(new ByteTag("natural", (byte) 1));
-        overworldTag.put(new FloatTag("ambient_light", 0f));
-        overworldTag.put(new StringTag("infiniburn", "minecraft:infiniburn_overworld"));
-        overworldTag.put(new ByteTag("respawn_anchor_works", (byte) 0));
-        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
-        overworldTag.put(new ByteTag("bed_works", (byte) 1));
-        overworldTag.put(new StringTag("effects", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("has_raids", (byte) 1));
-        overworldTag.put(new IntTag("logical_height", 256));
-        overworldTag.put(new FloatTag("coordinate_scale", 1f));
-        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
-        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
         return overworldTag;
     }
 }
