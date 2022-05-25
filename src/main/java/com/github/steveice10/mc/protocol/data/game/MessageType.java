@@ -9,4 +9,6 @@ public enum MessageType {
     TEAM_MSG_COMMAND,
     EMOTE_COMMAND,
     TELLRAW_COMMAND;
+
+    public static final MessageType[] VALUES = values();
 }

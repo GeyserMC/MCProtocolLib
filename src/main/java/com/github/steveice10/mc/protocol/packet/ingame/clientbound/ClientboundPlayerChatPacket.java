@@ -37,7 +37,7 @@ public class ClientboundPlayerChatPacket implements Packet {
 			this.unsignedContent = null;
 		}
 
-		this.type = MagicValues.key(MessageType.class, in.readVarInt());
+		this.type = in.readEnum(MessageType.VALUES);
 		this.senderUUID = in.readUUID();
 		this.senderName = DefaultComponentSerializer.get().deserialize(in.readString());
 		if (in.readBoolean()) {
@@ -46,9 +46,9 @@ public class ClientboundPlayerChatPacket implements Packet {
 			this.senderTeamName = null;
 		}
 
+		this.timeStamp = in.readLong();
 		this.salt = in.readLong();
 		this.signature = in.readBytes(in.readVarInt());
-		this.timeStamp = in.readLong();
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class ClientboundPlayerChatPacket implements Packet {
 			DefaultComponentSerializer.get().serialize(this.unsignedContent);
 		}
 
-		out.writeVarInt(MagicValues.value(Integer.class, this.type));
+		out.writeEnum(this.type);
 		out.writeUUID(this.senderUUID);
 		DefaultComponentSerializer.get().serialize(this.senderName);
 		if (this.senderTeamName != null) {

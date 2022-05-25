@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
-import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
@@ -160,15 +159,6 @@ public class MagicValues {
         register(SpreadItemAction.MIDDLE_MOUSE_END_DRAG, 10);
 
         register(FillStackAction.FILL, 0);
-
-        register(MessageType.CHAT, 0);
-        register(MessageType.SYSTEM, 1);
-        register(MessageType.GAME_INFO, 2);
-        register(MessageType.SAY_COMMAND, 3);
-        register(MessageType.MSG_COMMAND, 4);
-        register(MessageType.TEAM_MSG_COMMAND, 5);
-        register(MessageType.EMOTE_COMMAND, 6);
-        register(MessageType.TELLRAW_COMMAND, 7);
 
         register(GameMode.UNKNOWN, 255); // https://bugs.mojang.com/browse/MC-189885 - should be -1
         register(GameMode.SURVIVAL, 0);

@@ -22,12 +22,12 @@ public class ClientboundSystemChatPacket implements Packet {
 
 	public ClientboundSystemChatPacket(NetInput in) throws IOException {
 		this.content = DefaultComponentSerializer.get().deserialize(in.readString());
-		this.type = MagicValues.key(MessageType.class, in.readVarInt());
+		this.type = in.readEnum(MessageType.VALUES);
 	}
 
 	@Override
 	public void write(NetOutput out) throws IOException {
 		out.writeString(DefaultComponentSerializer.get().serialize(this.content));
-		out.writeVarInt(MagicValues.value(Integer.class, this.type));
+		out.writeEnum(this.type);
 	}
 }
