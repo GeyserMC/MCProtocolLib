@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -48,7 +49,7 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
             int x = (this.chunkX << 4) + (position >>> 8 & 0xF);
             int y = (this.chunkY << 4) + (position & 0xF);
             int z = (this.chunkZ << 4) + (position >>> 4 & 0xF);
-            this.entries[index] = new BlockChangeEntry(new Position(x, y, z), (int) (blockData >>> 12));
+            this.entries[index] = new BlockChangeEntry(Vector3i.from(x, y, z), (int) (blockData >>> 12));
         }
     }
 

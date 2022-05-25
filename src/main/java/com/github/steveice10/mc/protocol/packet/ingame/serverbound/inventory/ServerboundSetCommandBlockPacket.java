@@ -6,6 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -21,7 +22,7 @@ public class ServerboundSetCommandBlockPacket implements Packet {
     private static final int FLAG_CONDITIONAL = 0x02;
     private static final int FLAG_AUTOMATIC = 0x04;
 
-    private final @NonNull Position position;
+    private final @NonNull Vector3i position;
     private final @NonNull String command;
     private final @NonNull CommandBlockMode mode;
     private final boolean doesTrackOutput;

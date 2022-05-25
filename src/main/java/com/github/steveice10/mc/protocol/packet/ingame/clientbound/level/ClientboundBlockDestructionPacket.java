@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -17,7 +18,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundBlockDestructionPacket implements Packet {
     private final int breakerEntityId;
-    private final @NonNull Position position;
+    private final @NonNull Vector3i position;
     private final @NonNull BlockBreakStage stage;
 
     public ClientboundBlockDestructionPacket(NetInput in) throws IOException {

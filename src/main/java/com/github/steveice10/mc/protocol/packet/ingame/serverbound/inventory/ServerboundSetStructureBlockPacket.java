@@ -9,6 +9,7 @@ import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -24,12 +25,12 @@ public class ServerboundSetStructureBlockPacket implements Packet {
     private static final int FLAG_SHOW_AIR = 0x02;
     private static final int FLAG_SHOW_BOUNDING_BOX = 0x04;
 
-    private final @NonNull Position position;
+    private final @NonNull Vector3i position;
     private final @NonNull UpdateStructureBlockAction action;
     private final @NonNull UpdateStructureBlockMode mode;
     private final @NonNull String name;
-    private final @NonNull Position offset;
-    private final @NonNull Position size;
+    private final @NonNull Vector3i offset;
+    private final @NonNull Vector3i size;
     private final @NonNull StructureMirror mirror;
     private final @NonNull StructureRotation rotation;
     private final @NonNull String metadata;
@@ -44,8 +45,8 @@ public class ServerboundSetStructureBlockPacket implements Packet {
         this.action = MagicValues.key(UpdateStructureBlockAction.class, in.readVarInt());
         this.mode = MagicValues.key(UpdateStructureBlockMode.class, in.readVarInt());
         this.name = in.readString();
-        this.offset = new Position(in.readByte(), in.readByte(), in.readByte());
-        this.size = new Position(in.readUnsignedByte(), in.readUnsignedByte(), in.readUnsignedByte());
+        this.offset = Vector3i.from(in.readByte(), in.readByte(), in.readByte());
+        this.size = Vector3i.from(in.readUnsignedByte(), in.readUnsignedByte(), in.readUnsignedByte());
         this.mirror = MagicValues.key(StructureMirror.class, in.readVarInt());
         this.rotation = MagicValues.key(StructureRotation.class, in.readVarInt());
         this.metadata = in.readString();

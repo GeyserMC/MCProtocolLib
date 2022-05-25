@@ -19,6 +19,7 @@ import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -41,7 +42,7 @@ public class ClientboundBlockEventPacket implements Packet {
     private static final int SHULKER_BOX_LOWER = 523;
     private static final int SHULKER_BOX_HIGHER = 539;
 
-    private final @NonNull Position position;
+    private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
     private final @NonNull BlockValue value;
     private final int blockId;

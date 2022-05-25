@@ -38,7 +38,7 @@ public class GlobalPos {
 
     public static GlobalPos read(NetInput in) throws IOException {
         String dimension = Identifier.formalize(in.readString());
-        Vector3i pos = Position.readNukkit(in);
+        Vector3i pos = Position.read(in);
         return new GlobalPos(dimension, pos);
     }
 

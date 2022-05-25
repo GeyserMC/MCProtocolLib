@@ -13,6 +13,7 @@ import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
+import com.nukkitx.math.vector.Vector3i;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
@@ -37,8 +38,8 @@ public class MetadataType<T> {
     public static final MetadataType<ItemStack> ITEM = new MetadataType<>(ItemStack::read, ItemStack::write, ObjectEntityMetadata::new);
     public static final BooleanMetadataType BOOLEAN = new BooleanMetadataType(NetInput::readBoolean, NetOutput::writeBoolean, BooleanEntityMetadata::new);
     public static final MetadataType<Rotation> ROTATION = new MetadataType<>(Rotation::read, Rotation::write, ObjectEntityMetadata::new);
-    public static final MetadataType<Position> POSITION = new MetadataType<>(Position::read, Position::write, ObjectEntityMetadata::new);
-    public static final MetadataType<Optional<Position>> OPTIONAL_POSITION = new MetadataType<>(optionalReader(Position::read), optionalWriter(Position::write), ObjectEntityMetadata::new);
+    public static final MetadataType<Vector3i> POSITION = new MetadataType<>(Position::read, Position::write, ObjectEntityMetadata::new);
+    public static final MetadataType<Optional<Vector3i>> OPTIONAL_POSITION = new MetadataType<>(optionalReader(Position::read), optionalWriter(Position::write), ObjectEntityMetadata::new);
     public static final MetadataType<Direction> DIRECTION = new MetadataType<>(in -> in.readEnum(Direction.VALUES), NetOutput::writeEnum, ObjectEntityMetadata::new);
     public static final MetadataType<Optional<UUID>> OPTIONAL_UUID = new MetadataType<>(optionalReader(NetInput::readUUID), optionalWriter(NetOutput::writeUUID), ObjectEntityMetadata::new);
     public static final IntMetadataType BLOCK_STATE = new IntMetadataType(NetInput::readVarInt, NetOutput::writeVarInt, IntEntityMetadata::new);

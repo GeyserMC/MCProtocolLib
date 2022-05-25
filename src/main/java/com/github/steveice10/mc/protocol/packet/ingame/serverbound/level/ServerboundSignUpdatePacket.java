@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -14,10 +15,10 @@ import java.util.Arrays;
 @Data
 @With
 public class ServerboundSignUpdatePacket implements Packet {
-    private final @NonNull Position position;
+    private final @NonNull Vector3i position;
     private final @NonNull String[] lines;
 
-    public ServerboundSignUpdatePacket(@NonNull Position position, @NonNull String[] lines) {
+    public ServerboundSignUpdatePacket(@NonNull Vector3i position, @NonNull String[] lines) {
         if (lines.length != 4) {
             throw new IllegalArgumentException("Lines must contain exactly 4 strings.");
         }

@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +16,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ServerboundSetJigsawBlockPacket implements Packet {
-    private final @NonNull Position position;
+    private final @NonNull Vector3i position;
     private final @NonNull String name;
     private final @NonNull String target;
     private final @NonNull String pool;

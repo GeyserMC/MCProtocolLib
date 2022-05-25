@@ -7,6 +7,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.*;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
+import com.nukkitx.math.vector.Vector3i;
 import org.junit.Before;
 
 import java.util.OptionalInt;
@@ -25,7 +26,7 @@ public class ClientboundSetEntityDataPacketTest extends PacketTest {
                         new ByteEntityMetadata(4, MetadataType.BYTE, (byte) 45),
                         new IntEntityMetadata(2, MetadataType.INT, 555),
                         new FloatEntityMetadata(3, MetadataType.FLOAT, 3.0f),
-                        new ObjectEntityMetadata<>(5, MetadataType.POSITION, new Position(0, 1, 0)),
+                        new ObjectEntityMetadata<>(5, MetadataType.POSITION, Vector3i.from(0, 1, 0)),
                         new IntEntityMetadata(2, MetadataType.BLOCK_STATE, 60),
                         new ObjectEntityMetadata<>(6, MetadataType.DIRECTION, Direction.EAST),
                         new ObjectEntityMetadata<>(7, MetadataType.OPTIONAL_VARINT, OptionalInt.of(1038))

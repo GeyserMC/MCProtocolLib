@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -21,7 +21,7 @@ public class ClientboundExplodePacket implements Packet {
     private final float y;
     private final float z;
     private final float radius;
-    private final @NonNull List<Position> exploded;
+    private final @NonNull List<Vector3i> exploded;
     private final float pushX;
     private final float pushY;
     private final float pushZ;
@@ -34,7 +34,7 @@ public class ClientboundExplodePacket implements Packet {
         this.exploded = new ArrayList<>();
         int length = in.readVarInt();
         for (int count = 0; count < length; count++) {
-            this.exploded.add(new Position(in.readByte(), in.readByte(), in.readByte()));
+            this.exploded.add(Vector3i.from(in.readByte(), in.readByte(), in.readByte()));
         }
 
         this.pushX = in.readFloat();
@@ -49,7 +49,7 @@ public class ClientboundExplodePacket implements Packet {
         out.writeFloat(this.z);
         out.writeFloat(this.radius);
         out.writeVarInt(this.exploded.size());
-        for (Position record : this.exploded) {
+        for (Vector3i record : this.exploded) {
             out.writeByte(record.getX());
             out.writeByte(record.getY());
             out.writeByte(record.getZ());

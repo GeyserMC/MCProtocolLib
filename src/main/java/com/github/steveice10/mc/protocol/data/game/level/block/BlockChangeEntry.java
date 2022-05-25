@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.level.block;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -8,6 +8,6 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 public class BlockChangeEntry {
-    private final @NonNull Position position;
-    private final @NonNull int block;
+    private final @NonNull Vector3i position;
+    private final int block;
 }

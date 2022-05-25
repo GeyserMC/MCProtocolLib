@@ -16,6 +16,7 @@ import com.github.steveice10.mc.protocol.data.game.level.event.SoundEvent;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.nukkitx.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -28,11 +29,11 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundLevelEventPacket implements Packet {
     private final @NonNull LevelEvent event;
-    private final @NonNull Position position;
+    private final @NonNull Vector3i position;
     private final LevelEventData data;
     private final boolean broadcast;
 
-    public ClientboundLevelEventPacket(@NonNull LevelEvent event, @NonNull Position position, @NonNull LevelEventData data) {
+    public ClientboundLevelEventPacket(@NonNull LevelEvent event, @NonNull Vector3i position, @NonNull LevelEventData data) {
         this(event, position, data, false);
     }
 
