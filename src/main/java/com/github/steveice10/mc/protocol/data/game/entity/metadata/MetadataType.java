@@ -51,7 +51,7 @@ public class MetadataType<T> {
     public static final IntMetadataType CAT_VARIANT = new IntMetadataType(NetInput::readVarInt, NetOutput::writeVarInt, IntEntityMetadata::new);
     public static final IntMetadataType FROG_VARIANT = new IntMetadataType(NetInput::readVarInt, NetOutput::writeVarInt, IntEntityMetadata::new);
     public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = new MetadataType<>(optionalReader(GlobalPos::read), optionalWriter(GlobalPos::write), ObjectEntityMetadata::new);
-    public static final MetadataType<PaintingType> PAINTING_VARIANT = new MetadataType<>(in -> in.readEnum(PaintingType.VALUES), NetOutput::writeEnum, ObjectEntityMetadata::new);
+    public static final MetadataType<PaintingType> PAINTING_VARIANT = new MetadataType<>(PaintingType::read, NetOutput::writeEnum, ObjectEntityMetadata::new);
 
     protected final int id;
     protected final Reader<T> reader;

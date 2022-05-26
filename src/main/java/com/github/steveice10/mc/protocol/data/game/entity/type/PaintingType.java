@@ -1,5 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type;
 
+import com.github.steveice10.packetlib.io.NetInput;
+
+import java.io.IOException;
+
 public enum PaintingType {
     KEBAB,
     AZTEC,
@@ -23,14 +27,22 @@ public enum PaintingType {
     WITHER,
     FIGHTERS,
     POINTER,
-    PIG_SCENE,
+    PIGSCENE,
     BURNING_SKULL,
     SKELETON,
-    DONKEY_KONG,
     EARTH,
     WIND,
     WATER,
-    FIRE;
+    FIRE,
+    DONKEY_KONG;
 
-    public static final PaintingType[] VALUES = values();
+    private static final PaintingType[] VALUES = values();
+
+    public static PaintingType read(NetInput in) throws IOException {
+        return in.readEnum(VALUES);
+    }
+
+    public static PaintingType fromId(int id) {
+        return VALUES[id];
+    }
 }

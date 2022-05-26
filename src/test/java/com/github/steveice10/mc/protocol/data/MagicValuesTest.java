@@ -24,7 +24,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
-import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.inventory.AdvancementTabAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ClickItemAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ContainerActionType;
@@ -114,7 +113,6 @@ public class MagicValuesTest {
         this.register(EntityEvent.class, Integer.class);
         this.register(PositionElement.class, Integer.class);
         this.register(MinecartType.class, Integer.class);
-        this.register(PaintingType.class, Integer.class);
         this.register(ScoreboardPosition.class, Integer.class);
         this.register(ObjectiveAction.class, Integer.class);
         this.register(TeamAction.class, Integer.class);
