@@ -31,16 +31,16 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundBlockEventPacket implements Packet {
-    private static final int NOTE_BLOCK = 80;
-    private static final int STICKY_PISTON = 99;
-    private static final int PISTON = 106;
-    private static final int MOB_SPAWNER = 151; // Value does not show in 1.16
-    private static final int CHEST = 153;
-    private static final int ENDER_CHEST = 283;
-    private static final int TRAPPED_CHEST = 342;
-    private static final int END_GATEWAY = 513;
-    private static final int SHULKER_BOX_LOWER = 523;
-    private static final int SHULKER_BOX_HIGHER = 539;
+    private static final int NOTE_BLOCK = 89;
+    private static final int STICKY_PISTON = 108;
+    private static final int PISTON = 115;
+    private static final int MOB_SPAWNER = 160; // Value does not show in 1.16
+    private static final int CHEST = 162;
+    private static final int ENDER_CHEST = 299;
+    private static final int TRAPPED_CHEST = 360;
+    private static final int END_GATEWAY = 537;
+    private static final int SHULKER_BOX_LOWER = 547;
+    private static final int SHULKER_BOX_HIGHER = 563;
 
     private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
