@@ -69,7 +69,7 @@ public class ClientboundPlayerInfoPacket implements Packet {
                         displayName = DefaultComponentSerializer.get().deserialize(in.readString());
                     }
 
-                    Long expiresAt = null;
+                    long expiresAt;
                     PublicKey publicKey = null;
                     byte[] keySignature = null;
                     if (in.readBoolean()) {
@@ -82,6 +82,8 @@ public class ClientboundPlayerInfoPacket implements Packet {
                         } catch (GeneralSecurityException e) {
                             throw new IOException("Could not decode public key.", e);
                         }
+                    } else {
+                        expiresAt = 0L;
                     }
 
                     entry = new PlayerListEntry(profile, gameMode, ping, displayName, expiresAt, publicKey, keySignature);
