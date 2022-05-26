@@ -15,7 +15,7 @@ public class Particle {
     private final ParticleData data;
 
     public static Particle read(NetInput in) throws IOException {
-        ParticleType particleType = in.readEnum(ParticleType.VALUES);
+        ParticleType particleType = ParticleType.read(in);
         return new Particle(particleType, ParticleData.read(in, particleType));
     }
 

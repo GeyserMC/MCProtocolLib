@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.level.particle;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSource;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 
@@ -31,6 +32,12 @@ public interface ParticleData {
                 return new FallingDustParticleData(in.readVarInt());
             case ITEM:
                 return new ItemParticleData(ItemStack.read(in));
+            case SCULK_CHARGE:
+                return new SculkChargeParticleData(in.readFloat());
+            case SHRIEK:
+                return new ShriekParticleData(in.readVarInt());
+            case VIBRATION:
+                return new VibrationParticleData(PositionSource.read(in), in.readVarInt());
             default:
                 return null;
         }
@@ -62,6 +69,16 @@ public interface ParticleData {
                 break;
             case ITEM:
                 ItemStack.write(out, ((ItemParticleData) data).getItemStack());
+                break;
+            case SCULK_CHARGE:
+                out.writeFloat(((SculkChargeParticleData) data).getRoll());
+                break;
+            case SHRIEK:
+                out.writeVarInt(((ShriekParticleData) data).getDelay());
+                break;
+            case VIBRATION:
+                PositionSource.write(out, ((VibrationParticleData) data).getPositionSource());
+                out.writeVarInt(((VibrationParticleData) data).getArrivalTicks());
                 break;
         }
     }

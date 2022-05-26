@@ -1,5 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.level.particle;
 
+import com.github.steveice10.packetlib.io.NetInput;
+
+import java.io.IOException;
+
 public enum ParticleType {
     AMBIENT_ENTITY_EFFECT,
     ANGRY_VILLAGER,
@@ -25,10 +29,14 @@ public enum ParticleType {
     ENTITY_EFFECT,
     EXPLOSION_EMITTER,
     EXPLOSION,
+    SONIC_BOOM,
     FALLING_DUST,
     FIREWORK,
     FISHING,
     FLAME,
+    SCULK_SOUL,
+    SCULK_CHARGE,
+    SCULK_CHARGE_POP,
     SOUL_FIRE_FLAME,
     SOUL,
     FLASH,
@@ -88,7 +96,16 @@ public enum ParticleType {
     WAX_ON,
     WAX_OFF,
     ELECTRIC_SPARK,
-    SCRAPE;
+    SCRAPE,
+    SHRIEK;
 
-    public static final ParticleType[] VALUES = values();
+    private static final ParticleType[] VALUES = values();
+
+    public static ParticleType read(NetInput in) throws IOException {
+        return in.readEnum(VALUES);
+    }
+
+    public static ParticleType fromId(int id) {
+        return VALUES[id];
+    }
 }

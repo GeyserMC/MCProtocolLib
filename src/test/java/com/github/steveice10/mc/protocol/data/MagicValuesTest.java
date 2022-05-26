@@ -60,6 +60,7 @@ import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
+import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSourceType;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
@@ -166,6 +167,7 @@ public class MagicValuesTest {
         this.register(SuggestionType.class, String.class);
         this.register(StringProperties.class, Integer.class);
         this.register(SoundCategory.class, Integer.class);
+        this.register(PositionSourceType.class, String.class);
     }
 
     @Test

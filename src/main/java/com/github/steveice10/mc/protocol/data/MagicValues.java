@@ -62,6 +62,7 @@ import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue
 import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
 import com.github.steveice10.mc.protocol.data.game.level.notify.RespawnScreenValue;
+import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSourceType;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
@@ -733,6 +734,9 @@ public class MagicValues {
         register(SoundCategory.PLAYER, 7);
         register(SoundCategory.AMBIENT, 8);
         register(SoundCategory.VOICE, 9);
+
+        register(PositionSourceType.BLOCK, "minecraft:block");
+        register(PositionSourceType.ENTITY, "minecraft:entity");
     }
 
     private MagicValues() {

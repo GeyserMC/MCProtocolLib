@@ -29,7 +29,7 @@ public class ClientboundLevelParticlesPacket implements Packet {
     private final int amount;
 
     public ClientboundLevelParticlesPacket(NetInput in) throws IOException {
-        ParticleType type = ParticleType.VALUES[in.readInt()];
+        ParticleType type = ParticleType.read(in);
         this.longDistance = in.readBoolean();
         this.x = in.readDouble();
         this.y = in.readDouble();
