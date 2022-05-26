@@ -52,9 +52,7 @@ import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockVa
 import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
 import com.github.steveice10.mc.protocol.data.game.level.event.ComposterEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.ParticleEvent;
 import com.github.steveice10.mc.protocol.data.game.level.event.SmokeEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.SoundEvent;
 import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
 import com.github.steveice10.mc.protocol.data.game.level.notify.DemoMessageValue;
 import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValue;
@@ -138,8 +136,6 @@ public class MagicValuesTest {
         this.register(EndGatewayValueType.class, Integer.class);
         this.register(GenericBlockValueType.class, Integer.class);
         this.register(PistonValue.class, Integer.class);
-        this.register(SoundEvent.class, Integer.class);
-        this.register(ParticleEvent.class, Integer.class);
         this.register(SmokeEventData.class, Integer.class);
         this.register(ComposterEventData.class, Integer.class);
         this.register(NameTagVisibility.class, String.class);

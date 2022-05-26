@@ -2,17 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.level.event.BonemealGrowEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.BreakBlockEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.BreakPotionEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.ComposterEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.DragonFireballEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
-import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.ParticleEvent;
-import com.github.steveice10.mc.protocol.data.game.level.event.RecordEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.SmokeEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.SoundEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.*;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -38,25 +28,39 @@ public class ClientboundLevelEventPacket implements Packet {
     }
 
     public ClientboundLevelEventPacket(NetInput in) throws IOException {
-        this.event = MagicValues.key(LevelEvent.class, in.readInt());
+        this.event = LevelEvent.read(in);
         this.position = Position.read(in);
         int value = in.readInt();
-        if (this.event == SoundEvent.RECORD) {
-            this.data = new RecordEventData(value);
-        } else if (this.event == ParticleEvent.SMOKE) {
-            this.data = MagicValues.key(SmokeEventData.class, value % 6);
-        } else if (this.event == ParticleEvent.BREAK_BLOCK) {
-            this.data = new BreakBlockEventData(value);
-        } else if (this.event == ParticleEvent.BREAK_SPLASH_POTION) {
-            this.data = new BreakPotionEventData(value);
-        } else if (this.event == ParticleEvent.BONEMEAL_GROW || this.event == ParticleEvent.BONEMEAL_GROW_WITH_SOUND) {
-            this.data = new BonemealGrowEventData(value);
-        } else if (this.event == ParticleEvent.COMPOSTER) {
-            this.data = value > 0 ? ComposterEventData.FILL_SUCCESS : ComposterEventData.FILL;
-        } else if (this.event == ParticleEvent.ENDERDRAGON_FIREBALL_EXPLODE) {
-            this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
-        } else {
-            this.data = null;
+        switch (this.event) {
+            case RECORD:
+                this.data = new RecordEventData(value);
+                break;
+            case SMOKE:
+                this.data = MagicValues.key(SmokeEventData.class, value % 6);
+                break;
+            case BREAK_BLOCK:
+                this.data = new BreakBlockEventData(value);
+                break;
+            case BREAK_SPLASH_POTION:
+            case BREAK_SPLASH_POTION2:
+                this.data = new BreakPotionEventData(value);
+                break;
+            case BONEMEAL_GROW:
+            case BONEMEAL_GROW_WITH_SOUND:
+                this.data = new BonemealGrowEventData(value);
+                break;
+            case COMPOSTER:
+                this.data = value > 0 ? ComposterEventData.FILL_SUCCESS : ComposterEventData.FILL;
+                break;
+            case ENDERDRAGON_FIREBALL_EXPLODE:
+                this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
+                break;
+            case SCULK_BLOCK_CHARGE:
+                this.data = new SculkBlockChargeEventData(value);
+                break;
+            default:
+                this.data = null;
+                break;
         }
 
         this.broadcast = in.readBoolean();
@@ -64,7 +68,7 @@ public class ClientboundLevelEventPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeInt(MagicValues.value(Integer.class, this.event));
+        out.writeInt(this.event.getId());
         Position.write(out, this.position);
         int value = 0;
         if (this.data instanceof RecordEventData) {
@@ -81,6 +85,8 @@ public class ClientboundLevelEventPacket implements Packet {
             value = MagicValues.value(Integer.class, this.data);
         } else if (this.data instanceof DragonFireballEventData) {
             value = MagicValues.value(Integer.class, this.data);
+        } else if (this.data instanceof SculkBlockChargeEventData) {
+            value = ((SculkBlockChargeEventData) data).getLevelValue();
         }
 
         out.writeInt(value);
