@@ -8,7 +8,13 @@ public enum Pose {
     SPIN_ATTACK,
     SNEAKING,
     LONG_JUMPING,
-    DYING;
+    DYING,
+    CROAKING,
+    USING_TONGUE,
+    ROARING,
+    SNIFFING,
+    EMERGING,
+    DIGGING;
 
     public static final Pose[] VALUES = values();
 }

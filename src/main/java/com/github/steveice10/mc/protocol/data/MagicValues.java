@@ -101,7 +101,7 @@ public class MagicValues {
         register(PlayerState.STOP_SPRINTING, 4);
         register(PlayerState.START_HORSE_JUMP, 5);
         register(PlayerState.STOP_HORSE_JUMP, 6);
-        register(PlayerState.OPEN_HORSE_INVENTORY, 7);
+        register(PlayerState.OPEN_VEHICLE_INVENTORY, 7);
         register(PlayerState.START_ELYTRA_FLYING, 8);
 
         register(InteractAction.INTERACT, 0);

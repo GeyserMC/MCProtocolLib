@@ -1,13 +1,13 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
@@ -26,6 +26,7 @@ public class ClientboundPlayerChatPacket implements Packet {
 	private final Component senderName;
 	private final @Nullable Component senderTeamName;
 	private final long salt;
+	@ToString.Exclude
 	private final byte[] signature;
 	private final long timeStamp;
 
