@@ -1,21 +1,11 @@
 package com.github.steveice10.packetlib.packet;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-
-import java.io.IOException;
+import io.netty.buffer.ByteBuf;
 
 /**
- * A network packet. Any given packet must have a constructor that takes in a {@link NetInput}.
+ * A network packet. Any given packet must have a constructor that takes in a {@link ByteBuf}.
  */
 public interface Packet {
-    /**
-     * Writes the packet to the given output buffer.
-     *
-     * @param out The output destination to write to.
-     * @throws IOException If an I/O error occurs.
-     */
-    void write(NetOutput out) throws IOException;
 
     /**
      * Gets whether the packet has handling priority.

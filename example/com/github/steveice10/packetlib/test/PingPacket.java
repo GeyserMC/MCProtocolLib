@@ -1,7 +1,6 @@
 package com.github.steveice10.packetlib.test;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.packet.Packet;
 
 import java.io.IOException;
@@ -9,8 +8,8 @@ import java.io.IOException;
 public class PingPacket implements Packet {
     private final String id;
 
-    public PingPacket(NetInput in) throws IOException {
-        this.id = in.readString();
+    public PingPacket(ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+        this.id = codecHelper.readString(buf);
     }
 
     public PingPacket(String id) {
@@ -22,8 +21,8 @@ public class PingPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.id);
+    public void write(ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+        codecHelper.writeString(buf, this.id);
     }
 
     @Override

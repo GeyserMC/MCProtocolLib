@@ -23,6 +23,10 @@ public class TestProtocol extends PacketProtocol {
         this.setSecretKey(key);
     }
 
+    public PacketCodecHelper createHelper() {
+        return new BasePacketCodecHelper();
+    }
+
     public void setSecretKey(SecretKey key) {
         this.register(0, PingPacket.class, PingPacket::new);
         try {

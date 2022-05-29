@@ -1,8 +1,7 @@
 package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.Session;
-import com.github.steveice10.packetlib.tcp.io.ByteBufNetInput;
-import com.github.steveice10.packetlib.tcp.io.ByteBufNetOutput;
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,10 +12,12 @@ import java.util.List;
 
 public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
     private final Session session;
+    private final PacketCodecHelper codecHelper;
     private final int size;
 
     public TcpPacketSizer(Session session, int size) {
         this.session = session;
+        this.codecHelper = session.getCodecHelper();
         this.size = size;
     }
 
@@ -24,7 +25,7 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
         int length = in.readableBytes();
         out.ensureWritable(this.session.getPacketProtocol().getPacketHeader().getLengthSize(length) + length);
-        this.session.getPacketProtocol().getPacketHeader().writeLength(new ByteBufNetOutput(out), length);
+        this.session.getPacketProtocol().getPacketHeader().writeLength(out, this.codecHelper, length);
         out.writeBytes(in);
     }
 
@@ -40,7 +41,7 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
 
             lengthBytes[index] = buf.readByte();
             if ((this.session.getPacketProtocol().getPacketHeader().isLengthVariable() && lengthBytes[index] >= 0) || index == size - 1) {
-                int length = this.session.getPacketProtocol().getPacketHeader().readLength(new ByteBufNetInput(Unpooled.wrappedBuffer(lengthBytes)), buf.readableBytes());
+                int length = this.session.getPacketProtocol().getPacketHeader().readLength(Unpooled.wrappedBuffer(lengthBytes), this.codecHelper, buf.readableBytes());
                 if (buf.readableBytes() < length) {
                     buf.resetReaderIndex();
                     return;

@@ -1,6 +1,5 @@
 package com.github.steveice10.packetlib.tcp;
 
-import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

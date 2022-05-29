@@ -1,5 +1,6 @@
 package com.github.steveice10.packetlib;
 
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import com.github.steveice10.packetlib.event.session.SessionEvent;
 import com.github.steveice10.packetlib.event.session.SessionListener;
@@ -14,6 +15,7 @@ import java.util.Map;
  * A network session.
  */
 public interface Session {
+
     /**
      * Connects this session to its host and port.
      */
@@ -60,6 +62,13 @@ public interface Session {
      * @return The session's packet protocol.
      */
     public PacketProtocol getPacketProtocol();
+
+    /**
+     * Gets the session's {@link PacketCodecHelper}.
+     *
+     * @return The session's packet codec helper.
+     */
+    PacketCodecHelper getCodecHelper();
 
     /**
      * Gets this session's set flags. If this session belongs to a server, the server's

@@ -5,17 +5,17 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>packetlib</artifactId>
-    <version>2.2-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>PacketLib</name>
     <description>A library for networking between a client and a server with packets.</description>
-    <url>http://github.com/Steveice10/PacketLib/</url>
+    <url>http://github.com/GeyserMC/PacketLib/</url>
 
     <scm>
-        <connection>scm:git:git@github.com:Steveice10/PacketLib.git</connection>
-        <developerConnection>scm:git:git@github.com:Steveice10/PacketLib.git</developerConnection>
-        <url>git@github.com:Steveice10/PacketLib/</url>
+        <connection>scm:git:git@github.com:GeyserMC/PacketLib.git</connection>
+        <developerConnection>scm:git:git@github.com:GeyserMC/PacketLib.git</developerConnection>
+        <url>git@github.com:GeyserMC/PacketLib/</url>
     </scm>
 
     <properties>
@@ -34,15 +34,14 @@
 
     <developers>
         <developer>
-            <id>steveice10</id>
-            <name>Steveice10</name>
-            <email>Steveice10@gmail.com</email>
+            <id>geysermc</id>
+            <name>GeyserMC</name>
         </developer>
     </developers>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/Steveice10/PacketLib/issues</url>
+        <url>https://github.com/GeyserMC/PacketLib/issues</url>
     </issueManagement>
 
     <repositories>

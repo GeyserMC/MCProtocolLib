@@ -1,6 +1,6 @@
 package com.github.steveice10.packetlib.tcp;
 
-import com.github.steveice10.packetlib.Server;
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -8,11 +8,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TcpServerSession extends TcpSession {
-    private TcpServer server;
+    private final TcpServer server;
+    private final PacketCodecHelper codecHelper;
 
     public TcpServerSession(String host, int port, PacketProtocol protocol, TcpServer server) {
         super(host, port, protocol);
         this.server = server;
+        this.codecHelper = protocol.createHelper();
+    }
+
+    @Override
+    public PacketCodecHelper getCodecHelper() {
+        return this.codecHelper;
     }
 
     @Override

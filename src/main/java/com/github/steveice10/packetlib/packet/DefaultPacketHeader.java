@@ -1,7 +1,7 @@
 package com.github.steveice10.packetlib.packet;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
@@ -35,22 +35,22 @@ public class DefaultPacketHeader implements PacketHeader {
     }
 
     @Override
-    public int readLength(NetInput in, int available) throws IOException {
-        return in.readVarInt();
+    public int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available) throws IOException {
+        return codecHelper.readVarInt(buf);
     }
 
     @Override
-    public void writeLength(NetOutput out, int length) throws IOException {
-        out.writeVarInt(length);
+    public void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length) throws IOException {
+        codecHelper.writeVarInt(buf, length);
     }
 
     @Override
-    public int readPacketId(NetInput in) throws IOException {
-        return in.readVarInt();
+    public int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+        return codecHelper.readVarInt(buf);
     }
 
     @Override
-    public void writePacketId(NetOutput out, int packetId) throws IOException {
-        out.writeVarInt(packetId);
+    public void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId) throws IOException {
+        codecHelper.writeVarInt(buf, packetId);
     }
 }

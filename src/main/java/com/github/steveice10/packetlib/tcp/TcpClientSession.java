@@ -2,6 +2,7 @@ package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.BuiltinFlags;
 import com.github.steveice10.packetlib.ProxyInfo;
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
@@ -55,6 +56,7 @@ public class TcpClientSession extends TcpSession {
     private final String bindAddress;
     private final int bindPort;
     private final ProxyInfo proxy;
+    private final PacketCodecHelper codecHelper;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
         this(host, port, protocol, null);
@@ -73,6 +75,7 @@ public class TcpClientSession extends TcpSession {
         this.bindAddress = bindAddress;
         this.bindPort = bindPort;
         this.proxy = proxy;
+        this.codecHelper = protocol.createHelper();
     }
 
     @Override
@@ -142,6 +145,11 @@ public class TcpClientSession extends TcpSession {
         } catch(Throwable t) {
             exceptionCaught(null, t);
         }
+    }
+
+    @Override
+    public PacketCodecHelper getCodecHelper() {
+        return this.codecHelper;
     }
 
     private InetSocketAddress resolveAddress() {
