@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -13,21 +13,21 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundPlaceRecipePacket implements Packet {
+public class ServerboundPlaceRecipePacket implements MinecraftPacket {
     private final int containerId;
     private final @NonNull String recipeId;
     private final boolean makeAll;
 
-    public ServerboundPlaceRecipePacket(NetInput in) throws IOException {
+    public ServerboundPlaceRecipePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.containerId = in.readByte();
-        this.recipeId = in.readString();
+        this.recipeId = helper.readString(in);
         this.makeAll = in.readBoolean();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeByte(this.containerId);
-        out.writeString(this.recipeId);
+        helper.writeString(out, this.recipeId);
         out.writeBoolean(this.makeAll);
     }
 }

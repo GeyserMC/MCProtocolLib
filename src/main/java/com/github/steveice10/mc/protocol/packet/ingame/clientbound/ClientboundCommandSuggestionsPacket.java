@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 
 @Data
 @With
-public class ClientboundCommandSuggestionsPacket implements Packet {
+public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
     private final int transactionId;
     private final int start;
     private final int length;
@@ -33,32 +33,32 @@ public class ClientboundCommandSuggestionsPacket implements Packet {
         this.tooltips = Arrays.copyOf(tooltips, tooltips.length);
     }
 
-    public ClientboundCommandSuggestionsPacket(NetInput in) throws IOException {
-        this.transactionId = in.readVarInt();
-        this.start = in.readVarInt();
-        this.length = in.readVarInt();
-        this.matches = new String[in.readVarInt()];
+    public ClientboundCommandSuggestionsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.transactionId = helper.readVarInt(in);
+        this.start = helper.readVarInt(in);
+        this.length = helper.readVarInt(in);
+        this.matches = new String[helper.readVarInt(in)];
         this.tooltips = new Component[this.matches.length];
         for (int index = 0; index < this.matches.length; index++) {
-            this.matches[index] = in.readString();
+            this.matches[index] = helper.readString(in);
             if (in.readBoolean()) {
-                this.tooltips[index] = DefaultComponentSerializer.get().deserialize(in.readString());
+                this.tooltips[index] = helper.readComponent(in);
             }
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.transactionId);
-        out.writeVarInt(this.start);
-        out.writeVarInt(this.length);
-        out.writeVarInt(this.matches.length);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.transactionId);
+        helper.writeVarInt(out, this.start);
+        helper.writeVarInt(out, this.length);
+        helper.writeVarInt(out, this.matches.length);
         for (int index = 0; index < this.matches.length; index++) {
-            out.writeString(this.matches[index]);
+            helper.writeString(out, this.matches[index]);
             Component tooltip = this.tooltips[index];
             if (tooltip != null) {
                 out.writeBoolean(true);
-                out.writeString(DefaultComponentSerializer.get().serialize(tooltip));
+                helper.writeString(out, DefaultComponentSerializer.get().serialize(tooltip));
             } else {
                 out.writeBoolean(false);
             }

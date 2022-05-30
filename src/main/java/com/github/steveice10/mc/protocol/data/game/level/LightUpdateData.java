@@ -1,7 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.level;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -22,61 +22,56 @@ public class LightUpdateData {
     private final @NonNull List<byte[]> blockUpdates;
     private final boolean trustEdges;
 
-    public static LightUpdateData read(NetInput in) throws IOException {
-        return new LightUpdateData(in);
+    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        return new LightUpdateData(in, helper);
     }
 
-    private LightUpdateData(NetInput in) throws IOException {
+    private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.trustEdges = in.readBoolean();
 
-        this.skyYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
-        this.blockYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
-        this.emptySkyYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
-        this.emptyBlockYMask = BitSet.valueOf(in.readLongs(in.readVarInt()));
+        this.skyYMask = BitSet.valueOf(helper.readLongArray(in));
+        this.blockYMask = BitSet.valueOf(helper.readLongArray(in));
+        this.emptySkyYMask = BitSet.valueOf(helper.readLongArray(in));
+        this.emptyBlockYMask = BitSet.valueOf(helper.readLongArray(in));
 
-        int skyUpdateSize = in.readVarInt();
+        int skyUpdateSize = helper.readVarInt(in);
         skyUpdates = new ArrayList<>(skyUpdateSize);
         for (int i = 0; i < skyUpdateSize; i++) {
-            skyUpdates.add(in.readBytes(in.readVarInt()));
+            skyUpdates.add(helper.readByteArray(in));
         }
 
-        int blockUpdateSize = in.readVarInt();
+        int blockUpdateSize = helper.readVarInt(in);
         blockUpdates = new ArrayList<>(blockUpdateSize);
         for (int i = 0; i < blockUpdateSize; i++) {
-            blockUpdates.add(in.readBytes(in.readVarInt()));
+            blockUpdates.add(helper.readByteArray(in));
         }
     }
 
-    public static void write(NetOutput out, LightUpdateData data) throws IOException {
-        data.write(out);
+    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) throws IOException {
+        data.write(out, helper);
     }
 
-    private void write(NetOutput out) throws IOException {
+    private void write(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeBoolean(this.trustEdges);
 
-        writeBitSet(out, this.skyYMask);
-        writeBitSet(out, this.blockYMask);
-        writeBitSet(out, this.emptySkyYMask);
-        writeBitSet(out, this.emptyBlockYMask);
+        writeBitSet(out, helper, this.skyYMask);
+        writeBitSet(out, helper, this.blockYMask);
+        writeBitSet(out, helper, this.emptySkyYMask);
+        writeBitSet(out, helper, this.emptyBlockYMask);
 
-        out.writeVarInt(this.skyUpdates.size());
+        helper.writeVarInt(out, this.skyUpdates.size());
         for (byte[] array : this.skyUpdates) {
-            out.writeVarInt(array.length);
-            out.writeBytes(array);
+            helper.writeByteArray(out, array);
         }
 
-        out.writeVarInt(this.blockUpdates.size());
+        helper.writeVarInt(out, this.blockUpdates.size());
         for (byte[] array : this.blockUpdates) {
-            out.writeVarInt(array.length);
-            out.writeBytes(array);
+            helper.writeByteArray(out, array);
         }
     }
 
-    private void writeBitSet(NetOutput out, BitSet bitSet) throws IOException {
+    private void writeBitSet(ByteBuf out, MinecraftCodecHelper helper, BitSet bitSet) throws IOException {
         long[] array = bitSet.toLongArray();
-        out.writeVarInt(array.length);
-        for (long content : array) {
-            out.writeLong(content);
-        }
+        helper.writeLongArray(out, array);
     }
 }

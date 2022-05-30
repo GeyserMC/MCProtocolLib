@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -13,24 +13,24 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSetPassengersPacket implements Packet {
+public class ClientboundSetPassengersPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull int[] passengerIds;
 
-    public ClientboundSetPassengersPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
-        this.passengerIds = new int[in.readVarInt()];
+    public ClientboundSetPassengersPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
+        this.passengerIds = new int[helper.readVarInt(in)];
         for (int index = 0; index < this.passengerIds.length; index++) {
-            this.passengerIds[index] = in.readVarInt();
+            this.passengerIds[index] = helper.readVarInt(in);
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        out.writeVarInt(this.passengerIds.length);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeVarInt(out, this.passengerIds.length);
         for (int entityId : this.passengerIds) {
-            out.writeVarInt(entityId);
+            helper.writeVarInt(out, entityId);
         }
     }
 }

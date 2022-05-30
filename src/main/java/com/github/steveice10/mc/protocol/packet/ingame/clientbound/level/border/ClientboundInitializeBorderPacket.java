@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,7 +12,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundInitializeBorderPacket implements Packet {
+public class ClientboundInitializeBorderPacket implements MinecraftPacket {
     private final double newCenterX;
     private final double newCenterZ;
     private final double oldSize;
@@ -22,26 +22,26 @@ public class ClientboundInitializeBorderPacket implements Packet {
     private final int warningBlocks;
     private final int warningTime;
 
-    public ClientboundInitializeBorderPacket(NetInput in) throws IOException {
+    public ClientboundInitializeBorderPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.newCenterX = in.readDouble();
         this.newCenterZ = in.readDouble();
         this.oldSize = in.readDouble();
         this.newSize = in.readDouble();
-        this.lerpTime = in.readVarLong();
-        this.newAbsoluteMaxSize = in.readVarInt();
-        this.warningBlocks = in.readVarInt();
-        this.warningTime = in.readVarInt();
+        this.lerpTime = helper.readVarLong(in);
+        this.newAbsoluteMaxSize = helper.readVarInt(in);
+        this.warningBlocks = helper.readVarInt(in);
+        this.warningTime = helper.readVarInt(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeDouble(this.newCenterX);
         out.writeDouble(this.newCenterZ);
         out.writeDouble(this.oldSize);
         out.writeDouble(this.newSize);
-        out.writeVarLong(this.lerpTime);
-        out.writeVarInt(this.newAbsoluteMaxSize);
-        out.writeVarInt(this.warningBlocks);
-        out.writeVarInt(this.warningTime);
+        helper.writeVarLong(out, this.lerpTime);
+        helper.writeVarInt(out, this.newAbsoluteMaxSize);
+        helper.writeVarInt(out, this.warningBlocks);
+        helper.writeVarInt(out, this.warningTime);
     }
 }

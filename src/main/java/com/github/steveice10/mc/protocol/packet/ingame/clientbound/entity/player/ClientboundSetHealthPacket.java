@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,21 +12,21 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSetHealthPacket implements Packet {
+public class ClientboundSetHealthPacket implements MinecraftPacket {
     private final float health;
     private final int food;
     private final float saturation;
 
-    public ClientboundSetHealthPacket(NetInput in) throws IOException {
+    public ClientboundSetHealthPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.health = in.readFloat();
-        this.food = in.readVarInt();
+        this.food = helper.readVarInt(in);
         this.saturation = in.readFloat();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeFloat(this.health);
-        out.writeVarInt(this.food);
+        helper.writeVarInt(out, this.food);
         out.writeFloat(this.saturation);
     }
 }

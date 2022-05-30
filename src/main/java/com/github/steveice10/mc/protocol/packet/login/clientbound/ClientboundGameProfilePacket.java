@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.login.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -16,19 +16,19 @@ import java.util.List;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundGameProfilePacket implements Packet {
+public class ClientboundGameProfilePacket implements MinecraftPacket {
     private final @NonNull GameProfile profile;
 
-    public ClientboundGameProfilePacket(NetInput in) throws IOException {
-        GameProfile profile = new GameProfile(in.readUUID(), in.readString());
-        int properties = in.readVarInt();
+    public ClientboundGameProfilePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        GameProfile profile = new GameProfile(helper.readUUID(in), helper.readString(in));
+        int properties = helper.readVarInt(in);
         List<GameProfile.Property> propertyList = new ArrayList<>();
         for (int index = 0; index < properties; index++) {
-            String propertyName = in.readString();
-            String value = in.readString();
+            String propertyName = helper.readString(in);
+            String value = helper.readString(in);
             String signature = null;
             if (in.readBoolean()) {
-                signature = in.readString();
+                signature = helper.readString(in);
             }
 
             propertyList.add(new GameProfile.Property(propertyName, value, signature));
@@ -39,16 +39,16 @@ public class ClientboundGameProfilePacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeUUID(this.profile.getId());
-        out.writeString(this.profile.getName());
-        out.writeVarInt(this.profile.getProperties().size());
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeUUID(out, this.profile.getId());
+        helper.writeString(out, this.profile.getName());
+        helper.writeVarInt(out, this.profile.getProperties().size());
         for (GameProfile.Property property : this.profile.getProperties()) {
-            out.writeString(property.getName());
-            out.writeString(property.getValue());
+            helper.writeString(out, property.getName());
+            helper.writeString(out, property.getValue());
             out.writeBoolean(property.hasSignature());
             if (property.hasSignature()) {
-                out.writeString(property.getSignature());
+                helper.writeString(out, property.getSignature());
             }
         }
     }

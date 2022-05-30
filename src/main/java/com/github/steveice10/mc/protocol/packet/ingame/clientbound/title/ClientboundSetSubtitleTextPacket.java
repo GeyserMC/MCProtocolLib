@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.title;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -14,15 +14,15 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSetSubtitleTextPacket implements Packet {
+public class ClientboundSetSubtitleTextPacket implements MinecraftPacket {
     private final Component text;
 
-    public ClientboundSetSubtitleTextPacket(NetInput in) throws IOException {
-        this.text = DefaultComponentSerializer.get().deserialize(in.readString());
+    public ClientboundSetSubtitleTextPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.text = helper.readComponent(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(DefaultComponentSerializer.get().serialize(this.text));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, DefaultComponentSerializer.get().serialize(this.text));
     }
 }

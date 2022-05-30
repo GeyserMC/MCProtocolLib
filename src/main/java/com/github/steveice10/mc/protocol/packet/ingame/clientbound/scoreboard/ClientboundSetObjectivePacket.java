@@ -1,12 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @Data
 @With
-public class ClientboundSetObjectivePacket implements Packet {
+public class ClientboundSetObjectivePacket implements MinecraftPacket {
     private final @NonNull String name;
     private final @NonNull ObjectiveAction action;
 
@@ -51,12 +51,12 @@ public class ClientboundSetObjectivePacket implements Packet {
         this.type = type;
     }
 
-    public ClientboundSetObjectivePacket(NetInput in) throws IOException {
-        this.name = in.readString();
+    public ClientboundSetObjectivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.name = helper.readString(in);
         this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            this.displayName = DefaultComponentSerializer.get().deserialize(in.readString());
-            this.type = MagicValues.key(ScoreType.class, in.readVarInt());
+            this.displayName = helper.readComponent(in);
+            this.type = MagicValues.key(ScoreType.class, helper.readVarInt(in));
         } else {
             this.displayName = null;
             this.type = null;
@@ -64,12 +64,12 @@ public class ClientboundSetObjectivePacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.name);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.name);
         out.writeByte(MagicValues.value(Integer.class, this.action));
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            out.writeString(DefaultComponentSerializer.get().serialize(this.displayName));
-            out.writeVarInt(MagicValues.value(Integer.class, this.type));
+            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.displayName));
+            helper.writeVarInt(out, MagicValues.value(Integer.class, this.type));
         }
     }
 }

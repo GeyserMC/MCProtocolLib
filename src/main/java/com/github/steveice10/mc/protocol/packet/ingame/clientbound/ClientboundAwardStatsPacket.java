@@ -1,20 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
-import com.github.steveice10.mc.protocol.data.game.statistic.BreakBlockStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.BreakItemStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.CraftItemStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.CustomStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.DropItemStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.KillEntityStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.KilledByEntityStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.PickupItemStatistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.Statistic;
-import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
-import com.github.steveice10.mc.protocol.data.game.statistic.UseItemStatistic;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.data.game.statistic.*;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -27,14 +17,14 @@ import java.util.Map;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundAwardStatsPacket implements Packet {
+public class ClientboundAwardStatsPacket implements MinecraftPacket {
     private final @NonNull Map<Statistic, Integer> statistics = new HashMap<>(); //TODO Fastutil
 
-    public ClientboundAwardStatsPacket(NetInput in) throws IOException {
-        int length = in.readVarInt();
+    public ClientboundAwardStatsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        int length = helper.readVarInt(in);
         for (int index = 0; index < length; index++) {
-            StatisticCategory category = StatisticCategory.read(in);
-            int statisticId = in.readVarInt();
+            StatisticCategory category = helper.readStatisticCategory(in);
+            int statisticId = helper.readVarInt(in);
             Statistic statistic;
             switch (category) {
                 case BREAK_BLOCK:
@@ -56,24 +46,24 @@ public class ClientboundAwardStatsPacket implements Packet {
                     statistic = new DropItemStatistic(statisticId);
                     break;
                 case KILL_ENTITY:
-                    statistic = new KillEntityStatistic(EntityType.fromId(statisticId));
+                    statistic = new KillEntityStatistic(EntityType.from(statisticId));
                     break;
                 case KILLED_BY_ENTITY:
-                    statistic = new KilledByEntityStatistic(EntityType.fromId(statisticId));
+                    statistic = new KilledByEntityStatistic(EntityType.from(statisticId));
                     break;
                 case CUSTOM:
-                    statistic = CustomStatistic.fromId(statisticId);
+                    statistic = CustomStatistic.from(statisticId);
                     break;
                 default:
                     throw new IllegalStateException();
             }
-            this.statistics.put(statistic, in.readVarInt());
+            this.statistics.put(statistic, helper.readVarInt(in));
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.statistics.size());
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.statistics.size());
         for (Map.Entry<Statistic, Integer> entry : statistics.entrySet()) {
             Statistic statistic = entry.getKey();
 
@@ -109,9 +99,9 @@ public class ClientboundAwardStatsPacket implements Packet {
             } else {
                 throw new IllegalStateException();
             }
-            out.writeVarInt(category.ordinal());
-            out.writeVarInt(statisticId);
-            out.writeVarInt(entry.getValue());
+            helper.writeStatisticCategory(out, category);
+            helper.writeVarInt(out, statisticId);
+            helper.writeVarInt(out, entry.getValue());
         }
     }
 }

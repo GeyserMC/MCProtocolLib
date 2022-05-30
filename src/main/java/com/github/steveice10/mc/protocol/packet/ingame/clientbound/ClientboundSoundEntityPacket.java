@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +15,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSoundEntityPacket implements Packet {
+public class ClientboundSoundEntityPacket implements MinecraftPacket {
     private final int soundId;
     private final @NonNull SoundCategory soundCategory;
     private final int entityId;
@@ -23,20 +23,20 @@ public class ClientboundSoundEntityPacket implements Packet {
     private final float pitch;
     private final long seed;
 
-    public ClientboundSoundEntityPacket(NetInput in) throws IOException {
-        this.soundId = in.readVarInt();
-        this.soundCategory = MagicValues.key(SoundCategory.class, in.readVarInt());
-        this.entityId = in.readVarInt();
+    public ClientboundSoundEntityPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.soundId = helper.readVarInt(in);
+        this.soundCategory = MagicValues.key(SoundCategory.class, helper.readVarInt(in));
+        this.entityId = helper.readVarInt(in);
         this.volume = in.readFloat();
         this.pitch = in.readFloat();
         this.seed = in.readLong();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.soundId);
-        out.writeVarInt(MagicValues.value(Integer.class, this.soundCategory));
-        out.writeVarInt(this.entityId);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.soundId);
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.soundCategory));
+        helper.writeVarInt(out, this.entityId);
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
         out.writeLong(this.seed);

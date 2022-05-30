@@ -1,9 +1,5 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
-import com.github.steveice10.packetlib.io.NetInput;
-
-import java.io.IOException;
-
 public enum StatisticCategory {
     BREAK_BLOCK,
     CRAFT_ITEM,
@@ -17,11 +13,7 @@ public enum StatisticCategory {
 
     private static final StatisticCategory[] VALUES = values();
 
-    public static StatisticCategory read(NetInput in) throws IOException {
-        return in.readEnum(VALUES);
-    }
-
-    public static StatisticCategory fromId(int id) {
+    public static StatisticCategory from(int id) {
         return VALUES[id];
     }
 }

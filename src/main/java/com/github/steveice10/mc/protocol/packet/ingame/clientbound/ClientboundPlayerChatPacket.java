@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundPlayerChatPacket implements Packet {
+public class ClientboundPlayerChatPacket implements MinecraftPacket {
 	private final Component signedContent;
 	private final @Nullable Component unsignedContent;
 	private final MessageType type;
@@ -30,37 +30,37 @@ public class ClientboundPlayerChatPacket implements Packet {
 	private final byte[] signature;
 	private final long timeStamp;
 
-	public ClientboundPlayerChatPacket(NetInput in) throws IOException {
-		this.signedContent = DefaultComponentSerializer.get().deserialize(in.readString());
+	public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+		this.signedContent = helper.readComponent(in);
 		if (in.readBoolean()) {
-			this.unsignedContent = DefaultComponentSerializer.get().deserialize(in.readString());
+			this.unsignedContent = helper.readComponent(in);
 		} else {
 			this.unsignedContent = null;
 		}
 
-		this.type = in.readEnum(MessageType.VALUES);
-		this.senderUUID = in.readUUID();
-		this.senderName = DefaultComponentSerializer.get().deserialize(in.readString());
+		this.type = helper.readMessageType(in);
+		this.senderUUID = helper.readUUID(in);
+		this.senderName = helper.readComponent(in);
 		if (in.readBoolean()) {
-			this.senderTeamName = DefaultComponentSerializer.get().deserialize(in.readString());
+			this.senderTeamName = helper.readComponent(in);
 		} else {
 			this.senderTeamName = null;
 		}
 
 		this.timeStamp = in.readLong();
 		this.salt = in.readLong();
-		this.signature = in.readBytes(in.readVarInt());
+		this.signature = helper.readByteArray(in);
 	}
 
 	@Override
-	public void write(NetOutput out) throws IOException {
-		DefaultComponentSerializer.get().serialize(this.signedContent);
+	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+		helper.writeComponent(out, this.signedContent);
 		if (this.unsignedContent != null) {
-			DefaultComponentSerializer.get().serialize(this.unsignedContent);
+			helper.writeComponent(out, this.unsignedContent);
 		}
 
-		out.writeEnum(this.type);
-		out.writeUUID(this.senderUUID);
+		helper.writeMessageType(out, this.type);
+		helper.writeUUID(out, this.senderUUID);
 		DefaultComponentSerializer.get().serialize(this.senderName);
 		if (this.senderTeamName != null) {
 			DefaultComponentSerializer.get().serialize(this.senderTeamName);
@@ -68,7 +68,7 @@ public class ClientboundPlayerChatPacket implements Packet {
 
 		out.writeLong(this.timeStamp);
 		out.writeLong(this.salt);
-		out.writeVarInt(this.signature.length);
+		helper.writeVarInt(out, this.signature.length);
 		out.writeBytes(this.signature);
 	}
 }

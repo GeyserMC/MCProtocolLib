@@ -1,17 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
-import com.github.steveice10.mc.protocol.data.game.entity.object.FallingBlockData;
-import com.github.steveice10.mc.protocol.data.game.entity.object.GenericObjectData;
-import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
-import com.github.steveice10.mc.protocol.data.game.entity.object.ObjectData;
-import com.github.steveice10.mc.protocol.data.game.entity.object.ProjectileData;
-import com.github.steveice10.mc.protocol.data.game.entity.object.SplashPotionData;
+import com.github.steveice10.mc.protocol.data.game.entity.object.*;
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -23,7 +17,7 @@ import java.util.UUID;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundAddEntityPacket implements Packet {
+public class ClientboundAddEntityPacket implements MinecraftPacket {
     private static final GenericObjectData EMPTY_DATA = new GenericObjectData(0);
 
     private final int entityId;
@@ -56,10 +50,10 @@ public class ClientboundAddEntityPacket implements Packet {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, motionX, motionY, motionZ);
     }
 
-    public ClientboundAddEntityPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
-        this.uuid = in.readUUID();
-        this.type = EntityType.read(in);
+    public ClientboundAddEntityPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
+        this.uuid = helper.readUUID(in);
+        this.type = EntityType.from(helper.readVarInt(in));
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -67,7 +61,7 @@ public class ClientboundAddEntityPacket implements Packet {
         this.yaw = in.readByte() * 360 / 256f;
         this.headYaw = in.readByte() * 360 / 256f;
 
-        int data = in.readVarInt();
+        int data = helper.readVarInt(in);
         if (this.type == EntityType.MINECART) {
             this.data = MagicValues.key(MinecartType.class, data);
         } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME || this.type == EntityType.PAINTING) {
@@ -93,10 +87,10 @@ public class ClientboundAddEntityPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        out.writeUUID(this.uuid);
-        out.writeVarInt(this.type.ordinal());
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeUUID(out, this.uuid);
+        helper.writeVarInt(out, this.type.ordinal());
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
@@ -119,7 +113,7 @@ public class ClientboundAddEntityPacket implements Packet {
             data = ((GenericObjectData) this.data).getValue();
         }
 
-        out.writeVarInt(data);
+        helper.writeVarInt(out, data);
 
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));

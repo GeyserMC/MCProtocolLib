@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -14,18 +14,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSetEntityDataPacket implements Packet {
+public class ClientboundSetEntityDataPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull EntityMetadata<?, ?>[] metadata;
 
-    public ClientboundSetEntityDataPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
-        this.metadata = EntityMetadata.read(in);
+    public ClientboundSetEntityDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
+        this.metadata = helper.readEntityMetadata(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        EntityMetadata.write(out, this.metadata);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeEntityMetadata(out, this.metadata);
     }
 }

@@ -1,11 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.inventory.ContainerType;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -17,15 +17,15 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundOpenScreenPacket implements Packet {
+public class ClientboundOpenScreenPacket implements MinecraftPacket {
     private final int containerId;
     private final @NonNull ContainerType type;
     private final @NonNull Component title;
 
-    public ClientboundOpenScreenPacket(NetInput in) throws IOException {
-        this.containerId = in.readVarInt();
-        this.type = MagicValues.key(ContainerType.class, in.readVarInt());
-        this.title = DefaultComponentSerializer.get().deserialize(in.readString());
+    public ClientboundOpenScreenPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.containerId = helper.readVarInt(in);
+        this.type = MagicValues.key(ContainerType.class, helper.readVarInt(in));
+        this.title = helper.readComponent(in);
     }
 
     @Deprecated
@@ -36,10 +36,10 @@ public class ClientboundOpenScreenPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.containerId);
-        out.writeVarInt(MagicValues.value(Integer.class, this.type));
-        out.writeString(DefaultComponentSerializer.get().serialize(this.title));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.containerId);
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.type));
+        helper.writeString(out, DefaultComponentSerializer.get().serialize(this.title));
     }
 
     @Deprecated

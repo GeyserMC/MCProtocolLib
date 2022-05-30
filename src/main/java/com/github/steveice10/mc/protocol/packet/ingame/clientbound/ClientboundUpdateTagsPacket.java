@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -16,21 +16,21 @@ import java.util.Map;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundUpdateTagsPacket implements Packet {
+public class ClientboundUpdateTagsPacket implements MinecraftPacket {
     private final @NonNull Map<String, Map<String, int[]>> tags = new HashMap<>();
 
-    public ClientboundUpdateTagsPacket(NetInput in) throws IOException {
-        int totalTagCount = in.readVarInt();
+    public ClientboundUpdateTagsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        int totalTagCount = helper.readVarInt(in);
         for (int i = 0; i < totalTagCount; i++) {
             Map<String, int[]> tag = new HashMap<>();
-            String tagName = Identifier.formalize(in.readString());
-            int tagsCount = in.readVarInt();
+            String tagName = Identifier.formalize(helper.readString(in));
+            int tagsCount = helper.readVarInt(in);
             for (int j = 0; j < tagsCount; j++) {
-                String name = in.readString();
-                int entriesCount = in.readVarInt();
+                String name = helper.readString(in);
+                int entriesCount = helper.readVarInt(in);
                 int[] entries = new int[entriesCount];
                 for (int index = 0; index < entriesCount; index++) {
-                    entries[index] = in.readVarInt();
+                    entries[index] = helper.readVarInt(in);
                 }
 
                 tag.put(name, entries);
@@ -40,16 +40,16 @@ public class ClientboundUpdateTagsPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(tags.size());
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, tags.size());
         for (Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
-            out.writeString(tagSet.getKey());
-            out.writeVarInt(tagSet.getValue().size());
+            helper.writeString(out, tagSet.getKey());
+            helper.writeVarInt(out, tagSet.getValue().size());
             for (Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
-                out.writeString(tag.getKey());
-                out.writeVarInt(tag.getValue().length);
+                helper.writeString(out, tag.getKey());
+                helper.writeVarInt(out, tag.getValue().length);
                 for (int id : tag.getValue()) {
-                    out.writeVarInt(id);
+                    helper.writeVarInt(out, id);
                 }
             }
         }

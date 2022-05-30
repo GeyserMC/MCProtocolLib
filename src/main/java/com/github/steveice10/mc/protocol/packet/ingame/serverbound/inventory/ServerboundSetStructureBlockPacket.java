@@ -1,15 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.inventory.UpdateStructureBlockAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.UpdateStructureBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -20,7 +19,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundSetStructureBlockPacket implements Packet {
+public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
     private static final int FLAG_IGNORE_ENTITIES = 0x01;
     private static final int FLAG_SHOW_AIR = 0x02;
     private static final int FLAG_SHOW_BOUNDING_BOX = 0x04;
@@ -40,18 +39,18 @@ public class ServerboundSetStructureBlockPacket implements Packet {
     private final boolean showAir;
     private final boolean showBoundingBox;
 
-    public ServerboundSetStructureBlockPacket(NetInput in) throws IOException {
-        this.position = Position.read(in);
-        this.action = MagicValues.key(UpdateStructureBlockAction.class, in.readVarInt());
-        this.mode = MagicValues.key(UpdateStructureBlockMode.class, in.readVarInt());
-        this.name = in.readString();
+    public ServerboundSetStructureBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.position = helper.readPosition(in);
+        this.action = MagicValues.key(UpdateStructureBlockAction.class, helper.readVarInt(in));
+        this.mode = MagicValues.key(UpdateStructureBlockMode.class, helper.readVarInt(in));
+        this.name = helper.readString(in);
         this.offset = Vector3i.from(in.readByte(), in.readByte(), in.readByte());
         this.size = Vector3i.from(in.readUnsignedByte(), in.readUnsignedByte(), in.readUnsignedByte());
-        this.mirror = MagicValues.key(StructureMirror.class, in.readVarInt());
-        this.rotation = MagicValues.key(StructureRotation.class, in.readVarInt());
-        this.metadata = in.readString();
+        this.mirror = MagicValues.key(StructureMirror.class, helper.readVarInt(in));
+        this.rotation = MagicValues.key(StructureRotation.class, helper.readVarInt(in));
+        this.metadata = helper.readString(in);
         this.integrity = in.readFloat();
-        this.seed = in.readVarLong();
+        this.seed = helper.readVarLong(in);
 
         int flags = in.readUnsignedByte();
         this.ignoreEntities = (flags & FLAG_IGNORE_ENTITIES) != 0;
@@ -60,22 +59,22 @@ public class ServerboundSetStructureBlockPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        Position.write(out, this.position);
-        out.writeVarInt(MagicValues.value(Integer.class, this.action));
-        out.writeVarInt(MagicValues.value(Integer.class, this.mode));
-        out.writeString(this.name);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writePosition(out, this.position);
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mode));
+        helper.writeString(out, this.name);
         out.writeByte(this.offset.getX());
         out.writeByte(this.offset.getY());
         out.writeByte(this.offset.getZ());
         out.writeByte(this.size.getX());
         out.writeByte(this.size.getY());
         out.writeByte(this.size.getZ());
-        out.writeVarInt(MagicValues.value(Integer.class, this.mirror));
-        out.writeVarInt(MagicValues.value(Integer.class, this.rotation));
-        out.writeString(this.metadata);
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mirror));
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.rotation));
+        helper.writeString(out, this.metadata);
         out.writeFloat(this.integrity);
-        out.writeVarLong(this.seed);
+        helper.writeVarLong(out, this.seed);
 
         int flags = 0;
         if (this.ignoreEntities) {

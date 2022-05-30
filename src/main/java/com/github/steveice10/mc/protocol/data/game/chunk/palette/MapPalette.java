@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
-import com.github.steveice10.packetlib.io.NetInput;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import io.netty.buffer.ByteBuf;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
 import lombok.EqualsAndHashCode;
@@ -24,12 +25,12 @@ public class MapPalette implements Palette {
         this.idToState = new int[this.maxId + 1];
     }
 
-    public MapPalette(int bitsPerEntry, NetInput in) throws IOException {
+    public MapPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this(bitsPerEntry);
 
-        int paletteLength = in.readVarInt();
+        int paletteLength = helper.readVarInt(in);
         for (int i = 0; i < paletteLength; i++) {
-            int state = in.readVarInt();
+            int state = helper.readVarInt(in);
             this.idToState[i] = state;
             this.stateToId.putIfAbsent(state, i);
         }

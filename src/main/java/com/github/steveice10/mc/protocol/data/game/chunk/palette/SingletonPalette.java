@@ -1,9 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
-import com.github.steveice10.packetlib.io.NetInput;
 import lombok.EqualsAndHashCode;
-
-import java.io.IOException;
 
 /**
  * A palette containing one state.
@@ -14,10 +11,6 @@ public class SingletonPalette implements Palette {
 
     public SingletonPalette(int state) {
         this.state = state;
-    }
-
-    public SingletonPalette(NetInput in) throws IOException {
-        this.state = in.readVarInt();
     }
 
     @Override

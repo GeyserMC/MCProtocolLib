@@ -1,10 +1,5 @@
 package com.github.steveice10.mc.protocol.data.game.level.block;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-
-import java.io.IOException;
-
 public enum BlockEntityType {
     FURNACE,
     CHEST,
@@ -45,20 +40,11 @@ public enum BlockEntityType {
 
     private static final BlockEntityType[] VALUES = values();
 
-    public static BlockEntityType read(NetInput in) throws IOException {
-        int id = in.readVarInt();
+    public static BlockEntityType from(int id) {
         if (id >= 0 && id < VALUES.length) {
             return VALUES[id];
         } else {
             return null;
-        }
-    }
-
-    public static void write(NetOutput out, BlockEntityType type) throws IOException {
-        if (type == null) {
-            out.writeVarInt(-1);
-        } else {
-            out.writeVarInt(type.ordinal());
         }
     }
 }

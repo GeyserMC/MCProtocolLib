@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.login.serverbound;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -18,18 +18,18 @@ import java.security.spec.X509EncodedKeySpec;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundHelloPacket implements Packet {
+public class ServerboundHelloPacket implements MinecraftPacket {
     private final @NonNull String username;
     private final @Nullable Long expiresAt;
     private final @Nullable PublicKey publicKey;
     private final @Nullable byte[] keySignature;
 
-    public ServerboundHelloPacket(NetInput in) throws IOException {
-        this.username = in.readString();
+    public ServerboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.username = helper.readString(in);
         if (in.readBoolean()) {
             this.expiresAt = in.readLong();
-            byte[] publicKey = in.readBytes(in.readVarInt());
-            this.keySignature = in.readBytes(in.readVarInt());
+            byte[] publicKey = helper.readByteArray(in);
+            this.keySignature = helper.readByteArray(in);
 
             try {
                 this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
@@ -44,16 +44,14 @@ public class ServerboundHelloPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.username);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.username);
         out.writeBoolean(this.publicKey != null);
         if (this.publicKey != null) {
             out.writeLong(this.expiresAt);
             byte[] encoded = this.publicKey.getEncoded();
-            out.writeVarInt(encoded.length);
-            out.writeBytes(encoded);
-            out.writeVarInt(this.keySignature.length);
-            out.writeBytes(this.keySignature);
+            helper.writeByteArray(out, encoded);
+            helper.writeByteArray(out, this.keySignature);
         }
     }
 

@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.login.clientbound;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -17,15 +17,15 @@ import java.security.spec.X509EncodedKeySpec;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundHelloPacket implements Packet {
+public class ClientboundHelloPacket implements MinecraftPacket {
     private final @NonNull String serverId;
     private final @NonNull PublicKey publicKey;
     private final @NonNull byte[] verifyToken;
 
-    public ClientboundHelloPacket(NetInput in) throws IOException {
-        this.serverId = in.readString();
-        byte[] publicKey = in.readBytes(in.readVarInt());
-        this.verifyToken = in.readBytes(in.readVarInt());
+    public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.serverId = helper.readString(in);
+        byte[] publicKey = helper.readByteArray(in);
+        this.verifyToken = helper.readByteArray(in);
 
         try {
             this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
@@ -35,13 +35,11 @@ public class ClientboundHelloPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.serverId);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.serverId);
         byte[] encoded = this.publicKey.getEncoded();
-        out.writeVarInt(encoded.length);
-        out.writeBytes(encoded);
-        out.writeVarInt(this.verifyToken.length);
-        out.writeBytes(this.verifyToken);
+        helper.writeByteArray(out, encoded);
+        helper.writeByteArray(out, this.verifyToken);
     }
 
     @Override

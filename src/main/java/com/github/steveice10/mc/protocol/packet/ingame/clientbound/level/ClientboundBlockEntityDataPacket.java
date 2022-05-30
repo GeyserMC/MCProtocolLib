@@ -1,13 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.NBT;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -19,21 +17,21 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundBlockEntityDataPacket implements Packet {
+public class ClientboundBlockEntityDataPacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
     private final BlockEntityType type;
     private final @Nullable CompoundTag nbt;
 
-    public ClientboundBlockEntityDataPacket(NetInput in) throws IOException {
-        this.position = Position.read(in);
-        this.type = BlockEntityType.read(in);
-        this.nbt = NBT.read(in);
+    public ClientboundBlockEntityDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.position = helper.readPosition(in);
+        this.type = helper.readBlockEntityType(in);
+        this.nbt = helper.readTag(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        Position.write(out, this.position);
-        BlockEntityType.write(out, this.type);
-        NBT.write(out, this.nbt);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writePosition(out, this.position);
+        helper.writeBlockEntityType(out, this.type);
+        helper.writeTag(out, this.nbt);
     }
 }

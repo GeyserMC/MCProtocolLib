@@ -1,10 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,16 +14,16 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundBlockUpdatePacket implements Packet {
+public class ClientboundBlockUpdatePacket implements MinecraftPacket {
     private final @NonNull BlockChangeEntry entry;
 
-    public ClientboundBlockUpdatePacket(NetInput in) throws IOException {
-        this.entry = new BlockChangeEntry(Position.read(in), in.readVarInt());
+    public ClientboundBlockUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entry = new BlockChangeEntry(helper.readPosition(in), helper.readVarInt(in));
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        Position.write(out, this.entry.getPosition());
-        out.writeVarInt(this.entry.getBlock());
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writePosition(out, this.entry.getPosition());
+        helper.writeVarInt(out, this.entry.getBlock());
     }
 }

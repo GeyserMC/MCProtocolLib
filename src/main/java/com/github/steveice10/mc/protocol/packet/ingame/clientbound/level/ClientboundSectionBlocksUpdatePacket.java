@@ -1,11 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -14,7 +13,7 @@ import java.io.IOException;
 
 @Data
 @With
-public class ClientboundSectionBlocksUpdatePacket implements Packet {
+public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
     private final int chunkX;
     private final int chunkY;
     private final int chunkZ;
@@ -36,15 +35,15 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
         this.entries = entries;
     }
 
-    public ClientboundSectionBlocksUpdatePacket(NetInput in) throws IOException {
+    public ClientboundSectionBlocksUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         long chunkPosition = in.readLong();
         this.chunkX = (int) (chunkPosition >> 42);
         this.chunkY = (int) (chunkPosition << 44 >> 44);
         this.chunkZ = (int) (chunkPosition << 22 >> 42);
         this.ignoreOldLight = in.readBoolean();
-        this.entries = new BlockChangeEntry[in.readVarInt()];
+        this.entries = new BlockChangeEntry[helper.readVarInt(in)];
         for (int index = 0; index < this.entries.length; index++) {
-            long blockData = in.readVarLong();
+            long blockData = helper.readVarLong(in);
             short position = (short) (blockData & 0xFFFL);
             int x = (this.chunkX << 4) + (position >>> 8 & 0xF);
             int y = (this.chunkY << 4) + (position & 0xF);
@@ -54,16 +53,16 @@ public class ClientboundSectionBlocksUpdatePacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         long chunkPosition = 0;
         chunkPosition |= (this.chunkX & 0x3FFFFFL) << 42;
         chunkPosition |= (this.chunkZ & 0x3FFFFFL) << 20;
         out.writeLong(chunkPosition | (this.chunkY & 0xFFFFFL));
         out.writeBoolean(this.ignoreOldLight);
-        out.writeVarInt(this.entries.length);
+        helper.writeVarInt(out, this.entries.length);
         for (BlockChangeEntry entry : this.entries) {
             short position = (short) ((entry.getPosition().getX() - (this.chunkX << 4)) << 8 | (entry.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (entry.getPosition().getY() - (this.chunkY << 4)));
-            out.writeVarLong((long) entry.getBlock() << 12 | position);
+            helper.writeVarLong(out, (long) entry.getBlock() << 12 | position);
         }
     }
 }

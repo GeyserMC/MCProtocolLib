@@ -1,12 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.level.event.*;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -17,7 +16,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundLevelEventPacket implements Packet {
+public class ClientboundLevelEventPacket implements MinecraftPacket {
     private final @NonNull LevelEvent event;
     private final @NonNull Vector3i position;
     private final LevelEventData data;
@@ -27,9 +26,9 @@ public class ClientboundLevelEventPacket implements Packet {
         this(event, position, data, false);
     }
 
-    public ClientboundLevelEventPacket(NetInput in) throws IOException {
-        this.event = LevelEvent.read(in);
-        this.position = Position.read(in);
+    public ClientboundLevelEventPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.event = helper.readLevelEvent(in);
+        this.position = helper.readPosition(in);
         int value = in.readInt();
         switch (this.event) {
             case RECORD:
@@ -67,9 +66,9 @@ public class ClientboundLevelEventPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeInt(this.event.getId());
-        Position.write(out, this.position);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeLevelEvent(out, this.event);
+        helper.writePosition(out, this.position);
         int value = 0;
         if (this.data instanceof RecordEventData) {
             value = ((RecordEventData) this.data).getRecordId();

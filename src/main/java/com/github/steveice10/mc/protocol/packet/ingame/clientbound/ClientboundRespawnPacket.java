@@ -1,14 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -20,7 +17,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundRespawnPacket implements Packet {
+public class ClientboundRespawnPacket implements MinecraftPacket {
     private final @NonNull String dimension;
     private final @NonNull String worldName;
     private final long hashedSeed;
@@ -31,9 +28,9 @@ public class ClientboundRespawnPacket implements Packet {
     private final boolean copyMetadata;
     private final @Nullable GlobalPos lastDeathPos;
 
-    public ClientboundRespawnPacket(NetInput in) throws IOException {
-        this.dimension = in.readString();
-        this.worldName = in.readString();
+    public ClientboundRespawnPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.dimension = helper.readString(in);
+        this.worldName = helper.readString(in);
         this.hashedSeed = in.readLong();
         this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
         this.previousGamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
@@ -41,16 +38,16 @@ public class ClientboundRespawnPacket implements Packet {
         this.flat = in.readBoolean();
         this.copyMetadata = in.readBoolean();
         if (in.readBoolean()) {
-            this.lastDeathPos = GlobalPos.read(in);
+            this.lastDeathPos = helper.readGlobalPos(in);
         } else {
             this.lastDeathPos = null;
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.dimension);
-        out.writeString(this.worldName);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.dimension);
+        helper.writeString(out, this.worldName);
         out.writeLong(this.hashedSeed);
         out.writeByte(MagicValues.value(Integer.class, this.gamemode));
         out.writeByte(MagicValues.value(Integer.class, this.previousGamemode));
@@ -59,7 +56,7 @@ public class ClientboundRespawnPacket implements Packet {
         out.writeBoolean(this.copyMetadata);
         out.writeBoolean(this.lastDeathPos != null);
         if (this.lastDeathPos != null) {
-            GlobalPos.write(out, this.lastDeathPos);
+            helper.writeGlobalPos(out, this.lastDeathPos);
         }
     }
 }

@@ -1,12 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -19,7 +19,7 @@ import java.util.List;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundClientInformationPacket implements Packet {
+public class ServerboundClientInformationPacket implements MinecraftPacket {
     private final @NonNull String locale;
     private final int renderDistance;
     private final @NonNull ChatVisibility chatVisibility;
@@ -32,10 +32,10 @@ public class ServerboundClientInformationPacket implements Packet {
      */
     private final boolean allowsListing;
 
-    public ServerboundClientInformationPacket(NetInput in) throws IOException {
-        this.locale = in.readString();
+    public ServerboundClientInformationPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.locale = helper.readString(in);
         this.renderDistance = in.readByte();
-        this.chatVisibility = MagicValues.key(ChatVisibility.class, in.readVarInt());
+        this.chatVisibility = MagicValues.key(ChatVisibility.class, helper.readVarInt(in));
         this.useChatColors = in.readBoolean();
         this.visibleParts = new ArrayList<>();
 
@@ -47,16 +47,16 @@ public class ServerboundClientInformationPacket implements Packet {
             }
         }
 
-        this.mainHand = MagicValues.key(HandPreference.class, in.readVarInt());
+        this.mainHand = MagicValues.key(HandPreference.class, helper.readVarInt(in));
         this.textFilteringEnabled = in.readBoolean();
         this.allowsListing = in.readBoolean();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.locale);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.locale);
         out.writeByte(this.renderDistance);
-        out.writeVarInt(MagicValues.value(Integer.class, this.chatVisibility));
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.chatVisibility));
         out.writeBoolean(this.useChatColors);
 
         int flags = 0;
@@ -66,7 +66,7 @@ public class ServerboundClientInformationPacket implements Packet {
 
         out.writeByte(flags);
 
-        out.writeVarInt(MagicValues.value(Integer.class, this.mainHand));
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mainHand));
         out.writeBoolean(this.textFilteringEnabled);
         out.writeBoolean(allowsListing);
     }

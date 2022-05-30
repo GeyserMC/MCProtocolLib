@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,18 +12,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundPlayerCombatEndPacket implements Packet {
+public class ClientboundPlayerCombatEndPacket implements MinecraftPacket {
     private final int killerId;
     private final int duration;
 
-    public ClientboundPlayerCombatEndPacket(NetInput in) throws IOException {
-        this.duration = in.readVarInt();
+    public ClientboundPlayerCombatEndPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.duration = helper.readVarInt(in);
         this.killerId = in.readInt();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.duration);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.duration);
         out.writeInt(this.killerId);
     }
 }

@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -14,18 +14,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundSetCreativeModeSlotPacket implements Packet {
+public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
     private final int slot;
     private final @NonNull ItemStack clickedItem;
 
-    public ServerboundSetCreativeModeSlotPacket(NetInput in) throws IOException {
+    public ServerboundSetCreativeModeSlotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.slot = in.readShort();
-        this.clickedItem = ItemStack.read(in);
+        this.clickedItem = helper.readItemStack(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeShort(this.slot);
-        ItemStack.write(out, this.clickedItem);
+        helper.writeItemStack(out, this.clickedItem);
     }
 }

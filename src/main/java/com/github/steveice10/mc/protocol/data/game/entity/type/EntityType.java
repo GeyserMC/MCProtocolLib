@@ -1,9 +1,5 @@
 package com.github.steveice10.mc.protocol.data.game.entity.type;
 
-import com.github.steveice10.packetlib.io.NetInput;
-
-import java.io.IOException;
-
 public enum EntityType {
     ALLAY,
     AREA_EFFECT_CLOUD,
@@ -126,11 +122,7 @@ public enum EntityType {
 
     private static final EntityType[] VALUES = values();
 
-    public static EntityType read(NetInput in) throws IOException {
-        return in.readEnum(VALUES);
-    }
-
-    public static EntityType fromId(int id) {
+    public static EntityType from(int id) {
         return VALUES[id];
     }
 }

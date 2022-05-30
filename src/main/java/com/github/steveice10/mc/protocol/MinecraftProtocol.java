@@ -2,17 +2,20 @@ package com.github.steveice10.mc.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.PacketCodec;
 import com.github.steveice10.mc.protocol.codec.PacketStateCodec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
+import com.github.steveice10.packetlib.codec.PacketDefinition;
 import com.github.steveice10.packetlib.crypt.AESEncryption;
 import com.github.steveice10.packetlib.crypt.PacketEncryption;
-import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketHeader;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
+import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -132,6 +135,11 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
+    public PacketCodecHelper createHelper() {
+        return this.codec.getHelperFactory().get();
+    }
+
+    @Override
     public void newClientSession(Session session) {
         session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
         session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
@@ -175,8 +183,8 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public Packet createClientboundPacket(int id, NetInput in) throws IOException {
-        return this.stateCodec.createClientboundPacket(id, in);
+    public Packet createClientboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+        return this.stateCodec.createClientboundPacket(id, buf, codecHelper);
     }
 
     @Override
@@ -195,8 +203,8 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public Packet createServerboundPacket(int id, NetInput in) throws IOException {
-        return this.stateCodec.createServerboundPacket(id, in);
+    public Packet createServerboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+        return this.stateCodec.createServerboundPacket(id, buf, codecHelper);
     }
 
     @Override
@@ -212,5 +220,15 @@ public class MinecraftProtocol extends PacketProtocol {
     @Override
     public Class<? extends Packet> getServerboundClass(int id) {
         return this.stateCodec.getServerboundClass(id);
+    }
+
+    @Override
+    public PacketDefinition<?, ?> getServerboundDefinition(int id) {
+        return this.stateCodec.getServerboundDefinition(id);
+    }
+
+    @Override
+    public PacketDefinition<?, ?> getClientboundDefinition(int id) {
+        return this.stateCodec.getClientboundDefinition(id);
     }
 }

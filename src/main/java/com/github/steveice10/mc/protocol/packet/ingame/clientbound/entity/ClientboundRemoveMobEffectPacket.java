@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -14,18 +14,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundRemoveMobEffectPacket implements Packet {
+public class ClientboundRemoveMobEffectPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull Effect effect;
 
-    public ClientboundRemoveMobEffectPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
-        this.effect = Effect.fromNetworkId(in.readVarInt());
+    public ClientboundRemoveMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
+        this.effect = helper.readEffect(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        out.writeVarInt(Effect.toNetworkId(this.effect));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeEffect(out, this.effect);
     }
 }

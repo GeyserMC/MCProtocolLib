@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -13,34 +13,34 @@ import java.util.OptionalInt;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundSetBeaconPacket implements Packet {
+public class ServerboundSetBeaconPacket implements MinecraftPacket {
     private final OptionalInt primaryEffect;
     private final OptionalInt secondaryEffect;
 
-    public ServerboundSetBeaconPacket(NetInput in) throws IOException {
+    public ServerboundSetBeaconPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         if (in.readBoolean()) {
-            this.primaryEffect = OptionalInt.of(in.readVarInt());
+            this.primaryEffect = OptionalInt.of(helper.readVarInt(in));
         } else {
             this.primaryEffect = OptionalInt.empty();
         }
 
         if (in.readBoolean()) {
-            this.secondaryEffect = OptionalInt.of(in.readVarInt());
+            this.secondaryEffect = OptionalInt.of(helper.readVarInt(in));
         } else {
             this.secondaryEffect = OptionalInt.empty();
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeBoolean(this.primaryEffect.isPresent());
         if (this.primaryEffect.isPresent()) {
-            out.writeVarInt(this.primaryEffect.getAsInt());
+            helper.writeVarInt(out, this.primaryEffect.getAsInt());
         }
 
         out.writeBoolean(this.secondaryEffect.isPresent());
         if (this.secondaryEffect.isPresent()) {
-            out.writeVarInt(this.secondaryEffect.getAsInt());
+            helper.writeVarInt(out, this.secondaryEffect.getAsInt());
         }
     }
 }

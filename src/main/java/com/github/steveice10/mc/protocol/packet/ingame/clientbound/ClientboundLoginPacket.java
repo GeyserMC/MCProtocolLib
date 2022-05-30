@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.NBT;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -19,7 +18,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundLoginPacket implements Packet {
+public class ClientboundLoginPacket implements MinecraftPacket {
     private static final int GAMEMODE_MASK = 0x07;
 
     private final int entityId;
@@ -41,38 +40,38 @@ public class ClientboundLoginPacket implements Packet {
     private final boolean flat;
     private final @Nullable GlobalPos lastDeathPos;
 
-    public ClientboundLoginPacket(NetInput in) throws IOException {
+    public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = in.readInt();
 
         this.hardcore = in.readBoolean();
         int gameMode = in.readUnsignedByte();
         this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
         this.previousGamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-        this.worldCount = in.readVarInt();
+        this.worldCount = helper.readVarInt(in);
         this.worldNames = new String[this.worldCount];
         for (int i = 0; i < this.worldCount; i++) {
-            this.worldNames[i] = in.readString();
+            this.worldNames[i] = helper.readString(in);
         }
-        this.dimensionCodec = NBT.read(in);
-        this.dimension = in.readString();
-        this.worldName = in.readString();
+        this.dimensionCodec = helper.readTag(in);
+        this.dimension = helper.readString(in);
+        this.worldName = helper.readString(in);
         this.hashedSeed = in.readLong();
-        this.maxPlayers = in.readVarInt();
-        this.viewDistance = in.readVarInt();
-        this.simulationDistance = in.readVarInt();
+        this.maxPlayers = helper.readVarInt(in);
+        this.viewDistance = helper.readVarInt(in);
+        this.simulationDistance = helper.readVarInt(in);
         this.reducedDebugInfo = in.readBoolean();
         this.enableRespawnScreen = in.readBoolean();
         this.debug = in.readBoolean();
         this.flat = in.readBoolean();
         if (in.readBoolean()) {
-            this.lastDeathPos = GlobalPos.read(in);
+            this.lastDeathPos = helper.readGlobalPos(in);
         } else {
             this.lastDeathPos = null;
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeInt(this.entityId);
 
         out.writeBoolean(this.hardcore);
@@ -80,24 +79,24 @@ public class ClientboundLoginPacket implements Packet {
 
         out.writeByte(gameMode);
         out.writeByte(MagicValues.value(Integer.class, this.previousGamemode));
-        out.writeVarInt(this.worldCount);
+        helper.writeVarInt(out, this.worldCount);
         for (String worldName : this.worldNames) {
-            out.writeString(worldName);
+            helper.writeString(out, worldName);
         }
-        NBT.write(out, this.dimensionCodec);
-        out.writeString(this.dimension);
-        out.writeString(this.worldName);
+        helper.writeTag(out, this.dimensionCodec);
+        helper.writeString(out, this.dimension);
+        helper.writeString(out, this.worldName);
         out.writeLong(this.hashedSeed);
-        out.writeVarInt(this.maxPlayers);
-        out.writeVarInt(this.viewDistance);
-        out.writeVarInt(this.simulationDistance);
+        helper.writeVarInt(out, this.maxPlayers);
+        helper.writeVarInt(out, this.viewDistance);
+        helper.writeVarInt(out, this.simulationDistance);
         out.writeBoolean(this.reducedDebugInfo);
         out.writeBoolean(this.enableRespawnScreen);
         out.writeBoolean(this.debug);
         out.writeBoolean(this.flat);
         out.writeBoolean(this.lastDeathPos != null);
         if (this.lastDeathPos != null) {
-            GlobalPos.write(out, this.lastDeathPos);
+            helper.writeGlobalPos(out, this.lastDeathPos);
         }
     }
 }

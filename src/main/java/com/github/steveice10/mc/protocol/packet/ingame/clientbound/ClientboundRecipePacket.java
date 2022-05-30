@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.*;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ClientboundRecipePacket implements Packet {
+public class ClientboundRecipePacket implements MinecraftPacket {
     private final @NonNull UnlockRecipesAction action;
 
     private final @NonNull String[] recipes;
@@ -72,8 +72,8 @@ public class ClientboundRecipePacket implements Packet {
         this.alreadyKnownRecipes = Arrays.copyOf(alreadyKnownRecipes, alreadyKnownRecipes.length);
     }
 
-    public ClientboundRecipePacket(NetInput in) throws IOException {
-        this.action = MagicValues.key(UnlockRecipesAction.class, in.readVarInt());
+    public ClientboundRecipePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.action = MagicValues.key(UnlockRecipesAction.class, helper.readVarInt(in));
 
         this.openCraftingBook = in.readBoolean();
         this.activateCraftingFiltering = in.readBoolean();
@@ -85,23 +85,23 @@ public class ClientboundRecipePacket implements Packet {
         this.activateSmokingFiltering = in.readBoolean();
 
         if (this.action == UnlockRecipesAction.INIT) {
-            this.alreadyKnownRecipes = new String[in.readVarInt()];
+            this.alreadyKnownRecipes = new String[helper.readVarInt(in)];
             for (int i = 0; i < this.alreadyKnownRecipes.length; i++) {
-                this.alreadyKnownRecipes[i] = in.readString();
+                this.alreadyKnownRecipes[i] = helper.readString(in);
             }
         } else {
             this.alreadyKnownRecipes = null;
         }
 
-        this.recipes = new String[in.readVarInt()];
+        this.recipes = new String[helper.readVarInt(in)];
         for (int i = 0; i < this.recipes.length; i++) {
-            this.recipes[i] = in.readString();
+            this.recipes[i] = helper.readString(in);
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(MagicValues.value(Integer.class, this.action));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
 
         out.writeBoolean(this.openCraftingBook);
         out.writeBoolean(this.activateCraftingFiltering);
@@ -113,15 +113,15 @@ public class ClientboundRecipePacket implements Packet {
         out.writeBoolean(this.activateSmokingFiltering);
 
         if (this.action == UnlockRecipesAction.INIT) {
-            out.writeVarInt(this.alreadyKnownRecipes.length);
+            helper.writeVarInt(out, this.alreadyKnownRecipes.length);
             for (String recipeId : this.alreadyKnownRecipes) {
-                out.writeString(recipeId);
+                helper.writeString(out, recipeId);
             }
         }
 
-        out.writeVarInt(this.recipes.length);
+        helper.writeVarInt(out, this.recipes.length);
         for (String recipeId : this.recipes) {
-            out.writeString(recipeId);
+            helper.writeString(out, recipeId);
         }
     }
 }

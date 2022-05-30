@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.inventory.AdvancementTabAction;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @ToString
 @EqualsAndHashCode
-public class ServerboundSeenAdvancementsPacket implements Packet {
+public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     @Getter
     private final @NonNull AdvancementTabAction action;
     private final String tabId;
@@ -41,14 +41,14 @@ public class ServerboundSeenAdvancementsPacket implements Packet {
         return this.tabId;
     }
 
-    public ServerboundSeenAdvancementsPacket(NetInput in) throws IOException {
-        this.action = MagicValues.key(AdvancementTabAction.class, in.readVarInt());
+    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.action = MagicValues.key(AdvancementTabAction.class, helper.readVarInt(in));
         switch (this.action) {
             case CLOSED_SCREEN:
                 this.tabId = null;
                 break;
             case OPENED_TAB:
-                this.tabId = in.readString();
+                this.tabId = helper.readString(in);
                 break;
             default:
                 throw new IOException("Unknown advancement tab action: " + this.action);
@@ -56,13 +56,13 @@ public class ServerboundSeenAdvancementsPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(MagicValues.value(Integer.class, this.action));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
         switch (this.action) {
             case CLOSED_SCREEN:
                 break;
             case OPENED_TAB:
-                out.writeString(this.tabId);
+                helper.writeString(out, this.tabId);
                 break;
             default:
                 throw new IOException("Unknown advancement tab action: " + this.action);

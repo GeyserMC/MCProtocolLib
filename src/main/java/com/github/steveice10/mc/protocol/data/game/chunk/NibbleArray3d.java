@@ -1,12 +1,8 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-
-import java.io.IOException;
 
 @Data
 @AllArgsConstructor
@@ -15,14 +11,6 @@ public class NibbleArray3d {
 
     public NibbleArray3d(int size) {
         this(new byte[size >> 1]);
-    }
-
-    public NibbleArray3d(@NonNull NetInput in, int size) throws IOException {
-        this(in.readBytes(size));
-    }
-
-    public void write(@NonNull NetOutput out) throws IOException {
-        out.writeBytes(this.data);
     }
 
     public int get(int x, int y, int z) {

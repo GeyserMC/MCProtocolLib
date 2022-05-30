@@ -1,9 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
-import com.github.steveice10.packetlib.io.NetInput;
 import lombok.Getter;
-
-import java.io.IOException;
 
 /**
  * "Custom" statistics in Minecraft that don't belong to any
@@ -99,11 +96,7 @@ public enum CustomStatistic implements Statistic {
         this.format = format;
     }
 
-    public static CustomStatistic read(NetInput in) throws IOException {
-        return in.readEnum(VALUES);
-    }
-
-    public static CustomStatistic fromId(int id) {
+    public static CustomStatistic from(int id) {
         return VALUES[id];
     }
 }

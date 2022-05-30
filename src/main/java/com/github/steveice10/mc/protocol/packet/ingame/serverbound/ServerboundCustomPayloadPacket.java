@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -13,18 +13,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundCustomPayloadPacket implements Packet {
+public class ServerboundCustomPayloadPacket implements MinecraftPacket {
     private final @NonNull String channel;
     private final @NonNull byte data[];
 
-    public ServerboundCustomPayloadPacket(NetInput in) throws IOException {
-        this.channel = in.readString();
-        this.data = in.readBytes(in.available());
+    public ServerboundCustomPayloadPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.channel = helper.readString(in);
+        this.data = helper.readByteArray(in, ByteBuf::readableBytes);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.channel);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.channel);
         out.writeBytes(this.data);
     }
 }

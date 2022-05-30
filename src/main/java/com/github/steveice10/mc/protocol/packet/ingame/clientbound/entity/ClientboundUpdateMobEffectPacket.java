@@ -1,11 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
-import com.github.steveice10.mc.protocol.data.game.NBT;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -17,7 +16,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundUpdateMobEffectPacket implements Packet {
+public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private static final int FLAG_AMBIENT = 0x01;
     private static final int FLAG_SHOW_PARTICLES = 0x02;
 
@@ -29,28 +28,28 @@ public class ClientboundUpdateMobEffectPacket implements Packet {
     private final boolean showParticles;
     private final @Nullable CompoundTag factorData;
 
-    public ClientboundUpdateMobEffectPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
-        this.effect = Effect.fromNetworkId(in.readVarInt());
+    public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
+        this.effect = helper.readEffect(in);
         this.amplifier = in.readByte();
-        this.duration = in.readVarInt();
+        this.duration = helper.readVarInt(in);
 
         int flags = in.readByte();
         this.ambient = (flags & FLAG_AMBIENT) != 0;
         this.showParticles = (flags & FLAG_SHOW_PARTICLES) != 0;
         if (in.readBoolean()) {
-            this.factorData = NBT.read(in);
+            this.factorData = helper.readTag(in);
         } else {
             this.factorData = null;
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        out.writeVarInt(Effect.toNetworkId(this.effect));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeEffect(out, this.effect);
         out.writeByte(this.amplifier);
-        out.writeVarInt(this.duration);
+        helper.writeVarInt(out, this.duration);
 
         int flags = 0;
         if (this.ambient) {
@@ -64,7 +63,7 @@ public class ClientboundUpdateMobEffectPacket implements Packet {
         out.writeByte(flags);
         out.writeBoolean(this.factorData != null);
         if (this.factorData != null) {
-            NBT.write(out, this.factorData);
+            helper.writeTag(out, this.factorData);
         }
     }
 }

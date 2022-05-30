@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,22 +12,22 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSelectAdvancementsTabPacket implements Packet {
+public class ClientboundSelectAdvancementsTabPacket implements MinecraftPacket {
     private final String tabId;
 
-    public ClientboundSelectAdvancementsTabPacket(NetInput in) throws IOException {
+    public ClientboundSelectAdvancementsTabPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         if (in.readBoolean()) {
-            this.tabId = in.readString();
+            this.tabId = helper.readString(in);
         } else {
             this.tabId = null;
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         if (this.tabId != null) {
             out.writeBoolean(true);
-            out.writeString(this.tabId);
+            helper.writeString(out, this.tabId);
         } else {
             out.writeBoolean(false);
         }

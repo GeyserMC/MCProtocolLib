@@ -1,10 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +14,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundSetJigsawBlockPacket implements Packet {
+public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
     private final @NonNull String name;
     private final @NonNull String target;
@@ -23,22 +22,22 @@ public class ServerboundSetJigsawBlockPacket implements Packet {
     private final @NonNull String finalState;
     private final @NonNull String jointType;
 
-    public ServerboundSetJigsawBlockPacket(NetInput in) throws IOException {
-        this.position = Position.read(in);
-        this.name = in.readString();
-        this.target = in.readString();
-        this.pool = in.readString();
-        this.finalState = in.readString();
-        this.jointType = in.readString();
+    public ServerboundSetJigsawBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.position = helper.readPosition(in);
+        this.name = helper.readString(in);
+        this.target = helper.readString(in);
+        this.pool = helper.readString(in);
+        this.finalState = helper.readString(in);
+        this.jointType = helper.readString(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        Position.write(out, this.position);
-        out.writeString(this.name);
-        out.writeString(this.target);
-        out.writeString(this.pool);
-        out.writeString(this.finalState);
-        out.writeString(this.jointType);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writePosition(out, this.position);
+        helper.writeString(out, this.name);
+        helper.writeString(out, this.target);
+        helper.writeString(out, this.pool);
+        helper.writeString(out, this.finalState);
+        helper.writeString(out, this.jointType);
     }
 }

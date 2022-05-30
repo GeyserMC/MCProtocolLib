@@ -10,5 +10,9 @@ public enum MessageType {
     EMOTE_COMMAND,
     TELLRAW_COMMAND;
 
-    public static final MessageType[] VALUES = values();
+    private static final MessageType[] VALUES = values();
+
+    public static MessageType from(int id) {
+        return VALUES[id];
+    }
 }

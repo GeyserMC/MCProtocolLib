@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 
@@ -20,32 +20,32 @@ public class BooleanMetadataType extends MetadataType<Boolean> {
     }
 
     @Override
-    public EntityMetadata<Boolean, BooleanMetadataType> readMetadata(NetInput input, int id) throws IOException {
+    public EntityMetadata<Boolean, BooleanMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) throws IOException {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 
-    public void writeMetadataPrimitive(NetOutput output, boolean value) throws IOException {
+    public void writeMetadataPrimitive(ByteBuf output, boolean value) throws IOException {
        this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface
-    public interface BooleanReader extends Reader<Boolean> {
-        boolean readPrimitive(NetInput input) throws IOException;
+    public interface BooleanReader extends BasicReader<Boolean> {
+        boolean readPrimitive(ByteBuf input) throws IOException;
 
         @Deprecated
         @Override
-        default Boolean read(NetInput input) throws IOException {
+        default Boolean read(ByteBuf input) throws IOException {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
-    public interface BooleanWriter extends Writer<Boolean> {
-        void writePrimitive(NetOutput output, boolean value) throws IOException;
+    public interface BooleanWriter extends BasicWriter<Boolean> {
+        void writePrimitive(ByteBuf output, boolean value) throws IOException;
 
         @Deprecated
         @Override
-        default void write(NetOutput output, Boolean value) throws IOException {
+        default void write(ByteBuf output, Boolean value) throws IOException {
             this.writePrimitive(output, value);
         }
     }

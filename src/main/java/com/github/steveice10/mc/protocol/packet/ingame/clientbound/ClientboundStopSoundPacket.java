@@ -1,13 +1,13 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -18,23 +18,23 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundStopSoundPacket implements Packet {
+public class ClientboundStopSoundPacket implements MinecraftPacket {
     private static final int FLAG_CATEGORY = 0x01;
     private static final int FLAG_SOUND = 0x02;
 
     private final @Nullable SoundCategory category;
     private final @Nullable Sound sound;
 
-    public ClientboundStopSoundPacket(NetInput in) throws IOException {
+    public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         int flags = in.readByte();
         if ((flags & FLAG_CATEGORY) != 0) {
-            this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
+            this.category = MagicValues.key(SoundCategory.class, helper.readVarInt(in));
         } else {
             this.category = null;
         }
 
         if ((flags & FLAG_SOUND) != 0) {
-            String value = in.readString();
+            String value = helper.readString(in);
             Sound sound = BuiltinSound.NAME_TO_SOUND.get(value);
             if (sound != null) {
                 this.sound = sound;
@@ -47,7 +47,7 @@ public class ClientboundStopSoundPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         int flags = 0;
         if (this.category != null) {
             flags |= FLAG_CATEGORY;
@@ -70,7 +70,7 @@ public class ClientboundStopSoundPacket implements Packet {
                 value = ((BuiltinSound) this.sound).getName();
             }
 
-            out.writeString(value);
+            helper.writeString(out, value);
         }
     }
 }

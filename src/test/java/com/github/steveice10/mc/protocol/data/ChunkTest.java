@@ -1,16 +1,18 @@
 package com.github.steveice10.mc.protocol.data;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
-import com.github.steveice10.packetlib.io.stream.StreamNetInput;
-import com.github.steveice10.packetlib.io.stream.StreamNetOutput;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import org.cloudburstmc.protocol.common.util.TypeMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,14 +38,13 @@ public class ChunkTest {
 
     @Test
     public void testChunkSectionEncoding() throws IOException {
+        MinecraftCodecHelper helper = new MinecraftCodecHelper(TypeMap.empty(LevelEvent.class));
         for (ChunkSection section : chunkSectionsToTest) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            StreamNetOutput out = new StreamNetOutput(stream);
-            ChunkSection.write(out, section, 4);
-            StreamNetInput in = new StreamNetInput(new ByteArrayInputStream(stream.toByteArray()));
+            ByteBuf buf = Unpooled.buffer();
+            helper.writeChunkSection(buf, section);
             ChunkSection decoded;
             try {
-                decoded = ChunkSection.read(in, 4);
+                decoded = helper.readChunkSection(buf, 4);
             } catch (Exception e) {
                 System.out.println(section);
                 e.printStackTrace();

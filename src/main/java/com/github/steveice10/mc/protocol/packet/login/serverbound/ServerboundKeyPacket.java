@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.login.serverbound;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
@@ -19,7 +19,7 @@ import java.security.PublicKey;
 
 @ToString
 @EqualsAndHashCode
-public class ServerboundKeyPacket implements Packet {
+public class ServerboundKeyPacket implements MinecraftPacket {
     private final @NonNull byte[] sharedKey;
     private final @Nullable byte[] verifyToken;
     private final @Nullable Long salt;
@@ -47,31 +47,28 @@ public class ServerboundKeyPacket implements Packet {
         return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.verifyToken);
     }
 
-    public ServerboundKeyPacket(NetInput in) throws IOException {
-        this.sharedKey = in.readBytes(in.readVarInt());
+    public ServerboundKeyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.sharedKey = helper.readByteArray(in);
         if (in.readBoolean()) {
-            this.verifyToken = in.readBytes(in.readVarInt());
+            this.verifyToken = helper.readByteArray(in);
             this.salt = null;
             this.signature = null;
         } else {
             this.salt = in.readLong();
-            this.signature = in.readBytes(in.readVarInt());
+            this.signature = helper.readByteArray(in);
             this.verifyToken = null;
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.sharedKey.length);
-        out.writeBytes(this.sharedKey);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeByteArray(out, this.sharedKey);
         out.writeBoolean(this.verifyToken != null);
         if (this.verifyToken != null) {
-            out.writeVarInt(this.verifyToken.length);
-            out.writeBytes(this.verifyToken);
+            helper.writeByteArray(out, this.verifyToken);
         } else {
             out.writeLong(this.salt);
-            out.writeVarInt(this.signature.length);
-            out.writeBytes(this.signature);
+            helper.writeByteArray(out, this.signature);
         }
     }
 

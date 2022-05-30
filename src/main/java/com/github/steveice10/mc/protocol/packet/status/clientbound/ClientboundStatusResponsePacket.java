@@ -2,17 +2,17 @@ package com.github.steveice10.mc.protocol.packet.status.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.util.Base64;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -25,11 +25,11 @@ import java.nio.charset.StandardCharsets;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundStatusResponsePacket implements Packet {
+public class ClientboundStatusResponsePacket implements MinecraftPacket {
     private final @NonNull ServerStatusInfo info;
 
-    public ClientboundStatusResponsePacket(NetInput in) throws IOException {
-        JsonObject obj = new Gson().fromJson(in.readString(), JsonObject.class);
+    public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        JsonObject obj = new Gson().fromJson(helper.readString(in), JsonObject.class);
         JsonObject ver = obj.get("version").getAsJsonObject();
         VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
         JsonObject plrs = obj.get("players").getAsJsonObject();
@@ -58,7 +58,7 @@ public class ClientboundStatusResponsePacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         JsonObject obj = new JsonObject();
         JsonObject ver = new JsonObject();
         ver.addProperty("name", this.info.getVersionInfo().getVersionName());
@@ -86,7 +86,7 @@ public class ClientboundStatusResponsePacket implements Packet {
         }
         obj.addProperty("previewsChat", this.info.isPreviewsChat());
 
-        out.writeString(obj.toString());
+        helper.writeString(out, obj.toString());
     }
 
     @Override

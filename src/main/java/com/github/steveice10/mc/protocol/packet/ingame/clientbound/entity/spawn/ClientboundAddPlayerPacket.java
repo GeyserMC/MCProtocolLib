@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundAddPlayerPacket implements Packet {
+public class ClientboundAddPlayerPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull UUID uuid;
     private final double x;
@@ -23,9 +23,9 @@ public class ClientboundAddPlayerPacket implements Packet {
     private final float yaw;
     private final float pitch;
 
-    public ClientboundAddPlayerPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
-        this.uuid = in.readUUID();
+    public ClientboundAddPlayerPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
+        this.uuid = helper.readUUID(in);
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -34,9 +34,9 @@ public class ClientboundAddPlayerPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        out.writeUUID(this.uuid);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeUUID(out, this.uuid);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

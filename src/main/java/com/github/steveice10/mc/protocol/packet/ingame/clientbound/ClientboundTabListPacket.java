@@ -1,9 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
-import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,18 +14,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundTabListPacket implements Packet {
+public class ClientboundTabListPacket implements MinecraftPacket {
     private final @NonNull Component header;
     private final @NonNull Component footer;
 
-    public ClientboundTabListPacket(NetInput in) throws IOException {
-        this.header = DefaultComponentSerializer.get().deserialize(in.readString());
-        this.footer = DefaultComponentSerializer.get().deserialize(in.readString());
+    public ClientboundTabListPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.header = helper.readComponent(in);
+        this.footer = helper.readComponent(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(DefaultComponentSerializer.get().serialize(this.header));
-        out.writeString(DefaultComponentSerializer.get().serialize(this.footer));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeComponent(out, this.header);
+        helper.writeComponent(out, this.footer);
     }
 }

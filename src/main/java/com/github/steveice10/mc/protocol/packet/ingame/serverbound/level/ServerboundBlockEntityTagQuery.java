@@ -1,10 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,18 +14,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundBlockEntityTagQuery implements Packet {
+public class ServerboundBlockEntityTagQuery implements MinecraftPacket {
     private final int transactionId;
     private final @NonNull Vector3i position;
 
-    public ServerboundBlockEntityTagQuery(NetInput in) throws IOException {
-        this.transactionId = in.readVarInt();
-        this.position = Position.read(in);
+    public ServerboundBlockEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.transactionId = helper.readVarInt(in);
+        this.position = helper.readPosition(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.transactionId);
-        Position.write(out, this.position);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.transactionId);
+        helper.writePosition(out, this.position);
     }
 }
