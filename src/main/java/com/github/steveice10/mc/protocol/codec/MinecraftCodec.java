@@ -190,7 +190,6 @@ public class MinecraftCodec {
             .insert(1013, LevelEvent.BLOCK_WOODEN_TRAPDOOR_CLOSE)
             .insert(1014, LevelEvent.BLOCK_FENCE_GATE_CLOSE)
             .insert(1015, LevelEvent.ENTITY_GHAST_WARN)
-            // Copilot: Use the id parameter inside of LevelEvent as the key
             .insert(1016, LevelEvent.ENTITY_GHAST_SHOOT)
             .insert(1017, LevelEvent.ENTITY_ENDERDRAGON_SHOOT)
             .insert(1018, LevelEvent.ENTITY_BLAZE_SHOOT)
