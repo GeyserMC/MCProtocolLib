@@ -14,14 +14,10 @@ import java.util.List;
 
 public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     private final Session session;
-    private final PacketProtocol packetProtocol;
-    private final PacketCodecHelper codecHelper;
     private final boolean client;
 
     public TcpPacketCodec(Session session, boolean client) {
         this.session = session;
-        this.packetProtocol = session.getPacketProtocol();
-        this.codecHelper = session.getCodecHelper();
         this.client = client;
     }
 
@@ -30,12 +26,14 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) throws Exception {
         int initial = buf.writerIndex();
 
+        PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
-            int packetId = this.client ? this.packetProtocol.getServerboundId(packet) : this.packetProtocol.getClientboundId(packet);
-            PacketDefinition definition = this.client ? this.packetProtocol.getServerboundDefinition(packetId) : this.packetProtocol.getClientboundDefinition(packetId);
+            int packetId = this.client ? packetProtocol.getServerboundId(packet) : packetProtocol.getClientboundId(packet);
+            PacketDefinition definition = this.client ? packetProtocol.getServerboundDefinition(packetId) : packetProtocol.getClientboundDefinition(packetId);
             
-            this.packetProtocol.getPacketHeader().writePacketId(buf, this.codecHelper, packetId);
-            definition.getSerializer().serialize(buf, this.codecHelper, packet);
+            packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
+            definition.getSerializer().serialize(buf, codecHelper, packet);
         } catch (Throwable t) {
             // Reset writer index to make sure incomplete data is not written out.
             buf.writerIndex(initial);
@@ -52,14 +50,16 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         int initial = buf.readerIndex();
 
+        PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
-            int id = this.packetProtocol.getPacketHeader().readPacketId(buf, this.codecHelper);
+            int id = packetProtocol.getPacketHeader().readPacketId(buf, codecHelper);
             if (id == -1) {
                 buf.readerIndex(initial);
                 return;
             }
 
-            Packet packet = this.client ? this.packetProtocol.createClientboundPacket(id, buf, this.codecHelper) : this.packetProtocol.createServerboundPacket(id, buf, this.codecHelper);
+            Packet packet = this.client ? packetProtocol.createClientboundPacket(id, buf, codecHelper) : packetProtocol.createServerboundPacket(id, buf, codecHelper);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");

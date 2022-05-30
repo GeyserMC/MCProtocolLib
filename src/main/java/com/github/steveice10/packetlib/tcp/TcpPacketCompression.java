@@ -16,7 +16,6 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     private static final int MAX_COMPRESSED_SIZE = 2097152;
 
     private final Session session;
-    private final PacketCodecHelper codecHelper;
     private final Deflater deflater = new Deflater();
     private final Inflater inflater = new Inflater();
     private final byte[] buf = new byte[8192];
@@ -24,7 +23,6 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
 
     public TcpPacketCompression(Session session, boolean validateDecompression) {
         this.session = session;
-        this.codecHelper = session.getCodecHelper();
         this.validateDecompression = validateDecompression;
     }
 
@@ -40,12 +38,12 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
         int readable = in.readableBytes();
         if(readable < this.session.getCompressionThreshold()) {
-            this.codecHelper.writeVarInt(out, 0);
+            this.session.getCodecHelper().writeVarInt(out, 0);
             out.writeBytes(in);
         } else {
             byte[] bytes = new byte[readable];
             in.readBytes(bytes);
-            this.codecHelper.writeVarInt(out, bytes.length);
+            this.session.getCodecHelper().writeVarInt(out, bytes.length);
             this.deflater.setInput(bytes, 0, readable);
             this.deflater.finish();
             while(!this.deflater.finished()) {
@@ -60,7 +58,7 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         if(buf.readableBytes() != 0) {
-            int size = this.codecHelper.readVarInt(buf);
+            int size = this.session.getCodecHelper().readVarInt(buf);
             if(size == 0) {
                 out.add(buf.readBytes(buf.readableBytes()));
             } else {
