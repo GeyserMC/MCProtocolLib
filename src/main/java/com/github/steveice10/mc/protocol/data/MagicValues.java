@@ -60,7 +60,6 @@ import com.github.steveice10.mc.protocol.data.game.level.notify.EnterCreditsValu
 import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
 import com.github.steveice10.mc.protocol.data.game.level.notify.RespawnScreenValue;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSourceType;
-import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
@@ -616,17 +615,6 @@ public class MagicValues {
         register(StringProperties.SINGLE_WORD, 0);
         register(StringProperties.QUOTABLE_PHRASE, 1);
         register(StringProperties.GREEDY_PHRASE, 2);
-
-        register(SoundCategory.MASTER, 0);
-        register(SoundCategory.MUSIC, 1);
-        register(SoundCategory.RECORD, 2);
-        register(SoundCategory.WEATHER, 3);
-        register(SoundCategory.BLOCK, 4);
-        register(SoundCategory.HOSTILE, 5);
-        register(SoundCategory.NEUTRAL, 6);
-        register(SoundCategory.PLAYER, 7);
-        register(SoundCategory.AMBIENT, 8);
-        register(SoundCategory.VOICE, 9);
 
         register(PositionSourceType.BLOCK, "minecraft:block");
         register(PositionSourceType.ENTITY, "minecraft:entity");

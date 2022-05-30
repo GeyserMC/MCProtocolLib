@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
@@ -28,7 +27,7 @@ public class ClientboundStopSoundPacket implements Packet {
     public ClientboundStopSoundPacket(NetInput in) throws IOException {
         int flags = in.readByte();
         if ((flags & FLAG_CATEGORY) != 0) {
-            this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
+            this.category = SoundCategory.read(in);
         } else {
             this.category = null;
         }
@@ -59,7 +58,7 @@ public class ClientboundStopSoundPacket implements Packet {
 
         out.writeByte(flags);
         if (this.category != null) {
-            out.writeByte(MagicValues.value(Integer.class, this.category));
+            out.writeByte(this.category.ordinal());
         }
 
         if (this.sound != null) {

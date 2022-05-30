@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.packetlib.io.NetInput;
@@ -28,7 +27,7 @@ public class ClientboundSoundPacket implements Packet {
 
     public ClientboundSoundPacket(NetInput in) throws IOException {
         this.sound = BuiltinSound.VALUES[in.readVarInt()];
-        this.category = MagicValues.key(SoundCategory.class, in.readVarInt());
+        this.category = SoundCategory.read(in);
         this.x = in.readInt() / 8D;
         this.y = in.readInt() / 8D;
         this.z = in.readInt() / 8D;
@@ -40,7 +39,7 @@ public class ClientboundSoundPacket implements Packet {
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeVarInt(this.sound.ordinal());
-        out.writeVarInt(MagicValues.value(Integer.class, this.category));
+        out.writeVarInt(this.category.ordinal());
         out.writeInt((int) (this.x * 8));
         out.writeInt((int) (this.y * 8));
         out.writeInt((int) (this.z * 8));

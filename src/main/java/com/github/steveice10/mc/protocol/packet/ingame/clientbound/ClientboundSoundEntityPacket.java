@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -16,16 +16,16 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundSoundEntityPacket implements Packet {
-    private final int soundId;
-    private final @NonNull SoundCategory soundCategory;
+    private final @NonNull BuiltinSound sound;
+    private final @NonNull SoundCategory category;
     private final int entityId;
     private final float volume;
     private final float pitch;
     private final long seed;
 
     public ClientboundSoundEntityPacket(NetInput in) throws IOException {
-        this.soundId = in.readVarInt();
-        this.soundCategory = MagicValues.key(SoundCategory.class, in.readVarInt());
+        this.sound = BuiltinSound.VALUES[in.readVarInt()];
+        this.category = SoundCategory.read(in);
         this.entityId = in.readVarInt();
         this.volume = in.readFloat();
         this.pitch = in.readFloat();
@@ -34,8 +34,8 @@ public class ClientboundSoundEntityPacket implements Packet {
 
     @Override
     public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.soundId);
-        out.writeVarInt(MagicValues.value(Integer.class, this.soundCategory));
+        out.writeVarInt(this.sound.ordinal());
+        out.writeVarInt(this.category.ordinal());
         out.writeVarInt(this.entityId);
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
