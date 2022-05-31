@@ -1,11 +1,16 @@
 package com.github.steveice10.mc.protocol.data.game.entity;
 
+import com.github.steveice10.packetlib.io.NetInput;
+
+import java.io.IOException;
+
 public enum EntityEvent {
     TIPPED_ARROW_EMIT_PARTICLES,
     RABBIT_JUMP_OR_MINECART_SPAWNER_DELAY_RESET,
     LIVING_HURT,
     LIVING_DEATH,
     ATTACK,
+    STOP_ATTACK, // Unused
     TAMEABLE_TAMING_FAILED,
     TAMEABLE_TAMING_SUCCEEDED,
     WOLF_SHAKE_WATER,
@@ -61,5 +66,16 @@ public enum EntityEvent {
     GOAT_LOWERING_HEAD,
     GOAT_STOP_LOWERING_HEAD,
     MAKE_POOF_PARTICLES,
-    WARDEN_RECEIVE_SIGNAL
+    WARDEN_RECEIVE_SIGNAL,
+    WARDEN_SONIC_BOOM;
+
+    private static final EntityEvent[] VALUES = values();
+
+    public static EntityEvent read(NetInput in) throws IOException {
+        return VALUES[in.readByte()];
+    }
+
+    public static EntityEvent fromId(int id) {
+        return VALUES[id];
+    }
 }

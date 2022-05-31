@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.packetlib.io.NetInput;
 import com.github.steveice10.packetlib.io.NetOutput;
@@ -21,12 +20,12 @@ public class ClientboundEntityEventPacket implements Packet {
 
     public ClientboundEntityEventPacket(NetInput in) throws IOException {
         this.entityId = in.readInt();
-        this.status = MagicValues.key(EntityEvent.class, in.readByte());
+        this.status = EntityEvent.read(in);
     }
 
     @Override
     public void write(NetOutput out) throws IOException {
         out.writeInt(this.entityId);
-        out.writeByte(MagicValues.value(Integer.class, this.status));
+        out.writeByte(this.status.ordinal());
     }
 }

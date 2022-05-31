@@ -12,7 +12,6 @@ import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
 import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
-import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
@@ -107,7 +106,6 @@ public class MagicValuesTest {
         this.register(GameMode.class, Integer.class);
         this.register(Difficulty.class, Integer.class);
         this.register(Animation.class, Integer.class);
-        this.register(EntityEvent.class, Integer.class);
         this.register(PositionElement.class, Integer.class);
         this.register(MinecartType.class, Integer.class);
         this.register(ScoreboardPosition.class, Integer.class);
