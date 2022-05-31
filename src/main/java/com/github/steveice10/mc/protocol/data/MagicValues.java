@@ -179,7 +179,7 @@ public class MagicValues {
         register(EntityEvent.RABBIT_JUMP_OR_MINECART_SPAWNER_DELAY_RESET, 1);
         register(EntityEvent.LIVING_HURT, 2);
         register(EntityEvent.LIVING_DEATH, 3);
-        register(EntityEvent.IRON_GOLEM_ATTACK, 4);
+        register(EntityEvent.ATTACK, 4);
         register(EntityEvent.TAMEABLE_TAMING_FAILED, 6);
         register(EntityEvent.TAMEABLE_TAMING_SUCCEEDED, 7);
         register(EntityEvent.WOLF_SHAKE_WATER, 8);
