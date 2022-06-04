@@ -14,7 +14,8 @@ import com.github.steveice10.mc.protocol.data.game.inventory.MoveToHotbarAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ShiftClickItemAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.SpreadItemAction;
 import io.netty.buffer.ByteBuf;
-import io.netty.util.collection.IntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -34,9 +35,13 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     private final ContainerActionType action;
     private final ContainerAction param;
     private final ItemStack carriedItem;
-    private final @NonNull Map<Integer, ItemStack> changedSlots;
+    private final @NonNull Int2ObjectMap<ItemStack> changedSlots;
 
     public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
+        this(containerId, stateId, slot, action, param, carriedItem, new Int2ObjectOpenHashMap<>(changedSlots));
+    }
+
+    public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Int2ObjectMap<ItemStack> changedSlots) {
         if ((param == DropItemAction.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemAction.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
@@ -77,7 +82,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         }
 
         int changedItemsSize = helper.readVarInt(in);
-        this.changedSlots = new IntObjectHashMap<>(changedItemsSize);
+        this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
             int key = in.readShort();
             ItemStack value = helper.readItemStack(in);
@@ -102,8 +107,8 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         out.writeByte(MagicValues.value(Integer.class, this.action));
 
         helper.writeVarInt(out, this.changedSlots.size());
-        for (Map.Entry<Integer, ItemStack> pair : this.changedSlots.entrySet()) {
-            out.writeShort(pair.getKey());
+        for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {
+            out.writeShort(pair.getIntKey());
             helper.writeItemStack(out, pair.getValue());
         }
 

@@ -2,11 +2,10 @@ package com.github.steveice10.mc.protocol.packet;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
 import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.cloudburstmc.protocol.common.util.TypeMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -22,7 +21,7 @@ public abstract class PacketTest {
 
     @Test
     public void testPackets() throws Exception {
-        MinecraftCodecHelper helper = new MinecraftCodecHelper(TypeMap.empty(LevelEvent.class));
+        MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap());
         for (MinecraftPacket packet : this.packets) {
             ByteBuf buf = Unpooled.buffer();
             packet.serialize(buf, helper);
