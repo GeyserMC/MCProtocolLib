@@ -6,6 +6,8 @@ import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.codec.PacketDefinition;
 import com.github.steveice10.packetlib.codec.PacketSerializer;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,8 +19,8 @@ import java.util.Map;
  * All implementations must have a constructor that takes in a {@link ByteBuf}.
  */
 public abstract class PacketProtocol {
-    private final Map<Integer, PacketDefinition<? extends Packet, ?>> serverbound = new HashMap<>();
-    private final Map<Integer, PacketDefinition<? extends Packet, ?>> clientbound = new HashMap<>();
+    private final Int2ObjectMap<PacketDefinition<? extends Packet, ?>> serverbound = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<PacketDefinition<? extends Packet, ?>> clientbound = new Int2ObjectOpenHashMap<>();
 
     private final Map<Class<? extends Packet>, Integer> clientboundIds = new IdentityHashMap<>();
     private final Map<Class<? extends Packet>, Integer> serverboundIds = new IdentityHashMap<>();
