@@ -32,12 +32,9 @@ import com.github.steveice10.packetlib.codec.BasePacketCodecHelper;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
-import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
-import lombok.AccessLevel;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import org.cloudburstmc.protocol.common.util.TypeMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -58,7 +55,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private static final int POSITION_Y_SHIFT = 0xFFF;
     private static final int POSITION_WRITE_SHIFT = 0x3FFFFFF;
 
-    private final TypeMap<LevelEvent> levelEvents;
+    private final Int2ObjectMap<LevelEvent> levelEvents;
 
     public UUID readUUID(ByteBuf buf) {
         return new UUID(buf.readLong(), buf.readLong());
@@ -548,11 +545,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public LevelEvent readLevelEvent(ByteBuf buf) {
-        return this.levelEvents.getType(this.readVarInt(buf));
+        return this.levelEvents.get(this.readVarInt(buf));
     }
 
     public void writeLevelEvent(ByteBuf buf, LevelEvent event) {
-        this.writeVarInt(buf, this.levelEvents.getId(event));
+        this.writeVarInt(buf, event.getId());
     }
 
     public StatisticCategory readStatisticCategory(ByteBuf buf) {
