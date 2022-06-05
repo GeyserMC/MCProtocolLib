@@ -3,8 +3,7 @@ package com.github.steveice10.mc.protocol.data.game.level.block;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @Data
 @AllArgsConstructor

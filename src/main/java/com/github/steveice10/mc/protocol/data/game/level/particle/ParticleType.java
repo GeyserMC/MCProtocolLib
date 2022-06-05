@@ -1,9 +1,5 @@
 package com.github.steveice10.mc.protocol.data.game.level.particle;
 
-import com.github.steveice10.packetlib.io.NetInput;
-
-import java.io.IOException;
-
 public enum ParticleType {
     AMBIENT_ENTITY_EFFECT,
     ANGRY_VILLAGER,
@@ -101,11 +97,7 @@ public enum ParticleType {
 
     private static final ParticleType[] VALUES = values();
 
-    public static ParticleType read(NetInput in) throws IOException {
-        return in.readEnum(VALUES);
-    }
-
-    public static ParticleType fromId(int id) {
+    public static ParticleType from(int id) {
         return VALUES[id];
     }
 }

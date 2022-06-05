@@ -1,11 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
-import com.github.steveice10.mc.protocol.data.game.Identifier;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
 import com.nukkitx.math.vector.Vector3i;
-
-import java.io.IOException;
 
 public class GlobalPos {
     private final String dimension;
@@ -34,16 +29,5 @@ public class GlobalPos {
 
     public int getZ() {
         return position.getZ();
-    }
-
-    public static GlobalPos read(NetInput in) throws IOException {
-        String dimension = Identifier.formalize(in.readString());
-        Vector3i pos = Position.read(in);
-        return new GlobalPos(dimension, pos);
-    }
-
-    public static void write(NetOutput out, GlobalPos pos) throws IOException {
-        out.writeString(pos.getDimension());
-        Position.write(out, pos.getPosition());
     }
 }

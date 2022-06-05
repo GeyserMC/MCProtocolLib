@@ -1,10 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,21 +14,21 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundJigsawGeneratePacket implements Packet {
+public class ServerboundJigsawGeneratePacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
     private final int levels;
     private final boolean keepJigsaws;
 
-    public ServerboundJigsawGeneratePacket(NetInput in) throws IOException {
-        this.position = Position.read(in);
-        this.levels = in.readVarInt();
+    public ServerboundJigsawGeneratePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.position = helper.readPosition(in);
+        this.levels = helper.readVarInt(in);
         this.keepJigsaws = in.readBoolean();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        Position.write(out, this.position);
-        out.writeVarInt(this.levels);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writePosition(out, this.position);
+        helper.writeVarInt(out, this.levels);
         out.writeBoolean(this.keepJigsaws);
     }
 }

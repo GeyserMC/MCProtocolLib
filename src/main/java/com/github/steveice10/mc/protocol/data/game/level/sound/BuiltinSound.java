@@ -1335,17 +1335,11 @@ public enum BuiltinSound implements Sound {
     private final @NonNull String name;
 
     /**
-     * For grabbing when the CustomSoundPacket is sent.
-     */
-    public static final Map<String, BuiltinSound> NAME_TO_SOUND = new HashMap<>();
-    /**
      * For grabbing when the SoundPacket is sent.
      */
-    public static final BuiltinSound[] VALUES = values();
+    private static final BuiltinSound[] VALUES = values();
 
-    static {
-        for (BuiltinSound sound : VALUES) {
-            NAME_TO_SOUND.put(sound.name, sound);
-        }
+    public static BuiltinSound from(int id) {
+        return VALUES[id];
     }
 }

@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.handshake.serverbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,25 +15,25 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientIntentionPacket implements Packet {
+public class ClientIntentionPacket implements MinecraftPacket {
     private final int protocolVersion;
     private final @NonNull String hostname;
     private final int port;
     private final @NonNull HandshakeIntent intent;
 
-    public ClientIntentionPacket(NetInput in) throws IOException {
-        this.protocolVersion = in.readVarInt();
-        this.hostname = in.readString();
+    public ClientIntentionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.protocolVersion = helper.readVarInt(in);
+        this.hostname = helper.readString(in);
         this.port = in.readUnsignedShort();
-        this.intent = MagicValues.key(HandshakeIntent.class, in.readVarInt());
+        this.intent = MagicValues.key(HandshakeIntent.class, helper.readVarInt(in));
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.protocolVersion);
-        out.writeString(this.hostname);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.protocolVersion);
+        helper.writeString(out, this.hostname);
         out.writeShort(this.port);
-        out.writeVarInt(MagicValues.value(Integer.class, this.intent));
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.intent));
     }
 
     @Override

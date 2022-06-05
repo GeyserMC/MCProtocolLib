@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -13,15 +13,15 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundRecipeBookSeenRecipePacket implements Packet {
+public class ServerboundRecipeBookSeenRecipePacket implements MinecraftPacket {
     private final @NonNull String recipeId;
 
-    public ServerboundRecipeBookSeenRecipePacket(NetInput in) throws IOException {
-        this.recipeId = in.readString();
+    public ServerboundRecipeBookSeenRecipePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.recipeId = helper.readString(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.recipeId);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.recipeId);
     }
 }

@@ -1,6 +1,8 @@
 package com.github.steveice10.mc.protocol.codec;
 
 import com.github.steveice10.mc.protocol.data.ProtocolState;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
+import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundAwardStatsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundBossEventPacket;
@@ -169,11 +171,30 @@ import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundPo
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MinecraftCodec {
+    private static final Int2ObjectMap<LevelEvent> LEVEL_EVENTS = new Int2ObjectOpenHashMap<>();
+    private static final Map<String, BuiltinSound> SOUND_NAMES = new HashMap<>();
+
+    static {
+        for (LevelEvent levelEvent : LevelEvent.values()) {
+            LEVEL_EVENTS.put(levelEvent.getId(), levelEvent);
+        }
+
+        for (BuiltinSound sound : BuiltinSound.values()) {
+            SOUND_NAMES.put(sound.getName(), sound);
+        }
+    }
+
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 87)
-            .minecraftVersion("1.19-pre3")
+            .protocolVersion((1 << 30) | 91)
+            .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
+            .minecraftVersion("1.19-rc2")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(0x00, ClientIntentionPacket.class, ClientIntentionPacket::new)
             )

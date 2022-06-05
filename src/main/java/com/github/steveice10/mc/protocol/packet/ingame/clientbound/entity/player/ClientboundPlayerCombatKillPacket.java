@@ -1,9 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player;
 
-import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -14,21 +13,21 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundPlayerCombatKillPacket implements Packet {
+public class ClientboundPlayerCombatKillPacket implements MinecraftPacket {
     private final int playerId;
     private final int killerId;
     private final Component message;
 
-    public ClientboundPlayerCombatKillPacket(NetInput in) throws IOException {
-        this.playerId = in.readVarInt();
+    public ClientboundPlayerCombatKillPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.playerId = helper.readVarInt(in);
         this.killerId = in.readInt();
-        this.message = DefaultComponentSerializer.get().deserialize(in.readString());
+        this.message = helper.readComponent(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.playerId);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.playerId);
         out.writeInt(this.killerId);
-        out.writeString(DefaultComponentSerializer.get().serialize(this.message));
+        helper.writeComponent(out, this.message);
     }
 }

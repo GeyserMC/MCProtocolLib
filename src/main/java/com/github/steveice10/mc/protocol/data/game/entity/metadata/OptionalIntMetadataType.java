@@ -1,7 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.util.OptionalInt;
@@ -11,12 +11,12 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         super(OptionalIntReader.INSTANCE, OptionalIntWriter.INSTANCE, metadataFactory);
     }
 
-    public static class OptionalIntReader implements Reader<OptionalInt> {
+    public static class OptionalIntReader implements HelperReader<OptionalInt> {
         protected static final OptionalIntReader INSTANCE = new OptionalIntReader();
 
         @Override
-        public OptionalInt read(NetInput input) throws IOException {
-            int value = input.readVarInt();
+        public OptionalInt read(MinecraftCodecHelper helper, ByteBuf input) throws IOException {
+            int value = helper.readVarInt(input);
             if (value == 0) {
                 return OptionalInt.empty();
             }
@@ -25,15 +25,15 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         }
     }
 
-    public static class OptionalIntWriter implements Writer<OptionalInt> {
+    public static class OptionalIntWriter implements HelperWriter<OptionalInt> {
         protected static final OptionalIntWriter INSTANCE = new OptionalIntWriter();
 
         @Override
-        public void write(NetOutput output, OptionalInt value) throws IOException {
+        public void write(MinecraftCodecHelper helper, ByteBuf output, OptionalInt value) throws IOException {
             if (value.isPresent()) {
-                output.writeVarInt(value.getAsInt() + 1);
+                helper.writeVarInt(output, value.getAsInt() + 1);
             } else {
-                output.writeVarInt(0);
+                helper.writeVarInt(output, 0);
             }
         }
     }

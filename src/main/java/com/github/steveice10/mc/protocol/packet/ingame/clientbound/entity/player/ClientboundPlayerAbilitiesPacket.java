@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,7 +12,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundPlayerAbilitiesPacket implements Packet {
+public class ClientboundPlayerAbilitiesPacket implements MinecraftPacket {
     private static final int FLAG_INVINCIBLE = 0x01;
     private static final int FLAG_FLYING = 0x02;
     private static final int FLAG_CAN_FLY = 0x04;
@@ -25,7 +25,7 @@ public class ClientboundPlayerAbilitiesPacket implements Packet {
     private final float flySpeed;
     private final float walkSpeed;
 
-    public ClientboundPlayerAbilitiesPacket(NetInput in) throws IOException {
+    public ClientboundPlayerAbilitiesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         byte flags = in.readByte();
         this.invincible = (flags & FLAG_INVINCIBLE) > 0;
         this.canFly = (flags & FLAG_CAN_FLY) > 0;
@@ -37,7 +37,7 @@ public class ClientboundPlayerAbilitiesPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         int flags = 0;
         if (this.invincible) {
             flags |= FLAG_INVINCIBLE;

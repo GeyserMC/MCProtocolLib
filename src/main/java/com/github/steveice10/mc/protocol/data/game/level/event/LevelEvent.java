@@ -1,12 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.level.event;
 
-import com.github.steveice10.packetlib.io.NetInput;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @AllArgsConstructor
 public enum LevelEvent {
@@ -89,22 +84,4 @@ public enum LevelEvent {
 
     @Getter
     private final int id;
-
-    private static final LevelEvent[] VALUES = values();
-    private static final Map<Integer, LevelEvent> LEVEL_EVENT_MAP = new HashMap<>();
-
-    public static LevelEvent read(NetInput in) throws IOException {
-        int levelEventId = in.readInt();
-        LevelEvent levelEvent = LEVEL_EVENT_MAP.get(levelEventId);
-        if (levelEvent == null) {
-            throw new IllegalStateException("Unknown level event with id: " + levelEventId);
-        }
-        return levelEvent;
-    }
-
-    static {
-        for (LevelEvent levelEvent : VALUES) {
-            LEVEL_EVENT_MAP.put(levelEvent.id, levelEvent);
-        }
-    }
 }

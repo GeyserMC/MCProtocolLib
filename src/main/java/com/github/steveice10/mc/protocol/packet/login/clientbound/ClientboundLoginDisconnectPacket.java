@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.login.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,20 +15,20 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundLoginDisconnectPacket implements Packet {
+public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
     private final @NonNull Component reason;
 
     public ClientboundLoginDisconnectPacket(String text) {
         this(DefaultComponentSerializer.get().deserialize(text));
     }
 
-    public ClientboundLoginDisconnectPacket(NetInput in) throws IOException {
-        this.reason = DefaultComponentSerializer.get().deserialize(in.readString());
+    public ClientboundLoginDisconnectPacket(ByteBuf in, MinecraftCodecHelper codecHelper) throws IOException {
+        this.reason = DefaultComponentSerializer.get().deserialize(codecHelper.readString(in));
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(DefaultComponentSerializer.get().serialize(this.reason));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, DefaultComponentSerializer.get().serialize(this.reason));
     }
 
     @Override

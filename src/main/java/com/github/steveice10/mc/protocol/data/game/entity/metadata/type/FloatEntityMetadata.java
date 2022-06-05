@@ -1,8 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata.type;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.FloatMetadataType;
-import com.github.steveice10.packetlib.io.NetOutput;
+import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class FloatEntityMetadata extends EntityMetadata<Float, FloatMetadataType
     }
 
     @Override
-    protected void write(NetOutput out) throws IOException {
+    public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
         this.type.writeMetadataPrimitive(out, this.value);
     }
 }

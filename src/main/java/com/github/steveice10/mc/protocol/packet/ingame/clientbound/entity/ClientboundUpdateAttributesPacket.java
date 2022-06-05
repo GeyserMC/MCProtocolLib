@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeModifier;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeType;
-import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -20,21 +19,21 @@ import java.util.List;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundUpdateAttributesPacket implements Packet {
+public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull List<Attribute> attributes;
 
-    public ClientboundUpdateAttributesPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
+    public ClientboundUpdateAttributesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
         this.attributes = new ArrayList<>();
-        int length = in.readVarInt();
+        int length = helper.readVarInt(in);
         for (int index = 0; index < length; index++) {
-            String key = in.readString();
+            String key = helper.readString(in);
             double value = in.readDouble();
             List<AttributeModifier> modifiers = new ArrayList<>();
-            int len = in.readVarInt();
+            int len = helper.readVarInt(in);
             for (int ind = 0; ind < len; ind++) {
-                modifiers.add(new AttributeModifier(in.readUUID(), in.readDouble(), ModifierOperation.read(in)));
+                modifiers.add(new AttributeModifier(helper.readUUID(in), in.readDouble(), helper.readModifierOperation(in)));
             }
 
             AttributeType type = AttributeType.Builtin.BUILTIN.computeIfAbsent(Identifier.formalize(key), AttributeType.Custom::new);
@@ -43,17 +42,17 @@ public class ClientboundUpdateAttributesPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        out.writeVarInt(this.attributes.size());
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeVarInt(out, this.attributes.size());
         for (Attribute attribute : this.attributes) {
-            out.writeString(attribute.getType().getIdentifier());
+            helper.writeString(out, attribute.getType().getIdentifier());
             out.writeDouble(attribute.getValue());
-            out.writeVarInt(attribute.getModifiers().size());
+            helper.writeVarInt(out, attribute.getModifiers().size());
             for (AttributeModifier modifier : attribute.getModifiers()) {
-                out.writeUUID(modifier.getUuid());
+                helper.writeUUID(out, modifier.getUuid());
                 out.writeDouble(modifier.getAmount());
-                out.writeByte(modifier.getOperation().ordinal());
+                helper.writeModifierOperation(out, modifier.getOperation());
             }
         }
     }

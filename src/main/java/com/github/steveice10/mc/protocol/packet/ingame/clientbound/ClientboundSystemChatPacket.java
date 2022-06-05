@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.MessageType;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -15,18 +15,18 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSystemChatPacket implements Packet {
+public class ClientboundSystemChatPacket implements MinecraftPacket {
 	private final Component content;
 	private final MessageType type;
 
-	public ClientboundSystemChatPacket(NetInput in) throws IOException {
-		this.content = DefaultComponentSerializer.get().deserialize(in.readString());
-		this.type = in.readEnum(MessageType.VALUES);
+	public ClientboundSystemChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+		this.content = helper.readComponent(in);
+		this.type = helper.readMessageType(in);
 	}
 
 	@Override
-	public void write(NetOutput out) throws IOException {
-		out.writeString(DefaultComponentSerializer.get().serialize(this.content));
-		out.writeEnum(this.type);
+	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+		helper.writeString(out, DefaultComponentSerializer.get().serialize(this.content));
+		helper.writeMessageType(out, this.type);
 	}
 }

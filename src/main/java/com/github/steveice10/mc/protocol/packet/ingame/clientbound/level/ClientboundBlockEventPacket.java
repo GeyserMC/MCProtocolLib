@@ -1,25 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.*;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -30,7 +16,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundBlockEventPacket implements Packet {
+public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int NOTE_BLOCK = 89;
     private static final int STICKY_PISTON = 108;
     private static final int PISTON = 115;
@@ -47,12 +33,13 @@ public class ClientboundBlockEventPacket implements Packet {
     private final @NonNull BlockValue value;
     private final int blockId;
 
-    public ClientboundBlockEventPacket(NetInput in) throws IOException {
-        this.position = Position.read(in);
+    public ClientboundBlockEventPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.position = helper.readPosition(in);
         int type = in.readUnsignedByte();
         int value = in.readUnsignedByte();
-        this.blockId = in.readVarInt() & 0xFFF;
+        this.blockId = helper.readVarInt(in) & 0xFFF;
 
+        // TODO: Handle this in MinecraftCodecHelper
         if (this.blockId == NOTE_BLOCK) {
             this.type = MagicValues.key(NoteBlockValueType.class, type);
             this.value = new NoteBlockValue(value);
@@ -76,8 +63,9 @@ public class ClientboundBlockEventPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         int val = 0;
+        // TODO: Handle this in MinecraftCodecHelper
         if (this.type instanceof NoteBlockValueType) {
             val = ((NoteBlockValue) this.value).getPitch();
         } else if (this.type instanceof PistonValueType) {
@@ -88,9 +76,9 @@ public class ClientboundBlockEventPacket implements Packet {
             val = ((GenericBlockValue) this.value).getValue();
         }
 
-        Position.write(out, this.position);
+        helper.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeByte(val);
-        out.writeVarInt(this.blockId & 4095);
+        helper.writeVarInt(out, this.blockId & 4095);
     }
 }

@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -13,27 +13,27 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundChatPacket implements Packet {
+public class ServerboundChatPacket implements MinecraftPacket {
     private final @NonNull String message;
     private final long timeStamp;
     private final long salt;
     private final byte[] signature;
     private final boolean signedPreview;
 
-    public ServerboundChatPacket(NetInput in) throws IOException {
-        this.message = in.readString();
+    public ServerboundChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.message = helper.readString(in);
         this.timeStamp = in.readLong();
         this.salt = in.readLong();
-        this.signature = in.readBytes(in.readVarInt());
+        this.signature = helper.readByteArray(in);
         this.signedPreview = in.readBoolean();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeString(this.message);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, this.message);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);
-        out.writeVarInt(this.signature.length);
+        helper.writeVarInt(out, this.signature.length);
         out.writeBytes(this.signature);
         out.writeBoolean(this.signedPreview);
     }

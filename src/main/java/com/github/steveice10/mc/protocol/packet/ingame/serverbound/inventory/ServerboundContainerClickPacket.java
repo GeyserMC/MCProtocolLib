@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.inventory.ClickItemAction;
@@ -11,10 +13,9 @@ import com.github.steveice10.mc.protocol.data.game.inventory.FillStackAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.MoveToHotbarAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ShiftClickItemAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.SpreadItemAction;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
-import io.netty.util.collection.IntObjectHashMap;
+import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 @Data
 @With
-public class ServerboundContainerClickPacket implements Packet {
+public class ServerboundContainerClickPacket implements MinecraftPacket {
     public static final int CLICK_OUTSIDE_NOT_HOLDING_SLOT = -999;
 
     private final int containerId;
@@ -34,9 +35,13 @@ public class ServerboundContainerClickPacket implements Packet {
     private final ContainerActionType action;
     private final ContainerAction param;
     private final ItemStack carriedItem;
-    private final @NonNull Map<Integer, ItemStack> changedSlots;
+    private final @NonNull Int2ObjectMap<ItemStack> changedSlots;
 
     public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
+        this(containerId, stateId, slot, action, param, carriedItem, new Int2ObjectOpenHashMap<>(changedSlots));
+    }
+
+    public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Int2ObjectMap<ItemStack> changedSlots) {
         if ((param == DropItemAction.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemAction.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
@@ -52,9 +57,9 @@ public class ServerboundContainerClickPacket implements Packet {
         this.changedSlots = changedSlots;
     }
 
-    public ServerboundContainerClickPacket(NetInput in) throws IOException {
+    public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.containerId = in.readByte();
-        this.stateId = in.readVarInt();
+        this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
         byte param = in.readByte();
         this.action = MagicValues.key(ContainerActionType.class, in.readByte());
@@ -76,21 +81,21 @@ public class ServerboundContainerClickPacket implements Packet {
             throw new IllegalStateException();
         }
 
-        int changedItemsSize = in.readVarInt();
-        this.changedSlots = new IntObjectHashMap<>(changedItemsSize);
+        int changedItemsSize = helper.readVarInt(in);
+        this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
             int key = in.readShort();
-            ItemStack value = ItemStack.read(in);
+            ItemStack value = helper.readItemStack(in);
             this.changedSlots.put(key, value);
         }
 
-        this.carriedItem = ItemStack.read(in);
+        this.carriedItem = helper.readItemStack(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeByte(this.containerId);
-        out.writeVarInt(this.stateId);
+        helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
 
         int param = MagicValues.value(Integer.class, this.param);
@@ -101,12 +106,12 @@ public class ServerboundContainerClickPacket implements Packet {
         out.writeByte(param);
         out.writeByte(MagicValues.value(Integer.class, this.action));
 
-        out.writeVarInt(this.changedSlots.size());
-        for (Map.Entry<Integer, ItemStack> pair : this.changedSlots.entrySet()) {
-            out.writeShort(pair.getKey());
-            ItemStack.write(out, pair.getValue());
+        helper.writeVarInt(out, this.changedSlots.size());
+        for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {
+            out.writeShort(pair.getIntKey());
+            helper.writeItemStack(out, pair.getValue());
         }
 
-        ItemStack.write(out, this.carriedItem);
+        helper.writeItemStack(out, this.carriedItem);
     }
 }

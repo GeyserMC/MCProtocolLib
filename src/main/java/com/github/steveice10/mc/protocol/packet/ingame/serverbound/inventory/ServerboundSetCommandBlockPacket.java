@@ -1,12 +1,11 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -17,7 +16,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundSetCommandBlockPacket implements Packet {
+public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     private static final int FLAG_TRACK_OUTPUT = 0x01;
     private static final int FLAG_CONDITIONAL = 0x02;
     private static final int FLAG_AUTOMATIC = 0x04;
@@ -29,10 +28,10 @@ public class ServerboundSetCommandBlockPacket implements Packet {
     private final boolean conditional;
     private final boolean automatic;
 
-    public ServerboundSetCommandBlockPacket(NetInput in) throws IOException {
-        this.position = Position.read(in);
-        this.command = in.readString();
-        this.mode = MagicValues.key(CommandBlockMode.class, in.readVarInt());
+    public ServerboundSetCommandBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.position = helper.readPosition(in);
+        this.command = helper.readString(in);
+        this.mode = MagicValues.key(CommandBlockMode.class, helper.readVarInt(in));
 
         int flags = in.readUnsignedByte();
         this.doesTrackOutput = (flags & FLAG_TRACK_OUTPUT) != 0;
@@ -41,10 +40,10 @@ public class ServerboundSetCommandBlockPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        Position.write(out, this.position);
-        out.writeString(this.command);
-        out.writeVarInt(MagicValues.value(Integer.class, this.mode));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writePosition(out, this.position);
+        helper.writeString(out, this.command);
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mode));
 
         int flags = 0;
         if (this.doesTrackOutput) {

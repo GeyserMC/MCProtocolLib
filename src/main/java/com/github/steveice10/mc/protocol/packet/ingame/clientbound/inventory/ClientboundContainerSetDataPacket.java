@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.inventory.property.ContainerProperty;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -14,7 +14,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundContainerSetDataPacket implements Packet {
+public class ClientboundContainerSetDataPacket implements MinecraftPacket {
     private final int containerId;
     private final int rawProperty;
     private final int value;
@@ -27,14 +27,14 @@ public class ClientboundContainerSetDataPacket implements Packet {
         return MagicValues.key(type, this.value);
     }
 
-    public ClientboundContainerSetDataPacket(NetInput in) throws IOException {
+    public ClientboundContainerSetDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.containerId = in.readUnsignedByte();
         this.rawProperty = in.readShort();
         this.value = in.readShort();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeByte(this.containerId);
         out.writeShort(this.rawProperty);
         out.writeShort(this.value);

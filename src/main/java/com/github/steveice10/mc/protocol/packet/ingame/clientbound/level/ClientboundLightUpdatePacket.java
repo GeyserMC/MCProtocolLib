@@ -1,15 +1,15 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.List;
@@ -17,10 +17,10 @@ import java.util.List;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundLightUpdatePacket implements Packet {
+public class ClientboundLightUpdatePacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final @Nonnull LightUpdateData lightData;
+    private final @NotNull LightUpdateData lightData;
 
     public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
                                         @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
@@ -40,16 +40,16 @@ public class ClientboundLightUpdatePacket implements Packet {
         this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates, trustEdges);
     }
 
-    public ClientboundLightUpdatePacket(NetInput in) throws IOException {
-        this.x = in.readVarInt();
-        this.z = in.readVarInt();
-        this.lightData = LightUpdateData.read(in);
+    public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.x = helper.readVarInt(in);
+        this.z = helper.readVarInt(in);
+        this.lightData = helper.readLightUpdateData(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.x);
-        out.writeVarInt(this.z);
-        LightUpdateData.write(out, this.lightData);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.x);
+        helper.writeVarInt(out, this.z);
+        helper.writeLightUpdateData(out, this.lightData);
     }
 }

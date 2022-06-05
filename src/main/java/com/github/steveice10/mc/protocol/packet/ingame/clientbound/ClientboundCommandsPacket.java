@@ -1,24 +1,15 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
 import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
-import com.github.steveice10.mc.protocol.data.game.command.properties.CommandProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.DoubleProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.EntityProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.FloatProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.IntegerProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.LongProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.RangeProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.ScoreHolderProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
-import com.github.steveice10.mc.protocol.data.game.command.properties.ResourceProperties;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.data.game.command.properties.*;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -29,7 +20,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundCommandsPacket implements Packet {
+public class ClientboundCommandsPacket implements MinecraftPacket {
     private static final int FLAG_TYPE_MASK = 0x03;
     private static final int FLAG_EXECUTABLE = 0x04;
     private static final int FLAG_REDIRECT = 0x08;
@@ -44,32 +35,32 @@ public class ClientboundCommandsPacket implements Packet {
     private final @NonNull CommandNode[] nodes;
     private final int firstNodeIndex;
 
-    public ClientboundCommandsPacket(NetInput in) throws IOException {
-        this.nodes = new CommandNode[in.readVarInt()];
+    public ClientboundCommandsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.nodes = new CommandNode[helper.readVarInt(in)];
         for (int i = 0; i < this.nodes.length; i++) {
             byte flags = in.readByte();
             CommandType type = MagicValues.key(CommandType.class, flags & FLAG_TYPE_MASK);
             boolean executable = (flags & FLAG_EXECUTABLE) != 0;
 
-            int[] children = new int[in.readVarInt()];
+            int[] children = new int[helper.readVarInt(in)];
             for (int j = 0; j < children.length; j++) {
-                children[j] = in.readVarInt();
+                children[j] = helper.readVarInt(in);
             }
 
             int redirectIndex = -1;
             if ((flags & FLAG_REDIRECT) != 0) {
-                redirectIndex = in.readVarInt();
+                redirectIndex = helper.readVarInt(in);
             }
 
             String name = null;
             if (type == CommandType.LITERAL || type == CommandType.ARGUMENT) {
-                name = in.readString();
+                name = helper.readString(in);
             }
 
             CommandParser parser = null;
             CommandProperties properties = null;
             if (type == CommandType.ARGUMENT) {
-                parser = MagicValues.key(CommandParser.class, in.readVarInt());
+                parser = MagicValues.key(CommandParser.class, helper.readVarInt(in));
                 switch (parser) {
                     case DOUBLE: {
                         byte numberFlags = in.readByte();
@@ -132,7 +123,7 @@ public class ClientboundCommandsPacket implements Packet {
                         break;
                     }
                     case STRING:
-                        properties = MagicValues.key(StringProperties.class, in.readVarInt());
+                        properties = MagicValues.key(StringProperties.class, helper.readVarInt(in));
                         break;
                     case ENTITY: {
                         byte entityFlags = in.readByte();
@@ -145,7 +136,7 @@ public class ClientboundCommandsPacket implements Packet {
                         break;
                     case RESOURCE:
                     case RESOURCE_OR_TAG:
-                        properties = new ResourceProperties(in.readString());
+                        properties = new ResourceProperties(helper.readString(in));
                         break;
                     default:
                         break;
@@ -154,18 +145,18 @@ public class ClientboundCommandsPacket implements Packet {
 
             SuggestionType suggestionType = null;
             if ((flags & FLAG_SUGGESTION_TYPE) != 0) {
-                suggestionType = MagicValues.key(SuggestionType.class, Identifier.formalize(in.readString()));
+                suggestionType = MagicValues.key(SuggestionType.class, Identifier.formalize(helper.readString(in)));
             }
 
             this.nodes[i] = new CommandNode(type, executable, children, redirectIndex, name, parser, properties, suggestionType);
         }
 
-        this.firstNodeIndex = in.readVarInt();
+        this.firstNodeIndex = helper.readVarInt(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.nodes.length);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.nodes.length);
         for (CommandNode node : this.nodes) {
             int flags = MagicValues.value(Integer.class, node.getType()) & FLAG_TYPE_MASK;
             if (node.isExecutable()) {
@@ -182,21 +173,21 @@ public class ClientboundCommandsPacket implements Packet {
 
             out.writeByte(flags);
 
-            out.writeVarInt(node.getChildIndices().length);
+            helper.writeVarInt(out, node.getChildIndices().length);
             for (int childIndex : node.getChildIndices()) {
-                out.writeVarInt(childIndex);
+                helper.writeVarInt(out, childIndex);
             }
 
             if (node.getRedirectIndex() != -1) {
-                out.writeVarInt(node.getRedirectIndex());
+                helper.writeVarInt(out, node.getRedirectIndex());
             }
 
             if (node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
-                out.writeString(node.getName());
+                helper.writeString(out, node.getName());
             }
 
             if (node.getType() == CommandType.ARGUMENT) {
-                out.writeVarInt(MagicValues.value(Integer.class, node.getParser()));
+                helper.writeVarInt(out, MagicValues.value(Integer.class, node.getParser()));
                 switch (node.getParser()) {
                     case DOUBLE: {
                         DoubleProperties properties = (DoubleProperties) node.getProperties();
@@ -291,7 +282,7 @@ public class ClientboundCommandsPacket implements Packet {
                         break;
                     }
                     case STRING:
-                        out.writeVarInt(MagicValues.value(Integer.class, node.getProperties()));
+                        helper.writeVarInt(out, MagicValues.value(Integer.class, node.getProperties()));
                         break;
                     case ENTITY: {
                         EntityProperties properties = (EntityProperties) node.getProperties();
@@ -312,7 +303,7 @@ public class ClientboundCommandsPacket implements Packet {
                         break;
                     case RESOURCE:
                     case RESOURCE_OR_TAG:
-                        out.writeString(((ResourceProperties) node.getProperties()).getRegistryKey());
+                        helper.writeString(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
                         break;
                     default:
                         break;
@@ -320,10 +311,10 @@ public class ClientboundCommandsPacket implements Packet {
             }
 
             if (node.getSuggestionType() != null) {
-                out.writeString(MagicValues.value(String.class, node.getSuggestionType()));
+                helper.writeString(out, MagicValues.value(String.class, node.getSuggestionType()));
             }
         }
 
-        out.writeVarInt(this.firstNodeIndex);
+        helper.writeVarInt(out, this.firstNodeIndex);
     }
 }

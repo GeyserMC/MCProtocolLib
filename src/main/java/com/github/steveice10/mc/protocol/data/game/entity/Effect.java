@@ -37,11 +37,7 @@ public enum Effect {
 
     public static final Effect[] VALUES = values();
 
-    public static Effect fromNetworkId(int id) {
-        return VALUES[id - 1];
-    }
-
-    public static int toNetworkId(Effect effect) {
-        return effect.ordinal() + 1;
+    public static Effect from(int id) {
+        return VALUES[id];
     }
 }

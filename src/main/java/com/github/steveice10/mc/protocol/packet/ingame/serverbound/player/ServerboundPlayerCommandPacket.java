@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.player;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +15,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundPlayerCommandPacket implements Packet {
+public class ServerboundPlayerCommandPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull PlayerState state;
     private final int jumpBoost;
@@ -24,16 +24,16 @@ public class ServerboundPlayerCommandPacket implements Packet {
         this(entityId, state, 0);
     }
 
-    public ServerboundPlayerCommandPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
-        this.state = MagicValues.key(PlayerState.class, in.readVarInt());
-        this.jumpBoost = in.readVarInt();
+    public ServerboundPlayerCommandPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
+        this.state = MagicValues.key(PlayerState.class, helper.readVarInt(in));
+        this.jumpBoost = helper.readVarInt(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
-        out.writeVarInt(MagicValues.value(Integer.class, this.state));
-        out.writeVarInt(this.jumpBoost);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.state));
+        helper.writeVarInt(out, this.jumpBoost);
     }
 }

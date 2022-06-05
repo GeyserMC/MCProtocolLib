@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +15,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundPlayerLookAtPacket implements Packet {
+public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
     private final @NonNull RotationOrigin origin;
     private final double x;
     private final double y;
@@ -28,15 +28,15 @@ public class ClientboundPlayerLookAtPacket implements Packet {
         this(origin, x, y, z, 0, null);
     }
 
-    public ClientboundPlayerLookAtPacket(NetInput in) throws IOException {
-        this.origin = MagicValues.key(RotationOrigin.class, in.readVarInt());
+    public ClientboundPlayerLookAtPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.origin = MagicValues.key(RotationOrigin.class, helper.readVarInt(in));
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
 
         if (in.readBoolean()) {
-            this.targetEntityId = in.readVarInt();
-            this.targetEntityOrigin = MagicValues.key(RotationOrigin.class, in.readVarInt());
+            this.targetEntityId = helper.readVarInt(in);
+            this.targetEntityOrigin = MagicValues.key(RotationOrigin.class, helper.readVarInt(in));
         } else {
             this.targetEntityId = 0;
             this.targetEntityOrigin = null;
@@ -44,16 +44,16 @@ public class ClientboundPlayerLookAtPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(MagicValues.value(Integer.class, this.origin));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.origin));
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
 
         if (this.targetEntityOrigin != null) {
             out.writeBoolean(true);
-            out.writeVarInt(this.targetEntityId);
-            out.writeVarInt(MagicValues.value(Integer.class, this.targetEntityOrigin));
+            helper.writeVarInt(out, this.targetEntityId);
+            helper.writeVarInt(out, MagicValues.value(Integer.class, this.targetEntityOrigin));
         } else {
             out.writeBoolean(false);
         }

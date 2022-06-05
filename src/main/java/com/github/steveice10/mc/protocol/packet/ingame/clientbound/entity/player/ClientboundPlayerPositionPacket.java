@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -18,7 +18,7 @@ import java.util.List;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundPlayerPositionPacket implements Packet {
+public class ClientboundPlayerPositionPacket implements MinecraftPacket {
     private final double x;
     private final double y;
     private final double z;
@@ -32,7 +32,7 @@ public class ClientboundPlayerPositionPacket implements Packet {
         this(x, y, z, yaw, pitch, teleportId, dismountVehicle, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
-    public ClientboundPlayerPositionPacket(NetInput in) throws IOException {
+    public ClientboundPlayerPositionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -48,12 +48,12 @@ public class ClientboundPlayerPositionPacket implements Packet {
             }
         }
 
-        this.teleportId = in.readVarInt();
+        this.teleportId = helper.readVarInt(in);
         this.dismountVehicle = in.readBoolean();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
@@ -67,7 +67,7 @@ public class ClientboundPlayerPositionPacket implements Packet {
 
         out.writeByte(flags);
 
-        out.writeVarInt(this.teleportId);
+        helper.writeVarInt(out, this.teleportId);
         out.writeBoolean(this.dismountVehicle);
     }
 }

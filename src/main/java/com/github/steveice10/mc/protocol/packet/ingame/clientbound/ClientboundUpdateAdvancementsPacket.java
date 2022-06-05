@@ -1,14 +1,14 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -24,7 +24,7 @@ import java.util.Map;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundUpdateAdvancementsPacket implements Packet {
+public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     private static final int FLAG_HAS_BACKGROUND_TEXTURE = 0x01;
     private static final int FLAG_SHOW_TOAST = 0x02;
     private static final int FLAG_HIDDEN = 0x04;
@@ -47,26 +47,26 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
         return progress.get(criterionId);
     }
 
-    public ClientboundUpdateAdvancementsPacket(NetInput in) throws IOException {
+    public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.reset = in.readBoolean();
 
-        this.advancements = new Advancement[in.readVarInt()];
+        this.advancements = new Advancement[helper.readVarInt(in)];
         for (int i = 0; i < this.advancements.length; i++) {
-            String id = in.readString();
-            String parentId = in.readBoolean() ? in.readString() : null;
+            String id = helper.readString(in);
+            String parentId = in.readBoolean() ? helper.readString(in) : null;
             DisplayData displayData = null;
             if (in.readBoolean()) {
-                Component title = DefaultComponentSerializer.get().deserialize(in.readString());
-                Component description = DefaultComponentSerializer.get().deserialize(in.readString());
-                ItemStack icon = ItemStack.read(in);
-                FrameType frameType = MagicValues.key(FrameType.class, in.readVarInt());
+                Component title = helper.readComponent(in);
+                Component description = helper.readComponent(in);
+                ItemStack icon = helper.readItemStack(in);
+                FrameType frameType = MagicValues.key(FrameType.class, helper.readVarInt(in));
 
                 int flags = in.readInt();
                 boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
                 boolean showToast = (flags & FLAG_SHOW_TOAST) != 0;
                 boolean hidden = (flags & FLAG_HIDDEN) != 0;
 
-                String backgroundTexture = hasBackgroundTexture ? in.readString() : null;
+                String backgroundTexture = hasBackgroundTexture ? helper.readString(in) : null;
                 float posX = in.readFloat();
                 float posY = in.readFloat();
 
@@ -74,18 +74,18 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
             }
 
             List<String> criteria = new ArrayList<>();
-            int criteriaCount = in.readVarInt();
+            int criteriaCount = helper.readVarInt(in);
             for (int j = 0; j < criteriaCount; j++) {
-                criteria.add(in.readString());
+                criteria.add(helper.readString(in));
             }
 
             List<List<String>> requirements = new ArrayList<>();
-            int requirementCount = in.readVarInt();
+            int requirementCount = helper.readVarInt(in);
             for (int j = 0; j < requirementCount; j++) {
                 List<String> requirement = new ArrayList<>();
-                int componentCount = in.readVarInt();
+                int componentCount = helper.readVarInt(in);
                 for (int k = 0; k < componentCount; k++) {
-                    requirement.add(in.readString());
+                    requirement.add(helper.readString(in));
                 }
 
                 requirements.add(requirement);
@@ -94,20 +94,20 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
             this.advancements[i] = new Advancement(id, criteria, requirements, parentId, displayData);
         }
 
-        this.removedAdvancements = new String[in.readVarInt()];
+        this.removedAdvancements = new String[helper.readVarInt(in)];
         for (int i = 0; i < this.removedAdvancements.length; i++) {
-            this.removedAdvancements[i] = in.readString();
+            this.removedAdvancements[i] = helper.readString(in);
         }
 
         this.progress = new HashMap<>();
-        int progressCount = in.readVarInt();
+        int progressCount = helper.readVarInt(in);
         for (int i = 0; i < progressCount; i++) {
-            String advancementId = in.readString();
+            String advancementId = helper.readString(in);
 
             Map<String, Long> advancementProgress = new HashMap<>();
-            int criterionCount = in.readVarInt();
+            int criterionCount = helper.readVarInt(in);
             for (int j = 0; j < criterionCount; j++) {
-                String criterionId = in.readString();
+                String criterionId = helper.readString(in);
                 long achievedDate = in.readBoolean() ? in.readLong() : -1;
                 advancementProgress.put(criterionId, achievedDate);
             }
@@ -117,15 +117,15 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeBoolean(this.reset);
 
-        out.writeVarInt(this.advancements.length);
+        helper.writeVarInt(out, this.advancements.length);
         for (Advancement advancement : this.advancements) {
-            out.writeString(advancement.getId());
+            helper.writeString(out, advancement.getId());
             if (advancement.getParentId() != null) {
                 out.writeBoolean(true);
-                out.writeString(advancement.getParentId());
+                helper.writeString(out, advancement.getParentId());
             } else {
                 out.writeBoolean(false);
             }
@@ -133,10 +133,10 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
             DisplayData displayData = advancement.getDisplayData();
             if (displayData != null) {
                 out.writeBoolean(true);
-                out.writeString(DefaultComponentSerializer.get().serialize(displayData.getTitle()));
-                out.writeString(DefaultComponentSerializer.get().serialize(displayData.getDescription()));
-                ItemStack.write(out, displayData.getIcon());
-                out.writeVarInt(MagicValues.value(Integer.class, displayData.getFrameType()));
+                helper.writeString(out, DefaultComponentSerializer.get().serialize(displayData.getTitle()));
+                helper.writeString(out, DefaultComponentSerializer.get().serialize(displayData.getDescription()));
+                helper.writeItemStack(out, displayData.getIcon());
+                helper.writeVarInt(out, MagicValues.value(Integer.class, displayData.getFrameType()));
                 String backgroundTexture = displayData.getBackgroundTexture();
 
                 int flags = 0;
@@ -155,7 +155,7 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
                 out.writeInt(flags);
 
                 if (backgroundTexture != null) {
-                    out.writeString(backgroundTexture);
+                    helper.writeString(out, backgroundTexture);
                 }
 
                 out.writeFloat(displayData.getPosX());
@@ -164,32 +164,32 @@ public class ClientboundUpdateAdvancementsPacket implements Packet {
                 out.writeBoolean(false);
             }
 
-            out.writeVarInt(advancement.getCriteria().size());
+            helper.writeVarInt(out, advancement.getCriteria().size());
             for (String criterion : advancement.getCriteria()) {
-                out.writeString(criterion);
+                helper.writeString(out, criterion);
             }
 
-            out.writeVarInt(advancement.getRequirements().size());
+            helper.writeVarInt(out, advancement.getRequirements().size());
             for (List<String> requirement : advancement.getRequirements()) {
-                out.writeVarInt(requirement.size());
+                helper.writeVarInt(out, requirement.size());
                 for (String criterion : requirement) {
-                    out.writeString(criterion);
+                    helper.writeString(out, criterion);
                 }
             }
         }
 
-        out.writeVarInt(this.removedAdvancements.length);
+        helper.writeVarInt(out, this.removedAdvancements.length);
         for (String id : this.removedAdvancements) {
-            out.writeString(id);
+            helper.writeString(out, id);
         }
 
-        out.writeVarInt(this.progress.size());
+        helper.writeVarInt(out, this.progress.size());
         for (Map.Entry<String, Map<String, Long>> advancement : this.progress.entrySet()) {
-            out.writeString(advancement.getKey());
+            helper.writeString(out, advancement.getKey());
             Map<String, Long> advancementProgress = advancement.getValue();
-            out.writeVarInt(advancementProgress.size());
+            helper.writeVarInt(out, advancementProgress.size());
             for (Map.Entry<String, Long> criterion : advancementProgress.entrySet()) {
-                out.writeString(criterion.getKey());
+                helper.writeString(out, criterion.getKey());
                 if (criterion.getValue() != -1) {
                     out.writeBoolean(true);
                     out.writeLong(criterion.getValue());

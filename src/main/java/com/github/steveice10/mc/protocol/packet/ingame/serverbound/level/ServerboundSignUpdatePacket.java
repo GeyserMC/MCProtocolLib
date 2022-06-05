@@ -1,10 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.level;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
@@ -14,7 +13,7 @@ import java.util.Arrays;
 
 @Data
 @With
-public class ServerboundSignUpdatePacket implements Packet {
+public class ServerboundSignUpdatePacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
     private final @NonNull String[] lines;
 
@@ -27,19 +26,19 @@ public class ServerboundSignUpdatePacket implements Packet {
         this.lines = Arrays.copyOf(lines, lines.length);
     }
 
-    public ServerboundSignUpdatePacket(NetInput in) throws IOException {
-        this.position = Position.read(in);
+    public ServerboundSignUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.position = helper.readPosition(in);
         this.lines = new String[4];
         for (int count = 0; count < this.lines.length; count++) {
-            this.lines[count] = in.readString();
+            this.lines[count] = helper.readString(in);
         }
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        Position.write(out, this.position);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writePosition(out, this.position);
         for (String line : this.lines) {
-            out.writeString(line);
+            helper.writeString(out, line);
         }
     }
 }

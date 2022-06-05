@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +15,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSoundPacket implements Packet {
+public class ClientboundSoundPacket implements MinecraftPacket {
     private final @NonNull BuiltinSound sound;
     private final @NonNull SoundCategory category;
     private final double x;
@@ -25,9 +25,9 @@ public class ClientboundSoundPacket implements Packet {
     private final float pitch;
     private final long seed;
 
-    public ClientboundSoundPacket(NetInput in) throws IOException {
-        this.sound = BuiltinSound.VALUES[in.readVarInt()];
-        this.category = SoundCategory.read(in);
+    public ClientboundSoundPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.sound = helper.readBuiltinSound(in);
+        this.category = helper.readSoundCategory(in);
         this.x = in.readInt() / 8D;
         this.y = in.readInt() / 8D;
         this.z = in.readInt() / 8D;
@@ -37,9 +37,9 @@ public class ClientboundSoundPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.sound.ordinal());
-        out.writeVarInt(this.category.ordinal());
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeBuiltinSound(out, this.sound);
+        helper.writeSoundCategory(out, this.category);
         out.writeInt((int) (this.x * 8));
         out.writeInt((int) (this.y * 8));
         out.writeInt((int) (this.z * 8));

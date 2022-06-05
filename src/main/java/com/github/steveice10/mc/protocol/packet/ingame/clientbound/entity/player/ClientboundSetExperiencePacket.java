@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,21 +12,21 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSetExperiencePacket implements Packet {
+public class ClientboundSetExperiencePacket implements MinecraftPacket {
     private final float experience;
     private final int level;
     private final int totalExperience;
 
-    public ClientboundSetExperiencePacket(NetInput in) throws IOException {
+    public ClientboundSetExperiencePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.experience = in.readFloat();
-        this.level = in.readVarInt();
-        this.totalExperience = in.readVarInt();
+        this.level = helper.readVarInt(in);
+        this.totalExperience = helper.readVarInt(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeFloat(this.experience);
-        out.writeVarInt(this.level);
-        out.writeVarInt(this.totalExperience);
+        helper.writeVarInt(out, this.level);
+        helper.writeVarInt(out, this.totalExperience);
     }
 }

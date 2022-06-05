@@ -1,9 +1,5 @@
 package com.github.steveice10.mc.protocol.data.game.entity;
 
-import com.github.steveice10.packetlib.io.NetInput;
-
-import java.io.IOException;
-
 public enum EntityEvent {
     TIPPED_ARROW_EMIT_PARTICLES,
     RABBIT_JUMP_OR_MINECART_SPAWNER_DELAY_RESET,
@@ -71,11 +67,7 @@ public enum EntityEvent {
 
     private static final EntityEvent[] VALUES = values();
 
-    public static EntityEvent read(NetInput in) throws IOException {
-        return VALUES[in.readByte()];
-    }
-
-    public static EntityEvent fromId(int id) {
+    public static EntityEvent from(int id) {
         return VALUES[id];
     }
 }

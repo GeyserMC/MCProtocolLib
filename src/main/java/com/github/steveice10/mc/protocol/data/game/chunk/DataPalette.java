@@ -1,11 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.*;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.*;
-
-import java.io.IOException;
 
 @Getter
 @Setter
@@ -37,44 +33,6 @@ public class DataPalette {
                 new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType, globalPaletteBits);
     }
 
-    public static DataPalette read(NetInput in, PaletteType paletteType, int globalPaletteBits) throws IOException {
-        int bitsPerEntry = in.readByte();
-        Palette palette = readPalette(paletteType, bitsPerEntry, in);
-        BitStorage storage;
-        if (!(palette instanceof SingletonPalette)) {
-            int length = in.readVarInt();
-            storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize(), in.readLongs(length));
-        } else {
-            in.readVarInt();
-            storage = null;
-        }
-
-        return new DataPalette(palette, storage, paletteType, globalPaletteBits);
-    }
-
-    public static void write(NetOutput out, DataPalette palette) throws IOException {
-        if (palette.palette instanceof SingletonPalette) {
-            out.writeByte(0); // Bits per entry
-            out.writeVarInt(palette.palette.idToState(0));
-            out.writeVarInt(0); // Data length
-            return;
-        }
-
-        out.writeByte(palette.storage.getBitsPerEntry());
-
-        if (!(palette.palette instanceof GlobalPalette)) {
-            int paletteLength = palette.palette.size();
-            out.writeVarInt(paletteLength);
-            for (int i = 0; i < paletteLength; i++) {
-                out.writeVarInt(palette.palette.idToState(i));
-            }
-        }
-
-        long[] data = palette.storage.getData();
-        out.writeVarInt(data.length);
-        out.writeLongs(data);
-    }
-
     public int get(int x, int y, int z) {
         if (storage != null) {
             int id = this.storage.get(index(x, y, z));
@@ -103,20 +61,6 @@ public class DataPalette {
         } else {
             // Singleton palette and the block has not changed because the palette hasn't resized
             return state;
-        }
-    }
-
-    private static Palette readPalette(PaletteType paletteType, int bitsPerEntry, NetInput in) throws IOException {
-        if (bitsPerEntry > paletteType.getMaxBitsPerEntry()) {
-            return new GlobalPalette();
-        }
-        if (bitsPerEntry == 0) {
-            return new SingletonPalette(in);
-        }
-        if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
-            return new ListPalette(bitsPerEntry, in);
-        } else {
-            return new MapPalette(bitsPerEntry, in);
         }
     }
 

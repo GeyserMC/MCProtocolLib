@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundExplodePacket implements Packet {
+public class ClientboundExplodePacket implements MinecraftPacket {
     private final float x;
     private final float y;
     private final float z;
@@ -26,13 +26,13 @@ public class ClientboundExplodePacket implements Packet {
     private final float pushY;
     private final float pushZ;
 
-    public ClientboundExplodePacket(NetInput in) throws IOException {
+    public ClientboundExplodePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.x = in.readFloat();
         this.y = in.readFloat();
         this.z = in.readFloat();
         this.radius = in.readFloat();
         this.exploded = new ArrayList<>();
-        int length = in.readVarInt();
+        int length = helper.readVarInt(in);
         for (int count = 0; count < length; count++) {
             this.exploded.add(Vector3i.from(in.readByte(), in.readByte(), in.readByte()));
         }
@@ -43,12 +43,12 @@ public class ClientboundExplodePacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeFloat(this.x);
         out.writeFloat(this.y);
         out.writeFloat(this.z);
         out.writeFloat(this.radius);
-        out.writeVarInt(this.exploded.size());
+        helper.writeVarInt(out, this.exploded.size());
         for (Vector3i record : this.exploded) {
             out.writeByte(record.getX());
             out.writeByte(record.getY());

@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,21 +12,21 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundHorseScreenOpenPacket implements Packet {
+public class ClientboundHorseScreenOpenPacket implements MinecraftPacket {
     private final int containerId;
     private final int numberOfSlots;
     private final int entityId;
 
-    public ClientboundHorseScreenOpenPacket(NetInput in) throws IOException {
+    public ClientboundHorseScreenOpenPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.containerId = in.readByte();
-        this.numberOfSlots = in.readVarInt();
+        this.numberOfSlots = helper.readVarInt(in);
         this.entityId = in.readInt();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeByte(this.containerId);
-        out.writeVarInt(this.numberOfSlots);
+        helper.writeVarInt(out, this.numberOfSlots);
         out.writeInt(this.entityId);
     }
 }

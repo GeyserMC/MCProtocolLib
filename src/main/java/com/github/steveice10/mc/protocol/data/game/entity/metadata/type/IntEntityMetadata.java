@@ -1,9 +1,10 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata.type;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.IntMetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
-import com.github.steveice10.packetlib.io.NetOutput;
+import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class IntEntityMetadata extends EntityMetadata<Integer, IntMetadataType> 
     }
 
     @Override
-    protected void write(NetOutput out) throws IOException {
-        this.type.writeMetadataPrimitive(out, value);
+    public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
+        this.type.writeMetadataPrimitive(helper, out, value);
     }
 }

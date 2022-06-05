@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,7 +12,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundTeleportEntityPacket implements Packet {
+public class ClientboundTeleportEntityPacket implements MinecraftPacket {
     private final int entityId;
     private final double x;
     private final double y;
@@ -21,8 +21,8 @@ public class ClientboundTeleportEntityPacket implements Packet {
     private final float pitch;
     private final boolean onGround;
 
-    public ClientboundTeleportEntityPacket(NetInput in) throws IOException {
-        this.entityId = in.readVarInt();
+    public ClientboundTeleportEntityPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.entityId = helper.readVarInt(in);
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -32,8 +32,8 @@ public class ClientboundTeleportEntityPacket implements Packet {
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.entityId);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.entityId);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

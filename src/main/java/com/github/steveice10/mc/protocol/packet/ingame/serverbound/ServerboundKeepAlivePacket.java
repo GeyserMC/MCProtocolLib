@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
 
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
@@ -12,15 +12,15 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundKeepAlivePacket implements Packet {
+public class ServerboundKeepAlivePacket implements MinecraftPacket {
     private final long pingId;
 
-    public ServerboundKeepAlivePacket(NetInput in) throws IOException {
+    public ServerboundKeepAlivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.pingId = in.readLong();
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeLong(this.pingId);
     }
 

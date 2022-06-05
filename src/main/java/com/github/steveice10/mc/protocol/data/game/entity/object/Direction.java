@@ -23,4 +23,8 @@ public enum Direction implements ObjectData {
     public static Direction getByHorizontalIndex(int index) {
         return HORIZONTAL_VALUES[index % HORIZONTAL_VALUES.length];
     }
+
+    public static Direction from(int id) {
+        return VALUES[id];
+    }
 }

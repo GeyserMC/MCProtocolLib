@@ -1,10 +1,10 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,15 +15,15 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundClientCommandPacket implements Packet {
+public class ServerboundClientCommandPacket implements MinecraftPacket {
     private final @NonNull ClientCommand request;
 
-    public ServerboundClientCommandPacket(NetInput in) throws IOException {
-        this.request = MagicValues.key(ClientCommand.class, in.readVarInt());
+    public ServerboundClientCommandPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.request = MagicValues.key(ClientCommand.class, helper.readVarInt(in));
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(MagicValues.value(Integer.class, this.request));
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.request));
     }
 }

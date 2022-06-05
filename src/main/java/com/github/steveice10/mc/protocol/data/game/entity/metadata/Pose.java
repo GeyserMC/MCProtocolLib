@@ -16,5 +16,9 @@ public enum Pose {
     EMERGING,
     DIGGING;
 
-    public static final Pose[] VALUES = values();
+    private static final Pose[] VALUES = values();
+
+    public static Pose from(int id) {
+        return VALUES[id];
+    }
 }

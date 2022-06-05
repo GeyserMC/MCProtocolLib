@@ -1,20 +1,15 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.CookedRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.RecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.SmithingRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.*;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -25,38 +20,38 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundUpdateRecipesPacket implements Packet {
+public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     private final @NonNull Recipe[] recipes;
 
-    public ClientboundUpdateRecipesPacket(NetInput in) throws IOException {
-        this.recipes = new Recipe[in.readVarInt()];
+    public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.recipes = new Recipe[helper.readVarInt(in)];
         for (int i = 0; i < this.recipes.length; i++) {
-            RecipeType type = MagicValues.key(RecipeType.class, Identifier.formalize(in.readString()));
-            String identifier = in.readString();
+            RecipeType type = MagicValues.key(RecipeType.class, Identifier.formalize(helper.readString(in)));
+            String identifier = helper.readString(in);
             RecipeData data = null;
             switch (type) {
                 case CRAFTING_SHAPELESS: {
-                    String group = in.readString();
-                    Ingredient[] ingredients = new Ingredient[in.readVarInt()];
+                    String group = helper.readString(in);
+                    Ingredient[] ingredients = new Ingredient[helper.readVarInt(in)];
                     for (int j = 0; j < ingredients.length; j++) {
-                        ingredients[j] = this.readIngredient(in);
+                        ingredients[j] = helper.readRecipeIngredient(in);
                     }
 
-                    ItemStack result = ItemStack.read(in);
+                    ItemStack result = helper.readItemStack(in);
 
                     data = new ShapelessRecipeData(group, ingredients, result);
                     break;
                 }
                 case CRAFTING_SHAPED: {
-                    int width = in.readVarInt();
-                    int height = in.readVarInt();
-                    String group = in.readString();
+                    int width = helper.readVarInt(in);
+                    int height = helper.readVarInt(in);
+                    String group = helper.readString(in);
                     Ingredient[] ingredients = new Ingredient[width * height];
                     for (int j = 0; j < ingredients.length; j++) {
-                        ingredients[j] = this.readIngredient(in);
+                        ingredients[j] = helper.readRecipeIngredient(in);
                     }
 
-                    ItemStack result = ItemStack.read(in);
+                    ItemStack result = helper.readItemStack(in);
 
                     data = new ShapedRecipeData(width, height, group, ingredients, result);
                     break;
@@ -65,27 +60,27 @@ public class ClientboundUpdateRecipesPacket implements Packet {
                 case BLASTING:
                 case SMOKING:
                 case CAMPFIRE_COOKING: {
-                    String group = in.readString();
-                    Ingredient ingredient = this.readIngredient(in);
-                    ItemStack result = ItemStack.read(in);
+                    String group = helper.readString(in);
+                    Ingredient ingredient = helper.readRecipeIngredient(in);
+                    ItemStack result = helper.readItemStack(in);
                     float experience = in.readFloat();
-                    int cookingTime = in.readVarInt();
+                    int cookingTime = helper.readVarInt(in);
 
                     data = new CookedRecipeData(group, ingredient, result, experience, cookingTime);
                     break;
                 }
                 case STONECUTTING: {
-                    String group = in.readString();
-                    Ingredient ingredient = this.readIngredient(in);
-                    ItemStack result = ItemStack.read(in);
+                    String group = helper.readString(in);
+                    Ingredient ingredient = helper.readRecipeIngredient(in);
+                    ItemStack result = helper.readItemStack(in);
 
                     data = new StoneCuttingRecipeData(group, ingredient, result);
                     break;
                 }
                 case SMITHING: {
-                    Ingredient base = this.readIngredient(in);
-                    Ingredient addition = this.readIngredient(in);
-                    ItemStack result = ItemStack.read(in);
+                    Ingredient base = helper.readRecipeIngredient(in);
+                    Ingredient addition = helper.readRecipeIngredient(in);
+                    ItemStack result = helper.readItemStack(in);
 
                     data = new SmithingRecipeData(base, addition, result);
                     break;
@@ -98,32 +93,23 @@ public class ClientboundUpdateRecipesPacket implements Packet {
         }
     }
 
-    private Ingredient readIngredient(NetInput in) throws IOException {
-        ItemStack[] options = new ItemStack[in.readVarInt()];
-        for (int i = 0; i < options.length; i++) {
-            options[i] = ItemStack.read(in);
-        }
-
-        return new Ingredient(options);
-    }
-
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(this.recipes.length);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.recipes.length);
         for (Recipe recipe : this.recipes) {
-            out.writeString(MagicValues.value(String.class, recipe.getType()));
-            out.writeString(recipe.getIdentifier());
+            helper.writeString(out, MagicValues.value(String.class, recipe.getType()));
+            helper.writeString(out, recipe.getIdentifier());
             switch (recipe.getType()) {
                 case CRAFTING_SHAPELESS: {
                     ShapelessRecipeData data = (ShapelessRecipeData) recipe.getData();
 
-                    out.writeString(data.getGroup());
-                    out.writeVarInt(data.getIngredients().length);
+                    helper.writeString(out, data.getGroup());
+                    helper.writeVarInt(out, data.getIngredients().length);
                     for (Ingredient ingredient : data.getIngredients()) {
-                        this.writeIngredient(out, ingredient);
+                        helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    ItemStack.write(out, data.getResult());
+                    helper.writeItemStack(out, data.getResult());
                     break;
                 }
                 case CRAFTING_SHAPED: {
@@ -132,14 +118,14 @@ public class ClientboundUpdateRecipesPacket implements Packet {
                         throw new IllegalStateException("Shaped recipe must have ingredient count equal to width * height.");
                     }
 
-                    out.writeVarInt(data.getWidth());
-                    out.writeVarInt(data.getHeight());
-                    out.writeString(data.getGroup());
+                    helper.writeVarInt(out, data.getWidth());
+                    helper.writeVarInt(out, data.getHeight());
+                    helper.writeString(out, data.getGroup());
                     for (Ingredient ingredient : data.getIngredients()) {
-                        this.writeIngredient(out, ingredient);
+                        helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    ItemStack.write(out, data.getResult());
+                    helper.writeItemStack(out, data.getResult());
                     break;
                 }
                 case SMELTING:
@@ -148,39 +134,32 @@ public class ClientboundUpdateRecipesPacket implements Packet {
                 case CAMPFIRE_COOKING: {
                     CookedRecipeData data = (CookedRecipeData) recipe.getData();
 
-                    out.writeString(data.getGroup());
-                    this.writeIngredient(out, data.getIngredient());
-                    ItemStack.write(out, data.getResult());
+                    helper.writeString(out, data.getGroup());
+                    helper.writeRecipeIngredient(out, data.getIngredient());
+                    helper.writeItemStack(out, data.getResult());
                     out.writeFloat(data.getExperience());
-                    out.writeVarInt(data.getCookingTime());
+                    helper.writeVarInt(out, data.getCookingTime());
                     break;
                 }
                 case STONECUTTING: {
                     StoneCuttingRecipeData data = (StoneCuttingRecipeData) recipe.getData();
 
-                    out.writeString(data.getGroup());
-                    this.writeIngredient(out, data.getIngredient());
-                    ItemStack.write(out, data.getResult());
+                    helper.writeString(out, data.getGroup());
+                    helper.writeRecipeIngredient(out, data.getIngredient());
+                    helper.writeItemStack(out, data.getResult());
                     break;
                 }
                 case SMITHING: {
                     SmithingRecipeData data = (SmithingRecipeData) recipe.getData();
 
-                    this.writeIngredient(out, data.getBase());
-                    this.writeIngredient(out, data.getAddition());
-                    ItemStack.write(out, data.getResult());
+                    helper.writeRecipeIngredient(out, data.getBase());
+                    helper.writeRecipeIngredient(out, data.getAddition());
+                    helper.writeItemStack(out, data.getResult());
                     break;
                 }
                 default:
                     break;
             }
-        }
-    }
-
-    private void writeIngredient(NetOutput out, Ingredient ingredient) throws IOException {
-        out.writeVarInt(ingredient.getOptions().length);
-        for (ItemStack option : ingredient.getOptions()) {
-            ItemStack.write(out, option);
         }
     }
 }

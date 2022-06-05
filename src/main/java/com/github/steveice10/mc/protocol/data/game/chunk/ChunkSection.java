@@ -1,11 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
 import lombok.*;
-
-import java.io.IOException;
 
 @Data
 @Setter(AccessLevel.NONE)
@@ -22,20 +17,6 @@ public class ChunkSection {
 
     public ChunkSection() {
         this(0, DataPalette.createForChunk(), DataPalette.createForBiome(4));
-    }
-
-    public static ChunkSection read(NetInput in, int globalBiomePaletteBits) throws IOException {
-        int blockCount = in.readShort();
-
-        DataPalette chunkPalette = DataPalette.read(in, PaletteType.CHUNK, DataPalette.GLOBAL_PALETTE_BITS_PER_ENTRY);
-        DataPalette biomePalette = DataPalette.read(in, PaletteType.BIOME, globalBiomePaletteBits);
-        return new ChunkSection(blockCount, chunkPalette, biomePalette);
-    }
-
-    public static void write(NetOutput out, ChunkSection section, int globalBiomePaletteBits) throws IOException {
-        out.writeShort(section.blockCount);
-        DataPalette.write(out, section.chunkData);
-        DataPalette.write(out, section.biomeData);
     }
 
     public int getBlock(int x, int y, int z) {

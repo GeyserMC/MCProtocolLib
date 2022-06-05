@@ -1,13 +1,12 @@
 package com.github.steveice10.mc.protocol.packet.ingame.serverbound.player;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Position;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.io.NetOutput;
-import com.github.steveice10.packetlib.packet.Packet;
 import com.nukkitx.math.vector.Vector3i;
+import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -18,7 +17,7 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundUseItemOnPacket implements Packet {
+public class ServerboundUseItemOnPacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
     private final @NonNull Direction face;
     private final @NonNull Hand hand;
@@ -28,26 +27,26 @@ public class ServerboundUseItemOnPacket implements Packet {
     private final boolean insideBlock;
     private final int sequence;
 
-    public ServerboundUseItemOnPacket(NetInput in) throws IOException {
-        this.hand = MagicValues.key(Hand.class, in.readVarInt());
-        this.position = Position.read(in);
-        this.face = in.readEnum(Direction.VALUES);
+    public ServerboundUseItemOnPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.hand = MagicValues.key(Hand.class, helper.readVarInt(in));
+        this.position = helper.readPosition(in);
+        this.face = helper.readDirection(in);
         this.cursorX = in.readFloat();
         this.cursorY = in.readFloat();
         this.cursorZ = in.readFloat();
         this.insideBlock = in.readBoolean();
-        this.sequence = in.readVarInt();
+        this.sequence = helper.readVarInt(in);
     }
 
     @Override
-    public void write(NetOutput out) throws IOException {
-        out.writeVarInt(MagicValues.value(Integer.class, this.hand));
-        Position.write(out, this.position);
-        out.writeEnum(this.face);
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, MagicValues.value(Integer.class, this.hand));
+        helper.writePosition(out, this.position);
+        helper.writeDirection(out, this.face);
         out.writeFloat(this.cursorX);
         out.writeFloat(this.cursorY);
         out.writeFloat(this.cursorZ);
         out.writeBoolean(this.insideBlock);
-        out.writeVarInt(this.sequence);
+        helper.writeVarInt(out, this.sequence);
     }
 }
