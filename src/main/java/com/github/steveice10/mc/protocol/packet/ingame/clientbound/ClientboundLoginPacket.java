@@ -27,7 +27,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final GameMode previousGamemode;
     private final int worldCount;
     private final @NonNull String[] worldNames;
-    private final @NonNull CompoundTag dimensionCodec;
+    private final @NonNull CompoundTag registry;
     private final @NonNull String dimension;
     private final @NonNull String worldName;
     private final long hashedSeed;
@@ -52,7 +52,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         for (int i = 0; i < this.worldCount; i++) {
             this.worldNames[i] = helper.readString(in);
         }
-        this.dimensionCodec = helper.readTag(in);
+        this.registry = helper.readTag(in);
         this.dimension = helper.readString(in);
         this.worldName = helper.readString(in);
         this.hashedSeed = in.readLong();
@@ -83,7 +83,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         for (String worldName : this.worldNames) {
             helper.writeString(out, worldName);
         }
-        helper.writeTag(out, this.dimensionCodec);
+        helper.writeTag(out, this.registry);
         helper.writeString(out, this.dimension);
         helper.writeString(out, this.worldName);
         out.writeLong(this.hashedSeed);

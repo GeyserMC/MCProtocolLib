@@ -28,6 +28,7 @@ import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
@@ -61,6 +62,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     private final Int2ObjectMap<LevelEvent> levelEvents;
     private final Map<String, BuiltinSound> soundNames;
+
+    protected CompoundTag registry;
 
     public UUID readUUID(ByteBuf buf) {
         return new UUID(buf.readLong(), buf.readLong());
@@ -690,5 +693,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeNibbleArray(ByteBuf buf, NibbleArray3d nibbleArray) {
         buf.writeBytes(nibbleArray.getData());
+    }
+
+    /**
+     * The game registry sent to clients from the {@link ClientboundLoginPacket}.
+     * Implementations are required to set this value if they intend to use it.
+     *
+     * @return the game registry
+     */
+    @Nullable
+    public CompoundTag getRegistry() {
+        return this.registry;
+    }
+
+    public void setRegistry(CompoundTag registry) {
+        this.registry = registry;
     }
 }
