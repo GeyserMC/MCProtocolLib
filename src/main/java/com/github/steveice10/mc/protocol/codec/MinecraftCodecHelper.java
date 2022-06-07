@@ -553,11 +553,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public LevelEvent readLevelEvent(ByteBuf buf) {
-        return this.levelEvents.get(this.readVarInt(buf));
+        return this.levelEvents.get(buf.readInt());
     }
 
     public void writeLevelEvent(ByteBuf buf, LevelEvent event) {
-        this.writeVarInt(buf, event.getId());
+        buf.writeInt(event.getId());
     }
 
     public StatisticCategory readStatisticCategory(ByteBuf buf) {
