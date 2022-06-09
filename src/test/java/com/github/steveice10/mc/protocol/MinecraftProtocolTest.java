@@ -143,10 +143,8 @@ public class MinecraftProtocolTest {
     }
 
     public static CompoundTag loadLoginRegistry() {
-        try {
-            InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("login_registry.nbt");
-            assertNotNull("Could not find login registry.", inputStream);
-            DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream));
+        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("login_registry.nbt");
+            DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
             return (CompoundTag) NBTIO.readTag((DataInput) stream);
         } catch (IOException e) {
             e.printStackTrace();
