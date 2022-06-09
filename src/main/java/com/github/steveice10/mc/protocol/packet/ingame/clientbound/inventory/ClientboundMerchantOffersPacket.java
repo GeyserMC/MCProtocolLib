@@ -26,16 +26,12 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     public ClientboundMerchantOffersPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.containerId = helper.readVarInt(in);
 
-        byte size = in.readByte();
+        int size = helper.readVarInt(in);
         this.trades = new VillagerTrade[size];
         for (int i = 0; i < trades.length; i++) {
             ItemStack firstInput = helper.readItemStack(in);
             ItemStack output = helper.readItemStack(in);
-
-            ItemStack secondInput = null;
-            if (in.readBoolean()) {
-                secondInput = helper.readItemStack(in);
-            }
+            ItemStack secondInput = helper.readItemStack(in);
 
             boolean tradeDisabled = in.readBoolean();
             int numUses = in.readInt();
@@ -58,18 +54,11 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.containerId);
 
-        out.writeByte(this.trades.length);
-        for (int i = 0; i < this.trades.length; i++) {
-            VillagerTrade trade = this.trades[i];
-
+        helper.writeVarInt(out, this.trades.length);
+        for (VillagerTrade trade : this.trades) {
             helper.writeItemStack(out, trade.getFirstInput());
             helper.writeItemStack(out, trade.getOutput());
-
-            boolean hasSecondItem = trade.getSecondInput() != null;
-            out.writeBoolean(hasSecondItem);
-            if (hasSecondItem) {
-                helper.writeItemStack(out, trade.getSecondInput());
-            }
+            helper.writeItemStack(out, trade.getSecondInput());
 
             out.writeBoolean(trade.isTradeDisabled());
             out.writeInt(trade.getNumUses());

@@ -8,9 +8,9 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 public class VillagerTrade {
-    private final @NonNull ItemStack firstInput;
+    private final ItemStack firstInput;
     private final ItemStack secondInput;
-    private final @NonNull ItemStack output;
+    private final ItemStack output;
     private final boolean tradeDisabled;
     private final int numUses;
     private final int maxUses;
