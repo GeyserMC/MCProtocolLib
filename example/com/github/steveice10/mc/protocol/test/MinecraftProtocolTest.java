@@ -10,6 +10,7 @@ import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
+import com.github.steveice10.mc.protocol.data.game.MessageType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
@@ -17,8 +18,8 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.opennbt.tag.builtin.ByteTag;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -45,6 +46,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 import java.net.Proxy;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -71,7 +73,8 @@ public class MinecraftProtocolTest {
                             new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
                             new PlayerInfo(100, 0, new GameProfile[0]),
                             Component.text("Hello world!"),
-                            null
+                            null,
+                            false
                     )
             );
 
@@ -84,7 +87,7 @@ public class MinecraftProtocolTest {
                             1,
                             new String[]{"minecraft:world"},
                             getDimensionTag(),
-                            getOverworldTag(),
+                            "minecraft:overworld",
                             "minecraft:world",
                             100,
                             0,
@@ -93,7 +96,8 @@ public class MinecraftProtocolTest {
                             false,
                             false,
                             false,
-                            false
+                            false,
+                            null
                     ))
             );
 
@@ -121,7 +125,7 @@ public class MinecraftProtocolTest {
                                         .append(Component.text("!")
                                                 .color(NamedTextColor.GREEN));
 
-                                session.send(new ClientboundChatPacket(msg));
+                                session.send(new ClientboundSystemChatPacket(msg, MessageType.SYSTEM.ordinal()));
                             }
                         }
                     });
@@ -203,9 +207,9 @@ public class MinecraftProtocolTest {
             @Override
             public void packetReceived(Session session, Packet packet) {
                 if (packet instanceof ClientboundLoginPacket) {
-                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib."));
-                } else if (packet instanceof ClientboundChatPacket) {
-                    Component message = ((ClientboundChatPacket) packet).getMessage();
+                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0, new byte[0], false));
+                } else if (packet instanceof ClientboundSystemChatPacket) {
+                    Component message = ((ClientboundSystemChatPacket) packet).getContent();
                     System.out.println("Received Message: " + message);
                     session.disconnect("Finished");
                 }

@@ -21,7 +21,10 @@ import java.util.UUID;
 public class ClientboundPlayerChatPacket implements MinecraftPacket {
 	private final Component signedContent;
 	private final @Nullable Component unsignedContent;
-	private final MessageType type;
+	/**
+	 * Is {@link MessageType} defined in the order sent by the server in the login packet.
+	 */
+	private final int typeId;
 	private final UUID senderUUID;
 	private final Component senderName;
 	private final @Nullable Component senderTeamName;
@@ -30,7 +33,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 	private final byte[] signature;
 	private final long timeStamp;
 
-	public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+	public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
 		this.signedContent = helper.readComponent(in);
 		if (in.readBoolean()) {
 			this.unsignedContent = helper.readComponent(in);
@@ -38,7 +41,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 			this.unsignedContent = null;
 		}
 
-		this.type = helper.readMessageType(in);
+		this.typeId = helper.readVarInt(in);
 		this.senderUUID = helper.readUUID(in);
 		this.senderName = helper.readComponent(in);
 		if (in.readBoolean()) {
@@ -59,7 +62,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 			helper.writeComponent(out, this.unsignedContent);
 		}
 
-		helper.writeMessageType(out, this.type);
+		helper.writeVarInt(out, this.typeId);
 		helper.writeUUID(out, this.senderUUID);
 		DefaultComponentSerializer.get().serialize(this.senderName);
 		if (this.senderTeamName != null) {

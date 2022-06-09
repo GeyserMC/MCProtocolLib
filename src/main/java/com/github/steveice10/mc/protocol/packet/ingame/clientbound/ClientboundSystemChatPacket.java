@@ -17,16 +17,19 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundSystemChatPacket implements MinecraftPacket {
 	private final Component content;
-	private final MessageType type;
+	/**
+	 * Is {@link MessageType} defined in the order sent by the server in the login packet.
+	 */
+	private final int typeId;
 
-	public ClientboundSystemChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+	public ClientboundSystemChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
 		this.content = helper.readComponent(in);
-		this.type = helper.readMessageType(in);
+		this.typeId = helper.readVarInt(in);
 	}
 
 	@Override
 	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
 		helper.writeString(out, DefaultComponentSerializer.get().serialize(this.content));
-		helper.writeMessageType(out, this.type);
+		helper.writeVarInt(out, this.typeId);
 	}
 }

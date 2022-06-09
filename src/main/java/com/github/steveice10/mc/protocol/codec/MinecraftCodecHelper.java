@@ -568,14 +568,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, category);
     }
 
-    public MessageType readMessageType(ByteBuf buf) {
-        return MessageType.from(this.readVarInt(buf));
-    }
-
-    public void writeMessageType(ByteBuf buf, MessageType type) {
-        this.writeEnum(buf, type);
-    }
-
     public SoundCategory readSoundCategory(ByteBuf buf) {
         return SoundCategory.from(this.readVarInt(buf));
     }
