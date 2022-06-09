@@ -9,13 +9,8 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import com.github.steveice10.opennbt.tag.builtin.ByteTag;
+import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.DoubleTag;
-import com.github.steveice10.opennbt.tag.builtin.FloatTag;
-import com.github.steveice10.opennbt.tag.builtin.IntTag;
-import com.github.steveice10.opennbt.tag.builtin.ListTag;
-import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
@@ -28,7 +23,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
+import java.util.zip.GZIPInputStream;
 
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_COMPRESSION_THRESHOLD;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_BUILDER_KEY;
@@ -51,7 +51,7 @@ public class MinecraftProtocolTest {
             null,
             false
     );
-    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, getDimensionTag(), "overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, loadLoginRegistry(), "overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null);
 
     private static Server server;
 
@@ -142,45 +142,15 @@ public class MinecraftProtocolTest {
         }
     }
 
-    private static CompoundTag getDimensionTag() {
-        CompoundTag overworldTag = getOverworldTag();
-        CompoundTag tag = new CompoundTag("minecraft:dimension_type");
-        tag.put(new StringTag("type", "minecraft:dimension_type"));
-        ListTag list = new ListTag("value");
-        list.add(overworldTag);
-        tag.put(list);
-        return tag;
-    }
-
-    private static CompoundTag getOverworldTag() {
-        CompoundTag overworldTag = new CompoundTag("");
-        CompoundTag element = new CompoundTag("element");
-        element.put(new FloatTag("ambient_light", 0f));
-        element.put(new ByteTag("bed_works", (byte) 1));
-        element.put(new DoubleTag("coordinate_scale", 1d));
-        element.put(new StringTag("effects", "minecraft:overworld"));
-        element.put(new ByteTag("has_ceiling", (byte) 0));
-        element.put(new ByteTag("has_raids", (byte) 1));
-        element.put(new ByteTag("has_skylight", (byte) 1));
-        element.put(new IntTag("height", 384));
-        element.put(new StringTag("infiniburn", "#minecraft:infiniburn_overworld"));
-        element.put(new IntTag("logical_height", 384));
-        element.put(new IntTag("min_y", -64));
-        element.put(new IntTag("monster_spawner_block_light_limit", 0));
-        CompoundTag spawnLightLevel = new CompoundTag("monster_spawn_light_level");
-        spawnLightLevel.put(new StringTag("type", "minecraft:uniform"));
-        CompoundTag value = new CompoundTag("value");
-        value.put(new IntTag("max_inclusive", 7));
-        value.put(new IntTag("min_inclusive", 0));
-        spawnLightLevel.put(value);
-        element.put(spawnLightLevel);
-        element.put(new ByteTag("natural", (byte) 1));
-        element.put(new ByteTag("piglin_safe", (byte) 0));
-        element.put(new ByteTag("respawn_anchor_works", (byte) 0));
-        element.put(new ByteTag("ultrawarm", (byte) 0));
-        overworldTag.put(element);
-        overworldTag.put(new IntTag("id", 0));
-        overworldTag.put(new StringTag("name", "minecraft:overworld"));
-        return overworldTag;
+    public static CompoundTag loadLoginRegistry() {
+        try {
+            InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("login_registry.nbt");
+            assertNotNull("Could not find login registry.", inputStream);
+            DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream));
+            return (CompoundTag) NBTIO.readTag((DataInput) stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AssertionError("Unable to load login registry.");
+        }
     }
 }
