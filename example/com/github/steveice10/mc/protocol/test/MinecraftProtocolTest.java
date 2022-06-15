@@ -10,7 +10,7 @@ import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
-import com.github.steveice10.mc.protocol.data.game.MessageType;
+import com.github.steveice10.mc.protocol.data.game.BuiltinChatType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
@@ -125,7 +125,7 @@ public class MinecraftProtocolTest {
                                         .append(Component.text("!")
                                                 .color(NamedTextColor.GREEN));
 
-                                session.send(new ClientboundSystemChatPacket(msg, MessageType.SYSTEM.ordinal()));
+                                session.send(new ClientboundSystemChatPacket(msg, BuiltinChatType.SYSTEM.ordinal()));
                             }
                         }
                     });

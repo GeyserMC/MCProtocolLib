@@ -3,7 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.game.MessageType;
+import com.github.steveice10.mc.protocol.data.game.BuiltinChatType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 	private final Component signedContent;
 	private final @Nullable Component unsignedContent;
 	/**
-	 * Is {@link MessageType} defined in the order sent by the server in the login packet.
+	 * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
 	 */
 	private final int typeId;
 	private final UUID senderUUID;

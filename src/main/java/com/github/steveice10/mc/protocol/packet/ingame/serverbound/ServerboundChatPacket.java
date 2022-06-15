@@ -5,8 +5,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -14,13 +14,13 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ServerboundChatPacket implements MinecraftPacket {
-    private final @NonNull String message;
+    private final @NotNull String message;
     private final long timeStamp;
     private final long salt;
-    private final byte[] signature;
+    private final byte @NotNull[] signature;
     private final boolean signedPreview;
 
-    public ServerboundChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.message = helper.readString(in);
         this.timeStamp = in.readLong();
         this.salt = in.readLong();

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public enum MessageType {
+public enum BuiltinChatType {
     CHAT,
     SYSTEM,
     GAME_INFO,
@@ -16,24 +16,24 @@ public enum MessageType {
 
     private final String resourceLocation;
 
-    MessageType() {
+    BuiltinChatType() {
         this.resourceLocation = "minecraft:" + name().toLowerCase(Locale.ROOT);
     }
 
     public String getResourceLocation() {
         return resourceLocation;
     }
-    private static final Map<String, MessageType> BY_RESOURCE_LOCATION;
+    private static final Map<String, BuiltinChatType> BY_RESOURCE_LOCATION;
 
     static {
-        MessageType[] values = values();
+        BuiltinChatType[] values = values();
         BY_RESOURCE_LOCATION = new HashMap<>(values.length);
-        for (MessageType type : values) {
+        for (BuiltinChatType type : values) {
             BY_RESOURCE_LOCATION.put(type.getResourceLocation(), type);
         }
     }
 
-    public static MessageType from(String resourceLocation) {
+    public static BuiltinChatType from(String resourceLocation) {
         return BY_RESOURCE_LOCATION.get(resourceLocation);
     }
 }

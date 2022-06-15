@@ -5,6 +5,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import com.github.steveice10.mc.protocol.data.game.statistic.*;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -18,9 +20,9 @@ import java.util.Map;
 @With
 @AllArgsConstructor
 public class ClientboundAwardStatsPacket implements MinecraftPacket {
-    private final @NonNull Map<Statistic, Integer> statistics = new HashMap<>(); //TODO Fastutil
+    private final @NonNull Object2IntMap<Statistic> statistics = new Object2IntOpenHashMap<>();
 
-    public ClientboundAwardStatsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundAwardStatsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         int length = helper.readVarInt(in);
         for (int index = 0; index < length; index++) {
             StatisticCategory category = helper.readStatisticCategory(in);
@@ -64,7 +66,7 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.statistics.size());
-        for (Map.Entry<Statistic, Integer> entry : statistics.entrySet()) {
+        for (Object2IntMap.Entry<Statistic> entry : statistics.object2IntEntrySet()) {
             Statistic statistic = entry.getKey();
 
             StatisticCategory category;
@@ -101,7 +103,7 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
             }
             helper.writeStatisticCategory(out, category);
             helper.writeVarInt(out, statisticId);
-            helper.writeVarInt(out, entry.getValue());
+            helper.writeVarInt(out, entry.getIntValue());
         }
     }
 }
