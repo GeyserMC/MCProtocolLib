@@ -27,7 +27,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 	private final int typeId;
 	private final UUID senderUUID;
 	private final Component senderName;
-	private final @Nullable Component senderTeamName;
+	private final @Nullable Component targetName;
 	private final long salt;
 	@ToString.Exclude
 	private final byte[] signature;
@@ -45,9 +45,9 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 		this.senderUUID = helper.readUUID(in);
 		this.senderName = helper.readComponent(in);
 		if (in.readBoolean()) {
-			this.senderTeamName = helper.readComponent(in);
+			this.targetName = helper.readComponent(in);
 		} else {
-			this.senderTeamName = null;
+			this.targetName = null;
 		}
 
 		this.timeStamp = in.readLong();
@@ -65,8 +65,8 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 		helper.writeVarInt(out, this.typeId);
 		helper.writeUUID(out, this.senderUUID);
 		DefaultComponentSerializer.get().serialize(this.senderName);
-		if (this.senderTeamName != null) {
-			DefaultComponentSerializer.get().serialize(this.senderTeamName);
+		if (this.targetName != null) {
+			DefaultComponentSerializer.get().serialize(this.targetName);
 		}
 
 		out.writeLong(this.timeStamp);
