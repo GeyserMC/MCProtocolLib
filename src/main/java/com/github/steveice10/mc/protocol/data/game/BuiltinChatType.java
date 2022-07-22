@@ -9,7 +9,8 @@ public enum BuiltinChatType {
     SAY_COMMAND,
     MSG_COMMAND_INCOMING,
     MSG_COMMAND_OUTGOING,
-    TEAM_MSG_COMMAND,
+    TEAM_MSG_COMMAND_INCOMING,
+    TEAM_MSG_COMMAND_OUTGOING,
     EMOTE_COMMAND;
 
     private final String resourceLocation;
