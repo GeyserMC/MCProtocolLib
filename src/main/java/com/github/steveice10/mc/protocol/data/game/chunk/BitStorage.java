@@ -3,6 +3,9 @@ package com.github.steveice10.mc.protocol.data.game.chunk;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 @EqualsAndHashCode
 public class BitStorage {
@@ -30,7 +33,7 @@ public class BitStorage {
     };
 
     @Getter
-    private final @NonNull long[] data;
+    private final long @NonNull[] data;
     @Getter
     private final int bitsPerEntry;
     @Getter
@@ -46,7 +49,7 @@ public class BitStorage {
         this(bitsPerEntry, size, null);
     }
 
-    public BitStorage(int bitsPerEntry, int size, long[] data) {
+    public BitStorage(int bitsPerEntry, int size, long @Nullable[] data) {
         if (bitsPerEntry < 1 || bitsPerEntry > 32) {
             throw new IllegalArgumentException("bitsPerEntry must be between 1 and 32, inclusive.");
         }
@@ -59,7 +62,8 @@ public class BitStorage {
         int expectedLength = (size + this.valuesPerLong - 1) / this.valuesPerLong;
         if (data != null) {
             if (data.length != expectedLength) {
-                throw new IllegalArgumentException("Expected " + expectedLength + " longs but got " + data.length + " longs");
+                // Hypixel as of 1.19.0
+                data = Arrays.copyOf(data, expectedLength);
             }
 
             this.data = data;
