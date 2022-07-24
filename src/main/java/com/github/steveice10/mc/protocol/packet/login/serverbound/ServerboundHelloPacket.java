@@ -14,6 +14,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.UUID;
 
 @Data
 @With
@@ -22,7 +23,8 @@ public class ServerboundHelloPacket implements MinecraftPacket {
     private final @NonNull String username;
     private final @Nullable Long expiresAt;
     private final @Nullable PublicKey publicKey;
-    private final @Nullable byte[] keySignature;
+    private final byte @Nullable[] keySignature;
+    private final @Nullable UUID profileId;
 
     public ServerboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.username = helper.readString(in);
@@ -41,6 +43,11 @@ public class ServerboundHelloPacket implements MinecraftPacket {
             this.publicKey = null;
             this.keySignature = null;
         }
+        if (in.readBoolean()) {
+            this.profileId = helper.readUUID(in);
+        } else {
+            this.profileId = null;
+        }
     }
 
     @Override
@@ -52,6 +59,10 @@ public class ServerboundHelloPacket implements MinecraftPacket {
             byte[] encoded = this.publicKey.getEncoded();
             helper.writeByteArray(out, encoded);
             helper.writeByteArray(out, this.keySignature);
+        }
+        out.writeBoolean(this.profileId != null);
+        if (this.profileId != null) {
+            helper.writeUUID(out, this.profileId);
         }
     }
 
