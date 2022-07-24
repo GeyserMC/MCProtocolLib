@@ -20,7 +20,7 @@ import java.util.UUID;
 @With
 @AllArgsConstructor
 public class ClientboundPlayerChatPacket implements MinecraftPacket {
-	private final @Nullable byte[] previousSignature;
+	private final byte @Nullable[] previousSignature;
 	private final UUID sender;
 	private final byte[] headerSignature;
 	private final String messagePlain;
