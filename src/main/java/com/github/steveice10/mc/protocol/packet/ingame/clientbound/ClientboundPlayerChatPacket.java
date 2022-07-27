@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.BuiltinChatType;
+import com.github.steveice10.mc.protocol.data.game.ChatFilterType;
 import com.github.steveice10.mc.protocol.data.game.LastSeenMessage;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +31,8 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 	private final long salt;
 	private final List<LastSeenMessage> lastSeenMessages;
 	private final @Nullable Component unsignedContent;
+	private final BitSet filterMask;
+	private final ChatFilterType filterType;
 	/**
 	 * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
 	 */
@@ -64,6 +68,13 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 			this.unsignedContent = helper.readComponent(in);
 		} else {
 			this.unsignedContent = null;
+		}
+
+		this.filterType = ChatFilterType.from(helper.readVarInt(in));
+		if (filterType == ChatFilterType.PARTIALLY_FILTERED) {
+			this.filterMask = BitSet.valueOf(helper.readLongArray(in));
+		} else {
+			this.filterMask = new BitSet(0);
 		}
 
 		this.chatType = helper.readVarInt(in);
@@ -110,6 +121,11 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 			helper.writeComponent(out, this.unsignedContent);
 		} else {
 			out.writeBoolean(false);
+		}
+
+		helper.writeVarInt(out, this.filterType.ordinal());
+		if (this.filterType == ChatFilterType.PARTIALLY_FILTERED) {
+			helper.writeLongArray(out, this.filterMask.toLongArray());
 		}
 
 		helper.writeVarInt(out, this.chatType);
