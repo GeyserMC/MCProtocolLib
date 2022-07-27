@@ -613,13 +613,17 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int globalPaletteBits) throws IOException {
-        int bitsPerEntry = buf.readByte();
+        int bitsPerEntry = buf.readByte() & 0xFF;
         Palette palette = this.readPalette(buf, paletteType, bitsPerEntry);
         BitStorage storage;
         if (!(palette instanceof SingletonPalette)) {
             storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize(), this.readLongArray(buf));
         } else {
-            this.readVarInt(buf);
+            // Eat up - can be seen on Hypixel as of 1.19.0
+            int length = this.readVarInt(buf);
+            for (int i = 0; i < length; i++) {
+                buf.readLong();
+            }
             storage = null;
         }
 
@@ -649,18 +653,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     private Palette readPalette(ByteBuf buf, PaletteType paletteType, int bitsPerEntry) throws IOException {
-        if (bitsPerEntry > paletteType.getMaxBitsPerEntry()) {
-            return new GlobalPalette();
-        }
-
         if (bitsPerEntry == 0) {
             return new SingletonPalette(this.readVarInt(buf));
         }
-
         if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
             return new ListPalette(bitsPerEntry, buf, this);
-        } else {
+        } else if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
             return new MapPalette(bitsPerEntry, buf, this);
+        } else {
+            return GlobalPalette.INSTANCE;
         }
     }
 

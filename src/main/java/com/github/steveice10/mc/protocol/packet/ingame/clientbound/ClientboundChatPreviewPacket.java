@@ -31,6 +31,7 @@ public class ClientboundChatPreviewPacket implements MinecraftPacket {
 	@Override
 	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
 		out.writeInt(this.queryId);
+		out.writeBoolean(this.preview != null);
 		if (this.preview != null) {
 			helper.writeString(out, DefaultComponentSerializer.get().serialize(this.preview));
 		}
