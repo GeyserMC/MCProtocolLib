@@ -328,7 +328,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(0x00, ServerboundAcceptTeleportationPacket.class, ServerboundAcceptTeleportationPacket::new)
                     .registerServerboundPacket(0x01, ServerboundBlockEntityTagQuery.class, ServerboundBlockEntityTagQuery::new)
                     .registerServerboundPacket(0x02, ServerboundChangeDifficultyPacket.class, ServerboundChangeDifficultyPacket::new)
-                    .registerClientboundPacket(0x03, ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
+                    .registerServerboundPacket(0x03, ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
                     .registerServerboundPacket(0x04, ServerboundChatCommandPacket.class, ServerboundChatCommandPacket::new)
                     .registerServerboundPacket(0x05, ServerboundChatPacket.class, ServerboundChatPacket::new)
                     .registerServerboundPacket(0x06, ServerboundChatPreviewPacket.class, ServerboundChatPreviewPacket::new)
