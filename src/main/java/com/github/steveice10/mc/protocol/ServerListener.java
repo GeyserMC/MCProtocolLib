@@ -111,7 +111,7 @@ public class ServerListener extends SessionAdapter {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
 
                 if (this.profilePublicKeyData != null) {
-                    if (!keyPacket.verifyWithSaltSignature(this.profilePublicKeyData)) {
+                    if (!keyPacket.verifyWithSaltSignature(this.verifyToken, this.profilePublicKeyData)) {
                         session.disconnect("Invalid profile key setup!");
                         return;
                     }

@@ -41,7 +41,7 @@ public class ServerboundKeyPacket implements MinecraftPacket {
         return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.verifyToken);
     }
 
-    public boolean verifyWithSaltSignature(ServerboundHelloPacket.ProfilePublicKeyData profilePublicKeyData) {
+    public boolean verifyWithSaltSignature(byte[] verifyToken, ServerboundHelloPacket.ProfilePublicKeyData profilePublicKeyData) {
         try {
             Signature signature = Signature.getInstance("SHA256withRSA");
             signature.initVerify(profilePublicKeyData.getPublicKey());
