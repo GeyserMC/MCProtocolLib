@@ -19,6 +19,7 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
 	private final @Nullable Component motd;
 	private final @Nullable String iconBase64;
 	private final boolean previewsChat;
+	private final boolean enforcesSecureChat;
 
 	public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
 		if (in.readBoolean()) {
@@ -34,6 +35,7 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
 		}
 
 		this.previewsChat = in.readBoolean();
+		this.enforcesSecureChat = in.readBoolean();
 	}
 
 	@Override
@@ -49,5 +51,6 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
 		}
 
 		out.writeBoolean(this.previewsChat);
+		out.writeBoolean(this.enforcesSecureChat);
 	}
 }

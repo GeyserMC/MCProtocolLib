@@ -125,7 +125,7 @@ public class ClientListener extends SessionAdapter {
 
             if (this.targetState == ProtocolState.LOGIN) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
-                session.send(new ServerboundHelloPacket(profile.getName(), null, null, null));
+                session.send(new ServerboundHelloPacket(profile.getName(), null, null, null, profile.getId()));
             } else {
                 session.send(new ServerboundStatusRequestPacket());
             }
