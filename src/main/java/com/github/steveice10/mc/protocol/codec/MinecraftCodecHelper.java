@@ -48,8 +48,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.ObjIntConsumer;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
 
 @RequiredArgsConstructor
 public class MinecraftCodecHelper extends BasePacketCodecHelper {
@@ -63,6 +62,24 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private final Map<String, BuiltinSound> soundNames;
 
     protected CompoundTag registry;
+
+    @Nullable
+    public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
+        if (buf.readBoolean()) {
+            return ifPresent.apply(buf);
+        } else {
+            return null;
+        }
+    }
+
+    public <T> void writeNullable(ByteBuf buf, @Nullable T value, BiConsumer<ByteBuf, T> ifPresent) {
+        if (value != null) {
+            buf.writeBoolean(true);
+            ifPresent.accept(buf, value);
+        } else {
+            buf.writeBoolean(false);
+        }
+    }
 
     public UUID readUUID(ByteBuf buf) {
         return new UUID(buf.readLong(), buf.readLong());
