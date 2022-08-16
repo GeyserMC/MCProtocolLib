@@ -6,36 +6,30 @@ import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.Key;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 
 @ToString
 @EqualsAndHashCode
 public class ServerboundKeyPacket implements MinecraftPacket {
     private final @NonNull byte[] sharedKey;
     private final @Nullable byte[] verifyToken;
-    private final @Nullable Long salt;
-    private final @Nullable byte[] signature;
+    private final @Nullable SaltSignaturePair saltSignature;
 
     public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] verifyToken) {
         this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
         this.verifyToken = runEncryption(Cipher.ENCRYPT_MODE, publicKey, verifyToken);
-        this.salt = null;
-        this.signature = null;
+        this.saltSignature = null;
     }
 
-    public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, long salt, byte[] signature) {
+    public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, @NotNull SaltSignaturePair saltSignature) {
         this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
-        this.salt = salt;
-        this.signature = signature;
+        this.saltSignature = saltSignature;
         this.verifyToken = null;
     }
 
@@ -47,28 +41,51 @@ public class ServerboundKeyPacket implements MinecraftPacket {
         return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.verifyToken);
     }
 
-    public ServerboundKeyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public boolean verifyWithSaltSignature(byte[] verifyToken, ServerboundHelloPacket.ProfilePublicKeyData profilePublicKeyData) {
+        try {
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initVerify(profilePublicKeyData.getPublicKey());
+
+            signature.update(verifyToken);
+            signature.update(toByteArray(saltSignature.getSalt()));
+
+            return signature.verify(saltSignature.getSignature());
+        } catch (InvalidKeyException | SignatureException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private byte[] toByteArray(long value) {
+        // Copied from Guava
+        byte[] result = new byte[8];
+        for (int i = 7; i >= 0; i--) {
+            result[i] = (byte) (value & 0xffL);
+            value >>= 8;
+        }
+        return result;
+    }
+
+    public ServerboundKeyPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.sharedKey = helper.readByteArray(in);
         if (in.readBoolean()) {
             this.verifyToken = helper.readByteArray(in);
-            this.salt = null;
-            this.signature = null;
+            this.saltSignature = null;
         } else {
-            this.salt = in.readLong();
-            this.signature = helper.readByteArray(in);
+            this.saltSignature = new SaltSignaturePair(in.readLong(), helper.readByteArray(in));
             this.verifyToken = null;
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeByteArray(out, this.sharedKey);
         out.writeBoolean(this.verifyToken != null);
         if (this.verifyToken != null) {
             helper.writeByteArray(out, this.verifyToken);
         } else {
-            out.writeLong(this.salt);
-            helper.writeByteArray(out, this.signature);
+            out.writeLong(this.saltSignature.salt);
+            helper.writeByteArray(out, this.saltSignature.signature);
         }
     }
 
@@ -84,6 +101,24 @@ public class ServerboundKeyPacket implements MinecraftPacket {
             return cipher.doFinal(data);
         } catch (GeneralSecurityException e) {
             throw new IllegalStateException("Failed to " + (mode == Cipher.DECRYPT_MODE ? "decrypt" : "encrypt") + " data.", e);
+        }
+    }
+
+    public static class SaltSignaturePair {
+        private final long salt;
+        private final byte[] signature;
+
+        public SaltSignaturePair(long salt, byte[] signature) {
+            this.salt = salt;
+            this.signature = signature;
+        }
+
+        public long getSalt() {
+            return salt;
+        }
+
+        public byte[] getSignature() {
+            return signature;
         }
     }
 }

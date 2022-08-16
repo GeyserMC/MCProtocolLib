@@ -30,10 +30,7 @@ import com.github.steveice10.packetlib.packet.Packet;
 import net.kyori.adventure.text.Component;
 
 import javax.crypto.SecretKey;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+import java.security.*;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
@@ -58,8 +55,9 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
-    private byte[] verifyToken = new byte[4];
+    private final byte[] verifyToken = new byte[4];
     private String username = "";
+    private ServerboundHelloPacket.ProfilePublicKeyData profilePublicKeyData;
 
     private long lastPingTime = 0;
     private int lastPingId = 0;
@@ -101,6 +99,7 @@ public class ServerListener extends SessionAdapter {
         if (protocol.getState() == ProtocolState.LOGIN) {
             if (packet instanceof ServerboundHelloPacket) {
                 this.username = ((ServerboundHelloPacket) packet).getUsername();
+                this.profilePublicKeyData = ((ServerboundHelloPacket) packet).getPublicKey();
 
                 if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
                     session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.verifyToken));
@@ -110,9 +109,17 @@ public class ServerListener extends SessionAdapter {
             } else if (packet instanceof ServerboundKeyPacket) {
                 ServerboundKeyPacket keyPacket = (ServerboundKeyPacket) packet;
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
-                if (!Arrays.equals(this.verifyToken, keyPacket.getVerifyToken(privateKey))) {
-                    session.disconnect("Invalid nonce!");
-                    return;
+
+                if (this.profilePublicKeyData != null) {
+                    if (!keyPacket.verifyWithSaltSignature(this.verifyToken, this.profilePublicKeyData)) {
+                        session.disconnect("Invalid profile key setup!");
+                        return;
+                    }
+                } else {
+                    if (!Arrays.equals(this.verifyToken, keyPacket.getVerifyToken(privateKey))) {
+                        session.disconnect("Invalid nonce!");
+                        return;
+                    }
                 }
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);
