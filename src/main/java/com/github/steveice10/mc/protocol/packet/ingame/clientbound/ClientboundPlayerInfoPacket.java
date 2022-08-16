@@ -146,6 +146,7 @@ public class ClientboundPlayerInfoPacket implements MinecraftPacket {
                         helper.writeString(out, DefaultComponentSerializer.get().serialize(entry.getDisplayName()));
                     }
 
+                    out.writeBoolean(entry.getPublicKey() != null);
                     if (entry.getPublicKey() != null) {
                         out.writeLong(entry.getExpiresAt());
                         byte[] encoded = entry.getPublicKey().getEncoded();
