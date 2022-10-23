@@ -408,10 +408,11 @@ public class MagicValues {
         register(Advancement.DisplayData.FrameType.GOAL, 2);
 
         register(PlayerListEntryAction.ADD_PLAYER, 0);
-        register(PlayerListEntryAction.UPDATE_GAMEMODE, 1);
-        register(PlayerListEntryAction.UPDATE_LATENCY, 2);
-        register(PlayerListEntryAction.UPDATE_DISPLAY_NAME, 3);
-        register(PlayerListEntryAction.REMOVE_PLAYER, 4);
+        register(PlayerListEntryAction.INITIALIZE_CHAT, 1);
+        register(PlayerListEntryAction.UPDATE_GAME_MODE, 2);
+        register(PlayerListEntryAction.UPDATE_LISTED, 3);
+        register(PlayerListEntryAction.UPDATE_LATENCY, 4);
+        register(PlayerListEntryAction.UPDATE_DISPLAY_NAME, 5);
 
         register(UnlockRecipesAction.INIT, 0);
         register(UnlockRecipesAction.ADD, 1);

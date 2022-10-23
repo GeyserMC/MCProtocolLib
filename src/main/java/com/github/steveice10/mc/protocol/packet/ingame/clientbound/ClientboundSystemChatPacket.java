@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.game.BuiltinChatType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;

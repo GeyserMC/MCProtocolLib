@@ -7,7 +7,6 @@ import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientInte
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundAwardStatsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundBossEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPreviewPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCommandSuggestionsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCommandsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCooldownPacket;
@@ -15,24 +14,25 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCu
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCustomPayloadPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDeleteChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisguisedChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPingPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerChatHeaderPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRecipePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundResourcePackPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSelectAdvancementsTabPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundServerDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSetCameraPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSetDisplayChatPreviewPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSoundEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundStopSoundPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundTabListPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateAdvancementsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateEnabledFeaturesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateRecipesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateTagsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundAnimatePacket;
@@ -116,7 +116,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCh
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatAckPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPreviewPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
@@ -196,9 +195,9 @@ public class MinecraftCodec {
     }
 
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion(760)
+            .protocolVersion((1 << 30) | 104)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-            .minecraftVersion("1.19.1")
+            .minecraftVersion("22w42a")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(0x00, ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -229,20 +228,20 @@ public class MinecraftCodec {
                     .registerClientboundPacket(0x09, ClientboundBlockUpdatePacket.class, ClientboundBlockUpdatePacket::new)
                     .registerClientboundPacket(0x0A, ClientboundBossEventPacket.class, ClientboundBossEventPacket::new)
                     .registerClientboundPacket(0x0B, ClientboundChangeDifficultyPacket.class, ClientboundChangeDifficultyPacket::new)
-                    .registerClientboundPacket(0x0C, ClientboundChatPreviewPacket.class, ClientboundChatPreviewPacket::new)
-                    .registerClientboundPacket(0x0D, ClientboundClearTitlesPacket.class, ClientboundClearTitlesPacket::new)
-                    .registerClientboundPacket(0x0E, ClientboundCommandSuggestionsPacket.class, ClientboundCommandSuggestionsPacket::new)
-                    .registerClientboundPacket(0x0F, ClientboundCommandsPacket.class, ClientboundCommandsPacket::new)
-                    .registerClientboundPacket(0x10, ClientboundContainerClosePacket.class, ClientboundContainerClosePacket::new)
-                    .registerClientboundPacket(0x11, ClientboundContainerSetContentPacket.class, ClientboundContainerSetContentPacket::new)
-                    .registerClientboundPacket(0x12, ClientboundContainerSetDataPacket.class, ClientboundContainerSetDataPacket::new)
-                    .registerClientboundPacket(0x13, ClientboundContainerSetSlotPacket.class, ClientboundContainerSetSlotPacket::new)
-                    .registerClientboundPacket(0x14, ClientboundCooldownPacket.class, ClientboundCooldownPacket::new)
-                    .registerClientboundPacket(0x15, ClientboundCustomChatCompletionsPacket.class, ClientboundCustomChatCompletionsPacket::new)
-                    .registerClientboundPacket(0x16, ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
-                    .registerClientboundPacket(0x17, ClientboundCustomSoundPacket.class, ClientboundCustomSoundPacket::new)
-                    .registerClientboundPacket(0x18, ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new)
-                    .registerClientboundPacket(0x19, ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
+                    .registerClientboundPacket(0x0C, ClientboundClearTitlesPacket.class, ClientboundClearTitlesPacket::new)
+                    .registerClientboundPacket(0x0D, ClientboundCommandSuggestionsPacket.class, ClientboundCommandSuggestionsPacket::new)
+                    .registerClientboundPacket(0x0E, ClientboundCommandsPacket.class, ClientboundCommandsPacket::new)
+                    .registerClientboundPacket(0x0F, ClientboundContainerClosePacket.class, ClientboundContainerClosePacket::new)
+                    .registerClientboundPacket(0x10, ClientboundContainerSetContentPacket.class, ClientboundContainerSetContentPacket::new)
+                    .registerClientboundPacket(0x11, ClientboundContainerSetDataPacket.class, ClientboundContainerSetDataPacket::new)
+                    .registerClientboundPacket(0x12, ClientboundContainerSetSlotPacket.class, ClientboundContainerSetSlotPacket::new)
+                    .registerClientboundPacket(0x13, ClientboundCooldownPacket.class, ClientboundCooldownPacket::new)
+                    .registerClientboundPacket(0x14, ClientboundCustomChatCompletionsPacket.class, ClientboundCustomChatCompletionsPacket::new)
+                    .registerClientboundPacket(0x15, ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
+                    .registerClientboundPacket(0x16, ClientboundCustomSoundPacket.class, ClientboundCustomSoundPacket::new)
+                    .registerClientboundPacket(0x17, ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new)
+                    .registerClientboundPacket(0x18, ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
+					.registerClientboundPacket(0x19, ClientboundDisguisedChatPacket.class, ClientboundDisguisedChatPacket::new)
                     .registerClientboundPacket(0x1A, ClientboundEntityEventPacket.class, ClientboundEntityEventPacket::new)
                     .registerClientboundPacket(0x1B, ClientboundExplodePacket.class, ClientboundExplodePacket::new)
                     .registerClientboundPacket(0x1C, ClientboundForgetLevelChunkPacket.class, ClientboundForgetLevelChunkPacket::new)
@@ -267,12 +266,12 @@ public class MinecraftCodec {
                     .registerClientboundPacket(0x2F, ClientboundPingPacket.class, ClientboundPingPacket::new)
                     .registerClientboundPacket(0x30, ClientboundPlaceGhostRecipePacket.class, ClientboundPlaceGhostRecipePacket::new)
                     .registerClientboundPacket(0x31, ClientboundPlayerAbilitiesPacket.class, ClientboundPlayerAbilitiesPacket::new)
-                    .registerClientboundPacket(0x32, ClientboundPlayerChatHeaderPacket.class, ClientboundPlayerChatHeaderPacket::new)
-                    .registerClientboundPacket(0x33, ClientboundPlayerChatPacket.class, ClientboundPlayerChatPacket::new)
-                    .registerClientboundPacket(0x34, ClientboundPlayerCombatEndPacket.class, ClientboundPlayerCombatEndPacket::new)
-                    .registerClientboundPacket(0x35, ClientboundPlayerCombatEnterPacket.class, ClientboundPlayerCombatEnterPacket::new)
-                    .registerClientboundPacket(0x36, ClientboundPlayerCombatKillPacket.class, ClientboundPlayerCombatKillPacket::new)
-                    .registerClientboundPacket(0x37, ClientboundPlayerInfoPacket.class, ClientboundPlayerInfoPacket::new)
+                    .registerClientboundPacket(0x32, ClientboundPlayerChatPacket.class, ClientboundPlayerChatPacket::new)
+                    .registerClientboundPacket(0x33, ClientboundPlayerCombatEndPacket.class, ClientboundPlayerCombatEndPacket::new)
+                    .registerClientboundPacket(0x34, ClientboundPlayerCombatEnterPacket.class, ClientboundPlayerCombatEnterPacket::new)
+                    .registerClientboundPacket(0x35, ClientboundPlayerCombatKillPacket.class, ClientboundPlayerCombatKillPacket::new)
+                    .registerClientboundPacket(0x36, ClientboundPlayerInfoRemovePacket.class, ClientboundPlayerInfoRemovePacket::new)
+					.registerClientboundPacket(0x37, ClientboundPlayerInfoUpdatePacket.class, ClientboundPlayerInfoUpdatePacket::new)
                     .registerClientboundPacket(0x38, ClientboundPlayerLookAtPacket.class, ClientboundPlayerLookAtPacket::new)
                     .registerClientboundPacket(0x39, ClientboundPlayerPositionPacket.class, ClientboundPlayerPositionPacket::new)
                     .registerClientboundPacket(0x3A, ClientboundRecipePacket.class, ClientboundRecipePacket::new)
@@ -295,33 +294,33 @@ public class MinecraftCodec {
                     .registerClientboundPacket(0x4B, ClientboundSetChunkCacheCenterPacket.class, ClientboundSetChunkCacheCenterPacket::new)
                     .registerClientboundPacket(0x4C, ClientboundSetChunkCacheRadiusPacket.class, ClientboundSetChunkCacheRadiusPacket::new)
                     .registerClientboundPacket(0x4D, ClientboundSetDefaultSpawnPositionPacket.class, ClientboundSetDefaultSpawnPositionPacket::new)
-                    .registerClientboundPacket(0x4E, ClientboundSetDisplayChatPreviewPacket.class, ClientboundSetDisplayChatPreviewPacket::new)
-                    .registerClientboundPacket(0x4F, ClientboundSetDisplayObjectivePacket.class, ClientboundSetDisplayObjectivePacket::new)
-                    .registerClientboundPacket(0x50, ClientboundSetEntityDataPacket.class, ClientboundSetEntityDataPacket::new)
-                    .registerClientboundPacket(0x51, ClientboundSetEntityLinkPacket.class, ClientboundSetEntityLinkPacket::new)
-                    .registerClientboundPacket(0x52, ClientboundSetEntityMotionPacket.class, ClientboundSetEntityMotionPacket::new)
-                    .registerClientboundPacket(0x53, ClientboundSetEquipmentPacket.class, ClientboundSetEquipmentPacket::new)
-                    .registerClientboundPacket(0x54, ClientboundSetExperiencePacket.class, ClientboundSetExperiencePacket::new)
-                    .registerClientboundPacket(0x55, ClientboundSetHealthPacket.class, ClientboundSetHealthPacket::new)
-                    .registerClientboundPacket(0x56, ClientboundSetObjectivePacket.class, ClientboundSetObjectivePacket::new)
-                    .registerClientboundPacket(0x57, ClientboundSetPassengersPacket.class, ClientboundSetPassengersPacket::new)
-                    .registerClientboundPacket(0x58, ClientboundSetPlayerTeamPacket.class, ClientboundSetPlayerTeamPacket::new)
-                    .registerClientboundPacket(0x59, ClientboundSetScorePacket.class, ClientboundSetScorePacket::new)
-                    .registerClientboundPacket(0x5A, ClientboundSetSimulationDistancePacket.class, ClientboundSetSimulationDistancePacket::new)
-                    .registerClientboundPacket(0x5B, ClientboundSetSubtitleTextPacket.class, ClientboundSetSubtitleTextPacket::new)
-                    .registerClientboundPacket(0x5C, ClientboundSetTimePacket.class, ClientboundSetTimePacket::new)
-                    .registerClientboundPacket(0x5D, ClientboundSetTitleTextPacket.class, ClientboundSetTitleTextPacket::new)
-                    .registerClientboundPacket(0x5E, ClientboundSetTitlesAnimationPacket.class, ClientboundSetTitlesAnimationPacket::new)
-                    .registerClientboundPacket(0x5F, ClientboundSoundEntityPacket.class, ClientboundSoundEntityPacket::new)
-                    .registerClientboundPacket(0x60, ClientboundSoundPacket.class, ClientboundSoundPacket::new)
-                    .registerClientboundPacket(0x61, ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new)
-                    .registerClientboundPacket(0x62, ClientboundSystemChatPacket.class, ClientboundSystemChatPacket::new)
-                    .registerClientboundPacket(0x63, ClientboundTabListPacket.class, ClientboundTabListPacket::new)
-                    .registerClientboundPacket(0x64, ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
-                    .registerClientboundPacket(0x65, ClientboundTakeItemEntityPacket.class, ClientboundTakeItemEntityPacket::new)
-                    .registerClientboundPacket(0x66, ClientboundTeleportEntityPacket.class, ClientboundTeleportEntityPacket::new)
-                    .registerClientboundPacket(0x67, ClientboundUpdateAdvancementsPacket.class, ClientboundUpdateAdvancementsPacket::new)
-                    .registerClientboundPacket(0x68, ClientboundUpdateAttributesPacket.class, ClientboundUpdateAttributesPacket::new)
+                    .registerClientboundPacket(0x4E, ClientboundSetDisplayObjectivePacket.class, ClientboundSetDisplayObjectivePacket::new)
+                    .registerClientboundPacket(0x4F, ClientboundSetEntityDataPacket.class, ClientboundSetEntityDataPacket::new)
+                    .registerClientboundPacket(0x50, ClientboundSetEntityLinkPacket.class, ClientboundSetEntityLinkPacket::new)
+                    .registerClientboundPacket(0x51, ClientboundSetEntityMotionPacket.class, ClientboundSetEntityMotionPacket::new)
+                    .registerClientboundPacket(0x52, ClientboundSetEquipmentPacket.class, ClientboundSetEquipmentPacket::new)
+                    .registerClientboundPacket(0x53, ClientboundSetExperiencePacket.class, ClientboundSetExperiencePacket::new)
+                    .registerClientboundPacket(0x54, ClientboundSetHealthPacket.class, ClientboundSetHealthPacket::new)
+                    .registerClientboundPacket(0x55, ClientboundSetObjectivePacket.class, ClientboundSetObjectivePacket::new)
+                    .registerClientboundPacket(0x56, ClientboundSetPassengersPacket.class, ClientboundSetPassengersPacket::new)
+                    .registerClientboundPacket(0x57, ClientboundSetPlayerTeamPacket.class, ClientboundSetPlayerTeamPacket::new)
+                    .registerClientboundPacket(0x58, ClientboundSetScorePacket.class, ClientboundSetScorePacket::new)
+                    .registerClientboundPacket(0x59, ClientboundSetSimulationDistancePacket.class, ClientboundSetSimulationDistancePacket::new)
+                    .registerClientboundPacket(0x5A, ClientboundSetSubtitleTextPacket.class, ClientboundSetSubtitleTextPacket::new)
+                    .registerClientboundPacket(0x5B, ClientboundSetTimePacket.class, ClientboundSetTimePacket::new)
+                    .registerClientboundPacket(0x5C, ClientboundSetTitleTextPacket.class, ClientboundSetTitleTextPacket::new)
+                    .registerClientboundPacket(0x5D, ClientboundSetTitlesAnimationPacket.class, ClientboundSetTitlesAnimationPacket::new)
+                    .registerClientboundPacket(0x5E, ClientboundSoundEntityPacket.class, ClientboundSoundEntityPacket::new)
+                    .registerClientboundPacket(0x5F, ClientboundSoundPacket.class, ClientboundSoundPacket::new)
+                    .registerClientboundPacket(0x60, ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new)
+                    .registerClientboundPacket(0x61, ClientboundSystemChatPacket.class, ClientboundSystemChatPacket::new)
+                    .registerClientboundPacket(0x62, ClientboundTabListPacket.class, ClientboundTabListPacket::new)
+                    .registerClientboundPacket(0x63, ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
+                    .registerClientboundPacket(0x64, ClientboundTakeItemEntityPacket.class, ClientboundTakeItemEntityPacket::new)
+                    .registerClientboundPacket(0x65, ClientboundTeleportEntityPacket.class, ClientboundTeleportEntityPacket::new)
+                    .registerClientboundPacket(0x66, ClientboundUpdateAdvancementsPacket.class, ClientboundUpdateAdvancementsPacket::new)
+                    .registerClientboundPacket(0x67, ClientboundUpdateAttributesPacket.class, ClientboundUpdateAttributesPacket::new)
+					.registerClientboundPacket(0x68, ClientboundUpdateEnabledFeaturesPacket.class, ClientboundUpdateEnabledFeaturesPacket::new)
                     .registerClientboundPacket(0x69, ClientboundUpdateMobEffectPacket.class, ClientboundUpdateMobEffectPacket::new)
                     .registerClientboundPacket(0x6A, ClientboundUpdateRecipesPacket.class, ClientboundUpdateRecipesPacket::new)
                     .registerClientboundPacket(0x6B, ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
@@ -331,51 +330,50 @@ public class MinecraftCodec {
                     .registerServerboundPacket(0x03, ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
                     .registerServerboundPacket(0x04, ServerboundChatCommandPacket.class, ServerboundChatCommandPacket::new)
                     .registerServerboundPacket(0x05, ServerboundChatPacket.class, ServerboundChatPacket::new)
-                    .registerServerboundPacket(0x06, ServerboundChatPreviewPacket.class, ServerboundChatPreviewPacket::new)
-                    .registerServerboundPacket(0x07, ServerboundClientCommandPacket.class, ServerboundClientCommandPacket::new)
-                    .registerServerboundPacket(0x08, ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
-                    .registerServerboundPacket(0x09, ServerboundCommandSuggestionPacket.class, ServerboundCommandSuggestionPacket::new)
-                    .registerServerboundPacket(0x0A, ServerboundContainerButtonClickPacket.class, ServerboundContainerButtonClickPacket::new)
-                    .registerServerboundPacket(0x0B, ServerboundContainerClickPacket.class, ServerboundContainerClickPacket::new)
-                    .registerServerboundPacket(0x0C, ServerboundContainerClosePacket.class, ServerboundContainerClosePacket::new)
-                    .registerServerboundPacket(0x0D, ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
-                    .registerServerboundPacket(0x0E, ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
-                    .registerServerboundPacket(0x0F, ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)
-                    .registerServerboundPacket(0x10, ServerboundInteractPacket.class, ServerboundInteractPacket::new)
-                    .registerServerboundPacket(0x11, ServerboundJigsawGeneratePacket.class, ServerboundJigsawGeneratePacket::new)
-                    .registerServerboundPacket(0x12, ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
-                    .registerServerboundPacket(0x13, ServerboundLockDifficultyPacket.class, ServerboundLockDifficultyPacket::new)
-                    .registerServerboundPacket(0x14, ServerboundMovePlayerPosPacket.class, ServerboundMovePlayerPosPacket::new)
-                    .registerServerboundPacket(0x15, ServerboundMovePlayerPosRotPacket.class, ServerboundMovePlayerPosRotPacket::new)
-                    .registerServerboundPacket(0x16, ServerboundMovePlayerRotPacket.class, ServerboundMovePlayerRotPacket::new)
-                    .registerServerboundPacket(0x17, ServerboundMovePlayerStatusOnlyPacket.class, ServerboundMovePlayerStatusOnlyPacket::new)
-                    .registerServerboundPacket(0x18, ServerboundMoveVehiclePacket.class, ServerboundMoveVehiclePacket::new)
-                    .registerServerboundPacket(0x19, ServerboundPaddleBoatPacket.class, ServerboundPaddleBoatPacket::new)
-                    .registerServerboundPacket(0x1A, ServerboundPickItemPacket.class, ServerboundPickItemPacket::new)
-                    .registerServerboundPacket(0x1B, ServerboundPlaceRecipePacket.class, ServerboundPlaceRecipePacket::new)
-                    .registerServerboundPacket(0x1C, ServerboundPlayerAbilitiesPacket.class, ServerboundPlayerAbilitiesPacket::new)
-                    .registerServerboundPacket(0x1D, ServerboundPlayerActionPacket.class, ServerboundPlayerActionPacket::new)
-                    .registerServerboundPacket(0x1E, ServerboundPlayerCommandPacket.class, ServerboundPlayerCommandPacket::new)
-                    .registerServerboundPacket(0x1F, ServerboundPlayerInputPacket.class, ServerboundPlayerInputPacket::new)
-                    .registerServerboundPacket(0x20, ServerboundPongPacket.class, ServerboundPongPacket::new)
-                    .registerServerboundPacket(0x21, ServerboundRecipeBookChangeSettingsPacket.class, ServerboundRecipeBookChangeSettingsPacket::new)
-                    .registerServerboundPacket(0x22, ServerboundRecipeBookSeenRecipePacket.class, ServerboundRecipeBookSeenRecipePacket::new)
-                    .registerServerboundPacket(0x23, ServerboundRenameItemPacket.class, ServerboundRenameItemPacket::new)
-                    .registerServerboundPacket(0x24, ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
-                    .registerServerboundPacket(0x25, ServerboundSeenAdvancementsPacket.class, ServerboundSeenAdvancementsPacket::new)
-                    .registerServerboundPacket(0x26, ServerboundSelectTradePacket.class, ServerboundSelectTradePacket::new)
-                    .registerServerboundPacket(0x27, ServerboundSetBeaconPacket.class, ServerboundSetBeaconPacket::new)
-                    .registerServerboundPacket(0x28, ServerboundSetCarriedItemPacket.class, ServerboundSetCarriedItemPacket::new)
-                    .registerServerboundPacket(0x29, ServerboundSetCommandBlockPacket.class, ServerboundSetCommandBlockPacket::new)
-                    .registerServerboundPacket(0x2A, ServerboundSetCommandMinecartPacket.class, ServerboundSetCommandMinecartPacket::new)
-                    .registerServerboundPacket(0x2B, ServerboundSetCreativeModeSlotPacket.class, ServerboundSetCreativeModeSlotPacket::new)
-                    .registerServerboundPacket(0x2C, ServerboundSetJigsawBlockPacket.class, ServerboundSetJigsawBlockPacket::new)
-                    .registerServerboundPacket(0x2D, ServerboundSetStructureBlockPacket.class, ServerboundSetStructureBlockPacket::new)
-                    .registerServerboundPacket(0x2E, ServerboundSignUpdatePacket.class, ServerboundSignUpdatePacket::new)
-                    .registerServerboundPacket(0x2F, ServerboundSwingPacket.class, ServerboundSwingPacket::new)
-                    .registerServerboundPacket(0x30, ServerboundTeleportToEntityPacket.class, ServerboundTeleportToEntityPacket::new)
-                    .registerServerboundPacket(0x31, ServerboundUseItemOnPacket.class, ServerboundUseItemOnPacket::new)
-                    .registerServerboundPacket(0x32, ServerboundUseItemPacket.class, ServerboundUseItemPacket::new)
+                    .registerServerboundPacket(0x06, ServerboundClientCommandPacket.class, ServerboundClientCommandPacket::new)
+                    .registerServerboundPacket(0x07, ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
+                    .registerServerboundPacket(0x08, ServerboundCommandSuggestionPacket.class, ServerboundCommandSuggestionPacket::new)
+                    .registerServerboundPacket(0x09, ServerboundContainerButtonClickPacket.class, ServerboundContainerButtonClickPacket::new)
+                    .registerServerboundPacket(0x0A, ServerboundContainerClickPacket.class, ServerboundContainerClickPacket::new)
+                    .registerServerboundPacket(0x0B, ServerboundContainerClosePacket.class, ServerboundContainerClosePacket::new)
+                    .registerServerboundPacket(0x0C, ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
+                    .registerServerboundPacket(0x0D, ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
+                    .registerServerboundPacket(0x0E, ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)
+                    .registerServerboundPacket(0x0F, ServerboundInteractPacket.class, ServerboundInteractPacket::new)
+                    .registerServerboundPacket(0x10, ServerboundJigsawGeneratePacket.class, ServerboundJigsawGeneratePacket::new)
+                    .registerServerboundPacket(0x11, ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
+                    .registerServerboundPacket(0x12, ServerboundLockDifficultyPacket.class, ServerboundLockDifficultyPacket::new)
+                    .registerServerboundPacket(0x13, ServerboundMovePlayerPosPacket.class, ServerboundMovePlayerPosPacket::new)
+                    .registerServerboundPacket(0x14, ServerboundMovePlayerPosRotPacket.class, ServerboundMovePlayerPosRotPacket::new)
+                    .registerServerboundPacket(0x15, ServerboundMovePlayerRotPacket.class, ServerboundMovePlayerRotPacket::new)
+                    .registerServerboundPacket(0x16, ServerboundMovePlayerStatusOnlyPacket.class, ServerboundMovePlayerStatusOnlyPacket::new)
+                    .registerServerboundPacket(0x17, ServerboundMoveVehiclePacket.class, ServerboundMoveVehiclePacket::new)
+                    .registerServerboundPacket(0x18, ServerboundPaddleBoatPacket.class, ServerboundPaddleBoatPacket::new)
+                    .registerServerboundPacket(0x19, ServerboundPickItemPacket.class, ServerboundPickItemPacket::new)
+                    .registerServerboundPacket(0x1A, ServerboundPlaceRecipePacket.class, ServerboundPlaceRecipePacket::new)
+                    .registerServerboundPacket(0x1B, ServerboundPlayerAbilitiesPacket.class, ServerboundPlayerAbilitiesPacket::new)
+                    .registerServerboundPacket(0x1C, ServerboundPlayerActionPacket.class, ServerboundPlayerActionPacket::new)
+                    .registerServerboundPacket(0x1D, ServerboundPlayerCommandPacket.class, ServerboundPlayerCommandPacket::new)
+                    .registerServerboundPacket(0x1E, ServerboundPlayerInputPacket.class, ServerboundPlayerInputPacket::new)
+                    .registerServerboundPacket(0x1F, ServerboundPongPacket.class, ServerboundPongPacket::new)
+                    .registerServerboundPacket(0x20, ServerboundRecipeBookChangeSettingsPacket.class, ServerboundRecipeBookChangeSettingsPacket::new)
+                    .registerServerboundPacket(0x21, ServerboundRecipeBookSeenRecipePacket.class, ServerboundRecipeBookSeenRecipePacket::new)
+                    .registerServerboundPacket(0x22, ServerboundRenameItemPacket.class, ServerboundRenameItemPacket::new)
+                    .registerServerboundPacket(0x23, ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
+                    .registerServerboundPacket(0x24, ServerboundSeenAdvancementsPacket.class, ServerboundSeenAdvancementsPacket::new)
+                    .registerServerboundPacket(0x25, ServerboundSelectTradePacket.class, ServerboundSelectTradePacket::new)
+                    .registerServerboundPacket(0x26, ServerboundSetBeaconPacket.class, ServerboundSetBeaconPacket::new)
+                    .registerServerboundPacket(0x27, ServerboundSetCarriedItemPacket.class, ServerboundSetCarriedItemPacket::new)
+                    .registerServerboundPacket(0x28, ServerboundSetCommandBlockPacket.class, ServerboundSetCommandBlockPacket::new)
+                    .registerServerboundPacket(0x29, ServerboundSetCommandMinecartPacket.class, ServerboundSetCommandMinecartPacket::new)
+                    .registerServerboundPacket(0x2A, ServerboundSetCreativeModeSlotPacket.class, ServerboundSetCreativeModeSlotPacket::new)
+                    .registerServerboundPacket(0x2B, ServerboundSetJigsawBlockPacket.class, ServerboundSetJigsawBlockPacket::new)
+                    .registerServerboundPacket(0x2C, ServerboundSetStructureBlockPacket.class, ServerboundSetStructureBlockPacket::new)
+                    .registerServerboundPacket(0x2D, ServerboundSignUpdatePacket.class, ServerboundSignUpdatePacket::new)
+                    .registerServerboundPacket(0x2E, ServerboundSwingPacket.class, ServerboundSwingPacket::new)
+                    .registerServerboundPacket(0x2F, ServerboundTeleportToEntityPacket.class, ServerboundTeleportToEntityPacket::new)
+                    .registerServerboundPacket(0x30, ServerboundUseItemOnPacket.class, ServerboundUseItemOnPacket::new)
+                    .registerServerboundPacket(0x31, ServerboundUseItemPacket.class, ServerboundUseItemPacket::new)
             )
             .build();
 }

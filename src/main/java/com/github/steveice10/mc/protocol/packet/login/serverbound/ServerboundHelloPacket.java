@@ -23,11 +23,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ServerboundHelloPacket implements MinecraftPacket {
     private final @NonNull String username;
+    private final @NonNull UUID sessionId;
     private final @Nullable ProfilePublicKeyData publicKey;
     private final @Nullable UUID profileId;
 
     public ServerboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.username = helper.readString(in);
+        this.sessionId = helper.readUUID(in);
         if (in.readBoolean()) {
             this.publicKey = new ProfilePublicKeyData(in, helper);
         } else {
@@ -39,6 +41,7 @@ public class ServerboundHelloPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.username);
+        helper.writeUUID(out, this.sessionId);
         out.writeBoolean(this.publicKey != null);
         if (this.publicKey != null) {
             this.publicKey.serialize(out, helper);

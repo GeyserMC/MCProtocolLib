@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.data.game;
+package com.github.steveice10.mc.protocol.data.game.chat;
 
 public enum ChatFilterType {
 	PASS_THROUGH,

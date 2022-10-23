@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.codec;
 
+import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
@@ -44,7 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -695,6 +698,85 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeDataPalette(buf, section.getChunkData());
         this.writeDataPalette(buf, section.getBiomeData());
     }
+
+	public <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, Class<E> enumClass) {
+		E[] values = enumClass.getEnumConstants();
+		BitSet bitSet = this.readFixedBitSet(buf, values.length);
+		EnumSet<E> enumSet = EnumSet.noneOf(enumClass);
+
+		for (int i = 0; i < values.length; i++) {
+			if (bitSet.get(i)) {
+				enumSet.add(values[i]);
+			}
+		}
+
+		return enumSet;
+	}
+
+	public <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, Class<E> enumClass) {
+		E[] values = enumClass.getEnumConstants();
+		BitSet bitSet = new BitSet(values.length);
+
+		for (int i = 0; i < values.length; i++) {
+			bitSet.set(i, enumSet.contains(values[i]));
+		}
+
+		this.writeFixedBitSet(buf, bitSet, values.length);
+	}
+
+	public BitSet readFixedBitSet(ByteBuf buf, int length) {
+		byte[] bytes = new byte[-Math.floorDiv(-length, 8)];
+		buf.readBytes(bytes);
+		return BitSet.valueOf(bytes);
+	}
+
+	public void writeFixedBitSet(ByteBuf buf, BitSet bitSet, int length) {
+		if (bitSet.length() > length) {
+			throw new IllegalArgumentException("BitSet is larger than expected size (" + bitSet.length() + " > " + length + ")");
+		} else {
+			byte[] bytes = bitSet.toByteArray();
+			buf.writeBytes(Arrays.copyOf(bytes, -Math.floorDiv(-length, 8)));
+		}
+	}
+
+	public GameProfile readGameProfile(ByteBuf buf) {
+		UUID uuid = this.readUUID(buf);
+		String name = this.readString(buf);
+		GameProfile profile = new GameProfile(uuid, name);
+		int propertyCount = this.readVarInt(buf);
+		for (int i = 0; i < propertyCount; i++) {
+			profile.getProperties().add(this.readProperty(buf));
+		}
+		return profile;
+	}
+
+	public void writeGameProfile(ByteBuf buf, GameProfile profile) {
+		this.writeUUID(buf, profile.getId());
+		this.writeString(buf, profile.getName());
+		this.writeVarInt(buf, profile.getProperties().size());
+		for (GameProfile.Property property : profile.getProperties()) {
+			this.writeProperty(buf, property);
+		}
+	}
+
+	public GameProfile.Property readProperty(ByteBuf buf) {
+		String name = this.readString(buf);
+		String value = this.readString(buf);
+		if (buf.readBoolean()) {
+			return new GameProfile.Property(name, value, this.readString(buf));
+		} else {
+			return new GameProfile.Property(name, value);
+		}
+	}
+
+	public void writeProperty(ByteBuf buf, GameProfile.Property property) {
+		this.writeString(buf, property.getName());
+		this.writeString(buf, property.getValue());
+		buf.writeBoolean(property.hasSignature());
+		if (property.hasSignature()) {
+			this.writeString(buf, property.getSignature());
+		}
+	}
 
     public NibbleArray3d readNibbleArray(ByteBuf buf, int size) {
         return new NibbleArray3d(this.readByteArray(buf, ignored -> size));

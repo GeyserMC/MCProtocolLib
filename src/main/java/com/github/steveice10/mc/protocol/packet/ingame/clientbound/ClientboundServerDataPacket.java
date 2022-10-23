@@ -18,7 +18,6 @@ import java.io.IOException;
 public class ClientboundServerDataPacket implements MinecraftPacket {
 	private final @Nullable Component motd;
 	private final @Nullable String iconBase64;
-	private final boolean previewsChat;
 	private final boolean enforcesSecureChat;
 
 	public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
@@ -34,7 +33,6 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
 			this.iconBase64 = null;
 		}
 
-		this.previewsChat = in.readBoolean();
 		this.enforcesSecureChat = in.readBoolean();
 	}
 
@@ -50,7 +48,6 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
 			helper.writeString(out, this.iconBase64);
 		}
 
-		out.writeBoolean(this.previewsChat);
 		out.writeBoolean(this.enforcesSecureChat);
 	}
 }

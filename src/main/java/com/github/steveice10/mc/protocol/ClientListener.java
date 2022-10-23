@@ -35,6 +35,7 @@ import lombok.NonNull;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 /**
  * Handles making initial login and status requests for clients.
@@ -125,7 +126,7 @@ public class ClientListener extends SessionAdapter {
 
             if (this.targetState == ProtocolState.LOGIN) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
-                session.send(new ServerboundHelloPacket(profile.getName(), null, profile.getId()));
+                session.send(new ServerboundHelloPacket(profile.getName(), UUID.randomUUID(), null, profile.getId()));
             } else {
                 session.send(new ServerboundStatusRequestPacket());
             }
