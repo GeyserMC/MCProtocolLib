@@ -283,7 +283,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, type);
     }
 
-    private void writeEnum(ByteBuf buf, Enum<?> e){
+    private void writeEnum(ByteBuf buf, Enum<?> e) {
         this.writeVarInt(buf, e.ordinal());
     }
 
@@ -699,84 +699,84 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeDataPalette(buf, section.getBiomeData());
     }
 
-	public <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, Class<E> enumClass) {
-		E[] values = enumClass.getEnumConstants();
-		BitSet bitSet = this.readFixedBitSet(buf, values.length);
-		EnumSet<E> enumSet = EnumSet.noneOf(enumClass);
+    public <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, Class<E> enumClass) {
+        E[] values = enumClass.getEnumConstants();
+        BitSet bitSet = this.readFixedBitSet(buf, values.length);
+        EnumSet<E> enumSet = EnumSet.noneOf(enumClass);
 
-		for (int i = 0; i < values.length; i++) {
-			if (bitSet.get(i)) {
-				enumSet.add(values[i]);
-			}
-		}
+        for (int i = 0; i < values.length; i++) {
+            if (bitSet.get(i)) {
+                enumSet.add(values[i]);
+            }
+        }
 
-		return enumSet;
-	}
+        return enumSet;
+    }
 
-	public <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, Class<E> enumClass) {
-		E[] values = enumClass.getEnumConstants();
-		BitSet bitSet = new BitSet(values.length);
+    public <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, Class<E> enumClass) {
+        E[] values = enumClass.getEnumConstants();
+        BitSet bitSet = new BitSet(values.length);
 
-		for (int i = 0; i < values.length; i++) {
-			bitSet.set(i, enumSet.contains(values[i]));
-		}
+        for (int i = 0; i < values.length; i++) {
+            bitSet.set(i, enumSet.contains(values[i]));
+        }
 
-		this.writeFixedBitSet(buf, bitSet, values.length);
-	}
+        this.writeFixedBitSet(buf, bitSet, values.length);
+    }
 
-	public BitSet readFixedBitSet(ByteBuf buf, int length) {
-		byte[] bytes = new byte[-Math.floorDiv(-length, 8)];
-		buf.readBytes(bytes);
-		return BitSet.valueOf(bytes);
-	}
+    public BitSet readFixedBitSet(ByteBuf buf, int length) {
+        byte[] bytes = new byte[-Math.floorDiv(-length, 8)];
+        buf.readBytes(bytes);
+        return BitSet.valueOf(bytes);
+    }
 
-	public void writeFixedBitSet(ByteBuf buf, BitSet bitSet, int length) {
-		if (bitSet.length() > length) {
-			throw new IllegalArgumentException("BitSet is larger than expected size (" + bitSet.length() + " > " + length + ")");
-		} else {
-			byte[] bytes = bitSet.toByteArray();
-			buf.writeBytes(Arrays.copyOf(bytes, -Math.floorDiv(-length, 8)));
-		}
-	}
+    public void writeFixedBitSet(ByteBuf buf, BitSet bitSet, int length) {
+        if (bitSet.length() > length) {
+            throw new IllegalArgumentException("BitSet is larger than expected size (" + bitSet.length() + " > " + length + ")");
+        } else {
+            byte[] bytes = bitSet.toByteArray();
+            buf.writeBytes(Arrays.copyOf(bytes, -Math.floorDiv(-length, 8)));
+        }
+    }
 
-	public GameProfile readGameProfile(ByteBuf buf) {
-		UUID uuid = this.readUUID(buf);
-		String name = this.readString(buf);
-		GameProfile profile = new GameProfile(uuid, name);
-		int propertyCount = this.readVarInt(buf);
-		for (int i = 0; i < propertyCount; i++) {
-			profile.getProperties().add(this.readProperty(buf));
-		}
-		return profile;
-	}
+    public GameProfile readGameProfile(ByteBuf buf) {
+        UUID uuid = this.readUUID(buf);
+        String name = this.readString(buf);
+        GameProfile profile = new GameProfile(uuid, name);
+        int propertyCount = this.readVarInt(buf);
+        for (int i = 0; i < propertyCount; i++) {
+            profile.getProperties().add(this.readProperty(buf));
+        }
+        return profile;
+    }
 
-	public void writeGameProfile(ByteBuf buf, GameProfile profile) {
-		this.writeUUID(buf, profile.getId());
-		this.writeString(buf, profile.getName());
-		this.writeVarInt(buf, profile.getProperties().size());
-		for (GameProfile.Property property : profile.getProperties()) {
-			this.writeProperty(buf, property);
-		}
-	}
+    public void writeGameProfile(ByteBuf buf, GameProfile profile) {
+        this.writeUUID(buf, profile.getId());
+        this.writeString(buf, profile.getName());
+        this.writeVarInt(buf, profile.getProperties().size());
+        for (GameProfile.Property property : profile.getProperties()) {
+            this.writeProperty(buf, property);
+        }
+    }
 
-	public GameProfile.Property readProperty(ByteBuf buf) {
-		String name = this.readString(buf);
-		String value = this.readString(buf);
-		if (buf.readBoolean()) {
-			return new GameProfile.Property(name, value, this.readString(buf));
-		} else {
-			return new GameProfile.Property(name, value);
-		}
-	}
+    public GameProfile.Property readProperty(ByteBuf buf) {
+        String name = this.readString(buf);
+        String value = this.readString(buf);
+        if (buf.readBoolean()) {
+            return new GameProfile.Property(name, value, this.readString(buf));
+        } else {
+            return new GameProfile.Property(name, value);
+        }
+    }
 
-	public void writeProperty(ByteBuf buf, GameProfile.Property property) {
-		this.writeString(buf, property.getName());
-		this.writeString(buf, property.getValue());
-		buf.writeBoolean(property.hasSignature());
-		if (property.hasSignature()) {
-			this.writeString(buf, property.getSignature());
-		}
-	}
+    public void writeProperty(ByteBuf buf, GameProfile.Property property) {
+        this.writeString(buf, property.getName());
+        this.writeString(buf, property.getValue());
+        buf.writeBoolean(property.hasSignature());
+        if (property.hasSignature()) {
+            this.writeString(buf, property.getSignature());
+        }
+    }
 
     public NibbleArray3d readNibbleArray(ByteBuf buf, int size) {
         return new NibbleArray3d(this.readByteArray(buf, ignored -> size));

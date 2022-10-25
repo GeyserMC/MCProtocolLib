@@ -16,38 +16,38 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundServerDataPacket implements MinecraftPacket {
-	private final @Nullable Component motd;
-	private final @Nullable String iconBase64;
-	private final boolean enforcesSecureChat;
+    private final @Nullable Component motd;
+    private final @Nullable String iconBase64;
+    private final boolean enforcesSecureChat;
 
-	public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-		if (in.readBoolean()) {
-			this.motd = helper.readComponent(in);
-		} else {
-			this.motd = null;
-		}
+    public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        if (in.readBoolean()) {
+            this.motd = helper.readComponent(in);
+        } else {
+            this.motd = null;
+        }
 
-		if (in.readBoolean()) {
-			this.iconBase64 = helper.readString(in);
-		} else {
-			this.iconBase64 = null;
-		}
+        if (in.readBoolean()) {
+            this.iconBase64 = helper.readString(in);
+        } else {
+            this.iconBase64 = null;
+        }
 
-		this.enforcesSecureChat = in.readBoolean();
-	}
+        this.enforcesSecureChat = in.readBoolean();
+    }
 
-	@Override
-	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-		out.writeBoolean(this.motd != null);
-		if (this.motd != null) {
-			helper.writeString(out, DefaultComponentSerializer.get().serialize(this.motd));
-		}
+    @Override
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        out.writeBoolean(this.motd != null);
+        if (this.motd != null) {
+            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.motd));
+        }
 
-		out.writeBoolean(this.iconBase64 != null);
-		if (this.iconBase64 != null) {
-			helper.writeString(out, this.iconBase64);
-		}
+        out.writeBoolean(this.iconBase64 != null);
+        if (this.iconBase64 != null) {
+            helper.writeString(out, this.iconBase64);
+        }
 
-		out.writeBoolean(this.enforcesSecureChat);
-	}
+        out.writeBoolean(this.enforcesSecureChat);
+    }
 }

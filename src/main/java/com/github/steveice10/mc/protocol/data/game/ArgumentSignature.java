@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ArgumentSignature {
-	private final String name;
-	private final byte[] signature;
+    private final String name;
+    private final byte[] signature;
 }

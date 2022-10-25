@@ -21,20 +21,20 @@ public class ServerboundChatPacket implements MinecraftPacket {
     private final long salt;
     private final byte @Nullable[] signature;
     private final int offset;
-	private final BitSet acknowledgedMessages;
+    private final BitSet acknowledgedMessages;
 
     public ServerboundChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.message = helper.readString(in);
         this.timeStamp = in.readLong();
         this.salt = in.readLong();
-		if (in.readBoolean()) {
-			this.signature = in.readBytes(new byte[256]).array();
-		} else {
-			this.signature = null;
-		}
+        if (in.readBoolean()) {
+            this.signature = in.readBytes(new byte[256]).array();
+        } else {
+            this.signature = null;
+        }
 
         this.offset = helper.readVarInt(in);
-		this.acknowledgedMessages = helper.readFixedBitSet(in, 20);
+        this.acknowledgedMessages = helper.readFixedBitSet(in, 20);
     }
 
     @Override
@@ -42,12 +42,12 @@ public class ServerboundChatPacket implements MinecraftPacket {
         helper.writeString(out, this.message);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);
-		out.writeBoolean(this.signature != null);
-		if (this.signature != null) {
-			out.writeBytes(this.signature);
-		}
+        out.writeBoolean(this.signature != null);
+        if (this.signature != null) {
+            out.writeBytes(this.signature);
+        }
 
         helper.writeVarInt(out, this.offset);
-		helper.writeFixedBitSet(out, this.acknowledgedMessages, 20);
+        helper.writeFixedBitSet(out, this.acknowledgedMessages, 20);
     }
 }

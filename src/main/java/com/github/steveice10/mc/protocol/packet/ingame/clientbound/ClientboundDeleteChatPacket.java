@@ -14,18 +14,18 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundDeleteChatPacket implements MinecraftPacket {
-	private final MessageSignature messageSignature;
+    private final MessageSignature messageSignature;
 
-	public ClientboundDeleteChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-		int id = helper.readVarInt(in) - 1;
-		this.messageSignature = new MessageSignature(id, id == -1 ? in.readBytes(new byte[256]).array() : null);
-	}
+    public ClientboundDeleteChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        int id = helper.readVarInt(in) - 1;
+        this.messageSignature = new MessageSignature(id, id == -1 ? in.readBytes(new byte[256]).array() : null);
+    }
 
-	@Override
-	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-		helper.writeVarInt(out, this.messageSignature.getId() + 1);
-		if (this.messageSignature.getMessageSignature() != null) {
-			out.writeBytes(messageSignature.getMessageSignature());
-		}
-	}
+    @Override
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.messageSignature.getId() + 1);
+        if (this.messageSignature.getMessageSignature() != null) {
+            out.writeBytes(messageSignature.getMessageSignature());
+        }
+    }
 }

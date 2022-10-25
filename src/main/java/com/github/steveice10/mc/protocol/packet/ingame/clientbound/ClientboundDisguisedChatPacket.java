@@ -16,27 +16,27 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundDisguisedChatPacket implements MinecraftPacket {
-	private final Component message;
-	/**
-	 * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
-	 */
-	private final int chatType;
-	private final Component name;
-	private final @Nullable Component targetName;
+    private final Component message;
+    /**
+     * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
+     */
+    private final int chatType;
+    private final Component name;
+    private final @Nullable Component targetName;
 
 
-	public ClientboundDisguisedChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-		this.message = helper.readComponent(in);
-		this.chatType = helper.readVarInt(in);
-		this.name = helper.readComponent(in);
-		this.targetName = helper.readNullable(in, helper::readComponent);
-	}
+    public ClientboundDisguisedChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.message = helper.readComponent(in);
+        this.chatType = helper.readVarInt(in);
+        this.name = helper.readComponent(in);
+        this.targetName = helper.readNullable(in, helper::readComponent);
+    }
 
-	@Override
-	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-		helper.writeComponent(out, this.message);
-		helper.writeVarInt(out, this.chatType);
-		helper.writeComponent(out, this.name);
-		helper.writeNullable(out, this.targetName, helper::writeComponent);
-	}
+    @Override
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeComponent(out, this.message);
+        helper.writeVarInt(out, this.chatType);
+        helper.writeComponent(out, this.name);
+        helper.writeNullable(out, this.targetName, helper::writeComponent);
+    }
 }

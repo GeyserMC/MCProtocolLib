@@ -15,17 +15,17 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundSystemChatPacket implements MinecraftPacket {
-	private final Component content;
-	private final boolean overlay;
+    private final Component content;
+    private final boolean overlay;
 
-	public ClientboundSystemChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
-		this.content = helper.readComponent(in);
-		this.overlay = in.readBoolean();
-	}
+    public ClientboundSystemChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.content = helper.readComponent(in);
+        this.overlay = in.readBoolean();
+    }
 
-	@Override
-	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-		helper.writeString(out, DefaultComponentSerializer.get().serialize(this.content));
-		out.writeBoolean(this.overlay);
-	}
+    @Override
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeString(out, DefaultComponentSerializer.get().serialize(this.content));
+        out.writeBoolean(this.overlay);
+    }
 }

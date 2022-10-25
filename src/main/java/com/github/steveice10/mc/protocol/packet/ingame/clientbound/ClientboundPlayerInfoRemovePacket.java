@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.UUID;
 
 public class ClientboundPlayerInfoRemovePacket implements MinecraftPacket {
-	private final List<UUID> profileIds;
+    private final List<UUID> profileIds;
 
-	public ClientboundPlayerInfoRemovePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-		this.profileIds = new ArrayList<>();
-		int numIds = helper.readVarInt(in);
-		for (int i = 0; i < numIds; i++) {
-			this.profileIds.add(helper.readUUID(in));
-		}
-	}
+    public ClientboundPlayerInfoRemovePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.profileIds = new ArrayList<>();
+        int numIds = helper.readVarInt(in);
+        for (int i = 0; i < numIds; i++) {
+            this.profileIds.add(helper.readUUID(in));
+        }
+    }
 
-	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-		helper.writeVarInt(out, this.profileIds.size());
-		for (UUID id : this.profileIds) {
-			helper.writeUUID(out, id);
-		}
-	}
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.profileIds.size());
+        for (UUID id : this.profileIds) {
+            helper.writeUUID(out, id);
+        }
+    }
 }

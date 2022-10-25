@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
-import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
@@ -139,7 +138,6 @@ public class MagicValuesTest {
         this.register(CollisionRule.class, String.class);
         this.register(ScoreType.class, Integer.class);
         this.register(Advancement.DisplayData.FrameType.class, Integer.class);
-        this.register(PlayerListEntryAction.class, Integer.class);
         this.register(UnlockRecipesAction.class, Integer.class);
         this.register(CraftingBookStateType.class, Integer.class);
         this.register(AdvancementTabAction.class, Integer.class);

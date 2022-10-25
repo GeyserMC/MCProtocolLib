@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
-import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
@@ -406,13 +405,6 @@ public class MagicValues {
         register(Advancement.DisplayData.FrameType.TASK, 0);
         register(Advancement.DisplayData.FrameType.CHALLENGE, 1);
         register(Advancement.DisplayData.FrameType.GOAL, 2);
-
-        register(PlayerListEntryAction.ADD_PLAYER, 0);
-        register(PlayerListEntryAction.INITIALIZE_CHAT, 1);
-        register(PlayerListEntryAction.UPDATE_GAME_MODE, 2);
-        register(PlayerListEntryAction.UPDATE_LISTED, 3);
-        register(PlayerListEntryAction.UPDATE_LATENCY, 4);
-        register(PlayerListEntryAction.UPDATE_DISPLAY_NAME, 5);
 
         register(UnlockRecipesAction.INIT, 0);
         register(UnlockRecipesAction.ADD, 1);
