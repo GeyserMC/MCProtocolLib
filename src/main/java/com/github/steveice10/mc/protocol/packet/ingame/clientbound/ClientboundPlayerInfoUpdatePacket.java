@@ -8,6 +8,9 @@ import com.github.steveice10.mc.protocol.data.game.PlayerListEntry;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.With;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
@@ -20,43 +23,39 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
+@Data
+@With
+@AllArgsConstructor
 public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
     private final EnumSet<PlayerListEntryAction> actions;
     private final PlayerListEntry[] entries;
 
     public ClientboundPlayerInfoUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.actions = helper.readEnumSet(in, PlayerListEntryAction.class);
+        this.actions = helper.readEnumSet(in, PlayerListEntryAction.VALUES);
         this.entries = new PlayerListEntry[helper.readVarInt(in)];
         for (int count = 0; count < this.entries.length; count++) {
+            PlayerListEntry entry = new PlayerListEntry(helper.readUUID(in));
             for (PlayerListEntryAction action : this.actions) {
-                UUID profileId = helper.readUUID(in);
-                GameProfile profile;
-                if (action == PlayerListEntryAction.ADD_PLAYER) {
-                    profile = new GameProfile(profileId, helper.readString(in, 16));
-                } else {
-                    profile = new GameProfile(profileId, null);
-                }
-
-                PlayerListEntry entry = null;
                 switch (action) {
                     case ADD_PLAYER: {
-                        int properties = helper.readVarInt(in);
+                        GameProfile profile = new GameProfile(entry.getProfile().getId(), helper.readString(in, 16));
+                        int propertyCount = helper.readVarInt(in);
                         List<GameProfile.Property> propertyList = new ArrayList<>();
-                        for (int index = 0; index < properties; index++) {
+                        for (int index = 0; index < propertyCount; index++) {
                             propertyList.add(helper.readProperty(in));
                         }
 
                         profile.setProperties(propertyList);
 
-                        entry = new PlayerListEntry(profileId, profile);
+                        entry.setProfile(profile);
                         break;
                     }
                     case INITIALIZE_CHAT: {
-                        UUID sessionId = helper.readUUID(in);
+                        entry.setSessionId(helper.readUUID(in));
                         if (in.readBoolean()) {
-                            long expiresAt = in.readLong();
+                            entry.setExpiresAt(in.readLong());
                             byte[] keyBytes = helper.readByteArray(in);
-                            byte[] keySignature = helper.readByteArray(in);
+                            entry.setKeySignature(helper.readByteArray(in));
 
                             PublicKey publicKey = null;
                             try {
@@ -65,9 +64,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                                 throw new IOException("Could not decode public key.", e);
                             }
 
-                            entry = new PlayerListEntry(profileId, profile, sessionId, expiresAt, publicKey, keySignature);
-                        } else {
-                            entry = new PlayerListEntry(profileId, profile, sessionId, 0L, null, null);
+                            entry.setPublicKey(publicKey);
                         }
                         break;
                     }
@@ -75,36 +72,36 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         int rawGameMode = helper.readVarInt(in);
                         GameMode gameMode = MagicValues.key(GameMode.class, Math.max(rawGameMode, 0));
 
-                        entry = new PlayerListEntry(profileId, profile, gameMode);
+                        entry.setGameMode(gameMode);
                         break;
                     }
                     case UPDATE_LISTED: {
                         boolean listed = in.readBoolean();
 
-                        entry = new PlayerListEntry(profileId, profile, listed);
+                        entry.setListed(listed);
                         break;
                     }
                     case UPDATE_LATENCY: {
                         int latency = helper.readVarInt(in);
 
-                        entry = new PlayerListEntry(profileId, profile, latency);
+                        entry.setLatency(latency);
                         break;
                     }
                     case UPDATE_DISPLAY_NAME: {
                         Component displayName = helper.readNullable(in, helper::readComponent);
 
-                        entry = new PlayerListEntry(profileId, profile, displayName);
+                        entry.setDisplayName(displayName);
                         break;
                     }
                 }
-
-                this.entries[count] = entry;
             }
+
+            this.entries[count] = entry;
         }
     }
 
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeEnumSet(out, this.actions, PlayerListEntryAction.class);
+        helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {
             helper.writeUUID(out, entry.getProfile().getId());

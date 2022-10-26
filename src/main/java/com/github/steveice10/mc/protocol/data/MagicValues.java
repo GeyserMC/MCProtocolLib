@@ -155,7 +155,7 @@ public class MagicValues {
 
         register(FillStackAction.FILL, 0);
 
-        register(GameMode.UNKNOWN, 255); // https://bugs.mojang.com/browse/MC-189885 - should be -1
+        register(GameMode.UNKNOWN, -1);
         register(GameMode.SURVIVAL, 0);
         register(GameMode.CREATIVE, 1);
         register(GameMode.ADVENTURE, 2);

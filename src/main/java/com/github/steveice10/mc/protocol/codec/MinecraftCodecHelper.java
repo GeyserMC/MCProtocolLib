@@ -699,22 +699,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeDataPalette(buf, section.getBiomeData());
     }
 
-    public <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, Class<E> enumClass) {
-        E[] values = enumClass.getEnumConstants();
+    public <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, E[] values) {
         BitSet bitSet = this.readFixedBitSet(buf, values.length);
-        EnumSet<E> enumSet = EnumSet.noneOf(enumClass);
+        List<E> readValues = new ArrayList<>();
 
         for (int i = 0; i < values.length; i++) {
             if (bitSet.get(i)) {
-                enumSet.add(values[i]);
+                readValues.add(values[i]);
             }
         }
 
-        return enumSet;
+        return EnumSet.copyOf(readValues);
     }
 
-    public <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, Class<E> enumClass) {
-        E[] values = enumClass.getEnumConstants();
+    public <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, E[] values) {
         BitSet bitSet = new BitSet(values.length);
 
         for (int i = 0; i < values.length; i++) {
