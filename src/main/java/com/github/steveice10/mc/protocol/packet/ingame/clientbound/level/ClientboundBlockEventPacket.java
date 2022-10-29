@@ -3,13 +3,26 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.*;
-import com.nukkitx.math.vector.Vector3i;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.cloudburstmc.math.vector.Vector3i;
 
 import java.io.IOException;
 

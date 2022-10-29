@@ -3,13 +3,22 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.level.event.*;
-import com.nukkitx.math.vector.Vector3i;
+import com.github.steveice10.mc.protocol.data.game.level.event.BonemealGrowEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.BreakBlockEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.BreakPotionEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.ComposterEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.DragonFireballEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.RecordEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.SculkBlockChargeEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.SmokeEventData;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.cloudburstmc.math.vector.Vector3i;
 
 import java.io.IOException;
 

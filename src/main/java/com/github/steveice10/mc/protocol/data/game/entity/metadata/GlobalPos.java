@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 
-import com.nukkitx.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector3i;
 
 public class GlobalPos {
     private final String dimension;
