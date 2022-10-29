@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.codec;
 
 import com.github.steveice10.packetlib.codec.PacketCodecHelper;
-import com.github.steveice10.packetlib.codec.PacketSerializer;
 import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
