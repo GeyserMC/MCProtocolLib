@@ -51,8 +51,8 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         break;
                     }
                     case INITIALIZE_CHAT: {
-                        entry.setSessionId(helper.readUUID(in));
                         if (in.readBoolean()) {
+                            entry.setSessionId(helper.readUUID(in));
                             entry.setExpiresAt(in.readLong());
                             byte[] keyBytes = helper.readByteArray(in);
                             entry.setKeySignature(helper.readByteArray(in));
@@ -114,10 +114,9 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         }
                         break;
                     case INITIALIZE_CHAT:
-                        helper.writeUUID(out, entry.getSessionId());
-
                         out.writeBoolean(entry.getPublicKey() != null);
                         if (entry.getPublicKey() != null) {
+                            helper.writeUUID(out, entry.getSessionId());
                             out.writeLong(entry.getExpiresAt());
                             helper.writeByteArray(out, entry.getPublicKey().getEncoded());
                             helper.writeByteArray(out, entry.getKeySignature());
