@@ -226,12 +226,12 @@ public class MinecraftProtocolTest {
     }
 
     private static CompoundTag loadNetworkCodec() {
-        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("login_registry.nbt");
+        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("network_codec.nbt");
              DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
             return (CompoundTag) NBTIO.readTag((DataInput) stream);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new AssertionError("Unable to load login registry.");
+            throw new AssertionError("Unable to load network codec.");
         }
     }
 }

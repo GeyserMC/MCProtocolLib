@@ -51,7 +51,7 @@ public class MinecraftProtocolTest {
             null,
             false
     );
-    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, loadRegistryCodec(), "overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, GameMode.SURVIVAL, GameMode.SURVIVAL, 1, new String[]{"minecraft:world"}, loadNetworkCodec(), "overworld", "minecraft:world", 100, 0, 16, 16, false, false, false, false, null);
 
     private static Server server;
 
@@ -142,13 +142,13 @@ public class MinecraftProtocolTest {
         }
     }
 
-    public static CompoundTag loadRegistryCodec() {
-        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("registry_codec.nbt");
+    public static CompoundTag loadNetworkCodec() {
+        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("network_codec.nbt");
             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
             return (CompoundTag) NBTIO.readTag((DataInput) stream);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new AssertionError("Unable to load registry codec.");
+            throw new AssertionError("Unable to load network codec.");
         }
     }
 }
