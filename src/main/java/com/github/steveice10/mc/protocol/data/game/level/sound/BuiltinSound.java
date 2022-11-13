@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Getter
 @AllArgsConstructor
 public enum BuiltinSound implements Sound {
@@ -249,6 +246,15 @@ public enum BuiltinSound implements Sound {
     ENTITY_CHICKEN_EGG("entity.chicken.egg"),
     ENTITY_CHICKEN_HURT("entity.chicken.hurt"),
     ENTITY_CHICKEN_STEP("entity.chicken.step"),
+    BLOCK_CHISELED_BOOKSHELF_BREAK("block.chiseled_bookshelf.break"),
+    BLOCK_CHISELED_BOOKSHELF_FALL("block.chiseled_bookshelf.fall"),
+    BLOCK_CHISELED_BOOKSHELF_HIT("block.chiseled_bookshelf.hit"),
+    BLOCK_CHISELED_BOOKSHELF_INSERT("block.chiseled_bookshelf.insert"),
+    BLOCK_CHISELED_BOOKSHELF_INSERT_ENCHANTED("block.chiseled_bookshelf.insert.enchanted"),
+    BLOCK_CHISELED_BOOKSHELF_STEP("block.chiseled_bookshelf.step"),
+    BLOCK_CHISELED_BOOKSHELF_PICKUP("block.chiseled_bookshelf.pickup"),
+    BLOCK_CHISELED_BOOKSHELF_PICKUP_ENCHANTED("block.chiseled_bookshelf.pickup.enchanted"),
+    BLOCK_CHISELED_BOOKSHELF_PLACE("block.chiseled_bookshelf.place"),
     BLOCK_CHORUS_FLOWER_DEATH("block.chorus_flower.death"),
     BLOCK_CHORUS_FLOWER_GROW("block.chorus_flower.grow"),
     ITEM_CHORUS_FRUIT_TELEPORT("item.chorus_fruit.teleport"),
@@ -548,6 +554,16 @@ public enum BuiltinSound implements Sound {
     BLOCK_HANGING_SIGN_FALL("block.hanging_sign.fall"),
     BLOCK_HANGING_SIGN_HIT("block.hanging_sign.hit"),
     BLOCK_HANGING_SIGN_PLACE("block.hanging_sign.place"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_STEP("block.nether_wood_hanging_sign.step"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_BREAK("block.nether_wood_hanging_sign.break"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_FALL("block.nether_wood_hanging_sign.fall"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_HIT("block.nether_wood_hanging_sign.hit"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_PLACE("block.nether_wood_hanging_sign.place"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_STEP("block.bamboo_wood_hanging_sign.step"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_BREAK("block.bamboo_wood_hanging_sign.break"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_FALL("block.bamboo_wood_hanging_sign.fall"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_HIT("block.bamboo_wood_hanging_sign.hit"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_PLACE("block.bamboo_wood_hanging_sign.place"),
     ITEM_HOE_TILL("item.hoe.till"),
     ENTITY_HOGLIN_AMBIENT("entity.hoglin.ambient"),
     ENTITY_HOGLIN_ANGRY("entity.hoglin.angry"),
