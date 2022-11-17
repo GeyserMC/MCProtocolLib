@@ -4,7 +4,7 @@ MCProtocolLib is a simple library for communicating with Minecraft clients and s
 
 ## Example Code
 
-See [example/com/github/steveice10/mc/protocol/test/MinecraftProtocolTest.java](https://github.com/GeyserMC/MCProtocolLib/tree/master/example/com/github/steveice10/mc/protocol/test) for sample usage.
+See [example/src/main/java/com/github/steveice10/mc/protocol/test/](https://github.com/GeyserMC/MCProtocolLib/blob/master/example/src/main/java/com/github/steveice10/mc/protocol/test/) for sample usage.
 
 ## Adding as a Dependency
 
