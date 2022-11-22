@@ -29,7 +29,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
         for (int i = 0; i < this.recipes.length; i++) {
             RecipeType type = MagicValues.key(RecipeType.class, Identifier.formalize(helper.readString(in)));
             String identifier = helper.readString(in);
-            RecipeData data = null;
+            RecipeData data;
             switch (type) {
                 case CRAFTING_SHAPELESS: {
                     String group = helper.readString(in);
