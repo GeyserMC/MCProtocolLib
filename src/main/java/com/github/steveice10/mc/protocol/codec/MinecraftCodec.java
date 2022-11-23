@@ -340,7 +340,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(0x0C, ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
                     .registerServerboundPacket(0x0D, ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
                     .registerServerboundPacket(0x0E, ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)
-                    .registerServerboundPacket(0x1F, ServerboundInteractPacket.class, ServerboundInteractPacket::new)
+                    .registerServerboundPacket(0x0F, ServerboundInteractPacket.class, ServerboundInteractPacket::new)
                     .registerServerboundPacket(0x10, ServerboundJigsawGeneratePacket.class, ServerboundJigsawGeneratePacket::new)
                     .registerServerboundPacket(0x11, ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
                     .registerServerboundPacket(0x12, ServerboundLockDifficultyPacket.class, ServerboundLockDifficultyPacket::new)
