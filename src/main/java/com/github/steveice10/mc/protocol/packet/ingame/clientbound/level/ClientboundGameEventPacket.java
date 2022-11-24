@@ -25,7 +25,7 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
         float value = in.readFloat();
         // TODO: Handle this in MinecraftCodecHelper
         if (this.notification == GameEvent.CHANGE_GAMEMODE) {
-            this.value = MagicValues.key(GameMode.class, ((int) value == -1) ? 255 : (int) value); // https://bugs.mojang.com/browse/MC-189885 - since we read as a float this bug doesn't apply here
+            this.value = MagicValues.key(GameMode.class, (int) value);
         } else if (this.notification == GameEvent.DEMO_MESSAGE) {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
         } else if (this.notification == GameEvent.ENTER_CREDITS) {
@@ -46,9 +46,7 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
         out.writeByte(MagicValues.value(Integer.class, this.notification));
         float value = 0;
         // TODO: Handle this in MinecraftCodecHelper
-        if (this.value instanceof GameMode && this.value == GameMode.UNKNOWN) {
-            value = -1;
-        } else if (this.value instanceof Enum<?>) {
+        if (this.value instanceof Enum<?>) {
             value = MagicValues.value(Integer.class, (Enum<?>) this.value);
         } else if (this.value instanceof RainStrengthValue) {
             value = ((RainStrengthValue) this.value).getStrength();

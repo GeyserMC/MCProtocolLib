@@ -520,17 +520,17 @@ public class MagicValues {
         register(CommandParser.TEAM, 31);
         register(CommandParser.ITEM_SLOT, 32);
         register(CommandParser.RESOURCE_LOCATION, 33);
-        register(CommandParser.MOB_EFFECT, 34);
-        register(CommandParser.FUNCTION, 35);
-        register(CommandParser.ENTITY_ANCHOR, 36);
-        register(CommandParser.INT_RANGE, 37);
-        register(CommandParser.FLOAT_RANGE, 38);
-        register(CommandParser.ITEM_ENCHANTMENT, 39);
-        register(CommandParser.ENTITY_SUMMON, 40);
-        register(CommandParser.DIMENSION, 41);
-        register(CommandParser.TIME, 42);
-        register(CommandParser.RESOURCE_OR_TAG, 43);
-        register(CommandParser.RESOURCE, 44);
+        register(CommandParser.FUNCTION, 34);
+        register(CommandParser.ENTITY_ANCHOR, 35);
+        register(CommandParser.INT_RANGE, 36);
+        register(CommandParser.FLOAT_RANGE, 37);
+        register(CommandParser.DIMENSION, 38);
+        register(CommandParser.GAMEMODE, 39);
+        register(CommandParser.TIME, 40);
+        register(CommandParser.RESOURCE_OR_TAG, 41);
+        register(CommandParser.RESOURCE_OR_TAG_KEY, 42);
+        register(CommandParser.RESOURCE, 43);
+        register(CommandParser.RESOURCE_KEY, 44);
         register(CommandParser.TEMPLATE_MIRROR, 45);
         register(CommandParser.TEMPLATE_ROTATION, 46);
         register(CommandParser.UUID, 47);
@@ -538,7 +538,6 @@ public class MagicValues {
         register(SuggestionType.ASK_SERVER, "minecraft:ask_server");
         register(SuggestionType.ALL_RECIPES, "minecraft:all_recipes");
         register(SuggestionType.AVAILABLE_SOUNDS, "minecraft:available_sounds");
-        register(SuggestionType.AVAILABLE_BIOMES, "minecraft:available_biomes");
         register(SuggestionType.SUMMONABLE_ENTITIES, "minecraft:summonable_entities");
 
         register(StringProperties.SINGLE_WORD, 0);
