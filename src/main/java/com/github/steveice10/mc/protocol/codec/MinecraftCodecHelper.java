@@ -25,6 +25,8 @@ import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSourceType;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
@@ -82,6 +84,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         } else {
             buf.writeBoolean(false);
         }
+    }
+
+    public String readResourceLocation(ByteBuf buf) {
+        return Identifier.formalize(this.readString(buf));
+    }
+
+    public void writeResourceLocation(ByteBuf buf, String location) {
+        this.writeString(buf, location);
     }
 
     public UUID readUUID(ByteBuf buf) {
@@ -595,14 +605,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, category);
     }
 
-    public BuiltinSound readBuiltinSound(ByteBuf buf) {
-        return BuiltinSound.from(this.readVarInt(buf));
-    }
-
-    public void writeBuiltinSound(ByteBuf buf, BuiltinSound sound) {
-        this.writeEnum(buf, sound);
-    }
-
     @Nullable
     public BuiltinSound getBuiltinSound(String name) {
         return this.soundNames.get(name);
@@ -737,26 +739,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public GameProfile readGameProfile(ByteBuf buf) {
-        UUID uuid = this.readUUID(buf);
-        String name = this.readString(buf);
-        GameProfile profile = new GameProfile(uuid, name);
-        int propertyCount = this.readVarInt(buf);
-        for (int i = 0; i < propertyCount; i++) {
-            profile.getProperties().add(this.readProperty(buf));
-        }
-        return profile;
-    }
-
-    public void writeGameProfile(ByteBuf buf, GameProfile profile) {
-        this.writeUUID(buf, profile.getId());
-        this.writeString(buf, profile.getName());
-        this.writeVarInt(buf, profile.getProperties().size());
-        for (GameProfile.Property property : profile.getProperties()) {
-            this.writeProperty(buf, property);
-        }
-    }
-
     public GameProfile.Property readProperty(ByteBuf buf) {
         String name = this.readString(buf);
         String value = this.readString(buf);
@@ -773,6 +755,28 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeBoolean(property.hasSignature());
         if (property.hasSignature()) {
             this.writeString(buf, property.getSignature());
+        }
+    }
+
+    public <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {
+        int id = this.readVarInt(buf);
+        if (id == 0) {
+            return custom.apply(buf);
+        }
+        return registry.apply(id - 1);
+    }
+
+    public CustomSound readSoundEvent(ByteBuf buf) {
+        String name = this.readString(buf);
+        boolean isNewSystem = buf.readBoolean();
+        return new CustomSound(name, isNewSystem, isNewSystem ? buf.readFloat() : 16.0F);
+    }
+
+    public void writeSoundEvent(ByteBuf buf, Sound soundEvent) {
+        writeString(buf, soundEvent.getName());
+        buf.writeBoolean(soundEvent.isNewSystem());
+        if (soundEvent.isNewSystem()) {
+            buf.writeFloat(soundEvent.getRange());
         }
     }
 

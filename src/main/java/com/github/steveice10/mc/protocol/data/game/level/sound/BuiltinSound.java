@@ -1402,6 +1402,16 @@ public enum BuiltinSound implements Sound {
 
     private final @NonNull String name;
 
+    @Override
+    public boolean isNewSystem() {
+        return false;
+    }
+
+    @Override
+    public float getRange() {
+        return 16F;
+    }
+
     /**
      * For grabbing when the SoundPacket is sent.
      */

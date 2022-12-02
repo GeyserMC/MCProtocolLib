@@ -19,8 +19,6 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundSoundPacket implements MinecraftPacket {
     private final @NonNull Sound sound;
-    private final float range;
-    private final boolean isNewSystem;
     private final @NonNull SoundCategory category;
     private final double x;
     private final double y;
@@ -29,17 +27,8 @@ public class ClientboundSoundPacket implements MinecraftPacket {
     private final float pitch;
     private final long seed;
 
-    public ClientboundSoundPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        int id = helper.readVarInt(in);
-        if (id == 0) {
-            this.sound = new CustomSound(helper.readString(in));
-            this.isNewSystem = in.readBoolean();
-            this.range = this.isNewSystem ? in.readFloat() : 16.0F;
-        } else {
-            this.sound = BuiltinSound.from(id - 1);
-            this.isNewSystem = false;
-            this.range = 16.0F;
-        }
+    public ClientboundSoundPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.sound = helper.readById(in, BuiltinSound::from, helper::readSoundEvent);
         this.category = helper.readSoundCategory(in);
         this.x = in.readInt() / 8D;
         this.y = in.readInt() / 8D;
@@ -53,12 +42,9 @@ public class ClientboundSoundPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         if (this.sound instanceof CustomSound) {
             helper.writeVarInt(out, 0);
-            helper.writeString(out, ((CustomSound) this.sound).getName());
-            if (this.isNewSystem) {
-                out.writeFloat(this.range);
-            }
+            helper.writeSoundEvent(out, this.sound);
         } else {
-            helper.writeVarInt(out, ((BuiltinSound)this.sound).ordinal() + 1);
+            helper.writeVarInt(out, ((BuiltinSound) this.sound).ordinal() + 1);
         }
         helper.writeSoundCategory(out, this.category);
         out.writeInt((int) (this.x * 8));
