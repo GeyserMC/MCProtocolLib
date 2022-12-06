@@ -28,7 +28,8 @@ public class ServerboundChatPacket implements MinecraftPacket {
         this.timeStamp = in.readLong();
         this.salt = in.readLong();
         if (in.readBoolean()) {
-            this.signature = in.readBytes(new byte[256]).array();
+            this.signature = new byte[256];
+            in.readBytes(this.signature);
         } else {
             this.signature = null;
         }
