@@ -35,6 +35,7 @@ import lombok.NonNull;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 /**
  * Handles making initial login and status requests for clients.
@@ -80,7 +81,7 @@ public class ClientListener extends SessionAdapter {
                     return;
                 }
 
-                session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getVerifyToken()));
+                session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()));
                 session.enableEncryption(protocol.enableEncryption(key));
             } else if (packet instanceof ClientboundGameProfilePacket) {
                 protocol.setState(ProtocolState.GAME);
@@ -125,7 +126,7 @@ public class ClientListener extends SessionAdapter {
 
             if (this.targetState == ProtocolState.LOGIN) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
-                session.send(new ServerboundHelloPacket(profile.getName(), null, profile.getId()));
+                session.send(new ServerboundHelloPacket(profile.getName(), profile.getId()));
             } else {
                 session.send(new ServerboundStatusRequestPacket());
             }

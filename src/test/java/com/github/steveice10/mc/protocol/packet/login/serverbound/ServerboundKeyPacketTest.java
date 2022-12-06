@@ -44,6 +44,6 @@ public class ServerboundKeyPacketTest extends PacketTest {
     @Test
     public void testEncryptionResponsePacketGetters() {
         assertEquals("Secret key does not match.", this.secretKey, this.packet.getSecretKey(this.keyPair.getPrivate()));
-        assertArrayEquals("Verify token does not match.", this.verifyToken, this.packet.getVerifyToken(this.keyPair.getPrivate()));
+        assertArrayEquals("Verify token does not match.", this.verifyToken, this.packet.getEncryptedChallenge(this.keyPair.getPrivate()));
     }
 }

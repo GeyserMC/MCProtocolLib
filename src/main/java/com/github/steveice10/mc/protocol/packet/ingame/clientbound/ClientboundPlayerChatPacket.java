@@ -2,9 +2,9 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.BuiltinChatType;
-import com.github.steveice10.mc.protocol.data.game.ChatFilterType;
-import com.github.steveice10.mc.protocol.data.game.LastSeenMessage;
+import com.github.steveice10.mc.protocol.data.game.chat.BuiltinChatType;
+import com.github.steveice10.mc.protocol.data.game.chat.ChatFilterType;
+import com.github.steveice10.mc.protocol.data.game.chat.MessageSignature;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,119 +21,75 @@ import java.util.UUID;
 @With
 @AllArgsConstructor
 public class ClientboundPlayerChatPacket implements MinecraftPacket {
-	private final byte @Nullable[] previousSignature;
-	private final UUID sender;
-	private final byte[] headerSignature;
-	private final String messagePlain;
-	private final Component messageDecorated;
-	private final long timeStamp;
-	private final long salt;
-	private final List<LastSeenMessage> lastSeenMessages;
-	private final @Nullable Component unsignedContent;
-	private final BitSet filterMask;
-	private final ChatFilterType filterType;
-	/**
-	 * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
-	 */
-	private final int chatType;
-	private final Component name;
-	private final @Nullable Component targetName;
+    private final UUID sender;
+    private final int index;
+    private final byte @Nullable[] messageSignature;
+    private final String content;
+    private final long timeStamp;
+    private final long salt;
+    private final List<MessageSignature> lastSeenMessages;
+    private final @Nullable Component unsignedContent;
+    private final ChatFilterType filterMask;
+    /**
+     * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
+     */
+    private final int chatType;
+    private final Component name;
+    private final @Nullable Component targetName;
 
-	public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
-		if (in.readBoolean()) {
-			this.previousSignature = helper.readByteArray(in);
-		} else {
-			this.previousSignature = null;
-		}
+    public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.sender = helper.readUUID(in);
+        this.index = helper.readVarInt(in);
+        if (in.readBoolean()) {
+            this.messageSignature = in.readBytes(new byte[256]).array();
+        } else {
+            this.messageSignature = null;
+        }
 
-		this.sender = helper.readUUID(in);
-		this.headerSignature = helper.readByteArray(in);
-		this.messagePlain = helper.readString(in);
-		if (in.readBoolean()) {
-			this.messageDecorated = helper.readComponent(in);
-		} else {
-			this.messageDecorated = Component.text(this.messagePlain);
-		}
+        this.content = helper.readString(in, 256);
+        this.timeStamp = in.readLong();
+        this.salt = in.readLong();
 
-		this.timeStamp = in.readLong();
-		this.salt = in.readLong();
-		this.lastSeenMessages = new ArrayList<>();
-		int seenMessageCount = Math.min(helper.readVarInt(in), 5);
-		for (int i = 0; i < seenMessageCount; i++) {
-			lastSeenMessages.add(new LastSeenMessage(helper.readUUID(in), helper.readByteArray(in)));
-		}
+        this.lastSeenMessages = new ArrayList<>();
+        int seenMessageCount = Math.min(helper.readVarInt(in), 20);
+        for (int i = 0; i < seenMessageCount; i++) {
+            int id = helper.readVarInt(in) - 1;
+            byte[] messageSignature = id == -1 ? in.readBytes(new byte[256]).array() : null;
+            this.lastSeenMessages.add(new MessageSignature(id, messageSignature));
+        }
 
-		if (in.readBoolean()) {
-			this.unsignedContent = helper.readComponent(in);
-		} else {
-			this.unsignedContent = null;
-		}
+        this.unsignedContent = helper.readNullable(in, helper::readComponent);
+        this.filterMask = ChatFilterType.from(helper.readVarInt(in));
+        this.chatType = helper.readVarInt(in);
+        this.name = helper.readComponent(in);
+        this.targetName = helper.readNullable(in, helper::readComponent);
+    }
 
-		this.filterType = ChatFilterType.from(helper.readVarInt(in));
-		if (filterType == ChatFilterType.PARTIALLY_FILTERED) {
-			this.filterMask = BitSet.valueOf(helper.readLongArray(in));
-		} else {
-			this.filterMask = new BitSet(0);
-		}
+    @Override
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeUUID(out, this.sender);
+        helper.writeVarInt(out, this.index);
+        out.writeBoolean(this.messageSignature != null);
+        if (this.messageSignature != null) {
+            out.writeBytes(this.messageSignature);
+        }
 
-		this.chatType = helper.readVarInt(in);
-		this.name = helper.readComponent(in);
-		if (in.readBoolean()) {
-			this.targetName = helper.readComponent(in);
-		} else {
-			this.targetName = null;
-		}
-	}
+        helper.writeString(out, this.content);
+        out.writeLong(this.timeStamp);
+        out.writeLong(this.salt);
 
-	@Override
-	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-		if (this.previousSignature != null) {
-			out.writeBoolean(true);
-			helper.writeVarInt(out, this.previousSignature.length);
-			out.writeBytes(this.previousSignature);
-		} else {
-			out.writeBoolean(false);
-		}
+        helper.writeVarInt(out, this.lastSeenMessages.size());
+        for (MessageSignature messageSignature : this.lastSeenMessages) {
+            helper.writeVarInt(out, messageSignature.getId() + 1);
+            if (messageSignature.getMessageSignature() != null) {
+                out.writeBytes(messageSignature.getMessageSignature());
+            }
+        }
 
-		helper.writeUUID(out, this.sender);
-		helper.writeVarInt(out, this.headerSignature.length);
-		out.writeBytes(this.headerSignature);
-		helper.writeString(out, this.messagePlain);
-		if (!this.messageDecorated.equals(Component.text(this.messagePlain))) {
-			out.writeBoolean(true);
-			helper.writeComponent(out, this.messageDecorated);
-		} else {
-			out.writeBoolean(false);
-		}
-
-		out.writeLong(this.timeStamp);
-		out.writeLong(this.salt);
-		helper.writeVarInt(out, this.lastSeenMessages.size());
-		for (LastSeenMessage entry : this.lastSeenMessages) {
-			helper.writeUUID(out, entry.getProfileId());
-			helper.writeVarInt(out, entry.getLastSignature().length);
-			out.writeBytes(entry.getLastSignature());
-		}
-
-		if (this.unsignedContent != null) {
-			out.writeBoolean(true);
-			helper.writeComponent(out, this.unsignedContent);
-		} else {
-			out.writeBoolean(false);
-		}
-
-		helper.writeVarInt(out, this.filterType.ordinal());
-		if (this.filterType == ChatFilterType.PARTIALLY_FILTERED) {
-			helper.writeLongArray(out, this.filterMask.toLongArray());
-		}
-
-		helper.writeVarInt(out, this.chatType);
-		helper.writeComponent(out, this.name);
-		if (this.targetName != null) {
-			out.writeBoolean(true);
-			helper.writeComponent(out, this.targetName);
-		} else {
-			out.writeBoolean(false);
-		}
-	}
+        helper.writeNullable(out, this.unsignedContent, helper::writeComponent);
+        helper.writeVarInt(out, this.filterMask.ordinal());
+        helper.writeVarInt(out, this.chatType);
+        helper.writeComponent(out, this.name);
+        helper.writeNullable(out, this.targetName, helper::writeComponent);
+    }
 }

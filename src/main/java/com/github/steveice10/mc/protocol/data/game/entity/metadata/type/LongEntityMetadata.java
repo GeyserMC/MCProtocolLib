@@ -2,28 +2,27 @@ package com.github.steveice10.mc.protocol.data.game.entity.metadata.type;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.IntMetadataType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.LongMetadataType;
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
 import java.io.IOException;
 
-public class IntEntityMetadata extends EntityMetadata<Integer, IntMetadataType> {
-    private final int value;
+public class LongEntityMetadata extends EntityMetadata<Long, LongMetadataType> {
+    private final long value;
 
-    public IntEntityMetadata(int id, @NonNull IntMetadataType type, int value) {
+    public LongEntityMetadata(int id, @NonNull LongMetadataType type, long value) {
         super(id, type);
         this.value = value;
     }
 
-    public int getPrimitiveValue() {
+    public long getPrimitiveValue() {
         return this.value;
     }
 
     @Override
     @Deprecated
-    public Integer getValue() {
+    public Long getValue() {
         return this.value;
     }
 

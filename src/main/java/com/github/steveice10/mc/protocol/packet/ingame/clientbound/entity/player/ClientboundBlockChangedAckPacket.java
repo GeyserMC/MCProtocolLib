@@ -13,14 +13,14 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundBlockChangedAckPacket implements MinecraftPacket {
-	private final int sequence;
+    private final int sequence;
 
-	public ClientboundBlockChangedAckPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-		this.sequence = helper.readVarInt(in);
-	}
+    public ClientboundBlockChangedAckPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.sequence = helper.readVarInt(in);
+    }
 
-	@Override
-	public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-		helper.writeVarInt(out, this.sequence);
-	}
+    @Override
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        helper.writeVarInt(out, this.sequence);
+    }
 }

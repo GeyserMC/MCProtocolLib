@@ -55,15 +55,14 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
-    private final byte[] verifyToken = new byte[4];
+    private final byte[] challenge = new byte[4];
     private String username = "";
-    private ServerboundHelloPacket.ProfilePublicKeyData profilePublicKeyData;
 
     private long lastPingTime = 0;
     private int lastPingId = 0;
 
     public ServerListener() {
-        new Random().nextBytes(this.verifyToken);
+        new Random().nextBytes(this.challenge);
     }
 
     @Override
@@ -99,10 +98,9 @@ public class ServerListener extends SessionAdapter {
         if (protocol.getState() == ProtocolState.LOGIN) {
             if (packet instanceof ServerboundHelloPacket) {
                 this.username = ((ServerboundHelloPacket) packet).getUsername();
-                this.profilePublicKeyData = ((ServerboundHelloPacket) packet).getPublicKey();
 
                 if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
-                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.verifyToken));
+                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge));
                 } else {
                     new Thread(new UserAuthTask(session, null)).start();
                 }
@@ -110,16 +108,9 @@ public class ServerListener extends SessionAdapter {
                 ServerboundKeyPacket keyPacket = (ServerboundKeyPacket) packet;
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
 
-                if (this.profilePublicKeyData != null) {
-                    if (!keyPacket.verifyWithSaltSignature(this.verifyToken, this.profilePublicKeyData)) {
-                        session.disconnect("Invalid profile key setup!");
-                        return;
-                    }
-                } else {
-                    if (!Arrays.equals(this.verifyToken, keyPacket.getVerifyToken(privateKey))) {
-                        session.disconnect("Invalid nonce!");
-                        return;
-                    }
+                if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
+                    session.disconnect("Invalid challenge!");
+                    return;
                 }
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);

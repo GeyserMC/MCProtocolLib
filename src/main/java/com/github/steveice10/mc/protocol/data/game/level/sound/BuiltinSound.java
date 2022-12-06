@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Getter
 @AllArgsConstructor
 public enum BuiltinSound implements Sound {
@@ -107,6 +104,21 @@ public enum BuiltinSound implements Sound {
     BLOCK_BAMBOO_SAPLING_BREAK("block.bamboo_sapling.break"),
     BLOCK_BAMBOO_SAPLING_HIT("block.bamboo_sapling.hit"),
     BLOCK_BAMBOO_SAPLING_PLACE("block.bamboo_sapling.place"),
+    BLOCK_BAMBOO_WOOD_BREAK("block.bamboo_wood.break"),
+    BLOCK_BAMBOO_WOOD_FALL("block.bamboo_wood.fall"),
+    BLOCK_BAMBOO_WOOD_HIT("block.bamboo_wood.hit"),
+    BLOCK_BAMBOO_WOOD_PLACE("block.bamboo_wood.place"),
+    BLOCK_BAMBOO_WOOD_STEP("block.bamboo_wood.step"),
+    BLOCK_BAMBOO_WOOD_DOOR_CLOSE("block.bamboo_wood_door.close"),
+    BLOCK_BAMBOO_WOOD_DOOR_OPEN("block.bamboo_wood_door.open"),
+    BLOCK_BAMBOO_WOOD_TRAPDOOR_CLOSE("block.bamboo_wood_trapdoor.close"),
+    BLOCK_BAMBOO_WOOD_TRAPDOOR_OPEN("block.bamboo_wood_trapdoor.open"),
+    BLOCK_BAMBOO_WOOD_BUTTON_CLICK_OFF("block.bamboo_wood_button.click_off"),
+    BLOCK_BAMBOO_WOOD_BUTTON_CLICK_ON("block.bamboo_wood_button.click_on"),
+    BLOCK_BAMBOO_WOOD_PRESSURE_PLATE_CLICK_OFF("block.bamboo_wood_pressure_plate.click_off"),
+    BLOCK_BAMBOO_WOOD_PRESSURE_PLATE_CLICK_ON("block.bamboo_wood_pressure_plate.click_on"),
+    BLOCK_BAMBOO_WOOD_FENCE_GATE_CLOSE("block.bamboo_wood_fence_gate.close"),
+    BLOCK_BAMBOO_WOOD_FENCE_GATE_OPEN("block.bamboo_wood_fence_gate.open"),
     BLOCK_BARREL_CLOSE("block.barrel.close"),
     BLOCK_BARREL_OPEN("block.barrel.open"),
     BLOCK_BASALT_BREAK("block.basalt.break"),
@@ -187,6 +199,17 @@ public enum BuiltinSound implements Sound {
     BLOCK_CALCITE_PLACE("block.calcite.place"),
     BLOCK_CALCITE_HIT("block.calcite.hit"),
     BLOCK_CALCITE_FALL("block.calcite.fall"),
+    ENTITY_CAMEL_AMBIENT("entity.camel.ambient"),
+    ENTITY_CAMEL_DASH("entity.camel.dash"),
+    ENTITY_CAMEL_DASH_READY("entity.camel.dash_ready"),
+    ENTITY_CAMEL_DEATH("entity.camel.death"),
+    ENTITY_CAMEL_EAT("entity.camel.eat"),
+    ENTITY_CAMEL_HURT("entity.camel.hurt"),
+    ENTITY_CAMEL_SADDLE("entity.camel.saddle"),
+    ENTITY_CAMEL_SIT("entity.camel.sit"),
+    ENTITY_CAMEL_STAND("entity.camel.stand"),
+    ENTITY_CAMEL_STEP("entity.camel.step"),
+    ENTITY_CAMEL_STEP_SAND("entity.camel.step_sand"),
     BLOCK_CAMPFIRE_CRACKLE("block.campfire.crackle"),
     BLOCK_CANDLE_AMBIENT("block.candle.ambient"),
     BLOCK_CANDLE_BREAK("block.candle.break"),
@@ -223,6 +246,15 @@ public enum BuiltinSound implements Sound {
     ENTITY_CHICKEN_EGG("entity.chicken.egg"),
     ENTITY_CHICKEN_HURT("entity.chicken.hurt"),
     ENTITY_CHICKEN_STEP("entity.chicken.step"),
+    BLOCK_CHISELED_BOOKSHELF_BREAK("block.chiseled_bookshelf.break"),
+    BLOCK_CHISELED_BOOKSHELF_FALL("block.chiseled_bookshelf.fall"),
+    BLOCK_CHISELED_BOOKSHELF_HIT("block.chiseled_bookshelf.hit"),
+    BLOCK_CHISELED_BOOKSHELF_INSERT("block.chiseled_bookshelf.insert"),
+    BLOCK_CHISELED_BOOKSHELF_INSERT_ENCHANTED("block.chiseled_bookshelf.insert.enchanted"),
+    BLOCK_CHISELED_BOOKSHELF_STEP("block.chiseled_bookshelf.step"),
+    BLOCK_CHISELED_BOOKSHELF_PICKUP("block.chiseled_bookshelf.pickup"),
+    BLOCK_CHISELED_BOOKSHELF_PICKUP_ENCHANTED("block.chiseled_bookshelf.pickup.enchanted"),
+    BLOCK_CHISELED_BOOKSHELF_PLACE("block.chiseled_bookshelf.place"),
     BLOCK_CHORUS_FLOWER_DEATH("block.chorus_flower.death"),
     BLOCK_CHORUS_FLOWER_GROW("block.chorus_flower.grow"),
     ITEM_CHORUS_FRUIT_TELEPORT("item.chorus_fruit.teleport"),
@@ -517,6 +549,21 @@ public enum BuiltinSound implements Sound {
     BLOCK_HANGING_ROOTS_HIT("block.hanging_roots.hit"),
     BLOCK_HANGING_ROOTS_PLACE("block.hanging_roots.place"),
     BLOCK_HANGING_ROOTS_STEP("block.hanging_roots.step"),
+    BLOCK_HANGING_SIGN_STEP("block.hanging_sign.step"),
+    BLOCK_HANGING_SIGN_BREAK("block.hanging_sign.break"),
+    BLOCK_HANGING_SIGN_FALL("block.hanging_sign.fall"),
+    BLOCK_HANGING_SIGN_HIT("block.hanging_sign.hit"),
+    BLOCK_HANGING_SIGN_PLACE("block.hanging_sign.place"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_STEP("block.nether_wood_hanging_sign.step"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_BREAK("block.nether_wood_hanging_sign.break"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_FALL("block.nether_wood_hanging_sign.fall"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_HIT("block.nether_wood_hanging_sign.hit"),
+    BLOCK_NETHER_WOOD_HANGING_SIGN_PLACE("block.nether_wood_hanging_sign.place"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_STEP("block.bamboo_wood_hanging_sign.step"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_BREAK("block.bamboo_wood_hanging_sign.break"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_FALL("block.bamboo_wood_hanging_sign.fall"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_HIT("block.bamboo_wood_hanging_sign.hit"),
+    BLOCK_BAMBOO_WOOD_HANGING_SIGN_PLACE("block.bamboo_wood_hanging_sign.place"),
     ITEM_HOE_TILL("item.hoe.till"),
     ENTITY_HOGLIN_AMBIENT("entity.hoglin.ambient"),
     ENTITY_HOGLIN_ANGRY("entity.hoglin.angry"),
@@ -733,6 +780,21 @@ public enum BuiltinSound implements Sound {
     BLOCK_NETHER_BRICKS_FALL("block.nether_bricks.fall"),
     BLOCK_NETHER_WART_BREAK("block.nether_wart.break"),
     ITEM_NETHER_WART_PLANT("item.nether_wart.plant"),
+    BLOCK_NETHER_WOOD_BREAK("block.nether_wood.break"),
+    BLOCK_NETHER_WOOD_FALL("block.nether_wood.fall"),
+    BLOCK_NETHER_WOOD_HIT("block.nether_wood.hit"),
+    BLOCK_NETHER_WOOD_PLACE("block.nether_wood.place"),
+    BLOCK_NETHER_WOOD_STEP("block.nether_wood.step"),
+    BLOCK_NETHER_WOOD_DOOR_CLOSE("block.nether_wood_door.close"),
+    BLOCK_NETHER_WOOD_DOOR_OPEN("block.nether_wood_door.open"),
+    BLOCK_NETHER_WOOD_TRAPDOOR_CLOSE("block.nether_wood_trapdoor.close"),
+    BLOCK_NETHER_WOOD_TRAPDOOR_OPEN("block.nether_wood_trapdoor.open"),
+    BLOCK_NETHER_WOOD_BUTTON_CLICK_OFF("block.nether_wood_button.click_off"),
+    BLOCK_NETHER_WOOD_BUTTON_CLICK_ON("block.nether_wood_button.click_on"),
+    BLOCK_NETHER_WOOD_PRESSURE_PLATE_CLICK_OFF("block.nether_wood_pressure_plate.click_off"),
+    BLOCK_NETHER_WOOD_PRESSURE_PLATE_CLICK_ON("block.nether_wood_pressure_plate.click_on"),
+    BLOCK_NETHER_WOOD_FENCE_GATE_CLOSE("block.nether_wood_fence_gate.close"),
+    BLOCK_NETHER_WOOD_FENCE_GATE_OPEN("block.nether_wood_fence_gate.open"),
     BLOCK_PACKED_MUD_BREAK("block.packed_mud.break"),
     BLOCK_PACKED_MUD_FALL("block.packed_mud.fall"),
     BLOCK_PACKED_MUD_HIT("block.packed_mud.hit"),
@@ -794,6 +856,12 @@ public enum BuiltinSound implements Sound {
     BLOCK_NOTE_BLOCK_DIDGERIDOO("block.note_block.didgeridoo"),
     BLOCK_NOTE_BLOCK_BIT("block.note_block.bit"),
     BLOCK_NOTE_BLOCK_BANJO("block.note_block.banjo"),
+    BLOCK_NOTE_BLOCK_IMITATE_ZOMBIE("block.note_block.imitate.zombie"),
+    BLOCK_NOTE_BLOCK_IMITATE_SKELETON("block.note_block.imitate.skeleton"),
+    BLOCK_NOTE_BLOCK_IMITATE_CREEPER("block.note_block.imitate.creeper"),
+    BLOCK_NOTE_BLOCK_IMITATE_ENDER_DRAGON("block.note_block.imitate.ender_dragon"),
+    BLOCK_NOTE_BLOCK_IMITATE_WITHER_SKELETON("block.note_block.imitate.wither_skeleton"),
+    BLOCK_NOTE_BLOCK_IMITATE_PIGLIN("block.note_block.imitate.piglin"),
     ENTITY_OCELOT_HURT("entity.ocelot.hurt"),
     ENTITY_OCELOT_AMBIENT("entity.ocelot.ambient"),
     ENTITY_OCELOT_DEATH("entity.ocelot.death"),
@@ -1333,6 +1401,16 @@ public enum BuiltinSound implements Sound {
     ENTITY_ZOMBIE_VILLAGER_STEP("entity.zombie_villager.step");
 
     private final @NonNull String name;
+
+    @Override
+    public boolean isNewSystem() {
+        return false;
+    }
+
+    @Override
+    public float getRange() {
+        return 16F;
+    }
 
     /**
      * For grabbing when the SoundPacket is sent.

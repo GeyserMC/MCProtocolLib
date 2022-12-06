@@ -19,13 +19,10 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundLoginPacket implements MinecraftPacket {
-    private static final int GAMEMODE_MASK = 0x07;
-
     private final int entityId;
     private final boolean hardcore;
     private final @NonNull GameMode gameMode;
     private final GameMode previousGamemode;
-    private final int worldCount;
     private final @NonNull String[] worldNames;
     private final @NonNull CompoundTag registry;
     private final @NonNull String dimension;
@@ -42,14 +39,12 @@ public class ClientboundLoginPacket implements MinecraftPacket {
 
     public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = in.readInt();
-
         this.hardcore = in.readBoolean();
-        int gameMode = in.readUnsignedByte();
-        this.gameMode = MagicValues.key(GameMode.class, gameMode & GAMEMODE_MASK);
-        this.previousGamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-        this.worldCount = helper.readVarInt(in);
-        this.worldNames = new String[this.worldCount];
-        for (int i = 0; i < this.worldCount; i++) {
+        this.gameMode = MagicValues.key(GameMode.class, in.readByte());
+        this.previousGamemode = MagicValues.key(GameMode.class, in.readByte());
+        int worldCount = helper.readVarInt(in);
+        this.worldNames = new String[worldCount];
+        for (int i = 0; i < worldCount; i++) {
             this.worldNames[i] = helper.readString(in);
         }
         this.registry = helper.readTag(in);
@@ -73,13 +68,10 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeInt(this.entityId);
-
         out.writeBoolean(this.hardcore);
-        int gameMode = MagicValues.value(Integer.class, this.gameMode) & GAMEMODE_MASK;
-
-        out.writeByte(gameMode);
+        out.writeByte(MagicValues.value(Integer.class, this.gameMode));
         out.writeByte(MagicValues.value(Integer.class, this.previousGamemode));
-        helper.writeVarInt(out, this.worldCount);
+        helper.writeVarInt(out, this.worldNames.length);
         for (String worldName : this.worldNames) {
             helper.writeString(out, worldName);
         }
