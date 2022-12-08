@@ -22,7 +22,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final int entityId;
     private final boolean hardcore;
     private final @NonNull GameMode gameMode;
-    private final GameMode previousGamemode;
+    private final @Nullable GameMode previousGamemode;
     private final @NonNull String[] worldNames;
     private final @NonNull CompoundTag registry;
     private final @NonNull String dimension;
@@ -40,8 +40,8 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = in.readInt();
         this.hardcore = in.readBoolean();
-        this.gameMode = MagicValues.key(GameMode.class, in.readByte());
-        this.previousGamemode = MagicValues.key(GameMode.class, in.readByte());
+        this.gameMode = GameMode.byId(in.readByte());
+        this.previousGamemode = GameMode.byNullableId(in.readByte());
         int worldCount = helper.readVarInt(in);
         this.worldNames = new String[worldCount];
         for (int i = 0; i < worldCount; i++) {
@@ -69,8 +69,8 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeInt(this.entityId);
         out.writeBoolean(this.hardcore);
-        out.writeByte(MagicValues.value(Integer.class, this.gameMode));
-        out.writeByte(MagicValues.value(Integer.class, this.previousGamemode));
+        out.writeByte(this.gameMode.ordinal());
+        out.writeByte(GameMode.toNullableId(this.gameMode));
         helper.writeVarInt(out, this.worldNames.length);
         for (String worldName : this.worldNames) {
             helper.writeString(out, worldName);

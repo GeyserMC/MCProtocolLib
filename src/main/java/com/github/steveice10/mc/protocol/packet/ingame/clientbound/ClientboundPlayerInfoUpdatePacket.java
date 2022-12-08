@@ -70,7 +70,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                     }
                     case UPDATE_GAME_MODE: {
                         int rawGameMode = helper.readVarInt(in);
-                        GameMode gameMode = MagicValues.key(GameMode.class, Math.max(rawGameMode, 0));
+                        GameMode gameMode = GameMode.byId(Math.max(rawGameMode, 0));
 
                         entry.setGameMode(gameMode);
                         break;
@@ -100,7 +100,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {
@@ -123,7 +123,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         }
                         break;
                     case UPDATE_GAME_MODE:
-                        helper.writeVarInt(out, MagicValues.value(Integer.class, entry.getGameMode()));
+                        helper.writeVarInt(out, entry.getGameMode().ordinal());
                         break;
                     case UPDATE_LISTED:
                         out.writeBoolean(entry.isListed());

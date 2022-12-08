@@ -102,7 +102,6 @@ public class MagicValuesTest {
         this.register(DropItemAction.class, Integer.class);
         this.register(SpreadItemAction.class, Integer.class);
         this.register(FillStackAction.class, Integer.class);
-        this.register(GameMode.class, Integer.class);
         this.register(Difficulty.class, Integer.class);
         this.register(Animation.class, Integer.class);
         this.register(PositionElement.class, Integer.class);

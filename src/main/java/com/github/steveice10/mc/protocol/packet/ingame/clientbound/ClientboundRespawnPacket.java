@@ -23,7 +23,7 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
     private final @NonNull String worldName;
     private final long hashedSeed;
     private final @NonNull GameMode gamemode;
-    private final @NonNull GameMode previousGamemode;
+    private final @Nullable GameMode previousGamemode;
     private final boolean debug;
     private final boolean flat;
     // The following two are the dataToKeep byte
@@ -35,8 +35,8 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         this.dimension = helper.readString(in);
         this.worldName = helper.readString(in);
         this.hashedSeed = in.readLong();
-        this.gamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
-        this.previousGamemode = MagicValues.key(GameMode.class, in.readUnsignedByte());
+        this.gamemode = GameMode.byId(in.readUnsignedByte()); // Intentionally unsigned as of 1.19.3
+        this.previousGamemode = GameMode.byNullableId(in.readByte());
         this.debug = in.readBoolean();
         this.flat = in.readBoolean();
         byte dataToKeep = in.readByte();
@@ -50,8 +50,8 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         helper.writeString(out, this.dimension);
         helper.writeString(out, this.worldName);
         out.writeLong(this.hashedSeed);
-        out.writeByte(MagicValues.value(Integer.class, this.gamemode));
-        out.writeByte(MagicValues.value(Integer.class, this.previousGamemode));
+        out.writeByte(this.gamemode.ordinal());
+        out.writeByte(GameMode.toNullableId(this.previousGamemode));
         out.writeBoolean(this.debug);
         out.writeBoolean(this.flat);
         byte dataToKeep = 0;

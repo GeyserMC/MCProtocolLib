@@ -155,12 +155,6 @@ public class MagicValues {
 
         register(FillStackAction.FILL, 0);
 
-        register(GameMode.UNKNOWN, -1);
-        register(GameMode.SURVIVAL, 0);
-        register(GameMode.CREATIVE, 1);
-        register(GameMode.ADVENTURE, 2);
-        register(GameMode.SPECTATOR, 3);
-
         register(Difficulty.PEACEFUL, 0);
         register(Difficulty.EASY, 1);
         register(Difficulty.NORMAL, 2);

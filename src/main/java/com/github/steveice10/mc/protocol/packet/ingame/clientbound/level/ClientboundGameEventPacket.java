@@ -20,12 +20,12 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     private final @NonNull GameEvent notification;
     private final GameEventValue value;
 
-    public ClientboundGameEventPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundGameEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.notification = MagicValues.key(GameEvent.class, in.readUnsignedByte());
         float value = in.readFloat();
         // TODO: Handle this in MinecraftCodecHelper
         if (this.notification == GameEvent.CHANGE_GAMEMODE) {
-            this.value = MagicValues.key(GameMode.class, (int) value);
+            this.value = GameMode.byId((int) value);
         } else if (this.notification == GameEvent.DEMO_MESSAGE) {
             this.value = MagicValues.key(DemoMessageValue.class, (int) value);
         } else if (this.notification == GameEvent.ENTER_CREDITS) {
@@ -42,12 +42,12 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(MagicValues.value(Integer.class, this.notification));
         float value = 0;
         // TODO: Handle this in MinecraftCodecHelper
         if (this.value instanceof Enum<?>) {
-            value = MagicValues.value(Integer.class, (Enum<?>) this.value);
+            value = ((Enum<?>) this.value).ordinal();
         } else if (this.value instanceof RainStrengthValue) {
             value = ((RainStrengthValue) this.value).getStrength();
         } else if (this.value instanceof ThunderStrengthValue) {
