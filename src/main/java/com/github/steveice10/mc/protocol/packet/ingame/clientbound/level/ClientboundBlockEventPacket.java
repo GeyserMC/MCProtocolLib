@@ -17,27 +17,28 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundBlockEventPacket implements MinecraftPacket {
-    private static final int NOTE_BLOCK = 89;
-    private static final int STICKY_PISTON = 108;
-    private static final int PISTON = 115;
-    private static final int MOB_SPAWNER = 160; // Value does not show in 1.16
-    private static final int CHEST = 162;
-    private static final int ENDER_CHEST = 299;
-    private static final int TRAPPED_CHEST = 360;
-    private static final int END_GATEWAY = 537;
-    private static final int SHULKER_BOX_LOWER = 547;
-    private static final int SHULKER_BOX_HIGHER = 563;
+    // Do we really want these hardcoded values?
+    private static final int NOTE_BLOCK = 93;
+    private static final int STICKY_PISTON = 112;
+    private static final int PISTON = 119;
+    private static final int MOB_SPAWNER = 165; // Value does not show in 1.16
+    private static final int CHEST = 167;
+    private static final int ENDER_CHEST = 328;
+    private static final int TRAPPED_CHEST = 392;
+    private static final int END_GATEWAY = 576;
+    private static final int SHULKER_BOX_LOWER = 586;
+    private static final int SHULKER_BOX_HIGHER = 602;
 
     private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
     private final @NonNull BlockValue value;
     private final int blockId;
 
-    public ClientboundBlockEventPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundBlockEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);
         int type = in.readUnsignedByte();
         int value = in.readUnsignedByte();
-        this.blockId = helper.readVarInt(in) & 0xFFF;
+        this.blockId = helper.readVarInt(in);
 
         // TODO: Handle this in MinecraftCodecHelper
         if (this.blockId == NOTE_BLOCK) {
@@ -63,7 +64,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         int val = 0;
         // TODO: Handle this in MinecraftCodecHelper
         if (this.type instanceof NoteBlockValueType) {
@@ -79,6 +80,6 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         helper.writePosition(out, this.position);
         out.writeByte(MagicValues.value(Integer.class, this.type));
         out.writeByte(val);
-        helper.writeVarInt(out, this.blockId & 4095);
+        helper.writeVarInt(out, this.blockId);
     }
 }
