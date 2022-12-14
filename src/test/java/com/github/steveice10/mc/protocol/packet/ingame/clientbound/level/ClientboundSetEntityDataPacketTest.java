@@ -6,7 +6,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.*;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
-import com.nukkitx.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector3i;
 import org.junit.Before;
 
 import java.util.OptionalInt;

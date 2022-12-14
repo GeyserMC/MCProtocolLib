@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import com.nukkitx.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector3i;
 import org.junit.Before;
 
 public class ClientboundBlockUpdatePacketTest extends PacketTest {

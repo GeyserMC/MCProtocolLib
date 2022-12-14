@@ -7,7 +7,7 @@ import com.github.steveice10.mc.protocol.data.game.inventory.UpdateStructureBloc
 import com.github.steveice10.mc.protocol.data.game.inventory.UpdateStructureBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation;
-import com.nukkitx.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;

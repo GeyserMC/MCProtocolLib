@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.level.block;
 
-import com.nukkitx.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector3i;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;

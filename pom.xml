@@ -118,9 +118,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>math</artifactId>
-            <version>1.1.1</version>
+            <groupId>org.cloudburstmc.math</groupId>
+            <artifactId>immutable</artifactId>
+            <version>2.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
