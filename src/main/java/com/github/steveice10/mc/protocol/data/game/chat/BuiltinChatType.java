@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.data.game;
+package com.github.steveice10.mc.protocol.data.game.chat;
 
 import java.util.HashMap;
 import java.util.Locale;

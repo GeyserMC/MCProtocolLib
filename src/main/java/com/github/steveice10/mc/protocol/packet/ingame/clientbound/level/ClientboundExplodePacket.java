@@ -17,9 +17,9 @@ import java.util.List;
 @With
 @AllArgsConstructor
 public class ClientboundExplodePacket implements MinecraftPacket {
-    private final float x;
-    private final float y;
-    private final float z;
+    private final double x;
+    private final double y;
+    private final double z;
     private final float radius;
     private final @NonNull List<Vector3i> exploded;
     private final float pushX;
@@ -27,9 +27,9 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     private final float pushZ;
 
     public ClientboundExplodePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.x = in.readFloat();
-        this.y = in.readFloat();
-        this.z = in.readFloat();
+        this.x = in.readDouble();
+        this.y = in.readDouble();
+        this.z = in.readDouble();
         this.radius = in.readFloat();
         this.exploded = new ArrayList<>();
         int length = helper.readVarInt(in);
@@ -44,9 +44,9 @@ public class ClientboundExplodePacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeFloat(this.x);
-        out.writeFloat(this.y);
-        out.writeFloat(this.z);
+        out.writeDouble(this.x);
+        out.writeDouble(this.y);
+        out.writeDouble(this.z);
         out.writeFloat(this.radius);
         helper.writeVarInt(out, this.exploded.size());
         for (Vector3i record : this.exploded) {

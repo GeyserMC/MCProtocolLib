@@ -1,6 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
@@ -23,6 +24,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                         "Recipe1",
                                         new ShapelessRecipeData(
                                                 "Group1",
+                                                CraftingBookCategory.MISC,
                                                 new Ingredient[]{
                                                         new Ingredient(new ItemStack[]{
                                                                 new ItemStack(0)
@@ -38,6 +40,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                                 2,
                                                 3,
                                                 "Group2",
+                                                CraftingBookCategory.BUILDING,
                                                 new Ingredient[]{
                                                         new Ingredient(new ItemStack[]{
                                                                 new ItemStack(1)
@@ -66,6 +69,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                         "Recipe3",
                                         new CookedRecipeData(
                                                 "Group3",
+                                                CraftingBookCategory.EQUIPMENT,
                                                 new Ingredient(new ItemStack[]{
                                                         new ItemStack(7)
                                                 }),

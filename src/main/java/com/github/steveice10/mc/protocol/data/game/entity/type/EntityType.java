@@ -12,6 +12,7 @@ public enum EntityType {
     BOAT,
     CHEST_BOAT,
     CAT,
+    CAMEL,
     CAVE_SPIDER,
     CHICKEN,
     COD,

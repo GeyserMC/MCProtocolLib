@@ -134,8 +134,10 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     case SCORE_HOLDER:
                         properties = new ScoreHolderProperties(in.readBoolean());
                         break;
-                    case RESOURCE:
                     case RESOURCE_OR_TAG:
+                    case RESOURCE_OR_TAG_KEY:
+                    case RESOURCE:
+                    case RESOURCE_KEY:
                         properties = new ResourceProperties(helper.readString(in));
                         break;
                     default:

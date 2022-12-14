@@ -9,9 +9,6 @@ import lombok.NonNull;
 
 import java.io.IOException;
 
-/**
- * Used for both {@link MetadataType#INT} and {@link MetadataType#BLOCK_STATE}.
- */
 public class IntEntityMetadata extends EntityMetadata<Integer, IntMetadataType> {
     private final int value;
 
