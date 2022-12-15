@@ -9,13 +9,11 @@ import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
-import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
-import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
@@ -152,7 +150,6 @@ public class MagicValuesTest {
         this.register(RecipeType.class, String.class);
         this.register(CommandType.class, Integer.class);
         this.register(CommandParser.class, Integer.class);
-        this.register(SuggestionType.class, String.class);
         this.register(StringProperties.class, Integer.class);
         this.register(PositionSourceType.class, String.class);
     }

@@ -3,19 +3,15 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
-import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-
-import java.io.IOException;
 
 @Data
 @With
@@ -35,7 +31,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     private final @NonNull CommandNode[] nodes;
     private final int firstNodeIndex;
 
-    public ClientboundCommandsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundCommandsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.nodes = new CommandNode[helper.readVarInt(in)];
         for (int i = 0; i < this.nodes.length; i++) {
             byte flags = in.readByte();
@@ -145,9 +141,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                 }
             }
 
-            SuggestionType suggestionType = null;
+            String suggestionType = null;
             if ((flags & FLAG_SUGGESTION_TYPE) != 0) {
-                suggestionType = MagicValues.key(SuggestionType.class, Identifier.formalize(helper.readString(in)));
+                suggestionType = helper.readResourceLocation(in);
             }
 
             this.nodes[i] = new CommandNode(type, executable, children, redirectIndex, name, parser, properties, suggestionType);
@@ -157,7 +153,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.nodes.length);
         for (CommandNode node : this.nodes) {
             int flags = MagicValues.value(Integer.class, node.getType()) & FLAG_TYPE_MASK;
@@ -313,7 +309,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
             }
 
             if (node.getSuggestionType() != null) {
-                helper.writeString(out, MagicValues.value(String.class, node.getSuggestionType()));
+                helper.writeResourceLocation(out, node.getSuggestionType());
             }
         }
 

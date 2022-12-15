@@ -57,7 +57,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                             byte[] keyBytes = helper.readByteArray(in);
                             entry.setKeySignature(helper.readByteArray(in));
 
-                            PublicKey publicKey = null;
+                            PublicKey publicKey;
                             try {
                                 publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
                             } catch (GeneralSecurityException e) {
@@ -69,8 +69,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         break;
                     }
                     case UPDATE_GAME_MODE: {
-                        int rawGameMode = helper.readVarInt(in);
-                        GameMode gameMode = GameMode.byId(Math.max(rawGameMode, 0));
+                        GameMode gameMode = GameMode.byId(helper.readVarInt(in));
 
                         entry.setGameMode(gameMode);
                         break;
