@@ -72,7 +72,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                                 "Argument4",
                                 CommandParser.STRING,
                                 StringProperties.SINGLE_WORD,
-                                SuggestionType.ALL_RECIPES
+                                SuggestionType.ALL_RECIPES.getResourceLocation()
                         )
                 },
                 0

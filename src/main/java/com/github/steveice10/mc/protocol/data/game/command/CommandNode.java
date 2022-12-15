@@ -45,6 +45,7 @@ public class CommandNode {
 
     /**
      * Suggestions type, if present.
+     * See {@link SuggestionType} for vanilla defaults.
      */
-    private final SuggestionType suggestionType;
+    private final String suggestionType;
 }

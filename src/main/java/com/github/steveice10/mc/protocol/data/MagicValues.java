@@ -9,13 +9,11 @@ import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
-import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
-import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
@@ -528,11 +526,6 @@ public class MagicValues {
         register(CommandParser.TEMPLATE_MIRROR, 45);
         register(CommandParser.TEMPLATE_ROTATION, 46);
         register(CommandParser.UUID, 47);
-
-        register(SuggestionType.ASK_SERVER, "minecraft:ask_server");
-        register(SuggestionType.ALL_RECIPES, "minecraft:all_recipes");
-        register(SuggestionType.AVAILABLE_SOUNDS, "minecraft:available_sounds");
-        register(SuggestionType.SUMMONABLE_ENTITIES, "minecraft:summonable_entities");
 
         register(StringProperties.SINGLE_WORD, 0);
         register(StringProperties.QUOTABLE_PHRASE, 1);
