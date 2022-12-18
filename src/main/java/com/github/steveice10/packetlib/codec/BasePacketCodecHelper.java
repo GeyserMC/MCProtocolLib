@@ -141,17 +141,21 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
     }
 
     public String readString(ByteBuf buf) {
-        return this.readString(buf, Integer.MAX_VALUE);
+        return this.readString(buf, Short.MAX_VALUE);
     }
 
     @Override
     public String readString(ByteBuf buf, int maxLength) {
         int length = this.readVarInt(buf);
-        if (length > maxLength) {
+        if (length > maxLength * 3) {
+            throw new IllegalArgumentException("String buffer is longer than maximum allowed length");
+        }
+        String string = (String) buf.readCharSequence(length, StandardCharsets.UTF_8);
+        if (string.length() > maxLength) {
             throw new IllegalArgumentException("String is longer than maximum allowed length");
         }
 
-        return (String) buf.readCharSequence(length, StandardCharsets.UTF_8);
+        return string;
     }
 
     @Override
