@@ -19,7 +19,7 @@ public enum GameMode implements GameEventValue {
 
     @Nullable
     public static GameMode byNullableId(int id) {
-        return id == -1 ? null : VALUES[id];
+        return id == -1 ? null : byId(id);
     }
 
     public static int toNullableId(@Nullable GameMode gameMode) {
