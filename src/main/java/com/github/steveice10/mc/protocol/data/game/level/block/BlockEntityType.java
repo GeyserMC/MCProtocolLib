@@ -9,6 +9,7 @@ public enum BlockEntityType {
     DISPENSER,
     DROPPER,
     SIGN,
+    HANGING_SIGN,
     MOB_SPAWNER,
     PISTON,
     BREWING_STAND,
@@ -36,7 +37,8 @@ public enum BlockEntityType {
     BEEHIVE,
     SCULK_SENSOR,
     SCULK_CATALYST,
-    SCULK_SHRIEKER;
+    SCULK_SHRIEKER,
+    CHISELED_BOOKSHELF;
 
     private static final BlockEntityType[] VALUES = values();
 

@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
@@ -28,10 +29,11 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
         for (int i = 0; i < this.recipes.length; i++) {
             RecipeType type = MagicValues.key(RecipeType.class, Identifier.formalize(helper.readString(in)));
             String identifier = helper.readString(in);
-            RecipeData data = null;
+            RecipeData data;
             switch (type) {
                 case CRAFTING_SHAPELESS: {
                     String group = helper.readString(in);
+                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
                     Ingredient[] ingredients = new Ingredient[helper.readVarInt(in)];
                     for (int j = 0; j < ingredients.length; j++) {
                         ingredients[j] = helper.readRecipeIngredient(in);
@@ -39,13 +41,14 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
 
                     ItemStack result = helper.readItemStack(in);
 
-                    data = new ShapelessRecipeData(group, ingredients, result);
+                    data = new ShapelessRecipeData(group, category, ingredients, result);
                     break;
                 }
                 case CRAFTING_SHAPED: {
                     int width = helper.readVarInt(in);
                     int height = helper.readVarInt(in);
                     String group = helper.readString(in);
+                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
                     Ingredient[] ingredients = new Ingredient[width * height];
                     for (int j = 0; j < ingredients.length; j++) {
                         ingredients[j] = helper.readRecipeIngredient(in);
@@ -53,7 +56,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
 
                     ItemStack result = helper.readItemStack(in);
 
-                    data = new ShapedRecipeData(width, height, group, ingredients, result);
+                    data = new ShapedRecipeData(width, height, group, category, ingredients, result);
                     break;
                 }
                 case SMELTING:
@@ -61,12 +64,13 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                 case SMOKING:
                 case CAMPFIRE_COOKING: {
                     String group = helper.readString(in);
+                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
                     Ingredient ingredient = helper.readRecipeIngredient(in);
                     ItemStack result = helper.readItemStack(in);
                     float experience = in.readFloat();
                     int cookingTime = helper.readVarInt(in);
 
-                    data = new CookedRecipeData(group, ingredient, result, experience, cookingTime);
+                    data = new CookedRecipeData(group, category, ingredient, result, experience, cookingTime);
                     break;
                 }
                 case STONECUTTING: {
@@ -85,8 +89,12 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     data = new SmithingRecipeData(base, addition, result);
                     break;
                 }
-                default:
+                default: {
+                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
+
+                    data = new SimpleCraftingRecipeData(category);
                     break;
+                }
             }
 
             this.recipes[i] = new Recipe(type, identifier, data);
@@ -104,6 +112,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     ShapelessRecipeData data = (ShapelessRecipeData) recipe.getData();
 
                     helper.writeString(out, data.getGroup());
+                    helper.writeVarInt(out, data.getCategory().ordinal());
                     helper.writeVarInt(out, data.getIngredients().length);
                     for (Ingredient ingredient : data.getIngredients()) {
                         helper.writeRecipeIngredient(out, ingredient);
@@ -121,6 +130,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     helper.writeVarInt(out, data.getWidth());
                     helper.writeVarInt(out, data.getHeight());
                     helper.writeString(out, data.getGroup());
+                    helper.writeVarInt(out, data.getCategory().ordinal());
                     for (Ingredient ingredient : data.getIngredients()) {
                         helper.writeRecipeIngredient(out, ingredient);
                     }
@@ -135,6 +145,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     CookedRecipeData data = (CookedRecipeData) recipe.getData();
 
                     helper.writeString(out, data.getGroup());
+                    helper.writeVarInt(out, data.getCategory().ordinal());
                     helper.writeRecipeIngredient(out, data.getIngredient());
                     helper.writeItemStack(out, data.getResult());
                     out.writeFloat(data.getExperience());
@@ -157,8 +168,12 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     helper.writeItemStack(out, data.getResult());
                     break;
                 }
-                default:
+                default: {
+                    SimpleCraftingRecipeData data = (SimpleCraftingRecipeData) recipe.getData();
+
+                    helper.writeVarInt(out, data.getCategory().ordinal());
                     break;
+                }
             }
         }
     }

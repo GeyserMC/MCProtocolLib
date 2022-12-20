@@ -11,6 +11,7 @@ public enum Pose {
     DYING,
     CROAKING,
     USING_TONGUE,
+    SITTING,
     ROARING,
     SNIFFING,
     EMERGING,

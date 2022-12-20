@@ -1,5 +1,6 @@
 package com.github.steveice10.mc.protocol.codec;
 
+import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
@@ -44,6 +45,8 @@ import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSourceType;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
@@ -64,12 +67,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToIntFunction;
 
@@ -102,6 +108,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         } else {
             buf.writeBoolean(false);
         }
+    }
+
+    public String readResourceLocation(ByteBuf buf) {
+        return Identifier.formalize(this.readString(buf));
+    }
+
+    public void writeResourceLocation(ByteBuf buf, String location) {
+        this.writeString(buf, location);
     }
 
     public UUID readUUID(ByteBuf buf) {
@@ -303,7 +317,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, type);
     }
 
-    private void writeEnum(ByteBuf buf, Enum<?> e){
+    private void writeEnum(ByteBuf buf, Enum<?> e) {
         this.writeVarInt(buf, e.ordinal());
     }
 
@@ -615,14 +629,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, category);
     }
 
-    public BuiltinSound readBuiltinSound(ByteBuf buf) {
-        return BuiltinSound.from(this.readVarInt(buf));
-    }
-
-    public void writeBuiltinSound(ByteBuf buf, BuiltinSound sound) {
-        this.writeEnum(buf, sound);
-    }
-
     @Nullable
     public BuiltinSound getBuiltinSound(String name) {
         return this.soundNames.get(name);
@@ -717,6 +723,85 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeShort(section.getBlockCount());
         this.writeDataPalette(buf, section.getChunkData());
         this.writeDataPalette(buf, section.getBiomeData());
+    }
+
+    public <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, E[] values) {
+        BitSet bitSet = this.readFixedBitSet(buf, values.length);
+        List<E> readValues = new ArrayList<>();
+
+        for (int i = 0; i < values.length; i++) {
+            if (bitSet.get(i)) {
+                readValues.add(values[i]);
+            }
+        }
+
+        return EnumSet.copyOf(readValues);
+    }
+
+    public <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, E[] values) {
+        BitSet bitSet = new BitSet(values.length);
+
+        for (int i = 0; i < values.length; i++) {
+            bitSet.set(i, enumSet.contains(values[i]));
+        }
+
+        this.writeFixedBitSet(buf, bitSet, values.length);
+    }
+
+    public BitSet readFixedBitSet(ByteBuf buf, int length) {
+        byte[] bytes = new byte[-Math.floorDiv(-length, 8)];
+        buf.readBytes(bytes);
+        return BitSet.valueOf(bytes);
+    }
+
+    public void writeFixedBitSet(ByteBuf buf, BitSet bitSet, int length) {
+        if (bitSet.length() > length) {
+            throw new IllegalArgumentException("BitSet is larger than expected size (" + bitSet.length() + " > " + length + ")");
+        } else {
+            byte[] bytes = bitSet.toByteArray();
+            buf.writeBytes(Arrays.copyOf(bytes, -Math.floorDiv(-length, 8)));
+        }
+    }
+
+    public GameProfile.Property readProperty(ByteBuf buf) {
+        String name = this.readString(buf);
+        String value = this.readString(buf);
+        if (buf.readBoolean()) {
+            return new GameProfile.Property(name, value, this.readString(buf));
+        } else {
+            return new GameProfile.Property(name, value);
+        }
+    }
+
+    public void writeProperty(ByteBuf buf, GameProfile.Property property) {
+        this.writeString(buf, property.getName());
+        this.writeString(buf, property.getValue());
+        buf.writeBoolean(property.hasSignature());
+        if (property.hasSignature()) {
+            this.writeString(buf, property.getSignature());
+        }
+    }
+
+    public <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {
+        int id = this.readVarInt(buf);
+        if (id == 0) {
+            return custom.apply(buf);
+        }
+        return registry.apply(id - 1);
+    }
+
+    public CustomSound readSoundEvent(ByteBuf buf) {
+        String name = this.readString(buf);
+        boolean isNewSystem = buf.readBoolean();
+        return new CustomSound(name, isNewSystem, isNewSystem ? buf.readFloat() : 16.0F);
+    }
+
+    public void writeSoundEvent(ByteBuf buf, Sound soundEvent) {
+        writeString(buf, soundEvent.getName());
+        buf.writeBoolean(soundEvent.isNewSystem());
+        if (soundEvent.isNewSystem()) {
+            buf.writeFloat(soundEvent.getRange());
+        }
     }
 
     public NibbleArray3d readNibbleArray(ByteBuf buf, int size) {

@@ -22,7 +22,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     private static final int FLAG_SOUND = 0x02;
 
     private final @Nullable SoundCategory category;
-    private final @Nullable Sound sound;
+    private final @Nullable String sound;
 
     public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         int flags = in.readByte();
@@ -33,13 +33,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
         }
 
         if ((flags & FLAG_SOUND) != 0) {
-            String value = helper.readString(in);
-            Sound sound = helper.getBuiltinSound(value);
-            if (sound != null) {
-                this.sound = sound;
-            } else {
-                this.sound = new CustomSound(value);
-            }
+            this.sound = helper.readResourceLocation(in);
         } else {
             this.sound = null;
         }
@@ -62,14 +56,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
         }
 
         if (this.sound != null) {
-            String value = "";
-            if (this.sound instanceof CustomSound) {
-                value = ((CustomSound) this.sound).getName();
-            } else if (this.sound instanceof BuiltinSound) {
-                value = ((BuiltinSound) this.sound).getName();
-            }
-
-            helper.writeString(out, value);
+            helper.writeResourceLocation(out, this.sound);
         }
     }
 }

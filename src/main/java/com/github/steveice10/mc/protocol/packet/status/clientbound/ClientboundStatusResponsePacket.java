@@ -53,8 +53,8 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
         }
 
-        boolean previewsChat = obj.get("previewsChat").getAsBoolean();
-        this.info = new ServerStatusInfo(version, players, description, icon, previewsChat);
+        boolean enforcesSecureChat = obj.get("enforcesSecureChat").getAsBoolean();
+        this.info = new ServerStatusInfo(version, players, description, icon, enforcesSecureChat);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         if (this.info.getIconPng() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }
-        obj.addProperty("previewsChat", this.info.isPreviewsChat());
+        obj.addProperty("enforcesSecureChat", this.info.isEnforcesSecureChat());
 
         helper.writeString(out, obj.toString());
     }

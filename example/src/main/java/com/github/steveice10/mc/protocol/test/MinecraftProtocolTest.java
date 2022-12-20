@@ -10,7 +10,6 @@ import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.ServerLoginHandler;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
-import com.github.steveice10.mc.protocol.data.game.BuiltinChatType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
@@ -21,14 +20,8 @@ import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandl
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
-import com.github.steveice10.opennbt.tag.builtin.ByteTag;
+import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.FloatTag;
-import com.github.steveice10.opennbt.tag.builtin.IntTag;
-import com.github.steveice10.opennbt.tag.builtin.ListTag;
-import com.github.steveice10.opennbt.tag.builtin.LongTag;
-import com.github.steveice10.opennbt.tag.builtin.StringTag;
-import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
@@ -45,10 +38,15 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.Proxy;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class MinecraftProtocolTest {
     private static final boolean SPAWN_SERVER = true;
@@ -86,7 +84,7 @@ public class MinecraftProtocolTest {
                             GameMode.SURVIVAL,
                             1,
                             new String[]{"minecraft:world"},
-                            getDimensionTag(),
+                            loadNetworkCodec(),
                             "minecraft:overworld",
                             "minecraft:world",
                             100,
@@ -125,7 +123,7 @@ public class MinecraftProtocolTest {
                                         .append(Component.text("!")
                                                 .color(NamedTextColor.GREEN));
 
-                                session.send(new ClientboundSystemChatPacket(msg, BuiltinChatType.SYSTEM.ordinal()));
+                                session.send(new ClientboundSystemChatPacket(msg, false));
                             }
                         }
                     });
@@ -207,7 +205,7 @@ public class MinecraftProtocolTest {
             @Override
             public void packetReceived(Session session, Packet packet) {
                 if (packet instanceof ClientboundLoginPacket) {
-                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0, new byte[0], false));
+                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0, new byte[0], false, new ArrayList<>(), null));
                 } else if (packet instanceof ClientboundSystemChatPacket) {
                     Component message = ((ClientboundSystemChatPacket) packet).getContent();
                     System.out.println("Received Message: " + message);
@@ -227,86 +225,13 @@ public class MinecraftProtocolTest {
         client.connect();
     }
 
-    private static CompoundTag getDimensionTag() {
-        CompoundTag tag = new CompoundTag("");
-
-        CompoundTag dimensionTypes = new CompoundTag("minecraft:dimension_type");
-        dimensionTypes.put(new StringTag("type", "minecraft:dimension_type"));
-        ListTag dimensionTag = new ListTag("value");
-        CompoundTag overworldTag = convertToValue("minecraft:overworld", 0, getOverworldTag().getValue());
-        dimensionTag.add(overworldTag);
-        dimensionTypes.put(dimensionTag);
-        tag.put(dimensionTypes);
-
-        CompoundTag biomeTypes = new CompoundTag("minecraft:worldgen/biome");
-        biomeTypes.put(new StringTag("type", "minecraft:worldgen/biome"));
-        ListTag biomeTag = new ListTag("value");
-        CompoundTag plainsTag = convertToValue("minecraft:plains", 0, getPlainsTag().getValue());
-        biomeTag.add(plainsTag);
-        biomeTypes.put(biomeTag);
-        tag.put(biomeTypes);
-
-        return tag;
-    }
-
-    private static CompoundTag getOverworldTag() {
-        CompoundTag overworldTag = new CompoundTag("");
-        overworldTag.put(new StringTag("name", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("piglin_safe", (byte) 0));
-        overworldTag.put(new ByteTag("natural", (byte) 1));
-        overworldTag.put(new FloatTag("ambient_light", 0f));
-        overworldTag.put(new StringTag("infiniburn", "minecraft:infiniburn_overworld"));
-        overworldTag.put(new ByteTag("respawn_anchor_works", (byte) 0));
-        overworldTag.put(new ByteTag("has_skylight", (byte) 1));
-        overworldTag.put(new ByteTag("bed_works", (byte) 1));
-        overworldTag.put(new StringTag("effects", "minecraft:overworld"));
-        overworldTag.put(new ByteTag("has_raids", (byte) 1));
-        overworldTag.put(new IntTag("logical_height", 256));
-        overworldTag.put(new FloatTag("coordinate_scale", 1f));
-        overworldTag.put(new ByteTag("ultrawarm", (byte) 0));
-        overworldTag.put(new ByteTag("has_ceiling", (byte) 0));
-        overworldTag.put(new IntTag("height", 256));
-        overworldTag.put(new IntTag("min_y", 0));
-        return overworldTag;
-    }
-
-    private static CompoundTag getPlainsTag() {
-        CompoundTag plainsTag = new CompoundTag("");
-        plainsTag.put(new StringTag("name", "minecraft:plains"));
-        plainsTag.put(new StringTag("precipitation", "rain"));
-        plainsTag.put(new FloatTag("depth", 0.125f));
-        plainsTag.put(new FloatTag("temperature", 0.8f));
-        plainsTag.put(new FloatTag("scale", 0.05f));
-        plainsTag.put(new FloatTag("downfall", 0.4f));
-        plainsTag.put(new StringTag("category", "plains"));
-
-        CompoundTag effects = new CompoundTag("effects");
-        effects.put(new LongTag("sky_color", 7907327));
-        effects.put(new LongTag("water_fog_color", 329011));
-        effects.put(new LongTag("fog_color", 12638463));
-        effects.put(new LongTag("water_color", 4159204));
-
-        CompoundTag moodSound = new CompoundTag("mood_sound");
-        moodSound.put(new IntTag("tick_delay", 6000));
-        moodSound.put(new FloatTag("offset", 2.0f));
-        moodSound.put(new StringTag("sound", "minecraft:ambient.cave"));
-        moodSound.put(new IntTag("block_search_extent", 8));
-
-        effects.put(moodSound);
-
-        plainsTag.put(effects);
-
-        return plainsTag;
-    }
-
-    private static CompoundTag convertToValue(String name, int id, Map<String, Tag> values) {
-        CompoundTag tag = new CompoundTag(name);
-        tag.put(new StringTag("name", name));
-        tag.put(new IntTag("id", id));
-        CompoundTag element = new CompoundTag("element");
-        element.setValue(values);
-        tag.put(element);
-
-        return tag;
+    private static CompoundTag loadNetworkCodec() {
+        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("network_codec.nbt");
+             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
+            return (CompoundTag) NBTIO.readTag((DataInput) stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AssertionError("Unable to load network codec.");
+        }
     }
 }

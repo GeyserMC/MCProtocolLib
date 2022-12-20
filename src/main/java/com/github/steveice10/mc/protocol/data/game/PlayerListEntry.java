@@ -6,33 +6,26 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.PublicKey;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 public class PlayerListEntry {
-    private final @NonNull GameProfile profile;
-    private final GameMode gameMode;
-    private final int ping;
-    private final Component displayName;
-    private final long expiresAt;
-    private final PublicKey publicKey;
-    private final byte[] keySignature;
+    private final @NonNull UUID profileId;
+    private @NonNull GameProfile profile;
+    private boolean listed;
+    private int latency;
+    private GameMode gameMode;
+    private @Nullable Component displayName;
+    private UUID sessionId;
+    private long expiresAt;
+    private @Nullable PublicKey publicKey;
+    private byte @Nullable[] keySignature;
 
-    public PlayerListEntry(GameProfile profile) {
-        this(profile, null, 0, null, 0, null, null);
-    }
-
-    public PlayerListEntry(GameProfile profile, GameMode gameMode) {
-        this(profile, gameMode, 0, null, 0, null, null);
-    }
-
-    public PlayerListEntry(GameProfile profile, int ping) {
-        this(profile, null, ping, null, 0, null, null);
-    }
-
-    public PlayerListEntry(GameProfile profile, Component displayName) {
-        this(profile, null, 0, displayName, 0, null, null);
+    public PlayerListEntry(UUID profileId) {
+        this(profileId, new GameProfile(profileId, null), false, 0, GameMode.SURVIVAL, null, null, 0, null, null);
     }
 }

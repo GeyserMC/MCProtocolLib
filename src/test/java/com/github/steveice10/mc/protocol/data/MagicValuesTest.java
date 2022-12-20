@@ -4,19 +4,16 @@ import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
-import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.ResourcePackStatus;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.command.CommandParser;
 import com.github.steveice10.mc.protocol.data.game.command.CommandType;
-import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import com.github.steveice10.mc.protocol.data.game.entity.object.MinecartType;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
-import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
@@ -103,7 +100,6 @@ public class MagicValuesTest {
         this.register(DropItemAction.class, Integer.class);
         this.register(SpreadItemAction.class, Integer.class);
         this.register(FillStackAction.class, Integer.class);
-        this.register(GameMode.class, Integer.class);
         this.register(Difficulty.class, Integer.class);
         this.register(Animation.class, Integer.class);
         this.register(PositionElement.class, Integer.class);
@@ -139,7 +135,6 @@ public class MagicValuesTest {
         this.register(CollisionRule.class, String.class);
         this.register(ScoreType.class, Integer.class);
         this.register(Advancement.DisplayData.FrameType.class, Integer.class);
-        this.register(PlayerListEntryAction.class, Integer.class);
         this.register(UnlockRecipesAction.class, Integer.class);
         this.register(CraftingBookStateType.class, Integer.class);
         this.register(AdvancementTabAction.class, Integer.class);
@@ -155,7 +150,6 @@ public class MagicValuesTest {
         this.register(RecipeType.class, String.class);
         this.register(CommandType.class, Integer.class);
         this.register(CommandParser.class, Integer.class);
-        this.register(SuggestionType.class, String.class);
         this.register(StringProperties.class, Integer.class);
         this.register(PositionSourceType.class, String.class);
     }
