@@ -24,14 +24,16 @@ public class ServerboundChatCommandPacket implements MinecraftPacket {
     private final int offset;
     private final BitSet acknowledgedMessages;
 
-    public ServerboundChatCommandPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundChatCommandPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.command = helper.readString(in);
         this.timeStamp = in.readLong();
         this.salt = in.readLong();
         this.signatures = new ArrayList<>();
         int signatureCount = Math.min(helper.readVarInt(in), 8);
         for (int i = 0; i < signatureCount; i++) {
-            signatures.add(new ArgumentSignature(helper.readString(in, 16), in.readBytes(new byte[256]).array()));
+            byte[] signature = new byte[256];
+            signatures.add(new ArgumentSignature(helper.readString(in, 16), signature));
+            in.readBytes(signature);
         }
 
         this.offset = helper.readVarInt(in);
@@ -39,7 +41,7 @@ public class ServerboundChatCommandPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.command);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);
