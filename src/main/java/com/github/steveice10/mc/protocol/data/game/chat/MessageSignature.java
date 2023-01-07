@@ -16,10 +16,10 @@ public class MessageSignature {
         int id = helper.readVarInt(in) - 1;
         byte[] messageSignature;
         if (id == -1) {
-            messageSignature = null;
-        } else {
             messageSignature = new byte[256];
             in.readBytes(messageSignature);
+        } else {
+            messageSignature = null;
         }
         return new MessageSignature(id, messageSignature);
     }
