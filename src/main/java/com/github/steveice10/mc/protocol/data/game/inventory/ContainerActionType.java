@@ -8,4 +8,10 @@ public enum ContainerActionType {
     DROP_ITEM,
     SPREAD_ITEM,
     FILL_STACK;
+
+    private static final ContainerActionType[] VALUES = values();
+
+    public static ContainerActionType from(int id) {
+        return VALUES[id];
+    }
 }

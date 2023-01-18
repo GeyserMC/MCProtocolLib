@@ -8,4 +8,10 @@ public enum MinecartType implements ObjectData {
     MOB_SPAWNER,
     HOPPER,
     COMMAND_BLOCK;
+
+    private static final MinecartType[] VALUES = values();
+
+    public static MinecartType from(int id) {
+        return VALUES[id];
+    }
 }

@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Equipment;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
@@ -29,7 +28,7 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
         List<Equipment> list = new ArrayList<>();
         while (hasNextEntry) {
             int rawSlot = in.readByte();
-            EquipmentSlot slot = MagicValues.key(EquipmentSlot.class, ((byte) rawSlot) & 127);
+            EquipmentSlot slot = EquipmentSlot.from(((byte) rawSlot) & 127);
             ItemStack item = helper.readItemStack(in);
             list.add(new Equipment(slot, item));
             hasNextEntry = (rawSlot & 128) == 128;
@@ -41,7 +40,7 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.entityId);
         for (int i = 0; i < this.equipment.length; i++) {
-            int rawSlot = MagicValues.value(Integer.class, this.equipment[i].getSlot());
+            int rawSlot = this.equipment[i].getSlot().ordinal();
             if (i != equipment.length - 1) {
                 rawSlot = rawSlot | 128;
             }

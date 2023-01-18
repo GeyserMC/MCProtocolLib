@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.chunk.BitStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
@@ -91,7 +90,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeResourceLocation(ByteBuf buf, String location) {
-        this.writeString(buf, location);
+        this.writeString(buf, Identifier.formalize(location));
     }
 
     public UUID readUUID(ByteBuf buf) {
@@ -452,7 +451,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public PositionSource readPositionSource(ByteBuf buf) {
-        PositionSourceType type = this.readPositionSourceType(buf);
+        PositionSourceType type = PositionSourceType.from(this.readResourceLocation(buf));
         switch (type) {
             case BLOCK:
                 return new BlockPositionSource(this.readPosition(buf));
@@ -464,7 +463,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
-        this.writePositionSourceType(buf, positionSource.getType());
+        this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
         if (positionSource instanceof BlockPositionSource) {
             this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
         } else if (positionSource instanceof EntityPositionSource) {
@@ -473,14 +472,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
 
         throw new IllegalStateException("Unknown position source type!");
-    }
-
-    public PositionSourceType readPositionSourceType(ByteBuf buf) {
-        return MagicValues.key(PositionSourceType.class, Identifier.formalize(this.readString(buf)));
-    }
-
-    public void writePositionSourceType(ByteBuf buf, PositionSourceType type) {
-        this.writeString(buf, MagicValues.value(String.class, type));
     }
 
     public VillagerData readVillagerData(ByteBuf buf) {

@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.inventory.property.ContainerProperty;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -20,11 +19,7 @@ public class ClientboundContainerSetDataPacket implements MinecraftPacket {
     private final int value;
 
     public ClientboundContainerSetDataPacket(int containerId, ContainerProperty rawProperty, int value) {
-        this(containerId, MagicValues.value(Integer.class, rawProperty), value);
-    }
-
-    public <T extends ContainerProperty> T getProperty(Class<T> type) {
-        return MagicValues.key(type, this.value);
+        this(containerId, rawProperty.ordinal(), value);
     }
 
     public ClientboundContainerSetDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {

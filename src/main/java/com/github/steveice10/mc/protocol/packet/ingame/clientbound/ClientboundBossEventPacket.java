@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.BossBarAction;
 import com.github.steveice10.mc.protocol.data.game.BossBarColor;
 import com.github.steveice10.mc.protocol.data.game.BossBarDivision;
@@ -68,7 +67,7 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
 
     public ClientboundBossEventPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.uuid = helper.readUUID(in);
-        this.action = MagicValues.key(BossBarAction.class, helper.readVarInt(in));
+        this.action = BossBarAction.from(helper.readVarInt(in));
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
             this.title = helper.readComponent(in);
@@ -83,8 +82,8 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            this.color = MagicValues.key(BossBarColor.class, helper.readVarInt(in));
-            this.division = MagicValues.key(BossBarDivision.class, helper.readVarInt(in));
+            this.color = BossBarColor.from(helper.readVarInt(in));
+            this.division = BossBarDivision.from(helper.readVarInt(in));
         } else {
             this.color = null;
             this.division = null;
@@ -105,10 +104,10 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeUUID(out, this.uuid);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
+        helper.writeVarInt(out, this.action.ordinal());
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.title));
+            helper.writeComponent(out, this.title);
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -116,8 +115,8 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            helper.writeVarInt(out, MagicValues.value(Integer.class, this.color));
-            helper.writeVarInt(out, MagicValues.value(Integer.class, this.division));
+            helper.writeVarInt(out, this.color.ordinal());
+            helper.writeVarInt(out, this.division.ordinal());
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {

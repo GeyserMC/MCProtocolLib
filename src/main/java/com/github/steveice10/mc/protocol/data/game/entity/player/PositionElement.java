@@ -6,4 +6,10 @@ public enum PositionElement {
     Z,
     PITCH,
     YAW;
+
+    private static final PositionElement[] VALUES = values();
+
+    public static PositionElement from(int id) {
+        return VALUES[id];
+    }
 }

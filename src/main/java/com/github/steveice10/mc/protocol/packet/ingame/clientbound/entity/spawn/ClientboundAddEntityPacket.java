@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.object.*;
 import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import io.netty.buffer.ByteBuf;
@@ -63,7 +62,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
 
         int data = helper.readVarInt(in);
         if (this.type == EntityType.MINECART) {
-            this.data = MagicValues.key(MinecartType.class, data);
+            this.data = MinecartType.from(data);
         } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME || this.type == EntityType.PAINTING) {
             this.data = Direction.VALUES[data];
         } else if (this.type == EntityType.FALLING_BLOCK) {
@@ -100,7 +99,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
 
         int data = 0;
         if (this.data instanceof MinecartType) {
-            data = MagicValues.value(Integer.class, this.data);
+            data = ((MinecartType) this.data).ordinal();
         } else if (this.data instanceof Direction) {
             data = ((Direction) this.data).ordinal();
         } else if (this.data instanceof FallingBlockData) {

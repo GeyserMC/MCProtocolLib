@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.player;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.nukkitx.math.vector.Vector3i;
@@ -28,7 +27,7 @@ public class ServerboundUseItemOnPacket implements MinecraftPacket {
     private final int sequence;
 
     public ServerboundUseItemOnPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.hand = MagicValues.key(Hand.class, helper.readVarInt(in));
+        this.hand = Hand.from(helper.readVarInt(in));
         this.position = helper.readPosition(in);
         this.face = helper.readDirection(in);
         this.cursorX = in.readFloat();
@@ -40,7 +39,7 @@ public class ServerboundUseItemOnPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.hand));
+        helper.writeVarInt(out, this.hand.ordinal());
         helper.writePosition(out, this.position);
         helper.writeDirection(out, this.face);
         out.writeFloat(this.cursorX);

@@ -7,4 +7,10 @@ public enum Animation {
     SWING_OFFHAND,
     CRITICAL_HIT,
     ENCHANTMENT_CRITICAL_HIT;
+
+    private static final Animation[] VALUES = values();
+
+    public static Animation from(int id) {
+        return VALUES[id];
+    }
 }

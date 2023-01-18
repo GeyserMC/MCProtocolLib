@@ -10,4 +10,10 @@ public enum PlayerState {
     STOP_HORSE_JUMP,
     OPEN_VEHICLE_INVENTORY,
     START_ELYTRA_FLYING;
+
+    private static final PlayerState[] VALUES = values();
+
+    public static PlayerState from(int id) {
+        return VALUES[id];
+    }
 }

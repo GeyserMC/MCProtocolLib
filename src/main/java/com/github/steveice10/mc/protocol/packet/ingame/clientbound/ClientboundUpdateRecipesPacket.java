@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
@@ -27,8 +26,8 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.recipes = new Recipe[helper.readVarInt(in)];
         for (int i = 0; i < this.recipes.length; i++) {
-            RecipeType type = MagicValues.key(RecipeType.class, Identifier.formalize(helper.readString(in)));
-            String identifier = helper.readString(in);
+            RecipeType type = RecipeType.from(helper.readResourceLocation(in));
+            String identifier = helper.readResourceLocation(in);
             RecipeData data;
             switch (type) {
                 case CRAFTING_SHAPELESS: {
@@ -105,8 +104,8 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.recipes.length);
         for (Recipe recipe : this.recipes) {
-            helper.writeString(out, MagicValues.value(String.class, recipe.getType()));
-            helper.writeString(out, recipe.getIdentifier());
+            helper.writeResourceLocation(out, recipe.getType().getResourceLocation());
+            helper.writeResourceLocation(out, recipe.getIdentifier());
             switch (recipe.getType()) {
                 case CRAFTING_SHAPELESS: {
                     ShapelessRecipeData data = (ShapelessRecipeData) recipe.getData();

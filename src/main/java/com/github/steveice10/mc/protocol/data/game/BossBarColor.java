@@ -8,4 +8,10 @@ public enum BossBarColor {
     YELLOW,
     PURPLE,
     WHITE;
+
+    private static final BossBarColor[] VALUES = values();
+
+    public static BossBarColor from(int id) {
+        return VALUES[id];
+    }
 }

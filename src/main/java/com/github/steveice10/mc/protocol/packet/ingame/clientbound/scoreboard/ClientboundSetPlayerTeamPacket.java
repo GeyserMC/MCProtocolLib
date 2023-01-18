@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
@@ -107,14 +106,14 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
 
     public ClientboundSetPlayerTeamPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.teamName = helper.readString(in);
-        this.action = MagicValues.key(TeamAction.class, in.readByte());
+        this.action = TeamAction.from(in.readByte());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             this.displayName = helper.readComponent(in);
             byte flags = in.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
-            this.nameTagVisibility = MagicValues.key(NameTagVisibility.class, helper.readString(in));
-            this.collisionRule = MagicValues.key(CollisionRule.class, helper.readString(in));
+            this.nameTagVisibility = NameTagVisibility.from(helper.readString(in));
+            this.collisionRule = CollisionRule.from(helper.readString(in));
 
             this.color = TeamColor.VALUES[helper.readVarInt(in)];
 
@@ -144,15 +143,15 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeString(out, this.teamName);
-        out.writeByte(MagicValues.value(Integer.class, this.action));
+        out.writeByte(this.action.ordinal());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.displayName));
+            helper.writeComponent(out, this.displayName);
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
-            helper.writeString(out, MagicValues.value(String.class, this.nameTagVisibility));
-            helper.writeString(out, MagicValues.value(String.class, this.collisionRule));
+            helper.writeString(out, this.nameTagVisibility.getName());
+            helper.writeString(out, this.collisionRule.getName());
             helper.writeVarInt(out, this.color.ordinal());
-            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.prefix));
-            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.suffix));
+            helper.writeComponent(out, this.prefix);
+            helper.writeComponent(out, this.suffix);
         }
 
         if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {

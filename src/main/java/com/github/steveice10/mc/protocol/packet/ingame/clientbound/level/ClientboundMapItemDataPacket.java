@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.level.map.MapData;
 import com.github.steveice10.mc.protocol.data.game.level.map.MapIcon;
 import com.github.steveice10.mc.protocol.data.game.level.map.MapIconType;
@@ -48,7 +47,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
                     displayName = helper.readComponent(in);
                 }
 
-                this.icons[index] = new MapIcon(x, z, MagicValues.key(MapIconType.class, type), rotation, displayName);
+                this.icons[index] = new MapIcon(x, z, MapIconType.from(type), rotation, displayName);
             }
         }
 
@@ -74,14 +73,14 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
             out.writeBoolean(true);
             helper.writeVarInt(out, this.icons.length);
             for (MapIcon icon : this.icons) {
-                int type = MagicValues.value(Integer.class, icon.getIconType());
+                int type = icon.getIconType().ordinal();
                 helper.writeVarInt(out, type);
                 out.writeByte(icon.getCenterX());
                 out.writeByte(icon.getCenterZ());
                 out.writeByte(icon.getIconRotation());
                 if (icon.getDisplayName() != null) {
                     out.writeBoolean(true);
-                    helper.writeString(out, DefaultComponentSerializer.get().serialize(icon.getDisplayName()));
+                    helper.writeComponent(out, icon.getDisplayName());
                 } else {
                     out.writeBoolean(false);
                 }

@@ -13,4 +13,10 @@ public enum GameEvent {
     PUFFERFISH_STING_SOUND,
     AFFECTED_BY_ELDER_GUARDIAN,
     ENABLE_RESPAWN_SCREEN;
+
+    private static final GameEvent[] VALUES = values();
+
+    public static GameEvent from(int id) {
+        return VALUES[id];
+    }
 }
