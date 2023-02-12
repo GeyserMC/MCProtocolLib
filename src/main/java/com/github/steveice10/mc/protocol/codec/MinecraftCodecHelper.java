@@ -321,7 +321,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public Component readComponent(ByteBuf buf) {
-        return DefaultComponentSerializer.get().deserialize(this.readString(buf));
+        return DefaultComponentSerializer.get().deserialize(this.readString(buf, 262144));
     }
 
     public void writeComponent(ByteBuf buf, Component component) {
