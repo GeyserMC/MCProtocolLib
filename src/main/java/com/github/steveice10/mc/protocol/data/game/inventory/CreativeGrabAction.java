@@ -1,30 +1,15 @@
 package com.github.steveice10.mc.protocol.data.game.inventory;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
 public enum CreativeGrabAction implements ContainerAction {
-    GRAB(2);
-
-    private final int id;
-
-    CreativeGrabAction(int id) {
-        this.id = id;
-    }
+    GRAB;
 
     public int getId() {
-        return id;
+        return this.ordinal() + 2;
     }
 
-    private static Int2ObjectMap<CreativeGrabAction> VALUES = new Int2ObjectOpenHashMap<>();
+    private static final CreativeGrabAction[] VALUES = values();
 
     public static CreativeGrabAction from(int id) {
-        return VALUES.get(id);
-    }
-
-    static {
-        for (CreativeGrabAction action : values()) {
-            VALUES.put(action.id, action);
-        }
+        return VALUES[id - 2];
     }
 }

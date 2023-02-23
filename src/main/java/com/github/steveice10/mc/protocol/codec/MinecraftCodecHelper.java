@@ -7,18 +7,38 @@ import com.github.steveice10.mc.protocol.data.game.chunk.BitStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
 import com.github.steveice10.mc.protocol.data.game.chunk.NibbleArray3d;
-import com.github.steveice10.mc.protocol.data.game.chunk.palette.*;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.GlobalPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.ListPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.MapPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.Palette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.*;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
-import com.github.steveice10.mc.protocol.data.game.level.particle.*;
+import com.github.steveice10.mc.protocol.data.game.level.particle.BlockParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustColorTransitionParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.FallingDustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ItemParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleType;
+import com.github.steveice10.mc.protocol.data.game.level.particle.SculkChargeParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ShriekParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.VibrationParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.BlockPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.EntityPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSource;
@@ -52,7 +72,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ToIntFunction;
 
 @RequiredArgsConstructor
 public class MinecraftCodecHelper extends BasePacketCodecHelper {
@@ -90,7 +114,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeResourceLocation(ByteBuf buf, String location) {
-        this.writeString(buf, Identifier.formalize(location));
+        this.writeString(buf, location);
     }
 
     public UUID readUUID(ByteBuf buf) {
