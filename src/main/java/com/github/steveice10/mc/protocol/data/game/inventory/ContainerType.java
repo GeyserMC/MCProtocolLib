@@ -21,6 +21,7 @@ public enum ContainerType {
     LOOM,
     MERCHANT,
     SHULKER_BOX,
+    LEGACY_SMITHING,
     SMITHING,
     SMOKER,
     CARTOGRAPHY,

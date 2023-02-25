@@ -8,7 +8,8 @@ import lombok.NonNull;
 
 @Data
 @AllArgsConstructor
-public class SmithingRecipeData implements RecipeData {
+public class SmithingTransformRecipeData implements RecipeData {
+    private final @NonNull Ingredient template;
     private final @NonNull Ingredient base;
     private final @NonNull Ingredient addition;
     private final ItemStack result;

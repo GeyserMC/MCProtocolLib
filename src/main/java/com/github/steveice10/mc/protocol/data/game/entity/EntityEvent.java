@@ -63,7 +63,8 @@ public enum EntityEvent {
     GOAT_STOP_LOWERING_HEAD,
     MAKE_POOF_PARTICLES,
     WARDEN_RECEIVE_SIGNAL,
-    WARDEN_SONIC_BOOM;
+    WARDEN_SONIC_BOOM,
+    SNIFFER_MAKE_SOUND;
 
     private static final EntityEvent[] VALUES = values();
 

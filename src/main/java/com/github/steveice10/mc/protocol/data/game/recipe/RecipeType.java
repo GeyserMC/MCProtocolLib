@@ -21,5 +21,7 @@ public enum RecipeType {
     SMOKING,
     CAMPFIRE_COOKING,
     STONECUTTING,
-    SMITHING
+    SMITHING,
+    SMITHING_TRANSFORM,
+    SMITHING_TRIM
 }

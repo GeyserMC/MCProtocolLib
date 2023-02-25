@@ -48,5 +48,6 @@ public enum CommandParser {
     RESOURCE_KEY,
     TEMPLATE_MIRROR,
     TEMPLATE_ROTATION,
+    HEIGHTMAP,
     UUID;
 }

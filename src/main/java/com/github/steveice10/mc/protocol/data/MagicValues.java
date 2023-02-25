@@ -259,10 +259,11 @@ public class MagicValues {
         register(ContainerType.LOOM, 17);
         register(ContainerType.MERCHANT, 18);
         register(ContainerType.SHULKER_BOX, 19);
-        register(ContainerType.SMITHING, 20);
-        register(ContainerType.SMOKER, 21);
-        register(ContainerType.CARTOGRAPHY, 22);
-        register(ContainerType.STONECUTTER, 23);
+        register(ContainerType.LEGACY_SMITHING, 20);
+        register(ContainerType.SMITHING, 21);
+        register(ContainerType.SMOKER, 22);
+        register(ContainerType.CARTOGRAPHY, 23);
+        register(ContainerType.STONECUTTER, 24);
 
         register(BrewingStandProperty.BREW_TIME, 0);
 
@@ -472,6 +473,8 @@ public class MagicValues {
         register(RecipeType.CAMPFIRE_COOKING, "minecraft:campfire_cooking");
         register(RecipeType.STONECUTTING, "minecraft:stonecutting");
         register(RecipeType.SMITHING, "minecraft:smithing");
+        register(RecipeType.SMITHING_TRANSFORM, "minecraft:smithing_transform");
+        register(RecipeType.SMITHING_TRIM, "minecraft:smithing_trim");
 
         register(CommandType.ROOT, 0);
         register(CommandType.LITERAL, 1);
@@ -524,7 +527,8 @@ public class MagicValues {
         register(CommandParser.RESOURCE_KEY, 44);
         register(CommandParser.TEMPLATE_MIRROR, 45);
         register(CommandParser.TEMPLATE_ROTATION, 46);
-        register(CommandParser.UUID, 47);
+        register(CommandParser.HEIGHTMAP, 47);
+        register(CommandParser.UUID, 48);
 
         register(StringProperties.SINGLE_WORD, 0);
         register(StringProperties.QUOTABLE_PHRASE, 1);
