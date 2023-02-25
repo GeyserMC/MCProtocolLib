@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
@@ -59,7 +58,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 Component title = helper.readComponent(in);
                 Component description = helper.readComponent(in);
                 ItemStack icon = helper.readItemStack(in);
-                FrameType frameType = MagicValues.key(FrameType.class, helper.readVarInt(in));
+                FrameType frameType = FrameType.from(helper.readVarInt(in));
 
                 int flags = in.readInt();
                 boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
@@ -133,10 +132,10 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
             DisplayData displayData = advancement.getDisplayData();
             if (displayData != null) {
                 out.writeBoolean(true);
-                helper.writeString(out, DefaultComponentSerializer.get().serialize(displayData.getTitle()));
-                helper.writeString(out, DefaultComponentSerializer.get().serialize(displayData.getDescription()));
+                helper.writeComponent(out, displayData.getTitle());
+                helper.writeComponent(out, displayData.getDescription());
                 helper.writeItemStack(out, displayData.getIcon());
-                helper.writeVarInt(out, MagicValues.value(Integer.class, displayData.getFrameType()));
+                helper.writeVarInt(out, displayData.getFrameType().ordinal());
                 String backgroundTexture = displayData.getBackgroundTexture();
 
                 int flags = 0;

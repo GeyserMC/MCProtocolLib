@@ -6,4 +6,10 @@ public enum BossBarDivision {
     NOTCHES_10,
     NOTCHES_12,
     NOTCHES_20;
+
+    private static final BossBarDivision[] VALUES = values();
+
+    public static BossBarDivision from(int id) {
+        return VALUES[id];
+    }
 }

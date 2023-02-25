@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.player;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -26,14 +25,14 @@ public class ServerboundPlayerCommandPacket implements MinecraftPacket {
 
     public ServerboundPlayerCommandPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = helper.readVarInt(in);
-        this.state = MagicValues.key(PlayerState.class, helper.readVarInt(in));
+        this.state = PlayerState.from(helper.readVarInt(in));
         this.jumpBoost = helper.readVarInt(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.entityId);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.state));
+        helper.writeVarInt(out, this.state.ordinal());
         helper.writeVarInt(out, this.jumpBoost);
     }
 }

@@ -7,4 +7,10 @@ public enum BossBarAction {
     UPDATE_TITLE,
     UPDATE_STYLE,
     UPDATE_FLAGS;
+
+    private static final BossBarAction[] VALUES = values();
+
+    public static BossBarAction from(int id) {
+        return VALUES[id];
+    }
 }

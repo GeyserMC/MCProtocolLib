@@ -23,6 +23,6 @@ public class ClientboundSetSubtitleTextPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeString(out, DefaultComponentSerializer.get().serialize(this.text));
+        helper.writeComponent(out, this.text);
     }
 }

@@ -28,4 +28,10 @@ public enum MapIconType {
     RED_BANNER,
     BLACK_BANNER,
     TREASURE_MARKER;
+
+    private static final MapIconType[] VALUES = values();
+
+    public static MapIconType from(int id) {
+        return VALUES[id];
+    }
 }

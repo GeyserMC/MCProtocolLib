@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -20,13 +19,13 @@ public class ClientboundChangeDifficultyPacket implements MinecraftPacket {
     private final boolean difficultyLocked;
 
     public ClientboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.difficulty = MagicValues.key(Difficulty.class, in.readUnsignedByte());
+        this.difficulty = Difficulty.from(in.readUnsignedByte());
         this.difficultyLocked = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeByte(MagicValues.value(Integer.class, this.difficulty));
+        out.writeByte(this.difficulty.ordinal());
         out.writeBoolean(this.difficultyLocked);
     }
 }

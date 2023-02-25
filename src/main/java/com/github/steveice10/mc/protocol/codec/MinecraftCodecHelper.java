@@ -2,24 +2,43 @@ package com.github.steveice10.mc.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.chunk.BitStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
 import com.github.steveice10.mc.protocol.data.game.chunk.NibbleArray3d;
-import com.github.steveice10.mc.protocol.data.game.chunk.palette.*;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.GlobalPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.ListPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.MapPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.Palette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.*;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
-import com.github.steveice10.mc.protocol.data.game.level.particle.*;
+import com.github.steveice10.mc.protocol.data.game.level.particle.BlockParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustColorTransitionParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.FallingDustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ItemParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleType;
+import com.github.steveice10.mc.protocol.data.game.level.particle.SculkChargeParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ShriekParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.VibrationParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.BlockPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.EntityPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSource;
@@ -53,7 +72,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ToIntFunction;
 
 @RequiredArgsConstructor
 public class MinecraftCodecHelper extends BasePacketCodecHelper {
@@ -452,7 +475,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public PositionSource readPositionSource(ByteBuf buf) {
-        PositionSourceType type = this.readPositionSourceType(buf);
+        PositionSourceType type = PositionSourceType.from(this.readResourceLocation(buf));
         switch (type) {
             case BLOCK:
                 return new BlockPositionSource(this.readPosition(buf));
@@ -464,7 +487,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
-        this.writePositionSourceType(buf, positionSource.getType());
+        this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
         if (positionSource instanceof BlockPositionSource) {
             this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
         } else if (positionSource instanceof EntityPositionSource) {
@@ -473,14 +496,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
 
         throw new IllegalStateException("Unknown position source type!");
-    }
-
-    public PositionSourceType readPositionSourceType(ByteBuf buf) {
-        return MagicValues.key(PositionSourceType.class, Identifier.formalize(this.readString(buf)));
-    }
-
-    public void writePositionSourceType(ByteBuf buf, PositionSourceType type) {
-        this.writeString(buf, MagicValues.value(String.class, type));
     }
 
     public VillagerData readVillagerData(ByteBuf buf) {

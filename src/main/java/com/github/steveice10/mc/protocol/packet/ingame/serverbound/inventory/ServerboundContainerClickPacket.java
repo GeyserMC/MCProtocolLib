@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.inventory.ClickItemAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ContainerAction;
@@ -62,21 +61,21 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
         byte param = in.readByte();
-        this.action = MagicValues.key(ContainerActionType.class, in.readByte());
+        this.action = ContainerActionType.from(in.readByte());
         if (this.action == ContainerActionType.CLICK_ITEM) {
-            this.param = MagicValues.key(ClickItemAction.class, param);
+            this.param = ClickItemAction.from(param);
         } else if (this.action == ContainerActionType.SHIFT_CLICK_ITEM) {
-            this.param = MagicValues.key(ShiftClickItemAction.class, param);
+            this.param = ShiftClickItemAction.from(param);
         } else if (this.action == ContainerActionType.MOVE_TO_HOTBAR_SLOT) {
-            this.param = MagicValues.key(MoveToHotbarAction.class, param);
+            this.param = MoveToHotbarAction.from(param);
         } else if (this.action == ContainerActionType.CREATIVE_GRAB_MAX_STACK) {
-            this.param = MagicValues.key(CreativeGrabAction.class, param);
+            this.param = CreativeGrabAction.from(param);
         } else if (this.action == ContainerActionType.DROP_ITEM) {
-            this.param = MagicValues.key(DropItemAction.class, param + (this.slot != -999 ? 2 : 0));
+            this.param = DropItemAction.from(param + (this.slot != -999 ? 2 : 0));
         } else if (this.action == ContainerActionType.SPREAD_ITEM) {
-            this.param = MagicValues.key(SpreadItemAction.class, param);
+            this.param = SpreadItemAction.from(param);
         } else if (this.action == ContainerActionType.FILL_STACK) {
-            this.param = MagicValues.key(FillStackAction.class, param);
+            this.param = FillStackAction.from(param);
         } else {
             throw new IllegalStateException();
         }
@@ -98,13 +97,13 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
 
-        int param = MagicValues.value(Integer.class, this.param);
+        int param = this.param.getId();
         if (this.action == ContainerActionType.DROP_ITEM) {
             param %= 2;
         }
 
         out.writeByte(param);
-        out.writeByte(MagicValues.value(Integer.class, this.action));
+        out.writeByte(this.action.ordinal());
 
         helper.writeVarInt(out, this.changedSlots.size());
         for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {

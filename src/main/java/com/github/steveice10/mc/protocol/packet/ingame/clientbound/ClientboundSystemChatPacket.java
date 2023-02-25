@@ -25,7 +25,7 @@ public class ClientboundSystemChatPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeString(out, DefaultComponentSerializer.get().serialize(this.content));
+        helper.writeComponent(out, this.content);
         out.writeBoolean(this.overlay);
     }
 }

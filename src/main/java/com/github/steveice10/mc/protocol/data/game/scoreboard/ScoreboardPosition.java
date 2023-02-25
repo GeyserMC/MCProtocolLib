@@ -21,4 +21,10 @@ public enum ScoreboardPosition {
     SIDEBAR_TEAM_LIGHT_PURPLE,
     SIDEBAR_TEAM_YELLOW,
     SIDEBAR_TEAM_WHITE;
+
+    private static final ScoreboardPosition[] VALUES = values();
+
+    public static ScoreboardPosition from(int id) {
+        return VALUES[id];
+    }
 }
