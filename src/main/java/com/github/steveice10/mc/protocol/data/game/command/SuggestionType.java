@@ -26,7 +26,7 @@ public enum SuggestionType {
     private static final Map<String, SuggestionType> VALUES = new HashMap<>();
 
     @NotNull
-    public static SuggestionType byResourceLocation(String resourceLocation) {
+    public static SuggestionType from(String resourceLocation) {
         // Vanilla behavior as of 1.19.3
         // 1.16.5 still has AVAILABLE_BIOMES and vanilla doesn't care
         return VALUES.getOrDefault(resourceLocation, ASK_SERVER);

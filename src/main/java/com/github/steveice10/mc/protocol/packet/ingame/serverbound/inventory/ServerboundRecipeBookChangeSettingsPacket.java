@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.inventory.CraftingBookStateType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -21,14 +20,14 @@ public class ServerboundRecipeBookChangeSettingsPacket implements MinecraftPacke
     private final boolean filterActive;
 
     public ServerboundRecipeBookChangeSettingsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.type = MagicValues.key(CraftingBookStateType.class, helper.readVarInt(in));
+        this.type = CraftingBookStateType.from(helper.readVarInt(in));
         this.bookOpen = in.readBoolean();
         this.filterActive = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.type));
+        helper.writeVarInt(out, this.type.ordinal());
         out.writeBoolean(this.bookOpen);
         out.writeBoolean(this.filterActive);
     }

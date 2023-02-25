@@ -50,4 +50,10 @@ public enum CommandParser {
     TEMPLATE_ROTATION,
     HEIGHTMAP,
     UUID;
+
+    private static final CommandParser[] VALUES = values();
+
+    public static CommandParser from(int id) {
+        return VALUES[id];
+    }
 }

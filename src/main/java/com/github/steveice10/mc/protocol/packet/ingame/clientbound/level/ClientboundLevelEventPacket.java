@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.level.event.*;
 import com.nukkitx.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
@@ -31,11 +31,14 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
         this.position = helper.readPosition(in);
         int value = in.readInt();
         switch (this.event) {
+            case BLOCK_FIRE_EXTINGUISH:
+                this.data = FireExtinguishData.from(value);
+                break;
             case RECORD:
                 this.data = new RecordEventData(value);
                 break;
             case SMOKE:
-                this.data = MagicValues.key(SmokeEventData.class, value % 6);
+                this.data = new SmokeEventData(Direction.from(Math.abs(value % 6)));
                 break;
             case BREAK_BLOCK:
                 this.data = new BreakBlockEventData(value);
@@ -54,6 +57,9 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
             case ENDERDRAGON_FIREBALL_EXPLODE:
                 this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
                 break;
+            case ELECTRIC_SPARK:
+                this.data = value >= 0 && value < 6 ? new ElectricSparkData(Direction.from(value)) : null;
+                break;
             case SCULK_BLOCK_CHARGE:
                 this.data = new SculkBlockChargeEventData(value);
                 break;
@@ -70,10 +76,12 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
         helper.writeLevelEvent(out, this.event);
         helper.writePosition(out, this.position);
         int value = 0;
-        if (this.data instanceof RecordEventData) {
+        if (this.data instanceof FireExtinguishData) {
+            value = ((FireExtinguishData) this.data).ordinal();
+        } else if (this.data instanceof RecordEventData) {
             value = ((RecordEventData) this.data).getRecordId();
         } else if (this.data instanceof SmokeEventData) {
-            value = MagicValues.value(Integer.class, this.data);
+            value = ((SmokeEventData) this.data).getDirection().ordinal();
         } else if (this.data instanceof BreakBlockEventData) {
             value = ((BreakBlockEventData) this.data).getBlockState();
         } else if (this.data instanceof BreakPotionEventData) {
@@ -81,9 +89,11 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
         } else if (this.data instanceof BonemealGrowEventData) {
             value = ((BonemealGrowEventData) this.data).getParticleCount();
         } else if (this.data instanceof ComposterEventData) {
-            value = MagicValues.value(Integer.class, this.data);
+            value = ((ComposterEventData) this.data).ordinal();
         } else if (this.data instanceof DragonFireballEventData) {
-            value = MagicValues.value(Integer.class, this.data);
+            value = ((DragonFireballEventData) this.data).ordinal();
+        } else if (this.data instanceof ElectricSparkData) {
+            value = ((ElectricSparkData) this.data).getDirection().ordinal();
         } else if (this.data instanceof SculkBlockChargeEventData) {
             value = ((SculkBlockChargeEventData) data).getLevelValue();
         }

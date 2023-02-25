@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -19,11 +18,11 @@ public class ClientboundOpenBookPacket implements MinecraftPacket {
     private final @NonNull Hand hand;
 
     public ClientboundOpenBookPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.hand = MagicValues.key(Hand.class, helper.readVarInt(in));
+        this.hand = Hand.from(helper.readVarInt(in));
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeVarInt(out, MagicValues.value(Integer.class, hand));
+        helper.writeVarInt(out, this.hand.ordinal());
     }
 }

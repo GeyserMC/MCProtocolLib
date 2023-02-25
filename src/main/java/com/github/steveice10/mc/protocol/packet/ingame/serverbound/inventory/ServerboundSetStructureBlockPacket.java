@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.inventory.UpdateStructureBlockAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.UpdateStructureBlockMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.StructureMirror;
@@ -41,13 +40,13 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
 
     public ServerboundSetStructureBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.position = helper.readPosition(in);
-        this.action = MagicValues.key(UpdateStructureBlockAction.class, helper.readVarInt(in));
-        this.mode = MagicValues.key(UpdateStructureBlockMode.class, helper.readVarInt(in));
+        this.action = UpdateStructureBlockAction.from(helper.readVarInt(in));
+        this.mode = UpdateStructureBlockMode.from(helper.readVarInt(in));
         this.name = helper.readString(in);
         this.offset = Vector3i.from(in.readByte(), in.readByte(), in.readByte());
         this.size = Vector3i.from(in.readUnsignedByte(), in.readUnsignedByte(), in.readUnsignedByte());
-        this.mirror = MagicValues.key(StructureMirror.class, helper.readVarInt(in));
-        this.rotation = MagicValues.key(StructureRotation.class, helper.readVarInt(in));
+        this.mirror = StructureMirror.from(helper.readVarInt(in));
+        this.rotation = StructureRotation.from(helper.readVarInt(in));
         this.metadata = helper.readString(in);
         this.integrity = in.readFloat();
         this.seed = helper.readVarLong(in);
@@ -61,8 +60,8 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writePosition(out, this.position);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mode));
+        helper.writeVarInt(out, this.action.ordinal());
+        helper.writeVarInt(out, this.mode.ordinal());
         helper.writeString(out, this.name);
         out.writeByte(this.offset.getX());
         out.writeByte(this.offset.getY());
@@ -70,8 +69,8 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
         out.writeByte(this.size.getX());
         out.writeByte(this.size.getY());
         out.writeByte(this.size.getZ());
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mirror));
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.rotation));
+        helper.writeVarInt(out, this.mirror.ordinal());
+        helper.writeVarInt(out, this.rotation.ordinal());
         helper.writeString(out, this.metadata);
         out.writeFloat(this.integrity);
         helper.writeVarLong(out, this.seed);

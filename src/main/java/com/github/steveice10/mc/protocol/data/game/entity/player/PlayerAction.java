@@ -8,4 +8,10 @@ public enum PlayerAction {
     DROP_ITEM,
     RELEASE_USE_ITEM,
     SWAP_HANDS;
+
+    private static final PlayerAction[] VALUES = values();
+
+    public static PlayerAction from(int id) {
+        return VALUES[id];
+    }
 }

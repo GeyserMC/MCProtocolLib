@@ -5,4 +5,10 @@ public enum StructureRotation {
     CLOCKWISE_90,
     CLOCKWISE_180,
     COUNTERCLOCKWISE_90;
+
+    private static final StructureRotation[] VALUES = values();
+
+    public static StructureRotation from(int id) {
+        return VALUES[id];
+    }
 }

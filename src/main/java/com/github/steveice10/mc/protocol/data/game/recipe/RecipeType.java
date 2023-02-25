@@ -1,5 +1,11 @@
 package com.github.steveice10.mc.protocol.data.game.recipe;
 
+import com.github.steveice10.mc.protocol.data.game.Identifier;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 public enum RecipeType {
     CRAFTING_SHAPED,
     CRAFTING_SHAPELESS,
@@ -23,5 +29,27 @@ public enum RecipeType {
     STONECUTTING,
     SMITHING,
     SMITHING_TRANSFORM,
-    SMITHING_TRIM
+    SMITHING_TRIM;
+
+    private final String resourceLocation;
+
+    RecipeType() {
+        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
+    }
+
+    public String getResourceLocation() {
+        return resourceLocation;
+    }
+
+    private static final Map<String, RecipeType> VALUES = new HashMap<>();
+
+    public static RecipeType from(String resourceLocation) {
+        return VALUES.get(resourceLocation);
+    }
+
+    static {
+        for (RecipeType type : values()) {
+            VALUES.put(type.resourceLocation, type);
+        }
+    }
 }

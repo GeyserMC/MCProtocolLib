@@ -26,4 +26,10 @@ public enum ContainerType {
     SMOKER,
     CARTOGRAPHY,
     STONECUTTER;
+
+    private static final ContainerType[] VALUES = values();
+
+    public static ContainerType from(int id) {
+        return VALUES[id];
+    }
 }

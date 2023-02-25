@@ -58,7 +58,7 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
             Component tooltip = this.tooltips[index];
             if (tooltip != null) {
                 out.writeBoolean(true);
-                helper.writeString(out, DefaultComponentSerializer.get().serialize(tooltip));
+                helper.writeComponent(out, tooltip);
             } else {
                 out.writeBoolean(false);
             }

@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntry;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;

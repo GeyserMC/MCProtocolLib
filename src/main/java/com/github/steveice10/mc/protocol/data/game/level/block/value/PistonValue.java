@@ -1,10 +1,11 @@
 package com.github.steveice10.mc.protocol.data.game.level.block.value;
 
-public enum PistonValue implements BlockValue {
-    DOWN,
-    UP,
-    NORTH,
-    SOUTH,
-    WEST,
-    EAST
+import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class PistonValue implements BlockValue {
+    private final Direction direction;
 }

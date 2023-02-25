@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.inventory.AdvancementTabAction;
 import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
@@ -42,7 +41,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     }
 
     public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.action = MagicValues.key(AdvancementTabAction.class, helper.readVarInt(in));
+        this.action = AdvancementTabAction.from(helper.readVarInt(in));
         switch (this.action) {
             case CLOSED_SCREEN:
                 this.tabId = null;
@@ -57,7 +56,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
+        helper.writeVarInt(out, this.action.ordinal());
         switch (this.action) {
             case CLOSED_SCREEN:
                 break;

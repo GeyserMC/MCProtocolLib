@@ -4,4 +4,10 @@ public enum ObjectiveAction {
     ADD,
     REMOVE,
     UPDATE;
+
+    private static final ObjectiveAction[] VALUES = values();
+
+    public static ObjectiveAction from(int id) {
+        return VALUES[id];
+    }
 }

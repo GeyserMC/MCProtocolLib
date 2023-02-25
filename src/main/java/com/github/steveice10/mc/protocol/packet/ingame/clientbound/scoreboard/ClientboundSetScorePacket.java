@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
@@ -41,7 +40,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
 
     public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entry = helper.readString(in);
-        this.action = MagicValues.key(ScoreboardAction.class, helper.readVarInt(in));
+        this.action = ScoreboardAction.from(helper.readVarInt(in));
         this.objective = helper.readString(in);
         if (this.action == ScoreboardAction.ADD_OR_UPDATE) {
             this.value = helper.readVarInt(in);
@@ -53,7 +52,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeString(out, this.entry);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
+        helper.writeVarInt(out, this.action.ordinal());
         helper.writeString(out, this.objective);
         if (this.action == ScoreboardAction.ADD_OR_UPDATE) {
             helper.writeVarInt(out, this.value);

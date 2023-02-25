@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.handshake.serverbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -25,7 +24,7 @@ public class ClientIntentionPacket implements MinecraftPacket {
         this.protocolVersion = helper.readVarInt(in);
         this.hostname = helper.readString(in);
         this.port = in.readUnsignedShort();
-        this.intent = MagicValues.key(HandshakeIntent.class, helper.readVarInt(in));
+        this.intent = HandshakeIntent.from(helper.readVarInt(in) - 1);
     }
 
     @Override
@@ -33,7 +32,7 @@ public class ClientIntentionPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.protocolVersion);
         helper.writeString(out, this.hostname);
         out.writeShort(this.port);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.intent));
+        helper.writeVarInt(out, this.intent.ordinal() + 1);
     }
 
     @Override

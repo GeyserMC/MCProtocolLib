@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
@@ -73,7 +72,7 @@ public class ClientboundRecipePacket implements MinecraftPacket {
     }
 
     public ClientboundRecipePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.action = MagicValues.key(UnlockRecipesAction.class, helper.readVarInt(in));
+        this.action = UnlockRecipesAction.from(helper.readVarInt(in));
 
         this.openCraftingBook = in.readBoolean();
         this.activateCraftingFiltering = in.readBoolean();
@@ -101,7 +100,7 @@ public class ClientboundRecipePacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
+        helper.writeVarInt(out, this.action.ordinal());
 
         out.writeBoolean(this.openCraftingBook);
         out.writeBoolean(this.activateCraftingFiltering);

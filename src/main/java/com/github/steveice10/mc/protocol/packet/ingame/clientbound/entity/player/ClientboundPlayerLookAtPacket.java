@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.playe
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -29,14 +28,14 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
     }
 
     public ClientboundPlayerLookAtPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.origin = MagicValues.key(RotationOrigin.class, helper.readVarInt(in));
+        this.origin = RotationOrigin.from(helper.readVarInt(in));
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
 
         if (in.readBoolean()) {
             this.targetEntityId = helper.readVarInt(in);
-            this.targetEntityOrigin = MagicValues.key(RotationOrigin.class, helper.readVarInt(in));
+            this.targetEntityOrigin = RotationOrigin.from(helper.readVarInt(in));
         } else {
             this.targetEntityId = 0;
             this.targetEntityOrigin = null;
@@ -45,7 +44,7 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.origin));
+        helper.writeVarInt(out, this.origin.ordinal());
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
@@ -53,7 +52,7 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
         if (this.targetEntityOrigin != null) {
             out.writeBoolean(true);
             helper.writeVarInt(out, this.targetEntityId);
-            helper.writeVarInt(out, MagicValues.value(Integer.class, this.targetEntityOrigin));
+            helper.writeVarInt(out, this.origin.ordinal());
         } else {
             out.writeBoolean(false);
         }

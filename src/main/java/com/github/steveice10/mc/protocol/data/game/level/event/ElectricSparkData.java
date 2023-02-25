@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SmokeEventData implements LevelEventData {
+public class ElectricSparkData implements LevelEventData {
     private final Direction direction;
 }

@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.playe
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -41,7 +40,7 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
         this.relative = new ArrayList<>();
         int flags = in.readUnsignedByte();
         for (PositionElement element : PositionElement.values()) {
-            int bit = 1 << MagicValues.value(Integer.class, element);
+            int bit = 1 << element.ordinal();
             if ((flags & bit) == bit) {
                 this.relative.add(element);
             }
@@ -60,7 +59,7 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
 
         int flags = 0;
         for (PositionElement element : this.relative) {
-            flags |= 1 << MagicValues.value(Integer.class, element);
+            flags |= 1 << element.ordinal();
         }
 
         out.writeByte(flags);
