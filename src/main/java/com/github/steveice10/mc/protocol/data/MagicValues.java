@@ -159,7 +159,6 @@ public class MagicValues {
         register(Difficulty.HARD, 3);
 
         register(Animation.SWING_ARM, 0);
-        register(Animation.DAMAGE, 1);
         register(Animation.LEAVE_BED, 2);
         register(Animation.SWING_OFFHAND, 3);
         register(Animation.CRITICAL_HIT, 4);

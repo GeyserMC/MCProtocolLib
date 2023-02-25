@@ -8,18 +8,39 @@ import com.github.steveice10.mc.protocol.data.game.chunk.BitStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
 import com.github.steveice10.mc.protocol.data.game.chunk.NibbleArray3d;
-import com.github.steveice10.mc.protocol.data.game.chunk.palette.*;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.GlobalPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.ListPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.MapPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.Palette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.*;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
-import com.github.steveice10.mc.protocol.data.game.level.particle.*;
+import com.github.steveice10.mc.protocol.data.game.level.particle.BlockParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustColorTransitionParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.FallingDustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ItemParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleType;
+import com.github.steveice10.mc.protocol.data.game.level.particle.SculkChargeParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ShriekParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.VibrationParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.BlockPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.EntityPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSource;
@@ -37,6 +58,7 @@ import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.codec.BasePacketCodecHelper;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.math.vector.Vector4f;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +75,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ToIntFunction;
 
 @RequiredArgsConstructor
 public class MinecraftCodecHelper extends BasePacketCodecHelper {
@@ -269,6 +295,22 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeFloat(rot.getZ());
     }
 
+    public Vector4f readQuaternion(ByteBuf buf) {
+        float x = buf.readFloat();
+        float y = buf.readFloat();
+        float z = buf.readFloat();
+        float w = buf.readFloat();
+
+        return Vector4f.from(x, y, z, w);
+    }
+
+    public void writeQuaternion(ByteBuf buf, Vector4f vec4) {
+        buf.writeFloat(vec4.getX());
+        buf.writeFloat(vec4.getY());
+        buf.writeFloat(vec4.getZ());
+        buf.writeFloat(vec4.getW());
+    }
+
     public Direction readDirection(ByteBuf buf) {
         return Direction.from(this.readVarInt(buf));
     }
@@ -291,6 +333,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writePaintingType(ByteBuf buf, PaintingType type) {
         this.writeEnum(buf, type);
+    }
+
+    public SnifferState readSnifferState(ByteBuf buf) {
+        return SnifferState.from(this.readVarInt(buf));
+    }
+
+    public void writeSnifferState(ByteBuf buf, SnifferState state) {
+        this.writeEnum(buf, state);
     }
 
     private void writeEnum(ByteBuf buf, Enum<?> e) {
