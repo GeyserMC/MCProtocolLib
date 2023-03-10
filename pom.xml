@@ -88,12 +88,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
-            <artifactId>packetlib</artifactId>
-            <version>3.0.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.GeyserMC</groupId>
             <artifactId>mcauthlib</artifactId>
             <version>6f3d6aada5</version>
@@ -134,6 +128,37 @@
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.66.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-haproxy</artifactId>
+            <version>4.1.66.Final</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.netty.incubator</groupId>
+            <artifactId>netty-incubator-transport-native-io_uring</artifactId>
+            <version>0.0.8.Final</version>
+            <classifier>linux-x86_64</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-int-object-maps</artifactId>
+            <version>8.5.2</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
