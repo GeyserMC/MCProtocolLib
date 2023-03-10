@@ -88,12 +88,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.steveice10</groupId>
-            <artifactId>packetlib</artifactId>
-            <version>3.0.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.GeyserMC</groupId>
             <artifactId>mcauthlib</artifactId>
             <version>6f3d6aada5</version>
@@ -220,7 +214,6 @@
                 <configuration>
                     <show>public</show>
                     <failOnError>false</failOnError>
-                    <excludePackageNames>com.github.steveice10.packetlib:com.github.steveice10.packetlib.*:com.github.steveice10.packetlib.*.*</excludePackageNames>
                 </configuration>
             </plugin>
             <plugin>
