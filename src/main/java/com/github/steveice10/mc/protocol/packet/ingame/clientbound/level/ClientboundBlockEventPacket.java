@@ -40,7 +40,10 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         this.blockId = helper.readVarInt(in);
 
         // TODO: Handle this in MinecraftCodecHelper
-        if (this.blockId == STICKY_PISTON || this.blockId == PISTON) {
+        if (this.blockId == NOTE_BLOCK) {
+            this.type = NoteBlockValueType.from(type);
+            this.value = new NoteBlockValue();
+        } else if (this.blockId == STICKY_PISTON || this.blockId == PISTON) {
             this.type = PistonValueType.from(type);
             this.value = new PistonValue(Direction.from(Math.abs((value & 7) % 6)));
         } else if (this.blockId == MOB_SPAWNER) {

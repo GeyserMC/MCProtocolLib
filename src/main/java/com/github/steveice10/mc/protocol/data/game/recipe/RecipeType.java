@@ -29,7 +29,8 @@ public enum RecipeType {
     STONECUTTING,
     SMITHING,
     SMITHING_TRANSFORM,
-    SMITHING_TRIM;
+    SMITHING_TRIM,
+    CRAFTING_DECORATED_POT;
 
     private final String resourceLocation;
 

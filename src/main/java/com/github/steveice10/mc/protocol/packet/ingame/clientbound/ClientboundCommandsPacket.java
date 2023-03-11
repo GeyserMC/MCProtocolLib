@@ -130,6 +130,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     case SCORE_HOLDER:
                         properties = new ScoreHolderProperties(in.readBoolean());
                         break;
+                    case TIME:
+                        properties = new TimeProperties(in.readInt());
+                        break;
                     case RESOURCE_OR_TAG:
                     case RESOURCE_OR_TAG_KEY:
                     case RESOURCE:
@@ -297,6 +300,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     }
                     case SCORE_HOLDER:
                         out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
+                        break;
+                    case TIME:
+                        out.writeInt(((TimeProperties) node.getProperties()).getMin());
                         break;
                     case RESOURCE:
                     case RESOURCE_OR_TAG:
