@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
@@ -54,8 +53,9 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     }
 
                     ItemStack result = helper.readItemStack(in);
+                    boolean showNotification = in.readBoolean();
 
-                    data = new ShapedRecipeData(width, height, group, category, ingredients, result);
+                    data = new ShapedRecipeData(width, height, group, category, ingredients, result, showNotification);
                     break;
                 }
                 case SMELTING:
@@ -152,6 +152,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     }
 
                     helper.writeItemStack(out, data.getResult());
+                    out.writeBoolean(data.isShowNotification());
                     break;
                 }
                 case SMELTING:

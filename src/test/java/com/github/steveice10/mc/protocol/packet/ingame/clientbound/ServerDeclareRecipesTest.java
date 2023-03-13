@@ -62,7 +62,8 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                                                 new ItemStack(6)
                                                         })
                                                 },
-                                                new ItemStack(20)
+                                                new ItemStack(20),
+                                                true
                                         )
                                 ),
                                 new Recipe(
