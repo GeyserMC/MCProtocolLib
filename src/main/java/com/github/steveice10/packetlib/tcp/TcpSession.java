@@ -15,6 +15,7 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nullable;
 import java.net.ConnectException;
@@ -258,11 +259,21 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void disconnect(String reason) {
+        this.disconnect(Component.text(reason));
+    }
+
+    @Override
+    public void disconnect(String reason, Throwable cause) {
+        this.disconnect(Component.text(reason), cause);
+    }
+
+    @Override
+    public void disconnect(Component reason) {
         this.disconnect(reason, null);
     }
 
     @Override
-    public void disconnect(final String reason, final Throwable cause) {
+    public void disconnect(final Component reason, final Throwable cause) {
         if (this.disconnected) {
             return;
         }
@@ -273,9 +284,9 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             this.callEvent(new DisconnectingEvent(this, reason, cause));
             this.channel.flush().close().addListener((ChannelFutureListener) future ->
                     callEvent(new DisconnectedEvent(TcpSession.this,
-                            reason != null ? reason : "Connection closed.", cause)));
+                            reason != null ? reason : Component.text("Connection closed."), cause)));
         } else {
-            this.callEvent(new DisconnectedEvent(this, reason != null ? reason : "Connection closed.", cause));
+            this.callEvent(new DisconnectedEvent(this, reason != null ? reason : Component.text("Connection closed."), cause));
         }
     }
 

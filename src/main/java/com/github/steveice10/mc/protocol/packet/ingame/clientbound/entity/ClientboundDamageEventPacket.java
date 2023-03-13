@@ -4,8 +4,12 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.nukkitx.math.vector.Vector3d;
 import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
+@Data
+@AllArgsConstructor
 public class ClientboundDamageEventPacket implements MinecraftPacket {
     private final int entityId;
     private final int sourceTypeId;

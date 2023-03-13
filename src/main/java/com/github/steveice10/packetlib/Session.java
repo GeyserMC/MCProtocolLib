@@ -6,6 +6,8 @@ import com.github.steveice10.packetlib.event.session.SessionEvent;
 import com.github.steveice10.packetlib.event.session.SessionListener;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
+import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -246,7 +248,7 @@ public interface Session {
      *
      * @param reason Reason for disconnecting.
      */
-    public void disconnect(String reason);
+    void disconnect(@Nullable String reason);
 
     /**
      * Disconnects the session.
@@ -254,5 +256,20 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @param cause  Throwable responsible for disconnecting.
      */
-    public void disconnect(String reason, Throwable cause);
+    void disconnect(@Nullable String reason, Throwable cause);
+
+    /**
+     * Disconnects the session.
+     *
+     * @param reason Reason for disconnecting.
+     */
+    void disconnect(@Nullable Component reason);
+
+    /**
+     * Disconnects the session.
+     *
+     * @param reason Reason for disconnecting.
+     * @param cause  Throwable responsible for disconnecting.
+     */
+    void disconnect(@Nullable Component reason, Throwable cause);
 }

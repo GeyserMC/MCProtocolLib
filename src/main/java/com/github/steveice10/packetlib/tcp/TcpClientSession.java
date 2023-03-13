@@ -315,5 +315,7 @@ public class TcpClientSession extends TcpSession {
                 DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
                 break;
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> EVENT_LOOP_GROUP.shutdownGracefully()));
     }
 }

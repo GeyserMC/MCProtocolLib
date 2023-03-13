@@ -1,24 +1,15 @@
 package com.github.steveice10.packetlib.event.session;
 
 import com.github.steveice10.packetlib.Session;
+import net.kyori.adventure.text.Component;
 
 /**
  * Called when the session is disconnected.
  */
 public class DisconnectedEvent implements SessionEvent {
-    private Session session;
-    private String reason;
-    private Throwable cause;
-
-    /**
-     * Creates a new DisconnectedEvent instance.
-     *
-     * @param session Session being disconnected.
-     * @param reason  Reason for the session to disconnect.
-     */
-    public DisconnectedEvent(Session session, String reason) {
-        this(session, reason, null);
-    }
+    private final Session session;
+    private final Component reason;
+    private final Throwable cause;
 
     /**
      * Creates a new DisconnectedEvent instance.
@@ -27,7 +18,7 @@ public class DisconnectedEvent implements SessionEvent {
      * @param reason  Reason for the session to disconnect.
      * @param cause   Throwable that caused the disconnect.
      */
-    public DisconnectedEvent(Session session, String reason, Throwable cause) {
+    public DisconnectedEvent(Session session, Component reason, Throwable cause) {
         this.session = session;
         this.reason = reason;
         this.cause = cause;
@@ -47,7 +38,7 @@ public class DisconnectedEvent implements SessionEvent {
      *
      * @return The event's reason.
      */
-    public String getReason() {
+    public Component getReason() {
         return this.reason;
     }
 

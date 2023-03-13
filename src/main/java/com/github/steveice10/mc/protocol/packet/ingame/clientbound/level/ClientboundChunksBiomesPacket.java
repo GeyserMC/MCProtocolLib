@@ -4,10 +4,14 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkBiomeData;
 import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@AllArgsConstructor
 public class ClientboundChunksBiomesPacket implements MinecraftPacket {
     private final List<ChunkBiomeData> chunkBiomeData;
 
