@@ -21,6 +21,8 @@ import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @With
@@ -30,24 +32,23 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         JsonObject obj = new Gson().fromJson(helper.readString(in), JsonObject.class);
-        JsonObject ver = obj.get("version").getAsJsonObject();
-        VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
+        JsonElement desc = obj.get("description");
+        Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
         JsonObject plrs = obj.get("players").getAsJsonObject();
-        GameProfile[] profiles = new GameProfile[0];
+        List<GameProfile> profiles = new ArrayList<>();
         if (plrs.has("sample")) {
             JsonArray prof = plrs.get("sample").getAsJsonArray();
             if (prof.size() > 0) {
-                profiles = new GameProfile[prof.size()];
                 for (int index = 0; index < prof.size(); index++) {
                     JsonObject o = prof.get(index).getAsJsonObject();
-                    profiles[index] = new GameProfile(o.get("id").getAsString(), o.get("name").getAsString());
+                    profiles.add(new GameProfile(o.get("id").getAsString(), o.get("name").getAsString()));
                 }
             }
         }
 
         PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
-        JsonElement desc = obj.get("description");
-        Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
+        JsonObject ver = obj.get("version").getAsJsonObject();
+        VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
         byte[] icon = null;
         if (obj.has("favicon")) {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
@@ -66,7 +67,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         JsonObject plrs = new JsonObject();
         plrs.addProperty("max", this.info.getPlayerInfo().getMaxPlayers());
         plrs.addProperty("online", this.info.getPlayerInfo().getOnlinePlayers());
-        if (this.info.getPlayerInfo().getPlayers().length > 0) {
+        if (this.info.getPlayerInfo().getPlayers().size() > 0) {
             JsonArray array = new JsonArray();
             for (GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
                 JsonObject o = new JsonObject();
@@ -78,9 +79,9 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
             plrs.add("sample", array);
         }
 
-        obj.add("version", ver);
-        obj.add("players", plrs);
         obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(this.info.getDescription()), JsonElement.class));
+        obj.add("players", plrs);
+        obj.add("version", ver);
         if (this.info.getIconPng() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }

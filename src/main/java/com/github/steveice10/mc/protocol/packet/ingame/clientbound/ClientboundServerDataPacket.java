@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,38 +15,20 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundServerDataPacket implements MinecraftPacket {
-    private final @Nullable Component motd;
-    private final @Nullable String iconBase64;
+    private final Component motd;
+    private final byte @Nullable[] iconBytes;
     private final boolean enforcesSecureChat;
 
     public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        if (in.readBoolean()) {
-            this.motd = helper.readComponent(in);
-        } else {
-            this.motd = null;
-        }
-
-        if (in.readBoolean()) {
-            this.iconBase64 = helper.readString(in);
-        } else {
-            this.iconBase64 = null;
-        }
-
+        this.motd = helper.readComponent(in);
+        this.iconBytes = helper.readNullable(in, helper::readByteArray);
         this.enforcesSecureChat = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeBoolean(this.motd != null);
-        if (this.motd != null) {
-            helper.writeComponent(out, this.motd);
-        }
-
-        out.writeBoolean(this.iconBase64 != null);
-        if (this.iconBase64 != null) {
-            helper.writeString(out, this.iconBase64);
-        }
-
+        helper.writeComponent(out, this.motd);
+        helper.writeNullable(out, this.iconBytes, helper::writeByteArray);
         out.writeBoolean(this.enforcesSecureChat);
     }
 }

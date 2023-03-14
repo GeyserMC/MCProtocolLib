@@ -30,7 +30,11 @@ import com.github.steveice10.packetlib.packet.Packet;
 import net.kyori.adventure.text.Component;
 
 import javax.crypto.SecretKey;
-import java.security.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
@@ -125,7 +129,7 @@ public class ServerListener extends SessionAdapter {
                 if (builder == null) {
                     builder = $ -> new ServerStatusInfo(
                             new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
-                            new PlayerInfo(0, 20, new GameProfile[0]),
+                            new PlayerInfo(0, 20, new ArrayList<>()),
                             Component.text("A Minecraft Server"),
                             null,
                             false

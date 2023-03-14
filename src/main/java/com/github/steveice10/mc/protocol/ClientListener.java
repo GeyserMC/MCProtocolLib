@@ -86,7 +86,7 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundGameProfilePacket) {
                 protocol.setState(ProtocolState.GAME);
             } else if (packet instanceof ClientboundLoginDisconnectPacket) {
-                session.disconnect(((ClientboundLoginDisconnectPacket) packet).getReason().toString());
+                session.disconnect(((ClientboundLoginDisconnectPacket) packet).getReason());
             } else if (packet instanceof ClientboundLoginCompressionPacket) {
                 session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), false);
             }
@@ -112,7 +112,7 @@ public class ClientListener extends SessionAdapter {
             if (packet instanceof ClientboundKeepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
                 session.send(new ServerboundKeepAlivePacket(((ClientboundKeepAlivePacket) packet).getPingId()));
             } else if (packet instanceof ClientboundDisconnectPacket) {
-                session.disconnect(((ClientboundDisconnectPacket) packet).getReason().toString());
+                session.disconnect(((ClientboundDisconnectPacket) packet).getReason());
             }
         }
     }

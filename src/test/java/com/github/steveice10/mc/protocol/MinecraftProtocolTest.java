@@ -1,6 +1,5 @@
 package com.github.steveice10.mc.protocol;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
@@ -27,6 +26,7 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.zip.GZIPInputStream;
 
@@ -46,7 +46,7 @@ public class MinecraftProtocolTest {
 
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
             new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
-            new PlayerInfo(100, 0, new GameProfile[0]),
+            new PlayerInfo(100, 0, new ArrayList<>()),
             Component.text("Hello world!"),
             null,
             false

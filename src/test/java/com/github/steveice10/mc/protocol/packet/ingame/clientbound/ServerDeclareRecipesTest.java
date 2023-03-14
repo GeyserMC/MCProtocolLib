@@ -8,7 +8,8 @@ import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.CookedRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.SmithingRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.LegacyUpgradeRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.SmithingTransformRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import org.junit.Before;
@@ -93,7 +94,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 new Recipe(
                                         RecipeType.SMITHING,
                                         "minecraft:Recipe5",
-                                        new SmithingRecipeData(
+                                        new LegacyUpgradeRecipeData(
                                                 new Ingredient(new ItemStack[]{
                                                         new ItemStack(10)
                                                 }),
