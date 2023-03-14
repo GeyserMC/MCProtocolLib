@@ -241,4 +241,23 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>opencollab-release-repo</id>
+                    <url>https://repo.opencollab.dev/maven-releases/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>opencollab-snapshot-repo</id>
+                    <url>https://repo.opencollab.dev/maven-snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

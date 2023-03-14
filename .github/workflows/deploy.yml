@@ -21,4 +21,4 @@ jobs:
           server-username: ${{ vars.DEPLOY_USER }}
           server-password: ${{ secrets.DEPLOY_PASS }}
       - name: Deploy with Maven
-        run: mvn deploy
+        run: mvn deploy -P deploy
