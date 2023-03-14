@@ -29,7 +29,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     }
 
     /**
-     * @throws IllegalStateException if {@link #getAction()} is not {@link AdvancementTabAction#OPENED_TAB}.
+     * @throws IllegalStateException if #getAction() is not {@link AdvancementTabAction#OPENED_TAB}.
      */
     public String getTabId() {
         if (this.action != AdvancementTabAction.OPENED_TAB) {
