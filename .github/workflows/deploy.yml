@@ -17,8 +17,9 @@ jobs:
         with:
           java-version: 8
           distribution: temurin
+          overwrite-settings: true
           server-id: opencollab-snapshot-repo
           server-username: ${{ vars.DEPLOY_USER }}
           server-password: ${{ secrets.DEPLOY_PASS }}
       - name: Deploy with Maven
-        run: mvn deploy -P deploy
+        run: mvn deploy -B -P deploy
