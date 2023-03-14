@@ -138,7 +138,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-haproxy</artifactId>
-            <version>4.1.66.Final</version>
+            <version>4.1.86.Final</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
