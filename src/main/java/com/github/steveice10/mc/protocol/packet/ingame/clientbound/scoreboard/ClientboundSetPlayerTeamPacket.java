@@ -147,8 +147,8 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             helper.writeComponent(out, this.displayName);
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
-            helper.writeString(out, this.nameTagVisibility.getName());
-            helper.writeString(out, this.collisionRule.getName());
+            helper.writeString(out, this.nameTagVisibility == null ? "" : this.nameTagVisibility.getName());
+            helper.writeString(out, this.collisionRule == null ? "" : this.collisionRule.getName());
             helper.writeVarInt(out, this.color.ordinal());
             helper.writeComponent(out, this.prefix);
             helper.writeComponent(out, this.suffix);
