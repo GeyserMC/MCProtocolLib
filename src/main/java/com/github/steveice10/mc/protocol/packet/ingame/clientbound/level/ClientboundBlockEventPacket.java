@@ -16,17 +16,17 @@ import lombok.With;
 @AllArgsConstructor
 public class ClientboundBlockEventPacket implements MinecraftPacket {
     // Do we really want these hardcoded values?
-    private static final int NOTE_BLOCK = 93;
-    private static final int STICKY_PISTON = 112;
-    private static final int PISTON = 119;
-    private static final int MOB_SPAWNER = 165;
-    private static final int CHEST = 167;
-    private static final int ENDER_CHEST = 328;
-    private static final int TRAPPED_CHEST = 392;
-    private static final int END_GATEWAY = 576;
-    private static final int SHULKER_BOX_LOWER = 586;
-    private static final int SHULKER_BOX_HIGHER = 602;
-    private static final int BELL = 755;
+    private static final int NOTE_BLOCK = 101;
+    private static final int STICKY_PISTON = 120;
+    private static final int PISTON = 127;
+    private static final int MOB_SPAWNER = 174;
+    private static final int CHEST = 176;
+    private static final int ENDER_CHEST = 343;
+    private static final int TRAPPED_CHEST = 410;
+    private static final int END_GATEWAY = 600;
+    private static final int SHULKER_BOX_LOWER = 610;
+    private static final int SHULKER_BOX_HIGHER = 626;
+    private static final int BELL = 779;
 
     private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
