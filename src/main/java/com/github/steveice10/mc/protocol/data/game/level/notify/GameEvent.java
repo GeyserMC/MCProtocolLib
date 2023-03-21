@@ -2,8 +2,8 @@ package com.github.steveice10.mc.protocol.data.game.level.notify;
 
 public enum GameEvent {
     INVALID_BED,
-    START_RAIN,
     STOP_RAIN,
+    START_RAIN,
     CHANGE_GAMEMODE,
     ENTER_CREDITS,
     DEMO_MESSAGE,
