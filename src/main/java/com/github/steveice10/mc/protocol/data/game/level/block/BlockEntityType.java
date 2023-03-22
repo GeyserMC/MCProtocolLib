@@ -36,10 +36,11 @@ public enum BlockEntityType {
     CAMPFIRE,
     BEEHIVE,
     SCULK_SENSOR,
+    CALIBRATED_SCULK_SENSOR,
     SCULK_CATALYST,
     SCULK_SHRIEKER,
     CHISELED_BOOKSHELF,
-    SUSPICIOUS_SAND,
+    BRUSHABLE_BLOCK,
     DECORATED_POT;
 
     private static final BlockEntityType[] VALUES = values();

@@ -8,7 +8,6 @@ import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.CookedRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.LegacyUpgradeRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.SmithingTransformRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
@@ -93,16 +92,19 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                         )
                                 ),
                                 new Recipe(
-                                        RecipeType.SMITHING,
+                                        RecipeType.SMITHING_TRANSFORM,
                                         "minecraft:Recipe5",
-                                        new LegacyUpgradeRecipeData(
+                                        new SmithingTransformRecipeData(
                                                 new Ingredient(new ItemStack[]{
                                                         new ItemStack(10)
                                                 }),
                                                 new Ingredient(new ItemStack[]{
                                                         new ItemStack(11)
                                                 }),
-                                                new ItemStack(12)
+                                                new Ingredient(new ItemStack[]{
+                                                        new ItemStack(12)
+                                                }),
+                                                new ItemStack(13)
                                         )
                                 )
                         }

@@ -30,9 +30,7 @@ public enum ParticleType {
     FIREWORK,
     FISHING,
     FLAME,
-    DRIPPING_CHERRY_LEAVES,
-    FALLING_CHERRY_LEAVES,
-    LANDING_CHERRY_LEAVES,
+    CHERRY_LEAVES,
     SCULK_SOUL,
     SCULK_CHARGE,
     SCULK_CHARGE_POP,
@@ -96,7 +94,8 @@ public enum ParticleType {
     WAX_OFF,
     ELECTRIC_SPARK,
     SCRAPE,
-    SHRIEK;
+    SHRIEK,
+    EGG_CRACK;
 
     private static final ParticleType[] VALUES = values();
 

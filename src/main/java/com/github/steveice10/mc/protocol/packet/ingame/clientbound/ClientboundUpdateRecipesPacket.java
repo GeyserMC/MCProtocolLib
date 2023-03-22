@@ -80,14 +80,6 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     data = new StoneCuttingRecipeData(group, ingredient, result);
                     break;
                 }
-                case SMITHING: {
-                    Ingredient base = helper.readRecipeIngredient(in);
-                    Ingredient addition = helper.readRecipeIngredient(in);
-                    ItemStack result = helper.readItemStack(in);
-
-                    data = new LegacyUpgradeRecipeData(base, addition, result);
-                    break;
-                }
                 case SMITHING_TRANSFORM: {
                     Ingredient template = helper.readRecipeIngredient(in);
                     Ingredient base = helper.readRecipeIngredient(in);
@@ -174,14 +166,6 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
 
                     helper.writeString(out, data.getGroup());
                     helper.writeRecipeIngredient(out, data.getIngredient());
-                    helper.writeItemStack(out, data.getResult());
-                    break;
-                }
-                case SMITHING: {
-                    LegacyUpgradeRecipeData data = (LegacyUpgradeRecipeData) recipe.getData();
-
-                    helper.writeRecipeIngredient(out, data.getBase());
-                    helper.writeRecipeIngredient(out, data.getAddition());
                     helper.writeItemStack(out, data.getResult());
                     break;
                 }
