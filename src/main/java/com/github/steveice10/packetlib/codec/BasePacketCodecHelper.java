@@ -23,8 +23,10 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
                 throw new IllegalArgumentException("VarInt too long (length must be <= 5)");
             }
         }
+        int extractedLower7Bits = b & 0x7F;
+        int leftShiftedextractedLower7BitsBySizeIntoSevenTimes = extractedLower7Bits << (size*7);
 
-        return value | ((b & 0x7F) << (size * 7));
+        return value | leftShiftedextractedLower7BitsBySizeIntoSevenTimes;
     }
 
     // Based off of Andrew Steinborn's blog post:
