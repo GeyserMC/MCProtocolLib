@@ -9,8 +9,8 @@ import java.security.Key;
  * An encryption implementation using "AES/CFB8/NoPadding" encryption.
  */
 public class AESEncryption implements PacketEncryption {
-    private Cipher inCipher;
-    private Cipher outCipher;
+    private Cipher encryptionCipher;
+    private Cipher decryptionCipher;
 
     /**
      * Creates a new AESEncryption instance.
@@ -19,29 +19,29 @@ public class AESEncryption implements PacketEncryption {
      * @throws GeneralSecurityException If a security error occurs.
      */
     public AESEncryption(Key key) throws GeneralSecurityException {
-        this.inCipher = Cipher.getInstance("AES/CFB8/NoPadding");
-        this.inCipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
-        this.outCipher = Cipher.getInstance("AES/CFB8/NoPadding");
-        this.outCipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
+        this.encryptionCipher = Cipher.getInstance("AES/CFB8/NoPadding");
+        this.encryptionCipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
+        this.decryptionCipher = Cipher.getInstance("AES/CFB8/NoPadding");
+        this.decryptionCipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
     }
 
     @Override
     public int getDecryptOutputSize(int length) {
-        return this.inCipher.getOutputSize(length);
+        return this.encryptionCipher.getOutputSize(length);
     }
 
     @Override
     public int getEncryptOutputSize(int length) {
-        return this.outCipher.getOutputSize(length);
+        return this.decryptionCipher.getOutputSize(length);
     }
 
     @Override
     public int decrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception {
-        return this.inCipher.update(input, inputOffset, inputLength, output, outputOffset);
+        return this.encryptionCipher.update(input, inputOffset, inputLength, output, outputOffset);
     }
 
     @Override
     public int encrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception {
-        return this.outCipher.update(input, inputOffset, inputLength, output, outputOffset);
+        return this.decryptionCipher.update(input, inputOffset, inputLength, output, outputOffset);
     }
 }
