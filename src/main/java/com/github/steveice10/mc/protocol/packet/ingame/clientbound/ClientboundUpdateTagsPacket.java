@@ -42,16 +42,6 @@ public class ClientboundUpdateTagsPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, tags.size());
-        for (Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
-            helper.writeResourceLocation(out, tagSet.getKey());
-            helper.writeVarInt(out, tagSet.getValue().size());
-            for (Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
-                helper.writeResourceLocation(out, tag.getKey());
-                helper.writeVarInt(out, tag.getValue().length);
-                for (int id : tag.getValue()) {
-                    helper.writeVarInt(out, id);
-                }
-            }
-        }
+        helper.writeOnNestedTagSet(out,tags);
     }
 }

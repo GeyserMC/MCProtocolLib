@@ -843,4 +843,19 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public void setRegistry(CompoundTag registry) {
         this.registry = registry;
     }
+
+
+    public void writeOnNestedTagSet(ByteBuf out,Map<String, Map<String, int[]>> tags){
+        for (Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
+            this.writeResourceLocation(out, tagSet.getKey());
+            this.writeVarInt(out, tagSet.getValue().size());
+            for (Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
+                this.writeResourceLocation(out, tag.getKey());
+                this.writeVarInt(out, tag.getValue().length);
+                for (int id : tag.getValue()) {
+                    this.writeVarInt(out, id);
+                }
+            }
+        }
+    }
 }
