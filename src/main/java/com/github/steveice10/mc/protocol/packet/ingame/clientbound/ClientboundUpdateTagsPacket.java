@@ -41,7 +41,6 @@ public class ClientboundUpdateTagsPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, tags.size());
         helper.writeOnNestedTagSet(out,tags);
     }
 }
