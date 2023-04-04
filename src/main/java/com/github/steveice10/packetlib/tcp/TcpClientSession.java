@@ -113,8 +113,8 @@ public class TcpClientSession extends TcpSession {
 
                     refreshReadTimeoutHandler(channel);
                     refreshWriteTimeoutHandler(channel);
-
-                    addProxy(pipeline);
+                    TcpProxy tcpProxy = new TcpProxy(proxy);
+                    tcpProxy.addProxy(pipeline);
 
                     int size = protocol.getPacketHeader().getLengthSize();
                     if (size > 0) {
@@ -228,38 +228,6 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    private void addProxy(ChannelPipeline pipeline) {
-        if(proxy != null) {
-            switch(proxy.getType()) {
-                case HTTP:
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
-                    } else {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
-                    }
-
-                    break;
-                case SOCKS4:
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
-                    } else {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
-                    }
-
-                    break;
-                case SOCKS5:
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
-                    } else {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
-                    }
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
-            }
-        }
-    }
 
     private void addHAProxySupport(ChannelPipeline pipeline) {
         InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
