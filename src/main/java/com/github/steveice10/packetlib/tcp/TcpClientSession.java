@@ -123,8 +123,10 @@ public class TcpClientSession extends TcpSession {
 
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
                     pipeline.addLast("manager", TcpClientSession.this);
-
-                    addHAProxySupport(pipeline);
+                    InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
+                    if (getFlag(BuiltinFlags.ENABLE_CLIENT_PROXY_PROTOCOL, false) && clientAddress != null) {
+                        tcpProxy.addHAProxySupport(pipeline,clientAddress);
+                    }
                 }
             }).group(EVENT_LOOP_GROUP).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
 
@@ -225,29 +227,6 @@ public class TcpClientSession extends TcpSession {
                 e.printStackTrace();
             }
             return InetSocketAddress.createUnresolved(getHost(), getPort());
-        }
-    }
-
-
-    private void addHAProxySupport(ChannelPipeline pipeline) {
-        InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
-        if (getFlag(BuiltinFlags.ENABLE_CLIENT_PROXY_PROTOCOL, false) && clientAddress != null) {
-            pipeline.addFirst("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
-                @Override
-                public void channelActive(ChannelHandlerContext ctx) throws Exception {
-                    HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
-                    InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-                    ctx.channel().writeAndFlush(new HAProxyMessage(
-                            HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
-                            clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
-                            clientAddress.getPort(), remoteAddress.getPort()
-                    ));
-                    ctx.pipeline().remove(this);
-                    ctx.pipeline().remove("proxy-protocol-encoder");
-                    super.channelActive(ctx);
-                }
-            });
-            pipeline.addFirst("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
         }
     }
 
