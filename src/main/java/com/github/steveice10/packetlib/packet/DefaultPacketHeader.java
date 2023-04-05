@@ -22,31 +22,26 @@ public class DefaultPacketHeader implements PacketHeader {
     @Override
     public int getLengthSize(int length) {
 
-        if(isTheLengthRoundDownTo128(length)) {
+            int bits128 = 128;
+            int bits16384 = 16384;
+            int bits2097152 = 2097152;
+            int bits268435456 = 268435456;
+
+        if(isTheLengthRoundDownToBits(length, bits128)) {
             return 1;
-        } else if(isTheLengthRoundDownTo16384(length)) {
+        } else if(isTheLengthRoundDownToBits(length,bits16384)) {
             return 2;
-        } else if(isTheLengthRoundDownTo2097152(length)) {
+        } else if(isTheLengthRoundDownToBits(length,bits2097152)) {
             return 3;
-        } else if(isTheLengthRoundDownTo268435456(length)) {
+        } else if(isTheLengthRoundDownToBits(length,bits268435456)) {
             return 4;
         } else {
             return 5;
         }
     }
 
-    private boolean isTheLengthRoundDownTo128(int length){
-        return  (length&-128)==0;
-    }
-    private boolean isTheLengthRoundDownTo16384(int length){
-        return  (length&-16384)==0;
-    }
-    private boolean isTheLengthRoundDownTo2097152(int length){
-        return  (length&-2097152)==0;
-    }
-
-    private boolean isTheLengthRoundDownTo268435456(int length){
-        return  (length&-268435456)==0;
+    private boolean isTheLengthRoundDownToBits(int length,int bits){
+        return  (length&-bits)==0;
     }
 
     @Override
