@@ -19,14 +19,14 @@ import java.util.Map;
 public class ClientboundUpdateTagsPacket implements MinecraftPacket {
     private final @NonNull Map<String, Map<String, int[]>> tags = new HashMap<>();
 
-    public ClientboundUpdateTagsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateTagsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         int totalTagCount = helper.readVarInt(in);
         for (int i = 0; i < totalTagCount; i++) {
             Map<String, int[]> tag = new HashMap<>();
-            String tagName = Identifier.formalize(helper.readString(in));
+            String tagName = helper.readResourceLocation(in);
             int tagsCount = helper.readVarInt(in);
             for (int j = 0; j < tagsCount; j++) {
-                String name = helper.readString(in);
+                String name = helper.readResourceLocation(in);
                 int entriesCount = helper.readVarInt(in);
                 int[] entries = new int[entriesCount];
                 for (int index = 0; index < entriesCount; index++) {
@@ -40,13 +40,13 @@ public class ClientboundUpdateTagsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, tags.size());
         for (Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
-            helper.writeString(out, tagSet.getKey());
+            helper.writeResourceLocation(out, tagSet.getKey());
             helper.writeVarInt(out, tagSet.getValue().size());
             for (Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
-                helper.writeString(out, tag.getKey());
+                helper.writeResourceLocation(out, tag.getKey());
                 helper.writeVarInt(out, tag.getValue().length);
                 for (int id : tag.getValue()) {
                     helper.writeVarInt(out, id);

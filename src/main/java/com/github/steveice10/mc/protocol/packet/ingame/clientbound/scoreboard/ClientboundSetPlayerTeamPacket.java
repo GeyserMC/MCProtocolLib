@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.CollisionRule;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
@@ -11,6 +10,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.*;
 import net.kyori.adventure.text.Component;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -26,8 +26,8 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
     private final Component suffix;
     private final boolean friendlyFire;
     private final boolean seeFriendlyInvisibles;
-    private final NameTagVisibility nameTagVisibility;
-    private final CollisionRule collisionRule;
+    private final @Nullable NameTagVisibility nameTagVisibility;
+    private final @Nullable CollisionRule collisionRule;
     private final TeamColor color;
 
     private final String[] players;
@@ -147,8 +147,8 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             helper.writeComponent(out, this.displayName);
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
-            helper.writeString(out, this.nameTagVisibility.getName());
-            helper.writeString(out, this.collisionRule.getName());
+            helper.writeString(out, this.nameTagVisibility == null ? "" : this.nameTagVisibility.getName());
+            helper.writeString(out, this.collisionRule == null ? "" : this.collisionRule.getName());
             helper.writeVarInt(out, this.color.ordinal());
             helper.writeComponent(out, this.prefix);
             helper.writeComponent(out, this.suffix);

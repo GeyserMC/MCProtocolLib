@@ -27,7 +27,7 @@ public enum NameTagVisibility {
 
     static {
         for (NameTagVisibility option : values()) {
-            VALUES.put(option.name(), option);
+            VALUES.put(option.getName(), option);
         }
     }
 }

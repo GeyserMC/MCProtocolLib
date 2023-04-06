@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
+import java.util.OptionalInt;
+
 @Data
 @AllArgsConstructor
 public class CommandNode {
@@ -24,9 +26,9 @@ public class CommandNode {
     private final @NonNull int[] childIndices;
 
     /**
-     * Redirect index, or -1 if none is set.
+     * Redirect index, or empty if none is set.
      */
-    private final int redirectIndex;
+    private final OptionalInt redirectIndex;
 
     /**
      * Name of the node, if type is LITERAL or ARGUMENT.

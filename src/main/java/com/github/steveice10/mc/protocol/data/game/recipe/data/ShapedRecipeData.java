@@ -16,4 +16,5 @@ public class ShapedRecipeData implements RecipeData {
     private final @NonNull CraftingBookCategory category;
     private final @NonNull Ingredient[] ingredients;
     private final ItemStack result;
+    private final boolean showNotification;
 }

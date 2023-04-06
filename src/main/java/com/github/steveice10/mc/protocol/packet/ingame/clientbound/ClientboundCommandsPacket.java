@@ -12,6 +12,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
+import java.util.OptionalInt;
+
 @Data
 @With
 @AllArgsConstructor
@@ -42,9 +44,11 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                 children[j] = helper.readVarInt(in);
             }
 
-            int redirectIndex = 0;
+            OptionalInt redirectIndex;
             if ((flags & FLAG_REDIRECT) != 0) {
-                redirectIndex = helper.readVarInt(in);
+                redirectIndex = OptionalInt.of(helper.readVarInt(in));
+            } else {
+                redirectIndex = OptionalInt.empty();
             }
 
             String name = null;
@@ -163,7 +167,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                 flags |= FLAG_EXECUTABLE;
             }
 
-            if (node.getRedirectIndex() != 0) {
+            if (node.getRedirectIndex().isPresent()) {
                 flags |= FLAG_REDIRECT;
             }
 
@@ -178,8 +182,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                 helper.writeVarInt(out, childIndex);
             }
 
-            if (node.getRedirectIndex() != 0) {
-                helper.writeVarInt(out, node.getRedirectIndex());
+            if (node.getRedirectIndex().isPresent()) {
+                helper.writeVarInt(out, node.getRedirectIndex().getAsInt());
             }
 
             if (node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
