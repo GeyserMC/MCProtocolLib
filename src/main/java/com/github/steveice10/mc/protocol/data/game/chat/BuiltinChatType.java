@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.chat;
 
+import com.github.steveice10.mc.protocol.data.game.Identifier;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -16,23 +18,22 @@ public enum BuiltinChatType {
     private final String resourceLocation;
 
     BuiltinChatType() {
-        this.resourceLocation = "minecraft:" + name().toLowerCase(Locale.ROOT);
+        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
     }
 
     public String getResourceLocation() {
         return resourceLocation;
     }
-    private static final Map<String, BuiltinChatType> BY_RESOURCE_LOCATION;
 
-    static {
-        BuiltinChatType[] values = values();
-        BY_RESOURCE_LOCATION = new HashMap<>(values.length);
-        for (BuiltinChatType type : values) {
-            BY_RESOURCE_LOCATION.put(type.getResourceLocation(), type);
-        }
-    }
+    private static final Map<String, BuiltinChatType> VALUES = new HashMap<>();
 
     public static BuiltinChatType from(String resourceLocation) {
-        return BY_RESOURCE_LOCATION.get(resourceLocation);
+        return VALUES.get(resourceLocation);
+    }
+
+    static {
+        for (BuiltinChatType type : values()) {
+            VALUES.put(type.getResourceLocation(), type);
+        }
     }
 }

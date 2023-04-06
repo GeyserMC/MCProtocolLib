@@ -49,4 +49,10 @@ public enum CommandParser {
     TEMPLATE_MIRROR,
     TEMPLATE_ROTATION,
     UUID;
+
+    private static final CommandParser[] VALUES = values();
+
+    public static CommandParser from(int id) {
+        return VALUES[id];
+    }
 }

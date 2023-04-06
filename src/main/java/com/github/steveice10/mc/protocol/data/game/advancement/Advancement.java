@@ -51,6 +51,12 @@ public class Advancement {
             TASK,
             CHALLENGE,
             GOAL;
+
+            private static final FrameType[] VALUES = values();
+
+            public static FrameType from(int id) {
+                return VALUES[id];
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
@@ -35,7 +34,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
     public ServerboundClientInformationPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.locale = helper.readString(in);
         this.renderDistance = in.readByte();
-        this.chatVisibility = MagicValues.key(ChatVisibility.class, helper.readVarInt(in));
+        this.chatVisibility = ChatVisibility.from(helper.readVarInt(in));
         this.useChatColors = in.readBoolean();
         this.visibleParts = new ArrayList<>();
 
@@ -47,7 +46,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
             }
         }
 
-        this.mainHand = MagicValues.key(HandPreference.class, helper.readVarInt(in));
+        this.mainHand = HandPreference.from(helper.readVarInt(in));
         this.textFilteringEnabled = in.readBoolean();
         this.allowsListing = in.readBoolean();
     }
@@ -56,7 +55,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeString(out, this.locale);
         out.writeByte(this.renderDistance);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.chatVisibility));
+        helper.writeVarInt(out, this.chatVisibility.ordinal());
         out.writeBoolean(this.useChatColors);
 
         int flags = 0;
@@ -66,7 +65,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
 
         out.writeByte(flags);
 
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mainHand));
+        helper.writeVarInt(out, this.mainHand.ordinal());
         out.writeBoolean(this.textFilteringEnabled);
         out.writeBoolean(allowsListing);
     }

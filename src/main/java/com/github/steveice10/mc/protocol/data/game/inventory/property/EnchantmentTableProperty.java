@@ -45,6 +45,12 @@ public enum EnchantmentTableProperty implements ContainerProperty {
      */
     ENCHANTMENT_SLOT_3;
 
+    private static final EnchantmentTableProperty[] VALUES = values();
+
+    public static EnchantmentTableProperty from(int id) {
+        return VALUES[id];
+    }
+
     /**
      * Packs enchantment type and level into one integer as used for the ENCHANTMENT_SLOT_X properties.
      *

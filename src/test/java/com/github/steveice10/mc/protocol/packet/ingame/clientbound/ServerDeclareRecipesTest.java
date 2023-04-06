@@ -21,7 +21,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                         new Recipe[]{
                                 new Recipe(
                                         RecipeType.CRAFTING_SHAPELESS,
-                                        "Recipe1",
+                                        "minecraft:Recipe1",
                                         new ShapelessRecipeData(
                                                 "Group1",
                                                 CraftingBookCategory.MISC,
@@ -35,7 +35,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.CRAFTING_SHAPED,
-                                        "Recipe2",
+                                        "minecraft:Recipe2",
                                         new ShapedRecipeData(
                                                 2,
                                                 3,
@@ -66,7 +66,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.SMELTING,
-                                        "Recipe3",
+                                        "minecraft:Recipe3",
                                         new CookedRecipeData(
                                                 "Group3",
                                                 CraftingBookCategory.EQUIPMENT,
@@ -80,7 +80,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.STONECUTTING,
-                                        "Recipe4",
+                                        "minecraft:Recipe4",
                                         new StoneCuttingRecipeData(
                                                 "Group4",
                                                 new Ingredient(new ItemStack[]{
@@ -92,7 +92,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.SMITHING,
-                                        "Recipe5",
+                                        "minecraft:Recipe5",
                                         new SmithingRecipeData(
                                                 new Ingredient(new ItemStack[]{
                                                         new ItemStack(10)

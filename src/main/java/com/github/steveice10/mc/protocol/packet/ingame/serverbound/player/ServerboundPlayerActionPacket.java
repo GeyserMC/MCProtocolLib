@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.player;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import io.netty.buffer.ByteBuf;
@@ -24,7 +23,7 @@ public class ServerboundPlayerActionPacket implements MinecraftPacket {
     private final int sequence;
 
     public ServerboundPlayerActionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.action = MagicValues.key(PlayerAction.class, helper.readVarInt(in));
+        this.action = PlayerAction.from(helper.readVarInt(in));
         this.position = helper.readPosition(in);
         this.face = Direction.VALUES[in.readUnsignedByte()];
         this.sequence = helper.readVarInt(in);
@@ -32,7 +31,7 @@ public class ServerboundPlayerActionPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
+        helper.writeVarInt(out, this.action.ordinal());
         helper.writePosition(out, this.position);
         out.writeByte(this.face.ordinal());
         helper.writeVarInt(out, this.sequence);

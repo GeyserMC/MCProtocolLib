@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import io.netty.buffer.ByteBuf;
@@ -53,10 +52,10 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
 
     public ClientboundSetObjectivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.name = helper.readString(in);
-        this.action = MagicValues.key(ObjectiveAction.class, in.readByte());
+        this.action = ObjectiveAction.from(in.readByte());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
             this.displayName = helper.readComponent(in);
-            this.type = MagicValues.key(ScoreType.class, helper.readVarInt(in));
+            this.type = ScoreType.from(helper.readVarInt(in));
         } else {
             this.displayName = null;
             this.type = null;
@@ -66,10 +65,10 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeString(out, this.name);
-        out.writeByte(MagicValues.value(Integer.class, this.action));
+        out.writeByte(this.action.ordinal());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.displayName));
-            helper.writeVarInt(out, MagicValues.value(Integer.class, this.type));
+            helper.writeComponent(out, this.displayName);
+            helper.writeVarInt(out, this.type.ordinal());
         }
     }
 }

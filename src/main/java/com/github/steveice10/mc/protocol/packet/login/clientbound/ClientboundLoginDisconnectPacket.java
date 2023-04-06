@@ -28,7 +28,7 @@ public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeString(out, DefaultComponentSerializer.get().serialize(this.reason));
+        helper.writeComponent(out, this.reason);
     }
 
     @Override

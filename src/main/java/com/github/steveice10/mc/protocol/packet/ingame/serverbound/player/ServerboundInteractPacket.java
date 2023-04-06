@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.player;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import io.netty.buffer.ByteBuf;
@@ -36,7 +35,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
 
     public ServerboundInteractPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = helper.readVarInt(in);
-        this.action = MagicValues.key(InteractAction.class, helper.readVarInt(in));
+        this.action = InteractAction.from(helper.readVarInt(in));
         if (this.action == InteractAction.INTERACT_AT) {
             this.targetX = in.readFloat();
             this.targetY = in.readFloat();
@@ -48,7 +47,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         }
 
         if (this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
-            this.hand = MagicValues.key(Hand.class, helper.readVarInt(in));
+            this.hand = Hand.from(helper.readVarInt(in));
         } else {
             this.hand = null;
         }
@@ -58,7 +57,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.entityId);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.action));
+        helper.writeVarInt(out, this.action.ordinal());
         if (this.action == InteractAction.INTERACT_AT) {
             out.writeFloat(this.targetX);
             out.writeFloat(this.targetY);
@@ -66,7 +65,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         }
 
         if (this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
-            helper.writeVarInt(out, MagicValues.value(Integer.class, this.hand));
+            helper.writeVarInt(out, this.hand.ordinal());
         }
         out.writeBoolean(this.isSneaking);
     }

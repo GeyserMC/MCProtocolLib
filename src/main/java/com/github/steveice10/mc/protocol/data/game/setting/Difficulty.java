@@ -5,4 +5,10 @@ public enum Difficulty {
     EASY,
     NORMAL,
     HARD;
+
+    private static final Difficulty[] VALUES = values();
+
+    public static Difficulty from(int id) {
+        return VALUES[id];
+    }
 }

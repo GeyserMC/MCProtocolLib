@@ -41,7 +41,8 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
         this.sender = helper.readUUID(in);
         this.index = helper.readVarInt(in);
         if (in.readBoolean()) {
-            this.messageSignature = in.readBytes(new byte[256]).array();
+            this.messageSignature = new byte[256];
+            in.readBytes(this.messageSignature);
         } else {
             this.messageSignature = null;
         }
@@ -53,9 +54,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
         this.lastSeenMessages = new ArrayList<>();
         int seenMessageCount = Math.min(helper.readVarInt(in), 20);
         for (int i = 0; i < seenMessageCount; i++) {
-            int id = helper.readVarInt(in) - 1;
-            byte[] messageSignature = id == -1 ? in.readBytes(new byte[256]).array() : null;
-            this.lastSeenMessages.add(new MessageSignature(id, messageSignature));
+            this.lastSeenMessages.add(MessageSignature.read(in, helper));
         }
 
         this.unsignedContent = helper.readNullable(in, helper::readComponent);
@@ -66,7 +65,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.sender);
         helper.writeVarInt(out, this.index);
         out.writeBoolean(this.messageSignature != null);

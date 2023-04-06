@@ -4,5 +4,11 @@ public enum CraftingBookStateType {
     CRAFTING,
     FURNACE,
     BLAST_FURNACE,
-    SMOKER
+    SMOKER;
+
+    private static final CraftingBookStateType[] VALUES = values();
+
+    public static CraftingBookStateType from(int id) {
+        return VALUES[id];
+    }
 }

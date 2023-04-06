@@ -7,4 +7,10 @@ public enum EquipmentSlot {
     LEGGINGS,
     CHESTPLATE,
     HELMET;
+
+    private static final EquipmentSlot[] VALUES = values();
+
+    public static EquipmentSlot from(int id) {
+        return VALUES[id];
+    }
 }

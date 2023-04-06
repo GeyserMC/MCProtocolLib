@@ -40,7 +40,7 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeBoolean(this.motd != null);
         if (this.motd != null) {
-            helper.writeString(out, DefaultComponentSerializer.get().serialize(this.motd));
+            helper.writeComponent(out, this.motd);
         }
 
         out.writeBoolean(this.iconBase64 != null);

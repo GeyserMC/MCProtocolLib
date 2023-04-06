@@ -6,4 +6,10 @@ public enum TeamAction {
     UPDATE,
     ADD_PLAYER,
     REMOVE_PLAYER;
+
+    private static final TeamAction[] VALUES = values();
+
+    public static TeamAction from(int id) {
+        return VALUES[id];
+    }
 }

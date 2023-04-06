@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
 import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -31,7 +30,7 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     public ServerboundSetCommandBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.position = helper.readPosition(in);
         this.command = helper.readString(in);
-        this.mode = MagicValues.key(CommandBlockMode.class, helper.readVarInt(in));
+        this.mode = CommandBlockMode.from(helper.readVarInt(in));
 
         int flags = in.readUnsignedByte();
         this.doesTrackOutput = (flags & FLAG_TRACK_OUTPUT) != 0;
@@ -43,7 +42,7 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writePosition(out, this.position);
         helper.writeString(out, this.command);
-        helper.writeVarInt(out, MagicValues.value(Integer.class, this.mode));
+        helper.writeVarInt(out, this.mode.ordinal());
 
         int flags = 0;
         if (this.doesTrackOutput) {

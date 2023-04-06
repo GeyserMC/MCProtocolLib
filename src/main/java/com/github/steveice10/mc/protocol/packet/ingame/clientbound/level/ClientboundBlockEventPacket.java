@@ -2,29 +2,14 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.MagicValues;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.ChestValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.EndGatewayValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.GenericBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.MobSpawnerValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValueType;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
-import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
+import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-
-import java.io.IOException;
 
 @Data
 @With
@@ -34,13 +19,14 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int NOTE_BLOCK = 93;
     private static final int STICKY_PISTON = 112;
     private static final int PISTON = 119;
-    private static final int MOB_SPAWNER = 165; // Value does not show in 1.16
+    private static final int MOB_SPAWNER = 165;
     private static final int CHEST = 167;
     private static final int ENDER_CHEST = 328;
     private static final int TRAPPED_CHEST = 392;
     private static final int END_GATEWAY = 576;
     private static final int SHULKER_BOX_LOWER = 586;
     private static final int SHULKER_BOX_HIGHER = 602;
+    private static final int BELL = 755;
 
     private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
@@ -54,24 +40,24 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         this.blockId = helper.readVarInt(in);
 
         // TODO: Handle this in MinecraftCodecHelper
-        if (this.blockId == NOTE_BLOCK) {
-            this.type = MagicValues.key(NoteBlockValueType.class, type);
-            this.value = new NoteBlockValue(value);
-        } else if (this.blockId == STICKY_PISTON || this.blockId == PISTON) {
-            this.type = MagicValues.key(PistonValueType.class, type);
-            this.value = MagicValues.key(PistonValue.class, value);
+        if (this.blockId == STICKY_PISTON || this.blockId == PISTON) {
+            this.type = PistonValueType.from(type);
+            this.value = new PistonValue(Direction.from(Math.abs((value & 7) % 6)));
         } else if (this.blockId == MOB_SPAWNER) {
-            this.type = MagicValues.key(MobSpawnerValueType.class, type);
+            this.type = MobSpawnerValueType.from(type - 1);
             this.value = new MobSpawnerValue();
         } else if (this.blockId == CHEST || this.blockId == ENDER_CHEST || this.blockId == TRAPPED_CHEST
                 || (this.blockId >= SHULKER_BOX_LOWER && this.blockId <= SHULKER_BOX_HIGHER)) {
-            this.type = MagicValues.key(ChestValueType.class, type);
+            this.type = ChestValueType.from(type - 1);
             this.value = new ChestValue(value);
         } else if (this.blockId == END_GATEWAY) {
-            this.type = MagicValues.key(EndGatewayValueType.class, type);
+            this.type = EndGatewayValueType.from(type - 1);
             this.value = new EndGatewayValue();
+        } else if (this.blockId == BELL) {
+            this.type = BellValueType.from(type - 1);
+            this.value = new BellValue(Direction.from(Math.abs(value % 6)));
         } else {
-            this.type = MagicValues.key(GenericBlockValueType.class, type);
+            this.type = GenericBlockValueType.from(type);
             this.value = new GenericBlockValue(value);
         }
     }
@@ -79,19 +65,28 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         int val = 0;
+        int type = 0;
         // TODO: Handle this in MinecraftCodecHelper
-        if (this.type instanceof NoteBlockValueType) {
-            val = ((NoteBlockValue) this.value).getPitch();
-        } else if (this.type instanceof PistonValueType) {
-            val = MagicValues.value(Integer.class, this.value);
+        if (this.type instanceof PistonValueType) {
+            val = ((PistonValue) this.value).getDirection().ordinal();
+            type = ((PistonValueType) this.type).ordinal();
+        } else if (this.type instanceof MobSpawnerValueType) {
+            type = ((MobSpawnerValueType) this.type).ordinal() + 1;
         } else if (this.type instanceof ChestValueType) {
             val = ((ChestValue) this.value).getViewers();
+            type = ((ChestValueType) this.type).ordinal() + 1;
+        } else if (this.type instanceof EndGatewayValueType) {
+            type = ((EndGatewayValueType) this.type).ordinal() + 1;
+        } else if (this.type instanceof BellValueType) {
+            val = ((BellValue) this.value).getDirection().ordinal();
+            type = ((BellValueType) this.type).ordinal() + 1;
         } else if (this.type instanceof GenericBlockValueType) {
             val = ((GenericBlockValue) this.value).getValue();
+            type = ((GenericBlockValueType) this.type).ordinal();
         }
 
         helper.writePosition(out, this.position);
-        out.writeByte(MagicValues.value(Integer.class, this.type));
+        out.writeByte(type);
         out.writeByte(val);
         helper.writeVarInt(out, this.blockId);
     }
