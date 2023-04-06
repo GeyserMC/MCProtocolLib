@@ -38,7 +38,9 @@ public enum BlockEntityType {
     SCULK_SENSOR,
     SCULK_CATALYST,
     SCULK_SHRIEKER,
-    CHISELED_BOOKSHELF;
+    CHISELED_BOOKSHELF,
+    SUSPICIOUS_SAND,
+    DECORATED_POT;
 
     private static final BlockEntityType[] VALUES = values();
 

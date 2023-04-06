@@ -24,11 +24,10 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
     private final float yaw;
     private final float pitch;
     private final int teleportId;
-    private final boolean dismountVehicle;
     private final @NonNull List<PositionElement> relative;
 
-    public ClientboundPlayerPositionPacket(double x, double y, double z, float yaw, float pitch, int teleportId, boolean dismountVehicle, PositionElement... relative) {
-        this(x, y, z, yaw, pitch, teleportId, dismountVehicle, Arrays.asList(relative != null ? relative : new PositionElement[0]));
+    public ClientboundPlayerPositionPacket(double x, double y, double z, float yaw, float pitch, int teleportId, PositionElement... relative) {
+        this(x, y, z, yaw, pitch, teleportId, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
     public ClientboundPlayerPositionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
@@ -48,7 +47,6 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
         }
 
         this.teleportId = helper.readVarInt(in);
-        this.dismountVehicle = in.readBoolean();
     }
 
     @Override
@@ -67,6 +65,5 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
         out.writeByte(flags);
 
         helper.writeVarInt(out, this.teleportId);
-        out.writeBoolean(this.dismountVehicle);
     }
 }

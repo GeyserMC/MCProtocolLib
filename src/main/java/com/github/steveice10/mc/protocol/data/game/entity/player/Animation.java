@@ -1,16 +1,34 @@
 package com.github.steveice10.mc.protocol.data.game.entity.player;
 
-public enum Animation {
-    SWING_ARM,
-    DAMAGE,
-    LEAVE_BED,
-    SWING_OFFHAND,
-    CRITICAL_HIT,
-    ENCHANTMENT_CRITICAL_HIT;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-    private static final Animation[] VALUES = values();
+public enum Animation {
+    SWING_ARM(0),
+    LEAVE_BED(2),
+    SWING_OFFHAND(3),
+    CRITICAL_HIT(4),
+    ENCHANTMENT_CRITICAL_HIT(5);
+
+    private final int id;
+
+    Animation(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    private static Int2ObjectMap<Animation> VALUES = new Int2ObjectOpenHashMap<>();
 
     public static Animation from(int id) {
-        return VALUES[id];
+        return VALUES.get(id);
+    }
+
+    static {
+        for (Animation animation : values()) {
+            VALUES.put(animation.id, animation);
+        }
     }
 }

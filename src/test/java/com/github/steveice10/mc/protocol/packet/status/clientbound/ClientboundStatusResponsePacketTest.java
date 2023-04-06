@@ -9,6 +9,8 @@ import com.github.steveice10.mc.protocol.packet.PacketTest;
 import net.kyori.adventure.text.Component;
 import org.junit.Before;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 
 public class ClientboundStatusResponsePacketTest extends PacketTest {
@@ -17,9 +19,9 @@ public class ClientboundStatusResponsePacketTest extends PacketTest {
         this.setPackets(new ClientboundStatusResponsePacket(
                 new ServerStatusInfo(
                         new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
-                        new PlayerInfo(100, 10, new GameProfile[]{
-                                new GameProfile(UUID.randomUUID(), "Username")
-                        }),
+                        new PlayerInfo(100, 10, new ArrayList<>(
+                                Collections.singleton(new GameProfile(UUID.randomUUID(), "Username"))
+                        )),
                         Component.text("Description"),
                         null,
                         false

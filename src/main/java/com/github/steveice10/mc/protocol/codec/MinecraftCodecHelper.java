@@ -21,6 +21,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
@@ -60,6 +61,7 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector4f;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -292,6 +294,22 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeFloat(rot.getZ());
     }
 
+    public Vector4f readQuaternion(ByteBuf buf) {
+        float x = buf.readFloat();
+        float y = buf.readFloat();
+        float z = buf.readFloat();
+        float w = buf.readFloat();
+
+        return Vector4f.from(x, y, z, w);
+    }
+
+    public void writeQuaternion(ByteBuf buf, Vector4f vec4) {
+        buf.writeFloat(vec4.getX());
+        buf.writeFloat(vec4.getY());
+        buf.writeFloat(vec4.getZ());
+        buf.writeFloat(vec4.getW());
+    }
+
     public Direction readDirection(ByteBuf buf) {
         return Direction.from(this.readVarInt(buf));
     }
@@ -314,6 +332,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writePaintingType(ByteBuf buf, PaintingType type) {
         this.writeEnum(buf, type);
+    }
+
+    public SnifferState readSnifferState(ByteBuf buf) {
+        return SnifferState.from(this.readVarInt(buf));
+    }
+
+    public void writeSnifferState(ByteBuf buf, SnifferState state) {
+        this.writeEnum(buf, state);
     }
 
     private void writeEnum(ByteBuf buf, Enum<?> e) {

@@ -85,7 +85,24 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     Ingredient addition = helper.readRecipeIngredient(in);
                     ItemStack result = helper.readItemStack(in);
 
-                    data = new SmithingRecipeData(base, addition, result);
+                    data = new LegacyUpgradeRecipeData(base, addition, result);
+                    break;
+                }
+                case SMITHING_TRANSFORM: {
+                    Ingredient template = helper.readRecipeIngredient(in);
+                    Ingredient base = helper.readRecipeIngredient(in);
+                    Ingredient addition = helper.readRecipeIngredient(in);
+                    ItemStack result = helper.readItemStack(in);
+
+                    data = new SmithingTransformRecipeData(template, base, addition, result);
+                    break;
+                }
+                case SMITHING_TRIM: {
+                    Ingredient template = helper.readRecipeIngredient(in);
+                    Ingredient base = helper.readRecipeIngredient(in);
+                    Ingredient addition = helper.readRecipeIngredient(in);
+
+                    data = new SmithingTrimRecipeData(template, base, addition);
                     break;
                 }
                 default: {
@@ -160,11 +177,28 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     break;
                 }
                 case SMITHING: {
-                    SmithingRecipeData data = (SmithingRecipeData) recipe.getData();
+                    LegacyUpgradeRecipeData data = (LegacyUpgradeRecipeData) recipe.getData();
 
                     helper.writeRecipeIngredient(out, data.getBase());
                     helper.writeRecipeIngredient(out, data.getAddition());
                     helper.writeItemStack(out, data.getResult());
+                    break;
+                }
+                case SMITHING_TRANSFORM: {
+                    SmithingTransformRecipeData data = (SmithingTransformRecipeData) recipe.getData();
+
+                    helper.writeRecipeIngredient(out, data.getTemplate());
+                    helper.writeRecipeIngredient(out, data.getBase());
+                    helper.writeRecipeIngredient(out, data.getAddition());
+                    helper.writeItemStack(out, data.getResult());
+                    break;
+                }
+                case SMITHING_TRIM: {
+                    SmithingTrimRecipeData data = (SmithingTrimRecipeData) recipe.getData();
+
+                    helper.writeRecipeIngredient(out, data.getTemplate());
+                    helper.writeRecipeIngredient(out, data.getBase());
+                    helper.writeRecipeIngredient(out, data.getAddition());
                     break;
                 }
                 default: {

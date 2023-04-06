@@ -26,6 +26,6 @@ public class ClientboundAnimatePacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.entityId);
-        out.writeByte(this.animation.ordinal());
+        out.writeByte(this.animation.getId());
     }
 }
