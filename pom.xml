@@ -5,7 +5,7 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>1.19.4-1</version>
+    <version>1.19.4-2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
@@ -112,9 +112,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.nukkitx</groupId>
-            <artifactId>math</artifactId>
-            <version>1.1.1</version>
+            <groupId>org.cloudburstmc.math</groupId>
+            <artifactId>api</artifactId>
+            <version>2.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cloudburstmc.math</groupId>
+            <artifactId>immutable</artifactId>
+            <version>2.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -3,11 +3,11 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
-import com.nukkitx.math.vector.Vector3i;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.cloudburstmc.math.vector.Vector3i;
 
 import java.io.IOException;
 
