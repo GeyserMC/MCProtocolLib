@@ -29,6 +29,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType;
+import com.github.steveice10.mc.protocol.data.game.level.event.UnknownLevelEvent;
 import com.github.steveice10.mc.protocol.data.game.level.particle.BlockParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.DustParticleData;
@@ -88,7 +90,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private static final int POSITION_Y_SHIFT = 0xFFF;
     private static final int POSITION_WRITE_SHIFT = 0x3FFFFFF;
 
-    private final Int2ObjectMap<LevelEvent> levelEvents;
+    private final Int2ObjectMap<LevelEventType> levelEvents;
     private final Map<String, BuiltinSound> soundNames;
 
     protected CompoundTag registry;
@@ -623,7 +625,12 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public LevelEvent readLevelEvent(ByteBuf buf) {
-        return this.levelEvents.get(buf.readInt());
+        int id = buf.readInt();
+        LevelEventType type = this.levelEvents.get(id);
+        if (type != null) {
+            return type;
+        }
+        return new UnknownLevelEvent(id);
     }
 
     public void writeLevelEvent(ByteBuf buf, LevelEvent event) {
