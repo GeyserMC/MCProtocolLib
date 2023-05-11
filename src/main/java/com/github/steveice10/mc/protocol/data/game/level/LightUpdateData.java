@@ -20,15 +20,12 @@ public class LightUpdateData {
     private final @NonNull BitSet emptyBlockYMask;
     private final @NonNull List<byte[]> skyUpdates;
     private final @NonNull List<byte[]> blockUpdates;
-    private final boolean trustEdges;
 
     public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         return new LightUpdateData(in, helper);
     }
 
     private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.trustEdges = in.readBoolean();
-
         this.skyYMask = BitSet.valueOf(helper.readLongArray(in));
         this.blockYMask = BitSet.valueOf(helper.readLongArray(in));
         this.emptySkyYMask = BitSet.valueOf(helper.readLongArray(in));
@@ -52,8 +49,6 @@ public class LightUpdateData {
     }
 
     private void write(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeBoolean(this.trustEdges);
-
         writeBitSet(out, helper, this.skyYMask);
         writeBitSet(out, helper, this.blockYMask);
         writeBitSet(out, helper, this.emptySkyYMask);
