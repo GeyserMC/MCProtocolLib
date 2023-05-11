@@ -35,6 +35,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final boolean debug;
     private final boolean flat;
     private final @Nullable GlobalPos lastDeathPos;
+    private final int portalCooldown;
 
     public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = in.readInt();
@@ -62,6 +63,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         } else {
             this.lastDeathPos = null;
         }
+        this.portalCooldown = helper.readVarInt(in);
     }
 
     @Override
@@ -89,5 +91,6 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         if (this.lastDeathPos != null) {
             helper.writeGlobalPos(out, this.lastDeathPos);
         }
+        helper.writeVarInt(out, this.portalCooldown);
     }
 }

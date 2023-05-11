@@ -16,17 +16,17 @@ import org.cloudburstmc.math.vector.Vector3i;
 @AllArgsConstructor
 public class ClientboundBlockEventPacket implements MinecraftPacket {
     // Do we really want these hardcoded values?
-    private static final int NOTE_BLOCK = 101;
-    private static final int STICKY_PISTON = 120;
-    private static final int PISTON = 127;
-    private static final int MOB_SPAWNER = 174;
-    private static final int CHEST = 176;
-    private static final int ENDER_CHEST = 343;
-    private static final int TRAPPED_CHEST = 410;
-    private static final int END_GATEWAY = 600;
-    private static final int SHULKER_BOX_LOWER = 610;
-    private static final int SHULKER_BOX_HIGHER = 626;
-    private static final int BELL = 779;
+    private static final int NOTE_BLOCK = 102;
+    private static final int STICKY_PISTON = 121;
+    private static final int PISTON = 128;
+    private static final int MOB_SPAWNER = 175;
+    private static final int CHEST = 177;
+    private static final int ENDER_CHEST = 344;
+    private static final int TRAPPED_CHEST = 411;
+    private static final int END_GATEWAY = 603;
+    private static final int SHULKER_BOX_LOWER = 613;
+    private static final int SHULKER_BOX_HIGHER = 629;
+    private static final int BELL = 783;
 
     private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
