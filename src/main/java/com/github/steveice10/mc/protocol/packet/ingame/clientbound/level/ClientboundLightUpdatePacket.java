@@ -24,7 +24,7 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
 
     public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
                                         @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
-                                        @NonNull List<byte[]> skyUpdates, @NonNull List<byte[]> blockUpdates, boolean trustEdges) {
+                                        @NonNull List<byte[]> skyUpdates, @NonNull List<byte[]> blockUpdates) {
         for (byte[] content : skyUpdates) {
             if (content.length != 2048) {
                 throw new IllegalArgumentException("All arrays in skyUpdates must be length of 2048!");
@@ -37,7 +37,7 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
         }
         this.x = x;
         this.z = z;
-        this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates, trustEdges);
+        this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates);
     }
 
     public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
