@@ -28,21 +28,21 @@ public class ServerboundSignUpdatePacket implements MinecraftPacket {
         this.isFrontText = isFrontText;
     }
 
-    public ServerboundSignUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSignUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);
+        this.isFrontText = in.readBoolean();
         this.lines = new String[4];
         for (int count = 0; count < this.lines.length; count++) {
             this.lines[count] = helper.readString(in);
         }
-        this.isFrontText = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writePosition(out, this.position);
+        out.writeBoolean(this.isFrontText);
         for (String line : this.lines) {
             helper.writeString(out, line);
         }
-        out.writeBoolean(this.isFrontText);
     }
 }
