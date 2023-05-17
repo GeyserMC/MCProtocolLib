@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - feature/math-2.0 #TEMPOARY
+      - feature/1.20 #TEMPOARY
 
 jobs:
   build:
