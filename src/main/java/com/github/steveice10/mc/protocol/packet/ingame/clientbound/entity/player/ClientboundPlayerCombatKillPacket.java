@@ -15,19 +15,16 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundPlayerCombatKillPacket implements MinecraftPacket {
     private final int playerId;
-    private final int killerId;
     private final Component message;
 
     public ClientboundPlayerCombatKillPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.playerId = helper.readVarInt(in);
-        this.killerId = in.readInt();
         this.message = helper.readComponent(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.playerId);
-        out.writeInt(this.killerId);
         helper.writeComponent(out, this.message);
     }
 }
