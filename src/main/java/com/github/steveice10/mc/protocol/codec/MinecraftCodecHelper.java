@@ -578,8 +578,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public LightUpdateData readLightUpdateData(ByteBuf buf) {
-        boolean trustEdges = buf.readBoolean();
-
         BitSet skyYMask = BitSet.valueOf(this.readLongArray(buf));
         BitSet blockYMask = BitSet.valueOf(this.readLongArray(buf));
         BitSet emptySkyYMask = BitSet.valueOf(this.readLongArray(buf));
@@ -597,12 +595,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             blockUpdates.add(this.readByteArray(buf));
         }
 
-        return new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates, trustEdges);
+        return new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates);
     }
 
     public void writeLightUpdateData(ByteBuf buf, LightUpdateData data) {
-        buf.writeBoolean(data.isTrustEdges());
-
         writeBitSet(buf, data.getSkyYMask());
         writeBitSet(buf, data.getBlockYMask());
         writeBitSet(buf, data.getEmptySkyYMask());

@@ -13,17 +13,14 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundPlayerCombatEndPacket implements MinecraftPacket {
-    private final int killerId;
     private final int duration;
 
     public ClientboundPlayerCombatEndPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.duration = helper.readVarInt(in);
-        this.killerId = in.readInt();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.duration);
-        out.writeInt(this.killerId);
     }
 }

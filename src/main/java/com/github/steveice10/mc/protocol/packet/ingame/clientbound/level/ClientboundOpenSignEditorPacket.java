@@ -16,13 +16,16 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundOpenSignEditorPacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
+    private final boolean isFrontText;
 
     public ClientboundOpenSignEditorPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.position = helper.readPosition(in);
+        this.isFrontText = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writePosition(out, this.position);
+        out.writeBoolean(this.isFrontText);
     }
 }

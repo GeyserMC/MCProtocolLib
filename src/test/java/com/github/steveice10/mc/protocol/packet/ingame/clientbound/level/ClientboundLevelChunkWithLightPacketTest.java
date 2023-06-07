@@ -17,12 +17,12 @@ public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
         this.setPackets(
                 new ClientboundLevelChunkWithLightPacket(0, 0,
                         new byte[0], new CompoundTag("HeightMaps"), new BlockEntityInfo[0],
-                        new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList(), false)
+                        new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList())
                 ),
                 new ClientboundLevelChunkWithLightPacket(1, 1,
                         new byte[256], new CompoundTag("HeightMaps"), new BlockEntityInfo[] {
                         new BlockEntityInfo(1, 0, 1, BlockEntityType.CHEST, null)
-                }, new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList(), true)
+                }, new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList())
                 )
         );
     }

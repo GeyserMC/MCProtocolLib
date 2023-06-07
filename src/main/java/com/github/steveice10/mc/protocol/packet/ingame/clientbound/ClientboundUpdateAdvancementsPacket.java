@@ -90,7 +90,9 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 requirements.add(requirement);
             }
 
-            this.advancements[i] = new Advancement(id, criteria, requirements, parentId, displayData);
+            boolean sendTelemetryEvent = in.readBoolean();
+
+            this.advancements[i] = new Advancement(id, criteria, requirements, parentId, displayData, sendTelemetryEvent);
         }
 
         this.removedAdvancements = new String[helper.readVarInt(in)];
@@ -175,6 +177,8 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                     helper.writeString(out, criterion);
                 }
             }
+
+            out.writeBoolean(advancement.isSendsTelemetryEvent());
         }
 
         helper.writeVarInt(out, this.removedAdvancements.length);

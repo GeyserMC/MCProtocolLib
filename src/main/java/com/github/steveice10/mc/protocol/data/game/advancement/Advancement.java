@@ -16,17 +16,18 @@ public class Advancement {
     private final @NonNull List<List<String>> requirements;
     private final String parentId;
     private final DisplayData displayData;
+    private final boolean sendsTelemetryEvent;
 
-    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements) {
-        this(id, criteria, requirements, null, null);
+    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, boolean sendsTelemetryEvent) {
+        this(id, criteria, requirements, null, null, sendsTelemetryEvent);
     }
 
-    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, String parentId) {
-        this(id, criteria, requirements, parentId, null);
+    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, String parentId, boolean sendsTelemetryEvent) {
+        this(id, criteria, requirements, parentId, null, sendsTelemetryEvent);
     }
 
-    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, DisplayData displayData) {
-        this(id, criteria, requirements, null, displayData);
+    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, DisplayData displayData, boolean sendsTelemetryEvent) {
+        this(id, criteria, requirements, null, displayData, sendsTelemetryEvent);
     }
 
     @Data

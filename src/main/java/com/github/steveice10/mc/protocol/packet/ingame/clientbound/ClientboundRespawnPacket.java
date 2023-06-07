@@ -29,6 +29,7 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
     private final boolean keepMetadata;
     private final boolean keepAttributes;
     private final @Nullable GlobalPos lastDeathPos;
+    private final int portalCooldown;
 
     public ClientboundRespawnPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.dimension = helper.readString(in);
@@ -42,6 +43,7 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         this.keepAttributes = (dataToKeep & KEEP_ATTRIBUTES) != 0;
         this.keepMetadata = (dataToKeep & KEEP_ENTITY_DATA) != 0;
         this.lastDeathPos = helper.readNullable(in, helper::readGlobalPos);
+        this.portalCooldown = helper.readVarInt(in);
     }
 
     @Override
@@ -62,5 +64,6 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         }
         out.writeByte(dataToKeep);
         helper.writeNullable(out, this.lastDeathPos, helper::writeGlobalPos);
+        helper.writeVarInt(out, this.portalCooldown);
     }
 }
