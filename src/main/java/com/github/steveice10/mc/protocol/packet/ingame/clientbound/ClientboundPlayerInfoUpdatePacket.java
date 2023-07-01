@@ -107,6 +107,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                 switch (action) {
                     case ADD_PLAYER:
                         helper.writeString(out, entry.getProfile().getName());
+                        helper.writeVarInt(out, entry.getProfile().getProperties().size());
                         for (GameProfile.Property property : entry.getProfile().getProperties()) {
                             helper.writeProperty(out, property);
                         }
