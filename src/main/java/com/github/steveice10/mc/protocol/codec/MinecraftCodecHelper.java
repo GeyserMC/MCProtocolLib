@@ -521,9 +521,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         } else if (positionSource instanceof EntityPositionSource) {
             this.writeVarInt(buf, ((EntityPositionSource) positionSource).getEntityId());
             buf.writeFloat(((EntityPositionSource) positionSource).getYOffset());
+        } else {
+            throw new IllegalStateException("Unknown position source type!");
         }
-
-        throw new IllegalStateException("Unknown position source type!");
     }
 
     public VillagerData readVillagerData(ByteBuf buf) {
