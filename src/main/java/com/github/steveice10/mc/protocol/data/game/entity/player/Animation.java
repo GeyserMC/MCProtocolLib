@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.entity.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
 
 public enum Animation {
     SWING_ARM(0),
@@ -20,8 +21,9 @@ public enum Animation {
         return id;
     }
 
-    private static Int2ObjectMap<Animation> VALUES = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<Animation> VALUES = new Int2ObjectOpenHashMap<>();
 
+    @Nullable
     public static Animation from(int id) {
         return VALUES.get(id);
     }
