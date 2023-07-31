@@ -18,10 +18,9 @@ jobs:
         with:
           java-version: 8
           distribution: temurin
-          overwrite-settings: true
-          server-id: opencollab-snapshot-repo
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+      - uses: s4u/maven-settings-action@v2.8.0
+        with:
+          servers: '[{"id": "opencollab-release-repo", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}"},{"id": "opencollab-snapshot-repo", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}"}]'
       - name: Deploy with Maven
         run: mvn deploy -B -P deploy
         env:
