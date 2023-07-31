@@ -6,8 +6,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundAnimatePacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull Animation animation;
+    private final @Nullable Animation animation;
 
     public ClientboundAnimatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = helper.readVarInt(in);
@@ -26,6 +26,10 @@ public class ClientboundAnimatePacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.entityId);
-        out.writeByte(this.animation.getId());
+        if (this.animation == null) {
+            out.writeByte(-1); // Client does nothing on unknown ID
+        } else {
+            out.writeByte(this.animation.getId());
+        }
     }
 }
