@@ -316,6 +316,20 @@ public class TcpClientSession extends TcpSession {
                 break;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> EVENT_LOOP_GROUP.shutdownGracefully()));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownEventLoopGroup()));
+    }
+
+    public static void shutdownEventLoopGroup() {
+        if (EVENT_LOOP_GROUP != null) {
+            try {
+                EVENT_LOOP_GROUP.shutdownGracefully().sync();
+                EVENT_LOOP_GROUP = null;
+                CHANNEL_CLASS = null;
+                DATAGRAM_CHANNEL_CLASS = null;
+            } catch (InterruptedException e) {
+               e.printStackTrace();
+            }
+
+        }
     }
 }
