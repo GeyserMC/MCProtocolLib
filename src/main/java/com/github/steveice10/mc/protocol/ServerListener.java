@@ -8,10 +8,13 @@ import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
+import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisconnectPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
@@ -97,9 +100,7 @@ public class ServerListener extends SessionAdapter {
                         throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
-        }
-
-        if (protocol.getState() == ProtocolState.LOGIN) {
+        } else if (protocol.getState() == ProtocolState.LOGIN) {
             if (packet instanceof ServerboundHelloPacket) {
                 this.username = ((ServerboundHelloPacket) packet).getUsername();
 
@@ -121,9 +122,7 @@ public class ServerListener extends SessionAdapter {
                 session.enableEncryption(protocol.enableEncryption(key));
                 new Thread(new UserAuthTask(session, key)).start();
             }
-        }
-
-        if (protocol.getState() == ProtocolState.STATUS) {
+        } else if (protocol.getState() == ProtocolState.STATUS) {
             if (packet instanceof ServerboundStatusRequestPacket) {
                 ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if (builder == null) {
@@ -141,14 +140,18 @@ public class ServerListener extends SessionAdapter {
             } else if (packet instanceof ServerboundPingRequestPacket) {
                 session.send(new ClientboundPongResponsePacket(((ServerboundPingRequestPacket) packet).getPingTime()));
             }
-        }
-
-        if (protocol.getState() == ProtocolState.GAME) {
+        } else if (protocol.getState() == ProtocolState.GAME) {
             if (packet instanceof ServerboundKeepAlivePacket) {
                 if (((ServerboundKeepAlivePacket) packet).getPingId() == this.lastPingId) {
                     long time = System.currentTimeMillis() - this.lastPingTime;
                     session.setFlag(MinecraftConstants.PING_KEY, time);
                 }
+            } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
+                protocol.setState(ProtocolState.CONFIGURATION);
+            }
+        } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
+            if (packet instanceof ServerboundFinishConfigurationPacket) {
+                protocol.setState(ProtocolState.GAME);
             }
         }
     }

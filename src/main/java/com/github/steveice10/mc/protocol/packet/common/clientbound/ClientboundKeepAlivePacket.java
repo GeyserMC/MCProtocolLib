@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
+package com.github.steveice10.mc.protocol.packet.common.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
@@ -12,15 +12,15 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundPongPacket implements MinecraftPacket {
-    private final int id;
+public class ClientboundKeepAlivePacket implements MinecraftPacket {
+    private final long pingId;
 
-    public ServerboundPongPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.id = in.readInt();
+    public ClientboundKeepAlivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.pingId = in.readLong();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeInt(this.id);
+        out.writeLong(this.pingId);
     }
 }

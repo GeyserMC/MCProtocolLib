@@ -786,20 +786,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public GameProfile.Property readProperty(ByteBuf buf) {
         String name = this.readString(buf);
         String value = this.readString(buf);
-        if (buf.readBoolean()) {
-            return new GameProfile.Property(name, value, this.readString(buf));
-        } else {
-            return new GameProfile.Property(name, value);
-        }
+        String signature = this.readNullable(buf, this::readString);
+        return new GameProfile.Property(name, value, signature);
     }
 
     public void writeProperty(ByteBuf buf, GameProfile.Property property) {
         this.writeString(buf, property.getName());
         this.writeString(buf, property.getValue());
-        buf.writeBoolean(property.hasSignature());
-        if (property.hasSignature()) {
-            this.writeString(buf, property.getSignature());
-        }
+        this.writeNullable(buf, property.getSignature(), this::writeString);
     }
 
     public <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {

@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
+package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
@@ -12,15 +12,14 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundKeepAlivePacket implements MinecraftPacket {
-    private final long pingId;
+public class ClientboundChunkBatchFinishedPacket implements MinecraftPacket {
+    private final int batchSize;
 
-    public ClientboundKeepAlivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.pingId = in.readLong();
+    public ClientboundChunkBatchFinishedPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.batchSize = helper.readVarInt(in);
     }
 
-    @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeLong(this.pingId);
+        helper.writeVarInt(out, this.batchSize);
     }
 }

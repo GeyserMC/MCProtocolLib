@@ -11,10 +11,12 @@ import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
+import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisconnectPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundStartConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
@@ -35,7 +37,6 @@ import lombok.NonNull;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.UUID;
 
 /**
  * Handles making initial login and status requests for clients.
@@ -84,7 +85,7 @@ public class ClientListener extends SessionAdapter {
                 session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()));
                 session.enableEncryption(protocol.enableEncryption(key));
             } else if (packet instanceof ClientboundGameProfilePacket) {
-                protocol.setState(ProtocolState.GAME);
+                protocol.setState(ProtocolState.CONFIGURATION);
             } else if (packet instanceof ClientboundLoginDisconnectPacket) {
                 session.disconnect(((ClientboundLoginDisconnectPacket) packet).getReason());
             } else if (packet instanceof ClientboundLoginCompressionPacket) {
@@ -113,6 +114,12 @@ public class ClientListener extends SessionAdapter {
                 session.send(new ServerboundKeepAlivePacket(((ClientboundKeepAlivePacket) packet).getPingId()));
             } else if (packet instanceof ClientboundDisconnectPacket) {
                 session.disconnect(((ClientboundDisconnectPacket) packet).getReason());
+            } else if (packet instanceof ClientboundStartConfigurationPacket) {
+                protocol.setState(ProtocolState.CONFIGURATION);
+            }
+        } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
+            if (packet instanceof ClientboundFinishConfigurationPacket) {
+                protocol.setState(ProtocolState.GAME);
             }
         }
     }

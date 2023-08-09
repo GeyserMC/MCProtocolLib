@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PlayerListEntry {
     private final @NonNull UUID profileId;
-    private @NonNull GameProfile profile;
+    private @Nullable GameProfile profile;
     private boolean listed;
     private int latency;
     private GameMode gameMode;
@@ -26,6 +26,6 @@ public class PlayerListEntry {
     private byte @Nullable[] keySignature;
 
     public PlayerListEntry(UUID profileId) {
-        this(profileId, new GameProfile(profileId, null), false, 0, GameMode.SURVIVAL, null, null, 0, null, null);
+        this(profileId, null, false, 0, GameMode.SURVIVAL, null, null, 0, null, null);
     }
 }

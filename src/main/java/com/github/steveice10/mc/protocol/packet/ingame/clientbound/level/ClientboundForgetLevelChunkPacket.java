@@ -17,13 +17,13 @@ public class ClientboundForgetLevelChunkPacket implements MinecraftPacket {
     private final int z;
 
     public ClientboundForgetLevelChunkPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.x = in.readInt();
-        this.z = in.readInt();
+        long chunkPosition = in.readLong();
+        this.x = (int)chunkPosition;
+        this.z = (int)(chunkPosition >> 32);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeInt(this.x);
-        out.writeInt(this.z);
+        out.writeLong(this.x & 0xFFFFFFFFL | (this.z & 0xFFFFFFFFL) << 32);
     }
 }

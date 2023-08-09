@@ -25,11 +25,11 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
     private final @Nullable GameMode previousGamemode;
     private final boolean debug;
     private final boolean flat;
+    private final @Nullable GlobalPos lastDeathPos;
+    private final int portalCooldown;
     // The following two are the dataToKeep byte
     private final boolean keepMetadata;
     private final boolean keepAttributes;
-    private final @Nullable GlobalPos lastDeathPos;
-    private final int portalCooldown;
 
     public ClientboundRespawnPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.dimension = helper.readString(in);
@@ -39,11 +39,11 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         this.previousGamemode = GameMode.byNullableId(in.readByte());
         this.debug = in.readBoolean();
         this.flat = in.readBoolean();
+        this.lastDeathPos = helper.readNullable(in, helper::readGlobalPos);
+        this.portalCooldown = helper.readVarInt(in);
         byte dataToKeep = in.readByte();
         this.keepAttributes = (dataToKeep & KEEP_ATTRIBUTES) != 0;
         this.keepMetadata = (dataToKeep & KEEP_ENTITY_DATA) != 0;
-        this.lastDeathPos = helper.readNullable(in, helper::readGlobalPos);
-        this.portalCooldown = helper.readVarInt(in);
     }
 
     @Override
@@ -55,6 +55,8 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         out.writeByte(GameMode.toNullableId(this.previousGamemode));
         out.writeBoolean(this.debug);
         out.writeBoolean(this.flat);
+        helper.writeNullable(out, this.lastDeathPos, helper::writeGlobalPos);
+        helper.writeVarInt(out, this.portalCooldown);
         byte dataToKeep = 0;
         if (this.keepMetadata) {
             dataToKeep += KEEP_ENTITY_DATA;
@@ -63,7 +65,5 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
             dataToKeep += KEEP_ATTRIBUTES;
         }
         out.writeByte(dataToKeep);
-        helper.writeNullable(out, this.lastDeathPos, helper::writeGlobalPos);
-        helper.writeVarInt(out, this.portalCooldown);
     }
 }
