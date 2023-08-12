@@ -45,13 +45,16 @@ import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import java.net.*;
+import java.util.concurrent.ThreadFactory;
 
 public class TcpClientSession extends TcpSession {
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
     private static Class<? extends Channel> CHANNEL_CLASS;
     private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
     private static EventLoopGroup EVENT_LOOP_GROUP;
+    private static final int WAIT_FOR_SHUTDOWN_IN_MS = 2000;
 
     private final String bindAddress;
     private final int bindPort;
@@ -295,27 +298,37 @@ public class TcpClientSession extends TcpSession {
 
         switch (TransportHelper.determineTransportMethod()) {
             case IO_URING:
-                EVENT_LOOP_GROUP = new IOUringEventLoopGroup();
+                EVENT_LOOP_GROUP = new IOUringEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = IOUringSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
                 break;
             case EPOLL:
-                EVENT_LOOP_GROUP = new EpollEventLoopGroup();
+                EVENT_LOOP_GROUP = new EpollEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = EpollSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
                 break;
             case KQUEUE:
-                EVENT_LOOP_GROUP = new KQueueEventLoopGroup();
+                EVENT_LOOP_GROUP = new KQueueEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = KQueueSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
                 break;
             case NIO:
-                EVENT_LOOP_GROUP = new NioEventLoopGroup();
+                EVENT_LOOP_GROUP = new NioEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = NioSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
                 break;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> EVENT_LOOP_GROUP.shutdownGracefully()));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> EVENT_LOOP_GROUP.shutdownGracefully().awaitUninterruptibly(WAIT_FOR_SHUTDOWN_IN_MS)));
+    }
+
+    protected static ThreadFactory newThreadFactory() {
+       // Create a new daemon thread. When the last non daemon thread ends
+       // the runtime environment will call the shutdown hooks. One of the
+       // hooks will try to shut down the event loop group which will
+       // normally lead to the thread exiting. If not, it will be forcably
+       // killed after WAIT_FOR_SHUTDOWN_IN_MS ms along with the other
+       // daemon threads as the runtime exits.
+       return new DefaultThreadFactory(TcpClientSession.class, true);
     }
 }
