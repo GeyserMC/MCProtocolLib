@@ -15,7 +15,7 @@ public class ServerboundCustomQueryAnswerPacket implements MinecraftPacket {
     private final byte[] data;
 
     public ServerboundCustomQueryAnswerPacket(int transactionId) {
-        this(transactionId, null);
+        this(transactionId, new byte[0]);
     }
 
     public ServerboundCustomQueryAnswerPacket(ByteBuf in, MinecraftCodecHelper helper) {

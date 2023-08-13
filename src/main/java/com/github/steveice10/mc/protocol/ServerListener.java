@@ -9,6 +9,7 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
@@ -21,10 +22,13 @@ import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLog
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundKeyPacket;
+import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundLoginAcknowledgedPacket;
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundPongResponsePacket;
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
+import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
@@ -33,6 +37,10 @@ import com.github.steveice10.packetlib.packet.Packet;
 import net.kyori.adventure.text.Component;
 
 import javax.crypto.SecretKey;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -41,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Handles initial login and status requests for servers.
@@ -121,6 +130,10 @@ public class ServerListener extends SessionAdapter {
                 SecretKey key = keyPacket.getSecretKey(privateKey);
                 session.enableEncryption(protocol.enableEncryption(key));
                 new Thread(new UserAuthTask(session, key)).start();
+            } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
+                ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.CONFIGURATION);
+                session.send(new ClientboundRegistryDataPacket(loadNetworkCodec()));
+                session.send(new ClientboundFinishConfigurationPacket());
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
             if (packet instanceof ServerboundStatusRequestPacket) {
@@ -152,6 +165,14 @@ public class ServerListener extends SessionAdapter {
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundFinishConfigurationPacket) {
                 protocol.setState(ProtocolState.GAME);
+                ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
+                if (handler != null) {
+                    handler.loggedIn(session);
+                }
+
+                if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+                    new Thread(new KeepAliveTask(session)).start();
+                }
             }
         }
     }
@@ -161,16 +182,6 @@ public class ServerListener extends SessionAdapter {
         if (packet instanceof ClientboundLoginCompressionPacket) {
             session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), true);
             session.send(new ClientboundGameProfilePacket((GameProfile) session.getFlag(MinecraftConstants.PROFILE_KEY)));
-        } else if (packet instanceof ClientboundGameProfilePacket) {
-            ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.GAME);
-            ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
-            if (handler != null) {
-                handler.loggedIn(session);
-            }
-
-            if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
-                new Thread(new KeepAliveTask(session)).start();
-            }
         }
     }
 
@@ -239,6 +250,16 @@ public class ServerListener extends SessionAdapter {
                     break;
                 }
             }
+        }
+    }
+
+    public static CompoundTag loadNetworkCodec() {
+        try (InputStream inputStream = ServerListener.class.getClassLoader().getResourceAsStream("networkCodec.nbt");
+             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
+            return (CompoundTag) NBTIO.readTag((DataInput) stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new AssertionError("Unable to load network codec.");
         }
     }
 }

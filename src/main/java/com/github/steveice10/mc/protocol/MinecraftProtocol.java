@@ -85,7 +85,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param username Username to use.
      */
     public MinecraftProtocol(@NonNull String username) {
-        this(new GameProfile((UUID) null, username), null);
+        this(new GameProfile(UUID.randomUUID(), username), null);
     }
 
     /**
@@ -95,7 +95,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param username Username to use.
      */
     public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull String username) {
-        this(codec, new GameProfile((UUID) null, username), null);
+        this(codec, new GameProfile(UUID.randomUUID(), username), null);
     }
 
     /**

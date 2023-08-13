@@ -46,6 +46,7 @@ import java.net.Proxy;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.zip.GZIPInputStream;
 
 public class MinecraftProtocolTest {
@@ -69,7 +70,7 @@ public class MinecraftProtocolTest {
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session ->
                     new ServerStatusInfo(
                             new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
-                            new PlayerInfo(100, 0, new GameProfile[0]),
+                            new PlayerInfo(100, 0, new ArrayList<>()),
                             Component.text("Hello world!"),
                             null,
                             false
@@ -80,22 +81,21 @@ public class MinecraftProtocolTest {
                     session.send(new ClientboundLoginPacket(
                             0,
                             false,
-                            GameMode.SURVIVAL,
-                            GameMode.SURVIVAL,
-                            1,
                             new String[]{"minecraft:world"},
-                            loadNetworkCodec(),
-                            "minecraft:overworld",
-                            "minecraft:world",
-                            100,
                             0,
                             16,
                             16,
                             false,
                             false,
+                            "minecraft:overworld",
+                            "minecraft:world",
+                            100,
+                            GameMode.SURVIVAL,
+                            GameMode.SURVIVAL,
                             false,
                             false,
-                            null
+                            null,
+                            100
                     ))
             );
 
@@ -158,7 +158,7 @@ public class MinecraftProtocolTest {
                     + ", " + info.getVersionInfo().getProtocolVersion());
             System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers()
                     + " / " + info.getPlayerInfo().getMaxPlayers());
-            System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers()));
+            System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers().toArray()));
             System.out.println("Description: " + info.getDescription());
             System.out.println("Icon: " + info.getIconPng());
         });
@@ -205,7 +205,7 @@ public class MinecraftProtocolTest {
             @Override
             public void packetReceived(Session session, Packet packet) {
                 if (packet instanceof ClientboundLoginPacket) {
-                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0, new byte[0], false, new ArrayList<>(), null));
+                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0L, null, 0, new BitSet()));
                 } else if (packet instanceof ClientboundSystemChatPacket) {
                     Component message = ((ClientboundSystemChatPacket) packet).getContent();
                     System.out.println("Received Message: " + message);
@@ -223,15 +223,5 @@ public class MinecraftProtocolTest {
         });
 
         client.connect();
-    }
-
-    private static CompoundTag loadNetworkCodec() {
-        try (InputStream inputStream = MinecraftProtocolTest.class.getClassLoader().getResourceAsStream("network_codec.nbt");
-             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
-            return (CompoundTag) NBTIO.readTag((DataInput) stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new AssertionError("Unable to load network codec.");
-        }
     }
 }

@@ -12,6 +12,7 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
@@ -23,6 +24,7 @@ import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLog
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundKeyPacket;
+import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundLoginAcknowledgedPacket;
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundPongResponsePacket;
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
@@ -33,6 +35,7 @@ import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -45,6 +48,7 @@ import java.security.NoSuchAlgorithmException;
 public class ClientListener extends SessionAdapter {
     private final @NonNull ProtocolState targetState;
 
+    @SneakyThrows
     @Override
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
@@ -85,6 +89,7 @@ public class ClientListener extends SessionAdapter {
                 session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()));
                 session.enableEncryption(protocol.enableEncryption(key));
             } else if (packet instanceof ClientboundGameProfilePacket) {
+                session.send(new ServerboundLoginAcknowledgedPacket());
                 protocol.setState(ProtocolState.CONFIGURATION);
             } else if (packet instanceof ClientboundLoginDisconnectPacket) {
                 session.disconnect(((ClientboundLoginDisconnectPacket) packet).getReason());
@@ -119,7 +124,7 @@ public class ClientListener extends SessionAdapter {
             }
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ClientboundFinishConfigurationPacket) {
-                protocol.setState(ProtocolState.GAME);
+                session.send(new ServerboundFinishConfigurationPacket());
             }
         }
     }
@@ -137,6 +142,8 @@ public class ClientListener extends SessionAdapter {
             } else {
                 session.send(new ServerboundStatusRequestPacket());
             }
+        } else if (packet instanceof ServerboundFinishConfigurationPacket) {
+            ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.GAME);
         }
     }
 

@@ -5,7 +5,7 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>1.20.2-SNAPSHOT</version>
+    <version>1.20.2-1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
@@ -82,9 +82,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.GeyserMC</groupId>
+            <groupId>com.github.steveice10</groupId> <!-- Local repository groupId, will need to be reverted -->
             <artifactId>opennbt</artifactId>
-            <version>1.4</version>
+            <version>1.6-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -203,6 +203,30 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return expected.cast(tag);
     }
 
+    public CompoundTag readAnyTag(ByteBuf buf) throws IOException {
+        return readAnyTag(buf, CompoundTag.class);
+    }
+
+    @Nullable
+    public <T extends Tag> T readAnyTag(ByteBuf buf, Class<T> expected) throws IOException {
+        Tag tag = NBTIO.readAnyTag(new InputStream() {
+            @Override
+            public int read() {
+                return buf.readUnsignedByte();
+            }
+        });
+
+        if (tag == null) {
+            return null;
+        }
+
+        if (tag.getClass() != expected) {
+            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
+        }
+
+        return expected.cast(tag);
+    }
+
     public CompoundTag readTagLE(ByteBuf buf) throws IOException {
         return readTagLE(buf, CompoundTag.class);
     }
@@ -229,6 +253,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public <T extends Tag> void writeTag(ByteBuf buf, T tag) throws IOException {
         NBTIO.writeTag(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                buf.writeByte(b);
+            }
+        }, tag);
+    }
+
+    public <T extends Tag> void writeAnyTag(ByteBuf buf, T tag) throws IOException {
+        NBTIO.writeAnyTag(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
                 buf.writeByte(b);

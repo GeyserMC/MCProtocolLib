@@ -2,6 +2,7 @@ package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.Session;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
@@ -73,45 +74,14 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
                     }
                 }
 
-                this.setupInflaterInput(buf);
-                ByteBuf inflated = this.inflate(ctx, size);
+                byte[] bytes = new byte[buf.readableBytes()];
+                buf.readBytes(bytes);
+                this.inflater.setInput(bytes);
+                byte[] inflated = new byte[size];
+                this.inflater.inflate(inflated);
+                out.add(Unpooled.wrappedBuffer(inflated));
                 this.inflater.reset();
-                out.add(inflated);
             }
-        }
-    }
-
-    private void setupInflaterInput(ByteBuf buf) {
-        ByteBuffer inputBuffer;
-        if (buf.nioBufferCount() > 0) {
-            inputBuffer = buf.nioBuffer();
-            buf.skipBytes(buf.readableBytes());
-        } else {
-            inputBuffer = ByteBuffer.allocateDirect(buf.readableBytes());
-            buf.readBytes(inputBuffer);
-            inputBuffer.flip();
-        }
-
-        this.inflater.setInput(inputBuffer.array());
-    }
-
-    private ByteBuf inflate(ChannelHandlerContext ctx, int size) throws DataFormatException {
-        ByteBuf buf = ctx.alloc().directBuffer(size);
-
-        try {
-            ByteBuffer nioBuf = buf.internalNioBuffer(0, size);
-            int originalPos = nioBuf.position();
-            this.inflater.inflate(nioBuf.array());
-            int actualSize = nioBuf.position() - originalPos;
-            if (actualSize != size) {
-                throw new DecoderException("Badly compressed packet: actual length of uncompressed payload " + actualSize + " does not match declared size " + size);
-            } else {
-                buf.writerIndex(buf.writerIndex() + actualSize);
-                return buf;
-            }
-        } catch (Exception e) {
-            buf.release();
-            throw e;
         }
     }
 }

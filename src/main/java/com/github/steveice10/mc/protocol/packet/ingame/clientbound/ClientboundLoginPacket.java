@@ -21,7 +21,6 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final int entityId;
     private final boolean hardcore;
     private final @NonNull String[] worldNames;
-    private final @NonNull CompoundTag registry;
     private final int maxPlayers;
     private final int viewDistance;
     private final int simulationDistance;
@@ -45,7 +44,6 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         for (int i = 0; i < worldCount; i++) {
             this.worldNames[i] = helper.readString(in);
         }
-        this.registry = helper.readTag(in);
         this.maxPlayers = helper.readVarInt(in);
         this.viewDistance = helper.readVarInt(in);
         this.simulationDistance = helper.readVarInt(in);
@@ -74,7 +72,6 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         for (String worldName : this.worldNames) {
             helper.writeString(out, worldName);
         }
-        helper.writeTag(out, this.registry);
         helper.writeVarInt(out, this.maxPlayers);
         helper.writeVarInt(out, this.viewDistance);
         helper.writeVarInt(out, this.simulationDistance);
