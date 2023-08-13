@@ -43,6 +43,7 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
                     this.data = new SmokeEventData(Direction.from(Math.abs(value % 6)));
                     break;
                 case BREAK_BLOCK:
+                case BRUSH_BLOCK_COMPLETE:
                     this.data = new BreakBlockEventData(value);
                     break;
                 case BREAK_SPLASH_POTION:
