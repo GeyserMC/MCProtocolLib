@@ -11,13 +11,13 @@ import lombok.With;
 @With
 @AllArgsConstructor
 public class ServerboundChunkBatchReceivedPacket implements MinecraftPacket {
-    private final float desiredBatchSize;
+    private final float desiredChunksPerTick;
 
     public ServerboundChunkBatchReceivedPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.desiredBatchSize = in.readFloat();
+        this.desiredChunksPerTick = in.readFloat();
     }
 
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeFloat(this.desiredBatchSize);
+        out.writeFloat(this.desiredChunksPerTick);
     }
 }

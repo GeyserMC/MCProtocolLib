@@ -161,6 +161,8 @@ public class ServerListener extends SessionAdapter {
                 }
             } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
                 protocol.setState(ProtocolState.CONFIGURATION);
+            } else if (packet instanceof ServerboundPingRequestPacket) {
+                session.send(new ClientboundPongResponsePacket(((ServerboundPingRequestPacket) packet).getPingTime()));
             }
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundFinishConfigurationPacket) {
