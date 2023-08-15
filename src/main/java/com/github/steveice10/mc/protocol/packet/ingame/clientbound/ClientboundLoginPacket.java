@@ -71,7 +71,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         out.writeInt(this.entityId);
         out.writeBoolean(this.hardcore);
         out.writeByte(this.gameMode.ordinal());
-        out.writeByte(GameMode.toNullableId(this.gameMode));
+        out.writeByte(GameMode.toNullableId(this.previousGamemode));
         helper.writeVarInt(out, this.worldNames.length);
         for (String worldName : this.worldNames) {
             helper.writeString(out, worldName);
