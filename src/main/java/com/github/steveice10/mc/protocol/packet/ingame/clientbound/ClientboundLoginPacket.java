@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -26,15 +27,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final int simulationDistance;
     private final boolean reducedDebugInfo;
     private final boolean enableRespawnScreen;
-    private final @NonNull String dimension;
-    private final @NonNull String worldName;
-    private final long hashedSeed;
-    private final @NonNull GameMode gameMode;
-    private final @Nullable GameMode previousGamemode;
-    private final boolean debug;
-    private final boolean flat;
-    private final @Nullable GlobalPos lastDeathPos;
-    private final int portalCooldown;
+    private final PlayerSpawnInfo commonPlayerSpawnInfo;
 
     public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = in.readInt();
@@ -49,19 +42,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         this.simulationDistance = helper.readVarInt(in);
         this.reducedDebugInfo = in.readBoolean();
         this.enableRespawnScreen = in.readBoolean();
-        this.dimension = helper.readString(in);
-        this.worldName = helper.readString(in);
-        this.hashedSeed = in.readLong();
-        this.gameMode = GameMode.byId(in.readByte());
-        this.previousGamemode = GameMode.byNullableId(in.readByte());
-        this.debug = in.readBoolean();
-        this.flat = in.readBoolean();
-        if (in.readBoolean()) {
-            this.lastDeathPos = helper.readGlobalPos(in);
-        } else {
-            this.lastDeathPos = null;
-        }
-        this.portalCooldown = helper.readVarInt(in);
+        this.commonPlayerSpawnInfo = helper.readPlayerSpawnInfo(in);
     }
 
     @Override
@@ -77,17 +58,6 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.simulationDistance);
         out.writeBoolean(this.reducedDebugInfo);
         out.writeBoolean(this.enableRespawnScreen);
-        helper.writeString(out, this.dimension);
-        helper.writeString(out, this.worldName);
-        out.writeLong(this.hashedSeed);
-        out.writeByte(this.gameMode.ordinal());
-        out.writeByte(GameMode.toNullableId(this.previousGamemode));
-        out.writeBoolean(this.debug);
-        out.writeBoolean(this.flat);
-        out.writeBoolean(this.lastDeathPos != null);
-        if (this.lastDeathPos != null) {
-            helper.writeGlobalPos(out, this.lastDeathPos);
-        }
-        helper.writeVarInt(out, this.portalCooldown);
+        helper.writePlayerSpawnInfo(out, this.commonPlayerSpawnInfo);
     }
 }

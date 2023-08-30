@@ -25,6 +25,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
+import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
@@ -440,6 +442,31 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public void writeGlobalPos(ByteBuf buf, GlobalPos pos) {
         this.writeString(buf, pos.getDimension());
         this.writePosition(buf, pos.getPosition());
+    }
+
+    public PlayerSpawnInfo readPlayerSpawnInfo(ByteBuf buf) {
+        String dimension = this.readString(buf);
+        String worldName = this.readString(buf);
+        long hashedSeed = buf.readLong();
+        GameMode gameMode = GameMode.byId(buf.readByte());
+        GameMode previousGamemode = GameMode.byNullableId(buf.readByte());
+        boolean debug = buf.readBoolean();
+        boolean flat = buf.readBoolean();
+        GlobalPos lastDeathPos = this.readNullable(buf, this::readGlobalPos);
+        int portalCooldown = this.readVarInt(buf);
+        return new PlayerSpawnInfo(dimension, worldName, hashedSeed, gameMode, previousGamemode, debug, flat, lastDeathPos, portalCooldown);
+    }
+
+    public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
+        this.writeString(buf, info.getDimension());
+        this.writeString(buf, info.getWorldName());
+        buf.writeLong(info.getHashedSeed());
+        buf.writeByte(info.getGameMode().ordinal());
+        buf.writeByte(GameMode.toNullableId(info.getPreviousGamemode()));
+        buf.writeBoolean(info.isDebug());
+        buf.writeBoolean(info.isFlat());
+        this.writeNullable(buf, info.getLastDeathPos(), this::writeGlobalPos);
+        this.writeVarInt(buf, info.getPortalCooldown());
     }
 
     public ParticleType readParticleType(ByteBuf buf) {
