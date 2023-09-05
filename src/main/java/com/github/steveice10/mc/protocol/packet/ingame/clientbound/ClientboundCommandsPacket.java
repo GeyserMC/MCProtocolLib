@@ -308,8 +308,10 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     case TIME:
                         out.writeInt(((TimeProperties) node.getProperties()).getMin());
                         break;
-                    case RESOURCE:
                     case RESOURCE_OR_TAG:
+                    case RESOURCE_OR_TAG_KEY:
+                    case RESOURCE:
+                    case RESOURCE_KEY:
                         helper.writeString(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
                         break;
                     default:
