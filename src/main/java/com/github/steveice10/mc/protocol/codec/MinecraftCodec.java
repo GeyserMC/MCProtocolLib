@@ -127,7 +127,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCh
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatSessionUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientInformationPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
@@ -208,9 +208,9 @@ public class MinecraftCodec {
     }
 
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 147)
+            .protocolVersion((1 << 30) | 148)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-            .minecraftVersion("23w35a")
+            .minecraftVersion("1.20.2-pre1")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(0x00, ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -239,11 +239,12 @@ public class MinecraftCodec {
                     .registerClientboundPacket(0x06, ClientboundResourcePackPacket.class, ClientboundResourcePackPacket::new)
                     .registerClientboundPacket(0x07, ClientboundUpdateEnabledFeaturesPacket.class, ClientboundUpdateEnabledFeaturesPacket::new)
                     .registerClientboundPacket(0x08, ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
-                    .registerServerboundPacket(0x00, ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
-                    .registerServerboundPacket(0x01, ServerboundFinishConfigurationPacket.class, ServerboundFinishConfigurationPacket::new)
-                    .registerServerboundPacket(0x02, ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
-                    .registerServerboundPacket(0x03, ServerboundPongPacket.class, ServerboundPongPacket::new)
-                    .registerClientboundPacket(0x04, ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
+                    .registerServerboundPacket(0x00, ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
+                    .registerServerboundPacket(0x01, ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
+                    .registerServerboundPacket(0x02, ServerboundFinishConfigurationPacket.class, ServerboundFinishConfigurationPacket::new)
+                    .registerServerboundPacket(0x03, ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
+                    .registerServerboundPacket(0x04, ServerboundPongPacket.class, ServerboundPongPacket::new)
+                    .registerClientboundPacket(0x05, ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
             ).state(ProtocolState.GAME, PacketStateCodec.builder()
                     .registerClientboundPacket(0x00, ClientboundDelimiterPacket.class, ClientboundDelimiterPacket::new)
                     .registerClientboundPacket(0x01, ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new)

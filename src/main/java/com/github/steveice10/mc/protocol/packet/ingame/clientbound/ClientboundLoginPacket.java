@@ -27,6 +27,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final int simulationDistance;
     private final boolean reducedDebugInfo;
     private final boolean enableRespawnScreen;
+    private final boolean doLimitedCrafting;
     private final PlayerSpawnInfo commonPlayerSpawnInfo;
 
     public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
@@ -42,6 +43,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         this.simulationDistance = helper.readVarInt(in);
         this.reducedDebugInfo = in.readBoolean();
         this.enableRespawnScreen = in.readBoolean();
+        this.doLimitedCrafting = in.readBoolean();
         this.commonPlayerSpawnInfo = helper.readPlayerSpawnInfo(in);
     }
 
@@ -58,6 +60,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.simulationDistance);
         out.writeBoolean(this.reducedDebugInfo);
         out.writeBoolean(this.enableRespawnScreen);
+        out.writeBoolean(this.doLimitedCrafting);
         helper.writePlayerSpawnInfo(out, this.commonPlayerSpawnInfo);
     }
 }

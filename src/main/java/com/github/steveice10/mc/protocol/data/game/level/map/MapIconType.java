@@ -27,7 +27,14 @@ public enum MapIconType {
     GREEN_BANNER,
     RED_BANNER,
     BLACK_BANNER,
-    TREASURE_MARKER;
+    TREASURE_MARKER,
+    DESERT_VILLAGE,
+    PLAINS_VILLAGE,
+    SAVANNA_VILLAGE,
+    SNOWY_VILLAGE,
+    TAIGA_VILLAGE,
+    JUNGLE_TEMPLE,
+    SWAMP_HUT;
 
     private static final MapIconType[] VALUES = values();
 

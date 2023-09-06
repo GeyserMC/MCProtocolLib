@@ -11,6 +11,7 @@ import com.github.steveice10.mc.protocol.ServerLoginHandler;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -87,15 +88,18 @@ public class MinecraftProtocolTest {
                             16,
                             false,
                             false,
-                            "minecraft:overworld",
-                            "minecraft:world",
-                            100,
-                            GameMode.SURVIVAL,
-                            GameMode.SURVIVAL,
                             false,
-                            false,
-                            null,
-                            100
+                            new PlayerSpawnInfo(
+                                    "minecraft:overworld",
+                                    "minecraft:world",
+                                    100,
+                                    GameMode.SURVIVAL,
+                                    GameMode.SURVIVAL,
+                                    false,
+                                    false,
+                                    null,
+                                    100
+                            )
                     ))
             );
 
