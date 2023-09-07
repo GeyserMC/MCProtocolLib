@@ -82,9 +82,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.steveice10</groupId> <!-- Local repository groupId, will need to be reverted -->
+            <groupId>com.github.GeyserMC</groupId>
             <artifactId>opennbt</artifactId>
-            <version>1.6-SNAPSHOT</version>
+            <version>eae1397</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
