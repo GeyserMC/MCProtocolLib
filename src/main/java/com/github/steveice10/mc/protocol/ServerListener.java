@@ -27,7 +27,6 @@ import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundPo
 import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
-import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
@@ -37,10 +36,6 @@ import com.github.steveice10.packetlib.packet.Packet;
 import net.kyori.adventure.text.Component;
 
 import javax.crypto.SecretKey;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -49,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
-import java.util.zip.GZIPInputStream;
 
 /**
  * Handles initial login and status requests for servers.
@@ -71,13 +65,16 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
+    private final CompoundTag networkCodec;
+
     private final byte[] challenge = new byte[4];
     private String username = "";
 
     private long lastPingTime = 0;
     private int lastPingId = 0;
 
-    public ServerListener() {
+    public ServerListener(CompoundTag networkCodec) {
+        this.networkCodec = networkCodec;
         new Random().nextBytes(this.challenge);
     }
 
@@ -132,7 +129,7 @@ public class ServerListener extends SessionAdapter {
                 new Thread(new UserAuthTask(session, key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.CONFIGURATION);
-                session.send(new ClientboundRegistryDataPacket(loadNetworkCodec()));
+                session.send(new ClientboundRegistryDataPacket(networkCodec));
                 session.send(new ClientboundFinishConfigurationPacket());
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
@@ -252,16 +249,6 @@ public class ServerListener extends SessionAdapter {
                     break;
                 }
             }
-        }
-    }
-
-    public static CompoundTag loadNetworkCodec() {
-        try (InputStream inputStream = ServerListener.class.getClassLoader().getResourceAsStream("networkCodec.nbt");
-             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
-            return (CompoundTag) NBTIO.readTag((DataInput) stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new AssertionError("Unable to load network codec.");
         }
     }
 }
