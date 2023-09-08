@@ -16,11 +16,11 @@ public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
     public void setup() throws IOException {
         this.setPackets(
                 new ClientboundLevelChunkWithLightPacket(0, 0,
-                        new byte[0], new CompoundTag("HeightMaps"), new BlockEntityInfo[0],
+                        new byte[0], new CompoundTag(""), new BlockEntityInfo[0],
                         new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList())
                 ),
                 new ClientboundLevelChunkWithLightPacket(1, 1,
-                        new byte[256], new CompoundTag("HeightMaps"), new BlockEntityInfo[] {
+                        new byte[256], new CompoundTag(""), new BlockEntityInfo[] {
                         new BlockEntityInfo(1, 0, 1, BlockEntityType.CHEST, null)
                 }, new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList())
                 )
