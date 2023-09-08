@@ -18,6 +18,7 @@ import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDi
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundStartConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
@@ -90,7 +91,6 @@ public class ClientListener extends SessionAdapter {
                 session.enableEncryption(protocol.enableEncryption(key));
             } else if (packet instanceof ClientboundGameProfilePacket) {
                 session.send(new ServerboundLoginAcknowledgedPacket());
-                protocol.setState(ProtocolState.CONFIGURATION);
             } else if (packet instanceof ClientboundLoginDisconnectPacket) {
                 session.disconnect(((ClientboundLoginDisconnectPacket) packet).getReason());
             } else if (packet instanceof ClientboundLoginCompressionPacket) {
@@ -120,7 +120,7 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundDisconnectPacket) {
                 session.disconnect(((ClientboundDisconnectPacket) packet).getReason());
             } else if (packet instanceof ClientboundStartConfigurationPacket) {
-                protocol.setState(ProtocolState.CONFIGURATION);
+                session.send(new ServerboundConfigurationAcknowledgedPacket());
             }
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ClientboundFinishConfigurationPacket) {
@@ -131,9 +131,9 @@ public class ClientListener extends SessionAdapter {
 
     @Override
     public void packetSent(Session session, Packet packet) {
+        MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
         if (packet instanceof ClientIntentionPacket) {
             // Once the HandshakePacket has been sent, switch to the next protocol mode.
-            MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
             protocol.setState(this.targetState);
 
             if (this.targetState == ProtocolState.LOGIN) {
@@ -142,8 +142,12 @@ public class ClientListener extends SessionAdapter {
             } else {
                 session.send(new ServerboundStatusRequestPacket());
             }
+        } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
+            protocol.setState(ProtocolState.CONFIGURATION); // LOGIN -> CONFIGURATION
         } else if (packet instanceof ServerboundFinishConfigurationPacket) {
-            ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.GAME);
+            protocol.setState(ProtocolState.GAME); // CONFIGURATION -> GAME
+        } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
+            protocol.setState(ProtocolState.CONFIGURATION); // GAME -> CONFIGURATION
         }
     }
 
