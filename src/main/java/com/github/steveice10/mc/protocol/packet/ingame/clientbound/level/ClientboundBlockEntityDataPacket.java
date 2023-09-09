@@ -25,13 +25,13 @@ public class ClientboundBlockEntityDataPacket implements MinecraftPacket {
     public ClientboundBlockEntityDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.position = helper.readPosition(in);
         this.type = helper.readBlockEntityType(in);
-        this.nbt = helper.readTag(in);
+        this.nbt = helper.readAnyTag(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writePosition(out, this.position);
         helper.writeBlockEntityType(out, this.type);
-        helper.writeTag(out, this.nbt);
+        helper.writeAnyTag(out, this.nbt);
     }
 }

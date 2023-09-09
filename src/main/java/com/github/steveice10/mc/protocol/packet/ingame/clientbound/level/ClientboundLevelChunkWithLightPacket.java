@@ -38,7 +38,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
             int blockEntityZ = xz & 15;
             int blockEntityY = in.readShort();
             BlockEntityType type = helper.readBlockEntityType(in);
-            CompoundTag tag = helper.readTag(in);
+            CompoundTag tag = helper.readAnyTag(in);
             this.blockEntities[i] = new BlockEntityInfo(blockEntityX, blockEntityY, blockEntityZ, type, tag);
         }
 
@@ -58,7 +58,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
             out.writeByte(((blockEntity.getX() & 15) << 4) | blockEntity.getZ() & 15);
             out.writeShort(blockEntity.getY());
             helper.writeBlockEntityType(out, blockEntity.getType());
-            helper.writeTag(out, blockEntity.getNbt());
+            helper.writeAnyTag(out, blockEntity.getNbt());
         }
 
         helper.writeLightUpdateData(out, this.lightData);
