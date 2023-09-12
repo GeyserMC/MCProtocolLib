@@ -33,4 +33,9 @@ public class SingletonPalette implements Palette {
         }
         return 0;
     }
+
+    @Override
+    public SingletonPalette copy() {
+        return this;
+    }
 }

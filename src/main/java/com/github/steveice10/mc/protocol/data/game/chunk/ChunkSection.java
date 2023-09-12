@@ -19,6 +19,10 @@ public class ChunkSection {
         this(0, DataPalette.createForChunk(), DataPalette.createForBiome(4));
     }
 
+    public ChunkSection(ChunkSection original) {
+        this(original.blockCount, new DataPalette(original.chunkData), new DataPalette(original.biomeData));
+    }
+
     public int getBlock(int x, int y, int z) {
         return this.chunkData.get(x, y, z);
     }
