@@ -207,9 +207,9 @@ public class MinecraftCodec {
     }
 
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 152)
+            .protocolVersion((1 << 30) | 153)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-            .minecraftVersion("1.20.2-rc1")
+            .minecraftVersion("1.20.2-rc2")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
