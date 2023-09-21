@@ -84,7 +84,7 @@
         <dependency>
             <groupId>com.github.GeyserMC</groupId>
             <artifactId>opennbt</artifactId>
-            <version>eae1397</version>
+            <version>1.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
