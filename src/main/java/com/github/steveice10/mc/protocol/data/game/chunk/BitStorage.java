@@ -1,12 +1,11 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode
 public class BitStorage {
     private static final int[] MAGIC_VALUES = {
@@ -75,6 +74,11 @@ public class BitStorage {
         this.divideMultiply = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex]);
         this.divideAdd = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex + 1]);
         this.divideShift = MAGIC_VALUES[magicIndex + 2];
+    }
+
+    public BitStorage(BitStorage original) {
+        this(Arrays.copyOf(original.data, original.data.length), original.bitsPerEntry, original.size,
+                original.maxValue, original.valuesPerLong, original.divideMultiply, original.divideAdd, original.divideShift);
     }
 
     public int get(int index) {
