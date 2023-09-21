@@ -82,7 +82,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.GeyserMC</groupId>
+            <groupId>com.github.steveice10</groupId>
             <artifactId>opennbt</artifactId>
             <version>1.6</version>
             <scope>compile</scope>
