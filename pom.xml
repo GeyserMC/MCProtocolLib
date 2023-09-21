@@ -5,7 +5,7 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>1.20-2</version>
+    <version>1.20.2-1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
@@ -82,9 +82,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.GeyserMC</groupId>
+            <groupId>com.github.steveice10</groupId>
             <artifactId>opennbt</artifactId>
-            <version>1.4</version>
+            <version>1.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

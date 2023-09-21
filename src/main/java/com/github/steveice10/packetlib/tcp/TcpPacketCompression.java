@@ -1,7 +1,6 @@
 package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.Session;
-import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,7 +12,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
-    private static final int MAX_COMPRESSED_SIZE = 2097152;
+    private static final int MAX_UNCOMPRESSED_SIZE = 8388608;
 
     private final Session session;
     private final Deflater deflater = new Deflater();
@@ -57,9 +56,9 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        if(buf.readableBytes() != 0) {
+        if (buf.readableBytes() != 0) {
             int size = this.session.getCodecHelper().readVarInt(buf);
-            if(size == 0) {
+            if (size == 0) {
                 out.add(buf.readBytes(buf.readableBytes()));
             } else {
                 if (validateDecompression) { // This is sectioned off as of at least Java Edition 1.18
@@ -67,8 +66,8 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
                         throw new DecoderException("Badly compressed packet: size of " + size + " is below threshold of " + this.session.getCompressionThreshold() + ".");
                     }
 
-                    if (size > MAX_COMPRESSED_SIZE) {
-                        throw new DecoderException("Badly compressed packet: size of " + size + " is larger than protocol maximum of " + MAX_COMPRESSED_SIZE + ".");
+                    if (size > MAX_UNCOMPRESSED_SIZE) {
+                        throw new DecoderException("Badly compressed packet: size of " + size + " is larger than protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
                     }
                 }
 

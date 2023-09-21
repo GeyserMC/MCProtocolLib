@@ -6,6 +6,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.PacketCodec;
 import com.github.steveice10.mc.protocol.codec.PacketStateCodec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
+import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.codec.PacketCodecHelper;
@@ -19,16 +21,30 @@ import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Implements the Minecraft protocol.
  */
 public class MinecraftProtocol extends PacketProtocol {
+
+    /**
+     * The network codec sent from the server to the client during {@link ProtocolState#CONFIGURATION}.
+     * Lazily loaded once when {@link #newServerSession(Server, Session)} is invoked,
+     * if {@link #isUseDefaultListeners()} is true.
+     */
+    @Nullable
+    private static CompoundTag DEFAULT_NETWORK_CODEC;
 
     /**
      * The codec used for the Minecraft protocol.
@@ -85,7 +101,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param username Username to use.
      */
     public MinecraftProtocol(@NonNull String username) {
-        this(new GameProfile((UUID) null, username), null);
+        this(new GameProfile(UUID.randomUUID(), username), null);
     }
 
     /**
@@ -95,7 +111,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param username Username to use.
      */
     public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull String username) {
-        this(codec, new GameProfile((UUID) null, username), null);
+        this(codec, new GameProfile(UUID.randomUUID(), username), null);
     }
 
     /**
@@ -156,7 +172,11 @@ public class MinecraftProtocol extends PacketProtocol {
         this.setState(ProtocolState.HANDSHAKE);
 
         if (this.useDefaultListeners) {
-            session.addListener(new ServerListener());
+            if (DEFAULT_NETWORK_CODEC == null) {
+                DEFAULT_NETWORK_CODEC = loadNetworkCodec();
+            }
+
+            session.addListener(new ServerListener(DEFAULT_NETWORK_CODEC));
         }
     }
 
@@ -230,5 +250,14 @@ public class MinecraftProtocol extends PacketProtocol {
     @Override
     public PacketDefinition<?, ?> getClientboundDefinition(int id) {
         return this.stateCodec.getClientboundDefinition(id);
+    }
+
+    public static CompoundTag loadNetworkCodec() {
+        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt")) ;
+             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
+            return (CompoundTag) NBTIO.readTag((DataInput) stream);
+        } catch (Exception e) {
+            throw new AssertionError("Unable to load network codec.", e);
+        }
     }
 }

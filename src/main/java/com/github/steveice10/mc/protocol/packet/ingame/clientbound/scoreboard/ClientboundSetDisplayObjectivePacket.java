@@ -19,13 +19,13 @@ public class ClientboundSetDisplayObjectivePacket implements MinecraftPacket {
     private final @NonNull String name;
 
     public ClientboundSetDisplayObjectivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.position = ScoreboardPosition.from(in.readByte());
+        this.position = ScoreboardPosition.from(helper.readVarInt(in));
         this.name = helper.readString(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        out.writeByte(this.position.ordinal());
+        helper.writeVarInt(out, this.position.ordinal());
         helper.writeString(out, this.name);
     }
 }

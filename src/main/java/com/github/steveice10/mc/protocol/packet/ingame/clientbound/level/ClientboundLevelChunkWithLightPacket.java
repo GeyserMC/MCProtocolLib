@@ -28,7 +28,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     public ClientboundLevelChunkWithLightPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.x = in.readInt();
         this.z = in.readInt();
-        this.heightMaps = helper.readTag(in);
+        this.heightMaps = helper.readAnyTag(in);
         this.chunkData = helper.readByteArray(in);
 
         this.blockEntities = new BlockEntityInfo[helper.readVarInt(in)];
@@ -38,7 +38,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
             int blockEntityZ = xz & 15;
             int blockEntityY = in.readShort();
             BlockEntityType type = helper.readBlockEntityType(in);
-            CompoundTag tag = helper.readTag(in);
+            CompoundTag tag = helper.readAnyTag(in);
             this.blockEntities[i] = new BlockEntityInfo(blockEntityX, blockEntityY, blockEntityZ, type, tag);
         }
 
@@ -49,7 +49,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeInt(this.x);
         out.writeInt(this.z);
-        helper.writeTag(out, this.heightMaps);
+        helper.writeAnyTag(out, this.heightMaps);
         helper.writeVarInt(out, this.chunkData.length);
         out.writeBytes(this.chunkData);
 
@@ -58,7 +58,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
             out.writeByte(((blockEntity.getX() & 15) << 4) | blockEntity.getZ() & 15);
             out.writeShort(blockEntity.getY());
             helper.writeBlockEntityType(out, blockEntity.getType());
-            helper.writeTag(out, blockEntity.getNbt());
+            helper.writeAnyTag(out, blockEntity.getNbt());
         }
 
         helper.writeLightUpdateData(out, this.lightData);

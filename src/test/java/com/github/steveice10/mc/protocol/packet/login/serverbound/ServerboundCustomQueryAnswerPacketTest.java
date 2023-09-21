@@ -5,13 +5,13 @@ import org.junit.Before;
 
 import java.util.Random;
 
-public class ServerboundCustomQueryPacketTest extends PacketTest {
+public class ServerboundCustomQueryAnswerPacketTest extends PacketTest {
     @Before
     public void setup() {
         byte[] data = new byte[1024];
         new Random().nextBytes(data);
 
-        this.setPackets(new ServerboundCustomQueryPacket(0),
-                new ServerboundCustomQueryPacket(0, data));
+        this.setPackets(new ServerboundCustomQueryAnswerPacket(0),
+                new ServerboundCustomQueryAnswerPacket(0, data));
     }
 }

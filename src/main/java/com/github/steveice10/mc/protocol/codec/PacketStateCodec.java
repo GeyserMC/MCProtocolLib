@@ -46,13 +46,28 @@ public class PacketStateCodec extends PacketProtocol {
         private final Map<Integer, PacketDefinition<? extends MinecraftPacket, MinecraftCodecHelper>> clientboundPackets = new HashMap<>();
         private final Map<Integer, PacketDefinition<? extends MinecraftPacket, MinecraftCodecHelper>> serverboundPackets = new HashMap<>();
 
+        private int nextClientboundId = 0x00;
+        private int nextServerboundId = 0x00;
+
         public <T extends MinecraftPacket> Builder registerClientboundPacket(int id, Class<T> packetClass, PacketFactory<T, MinecraftCodecHelper> factory) {
-            this.clientboundPackets.put(id, new PacketDefinition<>(id, packetClass, new MinecraftPacketSerializer<>(factory)));
+            this.nextClientboundId = id;
+            return registerClientboundPacket(packetClass, factory);
+        }
+
+        public <T extends MinecraftPacket> Builder registerClientboundPacket(Class<T> packetClass, PacketFactory<T, MinecraftCodecHelper> factory) {
+            this.clientboundPackets.put(nextClientboundId, new PacketDefinition<>(nextClientboundId, packetClass, new MinecraftPacketSerializer<>(factory)));
+            this.nextClientboundId++;
             return this;
         }
 
         public <T extends MinecraftPacket> Builder registerServerboundPacket(int id, Class<T> packetClass, PacketFactory<T, MinecraftCodecHelper> factory) {
-            this.serverboundPackets.put(id, new PacketDefinition<>(id, packetClass, new MinecraftPacketSerializer<>(factory)));
+            this.nextServerboundId = id;
+            return registerServerboundPacket(packetClass, factory);
+        }
+
+        public <T extends MinecraftPacket> Builder registerServerboundPacket(Class<T> packetClass, PacketFactory<T, MinecraftCodecHelper> factory) {
+            this.serverboundPackets.put(nextServerboundId, new PacketDefinition<>(nextServerboundId, packetClass, new MinecraftPacketSerializer<>(factory)));
+            this.nextServerboundId++;
             return this;
         }
 
