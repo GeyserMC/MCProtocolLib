@@ -7,14 +7,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
 
-import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
-    private static final int MAX_COMPRESSED_SIZE = 2097152;
     private static final int MAX_UNCOMPRESSED_SIZE = 8388608;
 
     private final Session session;
