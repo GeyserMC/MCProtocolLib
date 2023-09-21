@@ -9,8 +9,6 @@ import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Server;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
@@ -23,13 +21,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-import java.util.zip.GZIPInputStream;
 
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_COMPRESSION_THRESHOLD;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_BUILDER_KEY;
@@ -43,7 +37,12 @@ import static org.junit.Assert.assertTrue;
 
 public class MinecraftProtocolTest {
     private static final String HOST = "localhost";
-    private static final int PORT = 25562;
+    private static final int PORT;
+
+    static {
+        PORT = findFreePort();
+        System.out.println("Found free port of " + PORT);
+    }
 
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
             new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
@@ -106,6 +105,14 @@ public class MinecraftProtocolTest {
             assertEquals("Received incorrect join packet.", JOIN_GAME_PACKET, listener.packet);
         } finally {
             session.disconnect("Login test complete.");
+        }
+    }
+
+    private static int findFreePort() throws IllegalStateException {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to find free port", e);
         }
     }
 
