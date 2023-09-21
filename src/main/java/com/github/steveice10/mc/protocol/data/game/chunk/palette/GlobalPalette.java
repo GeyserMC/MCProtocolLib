@@ -23,4 +23,9 @@ public class GlobalPalette implements Palette {
     public int idToState(int id) {
         return id;
     }
+
+    @Override
+    public GlobalPalette copy() {
+        return this;
+    }
 }

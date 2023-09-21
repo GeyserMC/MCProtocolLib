@@ -18,7 +18,7 @@ public interface Palette {
      * @param state Block state to convert.
      * @return The resulting storage ID.
      */
-    public int stateToId(int state);
+    int stateToId(int state);
 
     /**
      * Converts a storage ID to a block state. If the storage ID has no mapping,
@@ -27,5 +27,12 @@ public interface Palette {
      * @param id Storage ID to convert.
      * @return The resulting block state.
      */
-    public int idToState(int id);
+    int idToState(int id);
+
+    /**
+     * Creates a copy of this palette.
+     * This performs a deep copy of the palette's internal data.
+     * @return The palette's copy.
+     */
+    Palette copy();
 }
