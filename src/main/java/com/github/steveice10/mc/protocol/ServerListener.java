@@ -85,6 +85,12 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
+        String msg = packet.toString();
+        if (msg.length() > 150) {
+            msg = packet.getClass().getSimpleName();
+        }
+        System.out.println("Server received: " + msg);
+
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
         if (protocol.getState() == ProtocolState.HANDSHAKE) {
             if (packet instanceof ClientIntentionPacket) {
@@ -178,6 +184,12 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void packetSent(Session session, Packet packet) {
+        String msg = packet.toString();
+        if (msg.length() > 150) {
+            msg = packet.getClass().getSimpleName();
+        }
+        System.out.println("Server sent: " + msg);
+
         if (packet instanceof ClientboundLoginCompressionPacket) {
             session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), true);
             session.send(new ClientboundGameProfilePacket((GameProfile) session.getFlag(MinecraftConstants.PROFILE_KEY)));

@@ -133,7 +133,11 @@ public class MinecraftProtocolTest {
 
         @Override
         public void packetReceived(Session session, Packet packet) {
-            System.out.println("Received clientbound packet: " + packet);
+            String msg = packet.toString();
+            if (msg.length() > 150) {
+                msg = packet.getClass().getSimpleName();
+            }
+            System.out.println("Client received: " + msg);
 
             if (packet instanceof ClientboundLoginPacket) {
                 this.packet = (ClientboundLoginPacket) packet;
@@ -143,7 +147,11 @@ public class MinecraftProtocolTest {
 
         @Override
         public void packetSent(Session session, Packet packet) {
-            System.out.println("Sent serverbound packet: " + packet);
+            String msg = packet.toString();
+            if (msg.length() > 150) {
+                msg = packet.getClass().getSimpleName();
+            }
+            System.out.println("Client sent: " + msg);
         }
     }
 

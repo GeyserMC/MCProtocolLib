@@ -198,6 +198,12 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public void setState(ProtocolState state) {
+        if (profile == null) {
+            System.out.println("Server: " + this.state + " -> " + state);
+        } else {
+            System.out.println("Client: " + this.state + " -> " + state);
+        }
+
         this.state = state;
         this.stateCodec = this.codec.getCodec(state);
     }
