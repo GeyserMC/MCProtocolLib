@@ -58,6 +58,7 @@ public class MinecraftProtocolTest {
     @BeforeClass
     public static void setupServer() {
         server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
+
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
         server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
         server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session -> SERVER_INFO);
