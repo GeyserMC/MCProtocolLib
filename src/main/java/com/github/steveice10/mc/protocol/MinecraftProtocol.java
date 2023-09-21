@@ -204,7 +204,11 @@ public class MinecraftProtocol extends PacketProtocol {
 
     @Override
     public Packet createClientboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
-        return this.stateCodec.createClientboundPacket(id, buf, codecHelper);
+        try {
+            return this.stateCodec.createClientboundPacket(id, buf, codecHelper);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to create packet in state " + state, e);
+        }
     }
 
     @Override
