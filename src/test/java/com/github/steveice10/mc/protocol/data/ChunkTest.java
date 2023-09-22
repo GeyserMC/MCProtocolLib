@@ -52,4 +52,15 @@ public class ChunkTest {
             Assert.assertEquals("Decoded packet does not match original: " + section + " vs " + decoded, section, decoded);
         }
     }
+
+    @Test
+    public void testDeepCopy() {
+        for (ChunkSection section : chunkSectionsToTest) {
+            ChunkSection copy = new ChunkSection(section);
+            Assert.assertEquals("Deep copy does not match original: " + section + " vs " + copy, section, copy);
+
+            copy.setBlock(1, 1, 1, 10);
+            Assert.assertNotEquals("Deep copy is not deep: " + section + " vs " + copy, section, copy);
+        }
+    }
 }

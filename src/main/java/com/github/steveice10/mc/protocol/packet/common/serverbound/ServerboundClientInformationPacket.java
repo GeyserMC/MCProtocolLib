@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.packet.ingame.serverbound;
+package com.github.steveice10.mc.protocol.packet.common.serverbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;

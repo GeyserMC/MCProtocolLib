@@ -20,12 +20,12 @@ public class ClientboundTagQueryPacket implements MinecraftPacket {
 
     public ClientboundTagQueryPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.transactionId = helper.readVarInt(in);
-        this.nbt = helper.readTag(in);
+        this.nbt = helper.readAnyTag(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.transactionId);
-        helper.writeTag(out, this.nbt);
+        helper.writeAnyTag(out, this.nbt);
     }
 }

@@ -12,22 +12,21 @@ import java.util.List;
 @AllArgsConstructor
 public class Advancement {
     private final @NonNull String id;
-    private final @NonNull List<String> criteria;
     private final @NonNull List<List<String>> requirements;
     private final String parentId;
     private final DisplayData displayData;
     private final boolean sendsTelemetryEvent;
 
-    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, boolean sendsTelemetryEvent) {
-        this(id, criteria, requirements, null, null, sendsTelemetryEvent);
+    public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, boolean sendsTelemetryEvent) {
+        this(id, requirements, null, null, sendsTelemetryEvent);
     }
 
-    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, String parentId, boolean sendsTelemetryEvent) {
-        this(id, criteria, requirements, parentId, null, sendsTelemetryEvent);
+    public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, String parentId, boolean sendsTelemetryEvent) {
+        this(id, requirements, parentId, null, sendsTelemetryEvent);
     }
 
-    public Advancement(@NonNull String id, @NonNull List<String> criteria, @NonNull List<List<String>> requirements, DisplayData displayData, boolean sendsTelemetryEvent) {
-        this(id, criteria, requirements, null, displayData, sendsTelemetryEvent);
+    public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, DisplayData displayData, boolean sendsTelemetryEvent) {
+        this(id, requirements, null, displayData, sendsTelemetryEvent);
     }
 
     @Data

@@ -2,16 +2,20 @@ package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * A palette backed by a List.
  */
 @Getter
 @EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ListPalette implements Palette {
     private final int maxId;
 
@@ -64,5 +68,10 @@ public class ListPalette implements Palette {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public ListPalette copy() {
+        return new ListPalette(this.maxId, Arrays.copyOf(this.data, this.data.length), this.nextId);
     }
 }

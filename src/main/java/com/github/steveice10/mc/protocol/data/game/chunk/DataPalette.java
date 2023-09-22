@@ -16,6 +16,10 @@ public class DataPalette {
     private final PaletteType paletteType;
     private final int globalPaletteBits;
 
+    public DataPalette(DataPalette original) {
+        this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType, original.globalPaletteBits);
+    }
+
     public static DataPalette createForChunk() {
         return createForChunk(GLOBAL_PALETTE_BITS_PER_ENTRY);
     }

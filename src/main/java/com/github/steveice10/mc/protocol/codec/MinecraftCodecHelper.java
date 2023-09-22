@@ -25,6 +25,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
+import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
+import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
@@ -203,6 +205,30 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return expected.cast(tag);
     }
 
+    public CompoundTag readAnyTag(ByteBuf buf) throws IOException {
+        return readAnyTag(buf, CompoundTag.class);
+    }
+
+    @Nullable
+    public <T extends Tag> T readAnyTag(ByteBuf buf, Class<T> expected) throws IOException {
+        Tag tag = NBTIO.readAnyTag(new InputStream() {
+            @Override
+            public int read() {
+                return buf.readUnsignedByte();
+            }
+        });
+
+        if (tag == null) {
+            return null;
+        }
+
+        if (tag.getClass() != expected) {
+            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
+        }
+
+        return expected.cast(tag);
+    }
+
     public CompoundTag readTagLE(ByteBuf buf) throws IOException {
         return readTagLE(buf, CompoundTag.class);
     }
@@ -236,6 +262,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }, tag);
     }
 
+    public <T extends Tag> void writeAnyTag(ByteBuf buf, T tag) throws IOException {
+        NBTIO.writeAnyTag(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                buf.writeByte(b);
+            }
+        }, tag);
+    }
+
     public <T extends Tag> void writeTagLE(ByteBuf buf, T tag) throws IOException {
         NBTIO.writeTag(new OutputStream() {
             @Override
@@ -252,7 +287,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
 
         int item = this.readVarInt(buf);
-        return new ItemStack(item, buf.readByte(), this.readTag(buf));
+        return new ItemStack(item, buf.readByte(), this.readAnyTag(buf));
     }
 
     public void writeItemStack(ByteBuf buf, ItemStack item) throws IOException {
@@ -260,7 +295,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         if (item != null) {
             this.writeVarInt(buf, item.getId());
             buf.writeByte(item.getAmount());
-            this.writeTag(buf, item.getNbt());
+            this.writeAnyTag(buf, item.getNbt());
         }
     }
 
@@ -407,6 +442,31 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public void writeGlobalPos(ByteBuf buf, GlobalPos pos) {
         this.writeString(buf, pos.getDimension());
         this.writePosition(buf, pos.getPosition());
+    }
+
+    public PlayerSpawnInfo readPlayerSpawnInfo(ByteBuf buf) {
+        String dimension = this.readString(buf);
+        String worldName = this.readString(buf);
+        long hashedSeed = buf.readLong();
+        GameMode gameMode = GameMode.byId(buf.readByte());
+        GameMode previousGamemode = GameMode.byNullableId(buf.readByte());
+        boolean debug = buf.readBoolean();
+        boolean flat = buf.readBoolean();
+        GlobalPos lastDeathPos = this.readNullable(buf, this::readGlobalPos);
+        int portalCooldown = this.readVarInt(buf);
+        return new PlayerSpawnInfo(dimension, worldName, hashedSeed, gameMode, previousGamemode, debug, flat, lastDeathPos, portalCooldown);
+    }
+
+    public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
+        this.writeString(buf, info.getDimension());
+        this.writeString(buf, info.getWorldName());
+        buf.writeLong(info.getHashedSeed());
+        buf.writeByte(info.getGameMode().ordinal());
+        buf.writeByte(GameMode.toNullableId(info.getPreviousGamemode()));
+        buf.writeBoolean(info.isDebug());
+        buf.writeBoolean(info.isFlat());
+        this.writeNullable(buf, info.getLastDeathPos(), this::writeGlobalPos);
+        this.writeVarInt(buf, info.getPortalCooldown());
     }
 
     public ParticleType readParticleType(ByteBuf buf) {
@@ -786,20 +846,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public GameProfile.Property readProperty(ByteBuf buf) {
         String name = this.readString(buf);
         String value = this.readString(buf);
-        if (buf.readBoolean()) {
-            return new GameProfile.Property(name, value, this.readString(buf));
-        } else {
-            return new GameProfile.Property(name, value);
-        }
+        String signature = this.readNullable(buf, this::readString);
+        return new GameProfile.Property(name, value, signature);
     }
 
     public void writeProperty(ByteBuf buf, GameProfile.Property property) {
         this.writeString(buf, property.getName());
         this.writeString(buf, property.getValue());
-        buf.writeBoolean(property.hasSignature());
-        if (property.hasSignature()) {
-            this.writeString(buf, property.getSignature());
-        }
+        this.writeNullable(buf, property.getSignature(), this::writeString);
     }
 
     public <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {
