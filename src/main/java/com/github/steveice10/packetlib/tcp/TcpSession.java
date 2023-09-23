@@ -15,6 +15,7 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nullable;
@@ -32,6 +33,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
      */
     public static boolean USE_EVENT_LOOP_FOR_PACKETS = true;
     private static EventLoopGroup PACKET_EVENT_LOOP;
+    private static final int WAIT_FOR_SHUTDOWN_IN_MS = 2000;
 
     protected String host;
     protected int port;
@@ -296,7 +298,10 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         }
 
         if (PACKET_EVENT_LOOP == null) {
-            PACKET_EVENT_LOOP = new DefaultEventLoopGroup();
+            // See TcpClientSession.newThreadFactory() for details on
+            // daemon threads and their interaction with the runtime.
+            PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> PACKET_EVENT_LOOP.shutdownGracefully().awaitUninterruptibly(WAIT_FOR_SHUTDOWN_IN_MS)));
         }
         return PACKET_EVENT_LOOP.next();
     }
