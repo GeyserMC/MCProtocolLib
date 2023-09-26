@@ -605,11 +605,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public Effect readEffect(ByteBuf buf) {
-        return Effect.from(this.readVarInt(buf) - 1);
+        return Effect.from(this.readVarInt(buf));
     }
 
     public void writeEffect(ByteBuf buf, Effect effect) {
-        this.writeVarInt(buf, effect.ordinal() + 1);
+        this.writeVarInt(buf, effect.ordinal());
     }
 
     public BlockBreakStage readBlockBreakStage(ByteBuf buf) {
