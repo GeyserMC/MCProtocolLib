@@ -19,6 +19,7 @@ import java.io.IOException;
 public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private static final int FLAG_AMBIENT = 0x01;
     private static final int FLAG_SHOW_PARTICLES = 0x02;
+    private static final int FLAG_SHOW_ICON = 0x04;
 
     private final int entityId;
     private final @NonNull Effect effect;
@@ -26,6 +27,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private final int duration;
     private final boolean ambient;
     private final boolean showParticles;
+    private final boolean showIcon;
     private final @Nullable CompoundTag factorData;
 
     public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
@@ -37,8 +39,9 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
         int flags = in.readByte();
         this.ambient = (flags & FLAG_AMBIENT) != 0;
         this.showParticles = (flags & FLAG_SHOW_PARTICLES) != 0;
+        this.showIcon = (flags & FLAG_SHOW_ICON) != 0;
         if (in.readBoolean()) {
-            this.factorData = helper.readTag(in);
+            this.factorData = helper.readAnyTag(in);
         } else {
             this.factorData = null;
         }
@@ -55,15 +58,17 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
         if (this.ambient) {
             flags |= FLAG_AMBIENT;
         }
-
         if (this.showParticles) {
             flags |= FLAG_SHOW_PARTICLES;
+        }
+        if (this.showIcon) {
+            flags |= FLAG_SHOW_ICON;
         }
 
         out.writeByte(flags);
         out.writeBoolean(this.factorData != null);
         if (this.factorData != null) {
-            helper.writeTag(out, this.factorData);
+            helper.writeAnyTag(out, this.factorData);
         }
     }
 }
