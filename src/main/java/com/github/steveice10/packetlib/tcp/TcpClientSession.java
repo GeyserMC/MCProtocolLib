@@ -46,15 +46,22 @@ import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
+
 import java.net.*;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
 public class TcpClientSession extends TcpSession {
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
     private static Class<? extends Channel> CHANNEL_CLASS;
     private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
     private static EventLoopGroup EVENT_LOOP_GROUP;
-    private static final int WAIT_FOR_SHUTDOWN_IN_MS = 2000;
+
+    /**
+     * See {@link EventLoopGroup#shutdownGracefully(long, long, TimeUnit)}
+     */
+    private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
+    private static final int SHUTDOWN_TIMEOUT_MS = 500;
 
     private final String bindAddress;
     private final int bindPort;
@@ -106,7 +113,7 @@ public class TcpClientSession extends TcpSession {
                     try {
                         channel.config().setOption(ChannelOption.TCP_NODELAY, true);
                     } catch (ChannelException e) {
-                        if(debug) {
+                        if (debug) {
                             System.out.println("Exception while trying to set TCP_NODELAY");
                             e.printStackTrace();
                         }
@@ -319,15 +326,16 @@ public class TcpClientSession extends TcpSession {
                 break;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> EVENT_LOOP_GROUP.shutdownGracefully().awaitUninterruptibly(WAIT_FOR_SHUTDOWN_IN_MS)));
+        Runtime.getRuntime().addShutdownHook(new Thread(
+            () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
     }
 
     protected static ThreadFactory newThreadFactory() {
        // Create a new daemon thread. When the last non daemon thread ends
        // the runtime environment will call the shutdown hooks. One of the
        // hooks will try to shut down the event loop group which will
-       // normally lead to the thread exiting. If not, it will be forcably
-       // killed after WAIT_FOR_SHUTDOWN_IN_MS ms along with the other
+       // normally lead to the thread exiting. If not, it will be forcibly
+       // killed after SHUTDOWN_TIMEOUT_MS along with the other
        // daemon threads as the runtime exits.
        return new DefaultThreadFactory(TcpClientSession.class, true);
     }

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
     /**
@@ -33,7 +34,8 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
      */
     public static boolean USE_EVENT_LOOP_FOR_PACKETS = true;
     private static EventLoopGroup PACKET_EVENT_LOOP;
-    private static final int WAIT_FOR_SHUTDOWN_IN_MS = 2000;
+    private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
+    private static final int SHUTDOWN_TIMEOUT_MS = 500;
 
     protected String host;
     protected int port;
@@ -301,7 +303,8 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             // See TcpClientSession.newThreadFactory() for details on
             // daemon threads and their interaction with the runtime.
             PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> PACKET_EVENT_LOOP.shutdownGracefully().awaitUninterruptibly(WAIT_FOR_SHUTDOWN_IN_MS)));
+            Runtime.getRuntime().addShutdownHook(new Thread(
+                () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
         }
         return PACKET_EVENT_LOOP.next();
     }
