@@ -15,7 +15,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerboundCustomPayloadPacket implements MinecraftPacket {
     private final @NonNull String channel;
-    private final @NonNull byte data[];
+    private final byte @NonNull[] data;
 
     public ServerboundCustomPayloadPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.channel = helper.readString(in);

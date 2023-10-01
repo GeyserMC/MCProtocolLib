@@ -6,13 +6,14 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import org.jetbrains.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundCustomQueryAnswerPacket implements MinecraftPacket {
     private final int transactionId;
-    private final byte[] data;
+    private final byte @Nullable[] data;
 
     public ServerboundCustomQueryAnswerPacket(int transactionId) {
         this(transactionId, new byte[0]);
@@ -20,12 +21,12 @@ public class ServerboundCustomQueryAnswerPacket implements MinecraftPacket {
 
     public ServerboundCustomQueryAnswerPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.transactionId = helper.readVarInt(in);
-        this.data = helper.readByteArray(in, ByteBuf::readableBytes);
+        this.data = helper.readNullable(in, buf -> helper.readByteArray(buf, ByteBuf::readableBytes));
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.transactionId);
-        out.writeBytes(this.data);
+        helper.writeNullable(out, this.data, ByteBuf::writeBytes);
     }
 }
