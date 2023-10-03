@@ -243,7 +243,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundFinishConfigurationPacket.class, ServerboundFinishConfigurationPacket::new)
                     .registerServerboundPacket(ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
                     .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
-                    .registerClientboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
+                    .registerServerboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
             ).state(ProtocolState.GAME, PacketStateCodec.builder()
                     .registerClientboundPacket(ClientboundDelimiterPacket.class, ClientboundDelimiterPacket::new)
                     .registerClientboundPacket(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new)
