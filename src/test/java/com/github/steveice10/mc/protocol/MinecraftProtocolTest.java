@@ -17,9 +17,10 @@ import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import com.github.steveice10.packetlib.tcp.TcpServer;
 import net.kyori.adventure.text.Component;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -30,9 +31,6 @@ import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_H
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class MinecraftProtocolTest {
     private static final String HOST = "localhost";
@@ -49,7 +47,7 @@ public class MinecraftProtocolTest {
 
     private static Server server;
 
-    @BeforeClass
+    @BeforeAll
     public static void setupServer() {
         server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
@@ -66,10 +64,10 @@ public class MinecraftProtocolTest {
             session.send(JOIN_GAME_PACKET);
         });
 
-        assertTrue("Could not bind server.", server.bind(true).isListening());
+        Assertions.assertTrue(server.bind(true).isListening(), "Could not bind server.");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownServer() {
         if (server != null) {
             server.close(true);
@@ -87,8 +85,8 @@ public class MinecraftProtocolTest {
             session.connect();
 
             handler.status.await(4, SECONDS);
-            assertNotNull("Failed to get server info.", handler.info);
-            assertEquals("Received incorrect server info.", SERVER_INFO, handler.info);
+            Assertions.assertNotNull(handler.info, "Failed to get server info.");
+            Assertions.assertEquals(SERVER_INFO, handler.info, "Received incorrect server info.");
         } finally {
             session.disconnect("Status test complete.");
         }
@@ -104,8 +102,8 @@ public class MinecraftProtocolTest {
             session.connect();
 
             listener.login.await(4, SECONDS);
-            assertNotNull("Failed to log in.", listener.packet);
-            assertEquals("Received incorrect join packet.", JOIN_GAME_PACKET, listener.packet);
+            Assertions.assertNotNull(listener.packet, "Failed to log in.");
+            Assertions.assertEquals(JOIN_GAME_PACKET, listener.packet, "Received incorrect join packet.");
         } finally {
             session.disconnect("Login test complete.");
         }

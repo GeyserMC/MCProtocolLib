@@ -11,10 +11,10 @@ import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeDa
 import com.github.steveice10.mc.protocol.data.game.recipe.data.SmithingTransformRecipeData;
 import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class ServerDeclareRecipesTest extends PacketTest {
-    @Before
+    @BeforeEach
     public void setup() {
         this.setPackets(
                 new ClientboundUpdateRecipesPacket(

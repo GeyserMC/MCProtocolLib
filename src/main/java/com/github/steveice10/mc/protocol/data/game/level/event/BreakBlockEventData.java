@@ -7,5 +7,5 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 public class BreakBlockEventData implements LevelEventData {
-    private final @NonNull int blockState;
+    private final int blockState;
 }

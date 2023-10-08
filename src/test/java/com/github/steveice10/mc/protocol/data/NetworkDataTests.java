@@ -5,8 +5,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
@@ -22,7 +22,7 @@ public class NetworkDataTests {
             ByteBuf buf = Unpooled.buffer();
             helper.writeEffect(buf, effect);
 
-            Assert.assertEquals(effect, helper.readEffect(buf));
+            Assertions.assertEquals(effect, helper.readEffect(buf));
         }
     }
 }

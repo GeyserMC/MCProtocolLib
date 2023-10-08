@@ -6,11 +6,11 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetPlayerTeamPacket;
 import net.kyori.adventure.text.Component;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class ClientboundSetPlayerTeamPacketTest extends PacketTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         // Test nameTagVisibility and collisionRule encoding/decoding
         this.setPackets(

@@ -1,7 +1,7 @@
 package com.github.steveice10.mc.protocol.packet.login.clientbound;
 
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class ClientboundHelloPacketTest extends PacketTest {
-    @Before
+    @BeforeEach
     public void setup() {
         KeyPair keyPair;
         try {

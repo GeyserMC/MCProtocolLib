@@ -74,7 +74,6 @@ public interface Server {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    @SuppressWarnings("unchecked")
     <T> T getGlobalFlag(String key, T def);
 
     /**
@@ -116,6 +115,8 @@ public interface Server {
 
     /**
      * Binds the listener to its host and port.
+     *
+     * @return The server.
      */
     AbstractServer bind();
 
@@ -123,6 +124,7 @@ public interface Server {
      * Binds the listener to its host and port.
      *
      * @param wait Whether to wait for the listener to finish binding.
+     * @return The server.
      */
     AbstractServer bind(boolean wait);
 
@@ -131,6 +133,7 @@ public interface Server {
      *
      * @param wait     Whether to wait for the listener to finish binding.
      * @param callback Callback to call when the listener has finished binding.
+     * @return The server.
      */
     AbstractServer bind(boolean wait, Runnable callback);
 

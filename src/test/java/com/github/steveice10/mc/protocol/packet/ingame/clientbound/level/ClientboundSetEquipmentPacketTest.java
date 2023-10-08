@@ -5,11 +5,11 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.Equipment;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class ClientboundSetEquipmentPacketTest extends PacketTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         this.setPackets(
                 new ClientboundSetEquipmentPacket(1, new Equipment[]{

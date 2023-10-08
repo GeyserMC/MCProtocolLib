@@ -12,13 +12,13 @@ import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.OptionalInt;
 
 public class ClientboundSetEntityDataPacketTest extends PacketTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         this.setPackets(
                 new ClientboundSetEntityDataPacket(0, new EntityMetadata[0]),
