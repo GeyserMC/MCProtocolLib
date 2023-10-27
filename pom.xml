@@ -91,7 +91,7 @@
         <dependency>
             <groupId>com.github.GeyserMC</groupId>
             <artifactId>mcauthlib</artifactId>
-            <version>6621fd0</version>
+            <version>6621fd081c</version>
             <scope>compile</scope>
         </dependency>
         <!-- Kyori adventure -->
