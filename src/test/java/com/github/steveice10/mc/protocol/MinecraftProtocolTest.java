@@ -18,7 +18,6 @@ import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import com.github.steveice10.packetlib.tcp.TcpServer;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +30,7 @@ import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_H
 import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
 import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MinecraftProtocolTest {
     private static final String HOST = "localhost";
@@ -64,7 +64,7 @@ public class MinecraftProtocolTest {
             session.send(JOIN_GAME_PACKET);
         });
 
-        Assertions.assertTrue(server.bind(true).isListening(), "Could not bind server.");
+        assertTrue(server.bind(true).isListening(), "Could not bind server.");
     }
 
     @AfterAll
@@ -85,8 +85,8 @@ public class MinecraftProtocolTest {
             session.connect();
 
             handler.status.await(4, SECONDS);
-            Assertions.assertNotNull(handler.info, "Failed to get server info.");
-            Assertions.assertEquals(SERVER_INFO, handler.info, "Received incorrect server info.");
+            assertNotNull(handler.info, "Failed to get server info.");
+            assertEquals(SERVER_INFO, handler.info, "Received incorrect server info.");
         } finally {
             session.disconnect("Status test complete.");
         }
@@ -102,8 +102,8 @@ public class MinecraftProtocolTest {
             session.connect();
 
             listener.login.await(4, SECONDS);
-            Assertions.assertNotNull(listener.packet, "Failed to log in.");
-            Assertions.assertEquals(JOIN_GAME_PACKET, listener.packet, "Received incorrect join packet.");
+            assertNotNull(listener.packet, "Failed to log in.");
+            assertEquals(JOIN_GAME_PACKET, listener.packet, "Received incorrect join packet.");
         } finally {
             session.disconnect("Login test complete.");
         }

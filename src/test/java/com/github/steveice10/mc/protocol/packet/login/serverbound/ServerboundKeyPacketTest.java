@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.login.serverbound;
 
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +10,8 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServerboundKeyPacketTest extends PacketTest {
     private KeyPair keyPair;
@@ -41,7 +42,7 @@ public class ServerboundKeyPacketTest extends PacketTest {
 
     @Test
     public void testEncryptionResponsePacketGetters() {
-        Assertions.assertEquals(this.secretKey, this.packet.getSecretKey(this.keyPair.getPrivate()), "Secret key does not match.");
-        Assertions.assertArrayEquals(this.verifyToken, this.packet.getEncryptedChallenge(this.keyPair.getPrivate()), "Verify token does not match.");
+        assertEquals(this.secretKey, this.packet.getSecretKey(this.keyPair.getPrivate()), "Secret key does not match.");
+        assertArrayEquals(this.verifyToken, this.packet.getEncryptedChallenge(this.keyPair.getPrivate()), "Verify token does not match.");
     }
 }
