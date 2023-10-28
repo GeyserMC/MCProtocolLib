@@ -47,6 +47,12 @@ public class DataPalette {
     }
 
     /**
+     * Sets the block state at the given coordinates.
+     *
+     * @param x     the x coordinate.
+     * @param y     the y coordinate.
+     * @param z     the z coordinate.
+     * @param state the new block state.
      * @return the old value present in the storage.
      */
     public int set(int x, int y, int z, int state) {

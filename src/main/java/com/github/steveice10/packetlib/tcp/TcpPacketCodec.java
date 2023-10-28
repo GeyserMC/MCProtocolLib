@@ -33,7 +33,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             PacketDefinition definition = this.client ? packetProtocol.getServerboundDefinition(packetId) : packetProtocol.getClientboundDefinition(packetId);
 
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
-            definition.getSerializer().serialize(buf, codecHelper, packet);
+            definition.serializer().serialize(buf, codecHelper, packet);
         } catch (Throwable t) {
             // Reset writer index to make sure incomplete data is not written out.
             buf.writerIndex(initial);

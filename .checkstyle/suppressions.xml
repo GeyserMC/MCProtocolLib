@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suppressions PUBLIC "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN" "http://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+    <!-- no javadoc on test and internal classes -->
+    <suppress files="src[\\/]test[\\/]java[\\/].*" checks="(FilteringWriteTag|JavadocPackage|MissingJavadoc.*)"/>
+
+    <!-- no package JD on multirelease variants -->
+    <suppress files="src[\\/]main[\\/]java\d+[\\/].*" checks="JavadocPackage"/>
+
+    <!-- Gradle forces us to use get/set prefixes -->
+    <suppress checks="MethodName"/>
+</suppressions>

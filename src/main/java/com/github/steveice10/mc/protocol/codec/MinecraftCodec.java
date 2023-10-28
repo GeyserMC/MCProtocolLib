@@ -264,4 +264,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundUseItemPacket.class, ServerboundUseItemPacket::new)
             )
             .build();
+
+    private MinecraftCodec() {
+    }
 }

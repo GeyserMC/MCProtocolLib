@@ -8,7 +8,6 @@ public enum CraftingBookCategory {
 
     private static final CraftingBookCategory[] VALUES = values();
 
-
     public static CraftingBookCategory from(int id) {
         return VALUES[id];
     }

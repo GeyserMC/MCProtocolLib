@@ -19,6 +19,9 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
 
     /**
      * Creates a set score packet that removes the entry.
+     *
+     * @param entry The entry to remove.
+     * @param objective The objective to remove the entry from.
      */
     public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective) {
         this.entry = entry;
@@ -29,6 +32,10 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
 
     /**
      * Creates a set score packet that adds or updates the entry.
+     *
+     * @param entry The entry to add or update.
+     * @param objective The objective to add or update the entry in.
+     * @param value The value to set the entry to.
      */
     public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective, int value) {
         this.entry = entry;

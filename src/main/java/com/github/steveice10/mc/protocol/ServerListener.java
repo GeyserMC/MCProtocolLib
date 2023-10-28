@@ -33,6 +33,7 @@ import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 
 import javax.crypto.SecretKey;
@@ -42,8 +43,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Handles initial login and status requests for servers.
@@ -75,7 +76,7 @@ public class ServerListener extends SessionAdapter {
 
     public ServerListener(CompoundTag networkCodec) {
         this.networkCodec = networkCodec;
-        new Random().nextBytes(this.challenge);
+        ThreadLocalRandom.current().nextBytes(this.challenge);
     }
 
     @Override
@@ -106,8 +107,8 @@ public class ServerListener extends SessionAdapter {
                 }
             }
         } else if (protocol.getState() == ProtocolState.LOGIN) {
-            if (packet instanceof ServerboundHelloPacket) {
-                this.username = ((ServerboundHelloPacket) packet).getUsername();
+            if (packet instanceof ServerboundHelloPacket helloPacket) {
+                this.username = helloPacket.getUsername();
 
                 if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
                     session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge));
@@ -145,19 +146,19 @@ public class ServerListener extends SessionAdapter {
 
                 ServerStatusInfo info = builder.buildInfo(session);
                 session.send(new ClientboundStatusResponsePacket(info));
-            } else if (packet instanceof ServerboundPingRequestPacket) {
-                session.send(new ClientboundPongResponsePacket(((ServerboundPingRequestPacket) packet).getPingTime()));
+            } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
+                session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
             }
         } else if (protocol.getState() == ProtocolState.GAME) {
-            if (packet instanceof ServerboundKeepAlivePacket) {
-                if (((ServerboundKeepAlivePacket) packet).getPingId() == this.lastPingId) {
+            if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
+                if (keepAlivePacket.getPingId() == this.lastPingId) {
                     long time = System.currentTimeMillis() - this.lastPingTime;
                     session.setFlag(MinecraftConstants.PING_KEY, time);
                 }
             } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
                 protocol.setState(ProtocolState.CONFIGURATION);
-            } else if (packet instanceof ServerboundPingRequestPacket) {
-                session.send(new ClientboundPongResponsePacket(((ServerboundPingRequestPacket) packet).getPingTime()));
+            } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
+                session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
             }
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundFinishConfigurationPacket) {
@@ -192,14 +193,10 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
+    @RequiredArgsConstructor
     private class UserAuthTask implements Runnable {
         private final Session session;
         private final SecretKey key;
-
-        public UserAuthTask(Session session, SecretKey key) {
-            this.key = key;
-            this.session = session;
-        }
 
         @Override
         public void run() {
@@ -227,12 +224,9 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
+    @RequiredArgsConstructor
     private class KeepAliveTask implements Runnable {
         private final Session session;
-
-        public KeepAliveTask(Session session) {
-            this.session = session;
-        }
 
         @Override
         public void run() {

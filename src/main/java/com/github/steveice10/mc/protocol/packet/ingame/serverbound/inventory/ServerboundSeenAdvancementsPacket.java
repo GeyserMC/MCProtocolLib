@@ -29,6 +29,9 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     }
 
     /**
+     * Gets the tab ID that was opened.
+     *
+     * @return The tab ID.
      * @throws IllegalStateException if #getAction() is not {@link AdvancementTabAction#OPENED_TAB}.
      */
     public String getTabId() {

@@ -33,6 +33,6 @@ public class BufferedPacket implements Packet, PacketSerializer<BufferedPacket, 
         byte[] array = new byte[buf.readableBytes()];
         buf.readBytes(array);
 
-        return new BufferedPacket(definition.getPacketClass(), array);
+        return new BufferedPacket(definition.packetClass(), array);
     }
 }

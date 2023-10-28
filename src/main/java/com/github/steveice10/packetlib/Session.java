@@ -84,6 +84,7 @@ public interface Session {
      * Checks whether this session has a flag set. If this session belongs to a server,
      * the server's flags will also be checked.
      *
+     * @param <T>   Type of the flag.
      * @param key Key of the flag to check for.
      * @return Whether this session has a flag set.
      */
@@ -118,6 +119,7 @@ public interface Session {
      * Sets the value of a flag. This does not change a server's flags if this session
      * belongs to a server.
      *
+     * @param <T>   Type of the flag.
      * @param key   Key of the flag.
      * @param value Value to set the flag to.
      */

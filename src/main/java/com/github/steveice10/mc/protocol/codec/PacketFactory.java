@@ -10,6 +10,7 @@ import java.io.IOException;
  * Factory for constructing {@link Packet}s.
  *
  * @param <T> the packet type
+ * @param <H> the codec helper type
  */
 @FunctionalInterface
 public interface PacketFactory<T extends Packet, H extends PacketCodecHelper> {

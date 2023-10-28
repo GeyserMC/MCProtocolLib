@@ -14,7 +14,6 @@ public enum SoundCategory {
 
     private static final SoundCategory[] VALUES = values();
 
-
     public static SoundCategory from(int id) {
         return VALUES[id];
     }

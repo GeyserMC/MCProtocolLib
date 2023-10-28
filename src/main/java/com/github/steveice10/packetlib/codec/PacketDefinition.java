@@ -11,45 +11,12 @@ import java.io.IOException;
  * factory for construction.
  *
  * @param <T> the packet type
+ * @param <H> the codec helper type
+ * @param id the packet id
+ * @param packetClass the packet class
+ * @param serializer the packet serializer
  */
-public class PacketDefinition<T extends Packet, H extends PacketCodecHelper> {
-    private final int id;
-    private final Class<T> packetClass;
-    private final PacketSerializer<T, H> serializer;
-
-    public PacketDefinition(final int id, final Class<T> packetClass, final PacketSerializer<T, H> serializer) {
-        this.id = id;
-        this.packetClass = packetClass;
-        this.serializer = serializer;
-    }
-
-    /**
-     * Returns the id of the packet.
-     *
-     * @return the id of the packet
-     */
-    public int getId() {
-        return this.id;
-    }
-
-    /**
-     * Returns the class of the packet.
-     *
-     * @return the class of the packet
-     */
-    public Class<T> getPacketClass() {
-        return this.packetClass;
-    }
-
-    /**
-     * Returns the {@link PacketSerializer} of the packet.
-     *
-     * @return the packet serializer of the packet
-     */
-    public PacketSerializer<T, H> getSerializer() {
-        return this.serializer;
-    }
-
+public record PacketDefinition<T extends Packet, H extends PacketCodecHelper>(int id, Class<T> packetClass, PacketSerializer<T, H> serializer) {
     public T newInstance(ByteBuf buf, H helper) throws IOException {
         return this.serializer.deserialize(buf, helper, this);
     }

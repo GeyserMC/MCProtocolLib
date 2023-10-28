@@ -18,7 +18,10 @@ public class TransportHelper {
     }
 
     /**
-     * Used so implementations can opt to remove these dependencies if so desired
+     * Used so implementations can opt to remove these dependencies if so desired.
+     *
+     * @param className The class name to check for.
+     * @return Whether the class is available.
      */
     private static boolean isClassAvailable(String className) {
         try {
@@ -27,5 +30,8 @@ public class TransportHelper {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    private TransportHelper() {
     }
 }

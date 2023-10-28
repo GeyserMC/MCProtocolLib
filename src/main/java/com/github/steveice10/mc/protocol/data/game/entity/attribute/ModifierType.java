@@ -25,4 +25,7 @@ public final class ModifierType {
     public static final UUID CHESTPLATE_MODIFIER = UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E");
     public static final UUID HELMET_MODIFIER = UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150");
     public static final UUID COVERED_ARMOR_BONUS = UUID.fromString("7E0292F2-9434-48D5-A29F-9583AF7DF27F");
+
+    private ModifierType() {
+    }
 }

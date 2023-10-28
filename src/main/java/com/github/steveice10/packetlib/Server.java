@@ -49,6 +49,7 @@ public interface Server {
     /**
      * Checks whether this server has a flag set.
      *
+     * @param <T>   Type of the flag.
      * @param key Key of the flag to check for.
      * @return Whether this server has a flag set.
      */
@@ -80,6 +81,7 @@ public interface Server {
      * Sets the value of a flag. The flag will be used in sessions if a session does
      * not contain a value for the flag.
      *
+     * @param <T>   Type of the flag.
      * @param key   Key of the flag.
      * @param value Value to set the flag to.
      */

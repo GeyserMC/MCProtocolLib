@@ -10,8 +10,6 @@ import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -24,8 +22,7 @@ public class ClientboundDisguisedChatPacket implements MinecraftPacket {
     private final Component name;
     private final @Nullable Component targetName;
 
-
-    public ClientboundDisguisedChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundDisguisedChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.message = helper.readComponent(in);
         this.chatType = helper.readVarInt(in);
         this.name = helper.readComponent(in);
@@ -33,7 +30,7 @@ public class ClientboundDisguisedChatPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.message);
         helper.writeVarInt(out, this.chatType);
         helper.writeComponent(out, this.name);

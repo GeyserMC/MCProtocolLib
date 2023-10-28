@@ -74,6 +74,8 @@ public abstract class PacketProtocol {
     /**
      * Registers a packet to this protocol as both serverbound and clientbound.
      *
+     * @param <T>        The type of packet to register.
+     * @param <H>        The type of codec helper to use.
      * @param id         Id to register the packet to.
      * @param packet     Packet to register.
      * @param serializer The packet serializer.
@@ -98,6 +100,8 @@ public abstract class PacketProtocol {
     /**
      * Registers a serverbound packet to this protocol.
      *
+     * @param <T>        The type of packet to register.
+     * @param <H>        The type of codec helper to use.
      * @param id         Id to register the packet to.
      * @param packet     Packet to register.
      * @param serializer The packet serializer.
@@ -113,13 +117,15 @@ public abstract class PacketProtocol {
      * @param definition The packet definition.
      */
     public final void registerServerbound(PacketDefinition<? extends Packet, ?> definition) {
-        this.serverbound.put(definition.getId(), definition);
-        this.serverboundIds.put(definition.getPacketClass(), definition.getId());
+        this.serverbound.put(definition.id(), definition);
+        this.serverboundIds.put(definition.packetClass(), definition.id());
     }
 
     /**
      * Registers a clientbound packet to this protocol.
      *
+     * @param <T>        The type of packet to register.
+     * @param <H>        The type of codec helper to use.
      * @param id         Id to register the packet to.
      * @param packet     Packet to register.
      * @param serializer The packet serializer.
@@ -134,13 +140,14 @@ public abstract class PacketProtocol {
      * @param definition The packet definition.
      */
     public final void registerClientbound(PacketDefinition<? extends Packet, ?> definition) {
-        this.clientbound.put(definition.getId(), definition);
-        this.clientboundIds.put(definition.getPacketClass(), definition.getId());
+        this.clientbound.put(definition.id(), definition);
+        this.clientboundIds.put(definition.packetClass(), definition.id());
     }
 
     /**
      * Creates a new instance of a clientbound packet with the given id and read the clientbound input.
      *
+     * @param <H>        The type of codec helper to use.
      * @param id          Id of the packet to create.
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
@@ -202,12 +209,13 @@ public abstract class PacketProtocol {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
 
-        return definition.getPacketClass();
+        return definition.packetClass();
     }
 
     /**
      * Creates a new instance of a serverbound packet with the given id and read the serverbound input.
      *
+     * @param <H>        The type of codec helper to use.
      * @param id          Id of the packet to create.
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
@@ -269,7 +277,7 @@ public abstract class PacketProtocol {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
 
-        return definition.getPacketClass();
+        return definition.packetClass();
     }
 
     /**

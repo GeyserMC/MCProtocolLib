@@ -18,12 +18,17 @@ public abstract class EntityMetadata<V, T extends MetadataType<V>> {
 
     /**
      * May be null depending on type
+     *
+     * @return The value of this metadata.
      */
     public abstract V getValue();
 
     /**
      * Overridden for primitive classes. This write method still checks for these primitives in the event
      * they are manually created using {@link ObjectEntityMetadata}.
+     *
+     * @param helper The codec helper.
+     * @param out The output buffer.
      */
     public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
         this.type.writeMetadata(helper, out, this.getValue());

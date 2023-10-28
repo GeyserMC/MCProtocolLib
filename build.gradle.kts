@@ -1,15 +1,17 @@
 plugins {
+    idea
     `java-library`
     `maven-publish`
     id("net.kyori.indra") version "3.1.3"
     id("net.kyori.indra.git") version "3.1.3"
     id("net.kyori.indra.publishing") version "3.1.3"
+    id("net.kyori.indra.checkstyle") version "3.1.3"
 }
 
 indra {
     github("GeyserMC", "MCProtocolLib")
 
-    gpl3OnlyLicense()
+    mitLicense()
     publishReleasesTo("opencollab-release-repo", "https://repo.opencollab.dev/maven-releases/")
     publishSnapshotsTo("opencollab-snapshot-repo", "https://repo.opencollab.dev/maven-snapshots/")
 
