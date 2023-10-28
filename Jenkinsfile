@@ -19,7 +19,7 @@ pipeline {
             }
 
             steps {
-                sh './gradlew javadocs'
+                sh './gradlew javadoc'
                 step([$class: 'JavadocArchiver', javadocDir: 'target/site/apidocs', keepAll: false])
             }
         }
