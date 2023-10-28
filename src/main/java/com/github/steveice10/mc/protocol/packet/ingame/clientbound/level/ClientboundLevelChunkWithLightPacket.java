@@ -20,7 +20,7 @@ import java.io.IOException;
 public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final @NonNull byte[] chunkData;
+    private final byte @NonNull [] chunkData;
     private final @NonNull CompoundTag heightMaps;
     private final @NonNull BlockEntityInfo[] blockEntities;
     private final @NonNull LightUpdateData lightData;
@@ -55,10 +55,10 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.blockEntities.length);
         for (BlockEntityInfo blockEntity : this.blockEntities) {
-            out.writeByte(((blockEntity.getX() & 15) << 4) | blockEntity.getZ() & 15);
-            out.writeShort(blockEntity.getY());
-            helper.writeBlockEntityType(out, blockEntity.getType());
-            helper.writeAnyTag(out, blockEntity.getNbt());
+            out.writeByte(((blockEntity.x() & 15) << 4) | blockEntity.z() & 15);
+            out.writeShort(blockEntity.y());
+            helper.writeBlockEntityType(out, blockEntity.type());
+            helper.writeAnyTag(out, blockEntity.nbt());
         }
 
         helper.writeLightUpdateData(out, this.lightData);

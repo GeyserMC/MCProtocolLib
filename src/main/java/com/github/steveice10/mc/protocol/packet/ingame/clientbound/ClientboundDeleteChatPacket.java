@@ -8,8 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -22,9 +20,9 @@ public class ClientboundDeleteChatPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.messageSignature.getId() + 1);
-        if (this.messageSignature.getMessageSignature() != null) {
-            out.writeBytes(messageSignature.getMessageSignature());
+        helper.writeVarInt(out, this.messageSignature.id() + 1);
+        if (this.messageSignature.messageSignature() != null) {
+            out.writeBytes(messageSignature.messageSignature());
         }
     }
 }

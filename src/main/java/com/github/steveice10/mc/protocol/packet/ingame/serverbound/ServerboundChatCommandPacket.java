@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -47,8 +46,8 @@ public class ServerboundChatCommandPacket implements MinecraftPacket {
         out.writeLong(this.salt);
         helper.writeVarInt(out, this.signatures.size());
         for (ArgumentSignature signature : this.signatures) {
-            helper.writeString(out, signature.getName());
-            out.writeBytes(signature.getSignature());
+            helper.writeString(out, signature.name());
+            out.writeBytes(signature.signature());
         }
 
         helper.writeVarInt(out, this.offset);

@@ -13,8 +13,6 @@ import lombok.NonNull;
 import lombok.With;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @With
@@ -73,28 +71,28 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
             int statisticId;
             if (statistic instanceof BreakBlockStatistic) {
                 category = StatisticCategory.BREAK_BLOCK;
-                statisticId = ((BreakBlockStatistic) statistic).getId();
+                statisticId = ((BreakBlockStatistic) statistic).id();
             } else if (statistic instanceof CraftItemStatistic) {
                 category = StatisticCategory.CRAFT_ITEM;
-                statisticId = ((CraftItemStatistic) statistic).getId();
+                statisticId = ((CraftItemStatistic) statistic).id();
             } else if (statistic instanceof UseItemStatistic) {
                 category = StatisticCategory.USE_ITEM;
-                statisticId = ((UseItemStatistic) statistic).getId();
+                statisticId = ((UseItemStatistic) statistic).id();
             } else if (statistic instanceof BreakItemStatistic) {
                 category = StatisticCategory.BREAK_ITEM;
-                statisticId = ((BreakItemStatistic) statistic).getId();
+                statisticId = ((BreakItemStatistic) statistic).id();
             } else if (statistic instanceof PickupItemStatistic) {
                 category = StatisticCategory.PICKED_UP_ITEM;
-                statisticId = ((PickupItemStatistic) statistic).getId();
+                statisticId = ((PickupItemStatistic) statistic).id();
             } else if (statistic instanceof DropItemStatistic) {
                 category = StatisticCategory.DROP_ITEM;
-                statisticId = ((DropItemStatistic) statistic).getId();
+                statisticId = ((DropItemStatistic) statistic).id();
             } else if (statistic instanceof KillEntityStatistic) {
                 category = StatisticCategory.KILL_ENTITY;
-                statisticId = ((KillEntityStatistic) statistic).getEntity().ordinal();
+                statisticId = ((KillEntityStatistic) statistic).entity().ordinal();
             } else if (statistic instanceof KilledByEntityStatistic) {
                 category = StatisticCategory.KILLED_BY_ENTITY;
-                statisticId = ((KilledByEntityStatistic) statistic).getEntity().ordinal();
+                statisticId = ((KilledByEntityStatistic) statistic).entity().ordinal();
             } else if (statistic instanceof CustomStatistic) {
                 category = StatisticCategory.CUSTOM;
                 statisticId = ((CustomStatistic) statistic).ordinal();

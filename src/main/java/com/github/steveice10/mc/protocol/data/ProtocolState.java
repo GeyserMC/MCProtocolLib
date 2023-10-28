@@ -5,5 +5,5 @@ public enum ProtocolState {
     LOGIN,
     GAME,
     STATUS,
-    CONFIGURATION;
+    CONFIGURATION
 }

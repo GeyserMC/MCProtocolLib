@@ -1,11 +1,13 @@
 package com.github.steveice10.mc.protocol.data.game.chat;
 
 import com.github.steveice10.mc.protocol.data.game.Identifier;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Getter
 public enum BuiltinChatType {
     CHAT,
     SAY_COMMAND,
@@ -15,15 +17,7 @@ public enum BuiltinChatType {
     TEAM_MSG_COMMAND_OUTGOING,
     EMOTE_COMMAND;
 
-    private final String resourceLocation;
-
-    BuiltinChatType() {
-        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
-    }
-
-    public String getResourceLocation() {
-        return resourceLocation;
-    }
+    private final String resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
 
     private static final Map<String, BuiltinChatType> VALUES = new HashMap<>();
 

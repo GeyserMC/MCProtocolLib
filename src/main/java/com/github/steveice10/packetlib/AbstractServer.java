@@ -13,7 +13,7 @@ public abstract class AbstractServer implements Server {
 
     private final List<Session> sessions = new ArrayList<>();
 
-    private final Map<String, Object> flags = new HashMap<>();
+    private final Map<Flag<?>, Object> flags = new HashMap<>();
     private final List<ServerListener> listeners = new ArrayList<>();
 
     public AbstractServer(String host, int port, Supplier<? extends PacketProtocol> protocolSupplier) {
@@ -42,23 +42,23 @@ public abstract class AbstractServer implements Server {
     }
 
     @Override
-    public Map<String, Object> getGlobalFlags() {
+    public Map<Flag<?>, ?> getGlobalFlags() {
         return Collections.unmodifiableMap(this.flags);
     }
 
     @Override
-    public boolean hasGlobalFlag(String key) {
+    public <T> boolean hasGlobalFlag(Flag<T> key) {
         return this.flags.containsKey(key);
     }
 
     @Override
-    public <T> T getGlobalFlag(String key) {
+    public <T> T getGlobalFlag(Flag<T> key) {
         return this.getGlobalFlag(key, null);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getGlobalFlag(String key, T def) {
+    public <T> T getGlobalFlag(Flag<T> key, T def) {
         Object value = this.flags.get(key);
         if(value == null) {
             return def;
@@ -72,7 +72,7 @@ public abstract class AbstractServer implements Server {
     }
 
     @Override
-    public void setGlobalFlag(String key, Object value) {
+    public <T> void setGlobalFlag(Flag<T> key, T value) {
         this.flags.put(key, value);
     }
 

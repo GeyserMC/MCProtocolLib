@@ -12,7 +12,6 @@ import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -79,9 +78,9 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.lastSeenMessages.size());
         for (MessageSignature messageSignature : this.lastSeenMessages) {
-            helper.writeVarInt(out, messageSignature.getId() + 1);
-            if (messageSignature.getMessageSignature() != null) {
-                out.writeBytes(messageSignature.getMessageSignature());
+            helper.writeVarInt(out, messageSignature.id() + 1);
+            if (messageSignature.messageSignature() != null) {
+                out.writeBytes(messageSignature.messageSignature());
             }
         }
 

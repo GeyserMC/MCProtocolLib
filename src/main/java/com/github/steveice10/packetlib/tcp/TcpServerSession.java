@@ -1,6 +1,7 @@
 package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.codec.PacketCodecHelper;
+import com.github.steveice10.packetlib.Flag;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -23,15 +24,15 @@ public class TcpServerSession extends TcpSession {
     }
 
     @Override
-    public Map<String, Object> getFlags() {
-        Map<String, Object> ret = new HashMap<>();
+    public Map<Flag<?>, ?> getFlags() {
+        Map<Flag<?>, Object> ret = new HashMap<>();
         ret.putAll(this.server.getGlobalFlags());
         ret.putAll(super.getFlags());
         return ret;
     }
 
     @Override
-    public boolean hasFlag(String key) {
+    public <T> boolean hasFlag(Flag<T> key) {
         if(super.hasFlag(key)) {
             return true;
         }
@@ -40,7 +41,7 @@ public class TcpServerSession extends TcpSession {
     }
 
     @Override
-    public <T> T getFlag(String key, T def) {
+    public <T> T getFlag(Flag<T> key, T def) {
         T ret = super.getFlag(key, null);
         if(ret != null) {
             return ret;

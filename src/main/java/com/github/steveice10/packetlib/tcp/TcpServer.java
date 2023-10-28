@@ -165,14 +165,11 @@ public class TcpServer extends AbstractServer {
                 } catch(InterruptedException e) {
                 }
             } else {
-                future.addListener(new GenericFutureListener() {
-                    @Override
-                    public void operationComplete(Future future) {
-                        if(!future.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
-                            System.err.println("[ERROR] Failed to asynchronously close connection listener.");
-                            if(future.cause() != null) {
-                                future.cause().printStackTrace();
-                            }
+                future.addListener((GenericFutureListener) future12 -> {
+                    if(!future12.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
+                        System.err.println("[ERROR] Failed to asynchronously close connection listener.");
+                        if(future12.cause() != null) {
+                            future12.cause().printStackTrace();
                         }
                     }
                 });

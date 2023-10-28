@@ -72,7 +72,7 @@ public class DataPalette {
         if (bitsPerEntry <= this.paletteType.getMaxBitsPerEntry()) {
             return Math.max(this.paletteType.getMinBitsPerEntry(), bitsPerEntry);
         } else {
-            return GLOBAL_PALETTE_BITS_PER_ENTRY;
+            return globalPaletteBits;
         }
     }
 

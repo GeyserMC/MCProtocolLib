@@ -5,12 +5,5 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
-@Data
-@AllArgsConstructor
-public class BlockEntityInfo {
-    private final int x;
-    private final int y;
-    private final int z;
-    private final BlockEntityType type;
-    private final @Nullable CompoundTag nbt;
+public record BlockEntityInfo(int x, int y, int z, BlockEntityType type, @Nullable CompoundTag nbt) {
 }

@@ -44,7 +44,7 @@ public interface Server {
      *
      * @return This server's flags.
      */
-    Map<String, Object> getGlobalFlags();
+    Map<Flag<?>, ?> getGlobalFlags();
 
     /**
      * Checks whether this server has a flag set.
@@ -52,7 +52,7 @@ public interface Server {
      * @param key Key of the flag to check for.
      * @return Whether this server has a flag set.
      */
-    boolean hasGlobalFlag(String key);
+    <T> boolean hasGlobalFlag(Flag<T> key);
 
     /**
      * Gets the value of the given flag as an instance of the given type.
@@ -62,7 +62,7 @@ public interface Server {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getGlobalFlag(String key);
+    <T> T getGlobalFlag(Flag<T> key);
 
     /**
      * Gets the value of the given flag as an instance of the given type.
@@ -74,7 +74,7 @@ public interface Server {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getGlobalFlag(String key, T def);
+    <T> T getGlobalFlag(Flag<T> key, T def);
 
     /**
      * Sets the value of a flag. The flag will be used in sessions if a session does
@@ -83,7 +83,7 @@ public interface Server {
      * @param key   Key of the flag.
      * @param value Value to set the flag to.
      */
-    void setGlobalFlag(String key, Object value);
+    <T> void setGlobalFlag(Flag<T> key, T value);
 
     /**
      * Gets the listeners listening on this session.

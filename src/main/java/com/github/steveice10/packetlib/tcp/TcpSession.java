@@ -8,6 +8,7 @@ import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
 import com.github.steveice10.packetlib.event.session.PacketSendingEvent;
 import com.github.steveice10.packetlib.event.session.SessionEvent;
 import com.github.steveice10.packetlib.event.session.SessionListener;
+import com.github.steveice10.packetlib.Flag;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.channel.*;
@@ -16,6 +17,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nullable;
@@ -47,9 +49,10 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     private int readTimeout = 30;
     private int writeTimeout = 0;
 
-    private final Map<String, Object> flags = new HashMap<>();
+    private final Map<Flag<?>, Object> flags = new HashMap<>();
     private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
 
+    @Getter
     private Channel channel;
     protected boolean disconnected = false;
 
@@ -94,23 +97,23 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public Map<String, Object> getFlags() {
+    public Map<Flag<?>, ?> getFlags() {
         return Collections.unmodifiableMap(this.flags);
     }
 
     @Override
-    public boolean hasFlag(String key) {
+    public <T> boolean hasFlag(Flag<T> key) {
         return this.flags.containsKey(key);
     }
 
     @Override
-    public <T> T getFlag(String key) {
+    public <T> T getFlag(Flag<T> key) {
         return this.getFlag(key, null);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getFlag(String key, T def) {
+    public <T> T getFlag(Flag<T> key, T def) {
         Object value = this.flags.get(key);
         if (value == null) {
             return def;
@@ -124,7 +127,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void setFlag(String key, Object value) {
+    public <T> void setFlag(Flag<T> key, T value) {
         this.flags.put(key, value);
     }
 
@@ -307,10 +310,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
                 () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
         }
         return PACKET_EVENT_LOOP.next();
-    }
-
-    public Channel getChannel() {
-        return this.channel;
     }
 
     protected void refreshReadTimeoutHandler() {

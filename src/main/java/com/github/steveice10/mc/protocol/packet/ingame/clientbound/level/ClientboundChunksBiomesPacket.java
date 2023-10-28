@@ -29,9 +29,9 @@ public class ClientboundChunksBiomesPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.chunkBiomeData.size());
         for (ChunkBiomeData entry : this.chunkBiomeData) {
-            long raw = (long)entry.getX() & 0xFFFFFFFFL | ((long)entry.getZ() & 0xFFFFFFFFL) << 32;
+            long raw = (long)entry.x() & 0xFFFFFFFFL | ((long)entry.z() & 0xFFFFFFFFL) << 32;
             out.writeLong(raw);
-            helper.writeByteArray(out, entry.getBuffer());
+            helper.writeByteArray(out, entry.buffer());
         }
     }
 }

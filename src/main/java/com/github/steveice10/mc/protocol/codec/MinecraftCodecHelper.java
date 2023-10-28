@@ -95,8 +95,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private final Int2ObjectMap<LevelEventType> levelEvents;
     private final Map<String, BuiltinSound> soundNames;
 
-    protected CompoundTag registry;
-
     @Nullable
     public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
         if (buf.readBoolean()) {
@@ -488,38 +486,32 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) throws IOException {
-        switch (type) {
-            case BLOCK:
-            case BLOCK_MARKER:
-                return new BlockParticleData(this.readVarInt(buf));
-            case DUST:
+        return switch (type) {
+            case BLOCK, BLOCK_MARKER -> new BlockParticleData(this.readVarInt(buf));
+            case DUST -> {
                 float red = buf.readFloat();
                 float green = buf.readFloat();
                 float blue = buf.readFloat();
                 float scale = buf.readFloat();
-                return new DustParticleData(red, green, blue, scale);
-            case DUST_COLOR_TRANSITION:
-                red = buf.readFloat();
-                green = buf.readFloat();
-                blue = buf.readFloat();
-                scale = buf.readFloat();
+                yield new DustParticleData(red, green, blue, scale);
+            }
+            case DUST_COLOR_TRANSITION -> {
+                float red = buf.readFloat();
+                float green = buf.readFloat();
+                float blue = buf.readFloat();
+                float scale = buf.readFloat();
                 float newRed = buf.readFloat();
                 float newGreen = buf.readFloat();
                 float newBlue = buf.readFloat();
-                return new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
-            case FALLING_DUST:
-                return new FallingDustParticleData(this.readVarInt(buf));
-            case ITEM:
-                return new ItemParticleData(this.readItemStack(buf));
-            case SCULK_CHARGE:
-                return new SculkChargeParticleData(buf.readFloat());
-            case SHRIEK:
-                return new ShriekParticleData(this.readVarInt(buf));
-            case VIBRATION:
-                return new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
-            default:
-                return null;
-        }
+                yield new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
+            }
+            case FALLING_DUST -> new FallingDustParticleData(this.readVarInt(buf));
+            case ITEM -> new ItemParticleData(this.readItemStack(buf));
+            case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
+            case SHRIEK -> new ShriekParticleData(this.readVarInt(buf));
+            case VIBRATION -> new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
+            default -> null;
+        };
     }
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) throws IOException {
@@ -884,20 +876,5 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeNibbleArray(ByteBuf buf, NibbleArray3d nibbleArray) {
         buf.writeBytes(nibbleArray.getData());
-    }
-
-    /**
-     * The game registry sent to clients from the {@link ClientboundLoginPacket}.
-     * Implementations are required to set this value if they intend to use it.
-     *
-     * @return the game registry
-     */
-    @Nullable
-    public CompoundTag getRegistry() {
-        return this.registry;
-    }
-
-    public void setRegistry(CompoundTag registry) {
-        this.registry = registry;
     }
 }

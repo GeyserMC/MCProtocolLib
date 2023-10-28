@@ -1,11 +1,14 @@
 package com.github.steveice10.mc.protocol.data.game.statistic;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * "Custom" statistics in Minecraft that don't belong to any
  * specific category.
  */
+@Getter
+@RequiredArgsConstructor
 public enum CustomStatistic implements Statistic {
     LEAVE_GAME,
     PLAY_TIME(StatisticFormat.TIME),
@@ -85,15 +88,10 @@ public enum CustomStatistic implements Statistic {
 
     private static final CustomStatistic[] VALUES = values();
 
-    @Getter
     private final StatisticFormat format;
 
     CustomStatistic() {
         format = StatisticFormat.INTEGER;
-    }
-
-    CustomStatistic(StatisticFormat format) {
-        this.format = format;
     }
 
     public static CustomStatistic from(int id) {
