@@ -24,7 +24,7 @@ public enum SpreadItemAction implements ContainerAction {
         return id;
     }
 
-    private static Int2ObjectMap<SpreadItemAction> VALUES = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<SpreadItemAction> VALUES = new Int2ObjectOpenHashMap<>();
 
     public static SpreadItemAction from(int id) {
         return VALUES.get(id);

@@ -8,13 +8,13 @@ import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
-import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
@@ -87,8 +87,7 @@ public class ServerListener extends SessionAdapter {
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
         if (protocol.getState() == ProtocolState.HANDSHAKE) {
-            if (packet instanceof ClientIntentionPacket) {
-                ClientIntentionPacket intentionPacket = (ClientIntentionPacket) packet;
+            if (packet instanceof ClientIntentionPacket intentionPacket) {
                 switch (intentionPacket.getIntent()) {
                     case STATUS:
                         protocol.setState(ProtocolState.STATUS);
@@ -115,8 +114,7 @@ public class ServerListener extends SessionAdapter {
                 } else {
                     new Thread(new UserAuthTask(session, null)).start();
                 }
-            } else if (packet instanceof ServerboundKeyPacket) {
-                ServerboundKeyPacket keyPacket = (ServerboundKeyPacket) packet;
+            } else if (packet instanceof ServerboundKeyPacket keyPacket) {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
 
                 if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
@@ -195,8 +193,8 @@ public class ServerListener extends SessionAdapter {
     }
 
     private class UserAuthTask implements Runnable {
-        private Session session;
-        private SecretKey key;
+        private final Session session;
+        private final SecretKey key;
 
         public UserAuthTask(Session session, SecretKey key) {
             this.key = key;
@@ -230,7 +228,7 @@ public class ServerListener extends SessionAdapter {
     }
 
     private class KeepAliveTask implements Runnable {
-        private Session session;
+        private final Session session;
 
         public KeepAliveTask(Session session) {
             this.session = session;

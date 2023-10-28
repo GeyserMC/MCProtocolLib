@@ -31,7 +31,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         try {
             int packetId = this.client ? packetProtocol.getServerboundId(packet) : packetProtocol.getClientboundId(packet);
             PacketDefinition definition = this.client ? packetProtocol.getServerboundDefinition(packetId) : packetProtocol.getClientboundDefinition(packetId);
-            
+
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
         } catch (Throwable t) {

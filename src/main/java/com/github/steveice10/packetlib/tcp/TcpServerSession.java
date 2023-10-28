@@ -1,7 +1,7 @@
 package com.github.steveice10.packetlib.tcp;
 
-import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.Flag;
+import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -33,7 +33,7 @@ public class TcpServerSession extends TcpSession {
 
     @Override
     public <T> boolean hasFlag(Flag<T> key) {
-        if(super.hasFlag(key)) {
+        if (super.hasFlag(key)) {
             return true;
         }
 
@@ -43,7 +43,7 @@ public class TcpServerSession extends TcpSession {
     @Override
     public <T> T getFlag(Flag<T> key, T def) {
         T ret = super.getFlag(key, null);
-        if(ret != null) {
+        if (ret != null) {
             return ret;
         }
 

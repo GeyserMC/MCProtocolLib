@@ -9,8 +9,8 @@ import java.security.Key;
  * An encryption implementation using "AES/CFB8/NoPadding" encryption.
  */
 public class AESEncryption implements PacketEncryption {
-    private Cipher inCipher;
-    private Cipher outCipher;
+    private final Cipher inCipher;
+    private final Cipher outCipher;
 
     /**
      * Creates a new AESEncryption instance.

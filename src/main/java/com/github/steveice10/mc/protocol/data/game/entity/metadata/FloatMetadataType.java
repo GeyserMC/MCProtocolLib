@@ -13,7 +13,7 @@ public class FloatMetadataType extends MetadataType<Float> {
 
     protected FloatMetadataType(FloatReader reader, FloatWriter writer, FloatEntityMetadataFactory metadataFactory) {
         super(reader, writer, metadataFactory);
-        
+
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
         this.primitiveFactory = metadataFactory;

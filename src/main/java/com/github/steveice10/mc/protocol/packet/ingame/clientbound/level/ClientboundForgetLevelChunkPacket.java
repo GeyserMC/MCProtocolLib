@@ -18,8 +18,8 @@ public class ClientboundForgetLevelChunkPacket implements MinecraftPacket {
 
     public ClientboundForgetLevelChunkPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         long chunkPosition = in.readLong();
-        this.x = (int)chunkPosition;
-        this.z = (int)(chunkPosition >> 32);
+        this.x = (int) chunkPosition;
+        this.z = (int) (chunkPosition >> 32);
     }
 
     @Override

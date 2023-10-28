@@ -19,7 +19,7 @@ public class ServerboundChatPacket implements MinecraftPacket {
     private final @NotNull String message;
     private final long timeStamp;
     private final long salt;
-    private final byte @Nullable[] signature;
+    private final byte @Nullable [] signature;
     private final int offset;
     private final BitSet acknowledgedMessages;
 

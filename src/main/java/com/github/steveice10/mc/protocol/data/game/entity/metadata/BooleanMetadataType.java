@@ -25,7 +25,7 @@ public class BooleanMetadataType extends MetadataType<Boolean> {
     }
 
     public void writeMetadataPrimitive(ByteBuf output, boolean value) throws IOException {
-       this.primitiveWriter.writePrimitive(output, value);
+        this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface

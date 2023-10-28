@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 public class ServerboundCustomQueryAnswerPacket implements MinecraftPacket {
     private final int transactionId;
-    private final byte @Nullable[] data;
+    private final byte @Nullable [] data;
 
     public ServerboundCustomQueryAnswerPacket(int transactionId) {
         this(transactionId, new byte[0]);

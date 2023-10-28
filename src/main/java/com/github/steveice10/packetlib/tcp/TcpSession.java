@@ -1,14 +1,9 @@
 package com.github.steveice10.packetlib.tcp;
 
+import com.github.steveice10.packetlib.Flag;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.crypt.PacketEncryption;
-import com.github.steveice10.packetlib.event.session.ConnectedEvent;
-import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
-import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
-import com.github.steveice10.packetlib.event.session.PacketSendingEvent;
-import com.github.steveice10.packetlib.event.session.SessionEvent;
-import com.github.steveice10.packetlib.event.session.SessionListener;
-import com.github.steveice10.packetlib.Flag;
+import com.github.steveice10.packetlib.event.session.*;
 import com.github.steveice10.packetlib.packet.Packet;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.channel.*;
@@ -245,7 +240,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void send(Packet packet) {
-        if(this.channel == null) {
+        if (this.channel == null) {
             return;
         }
 
@@ -255,7 +250,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         if (!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
             this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
-                if(future.isSuccess()) {
+                if (future.isSuccess()) {
                     callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
@@ -307,7 +302,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             // daemon threads and their interaction with the runtime.
             PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
             Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+                    () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
         }
         return PACKET_EVENT_LOOP.next();
     }

@@ -36,7 +36,7 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
         int readable = in.readableBytes();
-        if(readable < this.session.getCompressionThreshold()) {
+        if (readable < this.session.getCompressionThreshold()) {
             this.session.getCodecHelper().writeVarInt(out, 0);
             out.writeBytes(in);
         } else {
@@ -45,7 +45,7 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
             this.session.getCodecHelper().writeVarInt(out, bytes.length);
             this.deflater.setInput(bytes, 0, readable);
             this.deflater.finish();
-            while(!this.deflater.finished()) {
+            while (!this.deflater.finished()) {
                 int length = this.deflater.deflate(this.buf);
                 out.writeBytes(this.buf, 0, length);
             }

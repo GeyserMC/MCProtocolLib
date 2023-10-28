@@ -10,10 +10,10 @@ public class IntMetadataType extends MetadataType<Integer> {
     private final IntReader primitiveReader;
     private final IntWriter primitiveWriter;
     private final IntEntityMetadataFactory primitiveFactory;
-    
+
     protected IntMetadataType(IntReader reader, IntWriter writer, IntEntityMetadataFactory metadataFactory) {
         super(reader, writer, metadataFactory);
-        
+
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
         this.primitiveFactory = metadataFactory;

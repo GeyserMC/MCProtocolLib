@@ -10,7 +10,7 @@ public interface PacketEncryption {
      * @param length Length of the data being decrypted.
      * @return The output size from decrypting.
      */
-    public int getDecryptOutputSize(int length);
+    int getDecryptOutputSize(int length);
 
     /**
      * Gets the output size from encrypting.
@@ -18,7 +18,7 @@ public interface PacketEncryption {
      * @param length Length of the data being encrypted.
      * @return The output size from encrypting.
      */
-    public int getEncryptOutputSize(int length);
+    int getEncryptOutputSize(int length);
 
     /**
      * Decrypts the given data.
@@ -31,7 +31,7 @@ public interface PacketEncryption {
      * @return The number of bytes stored in the output array.
      * @throws Exception If an error occurs.
      */
-    public int decrypt(byte input[], int inputOffset, int inputLength, byte output[], int outputOffset) throws Exception;
+    int decrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception;
 
     /**
      * Encrypts the given data.
@@ -44,5 +44,5 @@ public interface PacketEncryption {
      * @return The number of bytes stored in the output array.
      * @throws Exception If an error occurs.
      */
-    public int encrypt(byte input[], int inputOffset, int inputLength, byte output[], int outputOffset) throws Exception;
+    int encrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception;
 }

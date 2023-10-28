@@ -21,7 +21,7 @@ public class TcpPacketEncryptor extends ByteToMessageCodec<ByteBuf> {
         int length = in.readableBytes();
         byte[] bytes = this.getBytes(in);
         int outLength = this.encryption.getEncryptOutputSize(length);
-        if( this.encryptedArray.length < outLength) {
+        if (this.encryptedArray.length < outLength) {
             this.encryptedArray = new byte[outLength];
         }
 

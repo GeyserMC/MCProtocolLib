@@ -2,8 +2,6 @@ package com.github.steveice10.mc.protocol.data.game.chat;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
 public record MessageSignature(int id, byte @Nullable [] messageSignature) {

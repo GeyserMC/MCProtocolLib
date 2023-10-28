@@ -10,7 +10,7 @@ public class ByteMetadataType extends MetadataType<Byte> {
     private final ByteReader primitiveReader;
     private final ByteWriter primitiveWriter;
     private final ByteEntityMetadataFactory primitiveFactory;
-    
+
     protected ByteMetadataType(ByteReader reader, ByteWriter writer, ByteEntityMetadataFactory metadataFactory) {
         super(reader, writer, metadataFactory);
 

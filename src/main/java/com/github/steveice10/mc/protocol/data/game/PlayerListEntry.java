@@ -23,7 +23,7 @@ public class PlayerListEntry {
     private UUID sessionId;
     private long expiresAt;
     private @Nullable PublicKey publicKey;
-    private byte @Nullable[] keySignature;
+    private byte @Nullable [] keySignature;
 
     public PlayerListEntry(UUID profileId) {
         this(profileId, null, false, 0, GameMode.SURVIVAL, null, null, 0, null, null);

@@ -10,7 +10,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -146,7 +145,7 @@ public abstract class PacketProtocol {
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
-     * @throws IOException if there was an IO error whilst reading the packet.
+     * @throws IOException              if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")
@@ -168,7 +167,7 @@ public abstract class PacketProtocol {
      */
     public int getClientboundId(Class<? extends Packet> packetClass) {
         Integer packetId = this.clientboundIds.get(packetClass);
-        if(packetId == null) {
+        if (packetId == null) {
             throw new IllegalArgumentException("Unregistered clientbound packet class: " + packetClass.getName());
         }
 
@@ -192,6 +191,7 @@ public abstract class PacketProtocol {
 
     /**
      * Gets the packet class for a packet id.
+     *
      * @param id The packet id.
      * @return The registered packet's class
      * @throws IllegalArgumentException If the packet ID is not registered.
@@ -212,7 +212,7 @@ public abstract class PacketProtocol {
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
-     * @throws IOException if there was an IO error whilst reading the packet.
+     * @throws IOException              if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")
@@ -234,7 +234,7 @@ public abstract class PacketProtocol {
      */
     public int getServerboundId(Class<? extends Packet> packetClass) {
         Integer packetId = this.serverboundIds.get(packetClass);
-        if(packetId == null) {
+        if (packetId == null) {
             throw new IllegalArgumentException("Unregistered serverbound packet class: " + packetClass.getName());
         }
 
@@ -258,6 +258,7 @@ public abstract class PacketProtocol {
 
     /**
      * Gets the packet class for a packet id.
+     *
      * @param id The packet id.
      * @return The registered packet's class
      * @throws IllegalArgumentException If the packet ID is not registered.

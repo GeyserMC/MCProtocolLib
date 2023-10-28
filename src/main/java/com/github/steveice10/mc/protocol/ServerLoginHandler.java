@@ -12,5 +12,5 @@ public interface ServerLoginHandler {
      *
      * @param session Session that logged in.
      */
-    public void loggedIn(Session session);
+    void loggedIn(Session session);
 }

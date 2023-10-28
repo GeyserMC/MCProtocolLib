@@ -7,36 +7,19 @@ import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.AddressedEnvelope;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
-import io.netty.channel.*;
 import io.netty.channel.kqueue.KQueueDatagramChannel;
 import io.netty.channel.kqueue.KQueueEventLoopGroup;
 import io.netty.channel.kqueue.KQueueSocketChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.dns.DefaultDnsQuestion;
-import io.netty.handler.codec.dns.DefaultDnsRawRecord;
-import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
-import io.netty.handler.codec.dns.DnsRecordType;
-import io.netty.handler.codec.dns.DnsResponse;
-import io.netty.handler.codec.dns.DnsSection;
-import io.netty.handler.codec.haproxy.HAProxyCommand;
-import io.netty.handler.codec.haproxy.HAProxyMessage;
-import io.netty.handler.codec.haproxy.HAProxyMessageEncoder;
-import io.netty.handler.codec.haproxy.HAProxyProtocolVersion;
-import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
+import io.netty.handler.codec.dns.*;
+import io.netty.handler.codec.haproxy.*;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
@@ -47,7 +30,10 @@ import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -90,7 +76,7 @@ public class TcpClientSession extends TcpSession {
 
     @Override
     public void connect(boolean wait) {
-        if(this.disconnected) {
+        if (this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
         }
 
@@ -152,7 +138,7 @@ public class TcpClientSession extends TcpSession {
                     exceptionCaught(null, futureListener.cause());
                 }
             });
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             exceptionCaught(null, t);
         }
     }
@@ -170,7 +156,7 @@ public class TcpClientSession extends TcpSession {
             System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
         }
 
-        if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
+        if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
             DnsNameResolver resolver = null;
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try {
@@ -192,7 +178,7 @@ public class TcpClientSession extends TcpSession {
                             host = host.substring(0, host.length() - 1);
                         }
 
-                        if(debug) {
+                        if (debug) {
                             System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
                         }
 
@@ -204,7 +190,7 @@ public class TcpClientSession extends TcpSession {
                 } else if (debug) {
                     System.out.println("[PacketLib] No SRV record found.");
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 if (debug) {
                     System.out.println("[PacketLib] Failed to resolve SRV record.");
                     e.printStackTrace();
@@ -218,7 +204,7 @@ public class TcpClientSession extends TcpSession {
                     resolver.close();
                 }
             }
-        } else if(debug) {
+        } else if (debug) {
             System.out.println("[PacketLib] Not resolving SRV record for " + this.host);
         }
 
@@ -239,8 +225,8 @@ public class TcpClientSession extends TcpSession {
     }
 
     private void addProxy(ChannelPipeline pipeline) {
-        if(proxy != null) {
-            switch(proxy.getType()) {
+        if (proxy != null) {
+            switch (proxy.getType()) {
                 case HTTP:
                     if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
@@ -327,16 +313,16 @@ public class TcpClientSession extends TcpSession {
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(
-            () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+                () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
     }
 
     protected static ThreadFactory newThreadFactory() {
-       // Create a new daemon thread. When the last non daemon thread ends
-       // the runtime environment will call the shutdown hooks. One of the
-       // hooks will try to shut down the event loop group which will
-       // normally lead to the thread exiting. If not, it will be forcibly
-       // killed after SHUTDOWN_TIMEOUT_MS along with the other
-       // daemon threads as the runtime exits.
-       return new DefaultThreadFactory(TcpClientSession.class, true);
+        // Create a new daemon thread. When the last non daemon thread ends
+        // the runtime environment will call the shutdown hooks. One of the
+        // hooks will try to shut down the event loop group which will
+        // normally lead to the thread exiting. If not, it will be forcibly
+        // killed after SHUTDOWN_TIMEOUT_MS along with the other
+        // daemon threads as the runtime exits.
+        return new DefaultThreadFactory(TcpClientSession.class, true);
     }
 }

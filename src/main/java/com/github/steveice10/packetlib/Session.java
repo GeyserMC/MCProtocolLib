@@ -28,42 +28,42 @@ public interface Session {
      *
      * @param wait Whether to wait for the connection to be established before returning.
      */
-     void connect(boolean wait);
+    void connect(boolean wait);
 
     /**
      * Gets the host the session is connected to.
      *
      * @return The connected host.
      */
-     String getHost();
+    String getHost();
 
     /**
      * Gets the port the session is connected to.
      *
      * @return The connected port.
      */
-     int getPort();
+    int getPort();
 
     /**
      * Gets the local address of the session.
      *
      * @return The local address, or null if the session is not connected.
      */
-     SocketAddress getLocalAddress();
+    SocketAddress getLocalAddress();
 
     /**
      * Gets the remote address of the session.
      *
      * @return The remote address, or null if the session is not connected.
      */
-     SocketAddress getRemoteAddress();
+    SocketAddress getRemoteAddress();
 
     /**
      * Gets the packet protocol of the session.
      *
      * @return The session's packet protocol.
      */
-     PacketProtocol getPacketProtocol();
+    PacketProtocol getPacketProtocol();
 
     /**
      * Gets the session's {@link PacketCodecHelper}.
@@ -78,7 +78,7 @@ public interface Session {
      *
      * @return This session's flags.
      */
-     Map<Flag<?>, ?> getFlags();
+    Map<Flag<?>, ?> getFlags();
 
     /**
      * Checks whether this session has a flag set. If this session belongs to a server,
@@ -87,7 +87,7 @@ public interface Session {
      * @param key Key of the flag to check for.
      * @return Whether this session has a flag set.
      */
-     <T> boolean hasFlag(Flag<T> key);
+    <T> boolean hasFlag(Flag<T> key);
 
     /**
      * Gets the value of the given flag as an instance of the given type. If this
@@ -99,7 +99,7 @@ public interface Session {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-     <T> T getFlag(Flag<T> key);
+    <T> T getFlag(Flag<T> key);
 
     /**
      * Gets the value of the given flag as an instance of the given type. If this
@@ -112,7 +112,7 @@ public interface Session {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-     <T> T getFlag(Flag<T> key, T def);
+    <T> T getFlag(Flag<T> key, T def);
 
     /**
      * Sets the value of a flag. This does not change a server's flags if this session
@@ -175,7 +175,7 @@ public interface Session {
     /**
      * Sets the compression packet length threshold for this session (-1 = disabled).
      *
-     * @param threshold The new compression threshold.
+     * @param threshold             The new compression threshold.
      * @param validateDecompression whether to validate that the decompression fits within size checks.
      */
     void setCompressionThreshold(int threshold, boolean validateDecompression);

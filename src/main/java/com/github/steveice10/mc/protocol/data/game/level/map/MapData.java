@@ -11,5 +11,5 @@ public class MapData {
     private final int rows;
     private final int x;
     private final int y;
-    private final @NonNull byte data[];
+    private final @NonNull byte[] data;
 }

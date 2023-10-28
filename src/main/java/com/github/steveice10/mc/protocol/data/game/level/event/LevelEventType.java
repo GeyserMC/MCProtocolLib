@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.level.event;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 @AllArgsConstructor
 public enum LevelEventType implements LevelEvent {

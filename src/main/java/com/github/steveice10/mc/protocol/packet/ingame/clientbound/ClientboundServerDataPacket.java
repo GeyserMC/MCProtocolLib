@@ -16,7 +16,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundServerDataPacket implements MinecraftPacket {
     private final Component motd;
-    private final byte @Nullable[] iconBytes;
+    private final byte @Nullable [] iconBytes;
     private final boolean enforcesSecureChat;
 
     public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {

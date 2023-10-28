@@ -6,8 +6,8 @@ import java.net.SocketAddress;
  * Information describing a network proxy.
  */
 public class ProxyInfo {
-    private Type type;
-    private SocketAddress address;
+    private final Type type;
+    private final SocketAddress address;
     private boolean authenticated;
     private String username;
     private String password;
@@ -27,8 +27,8 @@ public class ProxyInfo {
     /**
      * Creates a new authenticated ProxyInfo instance.
      *
-     * @param type    Type of proxy.
-     * @param address Network address of the proxy.
+     * @param type     Type of proxy.
+     * @param address  Network address of the proxy.
      * @param username Username to authenticate with.
      * @param password Password to authenticate with.
      */
@@ -101,6 +101,6 @@ public class ProxyInfo {
         /**
          * SOCKS5 proxy.
          */
-        SOCKS5;
+        SOCKS5
     }
 }

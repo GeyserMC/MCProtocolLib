@@ -253,7 +253,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public static CompoundTag loadNetworkCodec() {
-        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt")) ;
+        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt"));
              DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
             return (CompoundTag) NBTIO.readTag((DataInput) stream);
         } catch (Exception e) {

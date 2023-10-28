@@ -14,14 +14,14 @@ public interface PacketHeader {
      *
      * @return Whether the header's length value can vary in size.
      */
-    public boolean isLengthVariable();
+    boolean isLengthVariable();
 
     /**
      * Gets the size of the header's length value.
      *
      * @return The length value's size.
      */
-    public int getLengthSize();
+    int getLengthSize();
 
     /**
      * Gets the size of the header's length value.
@@ -29,7 +29,7 @@ public interface PacketHeader {
      * @param length Length value to get the size of.
      * @return The length value's size.
      */
-    public int getLengthSize(int length);
+    int getLengthSize(int length);
 
     /**
      * Reads the length of a packet from the given input.
@@ -40,7 +40,7 @@ public interface PacketHeader {
      * @return The resulting packet length.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available) throws IOException;
+    int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available) throws IOException;
 
     /**
      * Writes the length of a packet to the given output.
@@ -50,7 +50,7 @@ public interface PacketHeader {
      * @param length      Length to write.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length) throws IOException;
+    void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length) throws IOException;
 
     /**
      * Reads the ID of a packet from the given input.
@@ -60,7 +60,7 @@ public interface PacketHeader {
      * @return The resulting packet ID, or -1 if the packet should not be read yet.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper) throws IOException;
+    int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper) throws IOException;
 
     /**
      * Writes the ID of a packet to the given output.
@@ -70,5 +70,5 @@ public interface PacketHeader {
      * @param packetId    Packet ID to write.
      * @throws java.io.IOException If an I/O error occurs.
      */
-    public void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId) throws IOException;
+    void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId) throws IOException;
 }
