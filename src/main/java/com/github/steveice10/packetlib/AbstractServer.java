@@ -2,40 +2,25 @@ package com.github.steveice10.packetlib;
 
 import com.github.steveice10.packetlib.event.server.*;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 import java.util.function.Supplier;
 
+@RequiredArgsConstructor
 public abstract class AbstractServer implements Server {
+    @Getter
     private final String host;
+    @Getter
     private final int port;
+    @Getter
     private final Supplier<? extends PacketProtocol> protocolSupplier;
 
     private final List<Session> sessions = new ArrayList<>();
 
     private final Map<Flag<?>, Object> flags = new HashMap<>();
     private final List<ServerListener> listeners = new ArrayList<>();
-
-    public AbstractServer(String host, int port, Supplier<? extends PacketProtocol> protocolSupplier) {
-        this.host = host;
-        this.port = port;
-        this.protocolSupplier = protocolSupplier;
-    }
-
-    @Override
-    public String getHost() {
-        return this.host;
-    }
-
-    @Override
-    public int getPort() {
-        return this.port;
-    }
-
-    @Override
-    public Supplier<? extends PacketProtocol> getPacketProtocol() {
-        return this.protocolSupplier;
-    }
 
     protected PacketProtocol createPacketProtocol() {
         return this.protocolSupplier.get();

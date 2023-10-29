@@ -16,7 +16,7 @@ public class DataPalette {
     private BitStorage storage;
 
     public DataPalette(DataPalette original) {
-        this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType, original.globalPaletteBits);
+        this(original.paletteType, original.globalPaletteBits, original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage));
     }
 
     public static DataPalette createForChunk() {
@@ -32,8 +32,8 @@ public class DataPalette {
     }
 
     public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
-        return new DataPalette(new ListPalette(paletteType.getMinBitsPerEntry()),
-                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType, globalPaletteBits);
+        return new DataPalette(paletteType, globalPaletteBits, new ListPalette(paletteType.getMinBitsPerEntry()),
+                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()));
     }
 
     private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {

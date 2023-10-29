@@ -484,17 +484,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) throws IOException {
         switch (type) {
-            case BLOCK:
-            case BLOCK_MARKER:
-                this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
-                break;
-            case DUST:
+            case BLOCK, BLOCK_MARKER -> this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
+            case DUST -> {
                 buf.writeFloat(((DustParticleData) data).getRed());
                 buf.writeFloat(((DustParticleData) data).getGreen());
                 buf.writeFloat(((DustParticleData) data).getBlue());
                 buf.writeFloat(((DustParticleData) data).getScale());
-                break;
-            case DUST_COLOR_TRANSITION:
+            }
+            case DUST_COLOR_TRANSITION -> {
                 buf.writeFloat(((DustParticleData) data).getRed());
                 buf.writeFloat(((DustParticleData) data).getGreen());
                 buf.writeFloat(((DustParticleData) data).getBlue());
@@ -502,23 +499,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewRed());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewGreen());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewBlue());
-                break;
-            case FALLING_DUST:
-                this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
-                break;
-            case ITEM:
-                this.writeItemStack(buf, ((ItemParticleData) data).getItemStack());
-                break;
-            case SCULK_CHARGE:
-                buf.writeFloat(((SculkChargeParticleData) data).getRoll());
-                break;
-            case SHRIEK:
-                this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
-                break;
-            case VIBRATION:
+            }
+            case FALLING_DUST -> this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
+            case ITEM -> this.writeItemStack(buf, ((ItemParticleData) data).getItemStack());
+            case SCULK_CHARGE -> buf.writeFloat(((SculkChargeParticleData) data).getRoll());
+            case SHRIEK -> this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
+            case VIBRATION -> {
                 this.writePositionSource(buf, ((VibrationParticleData) data).getPositionSource());
                 this.writeVarInt(buf, ((VibrationParticleData) data).getArrivalTicks());
-                break;
+            }
         }
     }
 
@@ -710,7 +699,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             storage = null;
         }
 
-        return new DataPalette(palette, storage, paletteType, globalPaletteBits);
+        return new DataPalette(paletteType, globalPaletteBits, palette, storage);
     }
 
     public void writeDataPalette(ByteBuf buf, DataPalette palette) {

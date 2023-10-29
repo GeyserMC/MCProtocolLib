@@ -30,7 +30,7 @@ public interface Server {
      *
      * @return The server's packet protocol.
      */
-    Supplier<? extends PacketProtocol> getPacketProtocol();
+    Supplier<? extends PacketProtocol> getProtocolSupplier();
 
     /**
      * Returns true if the listener is listening.
