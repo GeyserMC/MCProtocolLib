@@ -256,11 +256,11 @@ public class MinecraftCodec {
 
     static {
         for (LevelEventType levelEvent : LevelEventType.values()) {
-            LEVEL_EVENTS.put(levelEvent.getId(), levelEvent);
+            LEVEL_EVENTS.put(levelEvent.id(), levelEvent);
         }
 
         for (BuiltinSound sound : BuiltinSound.values()) {
-            SOUND_NAMES.put(sound.getName(), sound);
+            SOUND_NAMES.put(sound.name(), sound);
         }
     }
 

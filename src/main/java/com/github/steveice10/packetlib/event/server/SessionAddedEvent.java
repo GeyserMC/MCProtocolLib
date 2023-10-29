@@ -5,40 +5,11 @@ import com.github.steveice10.packetlib.Session;
 
 /**
  * Called when a session is added to the server.
+ *
+ * @param server  The server the session is being added to.
+ * @param session Session being added.
  */
-public class SessionAddedEvent implements ServerEvent {
-    private final Server server;
-    private final Session session;
-
-    /**
-     * Creates a new SessionAddedEvent instance.
-     *
-     * @param server  Server the session is being added to.
-     * @param session Session being added.
-     */
-    public SessionAddedEvent(Server server, Session session) {
-        this.server = server;
-        this.session = session;
-    }
-
-    /**
-     * Gets the server involved in this event.
-     *
-     * @return The event's server.
-     */
-    public Server getServer() {
-        return this.server;
-    }
-
-    /**
-     * Gets the session involved in this event.
-     *
-     * @return The event's session.
-     */
-    public Session getSession() {
-        return this.session;
-    }
-
+public record SessionAddedEvent(Server server, Session session) implements ServerEvent {
     @Override
     public void call(ServerListener listener) {
         listener.sessionAdded(this);

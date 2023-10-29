@@ -449,8 +449,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeParticle(ByteBuf buf, Particle particle) throws IOException {
-        this.writeEnum(buf, particle.getType());
-        this.writeParticleData(buf, particle.getType(), particle.getData());
+        this.writeEnum(buf, particle.type());
+        this.writeParticleData(buf, particle.type(), particle.data());
     }
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) throws IOException {
@@ -484,7 +484,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) throws IOException {
         switch (type) {
-            case BLOCK, BLOCK_MARKER -> this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
+            case BLOCK, BLOCK_MARKER -> this.writeVarInt(buf, ((BlockParticleData) data).blockState());
             case DUST -> {
                 buf.writeFloat(((DustParticleData) data).getRed());
                 buf.writeFloat(((DustParticleData) data).getGreen());
@@ -500,10 +500,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewGreen());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewBlue());
             }
-            case FALLING_DUST -> this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
-            case ITEM -> this.writeItemStack(buf, ((ItemParticleData) data).getItemStack());
-            case SCULK_CHARGE -> buf.writeFloat(((SculkChargeParticleData) data).getRoll());
-            case SHRIEK -> this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
+            case FALLING_DUST -> this.writeVarInt(buf, ((FallingDustParticleData) data).blockState());
+            case ITEM -> this.writeItemStack(buf, ((ItemParticleData) data).itemStack());
+            case SCULK_CHARGE -> buf.writeFloat(((SculkChargeParticleData) data).roll());
+            case SHRIEK -> this.writeVarInt(buf, ((ShriekParticleData) data).delay());
             case VIBRATION -> {
                 this.writePositionSource(buf, ((VibrationParticleData) data).getPositionSource());
                 this.writeVarInt(buf, ((VibrationParticleData) data).getArrivalTicks());
@@ -516,14 +516,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return switch (type) {
             case BLOCK -> new BlockPositionSource(this.readPosition(buf));
             case ENTITY -> new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
-            default -> throw new IllegalStateException("Unknown position source type!");
         };
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
         this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
         if (positionSource instanceof BlockPositionSource) {
-            this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
+            this.writePosition(buf, ((BlockPositionSource) positionSource).position());
         } else if (positionSource instanceof EntityPositionSource) {
             this.writeVarInt(buf, ((EntityPositionSource) positionSource).getEntityId());
             buf.writeFloat(((EntityPositionSource) positionSource).getYOffset());
@@ -636,7 +635,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeLevelEvent(ByteBuf buf, LevelEvent event) {
-        buf.writeInt(event.getId());
+        buf.writeInt(event.id());
     }
 
     public StatisticCategory readStatisticCategory(ByteBuf buf) {
@@ -678,8 +677,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeRecipeIngredient(ByteBuf buf, Ingredient ingredient) throws IOException {
-        this.writeVarInt(buf, ingredient.getOptions().length);
-        for (ItemStack option : ingredient.getOptions()) {
+        this.writeVarInt(buf, ingredient.options().length);
+        for (ItemStack option : ingredient.options()) {
             this.writeItemStack(buf, option);
         }
     }
@@ -817,10 +816,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeSoundEvent(ByteBuf buf, Sound soundEvent) {
-        writeString(buf, soundEvent.getName());
-        buf.writeBoolean(soundEvent.isNewSystem());
-        if (soundEvent.isNewSystem()) {
-            buf.writeFloat(soundEvent.getRange());
+        writeString(buf, soundEvent.name());
+        buf.writeBoolean(soundEvent.newSystem());
+        if (soundEvent.newSystem()) {
+            buf.writeFloat(soundEvent.range());
         }
     }
 

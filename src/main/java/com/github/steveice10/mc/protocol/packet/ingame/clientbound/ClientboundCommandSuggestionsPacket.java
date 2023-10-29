@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -16,10 +17,10 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
     private final int transactionId;
     private final int start;
     private final int length;
-    private final @NotNull String[] matches;
-    private final @NotNull Component[] tooltips;
+    private final @NotNull String @NotNull [] matches;
+    private final @Nullable Component @NotNull [] tooltips;
 
-    public ClientboundCommandSuggestionsPacket(int transactionId, int start, int length, @NotNull String[] matches, @NotNull Component[] tooltips) {
+    public ClientboundCommandSuggestionsPacket(int transactionId, int start, int length, @NotNull String @NotNull [] matches, @Nullable Component @NotNull [] tooltips) {
         if (tooltips.length != matches.length) {
             throw new IllegalArgumentException("Length of matches and tooltips must be equal.");
         }

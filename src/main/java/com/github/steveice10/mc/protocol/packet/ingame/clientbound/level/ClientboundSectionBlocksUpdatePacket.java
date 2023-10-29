@@ -55,8 +55,8 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
         out.writeLong(chunkPosition | (this.chunkY & 0xFFFFFL));
         helper.writeVarInt(out, this.entries.length);
         for (BlockChangeEntry entry : this.entries) {
-            short position = (short) ((entry.getPosition().getX() - (this.chunkX << 4)) << 8 | (entry.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (entry.getPosition().getY() - (this.chunkY << 4)));
-            helper.writeVarLong(out, (long) entry.getBlock() << 12 | (long) position);
+            short position = (short) ((entry.position().getX() - (this.chunkX << 4)) << 8 | (entry.position().getZ() - (this.chunkZ << 4)) << 4 | (entry.position().getY() - (this.chunkY << 4)));
+            helper.writeVarLong(out, (long) entry.block() << 12 | (long) position);
         }
     }
 }

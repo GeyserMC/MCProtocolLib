@@ -1,12 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.level.notify;
 
-import lombok.Data;
-
-@Data
-public class ThunderStrengthValue implements GameEventValue {
-    private final float strength;
-
-    public ThunderStrengthValue(float strength) {
+public record ThunderStrengthValue(float strength) implements GameEventValue {
+    public ThunderStrengthValue {
         if (strength > 1) {
             strength = 1;
         }
@@ -15,6 +10,5 @@ public class ThunderStrengthValue implements GameEventValue {
             strength = 0;
         }
 
-        this.strength = strength;
     }
 }

@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.data.game.level.event;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public enum LevelEventType implements LevelEvent {
     BLOCK_DISPENSER_DISPENSE(1000),
     BLOCK_DISPENSER_FAIL(1001),
@@ -77,7 +77,7 @@ public enum LevelEventType implements LevelEvent {
     private final int id;
 
     @Override
-    public int getId() {
-        return id;
+    public int id() {
+        return this.id;
     }
 }

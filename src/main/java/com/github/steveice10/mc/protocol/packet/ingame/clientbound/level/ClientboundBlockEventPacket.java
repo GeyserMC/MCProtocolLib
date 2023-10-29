@@ -71,20 +71,20 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         int type = 0;
         // TODO: Handle this in MinecraftCodecHelper
         if (this.type instanceof PistonValueType) {
-            val = ((PistonValue) this.value).getDirection().ordinal();
+            val = ((PistonValue) this.value).direction().ordinal();
             type = ((PistonValueType) this.type).ordinal();
         } else if (this.type instanceof MobSpawnerValueType) {
             type = ((MobSpawnerValueType) this.type).ordinal() + 1;
         } else if (this.type instanceof ChestValueType) {
-            val = ((ChestValue) this.value).getViewers();
+            val = ((ChestValue) this.value).viewers();
             type = ((ChestValueType) this.type).ordinal() + 1;
         } else if (this.type instanceof EndGatewayValueType) {
             type = ((EndGatewayValueType) this.type).ordinal() + 1;
         } else if (this.type instanceof BellValueType) {
-            val = ((BellValue) this.value).getDirection().ordinal();
+            val = ((BellValue) this.value).direction().ordinal();
             type = ((BellValueType) this.type).ordinal() + 1;
         } else if (this.type instanceof GenericBlockValueType) {
-            val = ((GenericBlockValue) this.value).getValue();
+            val = ((GenericBlockValue) this.value).value();
             type = ((GenericBlockValueType) this.type).ordinal();
         }
 

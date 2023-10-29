@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @With
 @AllArgsConstructor
 public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
-    private final @NotNull int[] entityIds;
+    private final int @NotNull [] entityIds;
 
     public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityIds = new int[helper.readVarInt(in)];

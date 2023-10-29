@@ -4,28 +4,11 @@ import com.github.steveice10.packetlib.Session;
 
 /**
  * Called when the session connects.
+ *
+ * @param session The session involved in this event.
+ * @see SessionListener#connected(ConnectedEvent)
  */
-public class ConnectedEvent implements SessionEvent {
-    private final Session session;
-
-    /**
-     * Creates a new ConnectedEvent instance.
-     *
-     * @param session Session being connected.
-     */
-    public ConnectedEvent(Session session) {
-        this.session = session;
-    }
-
-    /**
-     * Gets the session involved in this event.
-     *
-     * @return The event's session.
-     */
-    public Session getSession() {
-        return this.session;
-    }
-
+public record ConnectedEvent(Session session) implements SessionEvent {
     @Override
     public void call(SessionListener listener) {
         listener.connected(this);

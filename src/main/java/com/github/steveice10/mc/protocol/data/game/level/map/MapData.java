@@ -1,15 +1,22 @@
 package com.github.steveice10.mc.protocol.data.game.level.map;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
-@Data
-@AllArgsConstructor
-public class MapData {
-    private final int columns;
-    private final int rows;
-    private final int x;
-    private final int y;
-    private final @NotNull byte[] data;
+import java.util.Arrays;
+import java.util.Objects;
+
+public record MapData(int columns, int rows, int x, int y, byte @NotNull [] data) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MapData that)) return false;
+        return columns == that.columns && rows == that.rows && x == that.x && y == that.y && Arrays.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(columns, rows, x, y);
+        result = 31 * result + Arrays.hashCode(data);
+        return result;
+    }
 }

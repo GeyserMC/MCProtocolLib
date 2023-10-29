@@ -1,17 +1,17 @@
 package com.github.steveice10.packetlib;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.net.SocketAddress;
 
 /**
  * Information describing a network proxy.
+ *
+ * @param type     Type of proxy.
+ * @param address  Network address of the proxy.
+ * @param authData Authentication data for the proxy.
  */
-public class ProxyInfo {
-    private final Type type;
-    private final SocketAddress address;
-    private boolean authenticated;
-    private String username;
-    private String password;
-
+public record ProxyInfo(Type type, SocketAddress address, ProxyAuthData authData) {
     /**
      * Creates a new unauthenticated ProxyInfo instance.
      *
@@ -19,9 +19,7 @@ public class ProxyInfo {
      * @param address Network address of the proxy.
      */
     public ProxyInfo(Type type, SocketAddress address) {
-        this.type = type;
-        this.address = address;
-        this.authenticated = false;
+        this(type, address, null);
     }
 
     /**
@@ -32,56 +30,12 @@ public class ProxyInfo {
      * @param username Username to authenticate with.
      * @param password Password to authenticate with.
      */
-    public ProxyInfo(Type type, SocketAddress address, String username, String password) {
-        this(type, address);
-        this.authenticated = true;
-        this.username = username;
-        this.password = password;
+    public ProxyInfo(Type type, SocketAddress address, @Nullable String username, @Nullable String password) {
+        this(type, address, new ProxyAuthData(username, password));
     }
 
-    /**
-     * Gets the proxy's type.
-     *
-     * @return The proxy's type.
-     */
-    public Type getType() {
-        return this.type;
-    }
-
-    /**
-     * Gets the proxy's network address.
-     *
-     * @return The proxy's network address.
-     */
-    public SocketAddress getAddress() {
-        return this.address;
-    }
-
-    /**
-     * Gets whether the proxy is authenticated with.
-     *
-     * @return Whether to authenticate with the proxy.
-     */
     public boolean isAuthenticated() {
-        return this.authenticated;
-    }
-
-    /**
-     * Gets the proxy's authentication username.
-     *
-     * @return The username to authenticate with.
-     */
-    public String getUsername() {
-        return this.username;
-    }
-
-    /**
-     * Gets the proxy's authentication password.
-     *
-     * @return The password to authenticate with.
-     */
-    public String getPassword() {
-        return this.password;
+        return authData != null;
     }
 
     /**
@@ -95,6 +49,7 @@ public class ProxyInfo {
 
         /**
          * SOCKS4 proxy.
+         * SOCKS4 does not support passwords.
          */
         SOCKS4,
 
@@ -102,5 +57,8 @@ public class ProxyInfo {
          * SOCKS5 proxy.
          */
         SOCKS5
+    }
+
+    public record ProxyAuthData(String username, String password) {
     }
 }

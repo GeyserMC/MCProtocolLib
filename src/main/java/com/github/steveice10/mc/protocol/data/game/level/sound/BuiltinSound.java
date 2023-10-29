@@ -1504,12 +1504,12 @@ public enum BuiltinSound implements Sound {
     }
 
     @Override
-    public boolean isNewSystem() {
+    public boolean newSystem() {
         return false;
     }
 
     @Override
-    public float getRange() {
+    public float range() {
         return 16F;
     }
 }

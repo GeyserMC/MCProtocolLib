@@ -19,7 +19,7 @@ public class ChunkSection {
     }
 
     public ChunkSection(ChunkSection original) {
-        this( new DataPalette(original.chunkData), new DataPalette(original.biomeData), original.blockCount);
+        this(new DataPalette(original.chunkData), new DataPalette(original.biomeData), original.blockCount);
     }
 
     public int getBlock(int x, int y, int z) {

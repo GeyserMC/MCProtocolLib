@@ -1,9 +1,9 @@
 package com.github.steveice10.mc.protocol.data.game.level.sound;
 
 public interface Sound {
-    String getName();
+    String name();
 
-    boolean isNewSystem();
+    boolean newSystem();
 
-    float getRange();
+    float range();
 }

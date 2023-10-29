@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 public class ClientboundSetPassengersPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NotNull int[] passengerIds;
+    private final int @NotNull [] passengerIds;
 
     public ClientboundSetPassengersPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);

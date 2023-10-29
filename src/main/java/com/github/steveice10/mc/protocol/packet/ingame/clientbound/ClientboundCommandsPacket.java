@@ -12,8 +12,6 @@ import lombok.Data;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.OptionalInt;
-
 @Data
 @With
 @AllArgsConstructor
@@ -44,11 +42,11 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                 children[j] = helper.readVarInt(in);
             }
 
-            OptionalInt redirectIndex;
+            Integer redirectIndex;
             if ((flags & FLAG_REDIRECT) != 0) {
-                redirectIndex = OptionalInt.of(helper.readVarInt(in));
+                redirectIndex = helper.readVarInt(in);
             } else {
-                redirectIndex = OptionalInt.empty();
+                redirectIndex = null;
             }
 
             String name = null;
@@ -147,39 +145,39 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.nodes.length);
         for (CommandNode node : this.nodes) {
-            int flags = node.getType().ordinal() & FLAG_TYPE_MASK;
-            if (node.isExecutable()) {
+            int flags = node.type().ordinal() & FLAG_TYPE_MASK;
+            if (node.executable()) {
                 flags |= FLAG_EXECUTABLE;
             }
 
-            if (node.getRedirectIndex().isPresent()) {
+            if (node.redirectIndex() != null) {
                 flags |= FLAG_REDIRECT;
             }
 
-            if (node.getSuggestionType() != null) {
+            if (node.suggestionType() != null) {
                 flags |= FLAG_SUGGESTION_TYPE;
             }
 
             out.writeByte(flags);
 
-            helper.writeVarInt(out, node.getChildIndices().length);
-            for (int childIndex : node.getChildIndices()) {
+            helper.writeVarInt(out, node.childIndices().length);
+            for (int childIndex : node.childIndices()) {
                 helper.writeVarInt(out, childIndex);
             }
 
-            if (node.getRedirectIndex().isPresent()) {
-                helper.writeVarInt(out, node.getRedirectIndex().getAsInt());
+            if (node.redirectIndex() != null) {
+                helper.writeVarInt(out, node.redirectIndex());
             }
 
-            if (node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
-                helper.writeString(out, node.getName());
+            if (node.type() == CommandType.LITERAL || node.type() == CommandType.ARGUMENT) {
+                helper.writeString(out, node.name());
             }
 
-            if (node.getType() == CommandType.ARGUMENT) {
-                helper.writeVarInt(out, node.getParser().ordinal());
-                switch (node.getParser()) {
+            if (node.type() == CommandType.ARGUMENT) {
+                helper.writeVarInt(out, node.parser().ordinal());
+                switch (node.parser()) {
                     case DOUBLE -> {
-                        DoubleProperties properties = (DoubleProperties) node.getProperties();
+                        DoubleProperties properties = (DoubleProperties) node.properties();
 
                         int numberFlags = 0;
                         if (properties.min() != -Double.MAX_VALUE) {
@@ -201,7 +199,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
                     }
                     case FLOAT -> {
-                        FloatProperties properties = (FloatProperties) node.getProperties();
+                        FloatProperties properties = (FloatProperties) node.properties();
 
                         int numberFlags = 0;
                         if (properties.min() != -Float.MAX_VALUE) {
@@ -223,7 +221,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
                     }
                     case INTEGER -> {
-                        IntegerProperties properties = (IntegerProperties) node.getProperties();
+                        IntegerProperties properties = (IntegerProperties) node.properties();
 
                         int numberFlags = 0;
                         if (properties.min() != Integer.MIN_VALUE) {
@@ -245,7 +243,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
                     }
                     case LONG -> {
-                        LongProperties properties = (LongProperties) node.getProperties();
+                        LongProperties properties = (LongProperties) node.properties();
 
                         int numberFlags = 0;
                         if (properties.min() != Long.MIN_VALUE) {
@@ -266,9 +264,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                     }
-                    case STRING -> helper.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
+                    case STRING -> helper.writeVarInt(out, ((StringProperties) node.properties()).ordinal());
                     case ENTITY -> {
-                        EntityProperties properties = (EntityProperties) node.getProperties();
+                        EntityProperties properties = (EntityProperties) node.properties();
                         int entityFlags = 0;
                         if (properties.singleTarget()) {
                             entityFlags |= ENTITY_FLAG_SINGLE_TARGET;
@@ -280,16 +278,16 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
                         out.writeByte(entityFlags);
                     }
-                    case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.getProperties()).allowMultiple());
-                    case TIME -> out.writeInt(((TimeProperties) node.getProperties()).min());
+                    case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.properties()).allowMultiple());
+                    case TIME -> out.writeInt(((TimeProperties) node.properties()).min());
                     case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY ->
-                            helper.writeString(out, ((ResourceProperties) node.getProperties()).registryKey());
+                            helper.writeString(out, ((ResourceProperties) node.properties()).registryKey());
                     default -> {
                     }
                 }
 
-                if (node.getSuggestionType() != null) {
-                    helper.writeResourceLocation(out, node.getSuggestionType());
+                if (node.suggestionType() != null) {
+                    helper.writeResourceLocation(out, node.suggestionType());
                 }
             }
         }

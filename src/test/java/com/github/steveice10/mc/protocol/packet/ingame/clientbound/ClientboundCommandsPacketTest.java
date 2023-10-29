@@ -9,8 +9,6 @@ import com.github.steveice10.mc.protocol.data.game.command.properties.StringProp
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.util.OptionalInt;
-
 public class ClientboundCommandsPacketTest extends PacketTest {
     @BeforeEach
     public void setup() {
@@ -20,7 +18,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                                 CommandType.ROOT,
                                 true,
                                 new int[]{1, 2},
-                                OptionalInt.empty(),
+                                null,
                                 null,
                                 null,
                                 null,
@@ -30,7 +28,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                                 CommandType.LITERAL,
                                 false,
                                 new int[]{3, 4},
-                                OptionalInt.empty(),
+                                null,
                                 "Literal",
                                 null,
                                 null,
@@ -40,7 +38,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                                 CommandType.ARGUMENT,
                                 false,
                                 new int[0],
-                                OptionalInt.of(3),
+                                3,
                                 "Argument1",
                                 CommandParser.DOUBLE,
                                 new DoubleProperties(),
@@ -50,7 +48,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                                 CommandType.ARGUMENT,
                                 false,
                                 new int[0],
-                                OptionalInt.empty(),
+                                null,
                                 "Argument2",
                                 CommandParser.DOUBLE,
                                 new DoubleProperties(0, 100),
@@ -60,7 +58,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                                 CommandType.ARGUMENT,
                                 false,
                                 new int[0],
-                                OptionalInt.empty(),
+                                null,
                                 "Argument3",
                                 CommandParser.STRING,
                                 StringProperties.SINGLE_WORD,
@@ -70,7 +68,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                                 CommandType.ARGUMENT,
                                 false,
                                 new int[0],
-                                OptionalInt.empty(),
+                                null,
                                 "Argument4",
                                 CommandParser.STRING,
                                 StringProperties.SINGLE_WORD,

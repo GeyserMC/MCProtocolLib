@@ -2,7 +2,11 @@ package com.github.steveice10.mc.protocol.data.game.level.notify;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor
 public enum DemoMessageValue implements GameEventValue {
     WELCOME(0),
     MOVEMENT_CONTROLS(101),
@@ -20,15 +24,7 @@ public enum DemoMessageValue implements GameEventValue {
 
     private final int id;
 
-    DemoMessageValue(int id) {
-        this.id = id;
-    }
-
     public static DemoMessageValue from(int id) {
         return VALUES.get(id);
-    }
-
-    public int getId() {
-        return this.id;
     }
 }

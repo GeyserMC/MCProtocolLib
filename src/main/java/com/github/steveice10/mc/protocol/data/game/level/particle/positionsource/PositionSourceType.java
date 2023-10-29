@@ -1,11 +1,13 @@
 package com.github.steveice10.mc.protocol.data.game.level.particle.positionsource;
 
 import com.github.steveice10.mc.protocol.data.game.Identifier;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Getter
 public enum PositionSourceType {
     BLOCK,
     ENTITY;
@@ -18,17 +20,9 @@ public enum PositionSourceType {
         }
     }
 
-    private final String resourceLocation;
-
-    PositionSourceType() {
-        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
-    }
+    private final String resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
 
     public static PositionSourceType from(String resourceLocation) {
         return VALUES.get(resourceLocation);
-    }
-
-    public String getResourceLocation() {
-        return resourceLocation;
     }
 }

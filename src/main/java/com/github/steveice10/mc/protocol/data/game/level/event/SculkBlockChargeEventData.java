@@ -1,24 +1,13 @@
 package com.github.steveice10.mc.protocol.data.game.level.event;
 
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
-import lombok.Value;
 
 import java.util.EnumSet;
 import java.util.Set;
 
-@Value
-public class SculkBlockChargeEventData implements LevelEventData {
-    int charge;
-    Set<Direction> blockFaces;
-
-    public SculkBlockChargeEventData(int charge, Set<Direction> blockFaces) {
-        this.charge = charge;
-        this.blockFaces = blockFaces;
-    }
-
+public record SculkBlockChargeEventData(int charge, Set<Direction> blockFaces) implements LevelEventData {
     public SculkBlockChargeEventData(int value) {
-        this.charge = value >> 6;
-        this.blockFaces = EnumSet.noneOf(Direction.class);
+        this(value >> 6, EnumSet.noneOf(Direction.class));
 
         int blockFaceBits = value & 63;
         for (Direction direction : Direction.VALUES) {

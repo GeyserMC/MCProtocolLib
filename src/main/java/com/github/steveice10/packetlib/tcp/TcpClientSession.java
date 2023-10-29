@@ -47,8 +47,8 @@ public class TcpClientSession extends TcpSession {
         this(host, port, protocol, null);
     }
 
-    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxy) {
-        this(host, port, "0.0.0.0", 0, protocol, proxy);
+    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxyInfo) {
+        this(host, port, "0.0.0.0", 0, protocol, proxyInfo);
     }
 
     public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol) {
@@ -229,29 +229,30 @@ public class TcpClientSession extends TcpSession {
             return;
         }
 
-        switch (proxy.getType()) {
+        ProxyInfo.ProxyAuthData authData = proxy.authData();
+        switch (proxy.type()) {
             case HTTP -> {
-                if (proxy.isAuthenticated()) {
-                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                if (authData != null) {
+                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address(), authData.username(), authData.password()));
                 } else {
-                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
+                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address()));
                 }
             }
             case SOCKS4 -> {
-                if (proxy.isAuthenticated()) {
-                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
+                if (authData != null) {
+                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address(), authData.username()));
                 } else {
-                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
+                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address()));
                 }
             }
             case SOCKS5 -> {
-                if (proxy.isAuthenticated()) {
-                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                if (authData != null) {
+                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address(), authData.username(), authData.password()));
                 } else {
-                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
+                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address()));
                 }
             }
-            default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
+            default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.type());
         }
     }
 

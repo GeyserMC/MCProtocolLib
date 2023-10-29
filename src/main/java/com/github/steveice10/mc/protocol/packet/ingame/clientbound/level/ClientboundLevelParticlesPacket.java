@@ -43,7 +43,7 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeParticleType(out, this.particle.getType());
+        helper.writeParticleType(out, this.particle.type());
         out.writeBoolean(this.longDistance);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
@@ -53,6 +53,6 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         out.writeFloat(this.offsetZ);
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
-        helper.writeParticleData(out, this.particle.getType(), this.particle.getData());
+        helper.writeParticleData(out, this.particle.type(), this.particle.data());
     }
 }

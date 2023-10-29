@@ -81,7 +81,7 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void connected(ConnectedEvent event) {
-        event.getSession().setFlag(MinecraftConstants.PING_KEY, 0L);
+        event.session().setFlag(MinecraftConstants.PING_KEY, 0L);
     }
 
     @Override
@@ -182,11 +182,11 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void disconnecting(DisconnectingEvent event) {
-        MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
+        MinecraftProtocol protocol = (MinecraftProtocol) event.session().getPacketProtocol();
         if (protocol.getState() == ProtocolState.LOGIN) {
-            event.getSession().send(new ClientboundLoginDisconnectPacket(event.getReason()));
+            event.session().send(new ClientboundLoginDisconnectPacket(event.reason()));
         } else if (protocol.getState() == ProtocolState.GAME) {
-            event.getSession().send(new ClientboundDisconnectPacket(event.getReason()));
+            event.session().send(new ClientboundDisconnectPacket(event.reason()));
         }
     }
 

@@ -70,14 +70,14 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
             out.writeBoolean(true);
             helper.writeVarInt(out, this.icons.length);
             for (MapIcon icon : this.icons) {
-                int type = icon.getIconType().ordinal();
+                int type = icon.iconType().ordinal();
                 helper.writeVarInt(out, type);
-                out.writeByte(icon.getCenterX());
-                out.writeByte(icon.getCenterZ());
-                out.writeByte(icon.getIconRotation());
-                if (icon.getDisplayName() != null) {
+                out.writeByte(icon.centerX());
+                out.writeByte(icon.centerZ());
+                out.writeByte(icon.iconRotation());
+                if (icon.displayName() != null) {
                     out.writeBoolean(true);
-                    helper.writeComponent(out, icon.getDisplayName());
+                    helper.writeComponent(out, icon.displayName());
                 } else {
                     out.writeBoolean(false);
                 }
@@ -86,13 +86,13 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
             out.writeBoolean(false);
         }
 
-        if (this.data != null && this.data.getColumns() != 0) {
-            out.writeByte(this.data.getColumns());
-            out.writeByte(this.data.getRows());
-            out.writeByte(this.data.getX());
-            out.writeByte(this.data.getY());
-            helper.writeVarInt(out, this.data.getData().length);
-            out.writeBytes(this.data.getData());
+        if (this.data != null && this.data.columns() != 0) {
+            out.writeByte(this.data.columns());
+            out.writeByte(this.data.rows());
+            out.writeByte(this.data.x());
+            out.writeByte(this.data.y());
+            helper.writeVarInt(out, this.data.data().length);
+            out.writeBytes(this.data.data());
         } else {
             out.writeByte(0);
         }

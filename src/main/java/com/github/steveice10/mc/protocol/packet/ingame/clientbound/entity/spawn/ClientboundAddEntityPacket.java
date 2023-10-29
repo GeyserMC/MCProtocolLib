@@ -97,18 +97,18 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         out.writeByte((byte) (this.headYaw * 256 / 360));
 
         int data = 0;
-        if (this.data instanceof MinecartType) {
-            data = ((MinecartType) this.data).ordinal();
-        } else if (this.data instanceof Direction) {
-            data = ((Direction) this.data).ordinal();
-        } else if (this.data instanceof FallingBlockData) {
-            data = ((FallingBlockData) this.data).id() | ((FallingBlockData) this.data).metadata() << 16;
-        } else if (this.data instanceof SplashPotionData) {
-            data = ((SplashPotionData) this.data).potionData();
-        } else if (this.data instanceof ProjectileData) {
-            data = ((ProjectileData) this.data).ownerId();
-        } else if (this.data instanceof GenericObjectData) {
-            data = ((GenericObjectData) this.data).value();
+        if (this.data instanceof MinecartType minecartType) {
+            data = minecartType.ordinal();
+        } else if (this.data instanceof Direction direction) {
+            data = direction.ordinal();
+        } else if (this.data instanceof FallingBlockData fallingBlockData) {
+            data = fallingBlockData.id() | fallingBlockData.metadata() << 16;
+        } else if (this.data instanceof SplashPotionData splashPotionData) {
+            data = splashPotionData.potionData();
+        } else if (this.data instanceof ProjectileData projectileData) {
+            data = projectileData.ownerId();
+        } else if (this.data instanceof GenericObjectData genericObjectData) {
+            data = genericObjectData.value();
         }
 
         helper.writeVarInt(out, data);

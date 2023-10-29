@@ -153,11 +153,11 @@ public class ClientListener extends SessionAdapter {
 
     @Override
     public void connected(ConnectedEvent event) {
-        MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
+        MinecraftProtocol protocol = (MinecraftProtocol) event.session().getPacketProtocol();
         if (this.targetState == ProtocolState.LOGIN) {
-            event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
+            event.session().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.session().getHost(), event.session().getPort(), HandshakeIntent.LOGIN));
         } else if (this.targetState == ProtocolState.STATUS) {
-            event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
+            event.session().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.session().getHost(), event.session().getPort(), HandshakeIntent.STATUS));
         }
     }
 }
