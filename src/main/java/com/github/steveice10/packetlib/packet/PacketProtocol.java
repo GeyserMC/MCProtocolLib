@@ -76,7 +76,7 @@ public abstract class PacketProtocol {
      *
      * @param <T>        The type of packet to register.
      * @param <H>        The type of codec helper to use.
-     * @param id         Id to register the packet to.
+     * @param id         The id to register the packet to.
      * @param packet     Packet to register.
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
@@ -102,7 +102,7 @@ public abstract class PacketProtocol {
      *
      * @param <T>        The type of packet to register.
      * @param <H>        The type of codec helper to use.
-     * @param id         Id to register the packet to.
+     * @param id         The id to register the packet to.
      * @param packet     Packet to register.
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation.
@@ -126,7 +126,7 @@ public abstract class PacketProtocol {
      *
      * @param <T>        The type of packet to register.
      * @param <H>        The type of codec helper to use.
-     * @param id         Id to register the packet to.
+     * @param id         The id to register the packet to.
      * @param packet     Packet to register.
      * @param serializer The packet serializer.
      */
@@ -148,7 +148,7 @@ public abstract class PacketProtocol {
      * Creates a new instance of a clientbound packet with the given id and read the clientbound input.
      *
      * @param <H>         The type of codec helper to use.
-     * @param id          Id of the packet to create.
+     * @param id          The id of the packet to create.
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
@@ -216,7 +216,7 @@ public abstract class PacketProtocol {
      * Creates a new instance of a serverbound packet with the given id and read the serverbound input.
      *
      * @param <H>         The type of codec helper to use.
-     * @param id          Id of the packet to create.
+     * @param id          The id of the packet to create.
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.

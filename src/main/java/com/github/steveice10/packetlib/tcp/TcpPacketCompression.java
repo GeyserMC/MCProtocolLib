@@ -6,24 +6,21 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+@RequiredArgsConstructor
 public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     private static final int MAX_UNCOMPRESSED_SIZE = 8388608;
 
     private final Session session;
+    private final boolean validateDecompression;
     private final Deflater deflater = new Deflater();
     private final Inflater inflater = new Inflater();
     private final byte[] buf = new byte[8192];
-    private final boolean validateDecompression;
-
-    public TcpPacketCompression(Session session, boolean validateDecompression) {
-        this.session = session;
-        this.validateDecompression = validateDecompression;
-    }
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {

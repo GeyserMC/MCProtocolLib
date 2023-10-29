@@ -54,7 +54,7 @@ public enum EnchantmentTableProperty implements ContainerProperty {
     /**
      * Packs enchantment type and level into one integer as used for the ENCHANTMENT_SLOT_X properties.
      *
-     * @param type  Id of the enchantment
+     * @param type  The id of the enchantment
      * @param level Level of the enchantment
      * @return Packed value
      * @see #getEnchantmentType(int)
@@ -68,7 +68,7 @@ public enum EnchantmentTableProperty implements ContainerProperty {
      * Unpacks the enchantment type from one integer as used for the ENCHANTMENT_SLOT_X properties.
      *
      * @param enchantmentInfo Packed value
-     * @return Id of the enchantment
+     * @return The id of the enchantment
      * @see #getEnchantment(int, int)
      */
     public static int getEnchantmentType(int enchantmentInfo) {
