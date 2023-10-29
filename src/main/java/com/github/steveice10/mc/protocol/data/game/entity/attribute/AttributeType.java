@@ -62,6 +62,8 @@ public interface AttributeType {
 
     /**
      * Used when MCProtocolLib gets an attribute not in its built-in registry.
+     *
+     * @param identifier The identifier of the attribute.
      */
     record Custom(String identifier) implements AttributeType {
     }

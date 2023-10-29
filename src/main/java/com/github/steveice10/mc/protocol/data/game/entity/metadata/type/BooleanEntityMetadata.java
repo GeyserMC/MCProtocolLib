@@ -4,7 +4,6 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.BooleanMetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import io.netty.buffer.ByteBuf;
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
