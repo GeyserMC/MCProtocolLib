@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 public class TcpServer extends AbstractServer {
     private EventLoopGroup group;
-    private Class<? extends ServerSocketChannel> serverSocketChannel;
     private Channel channel;
 
     public TcpServer(String host, int port, Supplier<? extends PacketProtocol> protocol) {
@@ -41,26 +40,9 @@ public class TcpServer extends AbstractServer {
             return;
         }
 
-        switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING:
-                this.group = new IOUringEventLoopGroup();
-                this.serverSocketChannel = IOUringServerSocketChannel.class;
-                break;
-            case EPOLL:
-                this.group = new EpollEventLoopGroup();
-                this.serverSocketChannel = EpollServerSocketChannel.class;
-                break;
-            case KQUEUE:
-                this.group = new KQueueEventLoopGroup();
-                this.serverSocketChannel = KQueueServerSocketChannel.class;
-                break;
-            case NIO:
-                this.group = new NioEventLoopGroup();
-                this.serverSocketChannel = NioServerSocketChannel.class;
-                break;
-        }
+        group = TransportHelper.createEventLoopGroup();
 
-        ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<>() {
+        ChannelFuture future = new ServerBootstrap().channel(TransportHelper.SERVER_SOCKET_CHANNEL_CLASS).childHandler(new ChannelInitializer<>() {
             @Override
             public void initChannel(Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();

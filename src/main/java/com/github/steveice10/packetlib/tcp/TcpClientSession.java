@@ -64,12 +64,7 @@ public class TcpClientSession extends TcpSession {
     }
 
     private static void createTcpEventLoopGroup() {
-        EVENT_LOOP_GROUP = switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING -> new IOUringEventLoopGroup(newThreadFactory());
-            case EPOLL -> new EpollEventLoopGroup(newThreadFactory());
-            case KQUEUE -> new KQueueEventLoopGroup(newThreadFactory());
-            case NIO -> new NioEventLoopGroup(newThreadFactory());
-        };
+        EVENT_LOOP_GROUP = TransportHelper.createEventLoopGroup(newThreadFactory());
 
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
                 EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
@@ -99,7 +94,7 @@ public class TcpClientSession extends TcpSession {
 
         try {
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(TransportHelper.CHANNEL_CLASS);
+            bootstrap.channel(TransportHelper.SOCKET_CHANNEL_CLASS);
             bootstrap.handler(new ChannelInitializer<>() {
                 @Override
                 public void initChannel(Channel channel) {

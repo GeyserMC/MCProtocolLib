@@ -1,26 +1,27 @@
 package com.github.steveice10.packetlib.helper;
 
-import io.netty.channel.Channel;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollDatagramChannel;
-import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.kqueue.KQueue;
-import io.netty.channel.kqueue.KQueueDatagramChannel;
-import io.netty.channel.kqueue.KQueueSocketChannel;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.*;
+import io.netty.channel.kqueue.*;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramChannel;
+import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.incubator.channel.uring.IOUring;
-import io.netty.incubator.channel.uring.IOUringDatagramChannel;
-import io.netty.incubator.channel.uring.IOUringSocketChannel;
+import io.netty.incubator.channel.uring.*;
+
+import java.util.concurrent.ThreadFactory;
 
 public class TransportHelper {
-    public static final Class<? extends Channel> CHANNEL_CLASS;
+    public static final Class<? extends SocketChannel> SOCKET_CHANNEL_CLASS;
     public static final Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
+    public static final Class<? extends ServerSocketChannel> SERVER_SOCKET_CHANNEL_CLASS;
 
     static {
         var transportMethod = determineTransportMethod();
-        CHANNEL_CLASS = switch (transportMethod) {
+        SOCKET_CHANNEL_CLASS = switch (transportMethod) {
             case IO_URING -> IOUringSocketChannel.class;
             case EPOLL -> EpollSocketChannel.class;
             case KQUEUE -> KQueueSocketChannel.class;
@@ -32,17 +33,45 @@ public class TransportHelper {
             case KQUEUE -> KQueueDatagramChannel.class;
             case NIO -> NioDatagramChannel.class;
         };
+        SERVER_SOCKET_CHANNEL_CLASS = switch (transportMethod) {
+            case IO_URING -> IOUringServerSocketChannel.class;
+            case EPOLL -> EpollServerSocketChannel.class;
+            case KQUEUE -> KQueueServerSocketChannel.class;
+            case NIO -> NioServerSocketChannel.class;
+        };
     }
 
     private TransportHelper() {
     }
 
     public static TransportMethod determineTransportMethod() {
-        if (isClassAvailable("io.netty.incubator.channel.uring.IOUring") && IOUring.isAvailable())
+        if (isClassAvailable("io.netty.incubator.channel.uring.IOUring") && IOUring.isAvailable()) {
             return TransportMethod.IO_URING;
-        if (isClassAvailable("io.netty.channel.epoll.Epoll") && Epoll.isAvailable()) return TransportMethod.EPOLL;
-        if (isClassAvailable("io.netty.channel.kqueue.KQueue") && KQueue.isAvailable()) return TransportMethod.KQUEUE;
-        return TransportMethod.NIO;
+        } else if (isClassAvailable("io.netty.channel.epoll.Epoll") && Epoll.isAvailable()) {
+            return TransportMethod.EPOLL;
+        } else if (isClassAvailable("io.netty.channel.kqueue.KQueue") && KQueue.isAvailable()) {
+            return TransportMethod.KQUEUE;
+        } else {
+            return TransportMethod.NIO;
+        }
+    }
+
+    public static EventLoopGroup createEventLoopGroup() {
+        return switch (determineTransportMethod()) {
+            case IO_URING -> new IOUringEventLoopGroup();
+            case EPOLL -> new EpollEventLoopGroup();
+            case KQUEUE -> new KQueueEventLoopGroup();
+            case NIO -> new NioEventLoopGroup();
+        };
+    }
+
+    public static EventLoopGroup createEventLoopGroup(ThreadFactory threadFactory) {
+        return switch (determineTransportMethod()) {
+            case IO_URING -> new IOUringEventLoopGroup(threadFactory);
+            case EPOLL -> new EpollEventLoopGroup(threadFactory);
+            case KQUEUE -> new KQueueEventLoopGroup(threadFactory);
+            case NIO -> new NioEventLoopGroup(threadFactory);
+        };
     }
 
     /**
