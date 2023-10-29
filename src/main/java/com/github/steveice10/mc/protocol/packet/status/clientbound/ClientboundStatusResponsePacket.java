@@ -27,82 +27,138 @@ import java.util.List;
 @With
 @AllArgsConstructor
 public class ClientboundStatusResponsePacket implements MinecraftPacket {
+    private static final String FAVICON_PREFIX = "data:image/png;base64,";
+    private static final int FAVICON_PREFIX_LENGTH = FAVICON_PREFIX.length();
     private final @NonNull ServerStatusInfo info;
 
     public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
         JsonObject obj = new Gson().fromJson(helper.readString(in), JsonObject.class);
-        JsonElement desc = obj.get("description");
-        Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
-        JsonObject plrs = obj.get("players").getAsJsonObject();
-        List<GameProfile> profiles = new ArrayList<>();
-        if (plrs.has("sample")) {
-            JsonArray prof = plrs.get("sample").getAsJsonArray();
-            if (prof.size() > 0) {
-                for (int index = 0; index < prof.size(); index++) {
-                    JsonObject o = prof.get(index).getAsJsonObject();
-                    profiles.add(new GameProfile(o.get("id").getAsString(), o.get("name").getAsString()));
+
+        JsonElement descriptionElement = obj.get("description");
+        Component description = null;
+        if (descriptionElement != null) {
+            description = DefaultComponentSerializer.get().serializer().fromJson(descriptionElement, Component.class);
+        }
+
+        JsonElement playersElement = obj.get("players");
+        PlayerInfo playerInfo = null;
+        if (playersElement != null) {
+            JsonObject playersObject = playersElement.getAsJsonObject();
+
+            JsonElement sampleElement = playersObject.get("sample");
+            List<GameProfile> sampleProfiles = null;
+            if (sampleElement != null) {
+                JsonArray sampleArray = sampleElement.getAsJsonArray();
+                sampleProfiles = new ArrayList<>(sampleArray.size());
+                for (JsonElement sampleEntryElement : sampleArray) {
+                    JsonObject sampleEntryObject = sampleEntryElement.getAsJsonObject();
+                    sampleProfiles.add(new GameProfile(
+                            sampleEntryObject.get("id").getAsString(),
+                            sampleEntryObject.get("name").getAsString()
+                    ));
                 }
             }
+
+            playerInfo = new PlayerInfo(
+                    playersObject.get("max").getAsInt(),
+                    playersObject.get("online").getAsInt(),
+                    sampleProfiles
+            );
         }
 
-        PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
-        JsonObject ver = obj.get("version").getAsJsonObject();
-        VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
+        JsonElement versionElement = obj.get("version");
+        VersionInfo versionInfo = null;
+        if (versionElement != null) {
+            JsonObject versionObject = versionElement.getAsJsonObject();
+            versionInfo = new VersionInfo(
+                    versionObject.get("name").getAsString(),
+                    versionObject.get("protocol").getAsInt()
+            );
+        }
+
+        JsonElement iconElement = obj.get("favicon");
         byte[] icon = null;
-        if (obj.has("favicon")) {
-            icon = this.stringToIcon(obj.get("favicon").getAsString());
+        if (iconElement != null) {
+            icon = this.stringToIcon(iconElement.getAsString());
         }
 
-        boolean enforcesSecureChat = obj.get("enforcesSecureChat").getAsBoolean();
-        this.info = new ServerStatusInfo(version, players, description, icon, enforcesSecureChat);
+        JsonElement enforcesSecureChatElement = obj.get("enforcesSecureChat");
+        Boolean enforcesSecureChat = null;
+        if (enforcesSecureChatElement != null) {
+            enforcesSecureChat = enforcesSecureChatElement.getAsBoolean();
+        }
+
+        this.info = new ServerStatusInfo(
+                description,
+                playerInfo,
+                versionInfo,
+                icon,
+                enforcesSecureChat
+        );
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         JsonObject obj = new JsonObject();
-        JsonObject ver = new JsonObject();
-        ver.addProperty("name", this.info.getVersionInfo().getVersionName());
-        ver.addProperty("protocol", this.info.getVersionInfo().getProtocolVersion());
-        JsonObject plrs = new JsonObject();
-        plrs.addProperty("max", this.info.getPlayerInfo().getMaxPlayers());
-        plrs.addProperty("online", this.info.getPlayerInfo().getOnlinePlayers());
-        if (this.info.getPlayerInfo().getPlayers().size() > 0) {
-            JsonArray array = new JsonArray();
-            for (GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
-                JsonObject o = new JsonObject();
-                o.addProperty("name", profile.getName());
-                o.addProperty("id", profile.getIdAsString());
-                array.add(o);
+
+        Component description = this.info.description();
+        if (description != null) {
+            obj.add("description", DefaultComponentSerializer.get().serializer().toJsonTree(description));
+        }
+
+        PlayerInfo playerInfo = this.info.playerInfo();
+        if (playerInfo != null) {
+            JsonObject playersObject = new JsonObject();
+
+            playersObject.addProperty("max", playerInfo.getMaxPlayers());
+            playersObject.addProperty("online", playerInfo.getOnlinePlayers());
+
+            if (playerInfo.getPlayers() != null) {
+                JsonArray sampleArray = new JsonArray();
+                for (GameProfile profile : playerInfo.getPlayers()) {
+                    JsonObject o = new JsonObject();
+                    o.addProperty("name", profile.getName());
+                    o.addProperty("id", profile.getIdAsString());
+                    sampleArray.add(o);
+                }
+
+                playersObject.add("sample", sampleArray);
             }
 
-            plrs.add("sample", array);
+            obj.add("players", playersObject);
         }
 
-        obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(this.info.getDescription()), JsonElement.class));
-        obj.add("players", plrs);
-        obj.add("version", ver);
-        if (this.info.getIconPng() != null) {
-            obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
+        VersionInfo versionInfo = this.info.versionInfo();
+        if (versionInfo != null) {
+            JsonObject versionObject = new JsonObject();
+
+            versionObject.addProperty("name", versionInfo.getVersionName());
+            versionObject.addProperty("protocol", versionInfo.getProtocolVersion());
+
+            obj.add("version", versionObject);
         }
-        obj.addProperty("enforcesSecureChat", this.info.isEnforcesSecureChat());
+
+        if (this.info.iconPng() != null) {
+            obj.addProperty("favicon", this.iconToString(this.info.iconPng()));
+        }
+
+        Boolean enforcesSecureChat = this.info.enforcesSecureChat();
+        if (enforcesSecureChat != null) {
+            obj.addProperty("enforcesSecureChat", enforcesSecureChat);
+        }
 
         helper.writeString(out, obj.toString());
     }
 
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
     private byte[] stringToIcon(String str) {
-        if (str.startsWith("data:image/png;base64,")) {
-            str = str.substring("data:image/png;base64,".length());
+        if (str.startsWith(FAVICON_PREFIX)) {
+            str = str.substring(FAVICON_PREFIX_LENGTH);
         }
 
         return Base64.decode(str.getBytes(StandardCharsets.UTF_8));
     }
 
     private String iconToString(byte[] icon) {
-        return "data:image/png;base64," + new String(Base64.encode(icon), StandardCharsets.UTF_8);
+        return FAVICON_PREFIX + new String(Base64.encode(icon), StandardCharsets.UTF_8);
     }
 }

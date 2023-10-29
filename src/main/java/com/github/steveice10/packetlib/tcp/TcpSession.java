@@ -14,8 +14,8 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.net.ConnectException;
 import java.net.SocketAddress;
 import java.util.Collections;

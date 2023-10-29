@@ -32,9 +32,9 @@ public class MinecraftProtocolTest {
     private static final int PORT = 25562;
 
     private static final ServerStatusInfo SERVER_INFO = new ServerStatusInfo(
-            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
-            new PlayerInfo(100, 0, new ArrayList<>()),
             Component.text("Hello world!"),
+            new PlayerInfo(100, 0, new ArrayList<>()),
+            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
             null,
             false
     );

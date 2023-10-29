@@ -90,20 +90,16 @@ public class ServerListener extends SessionAdapter {
         if (protocol.getState() == ProtocolState.HANDSHAKE) {
             if (packet instanceof ClientIntentionPacket intentionPacket) {
                 switch (intentionPacket.getIntent()) {
-                    case STATUS:
-                        protocol.setState(ProtocolState.STATUS);
-                        break;
-                    case LOGIN:
+                    case STATUS -> protocol.setState(ProtocolState.STATUS);
+                    case LOGIN -> {
                         protocol.setState(ProtocolState.LOGIN);
                         if (intentionPacket.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
                             session.disconnect("Outdated server! I'm still on " + protocol.getCodec().getMinecraftVersion() + ".");
                         } else if (intentionPacket.getProtocolVersion() < protocol.getCodec().getProtocolVersion()) {
                             session.disconnect("Outdated client! Please use " + protocol.getCodec().getMinecraftVersion() + ".");
                         }
-
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
+                    }
+                    default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
         } else if (protocol.getState() == ProtocolState.LOGIN) {
@@ -127,7 +123,7 @@ public class ServerListener extends SessionAdapter {
                 session.enableEncryption(protocol.enableEncryption(key));
                 new Thread(new UserAuthTask(session, key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
-                ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.CONFIGURATION);
+                protocol.setState(ProtocolState.CONFIGURATION);
                 session.send(new ClientboundRegistryDataPacket(networkCodec));
                 session.send(new ClientboundFinishConfigurationPacket());
             }
@@ -136,9 +132,9 @@ public class ServerListener extends SessionAdapter {
                 ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if (builder == null) {
                     builder = $ -> new ServerStatusInfo(
-                            new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
-                            new PlayerInfo(0, 20, new ArrayList<>()),
                             Component.text("A Minecraft Server"),
+                            new PlayerInfo(0, 20, new ArrayList<>()),
+                            new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
                             null,
                             false
                     );
@@ -177,8 +173,8 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void packetSent(Session session, Packet packet) {
-        if (packet instanceof ClientboundLoginCompressionPacket) {
-            session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), true);
+        if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
+            session.setCompressionThreshold(loginCompressionPacket.getThreshold(), true);
             session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY)));
         }
     }

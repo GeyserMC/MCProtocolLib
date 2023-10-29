@@ -6,6 +6,7 @@ plugins {
     id("net.kyori.indra.git") version "3.1.3"
     id("net.kyori.indra.publishing") version "3.1.3"
     id("net.kyori.indra.checkstyle") version "3.1.3"
+    id("io.freefair.lombok") version "8.4"
 }
 
 indra {
@@ -100,9 +101,6 @@ dependencies {
     api("io.netty:netty-codec-haproxy:4.1.99.Final")
     api("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.23.Final")
 
-    // Annotations
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.7.3")
-
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
@@ -124,8 +122,12 @@ java {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+    options.compilerArgs.add("-Xlint:all,-serial,-processing")
 }
 
 tasks.withType<Javadoc> {
     options.encoding = "UTF-8"
+    title = "MCProtocolLib Javadocs"
+    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
 }
+
