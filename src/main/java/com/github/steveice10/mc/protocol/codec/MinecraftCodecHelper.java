@@ -521,11 +521,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
         this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
-        if (positionSource instanceof BlockPositionSource) {
-            this.writePosition(buf, ((BlockPositionSource) positionSource).position());
-        } else if (positionSource instanceof EntityPositionSource) {
-            this.writeVarInt(buf, ((EntityPositionSource) positionSource).getEntityId());
-            buf.writeFloat(((EntityPositionSource) positionSource).getYOffset());
+        if (positionSource instanceof BlockPositionSource blockPositionSource) {
+            this.writePosition(buf, blockPositionSource.position());
+        } else if (positionSource instanceof EntityPositionSource entityPositionSource) {
+            this.writeVarInt(buf, entityPositionSource.getEntityId());
+            buf.writeFloat(entityPositionSource.getYOffset());
         } else {
             throw new IllegalStateException("Unknown position source type!");
         }
