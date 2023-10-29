@@ -11,8 +11,8 @@ public class BooleanMetadataType extends MetadataType<Boolean> {
     private final BooleanWriter primitiveWriter;
     private final BooleanEntityMetadataFactory primitiveFactory;
 
-    protected BooleanMetadataType(BooleanReader reader, BooleanWriter writer, BooleanEntityMetadataFactory metadataFactory) {
-        super(reader, writer, metadataFactory);
+    protected BooleanMetadataType(int id,BooleanReader reader, BooleanWriter writer, BooleanEntityMetadataFactory metadataFactory) {
+        super(id, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;

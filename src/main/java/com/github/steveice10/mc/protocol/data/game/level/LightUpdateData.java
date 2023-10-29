@@ -21,10 +21,6 @@ public class LightUpdateData {
     private final @NonNull List<byte[]> skyUpdates;
     private final @NonNull List<byte[]> blockUpdates;
 
-    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        return new LightUpdateData(in, helper);
-    }
-
     private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.skyYMask = BitSet.valueOf(helper.readLongArray(in));
         this.blockYMask = BitSet.valueOf(helper.readLongArray(in));
@@ -42,6 +38,10 @@ public class LightUpdateData {
         for (int i = 0; i < blockUpdateSize; i++) {
             blockUpdates.add(helper.readByteArray(in));
         }
+    }
+
+    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        return new LightUpdateData(in, helper);
     }
 
     public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) throws IOException {

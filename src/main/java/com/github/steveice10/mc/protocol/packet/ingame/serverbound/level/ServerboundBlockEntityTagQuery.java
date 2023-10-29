@@ -9,8 +9,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -18,13 +16,13 @@ public class ServerboundBlockEntityTagQuery implements MinecraftPacket {
     private final int transactionId;
     private final @NonNull Vector3i position;
 
-    public ServerboundBlockEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundBlockEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) {
         this.transactionId = helper.readVarInt(in);
         this.position = helper.readPosition(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.transactionId);
         helper.writePosition(out, this.position);
     }

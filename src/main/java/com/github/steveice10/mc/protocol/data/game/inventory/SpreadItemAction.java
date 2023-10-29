@@ -14,25 +14,25 @@ public enum SpreadItemAction implements ContainerAction {
     MIDDLE_MOUSE_ADD_SLOT(9),
     MIDDLE_MOUSE_END_DRAG(10);
 
+    private static final Int2ObjectMap<SpreadItemAction> VALUES = new Int2ObjectOpenHashMap<>();
+
+    static {
+        for (SpreadItemAction action : values()) {
+            VALUES.put(action.id, action);
+        }
+    }
+
     private final int id;
 
     SpreadItemAction(int id) {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    private static final Int2ObjectMap<SpreadItemAction> VALUES = new Int2ObjectOpenHashMap<>();
-
     public static SpreadItemAction from(int id) {
         return VALUES.get(id);
     }
 
-    static {
-        for (SpreadItemAction action : values()) {
-            VALUES.put(action.id, action);
-        }
+    public int getId() {
+        return id;
     }
 }

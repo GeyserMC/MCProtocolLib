@@ -22,12 +22,12 @@ public class PacketCodec {
     @Getter
     private final Supplier<MinecraftCodecHelper> helperFactory;
 
-    public PacketStateCodec getCodec(ProtocolState protocolState) {
-        return this.stateProtocols.get(protocolState);
-    }
-
     public static Builder builder() {
         return new Builder();
+    }
+
+    public PacketStateCodec getCodec(ProtocolState protocolState) {
+        return this.stateProtocols.get(protocolState);
     }
 
     public Builder toBuilder() {

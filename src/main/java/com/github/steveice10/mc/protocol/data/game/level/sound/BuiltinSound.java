@@ -1493,7 +1493,15 @@ public enum BuiltinSound implements Sound {
     ENTITY_ZOMBIE_VILLAGER_HURT("entity.zombie_villager.hurt"),
     ENTITY_ZOMBIE_VILLAGER_STEP("entity.zombie_villager.step");
 
+    /**
+     * For grabbing when the SoundPacket is sent.
+     */
+    private static final BuiltinSound[] VALUES = values();
     private final @NonNull String name;
+
+    public static BuiltinSound from(int id) {
+        return VALUES[id];
+    }
 
     @Override
     public boolean isNewSystem() {
@@ -1503,14 +1511,5 @@ public enum BuiltinSound implements Sound {
     @Override
     public float getRange() {
         return 16F;
-    }
-
-    /**
-     * For grabbing when the SoundPacket is sent.
-     */
-    private static final BuiltinSound[] VALUES = values();
-
-    public static BuiltinSound from(int id) {
-        return VALUES[id];
     }
 }

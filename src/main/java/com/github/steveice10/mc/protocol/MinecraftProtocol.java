@@ -51,12 +51,9 @@ public class MinecraftProtocol extends PacketProtocol {
      */
     @Getter
     private final PacketCodec codec;
-
+    private final ProtocolState targetState;
     private ProtocolState state;
     private PacketStateCodec stateCodec;
-
-    private final ProtocolState targetState;
-
     /**
      * The player's identity.
      */
@@ -138,6 +135,15 @@ public class MinecraftProtocol extends PacketProtocol {
         this.accessToken = accessToken;
 
         this.setState(ProtocolState.HANDSHAKE);
+    }
+
+    public static CompoundTag loadNetworkCodec() {
+        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt"));
+             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
+            return (CompoundTag) NBTIO.readTag((DataInput) stream);
+        } catch (Exception e) {
+            throw new AssertionError("Unable to load network codec.", e);
+        }
     }
 
     @Override
@@ -250,14 +256,5 @@ public class MinecraftProtocol extends PacketProtocol {
     @Override
     public PacketDefinition<?, ?> getClientboundDefinition(int id) {
         return this.stateCodec.getClientboundDefinition(id);
-    }
-
-    public static CompoundTag loadNetworkCodec() {
-        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt"));
-             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
-            return (CompoundTag) NBTIO.readTag((DataInput) stream);
-        } catch (Exception e) {
-            throw new AssertionError("Unable to load network codec.", e);
-        }
     }
 }

@@ -12,8 +12,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -39,7 +37,7 @@ public class ClientboundSoundPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         if (this.sound instanceof CustomSound) {
             helper.writeVarInt(out, 0);
             helper.writeSoundEvent(out, this.sound);

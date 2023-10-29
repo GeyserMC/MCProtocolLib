@@ -158,7 +158,7 @@ public class TcpServer extends AbstractServer {
                 } catch (InterruptedException e) {
                 }
             } else {
-                future.addListener((GenericFutureListener) future12 -> {
+                future.addListener((GenericFutureListener<? extends Future<Object>>) future12 -> {
                     if (!future12.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
                         System.err.println("[ERROR] Failed to asynchronously close connection listener.");
                         if (future12.cause() != null) {

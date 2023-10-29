@@ -29,18 +29,15 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
         byte[] keyBytes = helper.readByteArray(in);
         this.keySignature = helper.readByteArray(in);
 
-        PublicKey publicKey = null;
         try {
-            publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
+            this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
         } catch (GeneralSecurityException e) {
             throw new IOException("Could not decode public key.", e);
         }
-
-        this.publicKey = publicKey;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.sessionId);
         out.writeLong(this.expiresAt);
         helper.writeByteArray(out, this.publicKey.getEncoded());

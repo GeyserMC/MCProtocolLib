@@ -28,7 +28,7 @@ public abstract class EntityMetadata<V, T extends MetadataType<V>> {
      * they are manually created using {@link ObjectEntityMetadata}.
      *
      * @param helper The codec helper.
-     * @param out The output buffer.
+     * @param out    The output buffer.
      */
     public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
         this.type.writeMetadata(helper, out, this.getValue());

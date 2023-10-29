@@ -5,8 +5,7 @@ import io.netty.channel.kqueue.KQueue;
 import io.netty.incubator.channel.uring.IOUring;
 
 public class TransportHelper {
-    public enum TransportMethod {
-        NIO, EPOLL, KQUEUE, IO_URING
+    private TransportHelper() {
     }
 
     public static TransportMethod determineTransportMethod() {
@@ -32,6 +31,7 @@ public class TransportHelper {
         }
     }
 
-    private TransportHelper() {
+    public enum TransportMethod {
+        NIO, EPOLL, KQUEUE, IO_URING
     }
 }

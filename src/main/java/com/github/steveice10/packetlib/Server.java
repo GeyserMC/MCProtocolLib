@@ -49,7 +49,7 @@ public interface Server {
     /**
      * Checks whether this server has a flag set.
      *
-     * @param <T>   Type of the flag.
+     * @param <T> Type of the flag.
      * @param key Key of the flag to check for.
      * @return Whether this server has a flag set.
      */

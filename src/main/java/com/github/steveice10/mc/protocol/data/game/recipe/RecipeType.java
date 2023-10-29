@@ -31,25 +31,25 @@ public enum RecipeType {
     SMITHING_TRIM,
     CRAFTING_DECORATED_POT;
 
+    private static final Map<String, RecipeType> VALUES = new HashMap<>();
+
+    static {
+        for (RecipeType type : values()) {
+            VALUES.put(type.resourceLocation, type);
+        }
+    }
+
     private final String resourceLocation;
 
     RecipeType() {
         this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
     }
 
-    public String getResourceLocation() {
-        return resourceLocation;
-    }
-
-    private static final Map<String, RecipeType> VALUES = new HashMap<>();
-
     public static RecipeType from(String resourceLocation) {
         return VALUES.get(resourceLocation);
     }
 
-    static {
-        for (RecipeType type : values()) {
-            VALUES.put(type.resourceLocation, type);
-        }
+    public String getResourceLocation() {
+        return resourceLocation;
     }
 }

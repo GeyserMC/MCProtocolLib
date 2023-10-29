@@ -9,25 +9,25 @@ public enum CollisionRule {
     PUSH_OTHER_TEAMS("pushOtherTeams"),
     PUSH_OWN_TEAM("pushOwnTeam");
 
+    private static final Map<String, CollisionRule> VALUES = new HashMap<>();
+
+    static {
+        for (CollisionRule rule : values()) {
+            VALUES.put(rule.getName(), rule);
+        }
+    }
+
     private final String name;
 
     CollisionRule(String name) {
         this.name = name;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    private static final Map<String, CollisionRule> VALUES = new HashMap<>();
-
     public static CollisionRule from(String name) {
         return VALUES.get(name);
     }
 
-    static {
-        for (CollisionRule rule : values()) {
-            VALUES.put(rule.getName(), rule);
-        }
+    public String getName() {
+        return this.name;
     }
 }

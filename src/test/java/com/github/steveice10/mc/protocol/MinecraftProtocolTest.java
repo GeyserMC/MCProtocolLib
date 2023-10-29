@@ -6,7 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
-import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoBuilder;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.packetlib.Server;
@@ -24,11 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_COMPRESSION_THRESHOLD;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_BUILDER_KEY;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_HANDLER_KEY;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,8 +47,8 @@ public class MinecraftProtocolTest {
         server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
         server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
-        server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session -> SERVER_INFO);
-        server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, (ServerLoginHandler) session -> {
+        server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, session -> SERVER_INFO);
+        server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, session -> {
             // Seems like in this setup the server can reply too quickly to ServerboundFinishConfigurationPacket
             // before the client can transition CONFIGURATION -> GAME. There is probably something wrong here and this is just a band-aid.
             try {

@@ -9,8 +9,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -22,7 +20,7 @@ public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
     private final @NonNull String finalState;
     private final @NonNull String jointType;
 
-    public ServerboundSetJigsawBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSetJigsawBlockPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);
         this.name = helper.readString(in);
         this.target = helper.readString(in);
@@ -32,7 +30,7 @@ public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writePosition(out, this.position);
         helper.writeString(out, this.name);
         helper.writeString(out, this.target);

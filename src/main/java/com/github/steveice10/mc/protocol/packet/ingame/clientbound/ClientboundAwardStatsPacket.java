@@ -12,8 +12,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -62,7 +60,7 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.statistics.size());
         for (Object2IntMap.Entry<Statistic> entry : statistics.object2IntEntrySet()) {
             Statistic statistic = entry.getKey();

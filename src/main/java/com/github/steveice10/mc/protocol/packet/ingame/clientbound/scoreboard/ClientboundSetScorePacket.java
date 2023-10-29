@@ -6,8 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,7 +18,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     /**
      * Creates a set score packet that removes the entry.
      *
-     * @param entry The entry to remove.
+     * @param entry     The entry to remove.
      * @param objective The objective to remove the entry from.
      */
     public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective) {
@@ -33,9 +31,9 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     /**
      * Creates a set score packet that adds or updates the entry.
      *
-     * @param entry The entry to add or update.
+     * @param entry     The entry to add or update.
      * @param objective The objective to add or update the entry in.
-     * @param value The value to set the entry to.
+     * @param value     The value to set the entry to.
      */
     public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective, int value) {
         this.entry = entry;
@@ -45,7 +43,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
         this.value = value;
     }
 
-    public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entry = helper.readString(in);
         this.action = ScoreboardAction.from(helper.readVarInt(in));
         this.objective = helper.readString(in);
@@ -57,7 +55,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.entry);
         helper.writeVarInt(out, this.action.ordinal());
         helper.writeString(out, this.objective);

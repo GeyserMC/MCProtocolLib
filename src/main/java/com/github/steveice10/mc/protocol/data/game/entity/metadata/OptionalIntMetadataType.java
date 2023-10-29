@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.OptionalInt;
 
 public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
-    protected OptionalIntMetadataType(EntityMetadataFactory<OptionalInt> metadataFactory) {
-        super(OptionalIntReader.INSTANCE, OptionalIntWriter.INSTANCE, metadataFactory);
+    protected OptionalIntMetadataType(int id, EntityMetadataFactory<OptionalInt> metadataFactory) {
+        super(id, OptionalIntReader.INSTANCE, OptionalIntWriter.INSTANCE, metadataFactory);
     }
 
     public static class OptionalIntReader implements HelperReader<OptionalInt> {

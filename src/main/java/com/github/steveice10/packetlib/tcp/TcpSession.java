@@ -26,30 +26,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
+    private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
+    private static final int SHUTDOWN_TIMEOUT_MS = 500;
     /**
      * Controls whether non-priority packets are handled in a separate event loop
      */
     public static boolean USE_EVENT_LOOP_FOR_PACKETS = true;
     private static EventLoopGroup PACKET_EVENT_LOOP;
-    private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
-    private static final int SHUTDOWN_TIMEOUT_MS = 500;
-
-    protected String host;
-    protected int port;
     private final PacketProtocol protocol;
     private final EventLoop eventLoop = createEventLoop();
-
+    private final Map<Flag<?>, Object> flags = new HashMap<>();
+    private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
+    protected String host;
+    protected int port;
+    protected boolean disconnected = false;
     private int compressionThreshold = -1;
     private int connectTimeout = 30;
     private int readTimeout = 30;
     private int writeTimeout = 0;
-
-    private final Map<Flag<?>, Object> flags = new HashMap<>();
-    private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
-
     @Getter
     private Channel channel;
-    protected boolean disconnected = false;
 
     public TcpSession(String host, int port, PacketProtocol protocol) {
         this.host = host;

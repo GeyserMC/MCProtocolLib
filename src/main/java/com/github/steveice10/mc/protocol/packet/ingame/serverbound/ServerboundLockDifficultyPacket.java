@@ -7,20 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundLockDifficultyPacket implements MinecraftPacket {
     private final boolean locked;
 
-    public ServerboundLockDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundLockDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.locked = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeBoolean(this.locked);
     }
 }

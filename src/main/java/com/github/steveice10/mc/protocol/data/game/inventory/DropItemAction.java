@@ -6,13 +6,13 @@ public enum DropItemAction implements ContainerAction {
     LEFT_CLICK_OUTSIDE_NOT_HOLDING,
     RIGHT_CLICK_OUTSIDE_NOT_HOLDING;
 
-    public int getId() {
-        return this.ordinal();
-    }
-
     private static final DropItemAction[] VALUES = values();
 
     public static DropItemAction from(int id) {
         return VALUES[id];
+    }
+
+    public int getId() {
+        return this.ordinal();
     }
 }

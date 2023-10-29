@@ -26,17 +26,27 @@ public class ServerboundKeyPacket implements MinecraftPacket {
         this.encryptedChallenge = runEncryption(Cipher.ENCRYPT_MODE, publicKey, challenge);
     }
 
+    public ServerboundKeyPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.sharedKey = helper.readByteArray(in);
+        this.encryptedChallenge = helper.readByteArray(in);
+    }
+
+    private static byte[] runEncryption(int mode, Key key, byte[] data) {
+        try {
+            Cipher cipher = Cipher.getInstance(key.getAlgorithm().equals("RSA") ? "RSA/ECB/PKCS1Padding" : "AES/CFB8/NoPadding");
+            cipher.init(mode, key);
+            return cipher.doFinal(data);
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Failed to " + (mode == Cipher.DECRYPT_MODE ? "decrypt" : "encrypt") + " data.", e);
+        }
+    }
+
     public SecretKey getSecretKey(PrivateKey privateKey) {
         return new SecretKeySpec(runEncryption(Cipher.DECRYPT_MODE, privateKey, this.sharedKey), "AES");
     }
 
     public byte[] getEncryptedChallenge(PrivateKey privateKey) {
         return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.encryptedChallenge);
-    }
-
-    public ServerboundKeyPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sharedKey = helper.readByteArray(in);
-        this.encryptedChallenge = helper.readByteArray(in);
     }
 
     @Override
@@ -48,15 +58,5 @@ public class ServerboundKeyPacket implements MinecraftPacket {
     @Override
     public boolean isPriority() {
         return true;
-    }
-
-    private static byte[] runEncryption(int mode, Key key, byte[] data) {
-        try {
-            Cipher cipher = Cipher.getInstance(key.getAlgorithm().equals("RSA") ? "RSA/ECB/PKCS1Padding" : "AES/CFB8/NoPadding");
-            cipher.init(mode, key);
-            return cipher.doFinal(data);
-        } catch (GeneralSecurityException e) {
-            throw new IllegalStateException("Failed to " + (mode == Cipher.DECRYPT_MODE ? "decrypt" : "encrypt") + " data.", e);
-        }
     }
 }

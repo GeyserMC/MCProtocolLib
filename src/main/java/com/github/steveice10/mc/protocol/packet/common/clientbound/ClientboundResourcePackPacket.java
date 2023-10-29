@@ -10,8 +10,6 @@ import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class ClientboundResourcePackPacket implements MinecraftPacket {
     private final boolean required;
     private final @Nullable Component prompt;
 
-    public ClientboundResourcePackPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundResourcePackPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.url = helper.readString(in);
         this.hash = helper.readString(in);
         this.required = in.readBoolean();
@@ -33,7 +31,7 @@ public class ClientboundResourcePackPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.url);
         helper.writeString(out, this.hash);
         out.writeBoolean(this.required);

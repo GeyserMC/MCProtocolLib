@@ -7,43 +7,6 @@ import java.nio.charset.StandardCharsets;
 
 public class BasePacketCodecHelper implements PacketCodecHelper {
 
-    @Override
-    public void writeVarInt(ByteBuf buf, int value) {
-        this.writeVarLong(buf, value & 0xFFFFFFFFL);
-    }
-
-    @Override
-    public int readVarInt(ByteBuf buf) {
-        int value = 0;
-        int size = 0;
-        int b;
-        while (((b = buf.readByte()) & 0x80) == 0x80) {
-            value |= (b & 0x7F) << (size++ * 7);
-            if (size > 5) {
-                throw new IllegalArgumentException("VarInt too long (length must be <= 5)");
-            }
-        }
-
-        return value | ((b & 0x7F) << (size * 7));
-    }
-
-    // Based off of Andrew Steinborn's blog post:
-    // https://steinborn.me/posts/performance/how-fast-can-you-write-a-varint/
-    @Override
-    public void writeVarLong(ByteBuf buf, long value) {
-        // Peel the one and two byte count cases explicitly as they are the most common VarInt sizes
-        // that the server will write, to improve inlining.
-        if ((value & ~0x7FL) == 0) {
-            buf.writeByte((byte) value);
-        } else if ((value & ~0x3FFFL) == 0) {
-            int w = (int) ((value & 0x7FL | 0x80L) << 8 |
-                    (value >>> 7));
-            buf.writeShort(w);
-        } else {
-            writeVarLongFull(buf, value);
-        }
-    }
-
     private static void writeVarLongFull(ByteBuf buf, long value) {
         if ((value & ~0x7FL) == 0) {
             buf.writeByte((byte) value);
@@ -122,6 +85,43 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
                     (value >>> 63));
             buf.writeLong(w);
             buf.writeShort(w2);
+        }
+    }
+
+    @Override
+    public void writeVarInt(ByteBuf buf, int value) {
+        this.writeVarLong(buf, value & 0xFFFFFFFFL);
+    }
+
+    @Override
+    public int readVarInt(ByteBuf buf) {
+        int value = 0;
+        int size = 0;
+        int b;
+        while (((b = buf.readByte()) & 0x80) == 0x80) {
+            value |= (b & 0x7F) << (size++ * 7);
+            if (size > 5) {
+                throw new IllegalArgumentException("VarInt too long (length must be <= 5)");
+            }
+        }
+
+        return value | ((b & 0x7F) << (size * 7));
+    }
+
+    // Based off of Andrew Steinborn's blog post:
+    // https://steinborn.me/posts/performance/how-fast-can-you-write-a-varint/
+    @Override
+    public void writeVarLong(ByteBuf buf, long value) {
+        // Peel the one and two byte count cases explicitly as they are the most common VarInt sizes
+        // that the server will write, to improve inlining.
+        if ((value & ~0x7FL) == 0) {
+            buf.writeByte((byte) value);
+        } else if ((value & ~0x3FFFL) == 0) {
+            int w = (int) ((value & 0x7FL | 0x80L) << 8 |
+                    (value >>> 7));
+            buf.writeShort(w);
+        } else {
+            writeVarLongFull(buf, value);
         }
     }
 

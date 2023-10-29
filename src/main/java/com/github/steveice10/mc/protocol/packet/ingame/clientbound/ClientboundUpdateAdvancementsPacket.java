@@ -32,19 +32,6 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     private final @NonNull String[] removedAdvancements;
     private final @NonNull Map<String, Map<String, Long>> progress;
 
-    public Map<String, Long> getProgress(@NonNull String advancementId) {
-        return this.progress.get(advancementId);
-    }
-
-    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
-        Map<String, Long> progress = this.getProgress(advancementId);
-        if (progress == null || !progress.containsKey(criterionId)) {
-            return -1;
-        }
-
-        return progress.get(criterionId);
-    }
-
     public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.reset = in.readBoolean();
 
@@ -108,6 +95,19 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
 
             this.progress.put(advancementId, advancementProgress);
         }
+    }
+
+    public Map<String, Long> getProgress(@NonNull String advancementId) {
+        return this.progress.get(advancementId);
+    }
+
+    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
+        Map<String, Long> progress = this.getProgress(advancementId);
+        if (progress == null || !progress.containsKey(criterionId)) {
+            return -1;
+        }
+
+        return progress.get(criterionId);
     }
 
     @Override

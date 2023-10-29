@@ -222,7 +222,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public <T extends Tag> void writeTag(ByteBuf buf, T tag) throws IOException {
         NBTIO.writeTag(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 buf.writeByte(b);
             }
         }, tag);
@@ -231,7 +231,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public <T extends Tag> void writeAnyTag(ByteBuf buf, T tag) throws IOException {
         NBTIO.writeAnyTag(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 buf.writeByte(b);
             }
         }, tag);
@@ -240,7 +240,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public <T extends Tag> void writeTagLE(ByteBuf buf, T tag) throws IOException {
         NBTIO.writeTag(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 buf.writeByte(b);
             }
         }, tag, true);
@@ -364,7 +364,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             ret.add(this.readMetadata(buf, id));
         }
 
-        return ret.toArray(new EntityMetadata[0]);
+        return ret.toArray(new EntityMetadata<?, ?>[0]);
     }
 
     public void writeEntityMetadata(ByteBuf buf, EntityMetadata<?, ?>[] metadata) throws IOException {
@@ -388,11 +388,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public MetadataType<?> readMetadataType(ByteBuf buf) {
         int id = this.readVarInt(buf);
-        if (id >= MetadataType.size()) {
-            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataType.size() + "!");
+        if (id >= MetadataTypes.size()) {
+            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataTypes.size() + "!");
         }
 
-        return MetadataType.from(id);
+        return MetadataTypes.from(id);
     }
 
     public void writeMetadataType(ByteBuf buf, MetadataType<?> type) {
@@ -406,8 +406,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeGlobalPos(ByteBuf buf, GlobalPos pos) {
-        this.writeString(buf, pos.getDimension());
-        this.writePosition(buf, pos.getPosition());
+        this.writeString(buf, pos.dimension());
+        this.writePosition(buf, pos.position());
     }
 
     public PlayerSpawnInfo readPlayerSpawnInfo(ByteBuf buf) {
@@ -524,14 +524,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public PositionSource readPositionSource(ByteBuf buf) {
         PositionSourceType type = PositionSourceType.from(this.readResourceLocation(buf));
-        switch (type) {
-            case BLOCK:
-                return new BlockPositionSource(this.readPosition(buf));
-            case ENTITY:
-                return new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
-            default:
-                throw new IllegalStateException("Unknown position source type!");
-        }
+        return switch (type) {
+            case BLOCK -> new BlockPositionSource(this.readPosition(buf));
+            case ENTITY -> new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
+            default -> throw new IllegalStateException("Unknown position source type!");
+        };
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
@@ -551,9 +548,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeVillagerData(ByteBuf buf, VillagerData villagerData) {
-        this.writeVarInt(buf, villagerData.getType());
-        this.writeVarInt(buf, villagerData.getProfession());
-        this.writeVarInt(buf, villagerData.getLevel());
+        this.writeVarInt(buf, villagerData.type());
+        this.writeVarInt(buf, villagerData.profession());
+        this.writeVarInt(buf, villagerData.level());
     }
 
     public ModifierOperation readModifierOperation(ByteBuf buf) {

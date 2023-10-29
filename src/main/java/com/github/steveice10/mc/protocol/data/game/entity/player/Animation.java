@@ -11,26 +11,26 @@ public enum Animation {
     CRITICAL_HIT(4),
     ENCHANTMENT_CRITICAL_HIT(5);
 
+    private static final Int2ObjectMap<Animation> VALUES = new Int2ObjectOpenHashMap<>();
+
+    static {
+        for (Animation animation : values()) {
+            VALUES.put(animation.id, animation);
+        }
+    }
+
     private final int id;
 
     Animation(int id) {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    private static final Int2ObjectMap<Animation> VALUES = new Int2ObjectOpenHashMap<>();
-
     @Nullable
     public static Animation from(int id) {
         return VALUES.get(id);
     }
 
-    static {
-        for (Animation animation : values()) {
-            VALUES.put(animation.id, animation);
-        }
+    public int getId() {
+        return id;
     }
 }

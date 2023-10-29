@@ -6,8 +6,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.IOException;
-
 @Data
 @NoArgsConstructor
 public class ClientboundChunkBatchStartPacket implements MinecraftPacket {
@@ -15,6 +13,6 @@ public class ClientboundChunkBatchStartPacket implements MinecraftPacket {
     public ClientboundChunkBatchStartPacket(ByteBuf in, MinecraftCodecHelper helper) {
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
     }
 }

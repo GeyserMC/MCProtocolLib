@@ -28,6 +28,20 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         this.tabId = tabId;
     }
 
+    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.action = AdvancementTabAction.from(helper.readVarInt(in));
+        switch (this.action) {
+            case CLOSED_SCREEN:
+                this.tabId = null;
+                break;
+            case OPENED_TAB:
+                this.tabId = helper.readString(in);
+                break;
+            default:
+                throw new IOException("Unknown advancement tab action: " + this.action);
+        }
+    }
+
     /**
      * Gets the tab ID that was opened.
      *
@@ -41,20 +55,6 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         }
 
         return this.tabId;
-    }
-
-    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.action = AdvancementTabAction.from(helper.readVarInt(in));
-        switch (this.action) {
-            case CLOSED_SCREEN:
-                this.tabId = null;
-                break;
-            case OPENED_TAB:
-                this.tabId = helper.readString(in);
-                break;
-            default:
-                throw new IOException("Unknown advancement tab action: " + this.action);
-        }
     }
 
     @Override

@@ -11,8 +11,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     private final @NonNull ContainerType type;
     private final @NonNull Component title;
 
-    public ClientboundOpenScreenPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundOpenScreenPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = helper.readVarInt(in);
         this.type = ContainerType.from(helper.readVarInt(in));
         this.title = helper.readComponent(in);
@@ -35,7 +33,7 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.containerId);
         helper.writeVarInt(out, this.type.ordinal());
         helper.writeComponent(out, this.title);

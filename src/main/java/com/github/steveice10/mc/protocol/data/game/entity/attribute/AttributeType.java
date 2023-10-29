@@ -11,23 +11,6 @@ public interface AttributeType {
 
     String getIdentifier();
 
-    /**
-     * Used when MCProtocolLib gets an attribute not in its built-in registry.
-     */
-    @Getter
-    @EqualsAndHashCode
-    class Custom implements AttributeType {
-        private final String identifier;
-
-        public Custom(String identifier) {
-            this.identifier = identifier;
-        }
-
-        public String getIdentifier() {
-            return identifier;
-        }
-    }
-
     @Getter
     @AllArgsConstructor
     enum Builtin implements AttributeType {
@@ -44,11 +27,6 @@ public interface AttributeType {
         GENERIC_LUCK("minecraft:generic.luck", 0, -1024, 1024),
         HORSE_JUMP_STRENGTH("minecraft:horse.jump_strength", 0.7, 0, 2),
         ZOMBIE_SPAWN_REINFORCEMENTS("minecraft:zombie.spawn_reinforcements", 0, 0, 1);
-
-        private final String identifier;
-        private final double def;
-        private final double min;
-        private final double max;
 
         public static final Map<String, AttributeType> BUILTIN = new HashMap<>();
 
@@ -68,8 +46,30 @@ public interface AttributeType {
             register(ZOMBIE_SPAWN_REINFORCEMENTS);
         }
 
+        private final String identifier;
+        private final double def;
+        private final double min;
+        private final double max;
+
         private static void register(AttributeType attributeType) {
             BUILTIN.put(attributeType.getIdentifier(), attributeType);
+        }
+    }
+
+    /**
+     * Used when MCProtocolLib gets an attribute not in its built-in registry.
+     */
+    @Getter
+    @EqualsAndHashCode
+    class Custom implements AttributeType {
+        private final String identifier;
+
+        public Custom(String identifier) {
+            this.identifier = identifier;
+        }
+
+        public String getIdentifier() {
+            return identifier;
         }
     }
 }

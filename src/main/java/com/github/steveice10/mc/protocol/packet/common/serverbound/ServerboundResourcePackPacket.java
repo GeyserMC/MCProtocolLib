@@ -9,20 +9,18 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundResourcePackPacket implements MinecraftPacket {
     private final @NonNull ResourcePackStatus status;
 
-    public ServerboundResourcePackPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundResourcePackPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.status = ResourcePackStatus.from(helper.readVarInt(in));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.status.ordinal());
     }
 }

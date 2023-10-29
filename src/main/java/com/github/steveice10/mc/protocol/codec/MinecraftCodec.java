@@ -45,17 +45,6 @@ import java.util.Map;
 public class MinecraftCodec {
     private static final Int2ObjectMap<LevelEventType> LEVEL_EVENTS = new Int2ObjectOpenHashMap<>();
     private static final Map<String, BuiltinSound> SOUND_NAMES = new HashMap<>();
-
-    static {
-        for (LevelEventType levelEvent : LevelEventType.values()) {
-            LEVEL_EVENTS.put(levelEvent.getId(), levelEvent);
-        }
-
-        for (BuiltinSound sound : BuiltinSound.values()) {
-            SOUND_NAMES.put(sound.getName(), sound);
-        }
-    }
-
     public static final PacketCodec CODEC = PacketCodec.builder()
             .protocolVersion(764)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
@@ -264,6 +253,16 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundUseItemPacket.class, ServerboundUseItemPacket::new)
             )
             .build();
+
+    static {
+        for (LevelEventType levelEvent : LevelEventType.values()) {
+            LEVEL_EVENTS.put(levelEvent.getId(), levelEvent);
+        }
+
+        for (BuiltinSound sound : BuiltinSound.values()) {
+            SOUND_NAMES.put(sound.getName(), sound);
+        }
+    }
 
     private MinecraftCodec() {
     }

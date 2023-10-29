@@ -10,15 +10,13 @@ public enum Direction implements ObjectData {
     WEST(2),
     EAST(3);
 
+    public static final Direction[] VALUES = values();
+    private static final Direction[] HORIZONTAL_VALUES = {NORTH, SOUTH, WEST, EAST};
     @Getter
     private final int horizontalIndex;
-
     Direction(int horizontalIndex) {
         this.horizontalIndex = horizontalIndex;
     }
-
-    private static final Direction[] HORIZONTAL_VALUES = {NORTH, SOUTH, WEST, EAST};
-    public static final Direction[] VALUES = values();
 
     public static Direction getByHorizontalIndex(int index) {
         return HORIZONTAL_VALUES[index % HORIZONTAL_VALUES.length];

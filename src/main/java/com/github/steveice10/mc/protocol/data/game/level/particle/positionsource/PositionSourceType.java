@@ -10,25 +10,25 @@ public enum PositionSourceType {
     BLOCK,
     ENTITY;
 
+    private static final Map<String, PositionSourceType> VALUES = new HashMap<>();
+
+    static {
+        for (PositionSourceType value : values()) {
+            VALUES.put(value.resourceLocation, value);
+        }
+    }
+
     private final String resourceLocation;
 
     PositionSourceType() {
         this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
     }
 
-    public String getResourceLocation() {
-        return resourceLocation;
-    }
-
-    private static final Map<String, PositionSourceType> VALUES = new HashMap<>();
-
     public static PositionSourceType from(String resourceLocation) {
         return VALUES.get(resourceLocation);
     }
 
-    static {
-        for (PositionSourceType value : values()) {
-            VALUES.put(value.resourceLocation, value);
-        }
+    public String getResourceLocation() {
+        return resourceLocation;
     }
 }

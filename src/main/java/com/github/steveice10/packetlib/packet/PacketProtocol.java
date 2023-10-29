@@ -147,7 +147,7 @@ public abstract class PacketProtocol {
     /**
      * Creates a new instance of a clientbound packet with the given id and read the clientbound input.
      *
-     * @param <H>        The type of codec helper to use.
+     * @param <H>         The type of codec helper to use.
      * @param id          Id of the packet to create.
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
@@ -215,7 +215,7 @@ public abstract class PacketProtocol {
     /**
      * Creates a new instance of a serverbound packet with the given id and read the serverbound input.
      *
-     * @param <H>        The type of codec helper to use.
+     * @param <H>         The type of codec helper to use.
      * @param id          Id of the packet to create.
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.

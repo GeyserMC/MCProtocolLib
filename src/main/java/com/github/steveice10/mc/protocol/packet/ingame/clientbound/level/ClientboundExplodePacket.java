@@ -9,7 +9,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     private final float pushY;
     private final float pushZ;
 
-    public ClientboundExplodePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundExplodePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -43,7 +42,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

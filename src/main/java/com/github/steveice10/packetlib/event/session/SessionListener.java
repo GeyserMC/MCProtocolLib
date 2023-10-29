@@ -11,7 +11,7 @@ public interface SessionListener {
      * Called when a session receives a packet.
      *
      * @param session the session that received the packet.
-     * @param packet the packet that was just received.
+     * @param packet  the packet that was just received.
      */
     void packetReceived(Session session, Packet packet);
 
@@ -26,7 +26,7 @@ public interface SessionListener {
      * Called when a session sends a packet.
      *
      * @param session Session that sent the packet.
-     * @param packet Packet just sent.
+     * @param packet  Packet just sent.
      */
     void packetSent(Session session, Packet packet);
 

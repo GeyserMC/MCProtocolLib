@@ -17,17 +17,17 @@ public enum BuiltinChatType {
     TEAM_MSG_COMMAND_OUTGOING,
     EMOTE_COMMAND;
 
-    private final String resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
-
     private static final Map<String, BuiltinChatType> VALUES = new HashMap<>();
-
-    public static BuiltinChatType from(String resourceLocation) {
-        return VALUES.get(resourceLocation);
-    }
 
     static {
         for (BuiltinChatType type : values()) {
             VALUES.put(type.getResourceLocation(), type);
         }
+    }
+
+    private final String resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
+
+    public static BuiltinChatType from(String resourceLocation) {
+        return VALUES.get(resourceLocation);
     }
 }

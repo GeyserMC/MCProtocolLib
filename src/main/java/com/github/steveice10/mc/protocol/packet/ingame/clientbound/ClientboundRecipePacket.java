@@ -6,7 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 @Data
@@ -71,7 +70,7 @@ public class ClientboundRecipePacket implements MinecraftPacket {
         this.alreadyKnownRecipes = Arrays.copyOf(alreadyKnownRecipes, alreadyKnownRecipes.length);
     }
 
-    public ClientboundRecipePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.action = UnlockRecipesAction.from(helper.readVarInt(in));
 
         this.openCraftingBook = in.readBoolean();
@@ -99,7 +98,7 @@ public class ClientboundRecipePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.action.ordinal());
 
         out.writeBoolean(this.openCraftingBook);

@@ -20,7 +20,7 @@ public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
                         new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList())
                 ),
                 new ClientboundLevelChunkWithLightPacket(1, 1,
-                        new byte[256], new CompoundTag(""), new BlockEntityInfo[] {
+                        new byte[256], new CompoundTag(""), new BlockEntityInfo[]{
                         new BlockEntityInfo(1, 0, 1, BlockEntityType.CHEST, null)
                 }, new LightUpdateData(new BitSet(), new BitSet(), new BitSet(), new BitSet(), Collections.emptyList(), Collections.emptyList())
                 )

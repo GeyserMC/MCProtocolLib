@@ -37,6 +37,20 @@ public class DataPalette {
                 new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType, globalPaletteBits);
     }
 
+    private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {
+        if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
+            return new ListPalette(bitsPerEntry);
+        } else if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
+            return new MapPalette(bitsPerEntry);
+        } else {
+            return new GlobalPalette();
+        }
+    }
+
+    private static int index(int x, int y, int z) {
+        return y << 8 | z << 4 | x;
+    }
+
     public int get(int x, int y, int z) {
         if (storage != null) {
             int id = this.storage.get(index(x, y, z));
@@ -97,19 +111,5 @@ public class DataPalette {
                 this.storage.set(i, this.palette.stateToId(oldPalette.idToState(oldData.get(i))));
             }
         }
-    }
-
-    private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {
-        if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
-            return new ListPalette(bitsPerEntry);
-        } else if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
-            return new MapPalette(bitsPerEntry);
-        } else {
-            return new GlobalPalette();
-        }
-    }
-
-    private static int index(int x, int y, int z) {
-        return y << 8 | z << 4 | x;
     }
 }

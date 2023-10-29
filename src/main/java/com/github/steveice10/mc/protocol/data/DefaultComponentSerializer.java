@@ -8,14 +8,14 @@ public final class DefaultComponentSerializer {
             .legacyHoverEventSerializer(NBTLegacyHoverEventSerializer.get())
             .build();
 
+    private DefaultComponentSerializer() {
+    }
+
     public static GsonComponentSerializer get() {
         return serializer;
     }
 
     public static void set(GsonComponentSerializer serializer) {
         DefaultComponentSerializer.serializer = serializer;
-    }
-
-    private DefaultComponentSerializer() {
     }
 }
