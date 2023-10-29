@@ -2,8 +2,12 @@ package com.github.steveice10.mc.protocol.data.game.entity.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@RequiredArgsConstructor
 public enum Animation {
     SWING_ARM(0),
     LEAVE_BED(2),
@@ -21,16 +25,8 @@ public enum Animation {
 
     private final int id;
 
-    Animation(int id) {
-        this.id = id;
-    }
-
     @Nullable
     public static Animation from(int id) {
         return VALUES.get(id);
-    }
-
-    public int getId() {
-        return id;
     }
 }

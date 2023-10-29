@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -9,7 +8,7 @@ import java.util.Map;
 
 public interface AttributeType {
 
-    String getIdentifier();
+    String identifier();
 
     @Getter
     @AllArgsConstructor
@@ -52,24 +51,18 @@ public interface AttributeType {
         private final double max;
 
         private static void register(AttributeType attributeType) {
-            BUILTIN.put(attributeType.getIdentifier(), attributeType);
+            BUILTIN.put(attributeType.identifier(), attributeType);
+        }
+
+        @Override
+        public String identifier() {
+            return identifier;
         }
     }
 
     /**
      * Used when MCProtocolLib gets an attribute not in its built-in registry.
      */
-    @Getter
-    @EqualsAndHashCode
-    class Custom implements AttributeType {
-        private final String identifier;
-
-        public Custom(String identifier) {
-            this.identifier = identifier;
-        }
-
-        public String getIdentifier() {
-            return identifier;
-        }
+    record Custom(String identifier) implements AttributeType {
     }
 }

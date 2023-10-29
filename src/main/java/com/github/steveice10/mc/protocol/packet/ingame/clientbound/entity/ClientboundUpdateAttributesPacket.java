@@ -9,8 +9,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.AttributeTyp
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull List<Attribute> attributes;
+    private final @NotNull List<Attribute> attributes;
 
     public ClientboundUpdateAttributesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
@@ -45,10 +45,10 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.entityId);
         helper.writeVarInt(out, this.attributes.size());
         for (Attribute attribute : this.attributes) {
-            helper.writeString(out, attribute.getType().getIdentifier());
-            out.writeDouble(attribute.getValue());
-            helper.writeVarInt(out, attribute.getModifiers().size());
-            for (AttributeModifier modifier : attribute.getModifiers()) {
+            helper.writeString(out, attribute.type().identifier());
+            out.writeDouble(attribute.value());
+            helper.writeVarInt(out, attribute.modifiers().size());
+            for (AttributeModifier modifier : attribute.modifiers()) {
                 helper.writeUUID(out, modifier.uuid());
                 out.writeDouble(modifier.amount());
                 helper.writeModifierOperation(out, modifier.operation());

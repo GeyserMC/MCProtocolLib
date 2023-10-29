@@ -6,7 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.level.LightUpdateData;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +20,9 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
     private final int z;
     private final @NotNull LightUpdateData lightData;
 
-    public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
-                                        @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
-                                        @NonNull List<byte[]> skyUpdates, @NonNull List<byte[]> blockUpdates) {
+    public ClientboundLightUpdatePacket(int x, int z, @NotNull BitSet skyYMask, @NotNull BitSet blockYMask,
+                                        @NotNull BitSet emptySkyYMask, @NotNull BitSet emptyBlockYMask,
+                                        @NotNull List<byte[]> skyUpdates, @NotNull List<byte[]> blockUpdates) {
         for (byte[] content : skyUpdates) {
             if (content.length != 2048) {
                 throw new IllegalArgumentException("All arrays in skyUpdates must be length of 2048!");

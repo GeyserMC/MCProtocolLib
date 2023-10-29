@@ -6,15 +6,15 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerState;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundPlayerCommandPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull PlayerState state;
+    private final @NotNull PlayerState state;
     private final int jumpBoost;
 
     public ServerboundPlayerCommandPacket(int entityId, PlayerState state) {

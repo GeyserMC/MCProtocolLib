@@ -7,20 +7,20 @@ import com.github.steveice10.mc.protocol.data.game.level.event.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundLevelEventPacket implements MinecraftPacket {
-    private final @NonNull LevelEvent event;
-    private final @NonNull Vector3i position;
-    private final @NonNull LevelEventData data;
+    private final @NotNull LevelEvent event;
+    private final @NotNull Vector3i position;
+    private final @NotNull LevelEventData data;
     private final boolean broadcast;
 
-    public ClientboundLevelEventPacket(@NonNull LevelEvent event, @NonNull Vector3i position, @NonNull LevelEventData data) {
+    public ClientboundLevelEventPacket(@NotNull LevelEvent event, @NotNull Vector3i position, @NotNull LevelEventData data) {
         this(event, position, data, false);
     }
 

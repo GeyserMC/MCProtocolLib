@@ -1,26 +1,25 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
-@Data
-@Setter(AccessLevel.NONE)
+@Getter
 @AllArgsConstructor
 @EqualsAndHashCode
 public class ChunkSection {
-
     private static final int AIR = 0;
-
+    private final @NotNull DataPalette chunkData;
+    private final @NotNull DataPalette biomeData;
     private int blockCount;
-    private @NonNull DataPalette chunkData;
-    @Getter
-    private @NonNull DataPalette biomeData;
 
     public ChunkSection() {
-        this(0, DataPalette.createForChunk(), DataPalette.createForBiome(4));
+        this(DataPalette.createForChunk(), DataPalette.createForBiome(4), 0);
     }
 
     public ChunkSection(ChunkSection original) {
-        this(original.blockCount, new DataPalette(original.chunkData), new DataPalette(original.biomeData));
+        this( new DataPalette(original.chunkData), new DataPalette(original.biomeData), original.blockCount);
     }
 
     public int getBlock(int x, int y, int z) {

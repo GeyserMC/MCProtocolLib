@@ -5,15 +5,15 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetDefaultSpawnPositionPacket implements MinecraftPacket {
-    private final @NonNull Vector3i position;
+    private final @NotNull Vector3i position;
     private final float angle;
 
     public ClientboundSetDefaultSpawnPositionPacket(ByteBuf in, MinecraftCodecHelper helper) {

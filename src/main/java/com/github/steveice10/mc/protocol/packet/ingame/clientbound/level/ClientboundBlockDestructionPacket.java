@@ -6,17 +6,17 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundBlockDestructionPacket implements MinecraftPacket {
     private final int breakerEntityId;
-    private final @NonNull Vector3i position;
-    private final @NonNull BlockBreakStage stage;
+    private final @NotNull Vector3i position;
+    private final @NotNull BlockBreakStage stage;
 
     public ClientboundBlockDestructionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.breakerEntityId = helper.readVarInt(in);

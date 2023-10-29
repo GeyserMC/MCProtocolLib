@@ -5,7 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ObjectEn
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -14,7 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public abstract class EntityMetadata<V, T extends MetadataType<V>> {
     protected final int id;
-    protected final @NonNull T type;
+    protected final @NotNull T type;
 
     /**
      * May be null depending on type

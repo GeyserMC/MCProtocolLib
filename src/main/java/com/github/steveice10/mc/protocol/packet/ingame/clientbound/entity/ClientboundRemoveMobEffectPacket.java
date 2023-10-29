@@ -6,15 +6,15 @@ import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundRemoveMobEffectPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull Effect effect;
+    private final @NotNull Effect effect;
 
     public ClientboundRemoveMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);

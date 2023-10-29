@@ -5,20 +5,20 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
-    private final @NonNull Vector3i position;
-    private final @NonNull String name;
-    private final @NonNull String target;
-    private final @NonNull String pool;
-    private final @NonNull String finalState;
-    private final @NonNull String jointType;
+    private final @NotNull Vector3i position;
+    private final @NotNull String name;
+    private final @NotNull String target;
+    private final @NotNull String pool;
+    private final @NotNull String finalState;
+    private final @NotNull String jointType;
 
     public ServerboundSetJigsawBlockPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);

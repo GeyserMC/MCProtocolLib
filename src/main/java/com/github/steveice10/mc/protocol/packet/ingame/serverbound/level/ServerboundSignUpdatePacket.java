@@ -4,20 +4,20 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 @Data
 @With
 public class ServerboundSignUpdatePacket implements MinecraftPacket {
-    private final @NonNull Vector3i position;
-    private final @NonNull String[] lines;
+    private final @NotNull Vector3i position;
+    private final @NotNull String[] lines;
     private final boolean isFrontText;
 
-    public ServerboundSignUpdatePacket(@NonNull Vector3i position, @NonNull String[] lines, boolean isFrontText) {
+    public ServerboundSignUpdatePacket(@NotNull Vector3i position, @NotNull String[] lines, boolean isFrontText) {
         if (lines.length != 4) {
             throw new IllegalArgumentException("Lines must contain exactly 4 strings.");
         }

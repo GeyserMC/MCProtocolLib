@@ -9,15 +9,15 @@ import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSoundPacket implements MinecraftPacket {
-    private final @NonNull Sound sound;
-    private final @NonNull SoundCategory category;
+    private final @NotNull Sound sound;
+    private final @NotNull SoundCategory category;
     private final double x;
     private final double y;
     private final double z;

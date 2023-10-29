@@ -9,6 +9,9 @@ import lombok.EqualsAndHashCode;
 public class GlobalPalette implements Palette {
     public static final GlobalPalette INSTANCE = new GlobalPalette();
 
+    private GlobalPalette() {
+    }
+
     @Override
     public int size() {
         return Integer.MAX_VALUE;

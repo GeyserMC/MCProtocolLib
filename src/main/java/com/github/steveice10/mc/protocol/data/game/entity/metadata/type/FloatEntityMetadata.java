@@ -4,14 +4,14 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.FloatMetadataType;
 import io.netty.buffer.ByteBuf;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 public class FloatEntityMetadata extends EntityMetadata<Float, FloatMetadataType> {
     private final float value;
 
-    public FloatEntityMetadata(int id, @NonNull FloatMetadataType type, float value) {
+    public FloatEntityMetadata(int id, @NotNull FloatMetadataType type, float value) {
         super(id, type);
         this.value = value;
     }

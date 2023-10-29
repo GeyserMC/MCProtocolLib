@@ -7,17 +7,17 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundPlayerActionPacket implements MinecraftPacket {
-    private final @NonNull PlayerAction action;
-    private final @NonNull Vector3i position;
-    private final @NonNull Direction face;
+    private final @NotNull PlayerAction action;
+    private final @NotNull Vector3i position;
+    private final @NotNull Direction face;
     private final int sequence;
 
     public ServerboundPlayerActionPacket(ByteBuf in, MinecraftCodecHelper helper) {

@@ -5,14 +5,14 @@ import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
 public class CookedRecipeData implements RecipeData {
-    private final @NonNull String group;
-    private final @NonNull CraftingBookCategory category;
-    private final @NonNull Ingredient ingredient;
+    private final @NotNull String group;
+    private final @NotNull CraftingBookCategory category;
+    private final @NotNull Ingredient ingredient;
     private final ItemStack result;
     private final float experience;
     private final int cookingTime;

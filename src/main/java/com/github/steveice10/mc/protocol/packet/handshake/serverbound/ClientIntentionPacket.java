@@ -6,17 +6,17 @@ import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientIntentionPacket implements MinecraftPacket {
     private final int protocolVersion;
-    private final @NonNull String hostname;
+    private final @NotNull String hostname;
     private final int port;
-    private final @NonNull HandshakeIntent intent;
+    private final @NotNull HandshakeIntent intent;
 
     public ClientIntentionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.protocolVersion = helper.readVarInt(in);

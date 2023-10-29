@@ -4,15 +4,19 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreboardAction;
 import io.netty.buffer.ByteBuf;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetScorePacket implements MinecraftPacket {
-    private final @NonNull String entry;
-    private final @NonNull ScoreboardAction action;
-    private final @NonNull String objective;
+    private final @NotNull String entry;
+    private final @NotNull ScoreboardAction action;
+    private final @NotNull String objective;
     private final int value;
 
     /**
@@ -21,7 +25,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
      * @param entry     The entry to remove.
      * @param objective The objective to remove the entry from.
      */
-    public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective) {
+    public ClientboundSetScorePacket(@NotNull String entry, @NotNull String objective) {
         this.entry = entry;
         this.action = ScoreboardAction.REMOVE;
         this.objective = objective;
@@ -35,7 +39,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
      * @param objective The objective to add or update the entry in.
      * @param value     The value to set the entry to.
      */
-    public ClientboundSetScorePacket(@NonNull String entry, @NonNull String objective, int value) {
+    public ClientboundSetScorePacket(@NotNull String entry, @NotNull String objective, int value) {
         this.entry = entry;
         this.action = ScoreboardAction.ADD_OR_UPDATE;
         this.objective = objective;

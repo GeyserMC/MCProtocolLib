@@ -6,14 +6,14 @@ import com.github.steveice10.mc.protocol.data.game.entity.RotationOrigin;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
-    private final @NonNull RotationOrigin origin;
+    private final @NotNull RotationOrigin origin;
     private final double x;
     private final double y;
     private final double z;

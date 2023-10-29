@@ -6,8 +6,8 @@ import com.github.steveice10.mc.protocol.data.game.inventory.AdvancementTabActio
 import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
 @EqualsAndHashCode
 public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     @Getter
-    private final @NonNull AdvancementTabAction action;
+    private final @NotNull AdvancementTabAction action;
     private final String tabId;
 
     public ServerboundSeenAdvancementsPacket() {
@@ -23,7 +23,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         this.tabId = null;
     }
 
-    public ServerboundSeenAdvancementsPacket(@NonNull String tabId) {
+    public ServerboundSeenAdvancementsPacket(@NotNull String tabId) {
         this.action = AdvancementTabAction.OPENED_TAB;
         this.tabId = tabId;
     }

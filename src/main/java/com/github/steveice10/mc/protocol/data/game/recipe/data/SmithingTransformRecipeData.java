@@ -4,13 +4,13 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
 public class SmithingTransformRecipeData implements RecipeData {
-    private final @NonNull Ingredient template;
-    private final @NonNull Ingredient base;
-    private final @NonNull Ingredient addition;
+    private final @NotNull Ingredient template;
+    private final @NotNull Ingredient base;
+    private final @NotNull Ingredient addition;
     private final ItemStack result;
 }

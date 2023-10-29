@@ -5,9 +5,9 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
@@ -18,7 +18,7 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
     /**
      * The server sends the record position in terms of the local chunk coordinate but it is stored here in terms of global coordinates.
      */
-    private final @NonNull BlockChangeEntry[] entries;
+    private final @NotNull BlockChangeEntry[] entries;
 
     public ClientboundSectionBlocksUpdatePacket(int chunkX, int chunkY, int chunkZ, BlockChangeEntry... entries) {
         if (entries == null || entries.length == 0) {

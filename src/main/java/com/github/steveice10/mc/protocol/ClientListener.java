@@ -35,8 +35,8 @@ import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -47,7 +47,7 @@ import java.security.NoSuchAlgorithmException;
  */
 @AllArgsConstructor
 public class ClientListener extends SessionAdapter {
-    private final @NonNull ProtocolState targetState;
+    private final @NotNull ProtocolState targetState;
 
     @SneakyThrows
     @Override

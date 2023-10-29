@@ -1,11 +1,6 @@
 package com.github.steveice10.mc.protocol.data.status;
 
-import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
-@Data
-@Setter(AccessLevel.NONE)
-@AllArgsConstructor
-public class VersionInfo {
-    private @NonNull String versionName;
-    private int protocolVersion;
+public record VersionInfo(@NotNull String versionName, int protocolVersion) {
 }

@@ -9,9 +9,9 @@ import com.github.steveice10.mc.protocol.data.game.level.block.StructureRotation
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
@@ -21,15 +21,15 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
     private static final int FLAG_SHOW_AIR = 0x02;
     private static final int FLAG_SHOW_BOUNDING_BOX = 0x04;
 
-    private final @NonNull Vector3i position;
-    private final @NonNull UpdateStructureBlockAction action;
-    private final @NonNull UpdateStructureBlockMode mode;
-    private final @NonNull String name;
-    private final @NonNull Vector3i offset;
-    private final @NonNull Vector3i size;
-    private final @NonNull StructureMirror mirror;
-    private final @NonNull StructureRotation rotation;
-    private final @NonNull String metadata;
+    private final @NotNull Vector3i position;
+    private final @NotNull UpdateStructureBlockAction action;
+    private final @NotNull UpdateStructureBlockMode mode;
+    private final @NotNull String name;
+    private final @NotNull Vector3i offset;
+    private final @NotNull Vector3i size;
+    private final @NotNull StructureMirror mirror;
+    private final @NotNull StructureRotation rotation;
+    private final @NotNull String metadata;
     private final float integrity;
     private final long seed;
     private final boolean ignoreEntities;

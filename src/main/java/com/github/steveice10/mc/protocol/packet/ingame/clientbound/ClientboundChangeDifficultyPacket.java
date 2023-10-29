@@ -6,14 +6,14 @@ import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundChangeDifficultyPacket implements MinecraftPacket {
-    private final @NonNull Difficulty difficulty;
+    private final @NotNull Difficulty difficulty;
     private final boolean difficultyLocked;
 
     public ClientboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {

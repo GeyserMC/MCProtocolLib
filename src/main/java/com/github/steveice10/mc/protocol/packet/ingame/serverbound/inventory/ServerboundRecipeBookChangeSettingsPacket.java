@@ -6,14 +6,14 @@ import com.github.steveice10.mc.protocol.data.game.inventory.CraftingBookStateTy
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundRecipeBookChangeSettingsPacket implements MinecraftPacket {
-    private final @NonNull CraftingBookStateType type;
+    private final @NotNull CraftingBookStateType type;
     private final boolean bookOpen;
     private final boolean filterActive;
 

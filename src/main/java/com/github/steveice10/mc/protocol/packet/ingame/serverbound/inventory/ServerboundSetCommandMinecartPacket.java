@@ -5,15 +5,15 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundSetCommandMinecartPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull String command;
+    private final @NotNull String command;
     private final boolean doesTrackOutput;
 
     public ServerboundSetCommandMinecartPacket(ByteBuf in, MinecraftCodecHelper helper) {

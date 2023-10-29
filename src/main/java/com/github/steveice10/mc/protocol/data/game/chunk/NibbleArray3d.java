@@ -2,12 +2,12 @@ package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
 public class NibbleArray3d {
-    private final @NonNull byte[] data;
+    private final byte @NotNull [] data;
 
     public NibbleArray3d(int size) {
         this(new byte[size >> 1]);

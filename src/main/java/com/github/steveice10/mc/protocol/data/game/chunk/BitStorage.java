@@ -1,6 +1,10 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -32,7 +36,7 @@ public class BitStorage {
     };
 
     @Getter
-    private final long @NonNull [] data;
+    private final long @NotNull [] data;
     @Getter
     private final int bitsPerEntry;
     @Getter

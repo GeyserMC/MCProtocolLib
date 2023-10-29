@@ -6,8 +6,8 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundTagQueryPacket implements MinecraftPacket {
     private final int transactionId;
-    private final @NonNull CompoundTag nbt;
+    private final @NotNull CompoundTag nbt;
 
     public ClientboundTagQueryPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.transactionId = helper.readVarInt(in);

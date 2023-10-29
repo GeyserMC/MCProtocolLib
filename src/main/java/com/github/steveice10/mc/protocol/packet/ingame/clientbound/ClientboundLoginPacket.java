@@ -6,8 +6,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
@@ -15,7 +15,7 @@ import lombok.With;
 public class ClientboundLoginPacket implements MinecraftPacket {
     private final int entityId;
     private final boolean hardcore;
-    private final @NonNull String[] worldNames;
+    private final @NotNull String[] worldNames;
     private final int maxPlayers;
     private final int viewDistance;
     private final int simulationDistance;

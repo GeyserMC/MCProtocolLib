@@ -7,8 +7,8 @@ import com.github.steveice10.mc.protocol.data.game.inventory.VillagerTrade;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull VillagerTrade[] trades;
+    private final @NotNull VillagerTrade[] trades;
     private final int villagerLevel;
     private final int experience;
     private final boolean regularVillager;
@@ -56,17 +56,17 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.trades.length);
         for (VillagerTrade trade : this.trades) {
-            helper.writeItemStack(out, trade.getFirstInput());
-            helper.writeItemStack(out, trade.getOutput());
-            helper.writeItemStack(out, trade.getSecondInput());
+            helper.writeItemStack(out, trade.firstInput());
+            helper.writeItemStack(out, trade.output());
+            helper.writeItemStack(out, trade.secondInput());
 
-            out.writeBoolean(trade.isTradeDisabled());
-            out.writeInt(trade.getNumUses());
-            out.writeInt(trade.getMaxUses());
-            out.writeInt(trade.getXp());
-            out.writeInt(trade.getSpecialPrice());
-            out.writeFloat(trade.getPriceMultiplier());
-            out.writeInt(trade.getDemand());
+            out.writeBoolean(trade.tradeDisabled());
+            out.writeInt(trade.numUses());
+            out.writeInt(trade.maxUses());
+            out.writeInt(trade.xp());
+            out.writeInt(trade.specialPrice());
+            out.writeFloat(trade.priceMultiplier());
+            out.writeInt(trade.demand());
         }
 
         helper.writeVarInt(out, this.villagerLevel);

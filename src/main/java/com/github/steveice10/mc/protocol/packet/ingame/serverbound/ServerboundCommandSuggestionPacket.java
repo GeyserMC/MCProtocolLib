@@ -5,15 +5,15 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundCommandSuggestionPacket implements MinecraftPacket {
     private final int transactionId;
-    private final @NonNull String text;
+    private final @NotNull String text;
 
     public ServerboundCommandSuggestionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.transactionId = helper.readVarInt(in);

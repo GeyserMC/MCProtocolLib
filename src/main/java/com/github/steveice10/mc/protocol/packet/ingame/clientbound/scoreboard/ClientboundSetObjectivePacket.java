@@ -6,15 +6,15 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.ObjectiveAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.ScoreType;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 public class ClientboundSetObjectivePacket implements MinecraftPacket {
-    private final @NonNull String name;
-    private final @NonNull ObjectiveAction action;
+    private final @NotNull String name;
+    private final @NotNull ObjectiveAction action;
 
     private final Component displayName;
     private final ScoreType type;
@@ -24,7 +24,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
      *
      * @param name Name of the objective.
      */
-    public ClientboundSetObjectivePacket(@NonNull String name) {
+    public ClientboundSetObjectivePacket(@NotNull String name) {
         this(name, ObjectiveAction.REMOVE, null, null);
     }
 
@@ -36,7 +36,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
      * @param displayName Display name of the objective.
      * @param type        Type of score.
      */
-    public ClientboundSetObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, Component displayName, ScoreType type) {
+    public ClientboundSetObjectivePacket(@NotNull String name, @NotNull ObjectiveAction action, Component displayName, ScoreType type) {
         if ((action == ObjectiveAction.ADD || action == ObjectiveAction.UPDATE) && (displayName == null || type == null)) {
             throw new IllegalArgumentException("ADD and UPDATE actions require display name and type.");
         }

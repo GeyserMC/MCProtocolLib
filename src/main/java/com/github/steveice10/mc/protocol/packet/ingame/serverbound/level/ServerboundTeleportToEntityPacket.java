@@ -5,8 +5,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 @With
 @AllArgsConstructor
 public class ServerboundTeleportToEntityPacket implements MinecraftPacket {
-    private final @NonNull UUID target;
+    private final @NotNull UUID target;
 
     public ServerboundTeleportToEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.target = helper.readUUID(in);

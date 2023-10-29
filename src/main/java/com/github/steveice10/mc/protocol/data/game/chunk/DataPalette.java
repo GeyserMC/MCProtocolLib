@@ -2,6 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.chunk;
 
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.*;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
@@ -12,7 +13,7 @@ public class DataPalette {
     public static final int GLOBAL_PALETTE_BITS_PER_ENTRY = 14;
     private final PaletteType paletteType;
     private final int globalPaletteBits;
-    private @NonNull Palette palette;
+    private @NotNull Palette palette;
     private BitStorage storage;
 
     public DataPalette(DataPalette original) {
@@ -42,7 +43,7 @@ public class DataPalette {
         } else if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
             return new MapPalette(bitsPerEntry);
         } else {
-            return new GlobalPalette();
+            return GlobalPalette.INSTANCE;
         }
     }
 

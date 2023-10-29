@@ -15,9 +15,9 @@ import com.google.gson.JsonObject;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.List;
 public class ClientboundStatusResponsePacket implements MinecraftPacket {
     private static final String FAVICON_PREFIX = "data:image/png;base64,";
     private static final int FAVICON_PREFIX_LENGTH = FAVICON_PREFIX.length();
-    private final @NonNull ServerStatusInfo info;
+    private final @NotNull ServerStatusInfo info;
 
     public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
         JsonObject obj = new Gson().fromJson(helper.readString(in), JsonObject.class);
@@ -110,12 +110,12 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         if (playerInfo != null) {
             JsonObject playersObject = new JsonObject();
 
-            playersObject.addProperty("max", playerInfo.getMaxPlayers());
-            playersObject.addProperty("online", playerInfo.getOnlinePlayers());
+            playersObject.addProperty("max", playerInfo.maxPlayers());
+            playersObject.addProperty("online", playerInfo.onlinePlayers());
 
-            if (playerInfo.getPlayers() != null) {
+            if (playerInfo.players() != null) {
                 JsonArray sampleArray = new JsonArray();
-                for (GameProfile profile : playerInfo.getPlayers()) {
+                for (GameProfile profile : playerInfo.players()) {
                     JsonObject o = new JsonObject();
                     o.addProperty("name", profile.getName());
                     o.addProperty("id", profile.getIdAsString());
@@ -132,8 +132,8 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         if (versionInfo != null) {
             JsonObject versionObject = new JsonObject();
 
-            versionObject.addProperty("name", versionInfo.getVersionName());
-            versionObject.addProperty("protocol", versionInfo.getProtocolVersion());
+            versionObject.addProperty("name", versionInfo.versionName());
+            versionObject.addProperty("protocol", versionInfo.protocolVersion());
 
             obj.add("version", versionObject);
         }

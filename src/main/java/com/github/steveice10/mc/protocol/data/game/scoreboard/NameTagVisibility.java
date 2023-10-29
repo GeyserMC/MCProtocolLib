@@ -1,8 +1,13 @@
 package com.github.steveice10.mc.protocol.data.game.scoreboard;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@RequiredArgsConstructor
 public enum NameTagVisibility {
     ALWAYS("always"),
     NEVER("never"),
@@ -19,15 +24,7 @@ public enum NameTagVisibility {
 
     private final String name;
 
-    NameTagVisibility(String name) {
-        this.name = name;
-    }
-
     public static NameTagVisibility from(String name) {
         return VALUES.get(name);
-    }
-
-    public String getName() {
-        return this.name;
     }
 }

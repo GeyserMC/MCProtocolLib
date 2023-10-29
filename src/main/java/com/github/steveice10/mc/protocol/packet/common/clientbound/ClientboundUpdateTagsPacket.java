@@ -5,8 +5,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 @With
 @AllArgsConstructor
 public class ClientboundUpdateTagsPacket implements MinecraftPacket {
-    private final @NonNull Map<String, Map<String, int[]>> tags = new HashMap<>();
+    private final @NotNull Map<String, Map<String, int[]>> tags = new HashMap<>();
 
     public ClientboundUpdateTagsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         int totalTagCount = helper.readVarInt(in);

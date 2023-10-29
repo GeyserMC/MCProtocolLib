@@ -9,8 +9,8 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -20,10 +20,10 @@ import java.io.IOException;
 public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final byte @NonNull [] chunkData;
-    private final @NonNull CompoundTag heightMaps;
-    private final @NonNull BlockEntityInfo[] blockEntities;
-    private final @NonNull LightUpdateData lightData;
+    private final byte @NotNull [] chunkData;
+    private final @NotNull CompoundTag heightMaps;
+    private final @NotNull BlockEntityInfo[] blockEntities;
+    private final @NotNull LightUpdateData lightData;
 
     public ClientboundLevelChunkWithLightPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.x = in.readInt();

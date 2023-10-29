@@ -4,7 +4,7 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,12 +14,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class LightUpdateData {
-    private final @NonNull BitSet skyYMask;
-    private final @NonNull BitSet blockYMask;
-    private final @NonNull BitSet emptySkyYMask;
-    private final @NonNull BitSet emptyBlockYMask;
-    private final @NonNull List<byte[]> skyUpdates;
-    private final @NonNull List<byte[]> blockUpdates;
+    private final @NotNull BitSet skyYMask;
+    private final @NotNull BitSet blockYMask;
+    private final @NotNull BitSet emptySkyYMask;
+    private final @NotNull BitSet emptyBlockYMask;
+    private final @NotNull List<byte[]> skyUpdates;
+    private final @NotNull List<byte[]> blockUpdates;
 
     private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.skyYMask = BitSet.valueOf(helper.readLongArray(in));

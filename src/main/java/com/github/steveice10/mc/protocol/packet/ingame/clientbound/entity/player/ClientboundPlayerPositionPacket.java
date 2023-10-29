@@ -6,8 +6,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
     private final float yaw;
     private final float pitch;
     private final int teleportId;
-    private final @NonNull List<PositionElement> relative;
+    private final @NotNull List<PositionElement> relative;
 
     public ClientboundPlayerPositionPacket(double x, double y, double z, float yaw, float pitch, int teleportId, PositionElement... relative) {
         this(x, y, z, yaw, pitch, teleportId, Arrays.asList(relative != null ? relative : new PositionElement[0]));

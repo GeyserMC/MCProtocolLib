@@ -7,8 +7,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.type.EntityType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -19,9 +19,9 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     private static final GenericObjectData EMPTY_DATA = new GenericObjectData(0);
 
     private final int entityId;
-    private final @NonNull UUID uuid;
-    private final @NonNull EntityType type;
-    private final @NonNull ObjectData data;
+    private final @NotNull UUID uuid;
+    private final @NotNull EntityType type;
+    private final @NotNull ObjectData data;
     private final double x;
     private final double y;
     private final double z;
@@ -32,17 +32,17 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     private final double motionY;
     private final double motionZ;
 
-    public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
+    public ClientboundAddEntityPacket(int entityId, @NotNull UUID uuid, @NotNull EntityType type,
                                       double x, double y, double z, float yaw, float pitch, float headYaw) {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, 0, 0, 0);
     }
 
-    public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type, @NonNull ObjectData data,
+    public ClientboundAddEntityPacket(int entityId, @NotNull UUID uuid, @NotNull EntityType type, @NotNull ObjectData data,
                                       double x, double y, double z, float yaw, float pitch, float headYaw) {
         this(entityId, uuid, type, data, x, y, z, yaw, headYaw, pitch, 0, 0, 0);
     }
 
-    public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
+    public ClientboundAddEntityPacket(int entityId, @NotNull UUID uuid, @NotNull EntityType type,
                                       double x, double y, double z, float yaw, float pitch,
                                       float headYaw, double motionX, double motionY, double motionZ) {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, motionX, motionY, motionZ);
@@ -102,13 +102,13 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         } else if (this.data instanceof Direction) {
             data = ((Direction) this.data).ordinal();
         } else if (this.data instanceof FallingBlockData) {
-            data = ((FallingBlockData) this.data).getId() | ((FallingBlockData) this.data).getMetadata() << 16;
+            data = ((FallingBlockData) this.data).id() | ((FallingBlockData) this.data).metadata() << 16;
         } else if (this.data instanceof SplashPotionData) {
-            data = ((SplashPotionData) this.data).getPotionData();
+            data = ((SplashPotionData) this.data).potionData();
         } else if (this.data instanceof ProjectileData) {
-            data = ((ProjectileData) this.data).getOwnerId();
+            data = ((ProjectileData) this.data).ownerId();
         } else if (this.data instanceof GenericObjectData) {
-            data = ((GenericObjectData) this.data).getValue();
+            data = ((GenericObjectData) this.data).value();
         }
 
         helper.writeVarInt(out, data);

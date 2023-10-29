@@ -11,8 +11,8 @@ import com.github.steveice10.mc.protocol.data.game.recipe.data.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
-    private final @NonNull Recipe[] recipes;
+    private final @NotNull Recipe[] recipes;
 
     public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.recipes = new Recipe[helper.readVarInt(in)];

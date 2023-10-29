@@ -5,8 +5,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -18,9 +18,9 @@ import java.security.spec.X509EncodedKeySpec;
 @With
 @AllArgsConstructor
 public class ClientboundHelloPacket implements MinecraftPacket {
-    private final @NonNull String serverId;
-    private final @NonNull PublicKey publicKey;
-    private final byte @NonNull [] challenge;
+    private final @NotNull String serverId;
+    private final @NotNull PublicKey publicKey;
+    private final byte @NotNull [] challenge;
 
     public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.serverId = helper.readString(in);

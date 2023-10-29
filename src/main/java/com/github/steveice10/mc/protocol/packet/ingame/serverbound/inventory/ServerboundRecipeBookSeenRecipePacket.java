@@ -5,14 +5,14 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundRecipeBookSeenRecipePacket implements MinecraftPacket {
-    private final @NonNull String recipeId;
+    private final @NotNull String recipeId;
 
     public ServerboundRecipeBookSeenRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.recipeId = helper.readString(in);

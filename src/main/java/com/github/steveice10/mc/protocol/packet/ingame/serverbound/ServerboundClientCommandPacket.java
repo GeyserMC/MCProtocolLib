@@ -6,14 +6,14 @@ import com.github.steveice10.mc.protocol.data.game.ClientCommand;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundClientCommandPacket implements MinecraftPacket {
-    private final @NonNull ClientCommand request;
+    private final @NotNull ClientCommand request;
 
     public ServerboundClientCommandPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.request = ClientCommand.from(helper.readVarInt(in));

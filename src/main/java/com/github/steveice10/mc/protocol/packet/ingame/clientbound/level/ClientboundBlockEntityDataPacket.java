@@ -7,9 +7,9 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundBlockEntityDataPacket implements MinecraftPacket {
-    private final @NonNull Vector3i position;
+    private final @NotNull Vector3i position;
     private final BlockEntityType type;
     private final @Nullable CompoundTag nbt;
 

@@ -8,8 +8,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ClientboundSetEquipmentPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull Equipment[] equipment;
+    private final @NotNull Equipment[] equipment;
 
     public ClientboundSetEquipmentPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = helper.readVarInt(in);

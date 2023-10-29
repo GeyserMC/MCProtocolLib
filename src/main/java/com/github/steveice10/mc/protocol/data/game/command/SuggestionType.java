@@ -1,12 +1,14 @@
 package com.github.steveice10.mc.protocol.data.game.command;
 
 import com.github.steveice10.mc.protocol.data.game.Identifier;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Getter
 public enum SuggestionType {
     ASK_SERVER,
     ALL_RECIPES,
@@ -34,7 +36,4 @@ public enum SuggestionType {
         return VALUES.getOrDefault(resourceLocation, ASK_SERVER);
     }
 
-    public String getResourceLocation() {
-        return resourceLocation;
-    }
 }

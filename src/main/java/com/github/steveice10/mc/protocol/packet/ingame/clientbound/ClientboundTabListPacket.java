@@ -5,16 +5,16 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundTabListPacket implements MinecraftPacket {
-    private final @NonNull Component header;
-    private final @NonNull Component footer;
+    private final @NotNull Component header;
+    private final @NotNull Component footer;
 
     public ClientboundTabListPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.header = helper.readComponent(in);

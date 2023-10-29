@@ -6,14 +6,14 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundBlockUpdatePacket implements MinecraftPacket {
-    private final @NonNull BlockChangeEntry entry;
+    private final @NotNull BlockChangeEntry entry;
 
     public ClientboundBlockUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entry = new BlockChangeEntry(helper.readPosition(in), helper.readVarInt(in));

@@ -4,8 +4,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -18,8 +18,8 @@ import java.security.PublicKey;
 @ToString
 @EqualsAndHashCode
 public class ServerboundKeyPacket implements MinecraftPacket {
-    private final byte @NonNull [] sharedKey;
-    private final byte @NonNull [] encryptedChallenge;
+    private final byte @NotNull [] sharedKey;
+    private final byte @NotNull [] encryptedChallenge;
 
     public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] challenge) {
         this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());

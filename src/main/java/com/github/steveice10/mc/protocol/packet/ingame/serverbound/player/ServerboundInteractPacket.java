@@ -7,15 +7,15 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.InteractAction;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundInteractPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull InteractAction action;
+    private final @NotNull InteractAction action;
 
     private final float targetX;
     private final float targetY;
@@ -27,7 +27,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         this(entityId, action, Hand.MAIN_HAND, isSneaking);
     }
 
-    public ServerboundInteractPacket(int entityId, InteractAction action, @NonNull Hand hand, boolean isSneaking) {
+    public ServerboundInteractPacket(int entityId, InteractAction action, @NotNull Hand hand, boolean isSneaking) {
         this(entityId, action, 0, 0, 0, hand, isSneaking);
     }
 

@@ -2,7 +2,11 @@ package com.github.steveice10.mc.protocol.data.game.inventory;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor
 public enum MoveToHotbarAction implements ContainerAction {
     SLOT_1(0),
     SLOT_2(1),
@@ -25,15 +29,7 @@ public enum MoveToHotbarAction implements ContainerAction {
 
     private final int id;
 
-    MoveToHotbarAction(int id) {
-        this.id = id;
-    }
-
     public static MoveToHotbarAction from(int id) {
         return VALUES.get(id);
-    }
-
-    public int getId() {
-        return id;
     }
 }

@@ -19,8 +19,8 @@ import com.github.steveice10.packetlib.packet.PacketHeader;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
@@ -97,7 +97,7 @@ public class MinecraftProtocol extends PacketProtocol {
      *
      * @param username Username to use.
      */
-    public MinecraftProtocol(@NonNull String username) {
+    public MinecraftProtocol(@NotNull String username) {
         this(new GameProfile(UUID.randomUUID(), username), null);
     }
 
@@ -107,7 +107,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param codec    The packet codec to use.
      * @param username Username to use.
      */
-    public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull String username) {
+    public MinecraftProtocol(@NotNull PacketCodec codec, @NotNull String username) {
         this(codec, new GameProfile(UUID.randomUUID(), username), null);
     }
 
@@ -117,7 +117,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile     GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(@NonNull GameProfile profile, String accessToken) {
+    public MinecraftProtocol(@NotNull GameProfile profile, String accessToken) {
         this(MinecraftCodec.CODEC, profile, accessToken);
     }
 
@@ -128,7 +128,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile     GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull GameProfile profile, String accessToken) {
+    public MinecraftProtocol(@NotNull PacketCodec codec, @NotNull GameProfile profile, String accessToken) {
         this.codec = codec;
         this.targetState = ProtocolState.LOGIN;
         this.profile = profile;

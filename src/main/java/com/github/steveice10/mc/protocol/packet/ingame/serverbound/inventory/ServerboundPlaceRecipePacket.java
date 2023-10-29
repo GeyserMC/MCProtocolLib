@@ -5,15 +5,15 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundPlaceRecipePacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull String recipeId;
+    private final @NotNull String recipeId;
     private final boolean makeAll;
 
     public ServerboundPlaceRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {

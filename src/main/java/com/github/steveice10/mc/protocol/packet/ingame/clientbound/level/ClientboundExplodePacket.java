@@ -5,9 +5,9 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     private final double y;
     private final double z;
     private final float radius;
-    private final @NonNull List<Vector3i> exploded;
+    private final @NotNull List<Vector3i> exploded;
     private final float pushX;
     private final float pushY;
     private final float pushZ;

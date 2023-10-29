@@ -5,16 +5,16 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundCustomQueryPacket implements MinecraftPacket {
     private final int messageId;
-    private final @NonNull String channel;
-    private final byte @NonNull [] data;
+    private final @NotNull String channel;
+    private final byte @NotNull [] data;
 
     public ClientboundCustomQueryPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.messageId = helper.readVarInt(in);

@@ -2,7 +2,11 @@ package com.github.steveice10.mc.protocol.data.game.inventory;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor
 public enum SpreadItemAction implements ContainerAction {
     LEFT_MOUSE_BEGIN_DRAG(0),
     LEFT_MOUSE_ADD_SLOT(1),
@@ -24,15 +28,7 @@ public enum SpreadItemAction implements ContainerAction {
 
     private final int id;
 
-    SpreadItemAction(int id) {
-        this.id = id;
-    }
-
     public static SpreadItemAction from(int id) {
         return VALUES.get(id);
-    }
-
-    public int getId() {
-        return id;
     }
 }

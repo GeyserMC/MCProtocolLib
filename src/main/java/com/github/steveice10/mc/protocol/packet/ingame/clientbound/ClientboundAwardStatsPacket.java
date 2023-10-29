@@ -9,14 +9,14 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundAwardStatsPacket implements MinecraftPacket {
-    private final @NonNull Object2IntMap<Statistic> statistics = new Object2IntOpenHashMap<>();
+    private final @NotNull Object2IntMap<Statistic> statistics = new Object2IntOpenHashMap<>();
 
     public ClientboundAwardStatsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         int length = helper.readVarInt(in);

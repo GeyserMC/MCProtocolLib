@@ -7,8 +7,8 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private static final int FLAG_SHOW_ICON = 0x04;
 
     private final int entityId;
-    private final @NonNull Effect effect;
+    private final @NotNull Effect effect;
     private final int amplifier;
     private final int duration;
     private final boolean ambient;

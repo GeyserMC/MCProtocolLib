@@ -7,17 +7,17 @@ import com.github.steveice10.mc.protocol.data.game.inventory.ContainerType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundOpenScreenPacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull ContainerType type;
-    private final @NonNull Component title;
+    private final @NotNull ContainerType type;
+    private final @NotNull Component title;
 
     public ClientboundOpenScreenPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = helper.readVarInt(in);
@@ -26,7 +26,7 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     }
 
     @Deprecated
-    public ClientboundOpenScreenPacket(int containerId, @NonNull ContainerType type, @NonNull String name) {
+    public ClientboundOpenScreenPacket(int containerId, @NotNull ContainerType type, @NotNull String name) {
         this.containerId = containerId;
         this.type = type;
         this.title = DefaultComponentSerializer.get().deserialize(name);

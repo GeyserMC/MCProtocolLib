@@ -1,7 +1,10 @@
 package com.github.steveice10.mc.protocol.data.game.entity.object;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor
 public enum Direction implements ObjectData {
     DOWN(-1),
     UP(-1),
@@ -12,12 +15,7 @@ public enum Direction implements ObjectData {
 
     public static final Direction[] VALUES = values();
     private static final Direction[] HORIZONTAL_VALUES = {NORTH, SOUTH, WEST, EAST};
-    @Getter
     private final int horizontalIndex;
-
-    Direction(int horizontalIndex) {
-        this.horizontalIndex = horizontalIndex;
-    }
 
     public static Direction getByHorizontalIndex(int index) {
         return HORIZONTAL_VALUES[index % HORIZONTAL_VALUES.length];

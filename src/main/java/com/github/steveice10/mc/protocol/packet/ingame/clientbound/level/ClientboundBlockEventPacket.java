@@ -7,9 +7,9 @@ import com.github.steveice10.mc.protocol.data.game.level.block.value.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
@@ -28,9 +28,9 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int SHULKER_BOX_HIGHER = 629;
     private static final int BELL = 783;
 
-    private final @NonNull Vector3i position;
-    private final @NonNull BlockValueType type;
-    private final @NonNull BlockValue value;
+    private final @NotNull Vector3i position;
+    private final @NotNull BlockValueType type;
+    private final @NotNull BlockValue value;
     private final int blockId;
 
     public ClientboundBlockEventPacket(ByteBuf in, MinecraftCodecHelper helper) {

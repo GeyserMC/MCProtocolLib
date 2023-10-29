@@ -6,8 +6,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadat
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundSetEntityDataPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull EntityMetadata<?, ?>[] metadata;
+    private final @NotNull EntityMetadata<?, ?>[] metadata;
 
     public ClientboundSetEntityDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = helper.readVarInt(in);

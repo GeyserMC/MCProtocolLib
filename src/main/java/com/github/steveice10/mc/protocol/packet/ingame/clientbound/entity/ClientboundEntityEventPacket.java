@@ -6,15 +6,15 @@ import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundEntityEventPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull EntityEvent event;
+    private final @NotNull EntityEvent event;
 
     public ClientboundEntityEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = in.readInt();

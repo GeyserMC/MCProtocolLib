@@ -8,8 +8,8 @@ import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +18,12 @@ import java.util.List;
 @With
 @AllArgsConstructor
 public class ServerboundClientInformationPacket implements MinecraftPacket {
-    private final @NonNull String locale;
+    private final @NotNull String locale;
     private final int renderDistance;
-    private final @NonNull ChatVisibility chatVisibility;
+    private final @NotNull ChatVisibility chatVisibility;
     private final boolean useChatColors;
-    private final @NonNull List<SkinPart> visibleParts;
-    private final @NonNull HandPreference mainHand;
+    private final @NotNull List<SkinPart> visibleParts;
+    private final @NotNull HandPreference mainHand;
     private final boolean textFilteringEnabled;
     /**
      * Whether the client permits being shown in server ping responses.

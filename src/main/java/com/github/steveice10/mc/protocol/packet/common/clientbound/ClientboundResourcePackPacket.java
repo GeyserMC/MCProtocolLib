@@ -5,17 +5,17 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundResourcePackPacket implements MinecraftPacket {
-    private final @NonNull String url;
-    private final @NonNull String hash;
+    private final @NotNull String url;
+    private final @NotNull String hash;
     private final boolean required;
     private final @Nullable Component prompt;
 

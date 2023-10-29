@@ -5,13 +5,13 @@ import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @AllArgsConstructor
 public class ShapelessRecipeData implements RecipeData {
-    private final @NonNull String group;
-    private final @NonNull CraftingBookCategory category;
-    private final @NonNull Ingredient[] ingredients;
+    private final @NotNull String group;
+    private final @NotNull CraftingBookCategory category;
+    private final @NotNull Ingredient[] ingredients;
     private final ItemStack result;
 }

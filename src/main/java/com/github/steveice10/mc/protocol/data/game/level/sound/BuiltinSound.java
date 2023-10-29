@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.level.sound;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @AllArgsConstructor
@@ -1497,7 +1497,7 @@ public enum BuiltinSound implements Sound {
      * For grabbing when the SoundPacket is sent.
      */
     private static final BuiltinSound[] VALUES = values();
-    private final @NonNull String name;
+    private final @NotNull String name;
 
     public static BuiltinSound from(int id) {
         return VALUES[id];

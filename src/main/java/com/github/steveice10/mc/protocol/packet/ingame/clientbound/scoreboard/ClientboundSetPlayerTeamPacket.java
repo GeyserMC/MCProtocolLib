@@ -7,8 +7,12 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import io.netty.buffer.ByteBuf;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -17,8 +21,8 @@ import java.util.Arrays;
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
-    private final @NonNull String teamName;
-    private final @NonNull TeamAction action;
+    private final @NotNull String teamName;
+    private final @NotNull TeamAction action;
 
     private final Component displayName;
     private final Component prefix;
@@ -31,7 +35,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
 
     private final String[] players;
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName) {
+    public ClientboundSetPlayerTeamPacket(@NotNull String teamName) {
         this.teamName = teamName;
         this.action = TeamAction.REMOVE;
 
@@ -47,9 +51,9 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = null;
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
-                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @NonNull TeamColor color) {
+    public ClientboundSetPlayerTeamPacket(@NotNull String teamName, @NotNull Component displayName, @NotNull Component prefix, @NotNull Component suffix,
+                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NotNull NameTagVisibility nameTagVisibility,
+                                          @NotNull CollisionRule collisionRule, @NotNull TeamColor color) {
         this.teamName = teamName;
         this.action = TeamAction.UPDATE;
 
@@ -65,7 +69,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = null;
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull TeamAction action, @NonNull String[] players) {
+    public ClientboundSetPlayerTeamPacket(@NotNull String teamName, @NotNull TeamAction action, @NotNull String[] players) {
         if (action != TeamAction.ADD_PLAYER && action != TeamAction.REMOVE_PLAYER) {
             throw new IllegalArgumentException("(name, action, players) constructor only valid for adding and removing players.");
         }
@@ -85,9 +89,9 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
-                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @NonNull TeamColor color, @NonNull String[] players) {
+    public ClientboundSetPlayerTeamPacket(@NotNull String teamName, @NotNull Component displayName, @NotNull Component prefix, @NotNull Component suffix,
+                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NotNull NameTagVisibility nameTagVisibility,
+                                          @NotNull CollisionRule collisionRule, @NotNull TeamColor color, @NotNull String[] players) {
         this.teamName = teamName;
         this.action = TeamAction.CREATE;
 

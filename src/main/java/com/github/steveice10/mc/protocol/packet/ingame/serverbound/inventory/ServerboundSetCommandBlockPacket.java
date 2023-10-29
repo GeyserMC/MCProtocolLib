@@ -6,9 +6,9 @@ import com.github.steveice10.mc.protocol.data.game.level.block.CommandBlockMode;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
@@ -18,9 +18,9 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     private static final int FLAG_CONDITIONAL = 0x02;
     private static final int FLAG_AUTOMATIC = 0x04;
 
-    private final @NonNull Vector3i position;
-    private final @NonNull String command;
-    private final @NonNull CommandBlockMode mode;
+    private final @NotNull Vector3i position;
+    private final @NotNull String command;
+    private final @NotNull CommandBlockMode mode;
     private final boolean doesTrackOutput;
     private final boolean conditional;
     private final boolean automatic;

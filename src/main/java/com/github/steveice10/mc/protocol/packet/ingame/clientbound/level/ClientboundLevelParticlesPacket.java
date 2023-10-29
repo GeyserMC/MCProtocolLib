@@ -7,8 +7,8 @@ import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundLevelParticlesPacket implements MinecraftPacket {
-    private final @NonNull Particle particle;
+    private final @NotNull Particle particle;
     private final boolean longDistance;
     private final double x;
     private final double y;

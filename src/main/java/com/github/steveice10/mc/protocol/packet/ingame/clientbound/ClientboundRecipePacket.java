@@ -4,7 +4,11 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import io.netty.buffer.ByteBuf;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -12,9 +16,9 @@ import java.util.Arrays;
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundRecipePacket implements MinecraftPacket {
-    private final @NonNull UnlockRecipesAction action;
+    private final @NotNull UnlockRecipesAction action;
 
-    private final @NonNull String[] recipes;
+    private final @NotNull String[] recipes;
     private final boolean openCraftingBook;
     private final boolean activateCraftingFiltering;
     private final boolean openSmeltingBook;
@@ -26,12 +30,12 @@ public class ClientboundRecipePacket implements MinecraftPacket {
 
     private final String[] alreadyKnownRecipes;
 
-    public ClientboundRecipePacket(@NonNull String[] recipes,
+    public ClientboundRecipePacket(@NotNull String[] recipes,
                                    boolean openCraftingBook, boolean activateCraftingFiltering,
                                    boolean openSmeltingBook, boolean activateSmeltingFiltering,
                                    boolean openBlastingBook, boolean activateBlastingFiltering,
                                    boolean openSmokingBook, boolean activateSmokingFiltering,
-                                   @NonNull UnlockRecipesAction action) {
+                                   @NotNull UnlockRecipesAction action) {
         if (action != UnlockRecipesAction.ADD && action != UnlockRecipesAction.REMOVE) {
             throw new IllegalArgumentException("Action must be ADD or REMOVE.");
         }
@@ -50,12 +54,12 @@ public class ClientboundRecipePacket implements MinecraftPacket {
         this.alreadyKnownRecipes = null;
     }
 
-    public ClientboundRecipePacket(@NonNull String[] recipes,
+    public ClientboundRecipePacket(@NotNull String[] recipes,
                                    boolean openCraftingBook, boolean activateCraftingFiltering,
                                    boolean openSmeltingBook, boolean activateSmeltingFiltering,
                                    boolean openBlastingBook, boolean activateBlastingFiltering,
                                    boolean openSmokingBook, boolean activateSmokingFiltering,
-                                   @NonNull String[] alreadyKnownRecipes) {
+                                   @NotNull String[] alreadyKnownRecipes) {
         this.action = UnlockRecipesAction.INIT;
         this.recipes = Arrays.copyOf(recipes, recipes.length);
         this.openCraftingBook = openCraftingBook;

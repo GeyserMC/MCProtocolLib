@@ -5,15 +5,15 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetPassengersPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull int[] passengerIds;
+    private final @NotNull int[] passengerIds;
 
     public ClientboundSetPassengersPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);

@@ -21,6 +21,6 @@ public enum BlockBreakStage {
     static {
         BlockBreakStage[] allValues = values();
         STAGES = new BlockBreakStage[allValues.length - 1];
-        System.arraycopy(allValues, 0, STAGES, 0, 10);
+        System.arraycopy(allValues, 0, STAGES, 0, STAGES.length);
     }
 }

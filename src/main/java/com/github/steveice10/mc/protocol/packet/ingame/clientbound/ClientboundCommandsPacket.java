@@ -9,8 +9,8 @@ import com.github.steveice10.mc.protocol.data.game.command.properties.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.OptionalInt;
 
@@ -29,7 +29,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     private static final int ENTITY_FLAG_SINGLE_TARGET = 0x01;
     private static final int ENTITY_FLAG_PLAYERS_ONLY = 0x02;
 
-    private final @NonNull CommandNode[] nodes;
+    private final @NotNull CommandNode[] nodes;
     private final int firstNodeIndex;
 
     public ClientboundCommandsPacket(ByteBuf in, MinecraftCodecHelper helper) {
@@ -62,7 +62,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
             if (type == CommandType.ARGUMENT) {
                 parser = CommandParser.from(helper.readVarInt(in));
                 switch (parser) {
-                    case DOUBLE: {
+                    case DOUBLE -> {
                         byte numberFlags = in.readByte();
                         double min = -Double.MAX_VALUE;
                         double max = Double.MAX_VALUE;
@@ -75,9 +75,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new DoubleProperties(min, max);
-                        break;
                     }
-                    case FLOAT: {
+                    case FLOAT -> {
                         byte numberFlags = in.readByte();
                         float min = -Float.MAX_VALUE;
                         float max = Float.MAX_VALUE;
@@ -90,9 +89,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new FloatProperties(min, max);
-                        break;
                     }
-                    case INTEGER: {
+                    case INTEGER -> {
                         byte numberFlags = in.readByte();
                         int min = Integer.MIN_VALUE;
                         int max = Integer.MAX_VALUE;
@@ -105,9 +103,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new IntegerProperties(min, max);
-                        break;
                     }
-                    case LONG: {
+                    case LONG -> {
                         byte numberFlags = in.readByte();
                         long min = Long.MIN_VALUE;
                         long max = Long.MAX_VALUE;
@@ -120,31 +117,19 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new LongProperties(min, max);
-                        break;
                     }
-                    case STRING:
-                        properties = StringProperties.from(helper.readVarInt(in));
-                        break;
-                    case ENTITY: {
+                    case STRING -> properties = StringProperties.from(helper.readVarInt(in));
+                    case ENTITY -> {
                         byte entityFlags = in.readByte();
                         properties = new EntityProperties((entityFlags & ENTITY_FLAG_SINGLE_TARGET) != 0,
                                 (entityFlags & ENTITY_FLAG_PLAYERS_ONLY) != 0);
-                        break;
                     }
-                    case SCORE_HOLDER:
-                        properties = new ScoreHolderProperties(in.readBoolean());
-                        break;
-                    case TIME:
-                        properties = new TimeProperties(in.readInt());
-                        break;
-                    case RESOURCE_OR_TAG:
-                    case RESOURCE_OR_TAG_KEY:
-                    case RESOURCE:
-                    case RESOURCE_KEY:
-                        properties = new ResourceProperties(helper.readString(in));
-                        break;
-                    default:
-                        break;
+                    case SCORE_HOLDER -> properties = new ScoreHolderProperties(in.readBoolean());
+                    case TIME -> properties = new TimeProperties(in.readInt());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY ->
+                            properties = new ResourceProperties(helper.readString(in));
+                    default -> {
+                    }
                 }
 
                 if ((flags & FLAG_SUGGESTION_TYPE) != 0) {
@@ -193,129 +178,114 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
             if (node.getType() == CommandType.ARGUMENT) {
                 helper.writeVarInt(out, node.getParser().ordinal());
                 switch (node.getParser()) {
-                    case DOUBLE: {
+                    case DOUBLE -> {
                         DoubleProperties properties = (DoubleProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if (properties.getMin() != -Double.MAX_VALUE) {
+                        if (properties.min() != -Double.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if (properties.getMax() != Double.MAX_VALUE) {
+                        if (properties.max() != Double.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeDouble(properties.getMin());
+                            out.writeDouble(properties.min());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeDouble(properties.getMax());
+                            out.writeDouble(properties.max());
                         }
 
-                        break;
                     }
-                    case FLOAT: {
+                    case FLOAT -> {
                         FloatProperties properties = (FloatProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if (properties.getMin() != -Float.MAX_VALUE) {
+                        if (properties.min() != -Float.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if (properties.getMax() != Float.MAX_VALUE) {
+                        if (properties.max() != Float.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeFloat(properties.getMin());
+                            out.writeFloat(properties.min());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeFloat(properties.getMax());
+                            out.writeFloat(properties.max());
                         }
 
-                        break;
                     }
-                    case INTEGER: {
+                    case INTEGER -> {
                         IntegerProperties properties = (IntegerProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if (properties.getMin() != Integer.MIN_VALUE) {
+                        if (properties.min() != Integer.MIN_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if (properties.getMax() != Integer.MAX_VALUE) {
+                        if (properties.max() != Integer.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeInt(properties.getMin());
+                            out.writeInt(properties.min());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeInt(properties.getMax());
+                            out.writeInt(properties.max());
                         }
 
-                        break;
                     }
-                    case LONG: {
+                    case LONG -> {
                         LongProperties properties = (LongProperties) node.getProperties();
 
                         int numberFlags = 0;
-                        if (properties.getMin() != Long.MIN_VALUE) {
+                        if (properties.min() != Long.MIN_VALUE) {
                             numberFlags |= NUMBER_FLAG_MIN_DEFINED;
                         }
 
-                        if (properties.getMax() != Long.MAX_VALUE) {
+                        if (properties.max() != Long.MAX_VALUE) {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
                         out.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeLong(properties.getMin());
+                            out.writeLong(properties.min());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeLong(properties.getMax());
+                            out.writeLong(properties.max());
                         }
 
-                        break;
                     }
-                    case STRING:
-                        helper.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
-                        break;
-                    case ENTITY: {
+                    case STRING -> helper.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
+                    case ENTITY -> {
                         EntityProperties properties = (EntityProperties) node.getProperties();
                         int entityFlags = 0;
-                        if (properties.isSingleTarget()) {
+                        if (properties.singleTarget()) {
                             entityFlags |= ENTITY_FLAG_SINGLE_TARGET;
                         }
 
-                        if (properties.isPlayersOnly()) {
+                        if (properties.playersOnly()) {
                             entityFlags |= ENTITY_FLAG_PLAYERS_ONLY;
                         }
 
                         out.writeByte(entityFlags);
-                        break;
                     }
-                    case SCORE_HOLDER:
-                        out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
-                        break;
-                    case TIME:
-                        out.writeInt(((TimeProperties) node.getProperties()).getMin());
-                        break;
-                    case RESOURCE_OR_TAG:
-                    case RESOURCE_OR_TAG_KEY:
-                    case RESOURCE:
-                    case RESOURCE_KEY:
-                        helper.writeString(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
-                        break;
-                    default:
-                        break;
+                    case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.getProperties()).allowMultiple());
+                    case TIME -> out.writeInt(((TimeProperties) node.getProperties()).min());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY ->
+                            helper.writeString(out, ((ResourceProperties) node.getProperties()).registryKey());
+                    default -> {
+                    }
                 }
 
                 if (node.getSuggestionType() != null) {

@@ -8,7 +8,6 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +25,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     private final ContainerActionType action;
     private final ContainerAction param;
     private final ItemStack carriedItem;
-    private final @NonNull Int2ObjectMap<ItemStack> changedSlots;
+    private final @NotNull Int2ObjectMap<ItemStack> changedSlots;
 
     public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
         this(containerId, stateId, slot, action, param, carriedItem, new Int2ObjectOpenHashMap<>(changedSlots));

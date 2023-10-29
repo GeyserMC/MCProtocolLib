@@ -7,14 +7,14 @@ import com.github.steveice10.mc.protocol.data.game.level.notify.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundGameEventPacket implements MinecraftPacket {
-    private final @NonNull GameEvent notification;
+    private final @NotNull GameEvent notification;
     private final GameEventValue value;
 
     public ClientboundGameEventPacket(ByteBuf in, MinecraftCodecHelper helper) {

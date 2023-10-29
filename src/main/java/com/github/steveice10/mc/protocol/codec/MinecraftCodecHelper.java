@@ -424,15 +424,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
-        this.writeString(buf, info.getDimension());
-        this.writeString(buf, info.getWorldName());
-        buf.writeLong(info.getHashedSeed());
-        buf.writeByte(info.getGameMode().ordinal());
-        buf.writeByte(GameMode.toNullableId(info.getPreviousGamemode()));
-        buf.writeBoolean(info.isDebug());
-        buf.writeBoolean(info.isFlat());
-        this.writeNullable(buf, info.getLastDeathPos(), this::writeGlobalPos);
-        this.writeVarInt(buf, info.getPortalCooldown());
+        this.writeString(buf, info.dimension());
+        this.writeString(buf, info.worldName());
+        buf.writeLong(info.hashedSeed());
+        buf.writeByte(info.gameMode().ordinal());
+        buf.writeByte(GameMode.toNullableId(info.previousGamemode()));
+        buf.writeBoolean(info.debug());
+        buf.writeBoolean(info.flat());
+        this.writeNullable(buf, info.lastDeathPos(), this::writeGlobalPos);
+        this.writeVarInt(buf, info.portalCooldown());
     }
 
     public ParticleType readParticleType(ByteBuf buf) {
@@ -742,7 +742,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
         DataPalette chunkPalette = this.readDataPalette(buf, PaletteType.CHUNK, DataPalette.GLOBAL_PALETTE_BITS_PER_ENTRY);
         DataPalette biomePalette = this.readDataPalette(buf, PaletteType.BIOME, globalBiomePaletteBits);
-        return new ChunkSection(blockCount, chunkPalette, biomePalette);
+        return new ChunkSection(chunkPalette, biomePalette, blockCount);
     }
 
     public void writeChunkSection(ByteBuf buf, ChunkSection section) {

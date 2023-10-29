@@ -1,11 +1,13 @@
 package com.github.steveice10.mc.protocol.data.game.recipe;
 
 import com.github.steveice10.mc.protocol.data.game.Identifier;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Getter
 public enum RecipeType {
     CRAFTING_SHAPED,
     CRAFTING_SHAPELESS,
@@ -39,17 +41,9 @@ public enum RecipeType {
         }
     }
 
-    private final String resourceLocation;
-
-    RecipeType() {
-        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
-    }
+    private final String resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
 
     public static RecipeType from(String resourceLocation) {
         return VALUES.get(resourceLocation);
-    }
-
-    public String getResourceLocation() {
-        return resourceLocation;
     }
 }

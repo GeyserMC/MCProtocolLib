@@ -1,8 +1,13 @@
 package com.github.steveice10.mc.protocol.data.game.scoreboard;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@RequiredArgsConstructor
 public enum CollisionRule {
     ALWAYS("always"),
     NEVER("never"),
@@ -19,15 +24,7 @@ public enum CollisionRule {
 
     private final String name;
 
-    CollisionRule(String name) {
-        this.name = name;
-    }
-
     public static CollisionRule from(String name) {
         return VALUES.get(name);
-    }
-
-    public String getName() {
-        return this.name;
     }
 }

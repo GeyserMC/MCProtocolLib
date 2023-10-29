@@ -6,15 +6,15 @@ import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
-    private final @NonNull Component reason;
+    private final @NotNull Component reason;
 
     public ClientboundLoginDisconnectPacket(String text) {
         this(DefaultComponentSerializer.get().deserialize(text));

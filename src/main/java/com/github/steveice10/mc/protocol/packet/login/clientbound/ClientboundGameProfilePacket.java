@@ -6,8 +6,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 @With
 @AllArgsConstructor
 public class ClientboundGameProfilePacket implements MinecraftPacket {
-    private final @NonNull GameProfile profile;
+    private final @NotNull GameProfile profile;
 
     public ClientboundGameProfilePacket(ByteBuf in, MinecraftCodecHelper helper) {
         GameProfile profile = new GameProfile(helper.readUUID(in), helper.readString(in));
