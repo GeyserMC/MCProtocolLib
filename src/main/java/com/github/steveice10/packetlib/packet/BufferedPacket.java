@@ -4,19 +4,14 @@ import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.codec.PacketDefinition;
 import com.github.steveice10.packetlib.codec.PacketSerializer;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class BufferedPacket implements Packet, PacketSerializer<BufferedPacket, PacketCodecHelper> {
+    @Getter
     private final Class<? extends Packet> packetClass;
     private final byte[] buf;
-
-    public BufferedPacket(Class<? extends Packet> packetClass, byte[] buf) {
-        this.packetClass = packetClass;
-        this.buf = buf;
-    }
-
-    public Class<? extends Packet> getPacketClass() {
-        return packetClass;
-    }
 
     @Override
     public boolean isPriority() {

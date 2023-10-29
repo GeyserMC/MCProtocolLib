@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataTypes;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.*;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;

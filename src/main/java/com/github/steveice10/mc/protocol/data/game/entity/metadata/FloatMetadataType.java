@@ -11,8 +11,8 @@ public class FloatMetadataType extends MetadataType<Float> {
     private final FloatWriter primitiveWriter;
     private final FloatEntityMetadataFactory primitiveFactory;
 
-    protected FloatMetadataType(int id,FloatReader reader, FloatWriter writer, FloatEntityMetadataFactory metadataFactory) {
-        super(id,reader, writer, metadataFactory);
+    protected FloatMetadataType(int id, FloatReader reader, FloatWriter writer, FloatEntityMetadataFactory metadataFactory) {
+        super(id, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;

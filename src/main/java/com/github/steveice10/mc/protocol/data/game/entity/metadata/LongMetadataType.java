@@ -11,8 +11,8 @@ public class LongMetadataType extends MetadataType<Long> {
     private final LongWriter primitiveWriter;
     private final LongEntityMetadataFactory primitiveFactory;
 
-    protected LongMetadataType(int id,LongReader reader, LongWriter writer, LongEntityMetadataFactory metadataFactory) {
-        super(id,reader, writer, metadataFactory);
+    protected LongMetadataType(int id, LongReader reader, LongWriter writer, LongEntityMetadataFactory metadataFactory) {
+        super(id, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;

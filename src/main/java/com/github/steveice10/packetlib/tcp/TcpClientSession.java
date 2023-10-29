@@ -8,27 +8,19 @@ import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
-import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.kqueue.KQueueDatagramChannel;
 import io.netty.channel.kqueue.KQueueEventLoopGroup;
-import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
-import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.*;
 import io.netty.handler.codec.haproxy.*;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import io.netty.incubator.channel.uring.IOUringDatagramChannel;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
-import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.Getter;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -44,12 +36,11 @@ public class TcpClientSession extends TcpSession {
      */
     private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
     private static final int SHUTDOWN_TIMEOUT_MS = 500;
-    private static Class<? extends Channel> CHANNEL_CLASS;
-    private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
     private static EventLoopGroup EVENT_LOOP_GROUP;
     private final String bindAddress;
     private final int bindPort;
     private final ProxyInfo proxy;
+    @Getter
     private final PacketCodecHelper codecHelper;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
@@ -73,35 +64,15 @@ public class TcpClientSession extends TcpSession {
     }
 
     private static void createTcpEventLoopGroup() {
-        if (CHANNEL_CLASS != null) {
-            return;
-        }
+        EVENT_LOOP_GROUP = switch (TransportHelper.determineTransportMethod()) {
+            case IO_URING -> new IOUringEventLoopGroup(newThreadFactory());
+            case EPOLL -> new EpollEventLoopGroup(newThreadFactory());
+            case KQUEUE -> new KQueueEventLoopGroup(newThreadFactory());
+            case NIO -> new NioEventLoopGroup(newThreadFactory());
+        };
 
-        switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING:
-                EVENT_LOOP_GROUP = new IOUringEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = IOUringSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
-                break;
-            case EPOLL:
-                EVENT_LOOP_GROUP = new EpollEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = EpollSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
-                break;
-            case KQUEUE:
-                EVENT_LOOP_GROUP = new KQueueEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = KQueueSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
-                break;
-            case NIO:
-                EVENT_LOOP_GROUP = new NioEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = NioSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
-                break;
-        }
-
-        Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() ->
+                EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
     }
 
     protected static ThreadFactory newThreadFactory() {
@@ -122,14 +93,14 @@ public class TcpClientSession extends TcpSession {
 
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
-        if (CHANNEL_CLASS == null) {
+        if (EVENT_LOOP_GROUP == null) {
             createTcpEventLoopGroup();
         }
 
         try {
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(CHANNEL_CLASS);
-            bootstrap.handler(new ChannelInitializer<Channel>() {
+            bootstrap.channel(TransportHelper.CHANNEL_CLASS);
+            bootstrap.handler(new ChannelInitializer<>() {
                 @Override
                 public void initChannel(Channel channel) {
                     PacketProtocol protocol = getPacketProtocol();
@@ -183,26 +154,19 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    @Override
-    public PacketCodecHelper getCodecHelper() {
-        return this.codecHelper;
-    }
-
     private InetSocketAddress resolveAddress() {
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
-        String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
-        if (debug) {
-            System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
-        }
-
         if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
-            DnsNameResolver resolver = null;
+            String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
+            if (debug) {
+                System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
+            }
+
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
-            try {
-                resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
-                        .channelType(DATAGRAM_CHANNEL_CLASS)
-                        .build();
+            try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
+                    .channelType(TransportHelper.DATAGRAM_CHANNEL_CLASS)
+                    .build()) {
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
                 DnsResponse response = envelope.content();
@@ -239,10 +203,6 @@ public class TcpClientSession extends TcpSession {
                 if (envelope != null) {
                     envelope.release();
                 }
-
-                if (resolver != null) {
-                    resolver.close();
-                }
             }
         } else if (debug) {
             System.out.println("[PacketLib] Not resolving SRV record for " + this.host);
@@ -265,35 +225,33 @@ public class TcpClientSession extends TcpSession {
     }
 
     private void addProxy(ChannelPipeline pipeline) {
-        if (proxy != null) {
-            switch (proxy.getType()) {
-                case HTTP:
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
-                    } else {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
-                    }
+        if (proxy == null) {
+            return;
+        }
 
-                    break;
-                case SOCKS4:
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
-                    } else {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
-                    }
-
-                    break;
-                case SOCKS5:
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
-                    } else {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
-                    }
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
+        switch (proxy.getType()) {
+            case HTTP -> {
+                if (proxy.isAuthenticated()) {
+                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                } else {
+                    pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
+                }
             }
+            case SOCKS4 -> {
+                if (proxy.isAuthenticated()) {
+                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
+                } else {
+                    pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
+                }
+            }
+            case SOCKS5 -> {
+                if (proxy.isAuthenticated()) {
+                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                } else {
+                    pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
+                }
+            }
+            default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
         }
     }
 

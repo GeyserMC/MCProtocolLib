@@ -11,8 +11,8 @@ public class IntMetadataType extends MetadataType<Integer> {
     private final IntWriter primitiveWriter;
     private final IntEntityMetadataFactory primitiveFactory;
 
-    protected IntMetadataType(int id,IntReader reader, IntWriter writer, IntEntityMetadataFactory metadataFactory) {
-        super(id,reader, writer, metadataFactory);
+    protected IntMetadataType(int id, IntReader reader, IntWriter writer, IntEntityMetadataFactory metadataFactory) {
+        super(id, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;

@@ -10,11 +10,10 @@ import lombok.*;
 @ToString
 public class DataPalette {
     public static final int GLOBAL_PALETTE_BITS_PER_ENTRY = 14;
-
-    private @NonNull Palette palette;
-    private BitStorage storage;
     private final PaletteType paletteType;
     private final int globalPaletteBits;
+    private @NonNull Palette palette;
+    private BitStorage storage;
 
     public DataPalette(DataPalette original) {
         this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType, original.globalPaletteBits);
