@@ -4,17 +4,15 @@ import com.github.steveice10.packetlib.crypt.PacketEncryption;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public class TcpPacketEncryptor extends ByteToMessageCodec<ByteBuf> {
     private final PacketEncryption encryption;
     private byte[] decryptedArray = new byte[0];
     private byte[] encryptedArray = new byte[0];
-
-    public TcpPacketEncryptor(PacketEncryption encryption) {
-        this.encryption = encryption;
-    }
 
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {

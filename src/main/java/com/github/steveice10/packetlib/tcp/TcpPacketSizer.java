@@ -6,17 +6,14 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.CorruptedFrameException;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
     private final Session session;
     private final int size;
-
-    public TcpPacketSizer(Session session, int size) {
-        this.session = session;
-        this.size = size;
-    }
 
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {

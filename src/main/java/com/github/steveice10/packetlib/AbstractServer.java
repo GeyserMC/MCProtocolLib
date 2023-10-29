@@ -41,7 +41,6 @@ public abstract class AbstractServer implements Server {
         return this.getGlobalFlag(key, null);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getGlobalFlag(Flag<T> key, T def) {
         Object value = this.flags.get(key);
@@ -49,11 +48,7 @@ public abstract class AbstractServer implements Server {
             return def;
         }
 
-        try {
-            return (T) value;
-        } catch (ClassCastException e) {
-            throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
-        }
+        return key.cast(value);
     }
 
     @Override

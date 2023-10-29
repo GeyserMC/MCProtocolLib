@@ -102,7 +102,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         return this.getFlag(key, null);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getFlag(Flag<T> key, T def) {
         Object value = this.flags.get(key);
@@ -110,11 +109,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             return def;
         }
 
-        try {
-            return (T) value;
-        } catch (ClassCastException e) {
-            throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
-        }
+        return key.cast(value);
     }
 
     @Override
