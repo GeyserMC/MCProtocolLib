@@ -22,8 +22,8 @@ public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
         this(DefaultComponentSerializer.get().deserialize(text));
     }
 
-    public ClientboundLoginDisconnectPacket(ByteBuf in, MinecraftCodecHelper codecHelper) throws IOException {
-        this.reason = DefaultComponentSerializer.get().deserialize(codecHelper.readString(in));
+    public ClientboundLoginDisconnectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+        this.reason = helper.readComponent(in);
     }
 
     @Override
