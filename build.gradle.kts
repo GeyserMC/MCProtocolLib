@@ -82,7 +82,6 @@ repositories {
 dependencies {
     // Minecraft related libraries
     api("com.github.steveice10:opennbt:1.6")
-    api("com.github.GeyserMC:mcauthlib:6621fd081c")
 
     // Kyori adventure
     api("net.kyori:adventure-text-serializer-gson:4.14.0")

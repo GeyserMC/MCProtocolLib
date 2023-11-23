@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.packet.status.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.util.Base64;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Data
@@ -155,10 +155,10 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
             str = str.substring(FAVICON_PREFIX_LENGTH);
         }
 
-        return Base64.decode(str.getBytes(StandardCharsets.UTF_8));
+        return Base64.getDecoder().decode(str.getBytes(StandardCharsets.UTF_8));
     }
 
     private String iconToString(byte[] icon) {
-        return FAVICON_PREFIX + new String(Base64.encode(icon), StandardCharsets.UTF_8);
+        return FAVICON_PREFIX + new String(Base64.getEncoder().encode(icon), StandardCharsets.UTF_8);
     }
 }
