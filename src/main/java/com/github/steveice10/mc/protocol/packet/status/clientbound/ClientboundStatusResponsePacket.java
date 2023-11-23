@@ -146,6 +146,9 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         if (enforcesSecureChat != null) {
             obj.addProperty("enforcesSecureChat", enforcesSecureChat);
         }
+        if (this.info.getEnforcesSecureChat() != null) {
+            obj.addProperty("enforcesSecureChat", this.info.getEnforcesSecureChat());
+        }
 
         helper.writeString(out, obj.toString());
     }
