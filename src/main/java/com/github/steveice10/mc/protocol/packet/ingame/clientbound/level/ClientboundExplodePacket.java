@@ -2,6 +2,9 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import com.github.steveice10.mc.protocol.data.game.level.block.ExplosionInteraction;
+import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +28,10 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     private final float pushX;
     private final float pushY;
     private final float pushZ;
+    private final @NonNull Particle smallExplosionParticles;
+    private final @NonNull Particle largeExplosionParticles;
+    private final @NonNull ExplosionInteraction blockInteraction;
+    private final @NonNull Sound explosionSound;
 
     public ClientboundExplodePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.x = in.readDouble();
@@ -40,6 +47,10 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         this.pushX = in.readFloat();
         this.pushY = in.readFloat();
         this.pushZ = in.readFloat();
+        this.smallExplosionParticles = helper.readParticle(in);
+        this.largeExplosionParticles = helper.readParticle(in);
+        this.blockInteraction = ExplosionInteraction.from(helper.readVarInt(in));
+        this.explosionSound = helper.readSoundEvent(in);
     }
 
     @Override
@@ -58,5 +69,9 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         out.writeFloat(this.pushX);
         out.writeFloat(this.pushY);
         out.writeFloat(this.pushZ);
+        helper.writeParticle(out, this.smallExplosionParticles);
+        helper.writeParticle(out, this.largeExplosionParticles);
+        helper.writeVarInt(out, this.blockInteraction.ordinal());
+        helper.writeSoundEvent(out, this.explosionSound);
     }
 }

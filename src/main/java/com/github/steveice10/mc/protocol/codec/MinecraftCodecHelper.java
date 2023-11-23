@@ -3,6 +3,10 @@ package com.github.steveice10.mc.protocol.codec;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.BlankFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.FixedFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.NumberFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.StyledFormat;
 import com.github.steveice10.mc.protocol.data.game.chunk.BitStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
@@ -559,6 +563,38 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 this.writePositionSource(buf, ((VibrationParticleData) data).getPositionSource());
                 this.writeVarInt(buf, ((VibrationParticleData) data).getArrivalTicks());
                 break;
+        }
+    }
+
+    public NumberFormat readNumberFormat(ByteBuf buf) throws IOException {
+        int id = this.readVarInt(buf);
+        switch (id) {
+            case 0:
+                return BlankFormat.INSTANCE;
+            case 1:
+                return new StyledFormat(this.readAnyTag(buf));
+            case 2:
+                return new FixedFormat(this.readComponent(buf));
+            default:
+                throw new IllegalArgumentException("Unknown number format type: " + id);
+        }
+    }
+
+    public void writeNumberFormat(ByteBuf buf, NumberFormat numberFormat) throws IOException {
+        if (numberFormat instanceof BlankFormat) {
+            this.writeVarInt(buf, 0);
+        } else if (numberFormat instanceof StyledFormat) {
+            StyledFormat styledFormat = (StyledFormat) numberFormat;
+
+            this.writeVarInt(buf, 1);
+            this.writeAnyTag(buf, styledFormat.getStyle());
+        } else if (numberFormat instanceof FixedFormat) {
+            FixedFormat fixedFormat = (FixedFormat) numberFormat;
+
+            this.writeVarInt(buf, 2);
+            this.writeComponent(buf, fixedFormat.getValue());
+        } else {
+            throw new IllegalArgumentException("Unknown number format: " + numberFormat);
         }
     }
 

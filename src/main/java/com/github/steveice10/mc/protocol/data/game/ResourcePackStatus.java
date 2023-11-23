@@ -4,7 +4,10 @@ public enum ResourcePackStatus {
     SUCCESSFULLY_LOADED,
     DECLINED,
     FAILED_DOWNLOAD,
-    ACCEPTED;
+    ACCEPTED,
+    INVALID_URL,
+    FAILED_RELOAD,
+    DISCARDED;
 
     private static final ResourcePackStatus[] VALUES = values();
 
