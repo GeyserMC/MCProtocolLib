@@ -43,11 +43,11 @@ public class ClientboundGameProfilePacket implements MinecraftPacket {
         helper.writeString(out, this.profile.getName());
         helper.writeVarInt(out, this.profile.getProperties().size());
         for (GameProfile.Property property : this.profile.getProperties()) {
-            helper.writeString(out, property.getName());
-            helper.writeString(out, property.getValue());
+            helper.writeString(out, property.name());
+            helper.writeString(out, property.value());
             out.writeBoolean(property.hasSignature());
             if (property.hasSignature()) {
-                helper.writeString(out, property.getSignature());
+                helper.writeString(out, property.signature());
             }
         }
     }

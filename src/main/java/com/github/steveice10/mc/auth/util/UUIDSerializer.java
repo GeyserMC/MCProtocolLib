@@ -36,7 +36,12 @@ public class UUIDSerializer extends TypeAdapter<UUID> {
             return null;
         }
 
-        return UUID.fromString(value.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
+        StringBuilder idBuff = new StringBuilder(value);
+        idBuff.insert(20, '-');
+        idBuff.insert(16, '-');
+        idBuff.insert(12, '-');
+        idBuff.insert(8, '-');
+        return UUID.fromString(idBuff.toString());
     }
 
     @Override

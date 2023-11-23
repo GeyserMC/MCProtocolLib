@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Base class for auth-related services.
@@ -88,7 +89,7 @@ public abstract class Service {
         try {
             StringBuilder queryString = new StringBuilder();
             for (Map.Entry<String, String> queryParam : queryParams.entrySet()) {
-                if (queryString.length() > 0) {
+                if (!queryString.isEmpty()) {
                     queryString.append("&");
                 }
 
@@ -118,10 +119,6 @@ public abstract class Service {
      * @param proxy Proxy to use. Null will be converted to NO_PROXY.
      */
     public void setProxy(Proxy proxy) {
-        if (proxy == null) {
-            this.proxy = Proxy.NO_PROXY;
-        } else {
-            this.proxy = proxy;
-        }
+        this.proxy = Objects.requireNonNullElse(proxy, Proxy.NO_PROXY);
     }
 }

@@ -796,9 +796,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeProperty(ByteBuf buf, GameProfile.Property property) {
-        this.writeString(buf, property.getName());
-        this.writeString(buf, property.getValue());
-        this.writeNullable(buf, property.getSignature(), this::writeString);
+        this.writeString(buf, property.name());
+        this.writeString(buf, property.value());
+        this.writeNullable(buf, property.signature(), this::writeString);
     }
 
     public <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {

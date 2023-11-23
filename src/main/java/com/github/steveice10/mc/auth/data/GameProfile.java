@@ -174,7 +174,7 @@ public class GameProfile {
      */
     public Property getProperty(String name) {
         for (Property property : this.getProperties()) {
-            if (property.getName().equals(name)) {
+            if (property.name().equals(name)) {
                 return property;
             }
         }
@@ -215,7 +215,7 @@ public class GameProfile {
 
                 MinecraftTexturesPayload result;
                 try {
-                    String json = new String(Base64.getDecoder().decode(textures.getValue().getBytes(StandardCharsets.UTF_8)));
+                    String json = new String(Base64.getDecoder().decode(textures.value().getBytes(StandardCharsets.UTF_8)));
                     result = GSON.fromJson(json, MinecraftTexturesPayload.class);
                 } catch (Exception e) {
                     throw new ProfileTextureException("Could not decode texture payload.", e);
@@ -224,7 +224,7 @@ public class GameProfile {
                 if (result != null && result.textures != null) {
                     if (requireSecure) {
                         for (GameProfile.Texture texture : result.textures.values()) {
-                            if (!isWhitelistedDomain(texture.getURL())) {
+                            if (!isWhitelistedDomain(texture.url())) {
                                 throw new ProfileTextureException("Textures payload has been tampered with. (non-whitelisted domain)");
                             }
                         }
@@ -249,7 +249,7 @@ public class GameProfile {
      *
      * @param type Type of texture to get.
      * @return The texture of the specified type.
-     * @throws PropertyException If an error occurs decoding the profile's texture property.
+     * @throws PropertyException If an error occurs, decoding the profile's texture property.
      */
     public Texture getTexture(TextureType type) throws PropertyException {
         return this.getTextures().get(type);
@@ -261,7 +261,7 @@ public class GameProfile {
      * @param type          Type of texture to get.
      * @param requireSecure Whether to require the profile's texture payload to be securely signed.
      * @return The texture of the specified type.
-     * @throws PropertyException If an error occurs decoding the profile's texture property.
+     * @throws PropertyException If an error occurs, decoding the profile's texture property.
      */
     public Texture getTexture(TextureType type, boolean requireSecure) throws PropertyException {
         return this.getTextures(requireSecure).get(type);
@@ -310,12 +310,16 @@ public class GameProfile {
 
     /**
      * A property belonging to a profile.
+     *
+     * @param name      Name of the property.
+     * @param value     Value of the property.
+     * @param signature Signature of the property.
      */
-    public static class Property {
-        private final String name;
-        private final String value;
-        private final String signature;
-
+    public record Property(
+        String name,
+        String value,
+        String signature
+    ) {
         /**
          * Creates a new Property instance.
          *
@@ -327,52 +331,12 @@ public class GameProfile {
         }
 
         /**
-         * Creates a new Property instance.
-         *
-         * @param name      Name of the property.
-         * @param value     Value of the property.
-         * @param signature Signature used to verify the property.
-         */
-        public Property(String name, String value, String signature) {
-            this.name = name;
-            this.value = value;
-            this.signature = signature;
-        }
-
-        /**
-         * Gets the name of the property.
-         *
-         * @return The property's name.
-         */
-        public String getName() {
-            return this.name;
-        }
-
-        /**
-         * Gets the value of the property.
-         *
-         * @return The property's value.
-         */
-        public String getValue() {
-            return this.value;
-        }
-
-        /**
          * Gets whether this property has a signature to verify it.
          *
          * @return Whether this property is signed.
          */
         public boolean hasSignature() {
             return this.signature != null;
-        }
-
-        /**
-         * Gets the signature used to verify the property.
-         *
-         * @return The property's signature.
-         */
-        public String getSignature() {
-            return this.signature;
         }
 
         /**
@@ -396,47 +360,25 @@ public class GameProfile {
                 throw new SignatureValidateException("Could not validate property signature.", e);
             }
         }
-
-        @Override
-        public String toString() {
-            return "Property{name=" + this.name + ", value=" + this.value + ", signature=" + this.signature + "}";
-        }
     }
 
     /**
      * A texture contained within a profile.
+     *
+     * @param url      URL of the texture.
+     * @param metadata Metadata of the texture.
      */
-    public static class Texture {
-        private final String url;
-        private final Map<String, String> metadata;
-
-        /**
-         * Creates a new Texture instance.
-         *
-         * @param url      URL of the texture.
-         * @param metadata Metadata of the texture.
-         */
-        public Texture(String url, Map<String, String> metadata) {
-            this.url = url;
-            this.metadata = new HashMap<>(metadata);
-        }
-
-        /**
-         * Gets the URL of the texture.
-         *
-         * @return The texture's URL.
-         */
-        public String getURL() {
-            return this.url;
-        }
-
+    public record Texture(
+        String url,
+        Map<String, String> metadata
+    ) {
         /**
          * Gets a metadata string from the texture.
          *
          * @param key Key of the metadata value to get.
          * @return The metadata value corresponding to the given key.
          */
-        public String getMetadata(String key) {
+        public String getMetadataValue(String key) {
             return this.metadata != null ? this.metadata.get(key) : null;
         }
 
@@ -446,7 +388,7 @@ public class GameProfile {
          * @return The texture's model.
          */
         public TextureModel getModel() {
-            String model = this.getMetadata("model");
+            String model = this.getMetadataValue("model");
             return model != null && model.equals("slim") ? TextureModel.SLIM : TextureModel.NORMAL;
         }
 

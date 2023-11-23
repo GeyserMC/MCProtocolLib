@@ -83,6 +83,9 @@ dependencies {
     // Minecraft related libraries
     api("com.github.steveice10:opennbt:1.6")
 
+    // https://mvnrepository.com/artifact/net.raphimc/MinecraftAuth
+    implementation("net.raphimc:MinecraftAuth:3.0.0")
+
     // Kyori adventure
     api("net.kyori:adventure-text-serializer-gson:4.14.0")
     api("net.kyori:adventure-text-serializer-gson-legacy-impl:4.14.0")
