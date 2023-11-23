@@ -5,8 +5,8 @@ import net.kyori.adventure.text.serializer.json.legacyimpl.NBTLegacyHoverEventSe
 
 public final class DefaultComponentSerializer {
     private static GsonComponentSerializer serializer = GsonComponentSerializer.builder()
-            .legacyHoverEventSerializer(NBTLegacyHoverEventSerializer.get())
-            .build();
+        .legacyHoverEventSerializer(NBTLegacyHoverEventSerializer.get())
+        .build();
 
     private DefaultComponentSerializer() {
     }

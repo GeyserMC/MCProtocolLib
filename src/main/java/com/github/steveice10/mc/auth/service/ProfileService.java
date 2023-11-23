@@ -63,47 +63,44 @@ public class ProfileService extends Service {
             }
         }
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                for (Set<String> request : partition(criteria, PROFILES_PER_REQUEST)) {
-                    Exception error = null;
-                    int failCount = 0;
-                    boolean tryAgain = true;
-                    while (failCount < MAX_FAIL_COUNT && tryAgain) {
-                        tryAgain = false;
+        Runnable runnable = () -> {
+            for (Set<String> request : partition(criteria, PROFILES_PER_REQUEST)) {
+                Exception error = null;
+                int failCount = 0;
+                boolean tryAgain = true;
+                while (failCount < MAX_FAIL_COUNT && tryAgain) {
+                    tryAgain = false;
+                    try {
+                        GameProfile[] profiles = HTTP.makeRequest(getProxy(), getEndpointUri(SEARCH_ENDPOINT), request, GameProfile[].class);
+                        failCount = 0;
+                        Set<String> missing = new HashSet<String>(request);
+                        for (GameProfile profile : profiles) {
+                            missing.remove(profile.getName().toLowerCase());
+                            callback.onProfileLookupSucceeded(profile);
+                        }
+
+                        for (String name : missing) {
+                            callback.onProfileLookupFailed(new GameProfile((UUID) null, name), new ProfileNotFoundException("Server could not find the requested profile."));
+                        }
+
                         try {
-                            GameProfile[] profiles = HTTP.makeRequest(getProxy(), getEndpointUri(SEARCH_ENDPOINT), request, GameProfile[].class);
-                            failCount = 0;
-                            Set<String> missing = new HashSet<String>(request);
-                            for (GameProfile profile : profiles) {
-                                missing.remove(profile.getName().toLowerCase());
-                                callback.onProfileLookupSucceeded(profile);
+                            Thread.sleep(DELAY_BETWEEN_PAGES);
+                        } catch (InterruptedException ignored) {
+                        }
+                    } catch (RequestException e) {
+                        error = e;
+                        failCount++;
+                        if (failCount >= MAX_FAIL_COUNT) {
+                            for (String name : request) {
+                                callback.onProfileLookupFailed(new GameProfile((UUID) null, name), error);
                             }
-
-                            for (String name : missing) {
-                                callback.onProfileLookupFailed(new GameProfile((UUID) null, name), new ProfileNotFoundException("Server could not find the requested profile."));
-                            }
-
+                        } else {
                             try {
-                                Thread.sleep(DELAY_BETWEEN_PAGES);
+                                Thread.sleep(DELAY_BETWEEN_FAILURES);
                             } catch (InterruptedException ignored) {
                             }
-                        } catch (RequestException e) {
-                            error = e;
-                            failCount++;
-                            if (failCount >= MAX_FAIL_COUNT) {
-                                for (String name : request) {
-                                    callback.onProfileLookupFailed(new GameProfile((UUID) null, name), error);
-                                }
-                            } else {
-                                try {
-                                    Thread.sleep(DELAY_BETWEEN_FAILURES);
-                                } catch (InterruptedException ignored) {
-                                }
 
-                                tryAgain = true;
-                            }
+                            tryAgain = true;
                         }
                     }
                 }

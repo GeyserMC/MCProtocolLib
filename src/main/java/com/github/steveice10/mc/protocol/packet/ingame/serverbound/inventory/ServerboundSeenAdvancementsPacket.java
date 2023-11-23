@@ -51,7 +51,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     public String getTabId() {
         if (this.action != AdvancementTabAction.OPENED_TAB) {
             throw new IllegalStateException("tabId is only set if action is " + AdvancementTabAction.OPENED_TAB
-                    + " but it was " + this.action);
+                + " but it was " + this.action);
         }
 
         return this.tabId;

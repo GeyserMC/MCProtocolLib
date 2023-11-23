@@ -12,77 +12,77 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
             buf.writeByte((byte) value);
         } else if ((value & ~0x3FFFL) == 0) {
             int w = (int) ((value & 0x7FL | 0x80L) << 8 |
-                    (value >>> 7));
+                (value >>> 7));
             buf.writeShort(w);
         } else if ((value & ~0x1FFFFFL) == 0) {
             int w = (int) ((value & 0x7FL | 0x80L) << 16 |
-                    ((value >>> 7) & 0x7FL | 0x80L) << 8 |
-                    (value >>> 14));
+                ((value >>> 7) & 0x7FL | 0x80L) << 8 |
+                (value >>> 14));
             buf.writeMedium(w);
         } else if ((value & ~0xFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
-                    (((value >>> 7) & 0x7F | 0x80) << 16) |
-                    ((value >>> 14) & 0x7F | 0x80) << 8 |
-                    (value >>> 21));
+                (((value >>> 7) & 0x7F | 0x80) << 16) |
+                ((value >>> 14) & 0x7F | 0x80) << 8 |
+                (value >>> 21));
             buf.writeInt(w);
         } else if ((value & ~0x7FFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
-                    ((value >>> 7) & 0x7F | 0x80) << 16 |
-                    ((value >>> 14) & 0x7F | 0x80) << 8 |
-                    ((value >>> 21) & 0x7F | 0x80));
+                ((value >>> 7) & 0x7F | 0x80) << 16 |
+                ((value >>> 14) & 0x7F | 0x80) << 8 |
+                ((value >>> 21) & 0x7F | 0x80));
             buf.writeInt(w);
             buf.writeByte((int) (value >>> 28));
         } else if ((value & ~0x3FFFFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
-                    ((value >>> 7) & 0x7F | 0x80) << 16 |
-                    ((value >>> 14) & 0x7F | 0x80) << 8 |
-                    ((value >>> 21) & 0x7F | 0x80));
+                ((value >>> 7) & 0x7F | 0x80) << 16 |
+                ((value >>> 14) & 0x7F | 0x80) << 8 |
+                ((value >>> 21) & 0x7F | 0x80));
             int w2 = (int) (((value >>> 28) & 0x7FL | 0x80L) << 8 |
-                    (value >>> 35));
+                (value >>> 35));
             buf.writeInt(w);
             buf.writeShort(w2);
         } else if ((value & ~0x1FFFFFFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
-                    ((value >>> 7) & 0x7F | 0x80) << 16 |
-                    ((value >>> 14) & 0x7F | 0x80) << 8 |
-                    ((value >>> 21) & 0x7F | 0x80));
+                ((value >>> 7) & 0x7F | 0x80) << 16 |
+                ((value >>> 14) & 0x7F | 0x80) << 8 |
+                ((value >>> 21) & 0x7F | 0x80));
             int w2 = (int) ((((value >>> 28) & 0x7FL | 0x80L) << 16 |
-                    ((value >>> 35) & 0x7FL | 0x80L) << 8) |
-                    (value >>> 42));
+                ((value >>> 35) & 0x7FL | 0x80L) << 8) |
+                (value >>> 42));
             buf.writeInt(w);
             buf.writeMedium(w2);
         } else if ((value & ~0xFFFFFFFFFFFFFFL) == 0) {
             long w = (value & 0x7F | 0x80) << 56 |
-                    ((value >>> 7) & 0x7F | 0x80) << 48 |
-                    ((value >>> 14) & 0x7F | 0x80) << 40 |
-                    ((value >>> 21) & 0x7F | 0x80) << 32 |
-                    ((value >>> 28) & 0x7FL | 0x80L) << 24 |
-                    ((value >>> 35) & 0x7FL | 0x80L) << 16 |
-                    ((value >>> 42) & 0x7FL | 0x80L) << 8 |
-                    (value >>> 49);
+                ((value >>> 7) & 0x7F | 0x80) << 48 |
+                ((value >>> 14) & 0x7F | 0x80) << 40 |
+                ((value >>> 21) & 0x7F | 0x80) << 32 |
+                ((value >>> 28) & 0x7FL | 0x80L) << 24 |
+                ((value >>> 35) & 0x7FL | 0x80L) << 16 |
+                ((value >>> 42) & 0x7FL | 0x80L) << 8 |
+                (value >>> 49);
             buf.writeLong(w);
         } else if ((value & ~0x7FFFFFFFFFFFFFFFL) == 0) {
             long w = (value & 0x7F | 0x80) << 56 |
-                    ((value >>> 7) & 0x7F | 0x80) << 48 |
-                    ((value >>> 14) & 0x7F | 0x80) << 40 |
-                    ((value >>> 21) & 0x7F | 0x80) << 32 |
-                    ((value >>> 28) & 0x7FL | 0x80L) << 24 |
-                    ((value >>> 35) & 0x7FL | 0x80L) << 16 |
-                    ((value >>> 42) & 0x7FL | 0x80L) << 8 |
-                    (value >>> 49);
+                ((value >>> 7) & 0x7F | 0x80) << 48 |
+                ((value >>> 14) & 0x7F | 0x80) << 40 |
+                ((value >>> 21) & 0x7F | 0x80) << 32 |
+                ((value >>> 28) & 0x7FL | 0x80L) << 24 |
+                ((value >>> 35) & 0x7FL | 0x80L) << 16 |
+                ((value >>> 42) & 0x7FL | 0x80L) << 8 |
+                (value >>> 49);
             buf.writeLong(w);
             buf.writeByte((byte) (value >>> 56));
         } else {
             long w = (value & 0x7F | 0x80) << 56 |
-                    ((value >>> 7) & 0x7F | 0x80) << 48 |
-                    ((value >>> 14) & 0x7F | 0x80) << 40 |
-                    ((value >>> 21) & 0x7F | 0x80) << 32 |
-                    ((value >>> 28) & 0x7FL | 0x80L) << 24 |
-                    ((value >>> 35) & 0x7FL | 0x80L) << 16 |
-                    ((value >>> 42) & 0x7FL | 0x80L) << 8 |
-                    (value >>> 49);
+                ((value >>> 7) & 0x7F | 0x80) << 48 |
+                ((value >>> 14) & 0x7F | 0x80) << 40 |
+                ((value >>> 21) & 0x7F | 0x80) << 32 |
+                ((value >>> 28) & 0x7FL | 0x80L) << 24 |
+                ((value >>> 35) & 0x7FL | 0x80L) << 16 |
+                ((value >>> 42) & 0x7FL | 0x80L) << 8 |
+                (value >>> 49);
             int w2 = (int) (((value >>> 56) & 0x7FL | 0x80L) << 8 |
-                    (value >>> 63));
+                (value >>> 63));
             buf.writeLong(w);
             buf.writeShort(w2);
         }
@@ -118,7 +118,7 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
             buf.writeByte((byte) value);
         } else if ((value & ~0x3FFFL) == 0) {
             int w = (int) ((value & 0x7FL | 0x80L) << 8 |
-                    (value >>> 7));
+                (value >>> 7));
             buf.writeShort(w);
         } else {
             writeVarLongFull(buf, value);

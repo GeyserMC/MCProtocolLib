@@ -50,7 +50,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
             this.type = MobSpawnerValueType.from(type - 1);
             this.value = new MobSpawnerValue();
         } else if (this.blockId == CHEST || this.blockId == ENDER_CHEST || this.blockId == TRAPPED_CHEST
-                || (this.blockId >= SHULKER_BOX_LOWER && this.blockId <= SHULKER_BOX_HIGHER)) {
+            || (this.blockId >= SHULKER_BOX_LOWER && this.blockId <= SHULKER_BOX_HIGHER)) {
             this.type = ChestValueType.from(type - 1);
             this.value = new ChestValue(value);
         } else if (this.blockId == END_GATEWAY) {

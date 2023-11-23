@@ -37,10 +37,9 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
                 case BREAK_SPLASH_POTION, BREAK_SPLASH_POTION2 -> this.data = new BreakPotionEventData(value);
                 case BONEMEAL_GROW, BONEMEAL_GROW_WITH_SOUND -> this.data = new BonemealGrowEventData(value);
                 case COMPOSTER -> this.data = value > 0 ? ComposterEventData.FILL_SUCCESS : ComposterEventData.FILL;
-                case ENDERDRAGON_FIREBALL_EXPLODE ->
-                        this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
+                case ENDERDRAGON_FIREBALL_EXPLODE -> this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
                 case ELECTRIC_SPARK -> // TODO: Look into why this is null (field is marked as @NotNull)
-                        this.data = value >= 0 && value < 6 ? new ElectricSparkData(Direction.from(value)) : null;
+                    this.data = value >= 0 && value < 6 ? new ElectricSparkData(Direction.from(value)) : null;
                 case SCULK_BLOCK_CHARGE -> this.data = new SculkBlockChargeEventData(value);
                 default -> this.data = new UnknownLevelEventData(value);
             }

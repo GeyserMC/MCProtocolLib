@@ -63,7 +63,7 @@ public class TcpClientSession extends TcpSession {
         EVENT_LOOP_GROUP = TransportHelper.createEventLoopGroup(newThreadFactory());
 
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
-                EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+            EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
     }
 
     protected static ThreadFactory newThreadFactory() {
@@ -156,8 +156,8 @@ public class TcpClientSession extends TcpSession {
 
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
-                    .channelType(TransportHelper.DATAGRAM_CHANNEL_CLASS)
-                    .build()) {
+                .channelType(TransportHelper.DATAGRAM_CHANNEL_CLASS)
+                .build()) {
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
                 DnsResponse response = envelope.content();
@@ -256,9 +256,9 @@ public class TcpClientSession extends TcpSession {
                     HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
                     InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
                     ctx.channel().writeAndFlush(new HAProxyMessage(
-                            HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
-                            clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
-                            clientAddress.getPort(), remoteAddress.getPort()
+                        HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
+                        clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
+                        clientAddress.getPort(), remoteAddress.getPort()
                     ));
                     ctx.pipeline().remove(this);
                     ctx.pipeline().remove("proxy-protocol-encoder");

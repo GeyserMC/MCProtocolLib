@@ -94,8 +94,8 @@ public abstract class Service {
                 }
 
                 queryString.append(queryParam.getKey())
-                        .append('=')
-                        .append(URLEncoder.encode(queryParam.getValue(), StandardCharsets.UTF_8));
+                    .append('=')
+                    .append(URLEncoder.encode(queryParam.getValue(), StandardCharsets.UTF_8));
             }
 
             return new URI(base.getScheme(), base.getAuthority(), base.getPath(), queryString.toString(), base.getFragment());

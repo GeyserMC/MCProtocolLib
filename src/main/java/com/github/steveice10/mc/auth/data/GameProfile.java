@@ -8,7 +8,6 @@ import com.github.steveice10.mc.auth.util.UUIDSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,26 +24,20 @@ import java.util.*;
 public class GameProfile {
     private static final String[] WHITELISTED_DOMAINS = {".minecraft.net", ".mojang.com"};
     private static final PublicKey SIGNATURE_KEY;
-    private static final Gson GSON;
+    private static final Gson GSON = new GsonBuilder()
+        .registerTypeAdapter(UUID.class, new UUIDSerializer())
+        .create();
 
     static {
         try (InputStream in = SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der")) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-            byte[] buffer = new byte[4096];
-            int length = -1;
-            while ((length = in.read(buffer)) != -1) {
-                out.write(buffer, 0, length);
+            if (in == null) {
+                throw new ExceptionInInitializerError("Missing yggdrasil public key.");
             }
 
-            out.close();
-
-            SIGNATURE_KEY = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(out.toByteArray()));
+            SIGNATURE_KEY = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
         } catch (Exception e) {
             throw new ExceptionInInitializerError("Missing/invalid yggdrasil public key.");
         }
-
-        GSON = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDSerializer()).create();
     }
 
     private final UUID id;

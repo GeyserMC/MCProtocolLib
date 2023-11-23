@@ -16,10 +16,10 @@ public record ServerStatusInfo(@Nullable Component description,
         if (this == o) return true;
         if (!(o instanceof ServerStatusInfo that)) return false;
         return Objects.equals(description, that.description)
-                && Objects.equals(playerInfo, that.playerInfo)
-                && Objects.equals(versionInfo, that.versionInfo)
-                && Arrays.equals(iconPng, that.iconPng)
-                && Objects.equals(enforcesSecureChat, that.enforcesSecureChat);
+            && Objects.equals(playerInfo, that.playerInfo)
+            && Objects.equals(versionInfo, that.versionInfo)
+            && Arrays.equals(iconPng, that.iconPng)
+            && Objects.equals(enforcesSecureChat, that.enforcesSecureChat);
     }
 
     @Override

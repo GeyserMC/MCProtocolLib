@@ -34,7 +34,7 @@ public class DataPalette {
 
     public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
         return new DataPalette(paletteType, globalPaletteBits, new ListPalette(paletteType.getMinBitsPerEntry()),
-                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()));
+            new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()));
     }
 
     private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {

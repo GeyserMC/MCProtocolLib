@@ -99,8 +99,7 @@ public class ServerListener extends SessionAdapter {
                             session.disconnect("Outdated client! Please use " + protocol.getCodec().getMinecraftVersion() + ".");
                         }
                     }
-                    default ->
-                            throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
+                    default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
         } else if (protocol.getState() == ProtocolState.LOGIN) {
@@ -133,11 +132,11 @@ public class ServerListener extends SessionAdapter {
                 ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if (builder == null) {
                     builder = $ -> new ServerStatusInfo(
-                            Component.text("A Minecraft Server"),
-                            new PlayerInfo(0, 20, new ArrayList<>()),
-                            new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
-                            null,
-                            false
+                        Component.text("A Minecraft Server"),
+                        new PlayerInfo(0, 20, new ArrayList<>()),
+                        new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
+                        null,
+                        false
                     );
                 }
 

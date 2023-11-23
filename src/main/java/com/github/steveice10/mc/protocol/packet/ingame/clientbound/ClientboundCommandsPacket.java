@@ -120,12 +120,11 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     case ENTITY -> {
                         byte entityFlags = in.readByte();
                         properties = new EntityProperties((entityFlags & ENTITY_FLAG_SINGLE_TARGET) != 0,
-                                (entityFlags & ENTITY_FLAG_PLAYERS_ONLY) != 0);
+                            (entityFlags & ENTITY_FLAG_PLAYERS_ONLY) != 0);
                     }
                     case SCORE_HOLDER -> properties = new ScoreHolderProperties(in.readBoolean());
                     case TIME -> properties = new TimeProperties(in.readInt());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY ->
-                            properties = new ResourceProperties(helper.readString(in));
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> properties = new ResourceProperties(helper.readString(in));
                     default -> {
                     }
                 }
@@ -280,8 +279,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     }
                     case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.properties()).allowMultiple());
                     case TIME -> out.writeInt(((TimeProperties) node.properties()).min());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY ->
-                            helper.writeString(out, ((ResourceProperties) node.properties()).registryKey());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> helper.writeString(out, ((ResourceProperties) node.properties()).registryKey());
                     default -> {
                     }
                 }

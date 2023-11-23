@@ -53,16 +53,16 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
                 for (JsonElement sampleEntryElement : sampleArray) {
                     JsonObject sampleEntryObject = sampleEntryElement.getAsJsonObject();
                     sampleProfiles.add(new GameProfile(
-                            sampleEntryObject.get("id").getAsString(),
-                            sampleEntryObject.get("name").getAsString()
+                        sampleEntryObject.get("id").getAsString(),
+                        sampleEntryObject.get("name").getAsString()
                     ));
                 }
             }
 
             playerInfo = new PlayerInfo(
-                    playersObject.get("max").getAsInt(),
-                    playersObject.get("online").getAsInt(),
-                    sampleProfiles
+                playersObject.get("max").getAsInt(),
+                playersObject.get("online").getAsInt(),
+                sampleProfiles
             );
         }
 
@@ -71,8 +71,8 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         if (versionElement != null) {
             JsonObject versionObject = versionElement.getAsJsonObject();
             versionInfo = new VersionInfo(
-                    versionObject.get("name").getAsString(),
-                    versionObject.get("protocol").getAsInt()
+                versionObject.get("name").getAsString(),
+                versionObject.get("protocol").getAsInt()
             );
         }
 
@@ -89,11 +89,11 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         }
 
         this.info = new ServerStatusInfo(
-                description,
-                playerInfo,
-                versionInfo,
-                icon,
-                enforcesSecureChat
+            description,
+            playerInfo,
+            versionInfo,
+            icon,
+            enforcesSecureChat
         );
     }
 

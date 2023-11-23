@@ -120,16 +120,7 @@ public class SessionService extends Service {
         return "SessionService{}";
     }
 
-    private static class JoinServerRequest {
-        private final String accessToken;
-        private final UUID selectedProfile;
-        private final String serverId;
-
-        protected JoinServerRequest(String accessToken, UUID selectedProfile, String serverId) {
-            this.accessToken = accessToken;
-            this.selectedProfile = selectedProfile;
-            this.serverId = serverId;
-        }
+    private record JoinServerRequest(String accessToken, UUID selectedProfile, String serverId) {
     }
 
     private static class HasJoinedResponse {
