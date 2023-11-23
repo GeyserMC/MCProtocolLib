@@ -28,6 +28,10 @@ import java.util.List;
 @With
 @AllArgsConstructor
 public class ClientboundStatusResponsePacket implements MinecraftPacket {
+
+    // vanilla behavior falls back to false if the field was not sent
+    private static final boolean ENFORCES_SECURE_CHAT_DEFAULT = false;
+
     private final @NonNull ServerStatusInfo info;
 
     public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
@@ -54,7 +58,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
             icon = this.stringToIcon(obj.get("favicon").getAsString());
         }
 
-        Boolean enforcesSecureChat = null;
+        boolean enforcesSecureChat = ENFORCES_SECURE_CHAT_DEFAULT;
         if (obj.has("enforcesSecureChat")) {
             enforcesSecureChat = obj.get("enforcesSecureChat").getAsBoolean();
         }
@@ -88,9 +92,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         if (this.info.getIconPng() != null) {
             obj.addProperty("favicon", this.iconToString(this.info.getIconPng()));
         }
-        if (this.info.getEnforcesSecureChat() != null) {
-            obj.addProperty("enforcesSecureChat", this.info.getEnforcesSecureChat());
-        }
+        obj.addProperty("enforcesSecureChat", this.info.isEnforcesSecureChat());
 
         helper.writeString(out, obj.toString());
     }
