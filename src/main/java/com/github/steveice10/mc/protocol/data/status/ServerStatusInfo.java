@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Nullable;
 
 @Data
 @Setter(AccessLevel.NONE)
@@ -16,5 +15,5 @@ public class ServerStatusInfo {
     private @NonNull PlayerInfo playerInfo;
     private @NonNull Component description;
     private byte[] iconPng;
-    private @Nullable Boolean enforcesSecureChat;
+    private boolean enforcesSecureChat;
 }
