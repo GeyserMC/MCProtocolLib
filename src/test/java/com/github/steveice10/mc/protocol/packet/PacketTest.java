@@ -6,12 +6,12 @@ import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class PacketTest {
     private MinecraftPacket[] packets;
@@ -29,7 +29,7 @@ public abstract class PacketTest {
 
             Packet decoded = this.createPacket(packet.getClass(), helper, buf);
 
-            assertEquals("Decoded packet does not match original: " + packet + " vs " + decoded, packet, decoded);
+            assertEquals(packet, decoded, "Decoded packet does not match original: " + packet + " vs " + decoded);
         }
     }
 

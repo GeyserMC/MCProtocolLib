@@ -55,4 +55,4 @@ Please join [the GeyserMC Discord server](https://discord.gg/geysermc) and visit
 
 ## License
 
-MCProtocolLib is licensed under the **[MIT license](http://www.opensource.org/licenses/mit-license.html)**.
+MCProtocolLib is licensed under the **[MIT license](https://opensource.org/license/mit/)**.

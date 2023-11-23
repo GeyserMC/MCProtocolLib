@@ -8,19 +8,21 @@ import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalett
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 public class ChunkTest {
     private final List<ChunkSection> chunkSectionsToTest = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setup() {
         chunkSectionsToTest.add(new ChunkSection());
 
@@ -49,7 +51,8 @@ public class ChunkTest {
                 e.printStackTrace();
                 throw e;
             }
-            Assert.assertEquals("Decoded packet does not match original: " + section + " vs " + decoded, section, decoded);
+
+            assertEquals(section, decoded, "Decoded packet does not match original: " + section + " vs " + decoded);
         }
     }
 
@@ -57,10 +60,10 @@ public class ChunkTest {
     public void testDeepCopy() {
         for (ChunkSection section : chunkSectionsToTest) {
             ChunkSection copy = new ChunkSection(section);
-            Assert.assertEquals("Deep copy does not match original: " + section + " vs " + copy, section, copy);
+            assertEquals(section, copy, "Deep copy does not match original: " + section + " vs " + copy);
 
             copy.setBlock(1, 1, 1, 10);
-            Assert.assertNotEquals("Deep copy is not deep: " + section + " vs " + copy, section, copy);
+            assertNotEquals(section, copy, "Deep copy is not deep: " + section + " vs " + copy);
         }
     }
 }

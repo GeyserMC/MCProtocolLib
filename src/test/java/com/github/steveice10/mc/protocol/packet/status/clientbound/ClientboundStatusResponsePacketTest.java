@@ -7,14 +7,14 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import net.kyori.adventure.text.Component;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
 
 public class ClientboundStatusResponsePacketTest extends PacketTest {
-    @Before
+    @BeforeEach
     public void setup() {
         this.setPackets(new ClientboundStatusResponsePacket(
                 new ServerStatusInfo(

@@ -7,12 +7,12 @@ import com.github.steveice10.mc.protocol.data.game.command.SuggestionType;
 import com.github.steveice10.mc.protocol.data.game.command.properties.DoubleProperties;
 import com.github.steveice10.mc.protocol.data.game.command.properties.StringProperties;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.OptionalInt;
 
 public class ClientboundCommandsPacketTest extends PacketTest {
-    @Before
+    @BeforeEach
     public void setup() {
         this.setPackets(new ClientboundCommandsPacket(
                 new CommandNode[]{

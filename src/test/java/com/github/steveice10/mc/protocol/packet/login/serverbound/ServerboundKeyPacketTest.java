@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.packet.login.serverbound;
 
 import com.github.steveice10.mc.protocol.packet.PacketTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -11,8 +11,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServerboundKeyPacketTest extends PacketTest {
     private KeyPair keyPair;
@@ -20,7 +19,7 @@ public class ServerboundKeyPacketTest extends PacketTest {
     private ServerboundKeyPacket packet;
     private byte[] verifyToken;
 
-    @Before
+    @BeforeEach
     public void setup() {
         try {
             KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
@@ -43,7 +42,7 @@ public class ServerboundKeyPacketTest extends PacketTest {
 
     @Test
     public void testEncryptionResponsePacketGetters() {
-        assertEquals("Secret key does not match.", this.secretKey, this.packet.getSecretKey(this.keyPair.getPrivate()));
-        assertArrayEquals("Verify token does not match.", this.verifyToken, this.packet.getEncryptedChallenge(this.keyPair.getPrivate()));
+        assertEquals(this.secretKey, this.packet.getSecretKey(this.keyPair.getPrivate()), "Secret key does not match.");
+        assertArrayEquals(this.verifyToken, this.packet.getEncryptedChallenge(this.keyPair.getPrivate()), "Verify token does not match.");
     }
 }
