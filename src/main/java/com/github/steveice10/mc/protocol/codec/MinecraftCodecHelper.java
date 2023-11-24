@@ -1,6 +1,8 @@
 package com.github.steveice10.mc.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.CheckedBiConsumer;
+import com.github.steveice10.mc.protocol.CheckedFunction;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.chat.numbers.BlankFormat;
@@ -82,7 +84,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
@@ -102,7 +103,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     protected CompoundTag registry;
 
     @Nullable
-    public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
+    public <T, E extends Throwable> T readNullable(ByteBuf buf, CheckedFunction<ByteBuf, T, E> ifPresent) throws E {
         if (buf.readBoolean()) {
             return ifPresent.apply(buf);
         } else {
@@ -110,7 +111,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public <T> void writeNullable(ByteBuf buf, @Nullable T value, BiConsumer<ByteBuf, T> ifPresent) {
+    public <T, E extends Throwable> void writeNullable(ByteBuf buf, @Nullable T value, CheckedBiConsumer<ByteBuf, T, E> ifPresent) throws E {
         if (value != null) {
             buf.writeBoolean(true);
             ifPresent.accept(buf, value);

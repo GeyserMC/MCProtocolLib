@@ -28,6 +28,8 @@ public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        // todo LoginDisconnectPacket serialization changed in 1.20.3
+        // not sure if it is equivalent o what we already have or if we need to have another type of Component serialization
         helper.writeComponent(out, this.reason);
     }
 

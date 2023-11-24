@@ -60,12 +60,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
             this.displayName = helper.readComponent(in);
             this.type = ScoreType.from(helper.readVarInt(in));
-
-            if (in.readBoolean()) {
-                this.numberFormat = helper.readNumberFormat(in);
-            } else {
-                this.numberFormat = null;
-            }
+            this.numberFormat = helper.readNullable(in, helper::readNumberFormat);
         } else {
             this.displayName = null;
             this.type = null;
