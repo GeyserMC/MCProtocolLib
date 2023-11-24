@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -34,27 +35,27 @@ public class Advancement {
     public static class DisplayData {
         private final @NonNull Component title;
         private final @NonNull Component description;
-        private final ItemStack icon;
-        private final @NonNull FrameType frameType;
+        private final @NonNull ItemStack icon;
+        private final @NonNull AdvancementType advancementType;
         private final boolean showToast;
         private final boolean hidden;
         private final float posX;
         private final float posY;
-        private final String backgroundTexture;
+        private final @Nullable String backgroundTexture;
 
-        public DisplayData(@NonNull Component title, @NonNull Component description, ItemStack icon, @NonNull FrameType frameType,
+        public DisplayData(@NonNull Component title, @NonNull Component description, @NonNull ItemStack icon, @NonNull AdvancementType advancementType,
                            boolean showToast, boolean hidden, float posX, float posY) {
-            this(title, description, icon, frameType, showToast, hidden, posX, posY, null);
+            this(title, description, icon, advancementType, showToast, hidden, posX, posY, null);
         }
 
-        public enum FrameType {
+        public enum AdvancementType {
             TASK,
             CHALLENGE,
             GOAL;
 
-            private static final FrameType[] VALUES = values();
+            private static final AdvancementType[] VALUES = values();
 
-            public static FrameType from(int id) {
+            public static AdvancementType from(int id) {
                 return VALUES[id];
             }
         }

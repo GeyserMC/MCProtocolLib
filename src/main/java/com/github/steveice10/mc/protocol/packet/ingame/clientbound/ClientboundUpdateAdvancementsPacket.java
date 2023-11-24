@@ -2,10 +2,9 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData;
-import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
+import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.AdvancementType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -58,7 +57,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 Component title = helper.readComponent(in);
                 Component description = helper.readComponent(in);
                 ItemStack icon = helper.readItemStack(in);
-                FrameType frameType = FrameType.from(helper.readVarInt(in));
+                AdvancementType advancementType = AdvancementType.from(helper.readVarInt(in));
 
                 int flags = in.readInt();
                 boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
@@ -69,7 +68,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 float posX = in.readFloat();
                 float posY = in.readFloat();
 
-                displayData = new DisplayData(title, description, icon, frameType, showToast, hidden, posX, posY, backgroundTexture);
+                displayData = new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
             }
 
             List<List<String>> requirements = new ArrayList<>();
@@ -131,7 +130,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 helper.writeComponent(out, displayData.getTitle());
                 helper.writeComponent(out, displayData.getDescription());
                 helper.writeItemStack(out, displayData.getIcon());
-                helper.writeVarInt(out, displayData.getFrameType().ordinal());
+                helper.writeVarInt(out, displayData.getAdvancementType().ordinal());
                 String backgroundTexture = displayData.getBackgroundTexture();
 
                 int flags = 0;
