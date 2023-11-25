@@ -62,7 +62,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
             this.type = BellValueType.from(type - 1);
             this.value = new BellValue(Direction.from(Math.abs(value % 6)));
          } else if (this.blockId == DECORATED_POT) {
-            this.type = DecoratedPotType.from(type - 1);
+            this.type = DecoratedPotValueType.from(type - 1);
             this.value = new DecoratedPotValue(WobbleStyle.from(Math.abs(value % 2)));
         } else {
             this.type = GenericBlockValueType.from(type);

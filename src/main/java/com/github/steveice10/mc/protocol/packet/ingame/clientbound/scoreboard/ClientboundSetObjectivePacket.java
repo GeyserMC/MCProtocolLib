@@ -20,8 +20,15 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
     private final @NonNull String name;
     private final @NonNull ObjectiveAction action;
 
-    private final Component displayName;
-    private final ScoreType type;
+    /**
+     * Not null if {@link #getAction()} is {@link ObjectiveAction#ADD} or {@link ObjectiveAction#UPDATE}
+     */
+    private final @Nullable Component displayName;
+
+    /**
+     * Not null if {@link #getAction()} is {@link ObjectiveAction#ADD} or {@link ObjectiveAction#UPDATE}
+     */
+    private final @Nullable ScoreType type;
     private final @Nullable NumberFormat numberFormat;
 
     /**
@@ -42,7 +49,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
      * @param type          Type of score.
      * @param numberFormat  Number formatting.
      */
-    public ClientboundSetObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, Component displayName, ScoreType type, @Nullable NumberFormat numberFormat) {
+    public ClientboundSetObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, @Nullable Component displayName, @Nullable ScoreType type, @Nullable NumberFormat numberFormat) {
         if ((action == ObjectiveAction.ADD || action == ObjectiveAction.UPDATE) && (displayName == null || type == null)) {
             throw new IllegalArgumentException("ADD and UPDATE actions require display name and type.");
         }
@@ -75,11 +82,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
             helper.writeComponent(out, this.displayName);
             helper.writeVarInt(out, this.type.ordinal());
-
-            out.writeBoolean(this.numberFormat != null);
-            if (this.numberFormat != null) {
-                helper.writeNumberFormat(out, this.numberFormat);
-            }
+            helper.writeNullable(out, this.numberFormat, helper::writeNumberFormat);
         }
     }
 }
