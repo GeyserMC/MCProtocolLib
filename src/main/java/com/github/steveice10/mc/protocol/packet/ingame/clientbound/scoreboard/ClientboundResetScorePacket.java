@@ -17,16 +17,16 @@ import java.io.IOException;
 public class ClientboundResetScorePacket implements MinecraftPacket {
 
     private final @NonNull String owner;
-    private final @Nullable String objectiveName;
+    private final @Nullable String objective;
 
     public ClientboundResetScorePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.owner = helper.readString(in);
-        this.objectiveName = helper.readNullable(in, helper::readString);
+        this.objective = helper.readNullable(in, helper::readString);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeString(out, this.owner);
-        helper.writeNullable(out, this.objectiveName, helper::writeString);
+        helper.writeNullable(out, this.objective, helper::writeString);
     }
 }
