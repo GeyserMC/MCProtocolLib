@@ -15,7 +15,7 @@ import java.io.IOException;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetScorePacket implements MinecraftPacket {
     private final @NonNull String owner;
-    private final @NonNull String objectiveName;
+    private final @NonNull String objective;
     private final int value;
     private final @Nullable Component display;
     private final @Nullable NumberFormat numberFormat;
@@ -23,9 +23,9 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     /**
      * Creates a set score packet that adds or updates the entry.
      */
-    public ClientboundSetScorePacket(@NonNull String owner, @NonNull String objectiveName, int value) {
+    public ClientboundSetScorePacket(@NonNull String owner, @NonNull String objective, int value) {
         this.owner = owner;
-        this.objectiveName = objectiveName;
+        this.objective = objective;
         this.value = value;
         this.display = null;
         this.numberFormat = null;
@@ -33,7 +33,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
 
     public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.owner = helper.readString(in);
-        this.objectiveName = helper.readString(in);
+        this.objective = helper.readString(in);
         this.value = helper.readVarInt(in);
         this.display = helper.readNullable(in, helper::readComponent);
         this.numberFormat = helper.readNullable(in, helper::readNumberFormat);
@@ -42,7 +42,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeString(out, this.owner);
-        helper.writeString(out, this.objectiveName);
+        helper.writeString(out, this.objective);
         helper.writeVarInt(out, this.value);
         helper.writeNullable(out, this.display, helper::writeComponent);
         helper.writeNullable(out, this.numberFormat, helper::writeNumberFormat);
