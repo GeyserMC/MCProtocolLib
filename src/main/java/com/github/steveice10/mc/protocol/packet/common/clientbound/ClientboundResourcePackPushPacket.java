@@ -23,7 +23,7 @@ public class ClientboundResourcePackPushPacket implements MinecraftPacket {
     private final boolean required;
     private final @Nullable Component prompt;
 
-    public ClientboundResourcePackPushPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundResourcePackPushPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.id = helper.readUUID(in);
         this.url = helper.readString(in);
         this.hash = helper.readString(in);

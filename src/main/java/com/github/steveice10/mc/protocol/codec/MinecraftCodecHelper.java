@@ -65,6 +65,7 @@ import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.codec.BasePacketCodecHelper;
+import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
@@ -388,12 +389,16 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, e.ordinal());
     }
 
-    public Component readComponent(ByteBuf buf) {
-        return DefaultComponentSerializer.get().deserialize(this.readString(buf, 262144));
+    public Component readComponent(ByteBuf buf) throws IOException {
+        CompoundTag tag = readAnyTag(buf);
+        JsonElement json = ComponentSerializer.tagComponentToJson(tag);
+        return DefaultComponentSerializer.get().deserializeFromTree(json);
     }
 
-    public void writeComponent(ByteBuf buf, Component component) {
-        this.writeString(buf, DefaultComponentSerializer.get().serialize(component));
+    public void writeComponent(ByteBuf buf, Component component) throws IOException {
+        JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
+        Tag tag = ComponentSerializer.jsonComponentToTag(json);
+        writeAnyTag(buf, tag);
     }
 
     public EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) throws IOException {

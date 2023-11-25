@@ -98,7 +98,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {
