@@ -41,7 +41,9 @@ public enum BlockEntityType {
     SCULK_SHRIEKER,
     CHISELED_BOOKSHELF,
     BRUSHABLE_BLOCK,
-    DECORATED_POT;
+    DECORATED_POT,
+    CRAFTER,
+    TRIAL_SPAWNER;
 
     private static final BlockEntityType[] VALUES = values();
 

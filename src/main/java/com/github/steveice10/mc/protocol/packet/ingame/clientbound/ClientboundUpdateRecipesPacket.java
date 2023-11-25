@@ -43,10 +43,12 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     break;
                 }
                 case CRAFTING_SHAPED: {
-                    int width = helper.readVarInt(in);
-                    int height = helper.readVarInt(in);
                     String group = helper.readString(in);
                     CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
+
+                    // ShapedRecipePattern in vanilla
+                    int width = helper.readVarInt(in);
+                    int height = helper.readVarInt(in);
                     Ingredient[] ingredients = new Ingredient[width * height];
                     for (int j = 0; j < ingredients.length; j++) {
                         ingredients[j] = helper.readRecipeIngredient(in);
@@ -135,10 +137,12 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                         throw new IllegalStateException("Shaped recipe must have ingredient count equal to width * height.");
                     }
 
-                    helper.writeVarInt(out, data.getWidth());
-                    helper.writeVarInt(out, data.getHeight());
                     helper.writeString(out, data.getGroup());
                     helper.writeVarInt(out, data.getCategory().ordinal());
+
+                    // ShapedRecipePattern in vanilla
+                    helper.writeVarInt(out, data.getWidth());
+                    helper.writeVarInt(out, data.getHeight());
                     for (Ingredient ingredient : data.getIngredients()) {
                         helper.writeRecipeIngredient(out, ingredient);
                     }

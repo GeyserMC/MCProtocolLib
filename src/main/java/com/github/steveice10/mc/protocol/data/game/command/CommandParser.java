@@ -19,6 +19,7 @@ public enum CommandParser {
     ITEM_PREDICATE,
     COLOR,
     COMPONENT,
+    STYLE,
     MESSAGE,
     NBT_COMPOUND_TAG,
     NBT_TAG,

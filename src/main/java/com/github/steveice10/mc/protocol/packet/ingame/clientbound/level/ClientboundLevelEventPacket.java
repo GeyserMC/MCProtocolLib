@@ -40,6 +40,7 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
                     this.data = new RecordEventData(value);
                     break;
                 case SMOKE:
+                case WHITE_SMOKE:
                     this.data = new SmokeEventData(Direction.from(Math.abs(value % 6)));
                     break;
                 case BREAK_BLOCK:
@@ -61,10 +62,13 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
                     this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
                     break;
                 case ELECTRIC_SPARK:
-                    this.data = value >= 0 && value < 6 ? new ElectricSparkData(Direction.from(value)) : null;
+                    this.data = value >= 0 && value < 6 ? new ElectricSparkData(Direction.from(value)) : new UnknownLevelEventData(value);
                     break;
                 case SCULK_BLOCK_CHARGE:
                     this.data = new SculkBlockChargeEventData(value);
+                    break;
+                case TRIAL_SPAWNER_DETECT_PLAYER:
+                    this.data = new TrialSpawnerDetectEventData(value);
                     break;
                 default:
                     this.data = new UnknownLevelEventData(value);

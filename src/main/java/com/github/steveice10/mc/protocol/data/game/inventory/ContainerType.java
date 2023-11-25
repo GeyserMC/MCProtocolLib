@@ -8,6 +8,7 @@ public enum ContainerType {
     GENERIC_9X5,
     GENERIC_9X6,
     GENERIC_3X3,
+    CRAFTER_3x3,
     ANVIL,
     BEACON,
     BLAST_FURNACE,
