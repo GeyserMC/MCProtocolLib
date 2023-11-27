@@ -5,6 +5,7 @@ public enum ResourcePackStatus {
     DECLINED,
     FAILED_DOWNLOAD,
     ACCEPTED,
+    DOWNLOADED,
     INVALID_URL,
     FAILED_RELOAD,
     DISCARDED;
