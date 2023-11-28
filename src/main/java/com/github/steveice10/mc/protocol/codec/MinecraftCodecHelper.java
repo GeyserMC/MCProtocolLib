@@ -605,7 +605,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public PositionSource readPositionSource(ByteBuf buf) {
-        PositionSourceType type = PositionSourceType.from(this.readResourceLocation(buf));
+        PositionSourceType type = PositionSourceType.from(this.readVarInt(buf));
         switch (type) {
             case BLOCK:
                 return new BlockPositionSource(this.readPosition(buf));
@@ -617,7 +617,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
-        this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
+        this.writeVarInt(buf, positionSource.getType().ordinal());
         if (positionSource instanceof BlockPositionSource) {
             this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
         } else if (positionSource instanceof EntityPositionSource) {
