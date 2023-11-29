@@ -73,6 +73,7 @@ import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -187,32 +188,18 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public CompoundTag readTag(ByteBuf buf) throws IOException {
-        return readTag(buf, CompoundTag.class);
-    }
-
     @Nullable
-    public <T extends Tag> T readTag(ByteBuf buf, Class<T> expected) throws IOException {
-        Tag tag = NBTIO.readTag(new InputStream() {
-            @Override
-            public int read() {
-                return buf.readUnsignedByte();
-            }
-        });
-
-        if (tag == null) {
-            return null;
-        }
-
-        if (tag.getClass() != expected) {
-            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
-        }
-
-        return expected.cast(tag);
-    }
-
     public CompoundTag readAnyTag(ByteBuf buf) throws IOException {
         return readAnyTag(buf, CompoundTag.class);
+    }
+
+    @NotNull
+    public CompoundTag readAnyTagOrThrow(ByteBuf buf) throws IOException {
+        CompoundTag tag = readAnyTag(buf);
+        if (tag == null) {
+            throw new IllegalArgumentException("Got end-tag when trying to read CompoundTag");
+        }
+        return tag;
     }
 
     @Nullable
@@ -228,62 +215,19 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             return null;
         }
 
-        if (tag.getClass() != expected) {
+        if (!expected.isInstance(tag)) {
             throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
         }
 
         return expected.cast(tag);
     }
-
-    public CompoundTag readTagLE(ByteBuf buf) throws IOException {
-        return readTagLE(buf, CompoundTag.class);
-    }
-
-    @Nullable
-    public <T extends Tag> T readTagLE(ByteBuf buf, Class<T> expected) throws IOException {
-        Tag tag = NBTIO.readTag(new InputStream() {
-            @Override
-            public int read() {
-                return buf.readUnsignedByte();
-            }
-        }, true);
-
-        if (tag == null) {
-            return null;
-        }
-
-        if (tag.getClass() != expected) {
-            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
-        }
-
-        return expected.cast(tag);
-    }
-
-    public <T extends Tag> void writeTag(ByteBuf buf, T tag) throws IOException {
-        NBTIO.writeTag(new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                buf.writeByte(b);
-            }
-        }, tag);
-    }
-
-    public <T extends Tag> void writeAnyTag(ByteBuf buf, T tag) throws IOException {
+    public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) throws IOException {
         NBTIO.writeAnyTag(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
                 buf.writeByte(b);
             }
         }, tag);
-    }
-
-    public <T extends Tag> void writeTagLE(ByteBuf buf, T tag) throws IOException {
-        NBTIO.writeTag(new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                buf.writeByte(b);
-            }
-        }, tag, true);
     }
 
     public ItemStack readItemStack(ByteBuf buf) throws IOException {
@@ -390,7 +334,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public Component readComponent(ByteBuf buf) throws IOException {
-        CompoundTag tag = readAnyTag(buf);
+        // do not use CompoundTag, as mojang serializes a plaintext component as just a single StringTag
+        Tag tag = readAnyTag(buf, Tag.class);
+        if (tag == null) {
+            throw new IllegalArgumentException("Got end-tag when trying to read Component");
+        }
         JsonElement json = ComponentSerializer.tagComponentToJson(tag);
         return DefaultComponentSerializer.get().deserializeFromTree(json);
     }
@@ -578,7 +526,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             case 0:
                 return BlankFormat.INSTANCE;
             case 1:
-                return new StyledFormat(this.readAnyTag(buf));
+                return new StyledFormat(this.readAnyTagOrThrow(buf));
             case 2:
                 return new FixedFormat(this.readComponent(buf));
             default:
@@ -671,8 +619,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
+    @NotNull
     public BlockEntityType readBlockEntityType(ByteBuf buf) {
-        return BlockEntityType.from(this.readVarInt(buf));
+        int id = this.readVarInt(buf);
+        BlockEntityType type = BlockEntityType.from(id);
+
+        if (type == null) {
+            throw new IllegalArgumentException("Unknown BlockEntityType: " + id);
+        }
+        return type;
     }
 
     public void writeBlockEntityType(ByteBuf buf, BlockEntityType type) {

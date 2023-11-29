@@ -40,11 +40,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
         this.ambient = (flags & FLAG_AMBIENT) != 0;
         this.showParticles = (flags & FLAG_SHOW_PARTICLES) != 0;
         this.showIcon = (flags & FLAG_SHOW_ICON) != 0;
-        if (in.readBoolean()) {
-            this.factorData = helper.readAnyTag(in);
-        } else {
-            this.factorData = null;
-        }
+        this.factorData = helper.readNullable(in, helper::readAnyTagOrThrow);
     }
 
     @Override
@@ -66,9 +62,6 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
         }
 
         out.writeByte(flags);
-        out.writeBoolean(this.factorData != null);
-        if (this.factorData != null) {
-            helper.writeAnyTag(out, this.factorData);
-        }
+        helper.writeNullable(out, this.factorData, helper::writeAnyTag);
     }
 }
