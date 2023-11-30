@@ -18,7 +18,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Map;
@@ -31,16 +31,20 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     private final int containerId;
     private final int stateId;
     private final int slot;
-    private final ContainerActionType action;
-    private final ContainerAction param;
-    private final ItemStack carriedItem;
-    private final @NonNull Int2ObjectMap<ItemStack> changedSlots;
+    private final @NonNull ContainerActionType action;
+    private final @NonNull ContainerAction param;
+    private final @Nullable ItemStack carriedItem;
+    private final @NonNull Int2ObjectMap<@Nullable ItemStack> changedSlots;
 
-    public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
+    public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
+                                           @NonNull ContainerActionType action, @NonNull ContainerAction param,
+                                           @Nullable ItemStack carriedItem, @NonNull Map<Integer, @Nullable ItemStack> changedSlots) {
         this(containerId, stateId, slot, action, param, carriedItem, new Int2ObjectOpenHashMap<>(changedSlots));
     }
 
-    public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Int2ObjectMap<ItemStack> changedSlots) {
+    public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
+                                           @NonNull ContainerActionType action, @NonNull ContainerAction param,
+                                           @Nullable ItemStack carriedItem, @NonNull Int2ObjectMap<@Nullable ItemStack> changedSlots) {
         if ((param == DropItemAction.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemAction.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT

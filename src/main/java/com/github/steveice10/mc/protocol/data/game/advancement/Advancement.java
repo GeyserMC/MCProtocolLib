@@ -35,7 +35,7 @@ public class Advancement {
     public static class DisplayData {
         private final @NonNull Component title;
         private final @NonNull Component description;
-        private final @NonNull ItemStack icon;
+        private final @Nullable ItemStack icon;
         private final @NonNull AdvancementType advancementType;
         private final boolean showToast;
         private final boolean hidden;
@@ -43,7 +43,7 @@ public class Advancement {
         private final float posY;
         private final @Nullable String backgroundTexture;
 
-        public DisplayData(@NonNull Component title, @NonNull Component description, @NonNull ItemStack icon, @NonNull AdvancementType advancementType,
+        public DisplayData(@NonNull Component title, @NonNull Component description, @Nullable ItemStack icon, @NonNull AdvancementType advancementType,
                            boolean showToast, boolean hidden, float posX, float posY) {
             this(title, description, icon, advancementType, showToast, hidden, posX, posY, null);
         }

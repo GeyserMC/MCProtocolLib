@@ -4,10 +4,11 @@ import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 @Data
 @AllArgsConstructor
 public class Equipment {
     private @NonNull EquipmentSlot slot;
-    private ItemStack item;
+    private @Nullable ItemStack item;
 }

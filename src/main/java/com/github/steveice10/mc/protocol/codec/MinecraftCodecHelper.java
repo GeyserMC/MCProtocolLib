@@ -230,6 +230,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }, tag);
     }
 
+    @Nullable
     public ItemStack readItemStack(ByteBuf buf) throws IOException {
         boolean present = buf.readBoolean();
         if (!present) {
