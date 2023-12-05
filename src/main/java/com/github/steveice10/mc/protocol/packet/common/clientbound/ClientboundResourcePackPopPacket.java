@@ -16,6 +16,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ClientboundResourcePackPopPacket implements MinecraftPacket {
 
+    /**
+     * When null, indicates that all packs should be popped.
+     */
     private final @Nullable UUID id;
 
     public ClientboundResourcePackPopPacket(ByteBuf in, MinecraftCodecHelper helper) {
