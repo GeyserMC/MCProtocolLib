@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -23,7 +21,9 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
         this.notification = GameEvent.from(in.readUnsignedByte());
         float value = in.readFloat();
         // TODO: Handle this in MinecraftCodecHelper
-        if (this.notification == GameEvent.CHANGE_GAMEMODE) {
+        if (this.notification == GameEvent.AFFECTED_BY_ELDER_GUARDIAN) {
+            this.value = new ElderGuardianEffectValue(value);
+        } else if (this.notification == GameEvent.CHANGE_GAMEMODE) {
             this.value = GameMode.byId((int) value);
         } else if (this.notification == GameEvent.DEMO_MESSAGE) {
             this.value = DemoMessageValue.from((int) value);

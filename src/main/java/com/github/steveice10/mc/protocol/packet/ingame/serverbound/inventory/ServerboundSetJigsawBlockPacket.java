@@ -21,6 +21,8 @@ public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
     private final @NonNull String pool;
     private final @NonNull String finalState;
     private final @NonNull String jointType;
+    private final int selectionPriority;
+    private final int placementPriority;
 
     public ServerboundSetJigsawBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.position = helper.readPosition(in);
@@ -29,6 +31,8 @@ public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
         this.pool = helper.readString(in);
         this.finalState = helper.readString(in);
         this.jointType = helper.readString(in);
+        this.selectionPriority = helper.readVarInt(in);
+        this.placementPriority = helper.readVarInt(in);
     }
 
     @Override
@@ -39,5 +43,7 @@ public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
         helper.writeString(out, this.pool);
         helper.writeString(out, this.finalState);
         helper.writeString(out, this.jointType);
+        helper.writeVarInt(out, this.selectionPriority);
+        helper.writeVarInt(out, this.placementPriority);
     }
 }

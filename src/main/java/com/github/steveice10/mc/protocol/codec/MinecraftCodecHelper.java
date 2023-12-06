@@ -1,8 +1,14 @@
 package com.github.steveice10.mc.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.CheckedBiConsumer;
+import com.github.steveice10.mc.protocol.CheckedFunction;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.BlankFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.FixedFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.NumberFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.StyledFormat;
 import com.github.steveice10.mc.protocol.data.game.chunk.BitStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
@@ -59,6 +65,7 @@ import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.codec.BasePacketCodecHelper;
+import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +73,7 @@ import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -78,7 +86,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
@@ -98,7 +105,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     protected CompoundTag registry;
 
     @Nullable
-    public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
+    public <T, E extends Throwable> T readNullable(ByteBuf buf, CheckedFunction<ByteBuf, T, E> ifPresent) throws E {
         if (buf.readBoolean()) {
             return ifPresent.apply(buf);
         } else {
@@ -106,7 +113,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public <T> void writeNullable(ByteBuf buf, @Nullable T value, BiConsumer<ByteBuf, T> ifPresent) {
+    public <T, E extends Throwable> void writeNullable(ByteBuf buf, @Nullable T value, CheckedBiConsumer<ByteBuf, T, E> ifPresent) throws E {
         if (value != null) {
             buf.writeBoolean(true);
             ifPresent.accept(buf, value);
@@ -181,32 +188,18 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public CompoundTag readTag(ByteBuf buf) throws IOException {
-        return readTag(buf, CompoundTag.class);
-    }
-
     @Nullable
-    public <T extends Tag> T readTag(ByteBuf buf, Class<T> expected) throws IOException {
-        Tag tag = NBTIO.readTag(new InputStream() {
-            @Override
-            public int read() {
-                return buf.readUnsignedByte();
-            }
-        });
-
-        if (tag == null) {
-            return null;
-        }
-
-        if (tag.getClass() != expected) {
-            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
-        }
-
-        return expected.cast(tag);
-    }
-
     public CompoundTag readAnyTag(ByteBuf buf) throws IOException {
         return readAnyTag(buf, CompoundTag.class);
+    }
+
+    @NotNull
+    public CompoundTag readAnyTagOrThrow(ByteBuf buf) throws IOException {
+        CompoundTag tag = readAnyTag(buf);
+        if (tag == null) {
+            throw new IllegalArgumentException("Got end-tag when trying to read CompoundTag");
+        }
+        return tag;
     }
 
     @Nullable
@@ -222,47 +215,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             return null;
         }
 
-        if (tag.getClass() != expected) {
+        if (!expected.isInstance(tag)) {
             throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
         }
 
         return expected.cast(tag);
     }
-
-    public CompoundTag readTagLE(ByteBuf buf) throws IOException {
-        return readTagLE(buf, CompoundTag.class);
-    }
-
-    @Nullable
-    public <T extends Tag> T readTagLE(ByteBuf buf, Class<T> expected) throws IOException {
-        Tag tag = NBTIO.readTag(new InputStream() {
-            @Override
-            public int read() {
-                return buf.readUnsignedByte();
-            }
-        }, true);
-
-        if (tag == null) {
-            return null;
-        }
-
-        if (tag.getClass() != expected) {
-            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
-        }
-
-        return expected.cast(tag);
-    }
-
-    public <T extends Tag> void writeTag(ByteBuf buf, T tag) throws IOException {
-        NBTIO.writeTag(new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                buf.writeByte(b);
-            }
-        }, tag);
-    }
-
-    public <T extends Tag> void writeAnyTag(ByteBuf buf, T tag) throws IOException {
+    public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) throws IOException {
         NBTIO.writeAnyTag(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
@@ -271,15 +230,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }, tag);
     }
 
-    public <T extends Tag> void writeTagLE(ByteBuf buf, T tag) throws IOException {
-        NBTIO.writeTag(new OutputStream() {
-            @Override
-            public void write(int b) throws IOException {
-                buf.writeByte(b);
-            }
-        }, tag, true);
-    }
-
+    @Nullable
     public ItemStack readItemStack(ByteBuf buf) throws IOException {
         boolean present = buf.readBoolean();
         if (!present) {
@@ -383,12 +334,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, e.ordinal());
     }
 
-    public Component readComponent(ByteBuf buf) {
-        return DefaultComponentSerializer.get().deserialize(this.readString(buf, 262144));
+    public Component readComponent(ByteBuf buf) throws IOException {
+        // do not use CompoundTag, as mojang serializes a plaintext component as just a single StringTag
+        Tag tag = readAnyTag(buf, Tag.class);
+        if (tag == null) {
+            throw new IllegalArgumentException("Got end-tag when trying to read Component");
+        }
+        JsonElement json = ComponentSerializer.tagComponentToJson(tag);
+        return DefaultComponentSerializer.get().deserializeFromTree(json);
     }
 
-    public void writeComponent(ByteBuf buf, Component component) {
-        this.writeString(buf, DefaultComponentSerializer.get().serialize(component));
+    public void writeComponent(ByteBuf buf, Component component) throws IOException {
+        JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
+        Tag tag = ComponentSerializer.jsonComponentToTag(json);
+        writeAnyTag(buf, tag);
     }
 
     public EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) throws IOException {
@@ -562,8 +521,40 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
+    public NumberFormat readNumberFormat(ByteBuf buf) throws IOException {
+        int id = this.readVarInt(buf);
+        switch (id) {
+            case 0:
+                return BlankFormat.INSTANCE;
+            case 1:
+                return new StyledFormat(this.readAnyTagOrThrow(buf));
+            case 2:
+                return new FixedFormat(this.readComponent(buf));
+            default:
+                throw new IllegalArgumentException("Unknown number format type: " + id);
+        }
+    }
+
+    public void writeNumberFormat(ByteBuf buf, NumberFormat numberFormat) throws IOException {
+        if (numberFormat instanceof BlankFormat) {
+            this.writeVarInt(buf, 0);
+        } else if (numberFormat instanceof StyledFormat) {
+            StyledFormat styledFormat = (StyledFormat) numberFormat;
+
+            this.writeVarInt(buf, 1);
+            this.writeAnyTag(buf, styledFormat.getStyle());
+        } else if (numberFormat instanceof FixedFormat) {
+            FixedFormat fixedFormat = (FixedFormat) numberFormat;
+
+            this.writeVarInt(buf, 2);
+            this.writeComponent(buf, fixedFormat.getValue());
+        } else {
+            throw new IllegalArgumentException("Unknown number format: " + numberFormat);
+        }
+    }
+
     public PositionSource readPositionSource(ByteBuf buf) {
-        PositionSourceType type = PositionSourceType.from(this.readResourceLocation(buf));
+        PositionSourceType type = PositionSourceType.from(this.readVarInt(buf));
         switch (type) {
             case BLOCK:
                 return new BlockPositionSource(this.readPosition(buf));
@@ -575,7 +566,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
-        this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
+        this.writeVarInt(buf, positionSource.getType().ordinal());
         if (positionSource instanceof BlockPositionSource) {
             this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
         } else if (positionSource instanceof EntityPositionSource) {
@@ -629,8 +620,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
+    @NotNull
     public BlockEntityType readBlockEntityType(ByteBuf buf) {
-        return BlockEntityType.from(this.readVarInt(buf));
+        int id = this.readVarInt(buf);
+        BlockEntityType type = BlockEntityType.from(id);
+
+        if (type == null) {
+            throw new IllegalArgumentException("Unknown BlockEntityType: " + id);
+        }
+        return type;
     }
 
     public void writeBlockEntityType(ByteBuf buf, BlockEntityType type) {

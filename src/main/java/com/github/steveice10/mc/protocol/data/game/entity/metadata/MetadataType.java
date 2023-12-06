@@ -62,16 +62,7 @@ public class MetadataType<T> {
     protected final Writer<T> writer;
     protected final EntityMetadataFactory<T> metadataFactory;
 
-    protected MetadataType(BasicReader<T> reader, BasicWriter<T> writer, EntityMetadataFactory<T> metadataFactory) {
-        this.id = VALUES.size();
-        this.reader = reader;
-        this.writer = writer;
-        this.metadataFactory = metadataFactory;
-
-        VALUES.add(this);
-    }
-
-    protected MetadataType(HelperReader<T> reader, HelperWriter<T> writer, EntityMetadataFactory<T> metadataFactory) {
+    protected MetadataType(Reader<T> reader, Writer<T> writer, EntityMetadataFactory<T> metadataFactory) {
         this.id = VALUES.size();
         this.reader = reader;
         this.writer = writer;
@@ -88,15 +79,13 @@ public class MetadataType<T> {
         this.writer.write(helper, output, value);
     }
 
+    @FunctionalInterface
     public interface Reader<V> {
-        V read(ByteBuf input) throws IOException;
-
         V read(MinecraftCodecHelper helper, ByteBuf input) throws IOException;
     }
 
+    @FunctionalInterface
     public interface Writer<V> {
-        void write(ByteBuf output, V value) throws IOException;
-
         void write(MinecraftCodecHelper helper, ByteBuf output, V value) throws IOException;
     }
 
@@ -119,24 +108,6 @@ public class MetadataType<T> {
     }
 
     @FunctionalInterface
-    public interface HelperReader<V> extends Reader<V> {
-        default V read(ByteBuf input) throws IOException {
-            throw new UnsupportedOperationException("This reader needs a codec helper!");
-        }
-
-        V read(MinecraftCodecHelper helper, ByteBuf input) throws IOException;
-    }
-
-    @FunctionalInterface
-    public interface HelperWriter<V> extends Writer<V> {
-        default void write(ByteBuf output, V value) throws IOException {
-            throw new UnsupportedOperationException("This writer needs a codec helper!");
-        }
-
-        void write(MinecraftCodecHelper helper, ByteBuf output, V value) throws IOException;
-    }
-
-    @FunctionalInterface
     public interface EntityMetadataFactory<V> {
         EntityMetadata<V, ? extends MetadataType<V>> create(int id, MetadataType<V> type, V value);
     }
@@ -151,7 +122,7 @@ public class MetadataType<T> {
         };
     }
 
-    private static <T> HelperReader<Optional<T>> optionalReader(HelperReader<T> reader) {
+    private static <T> Reader<Optional<T>> optionalReader(Reader<T> reader) {
         return (helper, input) -> {
             if (!input.readBoolean()) {
                 return Optional.empty();
@@ -162,19 +133,19 @@ public class MetadataType<T> {
     }
 
     private static <T> BasicWriter<Optional<T>> optionalWriter(BasicWriter<T> writer) {
-        return (ouput, value) -> {
-              ouput.writeBoolean(value.isPresent());
+        return (output, value) -> {
+              output.writeBoolean(value.isPresent());
               if (value.isPresent()) {
-                  writer.write(ouput, value.get());
+                  writer.write(output, value.get());
               }
         };
     }
 
-    private static <T> HelperWriter<Optional<T>> optionalWriter(HelperWriter<T> writer) {
-        return (helper, ouput, value) -> {
-            ouput.writeBoolean(value.isPresent());
+    private static <T> Writer<Optional<T>> optionalWriter(Writer<T> writer) {
+        return (helper, output, value) -> {
+            output.writeBoolean(value.isPresent());
             if (value.isPresent()) {
-                writer.write(helper, ouput, value.get());
+                writer.write(helper, output, value.get());
             }
         };
     }

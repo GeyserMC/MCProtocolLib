@@ -11,7 +11,7 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         super(OptionalIntReader.INSTANCE, OptionalIntWriter.INSTANCE, metadataFactory);
     }
 
-    public static class OptionalIntReader implements HelperReader<OptionalInt> {
+    public static class OptionalIntReader implements Reader<OptionalInt> {
         protected static final OptionalIntReader INSTANCE = new OptionalIntReader();
 
         @Override
@@ -25,7 +25,7 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         }
     }
 
-    public static class OptionalIntWriter implements HelperWriter<OptionalInt> {
+    public static class OptionalIntWriter implements Writer<OptionalInt> {
         protected static final OptionalIntWriter INSTANCE = new OptionalIntWriter();
 
         @Override

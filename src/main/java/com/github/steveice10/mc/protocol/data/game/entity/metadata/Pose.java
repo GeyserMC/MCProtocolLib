@@ -15,7 +15,10 @@ public enum Pose {
     ROARING,
     SNIFFING,
     EMERGING,
-    DIGGING;
+    DIGGING,
+    SLIDING,
+    SHOOTING,
+    INHALING;
 
     private static final Pose[] VALUES = values();
 

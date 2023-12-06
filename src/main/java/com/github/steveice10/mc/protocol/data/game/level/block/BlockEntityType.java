@@ -1,5 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.level.block;
 
+import org.jetbrains.annotations.Nullable;
+
 public enum BlockEntityType {
     FURNACE,
     CHEST,
@@ -41,10 +43,13 @@ public enum BlockEntityType {
     SCULK_SHRIEKER,
     CHISELED_BOOKSHELF,
     BRUSHABLE_BLOCK,
-    DECORATED_POT;
+    DECORATED_POT,
+    CRAFTER,
+    TRIAL_SPAWNER;
 
     private static final BlockEntityType[] VALUES = values();
 
+    @Nullable
     public static BlockEntityType from(int id) {
         if (id >= 0 && id < VALUES.length) {
             return VALUES[id];

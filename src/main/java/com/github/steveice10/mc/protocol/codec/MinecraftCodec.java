@@ -4,8 +4,20 @@ import com.github.steveice10.mc.protocol.data.ProtocolState;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundPingPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundResourcePackPopPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundResourcePackPushPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundUpdateTagsPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundPongPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundResourcePackPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundUpdateEnabledFeaturesPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundAwardStatsPacket;
@@ -17,16 +29,12 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCo
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCustomChatCompletionsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDeleteChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisguisedChatPacket;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundPingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRecipePacket;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundResourcePackPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSelectAdvancementsTabPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundServerDataPacket;
@@ -36,10 +44,10 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSt
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundStopSoundPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundTabListPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundTickingStatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundTickingStepPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateAdvancementsPacket;
-import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundUpdateEnabledFeaturesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateRecipesPacket;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundUpdateTagsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundAnimatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundDamageEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundEntityEventPacket;
@@ -111,6 +119,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderSizePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderWarningDelayPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderWarningDistancePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundResetScorePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetDisplayObjectivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetObjectivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetPlayerTeamPacket;
@@ -126,17 +135,13 @@ import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCh
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatSessionUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
-import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
-import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
-import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundLockDifficultyPacket;
-import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundPongPacket;
-import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundResourcePackPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerButtonClickPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClickPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClosePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerSlotStateChangedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundEditBookPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundPickItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundPlaceRecipePacket;
@@ -207,9 +212,9 @@ public class MinecraftCodec {
     }
 
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion(764)
+            .protocolVersion(765)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-            .minecraftVersion("1.20.2")
+            .minecraftVersion("1.20.3")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -235,7 +240,8 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
                     .registerClientboundPacket(ClientboundPingPacket.class, ClientboundPingPacket::new)
                     .registerClientboundPacket(ClientboundRegistryDataPacket.class, ClientboundRegistryDataPacket::new)
-                    .registerClientboundPacket(ClientboundResourcePackPacket.class, ClientboundResourcePackPacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
                     .registerClientboundPacket(ClientboundUpdateEnabledFeaturesPacket.class, ClientboundUpdateEnabledFeaturesPacket::new)
                     .registerClientboundPacket(ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
                     .registerServerboundPacket(ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
@@ -311,7 +317,9 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundRecipePacket.class, ClientboundRecipePacket::new)
                     .registerClientboundPacket(ClientboundRemoveEntitiesPacket.class, ClientboundRemoveEntitiesPacket::new)
                     .registerClientboundPacket(ClientboundRemoveMobEffectPacket.class, ClientboundRemoveMobEffectPacket::new)
-                    .registerClientboundPacket(ClientboundResourcePackPacket.class, ClientboundResourcePackPacket::new)
+                    .registerClientboundPacket(ClientboundResetScorePacket.class, ClientboundResetScorePacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
                     .registerClientboundPacket(ClientboundRespawnPacket.class, ClientboundRespawnPacket::new)
                     .registerClientboundPacket(ClientboundRotateHeadPacket.class, ClientboundRotateHeadPacket::new)
                     .registerClientboundPacket(ClientboundSectionBlocksUpdatePacket.class, ClientboundSectionBlocksUpdatePacket::new)
@@ -353,6 +361,8 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
                     .registerClientboundPacket(ClientboundTakeItemEntityPacket.class, ClientboundTakeItemEntityPacket::new)
                     .registerClientboundPacket(ClientboundTeleportEntityPacket.class, ClientboundTeleportEntityPacket::new)
+                    .registerClientboundPacket(ClientboundTickingStatePacket.class, ClientboundTickingStatePacket::new)
+                    .registerClientboundPacket(ClientboundTickingStepPacket.class, ClientboundTickingStepPacket::new)
                     .registerClientboundPacket(ClientboundUpdateAdvancementsPacket.class, ClientboundUpdateAdvancementsPacket::new)
                     .registerClientboundPacket(ClientboundUpdateAttributesPacket.class, ClientboundUpdateAttributesPacket::new)
                     .registerClientboundPacket(ClientboundUpdateMobEffectPacket.class, ClientboundUpdateMobEffectPacket::new)
@@ -373,6 +383,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundContainerButtonClickPacket.class, ServerboundContainerButtonClickPacket::new)
                     .registerServerboundPacket(ServerboundContainerClickPacket.class, ServerboundContainerClickPacket::new)
                     .registerServerboundPacket(ServerboundContainerClosePacket.class, ServerboundContainerClosePacket::new)
+                    .registerServerboundPacket(ServerboundContainerSlotStateChangedPacket.class, ServerboundContainerSlotStateChangedPacket::new)
                     .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
                     .registerServerboundPacket(ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
                     .registerServerboundPacket(ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)

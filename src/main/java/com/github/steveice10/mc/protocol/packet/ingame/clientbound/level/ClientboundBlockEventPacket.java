@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
+import com.github.steveice10.mc.protocol.data.game.level.block.WobbleStyle;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int SHULKER_BOX_LOWER = 613;
     private static final int SHULKER_BOX_HIGHER = 629;
     private static final int BELL = 783;
+    private static final int DECORATED_POT = 1055;
 
     private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
@@ -59,6 +61,9 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         } else if (this.blockId == BELL) {
             this.type = BellValueType.from(type - 1);
             this.value = new BellValue(Direction.from(Math.abs(value % 6)));
+         } else if (this.blockId == DECORATED_POT) {
+            this.type = DecoratedPotValueType.from(type - 1);
+            this.value = new DecoratedPotValue(WobbleStyle.from(Math.abs(value % 2)));
         } else {
             this.type = GenericBlockValueType.from(type);
             this.value = new GenericBlockValue(value);
