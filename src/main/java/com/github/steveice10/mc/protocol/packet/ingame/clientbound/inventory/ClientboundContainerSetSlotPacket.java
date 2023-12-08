@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -17,7 +18,7 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
     private final int containerId;
     private final int stateId;
     private final int slot;
-    private final ItemStack item;
+    private final @Nullable ItemStack item;
 
     public ClientboundContainerSetSlotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.containerId = in.readUnsignedByte();

@@ -29,7 +29,7 @@ public class IntMetadataType extends MetadataType<Integer> {
     }
 
     @FunctionalInterface
-    public interface IntReader extends HelperReader<Integer> {
+    public interface IntReader extends Reader<Integer> {
         int readPrimitive(MinecraftCodecHelper helper, ByteBuf input) throws IOException;
 
         @Deprecated
@@ -40,7 +40,7 @@ public class IntMetadataType extends MetadataType<Integer> {
     }
 
     @FunctionalInterface
-    public interface IntWriter extends HelperWriter<Integer> {
+    public interface IntWriter extends Writer<Integer> {
         void writePrimitive(MinecraftCodecHelper helper, ByteBuf output, int value) throws IOException;
 
         @Deprecated

@@ -1,8 +1,8 @@
 package com.github.steveice10.mc.protocol.data.game.level.event;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum LevelEventType implements LevelEvent {
     BLOCK_DISPENSER_DISPENSE(1000),
     BLOCK_DISPENSER_FAIL(1001),
@@ -44,6 +44,8 @@ public enum LevelEventType implements LevelEvent {
     DRIP_LAVA_INTO_CAULDRON(1046),
     DRIP_WATER_INTO_CAULDRON(1047),
     ENTITY_SKELETON_CONVERTED_TO_STRAY(1048),
+    BLOCK_CRAFTER_CRAFT(1049),
+    BLOCK_CRAFTER_FAIL(1050),
 
     COMPOSTER(1500),
     BLOCK_LAVA_EXTINGUISH(1501),
@@ -62,6 +64,7 @@ public enum LevelEventType implements LevelEvent {
     BREAK_SPLASH_POTION2(2007), // Mojank
     EXPLOSION(2008),
     EVAPORATE(2009),
+    WHITE_SMOKE(2010),
 
     END_GATEWAY_SPAWN(3000),
     ENTITY_ENDERDRAGON_GROWL(3001),
@@ -72,12 +75,17 @@ public enum LevelEventType implements LevelEvent {
     SCULK_BLOCK_CHARGE(3006),
     SCULK_SHRIEKER_SHRIEK(3007),
     BRUSH_BLOCK_COMPLETE(3008),
-    EGG_CRACK(3009);
+    EGG_CRACK(3009),
+    GUST_DUST(3010),
+    TRIAL_SPAWNER_SPAWN(3011),
+    TRIAL_SPAWNER_MOB_AT(3012),
+    TRIAL_SPAWNER_DETECT_PLAYER(3013),
+    TRIAL_SPAWNER_EJECT_ITEM(3014);
 
     private final int id;
 
     @Override
-    public int id() {
-        return this.id;
+    public int getId() {
+        return id;
     }
 }

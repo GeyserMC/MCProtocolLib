@@ -3,13 +3,22 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.game.inventory.*;
+import com.github.steveice10.mc.protocol.data.game.inventory.ClickItemAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.ContainerAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.ContainerActionType;
+import com.github.steveice10.mc.protocol.data.game.inventory.CreativeGrabAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.DropItemAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.FillStackAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.MoveToHotbarAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.ShiftClickItemAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.SpreadItemAction;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,20 +31,24 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     private final int containerId;
     private final int stateId;
     private final int slot;
-    private final ContainerActionType action;
-    private final ContainerAction param;
-    private final ItemStack carriedItem;
-    private final @NotNull Int2ObjectMap<ItemStack> changedSlots;
+    private final @NonNull ContainerActionType action;
+    private final @NonNull ContainerAction param;
+    private final @Nullable ItemStack carriedItem;
+    private final @NonNull Int2ObjectMap<@Nullable ItemStack> changedSlots;
 
-    public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Map<Integer, ItemStack> changedSlots) {
+    public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
+                                           @NonNull ContainerActionType action, @NonNull ContainerAction param,
+                                           @Nullable ItemStack carriedItem, @NonNull Map<Integer, @Nullable ItemStack> changedSlots) {
         this(containerId, stateId, slot, action, param, carriedItem, new Int2ObjectOpenHashMap<>(changedSlots));
     }
 
-    public ServerboundContainerClickPacket(int containerId, int stateId, int slot, ContainerActionType action, ContainerAction param, ItemStack carriedItem, @NotNull Int2ObjectMap<ItemStack> changedSlots) {
+    public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
+                                           @NonNull ContainerActionType action, @NonNull ContainerAction param,
+                                           @Nullable ItemStack carriedItem, @NonNull Int2ObjectMap<@Nullable ItemStack> changedSlots) {
         if ((param == DropItemAction.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemAction.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
-            && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
+                && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
-                + " with param LEFT_CLICK_OUTSIDE_NOT_HOLDING or RIGHT_CLICK_OUTSIDE_NOT_HOLDING");
+                    + " with param LEFT_CLICK_OUTSIDE_NOT_HOLDING or RIGHT_CLICK_OUTSIDE_NOT_HOLDING");
         }
 
         this.containerId = containerId;

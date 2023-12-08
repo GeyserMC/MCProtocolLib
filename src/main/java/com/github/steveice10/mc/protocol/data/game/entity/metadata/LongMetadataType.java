@@ -29,7 +29,7 @@ public class LongMetadataType extends MetadataType<Long> {
     }
 
     @FunctionalInterface
-    public interface LongReader extends HelperReader<Long> {
+    public interface LongReader extends Reader<Long> {
         long readPrimitive(MinecraftCodecHelper helper, ByteBuf input) throws IOException;
 
         @Deprecated
@@ -40,7 +40,7 @@ public class LongMetadataType extends MetadataType<Long> {
     }
 
     @FunctionalInterface
-    public interface LongWriter extends HelperWriter<Long> {
+    public interface LongWriter extends Writer<Long> {
         void writePrimitive(MinecraftCodecHelper helper, ByteBuf output, long value) throws IOException;
 
         @Deprecated

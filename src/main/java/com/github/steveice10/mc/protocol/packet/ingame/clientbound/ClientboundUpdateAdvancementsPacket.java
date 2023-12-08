@@ -4,14 +4,14 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement;
 import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData;
-import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.FrameType;
+import com.github.steveice10.mc.protocol.data.game.advancement.Advancement.DisplayData.AdvancementType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,9 +28,22 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     private static final int FLAG_HIDDEN = 0x04;
 
     private final boolean reset;
-    private final @NotNull Advancement[] advancements;
-    private final @NotNull String[] removedAdvancements;
-    private final @NotNull Map<String, Map<String, Long>> progress;
+    private final @NonNull Advancement[] advancements;
+    private final @NonNull String[] removedAdvancements;
+    private final @NonNull Map<String, Map<String, Long>> progress;
+
+    public Map<String, Long> getProgress(@NonNull String advancementId) {
+        return this.progress.get(advancementId);
+    }
+
+    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
+        Map<String, Long> progress = this.getProgress(advancementId);
+        if (progress == null || !progress.containsKey(criterionId)) {
+            return -1;
+        }
+
+        return progress.get(criterionId);
+    }
 
     public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.reset = in.readBoolean();
@@ -44,7 +57,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 Component title = helper.readComponent(in);
                 Component description = helper.readComponent(in);
                 ItemStack icon = helper.readItemStack(in);
-                FrameType frameType = FrameType.from(helper.readVarInt(in));
+                AdvancementType advancementType = AdvancementType.from(helper.readVarInt(in));
 
                 int flags = in.readInt();
                 boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
@@ -55,7 +68,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 float posX = in.readFloat();
                 float posY = in.readFloat();
 
-                displayData = new DisplayData(title, description, icon, frameType, showToast, hidden, posX, posY, backgroundTexture);
+                displayData = new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
             }
 
             List<List<String>> requirements = new ArrayList<>();
@@ -97,52 +110,39 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
         }
     }
 
-    public Map<String, Long> getProgress(@NotNull String advancementId) {
-        return this.progress.get(advancementId);
-    }
-
-    public long getAchievedDate(@NotNull String advancementId, @NotNull String criterionId) {
-        Map<String, Long> progress = this.getProgress(advancementId);
-        if (progress == null || !progress.containsKey(criterionId)) {
-            return -1;
-        }
-
-        return progress.get(criterionId);
-    }
-
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         out.writeBoolean(this.reset);
 
         helper.writeVarInt(out, this.advancements.length);
         for (Advancement advancement : this.advancements) {
-            helper.writeString(out, advancement.id());
-            if (advancement.parentId() != null) {
+            helper.writeString(out, advancement.getId());
+            if (advancement.getParentId() != null) {
                 out.writeBoolean(true);
-                helper.writeString(out, advancement.parentId());
+                helper.writeString(out, advancement.getParentId());
             } else {
                 out.writeBoolean(false);
             }
 
-            DisplayData displayData = advancement.displayData();
+            DisplayData displayData = advancement.getDisplayData();
             if (displayData != null) {
                 out.writeBoolean(true);
-                helper.writeComponent(out, displayData.title());
-                helper.writeComponent(out, displayData.description());
-                helper.writeItemStack(out, displayData.icon());
-                helper.writeVarInt(out, displayData.frameType().ordinal());
-                String backgroundTexture = displayData.backgroundTexture();
+                helper.writeComponent(out, displayData.getTitle());
+                helper.writeComponent(out, displayData.getDescription());
+                helper.writeItemStack(out, displayData.getIcon());
+                helper.writeVarInt(out, displayData.getAdvancementType().ordinal());
+                String backgroundTexture = displayData.getBackgroundTexture();
 
                 int flags = 0;
                 if (backgroundTexture != null) {
                     flags |= FLAG_HAS_BACKGROUND_TEXTURE;
                 }
 
-                if (displayData.showToast()) {
+                if (displayData.isShowToast()) {
                     flags |= FLAG_SHOW_TOAST;
                 }
 
-                if (displayData.hidden()) {
+                if (displayData.isHidden()) {
                     flags |= FLAG_HIDDEN;
                 }
 
@@ -152,21 +152,21 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                     helper.writeString(out, backgroundTexture);
                 }
 
-                out.writeFloat(displayData.posX());
-                out.writeFloat(displayData.posY());
+                out.writeFloat(displayData.getPosX());
+                out.writeFloat(displayData.getPosY());
             } else {
                 out.writeBoolean(false);
             }
 
-            helper.writeVarInt(out, advancement.requirements().size());
-            for (List<String> requirement : advancement.requirements()) {
+            helper.writeVarInt(out, advancement.getRequirements().size());
+            for (List<String> requirement : advancement.getRequirements()) {
                 helper.writeVarInt(out, requirement.size());
                 for (String criterion : requirement) {
                     helper.writeString(out, criterion);
                 }
             }
 
-            out.writeBoolean(advancement.sendsTelemetryEvent());
+            out.writeBoolean(advancement.isSendsTelemetryEvent());
         }
 
         helper.writeVarInt(out, this.removedAdvancements.length);

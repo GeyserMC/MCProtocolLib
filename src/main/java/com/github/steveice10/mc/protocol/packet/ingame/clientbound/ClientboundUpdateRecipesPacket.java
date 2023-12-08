@@ -11,8 +11,8 @@ import com.github.steveice10.mc.protocol.data.game.recipe.data.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
-    private final @NotNull Recipe[] recipes;
+    private final @NonNull Recipe[] recipes;
 
     public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.recipes = new Recipe[helper.readVarInt(in)];
@@ -43,10 +43,12 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     break;
                 }
                 case CRAFTING_SHAPED: {
-                    int width = helper.readVarInt(in);
-                    int height = helper.readVarInt(in);
                     String group = helper.readString(in);
                     CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
+
+                    // ShapedRecipePattern in vanilla
+                    int width = helper.readVarInt(in);
+                    int height = helper.readVarInt(in);
                     Ingredient[] ingredients = new Ingredient[width * height];
                     for (int j = 0; j < ingredients.length; j++) {
                         ingredients[j] = helper.readRecipeIngredient(in);
@@ -113,83 +115,85 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.recipes.length);
         for (Recipe recipe : this.recipes) {
-            helper.writeResourceLocation(out, recipe.type().getResourceLocation());
-            helper.writeResourceLocation(out, recipe.identifier());
-            switch (recipe.type()) {
+            helper.writeResourceLocation(out, recipe.getType().getResourceLocation());
+            helper.writeResourceLocation(out, recipe.getIdentifier());
+            switch (recipe.getType()) {
                 case CRAFTING_SHAPELESS: {
-                    ShapelessRecipeData data = (ShapelessRecipeData) recipe.data();
+                    ShapelessRecipeData data = (ShapelessRecipeData) recipe.getData();
 
-                    helper.writeString(out, data.group());
-                    helper.writeVarInt(out, data.category().ordinal());
-                    helper.writeVarInt(out, data.ingredients().length);
-                    for (Ingredient ingredient : data.ingredients()) {
+                    helper.writeString(out, data.getGroup());
+                    helper.writeVarInt(out, data.getCategory().ordinal());
+                    helper.writeVarInt(out, data.getIngredients().length);
+                    for (Ingredient ingredient : data.getIngredients()) {
                         helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    helper.writeItemStack(out, data.result());
+                    helper.writeItemStack(out, data.getResult());
                     break;
                 }
                 case CRAFTING_SHAPED: {
-                    ShapedRecipeData data = (ShapedRecipeData) recipe.data();
-                    if (data.ingredients().length != data.width() * data.height()) {
+                    ShapedRecipeData data = (ShapedRecipeData) recipe.getData();
+                    if (data.getIngredients().length != data.getWidth() * data.getHeight()) {
                         throw new IllegalStateException("Shaped recipe must have ingredient count equal to width * height.");
                     }
 
-                    helper.writeVarInt(out, data.width());
-                    helper.writeVarInt(out, data.height());
-                    helper.writeString(out, data.group());
-                    helper.writeVarInt(out, data.category().ordinal());
-                    for (Ingredient ingredient : data.ingredients()) {
+                    helper.writeString(out, data.getGroup());
+                    helper.writeVarInt(out, data.getCategory().ordinal());
+
+                    // ShapedRecipePattern in vanilla
+                    helper.writeVarInt(out, data.getWidth());
+                    helper.writeVarInt(out, data.getHeight());
+                    for (Ingredient ingredient : data.getIngredients()) {
                         helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    helper.writeItemStack(out, data.result());
-                    out.writeBoolean(data.showNotification());
+                    helper.writeItemStack(out, data.getResult());
+                    out.writeBoolean(data.isShowNotification());
                     break;
                 }
                 case SMELTING:
                 case BLASTING:
                 case SMOKING:
                 case CAMPFIRE_COOKING: {
-                    CookedRecipeData data = (CookedRecipeData) recipe.data();
+                    CookedRecipeData data = (CookedRecipeData) recipe.getData();
 
-                    helper.writeString(out, data.group());
-                    helper.writeVarInt(out, data.category().ordinal());
-                    helper.writeRecipeIngredient(out, data.ingredient());
-                    helper.writeItemStack(out, data.result());
-                    out.writeFloat(data.experience());
-                    helper.writeVarInt(out, data.cookingTime());
+                    helper.writeString(out, data.getGroup());
+                    helper.writeVarInt(out, data.getCategory().ordinal());
+                    helper.writeRecipeIngredient(out, data.getIngredient());
+                    helper.writeItemStack(out, data.getResult());
+                    out.writeFloat(data.getExperience());
+                    helper.writeVarInt(out, data.getCookingTime());
                     break;
                 }
                 case STONECUTTING: {
-                    StoneCuttingRecipeData data = (StoneCuttingRecipeData) recipe.data();
+                    StoneCuttingRecipeData data = (StoneCuttingRecipeData) recipe.getData();
 
-                    helper.writeString(out, data.group());
-                    helper.writeRecipeIngredient(out, data.ingredient());
-                    helper.writeItemStack(out, data.result());
+                    helper.writeString(out, data.getGroup());
+                    helper.writeRecipeIngredient(out, data.getIngredient());
+                    helper.writeItemStack(out, data.getResult());
                     break;
                 }
                 case SMITHING_TRANSFORM: {
-                    SmithingTransformRecipeData data = (SmithingTransformRecipeData) recipe.data();
+                    SmithingTransformRecipeData data = (SmithingTransformRecipeData) recipe.getData();
 
-                    helper.writeRecipeIngredient(out, data.template());
-                    helper.writeRecipeIngredient(out, data.base());
-                    helper.writeRecipeIngredient(out, data.addition());
-                    helper.writeItemStack(out, data.result());
+                    helper.writeRecipeIngredient(out, data.getTemplate());
+                    helper.writeRecipeIngredient(out, data.getBase());
+                    helper.writeRecipeIngredient(out, data.getAddition());
+                    helper.writeItemStack(out, data.getResult());
                     break;
                 }
                 case SMITHING_TRIM: {
-                    SmithingTrimRecipeData data = (SmithingTrimRecipeData) recipe.data();
+                    SmithingTrimRecipeData data = (SmithingTrimRecipeData) recipe.getData();
 
-                    helper.writeRecipeIngredient(out, data.template());
-                    helper.writeRecipeIngredient(out, data.base());
-                    helper.writeRecipeIngredient(out, data.addition());
+                    helper.writeRecipeIngredient(out, data.getTemplate());
+                    helper.writeRecipeIngredient(out, data.getBase());
+                    helper.writeRecipeIngredient(out, data.getAddition());
                     break;
                 }
                 default: {
-                    SimpleCraftingRecipeData data = (SimpleCraftingRecipeData) recipe.data();
+                    SimpleCraftingRecipeData data = (SimpleCraftingRecipeData) recipe.getData();
 
-                    helper.writeVarInt(out, data.category().ordinal());
+                    helper.writeVarInt(out, data.getCategory().ordinal());
                     break;
                 }
             }

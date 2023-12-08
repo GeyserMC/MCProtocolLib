@@ -3,31 +3,186 @@ package com.github.steveice10.mc.protocol.codec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
-import com.github.steveice10.mc.protocol.packet.common.clientbound.*;
-import com.github.steveice10.mc.protocol.packet.common.serverbound.*;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundPingPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundResourcePackPopPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundResourcePackPushPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundUpdateTagsPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundPongPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundResourcePackPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundUpdateEnabledFeaturesPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.*;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.*;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.*;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundAwardStatsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundBossEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCommandSuggestionsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCommandsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCooldownPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCustomChatCompletionsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDeleteChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisguisedChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoUpdatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRecipePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSelectAdvancementsTabPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundServerDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSetCameraPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSoundEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundStartConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundStopSoundPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundTabListPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundTickingStatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundTickingStepPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateAdvancementsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundUpdateRecipesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundAnimatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundDamageEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundEntityEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundHurtAnimationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityPosPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityPosRotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityRotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundMoveVehiclePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundRemoveEntitiesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundRemoveMobEffectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundRotateHeadPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityLinkPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityMotionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetPassengersPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTakeItemEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTeleportEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateAttributesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateMobEffectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockChangedAckPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerAbilitiesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerCombatEndPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerCombatEnterPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerCombatKillPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerLookAtPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetCarriedItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetExperiencePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddExperienceOrbPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.*;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.*;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.*;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerClosePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundHorseScreenOpenPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundMerchantOffersPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundOpenBookPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundOpenScreenPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundPlaceGhostRecipePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockDestructionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchFinishedPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchStartPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunksBiomesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundExplodePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundForgetLevelChunkPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelParticlesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLightUpdatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundMapItemDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundOpenSignEditorPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSectionBlocksUpdatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetChunkCacheCenterPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetChunkCacheRadiusPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetDefaultSpawnPositionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetSimulationDistancePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSoundPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundTagQueryPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundInitializeBorderPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderCenterPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderLerpSizePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderSizePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderWarningDelayPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderWarningDistancePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundResetScorePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetDisplayObjectivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetObjectivePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetPlayerTeamPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetScorePacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.title.*;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.*;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.*;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.*;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.*;
-import com.github.steveice10.mc.protocol.packet.login.clientbound.*;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.title.ClientboundClearTitlesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.title.ClientboundSetActionBarTextPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.title.ClientboundSetSubtitleTextPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.title.ClientboundSetTitleTextPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.title.ClientboundSetTitlesAnimationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChangeDifficultyPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatAckPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatSessionUpdatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundLockDifficultyPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerButtonClickPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClickPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClosePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerSlotStateChangedPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundEditBookPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundPickItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundPlaceRecipePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundRecipeBookChangeSettingsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundRecipeBookSeenRecipePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundRenameItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSeenAdvancementsPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSelectTradePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetBeaconPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetCommandBlockPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetCommandMinecartPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetCreativeModeSlotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetJigsawBlockPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetStructureBlockPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundAcceptTeleportationPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundBlockEntityTagQuery;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundChunkBatchReceivedPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundEntityTagQuery;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundJigsawGeneratePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundMoveVehiclePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundPaddleBoatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundPlayerInputPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundSignUpdatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundTeleportToEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundInteractPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerRotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerStatusOnlyPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerAbilitiesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerActionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSwingPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemOnPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundCustomQueryPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundHelloPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
+import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundCustomQueryAnswerPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundHelloPacket;
 import com.github.steveice10.mc.protocol.packet.login.serverbound.ServerboundKeyPacket;
@@ -45,225 +200,229 @@ import java.util.Map;
 public class MinecraftCodec {
     private static final Int2ObjectMap<LevelEventType> LEVEL_EVENTS = new Int2ObjectOpenHashMap<>();
     private static final Map<String, BuiltinSound> SOUND_NAMES = new HashMap<>();
-    public static final PacketCodec CODEC = PacketCodec.builder()
-        .protocolVersion(764)
-        .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-        .minecraftVersion("1.20.2")
-        .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
-            .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
-        )
-        .state(ProtocolState.LOGIN, PacketStateCodec.builder()
-            .registerClientboundPacket(ClientboundLoginDisconnectPacket.class, ClientboundLoginDisconnectPacket::new)
-            .registerClientboundPacket(ClientboundHelloPacket.class, ClientboundHelloPacket::new)
-            .registerClientboundPacket(ClientboundGameProfilePacket.class, ClientboundGameProfilePacket::new)
-            .registerClientboundPacket(ClientboundLoginCompressionPacket.class, ClientboundLoginCompressionPacket::new)
-            .registerClientboundPacket(ClientboundCustomQueryPacket.class, ClientboundCustomQueryPacket::new)
-            .registerServerboundPacket(ServerboundHelloPacket.class, ServerboundHelloPacket::new)
-            .registerServerboundPacket(ServerboundKeyPacket.class, ServerboundKeyPacket::new)
-            .registerServerboundPacket(ServerboundCustomQueryAnswerPacket.class, ServerboundCustomQueryAnswerPacket::new)
-            .registerServerboundPacket(ServerboundLoginAcknowledgedPacket.class, ServerboundLoginAcknowledgedPacket::new)
-        ).state(ProtocolState.STATUS, PacketStateCodec.builder()
-            .registerClientboundPacket(ClientboundStatusResponsePacket.class, ClientboundStatusResponsePacket::new)
-            .registerClientboundPacket(ClientboundPongResponsePacket.class, ClientboundPongResponsePacket::new)
-            .registerServerboundPacket(ServerboundStatusRequestPacket.class, ServerboundStatusRequestPacket::new)
-            .registerServerboundPacket(ServerboundPingRequestPacket.class, ServerboundPingRequestPacket::new)
-        ).state(ProtocolState.CONFIGURATION, PacketStateCodec.builder()
-            .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
-            .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
-            .registerClientboundPacket(ClientboundFinishConfigurationPacket.class, ClientboundFinishConfigurationPacket::new)
-            .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
-            .registerClientboundPacket(ClientboundPingPacket.class, ClientboundPingPacket::new)
-            .registerClientboundPacket(ClientboundRegistryDataPacket.class, ClientboundRegistryDataPacket::new)
-            .registerClientboundPacket(ClientboundResourcePackPacket.class, ClientboundResourcePackPacket::new)
-            .registerClientboundPacket(ClientboundUpdateEnabledFeaturesPacket.class, ClientboundUpdateEnabledFeaturesPacket::new)
-            .registerClientboundPacket(ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
-            .registerServerboundPacket(ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
-            .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
-            .registerServerboundPacket(ServerboundFinishConfigurationPacket.class, ServerboundFinishConfigurationPacket::new)
-            .registerServerboundPacket(ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
-            .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
-            .registerServerboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
-        ).state(ProtocolState.GAME, PacketStateCodec.builder()
-            .registerClientboundPacket(ClientboundDelimiterPacket.class, ClientboundDelimiterPacket::new)
-            .registerClientboundPacket(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new)
-            .registerClientboundPacket(ClientboundAddExperienceOrbPacket.class, ClientboundAddExperienceOrbPacket::new)
-            .registerClientboundPacket(ClientboundAnimatePacket.class, ClientboundAnimatePacket::new)
-            .registerClientboundPacket(ClientboundAwardStatsPacket.class, ClientboundAwardStatsPacket::new)
-            .registerClientboundPacket(ClientboundBlockChangedAckPacket.class, ClientboundBlockChangedAckPacket::new)
-            .registerClientboundPacket(ClientboundBlockDestructionPacket.class, ClientboundBlockDestructionPacket::new)
-            .registerClientboundPacket(ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new)
-            .registerClientboundPacket(ClientboundBlockEventPacket.class, ClientboundBlockEventPacket::new)
-            .registerClientboundPacket(ClientboundBlockUpdatePacket.class, ClientboundBlockUpdatePacket::new)
-            .registerClientboundPacket(ClientboundBossEventPacket.class, ClientboundBossEventPacket::new)
-            .registerClientboundPacket(ClientboundChangeDifficultyPacket.class, ClientboundChangeDifficultyPacket::new)
-            .registerClientboundPacket(ClientboundChunkBatchFinishedPacket.class, ClientboundChunkBatchFinishedPacket::new)
-            .registerClientboundPacket(ClientboundChunkBatchStartPacket.class, ClientboundChunkBatchStartPacket::new)
-            .registerClientboundPacket(ClientboundChunksBiomesPacket.class, ClientboundChunksBiomesPacket::new)
-            .registerClientboundPacket(ClientboundClearTitlesPacket.class, ClientboundClearTitlesPacket::new)
-            .registerClientboundPacket(ClientboundCommandSuggestionsPacket.class, ClientboundCommandSuggestionsPacket::new)
-            .registerClientboundPacket(ClientboundCommandsPacket.class, ClientboundCommandsPacket::new)
-            .registerClientboundPacket(ClientboundContainerClosePacket.class, ClientboundContainerClosePacket::new)
-            .registerClientboundPacket(ClientboundContainerSetContentPacket.class, ClientboundContainerSetContentPacket::new)
-            .registerClientboundPacket(ClientboundContainerSetDataPacket.class, ClientboundContainerSetDataPacket::new)
-            .registerClientboundPacket(ClientboundContainerSetSlotPacket.class, ClientboundContainerSetSlotPacket::new)
-            .registerClientboundPacket(ClientboundCooldownPacket.class, ClientboundCooldownPacket::new)
-            .registerClientboundPacket(ClientboundCustomChatCompletionsPacket.class, ClientboundCustomChatCompletionsPacket::new)
-            .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
-            .registerClientboundPacket(ClientboundDamageEventPacket.class, ClientboundDamageEventPacket::new)
-            .registerClientboundPacket(ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new)
-            .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
-            .registerClientboundPacket(ClientboundDisguisedChatPacket.class, ClientboundDisguisedChatPacket::new)
-            .registerClientboundPacket(ClientboundEntityEventPacket.class, ClientboundEntityEventPacket::new)
-            .registerClientboundPacket(ClientboundExplodePacket.class, ClientboundExplodePacket::new)
-            .registerClientboundPacket(ClientboundForgetLevelChunkPacket.class, ClientboundForgetLevelChunkPacket::new)
-            .registerClientboundPacket(ClientboundGameEventPacket.class, ClientboundGameEventPacket::new)
-            .registerClientboundPacket(ClientboundHorseScreenOpenPacket.class, ClientboundHorseScreenOpenPacket::new)
-            .registerClientboundPacket(ClientboundHurtAnimationPacket.class, ClientboundHurtAnimationPacket::new)
-            .registerClientboundPacket(ClientboundInitializeBorderPacket.class, ClientboundInitializeBorderPacket::new)
-            .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
-            .registerClientboundPacket(ClientboundLevelChunkWithLightPacket.class, ClientboundLevelChunkWithLightPacket::new)
-            .registerClientboundPacket(ClientboundLevelEventPacket.class, ClientboundLevelEventPacket::new)
-            .registerClientboundPacket(ClientboundLevelParticlesPacket.class, ClientboundLevelParticlesPacket::new)
-            .registerClientboundPacket(ClientboundLightUpdatePacket.class, ClientboundLightUpdatePacket::new)
-            .registerClientboundPacket(ClientboundLoginPacket.class, ClientboundLoginPacket::new)
-            .registerClientboundPacket(ClientboundMapItemDataPacket.class, ClientboundMapItemDataPacket::new)
-            .registerClientboundPacket(ClientboundMerchantOffersPacket.class, ClientboundMerchantOffersPacket::new)
-            .registerClientboundPacket(ClientboundMoveEntityPosPacket.class, ClientboundMoveEntityPosPacket::new)
-            .registerClientboundPacket(ClientboundMoveEntityPosRotPacket.class, ClientboundMoveEntityPosRotPacket::new)
-            .registerClientboundPacket(ClientboundMoveEntityRotPacket.class, ClientboundMoveEntityRotPacket::new)
-            .registerClientboundPacket(ClientboundMoveVehiclePacket.class, ClientboundMoveVehiclePacket::new)
-            .registerClientboundPacket(ClientboundOpenBookPacket.class, ClientboundOpenBookPacket::new)
-            .registerClientboundPacket(ClientboundOpenScreenPacket.class, ClientboundOpenScreenPacket::new)
-            .registerClientboundPacket(ClientboundOpenSignEditorPacket.class, ClientboundOpenSignEditorPacket::new)
-            .registerClientboundPacket(ClientboundPingPacket.class, ClientboundPingPacket::new)
-            .registerClientboundPacket(ClientboundPongResponsePacket.class, ClientboundPongResponsePacket::new)
-            .registerClientboundPacket(ClientboundPlaceGhostRecipePacket.class, ClientboundPlaceGhostRecipePacket::new)
-            .registerClientboundPacket(ClientboundPlayerAbilitiesPacket.class, ClientboundPlayerAbilitiesPacket::new)
-            .registerClientboundPacket(ClientboundPlayerChatPacket.class, ClientboundPlayerChatPacket::new)
-            .registerClientboundPacket(ClientboundPlayerCombatEndPacket.class, ClientboundPlayerCombatEndPacket::new)
-            .registerClientboundPacket(ClientboundPlayerCombatEnterPacket.class, ClientboundPlayerCombatEnterPacket::new)
-            .registerClientboundPacket(ClientboundPlayerCombatKillPacket.class, ClientboundPlayerCombatKillPacket::new)
-            .registerClientboundPacket(ClientboundPlayerInfoRemovePacket.class, ClientboundPlayerInfoRemovePacket::new)
-            .registerClientboundPacket(ClientboundPlayerInfoUpdatePacket.class, ClientboundPlayerInfoUpdatePacket::new)
-            .registerClientboundPacket(ClientboundPlayerLookAtPacket.class, ClientboundPlayerLookAtPacket::new)
-            .registerClientboundPacket(ClientboundPlayerPositionPacket.class, ClientboundPlayerPositionPacket::new)
-            .registerClientboundPacket(ClientboundRecipePacket.class, ClientboundRecipePacket::new)
-            .registerClientboundPacket(ClientboundRemoveEntitiesPacket.class, ClientboundRemoveEntitiesPacket::new)
-            .registerClientboundPacket(ClientboundRemoveMobEffectPacket.class, ClientboundRemoveMobEffectPacket::new)
-            .registerClientboundPacket(ClientboundResourcePackPacket.class, ClientboundResourcePackPacket::new)
-            .registerClientboundPacket(ClientboundRespawnPacket.class, ClientboundRespawnPacket::new)
-            .registerClientboundPacket(ClientboundRotateHeadPacket.class, ClientboundRotateHeadPacket::new)
-            .registerClientboundPacket(ClientboundSectionBlocksUpdatePacket.class, ClientboundSectionBlocksUpdatePacket::new)
-            .registerClientboundPacket(ClientboundSelectAdvancementsTabPacket.class, ClientboundSelectAdvancementsTabPacket::new)
-            .registerClientboundPacket(ClientboundServerDataPacket.class, ClientboundServerDataPacket::new)
-            .registerClientboundPacket(ClientboundSetActionBarTextPacket.class, ClientboundSetActionBarTextPacket::new)
-            .registerClientboundPacket(ClientboundSetBorderCenterPacket.class, ClientboundSetBorderCenterPacket::new)
-            .registerClientboundPacket(ClientboundSetBorderLerpSizePacket.class, ClientboundSetBorderLerpSizePacket::new)
-            .registerClientboundPacket(ClientboundSetBorderSizePacket.class, ClientboundSetBorderSizePacket::new)
-            .registerClientboundPacket(ClientboundSetBorderWarningDelayPacket.class, ClientboundSetBorderWarningDelayPacket::new)
-            .registerClientboundPacket(ClientboundSetBorderWarningDistancePacket.class, ClientboundSetBorderWarningDistancePacket::new)
-            .registerClientboundPacket(ClientboundSetCameraPacket.class, ClientboundSetCameraPacket::new)
-            .registerClientboundPacket(ClientboundSetCarriedItemPacket.class, ClientboundSetCarriedItemPacket::new)
-            .registerClientboundPacket(ClientboundSetChunkCacheCenterPacket.class, ClientboundSetChunkCacheCenterPacket::new)
-            .registerClientboundPacket(ClientboundSetChunkCacheRadiusPacket.class, ClientboundSetChunkCacheRadiusPacket::new)
-            .registerClientboundPacket(ClientboundSetDefaultSpawnPositionPacket.class, ClientboundSetDefaultSpawnPositionPacket::new)
-            .registerClientboundPacket(ClientboundSetDisplayObjectivePacket.class, ClientboundSetDisplayObjectivePacket::new)
-            .registerClientboundPacket(ClientboundSetEntityDataPacket.class, ClientboundSetEntityDataPacket::new)
-            .registerClientboundPacket(ClientboundSetEntityLinkPacket.class, ClientboundSetEntityLinkPacket::new)
-            .registerClientboundPacket(ClientboundSetEntityMotionPacket.class, ClientboundSetEntityMotionPacket::new)
-            .registerClientboundPacket(ClientboundSetEquipmentPacket.class, ClientboundSetEquipmentPacket::new)
-            .registerClientboundPacket(ClientboundSetExperiencePacket.class, ClientboundSetExperiencePacket::new)
-            .registerClientboundPacket(ClientboundSetHealthPacket.class, ClientboundSetHealthPacket::new)
-            .registerClientboundPacket(ClientboundSetObjectivePacket.class, ClientboundSetObjectivePacket::new)
-            .registerClientboundPacket(ClientboundSetPassengersPacket.class, ClientboundSetPassengersPacket::new)
-            .registerClientboundPacket(ClientboundSetPlayerTeamPacket.class, ClientboundSetPlayerTeamPacket::new)
-            .registerClientboundPacket(ClientboundSetScorePacket.class, ClientboundSetScorePacket::new)
-            .registerClientboundPacket(ClientboundSetSimulationDistancePacket.class, ClientboundSetSimulationDistancePacket::new)
-            .registerClientboundPacket(ClientboundSetSubtitleTextPacket.class, ClientboundSetSubtitleTextPacket::new)
-            .registerClientboundPacket(ClientboundSetTimePacket.class, ClientboundSetTimePacket::new)
-            .registerClientboundPacket(ClientboundSetTitleTextPacket.class, ClientboundSetTitleTextPacket::new)
-            .registerClientboundPacket(ClientboundSetTitlesAnimationPacket.class, ClientboundSetTitlesAnimationPacket::new)
-            .registerClientboundPacket(ClientboundSoundEntityPacket.class, ClientboundSoundEntityPacket::new)
-            .registerClientboundPacket(ClientboundSoundPacket.class, ClientboundSoundPacket::new)
-            .registerClientboundPacket(ClientboundStartConfigurationPacket.class, ClientboundStartConfigurationPacket::new)
-            .registerClientboundPacket(ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new)
-            .registerClientboundPacket(ClientboundSystemChatPacket.class, ClientboundSystemChatPacket::new)
-            .registerClientboundPacket(ClientboundTabListPacket.class, ClientboundTabListPacket::new)
-            .registerClientboundPacket(ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
-            .registerClientboundPacket(ClientboundTakeItemEntityPacket.class, ClientboundTakeItemEntityPacket::new)
-            .registerClientboundPacket(ClientboundTeleportEntityPacket.class, ClientboundTeleportEntityPacket::new)
-            .registerClientboundPacket(ClientboundUpdateAdvancementsPacket.class, ClientboundUpdateAdvancementsPacket::new)
-            .registerClientboundPacket(ClientboundUpdateAttributesPacket.class, ClientboundUpdateAttributesPacket::new)
-            .registerClientboundPacket(ClientboundUpdateMobEffectPacket.class, ClientboundUpdateMobEffectPacket::new)
-            .registerClientboundPacket(ClientboundUpdateRecipesPacket.class, ClientboundUpdateRecipesPacket::new)
-            .registerClientboundPacket(ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
-            .registerServerboundPacket(ServerboundAcceptTeleportationPacket.class, ServerboundAcceptTeleportationPacket::new)
-            .registerServerboundPacket(ServerboundBlockEntityTagQuery.class, ServerboundBlockEntityTagQuery::new)
-            .registerServerboundPacket(ServerboundChangeDifficultyPacket.class, ServerboundChangeDifficultyPacket::new)
-            .registerServerboundPacket(ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
-            .registerServerboundPacket(ServerboundChatCommandPacket.class, ServerboundChatCommandPacket::new)
-            .registerServerboundPacket(ServerboundChatPacket.class, ServerboundChatPacket::new)
-            .registerServerboundPacket(ServerboundChatSessionUpdatePacket.class, ServerboundChatSessionUpdatePacket::new)
-            .registerServerboundPacket(ServerboundChunkBatchReceivedPacket.class, ServerboundChunkBatchReceivedPacket::new)
-            .registerServerboundPacket(ServerboundClientCommandPacket.class, ServerboundClientCommandPacket::new)
-            .registerServerboundPacket(ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
-            .registerServerboundPacket(ServerboundCommandSuggestionPacket.class, ServerboundCommandSuggestionPacket::new)
-            .registerServerboundPacket(ServerboundConfigurationAcknowledgedPacket.class, ServerboundConfigurationAcknowledgedPacket::new)
-            .registerServerboundPacket(ServerboundContainerButtonClickPacket.class, ServerboundContainerButtonClickPacket::new)
-            .registerServerboundPacket(ServerboundContainerClickPacket.class, ServerboundContainerClickPacket::new)
-            .registerServerboundPacket(ServerboundContainerClosePacket.class, ServerboundContainerClosePacket::new)
-            .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
-            .registerServerboundPacket(ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
-            .registerServerboundPacket(ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)
-            .registerServerboundPacket(ServerboundInteractPacket.class, ServerboundInteractPacket::new)
-            .registerServerboundPacket(ServerboundJigsawGeneratePacket.class, ServerboundJigsawGeneratePacket::new)
-            .registerServerboundPacket(ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
-            .registerServerboundPacket(ServerboundLockDifficultyPacket.class, ServerboundLockDifficultyPacket::new)
-            .registerServerboundPacket(ServerboundMovePlayerPosPacket.class, ServerboundMovePlayerPosPacket::new)
-            .registerServerboundPacket(ServerboundMovePlayerPosRotPacket.class, ServerboundMovePlayerPosRotPacket::new)
-            .registerServerboundPacket(ServerboundMovePlayerRotPacket.class, ServerboundMovePlayerRotPacket::new)
-            .registerServerboundPacket(ServerboundMovePlayerStatusOnlyPacket.class, ServerboundMovePlayerStatusOnlyPacket::new)
-            .registerServerboundPacket(ServerboundMoveVehiclePacket.class, ServerboundMoveVehiclePacket::new)
-            .registerServerboundPacket(ServerboundPaddleBoatPacket.class, ServerboundPaddleBoatPacket::new)
-            .registerServerboundPacket(ServerboundPickItemPacket.class, ServerboundPickItemPacket::new)
-            .registerServerboundPacket(ServerboundPingRequestPacket.class, ServerboundPingRequestPacket::new)
-            .registerServerboundPacket(ServerboundPlaceRecipePacket.class, ServerboundPlaceRecipePacket::new)
-            .registerServerboundPacket(ServerboundPlayerAbilitiesPacket.class, ServerboundPlayerAbilitiesPacket::new)
-            .registerServerboundPacket(ServerboundPlayerActionPacket.class, ServerboundPlayerActionPacket::new)
-            .registerServerboundPacket(ServerboundPlayerCommandPacket.class, ServerboundPlayerCommandPacket::new)
-            .registerServerboundPacket(ServerboundPlayerInputPacket.class, ServerboundPlayerInputPacket::new)
-            .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
-            .registerServerboundPacket(ServerboundRecipeBookChangeSettingsPacket.class, ServerboundRecipeBookChangeSettingsPacket::new)
-            .registerServerboundPacket(ServerboundRecipeBookSeenRecipePacket.class, ServerboundRecipeBookSeenRecipePacket::new)
-            .registerServerboundPacket(ServerboundRenameItemPacket.class, ServerboundRenameItemPacket::new)
-            .registerServerboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
-            .registerServerboundPacket(ServerboundSeenAdvancementsPacket.class, ServerboundSeenAdvancementsPacket::new)
-            .registerServerboundPacket(ServerboundSelectTradePacket.class, ServerboundSelectTradePacket::new)
-            .registerServerboundPacket(ServerboundSetBeaconPacket.class, ServerboundSetBeaconPacket::new)
-            .registerServerboundPacket(ServerboundSetCarriedItemPacket.class, ServerboundSetCarriedItemPacket::new)
-            .registerServerboundPacket(ServerboundSetCommandBlockPacket.class, ServerboundSetCommandBlockPacket::new)
-            .registerServerboundPacket(ServerboundSetCommandMinecartPacket.class, ServerboundSetCommandMinecartPacket::new)
-            .registerServerboundPacket(ServerboundSetCreativeModeSlotPacket.class, ServerboundSetCreativeModeSlotPacket::new)
-            .registerServerboundPacket(ServerboundSetJigsawBlockPacket.class, ServerboundSetJigsawBlockPacket::new)
-            .registerServerboundPacket(ServerboundSetStructureBlockPacket.class, ServerboundSetStructureBlockPacket::new)
-            .registerServerboundPacket(ServerboundSignUpdatePacket.class, ServerboundSignUpdatePacket::new)
-            .registerServerboundPacket(ServerboundSwingPacket.class, ServerboundSwingPacket::new)
-            .registerServerboundPacket(ServerboundTeleportToEntityPacket.class, ServerboundTeleportToEntityPacket::new)
-            .registerServerboundPacket(ServerboundUseItemOnPacket.class, ServerboundUseItemOnPacket::new)
-            .registerServerboundPacket(ServerboundUseItemPacket.class, ServerboundUseItemPacket::new)
-        )
-        .build();
 
     static {
         for (LevelEventType levelEvent : LevelEventType.values()) {
-            LEVEL_EVENTS.put(levelEvent.id(), levelEvent);
+            LEVEL_EVENTS.put(levelEvent.getId(), levelEvent);
         }
 
         for (BuiltinSound sound : BuiltinSound.values()) {
-            SOUND_NAMES.put(sound.name(), sound);
+            SOUND_NAMES.put(sound.getName(), sound);
         }
     }
 
-    private MinecraftCodec() {
-    }
+    public static final PacketCodec CODEC = PacketCodec.builder()
+            .protocolVersion(765)
+            .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
+            .minecraftVersion("1.20.3")
+            .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
+                    .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
+            )
+            .state(ProtocolState.LOGIN, PacketStateCodec.builder()
+                    .registerClientboundPacket(ClientboundLoginDisconnectPacket.class, ClientboundLoginDisconnectPacket::new)
+                    .registerClientboundPacket(ClientboundHelloPacket.class, ClientboundHelloPacket::new)
+                    .registerClientboundPacket(ClientboundGameProfilePacket.class, ClientboundGameProfilePacket::new)
+                    .registerClientboundPacket(ClientboundLoginCompressionPacket.class, ClientboundLoginCompressionPacket::new)
+                    .registerClientboundPacket(ClientboundCustomQueryPacket.class, ClientboundCustomQueryPacket::new)
+                    .registerServerboundPacket(ServerboundHelloPacket.class, ServerboundHelloPacket::new)
+                    .registerServerboundPacket(ServerboundKeyPacket.class, ServerboundKeyPacket::new)
+                    .registerServerboundPacket(ServerboundCustomQueryAnswerPacket.class, ServerboundCustomQueryAnswerPacket::new)
+                    .registerServerboundPacket(ServerboundLoginAcknowledgedPacket.class, ServerboundLoginAcknowledgedPacket::new)
+            ).state(ProtocolState.STATUS, PacketStateCodec.builder()
+                    .registerClientboundPacket(ClientboundStatusResponsePacket.class, ClientboundStatusResponsePacket::new)
+                    .registerClientboundPacket(ClientboundPongResponsePacket.class, ClientboundPongResponsePacket::new)
+                    .registerServerboundPacket(ServerboundStatusRequestPacket.class, ServerboundStatusRequestPacket::new)
+                    .registerServerboundPacket(ServerboundPingRequestPacket.class, ServerboundPingRequestPacket::new)
+            ).state(ProtocolState.CONFIGURATION, PacketStateCodec.builder()
+                    .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
+                    .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
+                    .registerClientboundPacket(ClientboundFinishConfigurationPacket.class, ClientboundFinishConfigurationPacket::new)
+                    .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
+                    .registerClientboundPacket(ClientboundPingPacket.class, ClientboundPingPacket::new)
+                    .registerClientboundPacket(ClientboundRegistryDataPacket.class, ClientboundRegistryDataPacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
+                    .registerClientboundPacket(ClientboundUpdateEnabledFeaturesPacket.class, ClientboundUpdateEnabledFeaturesPacket::new)
+                    .registerClientboundPacket(ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
+                    .registerServerboundPacket(ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
+                    .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
+                    .registerServerboundPacket(ServerboundFinishConfigurationPacket.class, ServerboundFinishConfigurationPacket::new)
+                    .registerServerboundPacket(ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
+                    .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
+                    .registerServerboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
+            ).state(ProtocolState.GAME, PacketStateCodec.builder()
+                    .registerClientboundPacket(ClientboundDelimiterPacket.class, ClientboundDelimiterPacket::new)
+                    .registerClientboundPacket(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new)
+                    .registerClientboundPacket(ClientboundAddExperienceOrbPacket.class, ClientboundAddExperienceOrbPacket::new)
+                    .registerClientboundPacket(ClientboundAnimatePacket.class, ClientboundAnimatePacket::new)
+                    .registerClientboundPacket(ClientboundAwardStatsPacket.class, ClientboundAwardStatsPacket::new)
+                    .registerClientboundPacket(ClientboundBlockChangedAckPacket.class, ClientboundBlockChangedAckPacket::new)
+                    .registerClientboundPacket(ClientboundBlockDestructionPacket.class, ClientboundBlockDestructionPacket::new)
+                    .registerClientboundPacket(ClientboundBlockEntityDataPacket.class, ClientboundBlockEntityDataPacket::new)
+                    .registerClientboundPacket(ClientboundBlockEventPacket.class, ClientboundBlockEventPacket::new)
+                    .registerClientboundPacket(ClientboundBlockUpdatePacket.class, ClientboundBlockUpdatePacket::new)
+                    .registerClientboundPacket(ClientboundBossEventPacket.class, ClientboundBossEventPacket::new)
+                    .registerClientboundPacket(ClientboundChangeDifficultyPacket.class, ClientboundChangeDifficultyPacket::new)
+                    .registerClientboundPacket(ClientboundChunkBatchFinishedPacket.class, ClientboundChunkBatchFinishedPacket::new)
+                    .registerClientboundPacket(ClientboundChunkBatchStartPacket.class, ClientboundChunkBatchStartPacket::new)
+                    .registerClientboundPacket(ClientboundChunksBiomesPacket.class, ClientboundChunksBiomesPacket::new)
+                    .registerClientboundPacket(ClientboundClearTitlesPacket.class, ClientboundClearTitlesPacket::new)
+                    .registerClientboundPacket(ClientboundCommandSuggestionsPacket.class, ClientboundCommandSuggestionsPacket::new)
+                    .registerClientboundPacket(ClientboundCommandsPacket.class, ClientboundCommandsPacket::new)
+                    .registerClientboundPacket(ClientboundContainerClosePacket.class, ClientboundContainerClosePacket::new)
+                    .registerClientboundPacket(ClientboundContainerSetContentPacket.class, ClientboundContainerSetContentPacket::new)
+                    .registerClientboundPacket(ClientboundContainerSetDataPacket.class, ClientboundContainerSetDataPacket::new)
+                    .registerClientboundPacket(ClientboundContainerSetSlotPacket.class, ClientboundContainerSetSlotPacket::new)
+                    .registerClientboundPacket(ClientboundCooldownPacket.class, ClientboundCooldownPacket::new)
+                    .registerClientboundPacket(ClientboundCustomChatCompletionsPacket.class, ClientboundCustomChatCompletionsPacket::new)
+                    .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
+                    .registerClientboundPacket(ClientboundDamageEventPacket.class, ClientboundDamageEventPacket::new)
+                    .registerClientboundPacket(ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new)
+                    .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
+                    .registerClientboundPacket(ClientboundDisguisedChatPacket.class, ClientboundDisguisedChatPacket::new)
+                    .registerClientboundPacket(ClientboundEntityEventPacket.class, ClientboundEntityEventPacket::new)
+                    .registerClientboundPacket(ClientboundExplodePacket.class, ClientboundExplodePacket::new)
+                    .registerClientboundPacket(ClientboundForgetLevelChunkPacket.class, ClientboundForgetLevelChunkPacket::new)
+                    .registerClientboundPacket(ClientboundGameEventPacket.class, ClientboundGameEventPacket::new)
+                    .registerClientboundPacket(ClientboundHorseScreenOpenPacket.class, ClientboundHorseScreenOpenPacket::new)
+                    .registerClientboundPacket(ClientboundHurtAnimationPacket.class, ClientboundHurtAnimationPacket::new)
+                    .registerClientboundPacket(ClientboundInitializeBorderPacket.class, ClientboundInitializeBorderPacket::new)
+                    .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
+                    .registerClientboundPacket(ClientboundLevelChunkWithLightPacket.class, ClientboundLevelChunkWithLightPacket::new)
+                    .registerClientboundPacket(ClientboundLevelEventPacket.class, ClientboundLevelEventPacket::new)
+                    .registerClientboundPacket(ClientboundLevelParticlesPacket.class, ClientboundLevelParticlesPacket::new)
+                    .registerClientboundPacket(ClientboundLightUpdatePacket.class, ClientboundLightUpdatePacket::new)
+                    .registerClientboundPacket(ClientboundLoginPacket.class, ClientboundLoginPacket::new)
+                    .registerClientboundPacket(ClientboundMapItemDataPacket.class, ClientboundMapItemDataPacket::new)
+                    .registerClientboundPacket(ClientboundMerchantOffersPacket.class, ClientboundMerchantOffersPacket::new)
+                    .registerClientboundPacket(ClientboundMoveEntityPosPacket.class, ClientboundMoveEntityPosPacket::new)
+                    .registerClientboundPacket(ClientboundMoveEntityPosRotPacket.class, ClientboundMoveEntityPosRotPacket::new)
+                    .registerClientboundPacket(ClientboundMoveEntityRotPacket.class, ClientboundMoveEntityRotPacket::new)
+                    .registerClientboundPacket(ClientboundMoveVehiclePacket.class, ClientboundMoveVehiclePacket::new)
+                    .registerClientboundPacket(ClientboundOpenBookPacket.class, ClientboundOpenBookPacket::new)
+                    .registerClientboundPacket(ClientboundOpenScreenPacket.class, ClientboundOpenScreenPacket::new)
+                    .registerClientboundPacket(ClientboundOpenSignEditorPacket.class, ClientboundOpenSignEditorPacket::new)
+                    .registerClientboundPacket(ClientboundPingPacket.class, ClientboundPingPacket::new)
+                    .registerClientboundPacket(ClientboundPongResponsePacket.class, ClientboundPongResponsePacket::new)
+                    .registerClientboundPacket(ClientboundPlaceGhostRecipePacket.class, ClientboundPlaceGhostRecipePacket::new)
+                    .registerClientboundPacket(ClientboundPlayerAbilitiesPacket.class, ClientboundPlayerAbilitiesPacket::new)
+                    .registerClientboundPacket(ClientboundPlayerChatPacket.class, ClientboundPlayerChatPacket::new)
+                    .registerClientboundPacket(ClientboundPlayerCombatEndPacket.class, ClientboundPlayerCombatEndPacket::new)
+                    .registerClientboundPacket(ClientboundPlayerCombatEnterPacket.class, ClientboundPlayerCombatEnterPacket::new)
+                    .registerClientboundPacket(ClientboundPlayerCombatKillPacket.class, ClientboundPlayerCombatKillPacket::new)
+                    .registerClientboundPacket(ClientboundPlayerInfoRemovePacket.class, ClientboundPlayerInfoRemovePacket::new)
+                    .registerClientboundPacket(ClientboundPlayerInfoUpdatePacket.class, ClientboundPlayerInfoUpdatePacket::new)
+                    .registerClientboundPacket(ClientboundPlayerLookAtPacket.class, ClientboundPlayerLookAtPacket::new)
+                    .registerClientboundPacket(ClientboundPlayerPositionPacket.class, ClientboundPlayerPositionPacket::new)
+                    .registerClientboundPacket(ClientboundRecipePacket.class, ClientboundRecipePacket::new)
+                    .registerClientboundPacket(ClientboundRemoveEntitiesPacket.class, ClientboundRemoveEntitiesPacket::new)
+                    .registerClientboundPacket(ClientboundRemoveMobEffectPacket.class, ClientboundRemoveMobEffectPacket::new)
+                    .registerClientboundPacket(ClientboundResetScorePacket.class, ClientboundResetScorePacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
+                    .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
+                    .registerClientboundPacket(ClientboundRespawnPacket.class, ClientboundRespawnPacket::new)
+                    .registerClientboundPacket(ClientboundRotateHeadPacket.class, ClientboundRotateHeadPacket::new)
+                    .registerClientboundPacket(ClientboundSectionBlocksUpdatePacket.class, ClientboundSectionBlocksUpdatePacket::new)
+                    .registerClientboundPacket(ClientboundSelectAdvancementsTabPacket.class, ClientboundSelectAdvancementsTabPacket::new)
+                    .registerClientboundPacket(ClientboundServerDataPacket.class, ClientboundServerDataPacket::new)
+                    .registerClientboundPacket(ClientboundSetActionBarTextPacket.class, ClientboundSetActionBarTextPacket::new)
+                    .registerClientboundPacket(ClientboundSetBorderCenterPacket.class, ClientboundSetBorderCenterPacket::new)
+                    .registerClientboundPacket(ClientboundSetBorderLerpSizePacket.class, ClientboundSetBorderLerpSizePacket::new)
+                    .registerClientboundPacket(ClientboundSetBorderSizePacket.class, ClientboundSetBorderSizePacket::new)
+                    .registerClientboundPacket(ClientboundSetBorderWarningDelayPacket.class, ClientboundSetBorderWarningDelayPacket::new)
+                    .registerClientboundPacket(ClientboundSetBorderWarningDistancePacket.class, ClientboundSetBorderWarningDistancePacket::new)
+                    .registerClientboundPacket(ClientboundSetCameraPacket.class, ClientboundSetCameraPacket::new)
+                    .registerClientboundPacket(ClientboundSetCarriedItemPacket.class, ClientboundSetCarriedItemPacket::new)
+                    .registerClientboundPacket(ClientboundSetChunkCacheCenterPacket.class, ClientboundSetChunkCacheCenterPacket::new)
+                    .registerClientboundPacket(ClientboundSetChunkCacheRadiusPacket.class, ClientboundSetChunkCacheRadiusPacket::new)
+                    .registerClientboundPacket(ClientboundSetDefaultSpawnPositionPacket.class, ClientboundSetDefaultSpawnPositionPacket::new)
+                    .registerClientboundPacket(ClientboundSetDisplayObjectivePacket.class, ClientboundSetDisplayObjectivePacket::new)
+                    .registerClientboundPacket(ClientboundSetEntityDataPacket.class, ClientboundSetEntityDataPacket::new)
+                    .registerClientboundPacket(ClientboundSetEntityLinkPacket.class, ClientboundSetEntityLinkPacket::new)
+                    .registerClientboundPacket(ClientboundSetEntityMotionPacket.class, ClientboundSetEntityMotionPacket::new)
+                    .registerClientboundPacket(ClientboundSetEquipmentPacket.class, ClientboundSetEquipmentPacket::new)
+                    .registerClientboundPacket(ClientboundSetExperiencePacket.class, ClientboundSetExperiencePacket::new)
+                    .registerClientboundPacket(ClientboundSetHealthPacket.class, ClientboundSetHealthPacket::new)
+                    .registerClientboundPacket(ClientboundSetObjectivePacket.class, ClientboundSetObjectivePacket::new)
+                    .registerClientboundPacket(ClientboundSetPassengersPacket.class, ClientboundSetPassengersPacket::new)
+                    .registerClientboundPacket(ClientboundSetPlayerTeamPacket.class, ClientboundSetPlayerTeamPacket::new)
+                    .registerClientboundPacket(ClientboundSetScorePacket.class, ClientboundSetScorePacket::new)
+                    .registerClientboundPacket(ClientboundSetSimulationDistancePacket.class, ClientboundSetSimulationDistancePacket::new)
+                    .registerClientboundPacket(ClientboundSetSubtitleTextPacket.class, ClientboundSetSubtitleTextPacket::new)
+                    .registerClientboundPacket(ClientboundSetTimePacket.class, ClientboundSetTimePacket::new)
+                    .registerClientboundPacket(ClientboundSetTitleTextPacket.class, ClientboundSetTitleTextPacket::new)
+                    .registerClientboundPacket(ClientboundSetTitlesAnimationPacket.class, ClientboundSetTitlesAnimationPacket::new)
+                    .registerClientboundPacket(ClientboundSoundEntityPacket.class, ClientboundSoundEntityPacket::new)
+                    .registerClientboundPacket(ClientboundSoundPacket.class, ClientboundSoundPacket::new)
+                    .registerClientboundPacket(ClientboundStartConfigurationPacket.class, ClientboundStartConfigurationPacket::new)
+                    .registerClientboundPacket(ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new)
+                    .registerClientboundPacket(ClientboundSystemChatPacket.class, ClientboundSystemChatPacket::new)
+                    .registerClientboundPacket(ClientboundTabListPacket.class, ClientboundTabListPacket::new)
+                    .registerClientboundPacket(ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
+                    .registerClientboundPacket(ClientboundTakeItemEntityPacket.class, ClientboundTakeItemEntityPacket::new)
+                    .registerClientboundPacket(ClientboundTeleportEntityPacket.class, ClientboundTeleportEntityPacket::new)
+                    .registerClientboundPacket(ClientboundTickingStatePacket.class, ClientboundTickingStatePacket::new)
+                    .registerClientboundPacket(ClientboundTickingStepPacket.class, ClientboundTickingStepPacket::new)
+                    .registerClientboundPacket(ClientboundUpdateAdvancementsPacket.class, ClientboundUpdateAdvancementsPacket::new)
+                    .registerClientboundPacket(ClientboundUpdateAttributesPacket.class, ClientboundUpdateAttributesPacket::new)
+                    .registerClientboundPacket(ClientboundUpdateMobEffectPacket.class, ClientboundUpdateMobEffectPacket::new)
+                    .registerClientboundPacket(ClientboundUpdateRecipesPacket.class, ClientboundUpdateRecipesPacket::new)
+                    .registerClientboundPacket(ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
+                    .registerServerboundPacket(ServerboundAcceptTeleportationPacket.class, ServerboundAcceptTeleportationPacket::new)
+                    .registerServerboundPacket(ServerboundBlockEntityTagQuery.class, ServerboundBlockEntityTagQuery::new)
+                    .registerServerboundPacket(ServerboundChangeDifficultyPacket.class, ServerboundChangeDifficultyPacket::new)
+                    .registerServerboundPacket(ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
+                    .registerServerboundPacket(ServerboundChatCommandPacket.class, ServerboundChatCommandPacket::new)
+                    .registerServerboundPacket(ServerboundChatPacket.class, ServerboundChatPacket::new)
+                    .registerServerboundPacket(ServerboundChatSessionUpdatePacket.class, ServerboundChatSessionUpdatePacket::new)
+                    .registerServerboundPacket(ServerboundChunkBatchReceivedPacket.class, ServerboundChunkBatchReceivedPacket::new)
+                    .registerServerboundPacket(ServerboundClientCommandPacket.class, ServerboundClientCommandPacket::new)
+                    .registerServerboundPacket(ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
+                    .registerServerboundPacket(ServerboundCommandSuggestionPacket.class, ServerboundCommandSuggestionPacket::new)
+                    .registerServerboundPacket(ServerboundConfigurationAcknowledgedPacket.class, ServerboundConfigurationAcknowledgedPacket::new)
+                    .registerServerboundPacket(ServerboundContainerButtonClickPacket.class, ServerboundContainerButtonClickPacket::new)
+                    .registerServerboundPacket(ServerboundContainerClickPacket.class, ServerboundContainerClickPacket::new)
+                    .registerServerboundPacket(ServerboundContainerClosePacket.class, ServerboundContainerClosePacket::new)
+                    .registerServerboundPacket(ServerboundContainerSlotStateChangedPacket.class, ServerboundContainerSlotStateChangedPacket::new)
+                    .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
+                    .registerServerboundPacket(ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
+                    .registerServerboundPacket(ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)
+                    .registerServerboundPacket(ServerboundInteractPacket.class, ServerboundInteractPacket::new)
+                    .registerServerboundPacket(ServerboundJigsawGeneratePacket.class, ServerboundJigsawGeneratePacket::new)
+                    .registerServerboundPacket(ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
+                    .registerServerboundPacket(ServerboundLockDifficultyPacket.class, ServerboundLockDifficultyPacket::new)
+                    .registerServerboundPacket(ServerboundMovePlayerPosPacket.class, ServerboundMovePlayerPosPacket::new)
+                    .registerServerboundPacket(ServerboundMovePlayerPosRotPacket.class, ServerboundMovePlayerPosRotPacket::new)
+                    .registerServerboundPacket(ServerboundMovePlayerRotPacket.class, ServerboundMovePlayerRotPacket::new)
+                    .registerServerboundPacket(ServerboundMovePlayerStatusOnlyPacket.class, ServerboundMovePlayerStatusOnlyPacket::new)
+                    .registerServerboundPacket(ServerboundMoveVehiclePacket.class, ServerboundMoveVehiclePacket::new)
+                    .registerServerboundPacket(ServerboundPaddleBoatPacket.class, ServerboundPaddleBoatPacket::new)
+                    .registerServerboundPacket(ServerboundPickItemPacket.class, ServerboundPickItemPacket::new)
+                    .registerServerboundPacket(ServerboundPingRequestPacket.class, ServerboundPingRequestPacket::new)
+                    .registerServerboundPacket(ServerboundPlaceRecipePacket.class, ServerboundPlaceRecipePacket::new)
+                    .registerServerboundPacket(ServerboundPlayerAbilitiesPacket.class, ServerboundPlayerAbilitiesPacket::new)
+                    .registerServerboundPacket(ServerboundPlayerActionPacket.class, ServerboundPlayerActionPacket::new)
+                    .registerServerboundPacket(ServerboundPlayerCommandPacket.class, ServerboundPlayerCommandPacket::new)
+                    .registerServerboundPacket(ServerboundPlayerInputPacket.class, ServerboundPlayerInputPacket::new)
+                    .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
+                    .registerServerboundPacket(ServerboundRecipeBookChangeSettingsPacket.class, ServerboundRecipeBookChangeSettingsPacket::new)
+                    .registerServerboundPacket(ServerboundRecipeBookSeenRecipePacket.class, ServerboundRecipeBookSeenRecipePacket::new)
+                    .registerServerboundPacket(ServerboundRenameItemPacket.class, ServerboundRenameItemPacket::new)
+                    .registerServerboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
+                    .registerServerboundPacket(ServerboundSeenAdvancementsPacket.class, ServerboundSeenAdvancementsPacket::new)
+                    .registerServerboundPacket(ServerboundSelectTradePacket.class, ServerboundSelectTradePacket::new)
+                    .registerServerboundPacket(ServerboundSetBeaconPacket.class, ServerboundSetBeaconPacket::new)
+                    .registerServerboundPacket(ServerboundSetCarriedItemPacket.class, ServerboundSetCarriedItemPacket::new)
+                    .registerServerboundPacket(ServerboundSetCommandBlockPacket.class, ServerboundSetCommandBlockPacket::new)
+                    .registerServerboundPacket(ServerboundSetCommandMinecartPacket.class, ServerboundSetCommandMinecartPacket::new)
+                    .registerServerboundPacket(ServerboundSetCreativeModeSlotPacket.class, ServerboundSetCreativeModeSlotPacket::new)
+                    .registerServerboundPacket(ServerboundSetJigsawBlockPacket.class, ServerboundSetJigsawBlockPacket::new)
+                    .registerServerboundPacket(ServerboundSetStructureBlockPacket.class, ServerboundSetStructureBlockPacket::new)
+                    .registerServerboundPacket(ServerboundSignUpdatePacket.class, ServerboundSignUpdatePacket::new)
+                    .registerServerboundPacket(ServerboundSwingPacket.class, ServerboundSwingPacket::new)
+                    .registerServerboundPacket(ServerboundTeleportToEntityPacket.class, ServerboundTeleportToEntityPacket::new)
+                    .registerServerboundPacket(ServerboundUseItemOnPacket.class, ServerboundUseItemOnPacket::new)
+                    .registerServerboundPacket(ServerboundUseItemPacket.class, ServerboundUseItemPacket::new)
+            )
+            .build();
 }

@@ -15,7 +15,7 @@ public class ClientboundSystemChatPacket implements MinecraftPacket {
     private final Component content;
     private final boolean overlay;
 
-    public ClientboundSystemChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundSystemChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.content = helper.readComponent(in);
         this.overlay = in.readBoolean();
     }

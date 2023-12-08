@@ -10,8 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class ItemStack {
     private final int id;
     private final int amount;
-    @Nullable
-    private final CompoundTag nbt;
+    private final @Nullable CompoundTag nbt;
 
     public ItemStack(int id) {
         this(id, 1);

@@ -9,8 +9,8 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -20,15 +20,15 @@ import java.io.IOException;
 public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final byte @NotNull [] chunkData;
-    private final @NotNull CompoundTag heightMaps;
-    private final @NotNull BlockEntityInfo[] blockEntities;
-    private final @NotNull LightUpdateData lightData;
+    private final byte @NonNull [] chunkData;
+    private final @NonNull CompoundTag heightMaps;
+    private final @NonNull BlockEntityInfo @NonNull [] blockEntities;
+    private final @NonNull LightUpdateData lightData;
 
     public ClientboundLevelChunkWithLightPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.x = in.readInt();
         this.z = in.readInt();
-        this.heightMaps = helper.readAnyTag(in);
+        this.heightMaps = helper.readAnyTagOrThrow(in);
         this.chunkData = helper.readByteArray(in);
 
         this.blockEntities = new BlockEntityInfo[helper.readVarInt(in)];
@@ -55,10 +55,10 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.blockEntities.length);
         for (BlockEntityInfo blockEntity : this.blockEntities) {
-            out.writeByte(((blockEntity.x() & 15) << 4) | blockEntity.z() & 15);
-            out.writeShort(blockEntity.y());
-            helper.writeBlockEntityType(out, blockEntity.type());
-            helper.writeAnyTag(out, blockEntity.nbt());
+            out.writeByte(((blockEntity.getX() & 15) << 4) | blockEntity.getZ() & 15);
+            out.writeShort(blockEntity.getY());
+            helper.writeBlockEntityType(out, blockEntity.getType());
+            helper.writeAnyTag(out, blockEntity.getNbt());
         }
 
         helper.writeLightUpdateData(out, this.lightData);

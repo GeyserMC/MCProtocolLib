@@ -6,8 +6,9 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -17,8 +18,8 @@ import java.io.IOException;
 public class ClientboundContainerSetContentPacket implements MinecraftPacket {
     private final int containerId;
     private final int stateId;
-    private final @NotNull ItemStack[] items;
-    private final ItemStack carriedItem;
+    private final @Nullable ItemStack @NonNull [] items;
+    private final @Nullable ItemStack carriedItem;
 
     public ClientboundContainerSetContentPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.containerId = in.readUnsignedByte();

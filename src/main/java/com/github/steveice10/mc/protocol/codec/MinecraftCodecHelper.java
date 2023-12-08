@@ -1,17 +1,34 @@
 package com.github.steveice10.mc.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.protocol.CheckedBiConsumer;
+import com.github.steveice10.mc.protocol.CheckedFunction;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.BlankFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.FixedFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.NumberFormat;
+import com.github.steveice10.mc.protocol.data.game.chat.numbers.StyledFormat;
 import com.github.steveice10.mc.protocol.data.game.chunk.BitStorage;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
 import com.github.steveice10.mc.protocol.data.game.chunk.DataPalette;
 import com.github.steveice10.mc.protocol.data.game.chunk.NibbleArray3d;
-import com.github.steveice10.mc.protocol.data.game.chunk.palette.*;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.GlobalPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.ListPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.MapPalette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.Palette;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.PaletteType;
+import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.*;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
@@ -22,7 +39,17 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityType;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType;
 import com.github.steveice10.mc.protocol.data.game.level.event.UnknownLevelEvent;
-import com.github.steveice10.mc.protocol.data.game.level.particle.*;
+import com.github.steveice10.mc.protocol.data.game.level.particle.BlockParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustColorTransitionParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.DustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.FallingDustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ItemParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleType;
+import com.github.steveice10.mc.protocol.data.game.level.particle.SculkChargeParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.ShriekParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.VibrationParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.BlockPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.EntityPositionSource;
 import com.github.steveice10.mc.protocol.data.game.level.particle.positionsource.PositionSource;
@@ -33,10 +60,12 @@ import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.statistic.StatisticCategory;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.codec.BasePacketCodecHelper;
+import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
@@ -44,13 +73,23 @@ import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.ObjIntConsumer;
+import java.util.function.ToIntFunction;
 
 @RequiredArgsConstructor
 public class MinecraftCodecHelper extends BasePacketCodecHelper {
@@ -63,8 +102,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private final Int2ObjectMap<LevelEventType> levelEvents;
     private final Map<String, BuiltinSound> soundNames;
 
+    protected CompoundTag registry;
+
     @Nullable
-    public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
+    public <T, E extends Throwable> T readNullable(ByteBuf buf, CheckedFunction<ByteBuf, T, E> ifPresent) throws E {
         if (buf.readBoolean()) {
             return ifPresent.apply(buf);
         } else {
@@ -72,7 +113,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public <T> void writeNullable(ByteBuf buf, @Nullable T value, BiConsumer<ByteBuf, T> ifPresent) {
+    public <T, E extends Throwable> void writeNullable(ByteBuf buf, @Nullable T value, CheckedBiConsumer<ByteBuf, T, E> ifPresent) throws E {
         if (value != null) {
             buf.writeBoolean(true);
             ifPresent.accept(buf, value);
@@ -147,32 +188,18 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public CompoundTag readTag(ByteBuf buf) throws IOException {
-        return readTag(buf, CompoundTag.class);
-    }
-
     @Nullable
-    public <T extends Tag> T readTag(ByteBuf buf, Class<T> expected) throws IOException {
-        Tag tag = NBTIO.readTag(new InputStream() {
-            @Override
-            public int read() {
-                return buf.readUnsignedByte();
-            }
-        });
-
-        if (tag == null) {
-            return null;
-        }
-
-        if (tag.getClass() != expected) {
-            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
-        }
-
-        return expected.cast(tag);
-    }
-
     public CompoundTag readAnyTag(ByteBuf buf) throws IOException {
         return readAnyTag(buf, CompoundTag.class);
+    }
+
+    @NotNull
+    public CompoundTag readAnyTagOrThrow(ByteBuf buf) throws IOException {
+        CompoundTag tag = readAnyTag(buf);
+        if (tag == null) {
+            throw new IllegalArgumentException("Got end-tag when trying to read CompoundTag");
+        }
+        return tag;
     }
 
     @Nullable
@@ -188,64 +215,22 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             return null;
         }
 
-        if (tag.getClass() != expected) {
+        if (!expected.isInstance(tag)) {
             throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
         }
 
         return expected.cast(tag);
     }
-
-    public CompoundTag readTagLE(ByteBuf buf) throws IOException {
-        return readTagLE(buf, CompoundTag.class);
+    public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) throws IOException {
+        NBTIO.writeAnyTag(new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                buf.writeByte(b);
+            }
+        }, tag);
     }
 
     @Nullable
-    public <T extends Tag> T readTagLE(ByteBuf buf, Class<T> expected) throws IOException {
-        Tag tag = NBTIO.readTag(new InputStream() {
-            @Override
-            public int read() {
-                return buf.readUnsignedByte();
-            }
-        }, true);
-
-        if (tag == null) {
-            return null;
-        }
-
-        if (tag.getClass() != expected) {
-            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
-        }
-
-        return expected.cast(tag);
-    }
-
-    public <T extends Tag> void writeTag(ByteBuf buf, T tag) throws IOException {
-        NBTIO.writeTag(new OutputStream() {
-            @Override
-            public void write(int b) {
-                buf.writeByte(b);
-            }
-        }, tag);
-    }
-
-    public <T extends Tag> void writeAnyTag(ByteBuf buf, T tag) throws IOException {
-        NBTIO.writeAnyTag(new OutputStream() {
-            @Override
-            public void write(int b) {
-                buf.writeByte(b);
-            }
-        }, tag);
-    }
-
-    public <T extends Tag> void writeTagLE(ByteBuf buf, T tag) throws IOException {
-        NBTIO.writeTag(new OutputStream() {
-            @Override
-            public void write(int b) {
-                buf.writeByte(b);
-            }
-        }, tag, true);
-    }
-
     public ItemStack readItemStack(ByteBuf buf) throws IOException {
         boolean present = buf.readBoolean();
         if (!present) {
@@ -349,12 +334,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, e.ordinal());
     }
 
-    public Component readComponent(ByteBuf buf) {
-        return DefaultComponentSerializer.get().deserialize(this.readString(buf, 262144));
+    public Component readComponent(ByteBuf buf) throws IOException {
+        // do not use CompoundTag, as mojang serializes a plaintext component as just a single StringTag
+        Tag tag = readAnyTag(buf, Tag.class);
+        if (tag == null) {
+            throw new IllegalArgumentException("Got end-tag when trying to read Component");
+        }
+        JsonElement json = ComponentSerializer.tagComponentToJson(tag);
+        return DefaultComponentSerializer.get().deserializeFromTree(json);
     }
 
-    public void writeComponent(ByteBuf buf, Component component) {
-        this.writeString(buf, DefaultComponentSerializer.get().serialize(component));
+    public void writeComponent(ByteBuf buf, Component component) throws IOException {
+        JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
+        Tag tag = ComponentSerializer.jsonComponentToTag(json);
+        writeAnyTag(buf, tag);
     }
 
     public EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) throws IOException {
@@ -364,7 +357,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             ret.add(this.readMetadata(buf, id));
         }
 
-        return ret.toArray(new EntityMetadata<?, ?>[0]);
+        return ret.toArray(new EntityMetadata[0]);
     }
 
     public void writeEntityMetadata(ByteBuf buf, EntityMetadata<?, ?>[] metadata) throws IOException {
@@ -388,11 +381,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public MetadataType<?> readMetadataType(ByteBuf buf) {
         int id = this.readVarInt(buf);
-        if (id >= MetadataTypes.size()) {
-            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataTypes.size() + "!");
+        if (id >= MetadataType.size()) {
+            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataType.size() + "!");
         }
 
-        return MetadataTypes.from(id);
+        return MetadataType.from(id);
     }
 
     public void writeMetadataType(ByteBuf buf, MetadataType<?> type) {
@@ -406,8 +399,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeGlobalPos(ByteBuf buf, GlobalPos pos) {
-        this.writeString(buf, pos.dimension());
-        this.writePosition(buf, pos.position());
+        this.writeString(buf, pos.getDimension());
+        this.writePosition(buf, pos.getPosition());
     }
 
     public PlayerSpawnInfo readPlayerSpawnInfo(ByteBuf buf) {
@@ -424,15 +417,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
-        this.writeString(buf, info.dimension());
-        this.writeString(buf, info.worldName());
-        buf.writeLong(info.hashedSeed());
-        buf.writeByte(info.gameMode().ordinal());
-        buf.writeByte(GameMode.toNullableId(info.previousGamemode()));
-        buf.writeBoolean(info.debug());
-        buf.writeBoolean(info.flat());
-        this.writeNullable(buf, info.lastDeathPos(), this::writeGlobalPos);
-        this.writeVarInt(buf, info.portalCooldown());
+        this.writeString(buf, info.getDimension());
+        this.writeString(buf, info.getWorldName());
+        buf.writeLong(info.getHashedSeed());
+        buf.writeByte(info.getGameMode().ordinal());
+        buf.writeByte(GameMode.toNullableId(info.getPreviousGamemode()));
+        buf.writeBoolean(info.isDebug());
+        buf.writeBoolean(info.isFlat());
+        this.writeNullable(buf, info.getLastDeathPos(), this::writeGlobalPos);
+        this.writeVarInt(buf, info.getPortalCooldown());
     }
 
     public ParticleType readParticleType(ByteBuf buf) {
@@ -449,49 +442,58 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeParticle(ByteBuf buf, Particle particle) throws IOException {
-        this.writeEnum(buf, particle.type());
-        this.writeParticleData(buf, particle.type(), particle.data());
+        this.writeEnum(buf, particle.getType());
+        this.writeParticleData(buf, particle.getType(), particle.getData());
     }
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) throws IOException {
-        return switch (type) {
-            case BLOCK, BLOCK_MARKER -> new BlockParticleData(this.readVarInt(buf));
-            case DUST -> {
+        switch (type) {
+            case BLOCK:
+            case BLOCK_MARKER:
+                return new BlockParticleData(this.readVarInt(buf));
+            case DUST:
                 float red = buf.readFloat();
                 float green = buf.readFloat();
                 float blue = buf.readFloat();
                 float scale = buf.readFloat();
-                yield new DustParticleData(red, green, blue, scale);
-            }
-            case DUST_COLOR_TRANSITION -> {
-                float red = buf.readFloat();
-                float green = buf.readFloat();
-                float blue = buf.readFloat();
-                float scale = buf.readFloat();
+                return new DustParticleData(red, green, blue, scale);
+            case DUST_COLOR_TRANSITION:
+                red = buf.readFloat();
+                green = buf.readFloat();
+                blue = buf.readFloat();
+                scale = buf.readFloat();
                 float newRed = buf.readFloat();
                 float newGreen = buf.readFloat();
                 float newBlue = buf.readFloat();
-                yield new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
-            }
-            case FALLING_DUST -> new FallingDustParticleData(this.readVarInt(buf));
-            case ITEM -> new ItemParticleData(this.readItemStack(buf));
-            case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
-            case SHRIEK -> new ShriekParticleData(this.readVarInt(buf));
-            case VIBRATION -> new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
-            default -> null;
-        };
+                return new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
+            case FALLING_DUST:
+                return new FallingDustParticleData(this.readVarInt(buf));
+            case ITEM:
+                return new ItemParticleData(this.readItemStack(buf));
+            case SCULK_CHARGE:
+                return new SculkChargeParticleData(buf.readFloat());
+            case SHRIEK:
+                return new ShriekParticleData(this.readVarInt(buf));
+            case VIBRATION:
+                return new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
+            default:
+                return null;
+        }
     }
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) throws IOException {
         switch (type) {
-            case BLOCK, BLOCK_MARKER -> this.writeVarInt(buf, ((BlockParticleData) data).blockState());
-            case DUST -> {
+            case BLOCK:
+            case BLOCK_MARKER:
+                this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
+                break;
+            case DUST:
                 buf.writeFloat(((DustParticleData) data).getRed());
                 buf.writeFloat(((DustParticleData) data).getGreen());
                 buf.writeFloat(((DustParticleData) data).getBlue());
                 buf.writeFloat(((DustParticleData) data).getScale());
-            }
-            case DUST_COLOR_TRANSITION -> {
+                break;
+            case DUST_COLOR_TRANSITION:
                 buf.writeFloat(((DustParticleData) data).getRed());
                 buf.writeFloat(((DustParticleData) data).getGreen());
                 buf.writeFloat(((DustParticleData) data).getBlue());
@@ -499,33 +501,77 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewRed());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewGreen());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewBlue());
-            }
-            case FALLING_DUST -> this.writeVarInt(buf, ((FallingDustParticleData) data).blockState());
-            case ITEM -> this.writeItemStack(buf, ((ItemParticleData) data).itemStack());
-            case SCULK_CHARGE -> buf.writeFloat(((SculkChargeParticleData) data).roll());
-            case SHRIEK -> this.writeVarInt(buf, ((ShriekParticleData) data).delay());
-            case VIBRATION -> {
+                break;
+            case FALLING_DUST:
+                this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
+                break;
+            case ITEM:
+                this.writeItemStack(buf, ((ItemParticleData) data).getItemStack());
+                break;
+            case SCULK_CHARGE:
+                buf.writeFloat(((SculkChargeParticleData) data).getRoll());
+                break;
+            case SHRIEK:
+                this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
+                break;
+            case VIBRATION:
                 this.writePositionSource(buf, ((VibrationParticleData) data).getPositionSource());
                 this.writeVarInt(buf, ((VibrationParticleData) data).getArrivalTicks());
-            }
+                break;
+        }
+    }
+
+    public NumberFormat readNumberFormat(ByteBuf buf) throws IOException {
+        int id = this.readVarInt(buf);
+        switch (id) {
+            case 0:
+                return BlankFormat.INSTANCE;
+            case 1:
+                return new StyledFormat(this.readAnyTagOrThrow(buf));
+            case 2:
+                return new FixedFormat(this.readComponent(buf));
+            default:
+                throw new IllegalArgumentException("Unknown number format type: " + id);
+        }
+    }
+
+    public void writeNumberFormat(ByteBuf buf, NumberFormat numberFormat) throws IOException {
+        if (numberFormat instanceof BlankFormat) {
+            this.writeVarInt(buf, 0);
+        } else if (numberFormat instanceof StyledFormat) {
+            StyledFormat styledFormat = (StyledFormat) numberFormat;
+
+            this.writeVarInt(buf, 1);
+            this.writeAnyTag(buf, styledFormat.getStyle());
+        } else if (numberFormat instanceof FixedFormat) {
+            FixedFormat fixedFormat = (FixedFormat) numberFormat;
+
+            this.writeVarInt(buf, 2);
+            this.writeComponent(buf, fixedFormat.getValue());
+        } else {
+            throw new IllegalArgumentException("Unknown number format: " + numberFormat);
         }
     }
 
     public PositionSource readPositionSource(ByteBuf buf) {
-        PositionSourceType type = PositionSourceType.from(this.readResourceLocation(buf));
-        return switch (type) {
-            case BLOCK -> new BlockPositionSource(this.readPosition(buf));
-            case ENTITY -> new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
-        };
+        PositionSourceType type = PositionSourceType.from(this.readVarInt(buf));
+        switch (type) {
+            case BLOCK:
+                return new BlockPositionSource(this.readPosition(buf));
+            case ENTITY:
+                return new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
+            default:
+                throw new IllegalStateException("Unknown position source type!");
+        }
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
-        this.writeResourceLocation(buf, positionSource.getType().getResourceLocation());
-        if (positionSource instanceof BlockPositionSource blockPositionSource) {
-            this.writePosition(buf, blockPositionSource.position());
-        } else if (positionSource instanceof EntityPositionSource entityPositionSource) {
-            this.writeVarInt(buf, entityPositionSource.getEntityId());
-            buf.writeFloat(entityPositionSource.getYOffset());
+        this.writeVarInt(buf, positionSource.getType().ordinal());
+        if (positionSource instanceof BlockPositionSource) {
+            this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
+        } else if (positionSource instanceof EntityPositionSource) {
+            this.writeVarInt(buf, ((EntityPositionSource) positionSource).getEntityId());
+            buf.writeFloat(((EntityPositionSource) positionSource).getYOffset());
         } else {
             throw new IllegalStateException("Unknown position source type!");
         }
@@ -536,9 +582,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeVillagerData(ByteBuf buf, VillagerData villagerData) {
-        this.writeVarInt(buf, villagerData.type());
-        this.writeVarInt(buf, villagerData.profession());
-        this.writeVarInt(buf, villagerData.level());
+        this.writeVarInt(buf, villagerData.getType());
+        this.writeVarInt(buf, villagerData.getProfession());
+        this.writeVarInt(buf, villagerData.getLevel());
     }
 
     public ModifierOperation readModifierOperation(ByteBuf buf) {
@@ -574,8 +620,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
+    @NotNull
     public BlockEntityType readBlockEntityType(ByteBuf buf) {
-        return BlockEntityType.from(this.readVarInt(buf));
+        int id = this.readVarInt(buf);
+        BlockEntityType type = BlockEntityType.from(id);
+
+        if (type == null) {
+            throw new IllegalArgumentException("Unknown BlockEntityType: " + id);
+        }
+        return type;
     }
 
     public void writeBlockEntityType(ByteBuf buf, BlockEntityType type) {
@@ -635,7 +688,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeLevelEvent(ByteBuf buf, LevelEvent event) {
-        buf.writeInt(event.id());
+        buf.writeInt(event.getId());
     }
 
     public StatisticCategory readStatisticCategory(ByteBuf buf) {
@@ -677,8 +730,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeRecipeIngredient(ByteBuf buf, Ingredient ingredient) throws IOException {
-        this.writeVarInt(buf, ingredient.options().length);
-        for (ItemStack option : ingredient.options()) {
+        this.writeVarInt(buf, ingredient.getOptions().length);
+        for (ItemStack option : ingredient.getOptions()) {
             this.writeItemStack(buf, option);
         }
     }
@@ -698,7 +751,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             storage = null;
         }
 
-        return new DataPalette(paletteType, globalPaletteBits, palette, storage);
+        return new DataPalette(palette, storage, paletteType, globalPaletteBits);
     }
 
     public void writeDataPalette(ByteBuf buf, DataPalette palette) {
@@ -741,7 +794,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
         DataPalette chunkPalette = this.readDataPalette(buf, PaletteType.CHUNK, DataPalette.GLOBAL_PALETTE_BITS_PER_ENTRY);
         DataPalette biomePalette = this.readDataPalette(buf, PaletteType.BIOME, globalBiomePaletteBits);
-        return new ChunkSection(chunkPalette, biomePalette, blockCount);
+        return new ChunkSection(blockCount, chunkPalette, biomePalette);
     }
 
     public void writeChunkSection(ByteBuf buf, ChunkSection section) {
@@ -796,9 +849,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeProperty(ByteBuf buf, GameProfile.Property property) {
-        this.writeString(buf, property.name());
-        this.writeString(buf, property.value());
-        this.writeNullable(buf, property.signature(), this::writeString);
+        this.writeString(buf, property.getName());
+        this.writeString(buf, property.getValue());
+        this.writeNullable(buf, property.getSignature(), this::writeString);
     }
 
     public <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {
@@ -816,10 +869,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeSoundEvent(ByteBuf buf, Sound soundEvent) {
-        writeString(buf, soundEvent.name());
-        buf.writeBoolean(soundEvent.newSystem());
-        if (soundEvent.newSystem()) {
-            buf.writeFloat(soundEvent.range());
+        writeString(buf, soundEvent.getName());
+        buf.writeBoolean(soundEvent.isNewSystem());
+        if (soundEvent.isNewSystem()) {
+            buf.writeFloat(soundEvent.getRange());
         }
     }
 
@@ -829,5 +882,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeNibbleArray(ByteBuf buf, NibbleArray3d nibbleArray) {
         buf.writeBytes(nibbleArray.getData());
+    }
+
+    /**
+     * The game registry sent to clients from the {@link ClientboundLoginPacket}.
+     * Implementations are required to set this value if they intend to use it.
+     *
+     * @return the game registry
+     */
+    @Nullable
+    public CompoundTag getRegistry() {
+        return this.registry;
+    }
+
+    public void setRegistry(CompoundTag registry) {
+        this.registry = registry;
     }
 }

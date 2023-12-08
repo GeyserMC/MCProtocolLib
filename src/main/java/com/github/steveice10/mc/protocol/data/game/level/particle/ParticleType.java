@@ -25,6 +25,8 @@ public enum ParticleType {
     ENTITY_EFFECT,
     EXPLOSION_EMITTER,
     EXPLOSION,
+    GUST,
+    GUST_EMITTER,
     SONIC_BOOM,
     FALLING_DUST,
     FIREWORK,
@@ -53,6 +55,7 @@ public enum ParticleType {
     PORTAL,
     RAIN,
     SMOKE,
+    WHITE_SMOKE,
     SNEEZE,
     SPIT,
     SQUID_INK,
@@ -95,7 +98,10 @@ public enum ParticleType {
     ELECTRIC_SPARK,
     SCRAPE,
     SHRIEK,
-    EGG_CRACK;
+    EGG_CRACK,
+    DUST_PLUME,
+    GUST_DUST,
+    TRIAL_SPAWNER_DETECTION;
 
     private static final ParticleType[] VALUES = values();
 

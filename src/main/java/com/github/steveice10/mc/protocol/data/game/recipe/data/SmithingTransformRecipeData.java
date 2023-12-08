@@ -2,8 +2,16 @@ package com.github.steveice10.mc.protocol.data.game.recipe.data;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
-import org.jetbrains.annotations.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
-public record SmithingTransformRecipeData(@NotNull Ingredient template, @NotNull Ingredient base,
-                                          @NotNull Ingredient addition, ItemStack result) implements RecipeData {
+@Data
+@AllArgsConstructor
+public class SmithingTransformRecipeData implements RecipeData {
+    private final @NonNull Ingredient template;
+    private final @NonNull Ingredient base;
+    private final @NonNull Ingredient addition;
+    private final @Nullable ItemStack result;
 }
