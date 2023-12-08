@@ -3,15 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.game.inventory.ClickItemAction;
-import com.github.steveice10.mc.protocol.data.game.inventory.ContainerAction;
-import com.github.steveice10.mc.protocol.data.game.inventory.ContainerActionType;
-import com.github.steveice10.mc.protocol.data.game.inventory.CreativeGrabAction;
-import com.github.steveice10.mc.protocol.data.game.inventory.DropItemAction;
-import com.github.steveice10.mc.protocol.data.game.inventory.FillStackAction;
-import com.github.steveice10.mc.protocol.data.game.inventory.MoveToHotbarAction;
-import com.github.steveice10.mc.protocol.data.game.inventory.ShiftClickItemAction;
-import com.github.steveice10.mc.protocol.data.game.inventory.SpreadItemAction;
+import com.github.steveice10.mc.protocol.data.game.inventory.*;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -20,7 +12,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Map;
 
 @Data
@@ -60,7 +51,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.changedSlots = changedSlots;
     }
 
-    public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = in.readByte();
         this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
@@ -96,7 +87,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.containerId);
         helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);

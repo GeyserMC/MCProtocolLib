@@ -12,7 +12,6 @@ import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +70,7 @@ public class MetadataTypes {
         };
     }
 
-    private static <T> MetadataType.HelperReader<Optional<T>> optionalReader(MetadataType.HelperReader<T> reader) {
+    private static <T> MetadataType.Reader<Optional<T>> optionalReader(MetadataType.Reader<T> reader) {
         return (helper, input) -> {
             if (!input.readBoolean()) {
                 return Optional.empty();
@@ -90,7 +89,7 @@ public class MetadataTypes {
         };
     }
 
-    private static <T> MetadataType.HelperWriter<Optional<T>> optionalWriter(MetadataType.HelperWriter<T> writer) {
+    private static <T> MetadataType.Writer<Optional<T>> optionalWriter(MetadataType.Writer<T> writer) {
         return (helper, ouput, value) -> {
             ouput.writeBoolean(value.isPresent());
             if (value.isPresent()) {
@@ -99,7 +98,7 @@ public class MetadataTypes {
         };
     }
 
-    public static MetadataType<?> read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public static MetadataType<?> read(ByteBuf in, MinecraftCodecHelper helper) {
         int id = helper.readVarInt(in);
         if (id >= VALUES.size()) {
             throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + VALUES.size() + "!");

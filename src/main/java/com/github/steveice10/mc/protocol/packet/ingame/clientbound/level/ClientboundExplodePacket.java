@@ -27,10 +27,10 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     private final float pushX;
     private final float pushY;
     private final float pushZ;
-    private final @NonNull Particle smallExplosionParticles;
-    private final @NonNull Particle largeExplosionParticles;
-    private final @NonNull ExplosionInteraction blockInteraction;
-    private final @NonNull Sound explosionSound;
+    private final @NotNull Particle smallExplosionParticles;
+    private final @NotNull Particle largeExplosionParticles;
+    private final @NotNull ExplosionInteraction blockInteraction;
+    private final @NotNull Sound explosionSound;
 
     public ClientboundExplodePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.x = in.readDouble();

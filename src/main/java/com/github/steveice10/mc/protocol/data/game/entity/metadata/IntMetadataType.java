@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.IntEntityMetadata;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class IntMetadataType extends MetadataType<Integer> {
     private final IntReader primitiveReader;
     private final IntWriter primitiveWriter;
@@ -20,32 +18,32 @@ public class IntMetadataType extends MetadataType<Integer> {
     }
 
     @Override
-    public EntityMetadata<Integer, IntMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) throws IOException {
+    public EntityMetadata<Integer, IntMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(helper, input));
     }
 
-    public void writeMetadataPrimitive(MinecraftCodecHelper helper, ByteBuf output, int value) throws IOException {
+    public void writeMetadataPrimitive(MinecraftCodecHelper helper, ByteBuf output, int value) {
         this.primitiveWriter.writePrimitive(helper, output, value);
     }
 
     @FunctionalInterface
     public interface IntReader extends Reader<Integer> {
-        int readPrimitive(MinecraftCodecHelper helper, ByteBuf input) throws IOException;
+        int readPrimitive(MinecraftCodecHelper helper, ByteBuf input);
 
         @Deprecated
         @Override
-        default Integer read(MinecraftCodecHelper helper, ByteBuf input) throws IOException {
+        default Integer read(MinecraftCodecHelper helper, ByteBuf input) {
             return this.readPrimitive(helper, input);
         }
     }
 
     @FunctionalInterface
     public interface IntWriter extends Writer<Integer> {
-        void writePrimitive(MinecraftCodecHelper helper, ByteBuf output, int value) throws IOException;
+        void writePrimitive(MinecraftCodecHelper helper, ByteBuf output, int value);
 
         @Deprecated
         @Override
-        default void write(MinecraftCodecHelper helper, ByteBuf output, Integer value) throws IOException {
+        default void write(MinecraftCodecHelper helper, ByteBuf output, Integer value) {
             this.writePrimitive(helper, output, value);
         }
     }

@@ -8,8 +8,6 @@ import lombok.*;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,6 +20,10 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
 
     /**
      * Creates a set score packet that adds or updates the entry.
+     *
+     * @param owner The entry to add or update.
+     * @param objective The objective to add or update the entry for.
+     * @param value The value to set the entry to.
      */
     public ClientboundSetScorePacket(@NonNull String owner, @NonNull String objective, int value) {
         this.owner = owner;
@@ -31,7 +33,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
         this.numberFormat = null;
     }
 
-    public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.owner = helper.readString(in);
         this.objective = helper.readString(in);
         this.value = helper.readVarInt(in);
@@ -40,7 +42,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.owner);
         helper.writeString(out, this.objective);
         helper.writeVarInt(out, this.value);

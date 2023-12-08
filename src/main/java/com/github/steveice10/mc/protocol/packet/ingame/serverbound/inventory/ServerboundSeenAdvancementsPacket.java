@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
 @ToString
 @EqualsAndHashCode
 public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
@@ -28,7 +26,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         this.tabId = tabId;
     }
 
-    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.action = AdvancementTabAction.from(helper.readVarInt(in));
         switch (this.action) {
             case CLOSED_SCREEN:
@@ -38,7 +36,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
                 this.tabId = helper.readString(in);
                 break;
             default:
-                throw new IOException("Unknown advancement tab action: " + this.action);
+                throw new IllegalStateException("Unknown advancement tab action: " + this.action);
         }
     }
 
@@ -58,7 +56,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.action.ordinal());
         switch (this.action) {
             case CLOSED_SCREEN:
@@ -67,7 +65,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
                 helper.writeString(out, this.tabId);
                 break;
             default:
-                throw new IOException("Unknown advancement tab action: " + this.action);
+                throw new IllegalStateException("Unknown advancement tab action: " + this.action);
         }
     }
 }

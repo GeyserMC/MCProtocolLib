@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class FloatMetadataType extends MetadataType<Float> {
     private final FloatReader primitiveReader;
     private final FloatWriter primitiveWriter;
@@ -20,32 +18,32 @@ public class FloatMetadataType extends MetadataType<Float> {
     }
 
     @Override
-    public EntityMetadata<Float, FloatMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) throws IOException {
+    public EntityMetadata<Float, FloatMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 
-    public void writeMetadataPrimitive(ByteBuf output, float value) throws IOException {
+    public void writeMetadataPrimitive(ByteBuf output, float value) {
         this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface
     public interface FloatReader extends BasicReader<Float> {
-        float readPrimitive(ByteBuf input) throws IOException;
+        float readPrimitive(ByteBuf input);
 
         @Deprecated
         @Override
-        default Float read(ByteBuf input) throws IOException {
+        default Float read(ByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
     public interface FloatWriter extends BasicWriter<Float> {
-        void writePrimitive(ByteBuf output, float value) throws IOException;
+        void writePrimitive(ByteBuf output, float value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Float value) throws IOException {
+        default void write(ByteBuf output, Float value) {
             this.writePrimitive(output, value);
         }
     }

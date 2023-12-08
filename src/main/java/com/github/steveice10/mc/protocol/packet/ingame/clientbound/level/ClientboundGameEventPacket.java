@@ -52,9 +52,9 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
         } else if (this.value instanceof Enum<?>) {
             value = ((Enum<?>) this.value).ordinal();
         } else if (this.value instanceof RainStrengthValue) {
-            value = ((RainStrengthValue) this.value).getStrength();
+            value = ((RainStrengthValue) this.value).strength();
         } else if (this.value instanceof ThunderStrengthValue) {
-            value = ((ThunderStrengthValue) this.value).getStrength();
+            value = ((ThunderStrengthValue) this.value).strength();
         }
 
         out.writeFloat(value);

@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -25,7 +23,7 @@ public class ServerboundContainerSlotStateChangedPacket implements MinecraftPack
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.slotId);
         helper.writeVarInt(out, this.containerId);
         out.writeBoolean(this.newState);

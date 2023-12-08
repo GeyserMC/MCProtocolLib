@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -23,7 +21,7 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     private final boolean regularVillager;
     private final boolean canRestock;
 
-    public ClientboundMerchantOffersPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundMerchantOffersPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = helper.readVarInt(in);
 
         int size = helper.readVarInt(in);
@@ -51,7 +49,7 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.containerId);
 
         helper.writeVarInt(out, this.trades.length);

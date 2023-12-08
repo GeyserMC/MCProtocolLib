@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -28,7 +27,7 @@ public class ListPalette implements Palette {
         this.data = new int[this.maxId + 1];
     }
 
-    public ListPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ListPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) {
         this(bitsPerEntry);
 
         int paletteLength = helper.readVarInt(in);

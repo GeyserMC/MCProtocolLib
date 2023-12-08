@@ -85,7 +85,7 @@ public enum LevelEventType implements LevelEvent {
     private final int id;
 
     @Override
-    public int getId() {
+    public int id() {
         return id;
     }
 }

@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -27,7 +25,7 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
     private final float velocityOffset;
     private final int amount;
 
-    public ClientboundLevelParticlesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLevelParticlesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         ParticleType type = helper.readParticleType(in);
         this.longDistance = in.readBoolean();
         this.x = in.readDouble();
@@ -42,7 +40,7 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeParticleType(out, this.particle.type());
         out.writeBoolean(this.longDistance);
         out.writeDouble(this.x);

@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.Objects;
 
 @Data
@@ -30,7 +29,7 @@ public abstract class EntityMetadata<V, T extends MetadataType<V>> {
      * @param helper The codec helper.
      * @param out    The output buffer.
      */
-    public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
+    public void write(MinecraftCodecHelper helper, ByteBuf out) {
         this.type.writeMetadata(helper, out, this.getValue());
     }
 

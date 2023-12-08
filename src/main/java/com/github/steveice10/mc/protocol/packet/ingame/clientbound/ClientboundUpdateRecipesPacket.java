@@ -14,15 +14,13 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     private final @NonNull Recipe[] recipes;
 
-    public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.recipes = new Recipe[helper.readVarInt(in)];
         for (int i = 0; i < this.recipes.length; i++) {
             RecipeType type = RecipeType.from(helper.readResourceLocation(in));
@@ -112,14 +110,14 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.recipes.length);
         for (Recipe recipe : this.recipes) {
-            helper.writeResourceLocation(out, recipe.getType().getResourceLocation());
-            helper.writeResourceLocation(out, recipe.getIdentifier());
-            switch (recipe.getType()) {
+            helper.writeResourceLocation(out, recipe.type().getResourceLocation());
+            helper.writeResourceLocation(out, recipe.identifier());
+            switch (recipe.type()) {
                 case CRAFTING_SHAPELESS: {
-                    ShapelessRecipeData data = (ShapelessRecipeData) recipe.getData();
+                    ShapelessRecipeData data = (ShapelessRecipeData) recipe.data();
 
                     helper.writeString(out, data.getGroup());
                     helper.writeVarInt(out, data.getCategory().ordinal());
@@ -132,7 +130,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     break;
                 }
                 case CRAFTING_SHAPED: {
-                    ShapedRecipeData data = (ShapedRecipeData) recipe.getData();
+                    ShapedRecipeData data = (ShapedRecipeData) recipe.data();
                     if (data.getIngredients().length != data.getWidth() * data.getHeight()) {
                         throw new IllegalStateException("Shaped recipe must have ingredient count equal to width * height.");
                     }
@@ -155,7 +153,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                 case BLASTING:
                 case SMOKING:
                 case CAMPFIRE_COOKING: {
-                    CookedRecipeData data = (CookedRecipeData) recipe.getData();
+                    CookedRecipeData data = (CookedRecipeData) recipe.data();
 
                     helper.writeString(out, data.getGroup());
                     helper.writeVarInt(out, data.getCategory().ordinal());
@@ -166,7 +164,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     break;
                 }
                 case STONECUTTING: {
-                    StoneCuttingRecipeData data = (StoneCuttingRecipeData) recipe.getData();
+                    StoneCuttingRecipeData data = (StoneCuttingRecipeData) recipe.data();
 
                     helper.writeString(out, data.getGroup());
                     helper.writeRecipeIngredient(out, data.getIngredient());
@@ -174,7 +172,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     break;
                 }
                 case SMITHING_TRANSFORM: {
-                    SmithingTransformRecipeData data = (SmithingTransformRecipeData) recipe.getData();
+                    SmithingTransformRecipeData data = (SmithingTransformRecipeData) recipe.data();
 
                     helper.writeRecipeIngredient(out, data.getTemplate());
                     helper.writeRecipeIngredient(out, data.getBase());
@@ -183,17 +181,17 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     break;
                 }
                 case SMITHING_TRIM: {
-                    SmithingTrimRecipeData data = (SmithingTrimRecipeData) recipe.getData();
+                    SmithingTrimRecipeData data = (SmithingTrimRecipeData) recipe.data();
 
-                    helper.writeRecipeIngredient(out, data.getTemplate());
-                    helper.writeRecipeIngredient(out, data.getBase());
-                    helper.writeRecipeIngredient(out, data.getAddition());
+                    helper.writeRecipeIngredient(out, data.template());
+                    helper.writeRecipeIngredient(out, data.base());
+                    helper.writeRecipeIngredient(out, data.addition());
                     break;
                 }
                 default: {
-                    SimpleCraftingRecipeData data = (SimpleCraftingRecipeData) recipe.getData();
+                    SimpleCraftingRecipeData data = (SimpleCraftingRecipeData) recipe.data();
 
-                    helper.writeVarInt(out, data.getCategory().ordinal());
+                    helper.writeVarInt(out, data.category().ordinal());
                     break;
                 }
             }

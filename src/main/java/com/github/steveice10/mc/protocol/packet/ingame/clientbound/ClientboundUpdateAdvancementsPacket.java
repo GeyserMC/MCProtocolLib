@@ -13,7 +13,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
         return progress.get(criterionId);
     }
 
-    public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.reset = in.readBoolean();
 
         this.advancements = new Advancement[helper.readVarInt(in)];
@@ -111,7 +110,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeBoolean(this.reset);
 
         helper.writeVarInt(out, this.advancements.length);

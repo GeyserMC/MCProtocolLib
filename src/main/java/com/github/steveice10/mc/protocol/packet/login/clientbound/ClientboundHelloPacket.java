@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -22,7 +21,7 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     private final @NotNull PublicKey publicKey;
     private final byte @NotNull [] challenge;
 
-    public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.serverId = helper.readString(in);
         byte[] publicKey = helper.readByteArray(in);
         this.challenge = helper.readByteArray(in);
@@ -30,7 +29,7 @@ public class ClientboundHelloPacket implements MinecraftPacket {
         try {
             this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
         } catch (GeneralSecurityException e) {
-            throw new IOException("Could not decode public key.", e);
+            throw new IllegalStateException("Could not decode public key.", e);
         }
     }
 

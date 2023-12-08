@@ -10,9 +10,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 @With
@@ -20,7 +18,7 @@ import java.io.IOException;
 public class ClientboundLevelEventPacket implements MinecraftPacket {
     private final @NonNull LevelEvent event;
     private final @NonNull Vector3i position;
-    private final @Nonnull LevelEventData data;
+    private final @NotNull LevelEventData data;
     private final boolean broadcast;
 
     public ClientboundLevelEventPacket(@NonNull LevelEvent event, @NonNull Vector3i position, @NonNull LevelEventData data) {
@@ -82,32 +80,32 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeLevelEvent(out, this.event);
         helper.writePosition(out, this.position);
         int value;
         if (this.data instanceof FireExtinguishData) {
             value = ((FireExtinguishData) this.data).ordinal();
         } else if (this.data instanceof RecordEventData) {
-            value = ((RecordEventData) this.data).getRecordId();
+            value = ((RecordEventData) this.data).recordId();
         } else if (this.data instanceof SmokeEventData) {
-            value = ((SmokeEventData) this.data).getDirection().ordinal();
+            value = ((SmokeEventData) this.data).direction().ordinal();
         } else if (this.data instanceof BreakBlockEventData) {
-            value = ((BreakBlockEventData) this.data).getBlockState();
+            value = ((BreakBlockEventData) this.data).blockState();
         } else if (this.data instanceof BreakPotionEventData) {
-            value = ((BreakPotionEventData) this.data).getPotionId();
+            value = ((BreakPotionEventData) this.data).potionId();
         } else if (this.data instanceof BonemealGrowEventData) {
-            value = ((BonemealGrowEventData) this.data).getParticleCount();
+            value = ((BonemealGrowEventData) this.data).particleCount();
         } else if (this.data instanceof ComposterEventData) {
             value = ((ComposterEventData) this.data).ordinal();
         } else if (this.data instanceof DragonFireballEventData) {
             value = ((DragonFireballEventData) this.data).ordinal();
         } else if (this.data instanceof ElectricSparkData) {
-            value = ((ElectricSparkData) this.data).getDirection().ordinal();
+            value = ((ElectricSparkData) this.data).direction().ordinal();
         } else if (this.data instanceof SculkBlockChargeEventData) {
             value = ((SculkBlockChargeEventData) data).getLevelValue();
         } else {
-            value = ((UnknownLevelEventData) data).getData();
+            value = ((UnknownLevelEventData) data).data();
         }
 
         out.writeInt(value);
