@@ -28,8 +28,8 @@ public class ProfileService extends Service {
     }
 
     private static Set<Set<String>> partition(Set<String> set, int size) {
-        List<String> list = new ArrayList<String>(set);
-        Set<Set<String>> ret = new HashSet<Set<String>>();
+        List<String> list = new ArrayList<>(set);
+        Set<Set<String>> ret = new HashSet<>();
         for (int i = 0; i < list.size(); i += size) {
             Set<String> s = new HashSet<>(list.subList(i, Math.min(i + size, list.size())));
             ret.add(s);
@@ -56,7 +56,7 @@ public class ProfileService extends Service {
      * @param async    Whether to perform requests asynchronously.
      */
     public void findProfilesByName(final String[] names, final ProfileLookupCallback callback, final boolean async) {
-        final Set<String> criteria = new HashSet<String>();
+        final Set<String> criteria = new HashSet<>();
         for (String name : names) {
             if (name != null && !name.isEmpty()) {
                 criteria.add(name.toLowerCase());
@@ -65,7 +65,7 @@ public class ProfileService extends Service {
 
         Runnable runnable = () -> {
             for (Set<String> request : partition(criteria, PROFILES_PER_REQUEST)) {
-                Exception error = null;
+                Exception error;
                 int failCount = 0;
                 boolean tryAgain = true;
                 while (failCount < MAX_FAIL_COUNT && tryAgain) {
@@ -73,7 +73,7 @@ public class ProfileService extends Service {
                     try {
                         GameProfile[] profiles = HTTP.makeRequest(getProxy(), getEndpointUri(SEARCH_ENDPOINT), request, GameProfile[].class);
                         failCount = 0;
-                        Set<String> missing = new HashSet<String>(request);
+                        Set<String> missing = new HashSet<>(request);
                         for (GameProfile profile : profiles) {
                             missing.remove(profile.getName().toLowerCase());
                             callback.onProfileLookupSucceeded(profile);

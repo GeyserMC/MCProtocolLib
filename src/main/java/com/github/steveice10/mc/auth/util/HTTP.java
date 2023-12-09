@@ -82,7 +82,7 @@ public class HTTP {
     }
 
     public static <T> T makeRequest(Proxy proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
-        return makeRequest(proxy, uri, input, responseType, new HashMap<String, String>());
+        return makeRequest(proxy, uri, input, responseType, new HashMap<>());
     }
 
     private static void checkForError(JsonElement response) throws RequestException {

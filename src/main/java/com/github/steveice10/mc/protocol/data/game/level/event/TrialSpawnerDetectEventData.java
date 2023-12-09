@@ -1,10 +1,4 @@
 package com.github.steveice10.mc.protocol.data.game.level.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
-public class TrialSpawnerDetectEventData implements LevelEventData {
-    private final int detectedPlayers;
+public record TrialSpawnerDetectEventData(int detectedPlayers) implements LevelEventData {
 }

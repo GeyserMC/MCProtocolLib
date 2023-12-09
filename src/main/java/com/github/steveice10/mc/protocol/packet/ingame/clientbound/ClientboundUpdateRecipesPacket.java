@@ -119,34 +119,34 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                 case CRAFTING_SHAPELESS: {
                     ShapelessRecipeData data = (ShapelessRecipeData) recipe.data();
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeVarInt(out, data.getCategory().ordinal());
-                    helper.writeVarInt(out, data.getIngredients().length);
-                    for (Ingredient ingredient : data.getIngredients()) {
+                    helper.writeString(out, data.group());
+                    helper.writeVarInt(out, data.category().ordinal());
+                    helper.writeVarInt(out, data.ingredients().length);
+                    for (Ingredient ingredient : data.ingredients()) {
                         helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeItemStack(out, data.result());
                     break;
                 }
                 case CRAFTING_SHAPED: {
                     ShapedRecipeData data = (ShapedRecipeData) recipe.data();
-                    if (data.getIngredients().length != data.getWidth() * data.getHeight()) {
+                    if (data.ingredients().length != data.width() * data.height()) {
                         throw new IllegalStateException("Shaped recipe must have ingredient count equal to width * height.");
                     }
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeVarInt(out, data.getCategory().ordinal());
+                    helper.writeString(out, data.group());
+                    helper.writeVarInt(out, data.category().ordinal());
 
                     // ShapedRecipePattern in vanilla
-                    helper.writeVarInt(out, data.getWidth());
-                    helper.writeVarInt(out, data.getHeight());
-                    for (Ingredient ingredient : data.getIngredients()) {
+                    helper.writeVarInt(out, data.width());
+                    helper.writeVarInt(out, data.height());
+                    for (Ingredient ingredient : data.ingredients()) {
                         helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    helper.writeItemStack(out, data.getResult());
-                    out.writeBoolean(data.isShowNotification());
+                    helper.writeItemStack(out, data.result());
+                    out.writeBoolean(data.showNotification());
                     break;
                 }
                 case SMELTING:
@@ -155,29 +155,29 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                 case CAMPFIRE_COOKING: {
                     CookedRecipeData data = (CookedRecipeData) recipe.data();
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeVarInt(out, data.getCategory().ordinal());
-                    helper.writeRecipeIngredient(out, data.getIngredient());
-                    helper.writeItemStack(out, data.getResult());
-                    out.writeFloat(data.getExperience());
-                    helper.writeVarInt(out, data.getCookingTime());
+                    helper.writeString(out, data.group());
+                    helper.writeVarInt(out, data.category().ordinal());
+                    helper.writeRecipeIngredient(out, data.ingredient());
+                    helper.writeItemStack(out, data.result());
+                    out.writeFloat(data.experience());
+                    helper.writeVarInt(out, data.cookingTime());
                     break;
                 }
                 case STONECUTTING: {
                     StoneCuttingRecipeData data = (StoneCuttingRecipeData) recipe.data();
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeRecipeIngredient(out, data.getIngredient());
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeString(out, data.group());
+                    helper.writeRecipeIngredient(out, data.ingredient());
+                    helper.writeItemStack(out, data.result());
                     break;
                 }
                 case SMITHING_TRANSFORM: {
                     SmithingTransformRecipeData data = (SmithingTransformRecipeData) recipe.data();
 
-                    helper.writeRecipeIngredient(out, data.getTemplate());
-                    helper.writeRecipeIngredient(out, data.getBase());
-                    helper.writeRecipeIngredient(out, data.getAddition());
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeRecipeIngredient(out, data.template());
+                    helper.writeRecipeIngredient(out, data.base());
+                    helper.writeRecipeIngredient(out, data.addition());
+                    helper.writeItemStack(out, data.result());
                     break;
                 }
                 case SMITHING_TRIM: {
