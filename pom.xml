@@ -107,6 +107,12 @@
             <version>${adventure.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-json-legacy-impl</artifactId>
+            <version>${adventure.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Lombok and annotations -->
         <dependency>
             <groupId>org.projectlombok</groupId>
