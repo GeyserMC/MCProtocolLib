@@ -11,7 +11,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 
 @Data
@@ -20,7 +19,7 @@ import java.io.IOException;
 public class ClientboundLevelEventPacket implements MinecraftPacket {
     private final @NonNull LevelEvent event;
     private final @NonNull Vector3i position;
-    private final @Nonnull LevelEventData data;
+    private final @NonNull LevelEventData data;
     private final boolean broadcast;
 
     public ClientboundLevelEventPacket(@NonNull LevelEvent event, @NonNull Vector3i position, @NonNull LevelEventData data) {
