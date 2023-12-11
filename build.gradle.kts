@@ -17,22 +17,22 @@ indra {
 
     configurePublications {
         pom {
-            name.set("MCProtocolLib")
-            url.set("https://github.com/GeyserMC/MCProtocolLib/")
+            name = "MCProtocolLib"
+            url = "https://github.com/GeyserMC/MCProtocolLib/"
             organization {
-                name.set("GeyserMC")
-                url.set("https://github.com/GeyserMC")
+                name = "GeyserMC"
+                url = "https://github.com/GeyserMC"
             }
             developers {
                 developer {
-                    id.set("steveice10")
-                    name.set("Steveice10")
-                    email.set("Steveice10@gmail.com")
+                    id = "steveice10"
+                    name = "Steveice10"
+                    email = "Steveice10@gmail.com"
                 }
                 developer {
-                    id.set("GeyserMC")
-                    name.set("GeyserMC")
-                    url.set("https://geysermc.org/")
+                    id = "GeyserMC"
+                    name = "GeyserMC"
+                    url = "https://geysermc.org/"
                 }
             }
         }
