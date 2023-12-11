@@ -5,7 +5,6 @@ plugins {
     id("net.kyori.indra") version "3.1.3"
     id("net.kyori.indra.git") version "3.1.3"
     id("net.kyori.indra.publishing") version "3.1.3"
-    id("net.kyori.indra.checkstyle") version "3.1.3"
     id("io.freefair.lombok") version "8.4"
 }
 
