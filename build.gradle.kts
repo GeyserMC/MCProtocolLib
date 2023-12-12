@@ -44,10 +44,10 @@ indra {
     }
 
     javaVersions {
-        target(17)
+        target(16)
         strictVersions()
-        testWith(17)
-        minimumToolchain(17)
+        testWith(16)
+        minimumToolchain(16)
     }
 }
 
@@ -97,8 +97,8 @@ version = "1.20.2-1-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
     withSourcesJar()
     withJavadocJar()
 }

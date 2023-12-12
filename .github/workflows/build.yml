@@ -18,22 +18,16 @@ jobs:
         # See https://github.com/gradle/wrapper-validation-action/commits
         uses: gradle/wrapper-validation-action@342dbebe7272035434f9baccc29a816ec6dd2c7b
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Set up JDK 17
+      - name: Set up JDK 16
         # See https://github.com/actions/setup-java/commits
         uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0
         with:
-          java-version: 17
+          java-version: 16
           distribution: temurin
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Build
+        # See https://github.com/gradle/gradle-build-action/commits
+        uses: gradle/gradle-build-action@3bfe3a46584a206fb8361cdedd0647b0c4204232
+        with:
+          arguments: build
+          gradle-home-cache-cleanup: true
