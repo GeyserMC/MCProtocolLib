@@ -22,13 +22,8 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      - uses: s4u/maven-settings-action@60912582505985be4cc55d2b890eb32767f8de5f
-        # See https://github.com/s4u/maven-settings-action/commits
-        with:
-          servers: '[{"id": "opencollab-release-repo", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}"},{"id": "opencollab-snapshot-repo", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}"}]'
-
-      - name: Deploy with Maven
-        run: mvn deploy -B -P deploy
+      - name: Deploy with Gradle
+        run: ./gradlew deploy
         env:
-          MAVEN_USERNAME: ${{ vars.DEPLOY_USER }}
-          MAVEN_PASSWORD: ${{ secrets.DEPLOY_PASS }}
+          OPENCOLLAB_USERNAME: ${{ vars.DEPLOY_USER }}
+          OPENCOLLAB_PASSWORD: ${{ secrets.DEPLOY_PASS }}
