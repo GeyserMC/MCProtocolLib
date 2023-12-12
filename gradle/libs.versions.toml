@@ -1,0 +1,41 @@
+metadata.format.version = "1.1"
+
+[versions]
+
+indra = "2.2.2"
+
+[libraries]
+
+adventure-text-serializer-gson = "net.kyori:adventure-text-serializer-gson:4.14.0"
+adventure-text-serializer-gson-legacy-impl = "net.kyori:adventure-text-serializer-gson-legacy-impl:4.14.0"
+
+opennbt = "com.github.steveice10:opennbt:1.6"
+mcauthlib = "com.github.GeyserMC:mcauthlib:6621fd0"
+
+math-api = "org.cloudburstmc.math:api:2.0"
+math-immutable = "org.cloudburstmc.math:immutable:2.0"
+
+fastutil-object2int-maps = "com.nukkitx.fastutil:fastutil-object-int-maps:8.5.3"
+fastutil-int2object-maps = "com.nukkitx.fastutil:fastutil-int-object-maps:8.5.3"
+
+netty-all = "io.netty:netty-all:4.1.99.Final"
+netty-codec-haproxy = "io.netty:netty-codec-haproxy:4.1.99.Final"
+netty-incubator-transport-native-io_uring = "io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.23.Final"
+
+lombok = "org.projectlombok:lombok:1.18.30"
+
+junit-jupiter = "org.junit.jupiter:junit-jupiter:5.8.2"
+
+[plugins]
+
+indra = { id = "net.kyori.indra", version.ref = "indra" }
+indra-git = { id = "net.kyori.indra.git", version.ref = "indra" }
+indra-publishing = { id = "net.kyori.indra.publishing", version.ref = "indra" }
+lombok = { id = "io.freefair.lombok", version = "8.4" }
+
+[bundles]
+
+adventure = ["adventure-text-serializer-gson", "adventure-text-serializer-gson-legacy-impl"]
+math = ["math-api", "math-immutable"]
+fastutil = ["fastutil-object2int-maps", "fastutil-int2object-maps"]
+netty = ["netty-all", "netty-codec-haproxy", "netty-incubator-transport-native-io_uring"]

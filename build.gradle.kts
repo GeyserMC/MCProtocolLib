@@ -64,32 +64,27 @@ publishing {
 
 dependencies {
     // Minecraft related libraries
-    api("com.github.steveice10:opennbt:1.6")
-    api("com.github.GeyserMC:mcauthlib:6621fd0")
+    api(libs.opennbt)
+    api(libs.mcauthlib)
 
     // Kyori adventure
-    api("net.kyori:adventure-text-serializer-gson:4.14.0")
-    api("net.kyori:adventure-text-serializer-gson-legacy-impl:4.14.0")
+    api(libs.bundles.adventure)
 
     // Math utilities
-    api("org.cloudburstmc.math:api:2.0")
-    api("org.cloudburstmc.math:immutable:2.0")
+    api(libs.bundles.math)
 
     // Stripped down fastutil
-    api("com.nukkitx.fastutil:fastutil-object-int-maps:8.5.3")
-    api("com.nukkitx.fastutil:fastutil-int-object-maps:8.5.3")
+    api(libs.bundles.fastutil)
 
     // Netty
-    api("io.netty:netty-all:4.1.99.Final")
-    api("io.netty:netty-codec-haproxy:4.1.99.Final")
-    api("io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.23.Final")
+    api(libs.bundles.netty)
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 
     // Test dependencies
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation(libs.junit.jupiter)
 }
 
 group = "com.github.steveice10"
