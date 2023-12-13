@@ -19,7 +19,7 @@ math-immutable = "org.cloudburstmc.math:immutable:2.0"
 fastutil-object2int-maps = "com.nukkitx.fastutil:fastutil-object-int-maps:8.5.3"
 fastutil-int2object-maps = "com.nukkitx.fastutil:fastutil-int-object-maps:8.5.3"
 
-netty-all = "io.netty:netty-all:4.1.102.Final"
+netty-all = "io.netty:netty-all:4.1.103.Final"
 netty-incubator-transport-native-io_uring = "io.netty.incubator:netty-incubator-transport-native-io_uring:0.0.24.Final"
 
 junit-jupiter = "org.junit.jupiter:junit-jupiter:5.8.2"
