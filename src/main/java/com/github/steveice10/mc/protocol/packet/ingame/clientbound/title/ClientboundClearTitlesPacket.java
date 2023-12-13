@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundClearTitlesPacket implements MinecraftPacket {
     private final boolean resetTimes;
 
-    public ClientboundClearTitlesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundClearTitlesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.resetTimes = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeBoolean(this.resetTimes);
     }
 }

@@ -26,7 +26,7 @@ public class ServerboundUseItemOnPacket implements MinecraftPacket {
     private final boolean insideBlock;
     private final int sequence;
 
-    public ServerboundUseItemOnPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundUseItemOnPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.hand = Hand.from(helper.readVarInt(in));
         this.position = helper.readPosition(in);
         this.face = helper.readDirection(in);
@@ -38,7 +38,7 @@ public class ServerboundUseItemOnPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.hand.ordinal());
         helper.writePosition(out, this.position);
         helper.writeDirection(out, this.face);

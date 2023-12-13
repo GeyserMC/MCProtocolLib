@@ -18,13 +18,13 @@ public class ServerboundUseItemPacket implements MinecraftPacket {
     private final @NonNull Hand hand;
     private final int sequence;
 
-    public ServerboundUseItemPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundUseItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.hand = Hand.from(helper.readVarInt(in));
         this.sequence = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.hand.ordinal());
         helper.writeVarInt(out, this.sequence);
     }

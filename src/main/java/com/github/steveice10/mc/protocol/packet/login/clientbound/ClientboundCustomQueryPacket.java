@@ -18,14 +18,14 @@ public class ClientboundCustomQueryPacket implements MinecraftPacket {
     private final @NonNull String channel;
     private final byte @NonNull[] data;
 
-    public ClientboundCustomQueryPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundCustomQueryPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.messageId = helper.readVarInt(in);
         this.channel = helper.readString(in);
         this.data = helper.readByteArray(in, ByteBuf::readableBytes);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.messageId);
         helper.writeString(out, this.channel);
         out.writeBytes(this.data);

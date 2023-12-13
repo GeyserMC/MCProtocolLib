@@ -22,7 +22,7 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     private final @NonNull PublicKey publicKey;
     private final @NonNull byte[] challenge;
 
-    public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.serverId = helper.readString(in);
         byte[] publicKey = helper.readByteArray(in);
         this.challenge = helper.readByteArray(in);
@@ -30,12 +30,12 @@ public class ClientboundHelloPacket implements MinecraftPacket {
         try {
             this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
         } catch (GeneralSecurityException e) {
-            throw new IOException("Could not decode public key.", e);
+            throw new IllegalStateException("Could not decode public key.", e);
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.serverId);
         byte[] encoded = this.publicKey.getEncoded();
         helper.writeByteArray(out, encoded);

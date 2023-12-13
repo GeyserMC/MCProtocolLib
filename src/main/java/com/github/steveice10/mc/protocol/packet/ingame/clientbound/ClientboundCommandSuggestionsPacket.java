@@ -33,7 +33,7 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
         this.tooltips = Arrays.copyOf(tooltips, tooltips.length);
     }
 
-    public ClientboundCommandSuggestionsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundCommandSuggestionsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.transactionId = helper.readVarInt(in);
         this.start = helper.readVarInt(in);
         this.length = helper.readVarInt(in);
@@ -48,7 +48,7 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.transactionId);
         helper.writeVarInt(out, this.start);
         helper.writeVarInt(out, this.length);

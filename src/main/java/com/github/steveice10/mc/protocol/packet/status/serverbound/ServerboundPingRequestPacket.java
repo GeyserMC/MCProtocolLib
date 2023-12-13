@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ServerboundPingRequestPacket implements MinecraftPacket {
     private final long pingTime;
 
-    public ServerboundPingRequestPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundPingRequestPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.pingTime = in.readLong();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeLong(this.pingTime);
     }
 }

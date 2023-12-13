@@ -30,7 +30,7 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
         this(x, y, z, yaw, pitch, teleportId, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
-    public ClientboundPlayerPositionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerPositionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -50,7 +50,7 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

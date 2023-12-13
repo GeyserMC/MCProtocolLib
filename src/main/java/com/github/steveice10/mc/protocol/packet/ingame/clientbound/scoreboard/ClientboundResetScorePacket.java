@@ -25,7 +25,7 @@ public class ClientboundResetScorePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.owner);
         helper.writeNullable(out, this.objective, helper::writeString);
     }

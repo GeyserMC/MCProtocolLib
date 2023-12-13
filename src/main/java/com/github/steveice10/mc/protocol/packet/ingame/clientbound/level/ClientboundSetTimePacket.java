@@ -16,13 +16,13 @@ public class ClientboundSetTimePacket implements MinecraftPacket {
     private final long worldAge;
     private final long time;
 
-    public ClientboundSetTimePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetTimePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.worldAge = in.readLong();
         this.time = in.readLong();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeLong(this.worldAge);
         out.writeLong(this.time);
     }

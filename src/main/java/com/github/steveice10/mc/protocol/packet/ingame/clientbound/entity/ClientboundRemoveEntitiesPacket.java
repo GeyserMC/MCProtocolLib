@@ -16,7 +16,7 @@ import java.io.IOException;
 public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
     private final @NotNull int[] entityIds;
 
-    public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityIds = new int[helper.readVarInt(in)];
         for (int i = 0; i < this.entityIds.length; i++) {
             this.entityIds[i] = helper.readVarInt(in);
@@ -24,7 +24,7 @@ public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityIds.length);
         for (int entityId : this.entityIds) {
             helper.writeVarInt(out, entityId);

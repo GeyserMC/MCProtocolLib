@@ -17,12 +17,12 @@ import java.io.IOException;
 public class ServerboundChangeDifficultyPacket implements MinecraftPacket {
     private final @NonNull Difficulty difficulty;
 
-    public ServerboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.difficulty = Difficulty.from(in.readByte());
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.difficulty.ordinal());
     }
 }

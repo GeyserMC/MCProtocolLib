@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ServerboundChatAckPacket implements MinecraftPacket {
     private final int offset;
 
-    public ServerboundChatAckPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundChatAckPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.offset = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.offset);
     }
 }

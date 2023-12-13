@@ -20,32 +20,32 @@ public class LongMetadataType extends MetadataType<Long> {
     }
 
     @Override
-    public EntityMetadata<Long, LongMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) throws IOException {
+    public EntityMetadata<Long, LongMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(helper, input));
     }
 
-    public void writeMetadataPrimitive(MinecraftCodecHelper helper, ByteBuf output, long value) throws IOException {
+    public void writeMetadataPrimitive(MinecraftCodecHelper helper, ByteBuf output, long value) {
         this.primitiveWriter.writePrimitive(helper, output, value);
     }
 
     @FunctionalInterface
     public interface LongReader extends Reader<Long> {
-        long readPrimitive(MinecraftCodecHelper helper, ByteBuf input) throws IOException;
+        long readPrimitive(MinecraftCodecHelper helper, ByteBuf input);
 
         @Deprecated
         @Override
-        default Long read(MinecraftCodecHelper helper, ByteBuf input) throws IOException {
+        default Long read(MinecraftCodecHelper helper, ByteBuf input) {
             return this.readPrimitive(helper, input);
         }
     }
 
     @FunctionalInterface
     public interface LongWriter extends Writer<Long> {
-        void writePrimitive(MinecraftCodecHelper helper, ByteBuf output, long value) throws IOException;
+        void writePrimitive(MinecraftCodecHelper helper, ByteBuf output, long value);
 
         @Deprecated
         @Override
-        default void write(MinecraftCodecHelper helper, ByteBuf output, Long value) throws IOException {
+        default void write(MinecraftCodecHelper helper, ByteBuf output, Long value) {
             this.writePrimitive(helper, output, value);
         }
     }

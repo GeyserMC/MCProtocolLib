@@ -12,12 +12,12 @@ public class MinecraftPacketSerializer<T extends MinecraftPacket> implements Pac
     private final PacketFactory<T, MinecraftCodecHelper> factory;
 
     @Override
-    public void serialize(ByteBuf buf, MinecraftCodecHelper helper, T packet) throws IOException {
+    public void serialize(ByteBuf buf, MinecraftCodecHelper helper, T packet) {
         packet.serialize(buf, helper);
     }
 
     @Override
-    public T deserialize(ByteBuf buf, MinecraftCodecHelper helper, PacketDefinition<T, MinecraftCodecHelper> definition) throws IOException {
+    public T deserialize(ByteBuf buf, MinecraftCodecHelper helper, PacketDefinition<T, MinecraftCodecHelper> definition) {
         return this.factory.construct(buf, helper);
     }
 }

@@ -15,6 +15,6 @@ public class ClientboundBundlePacket implements MinecraftPacket {
     private final List<MinecraftPacket> packets;
 
     @Override
-    public void serialize(ByteBuf buf, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf buf, MinecraftCodecHelper helper) {
     }
 }

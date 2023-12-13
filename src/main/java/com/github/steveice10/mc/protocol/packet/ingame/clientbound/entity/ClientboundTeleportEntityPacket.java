@@ -21,7 +21,7 @@ public class ClientboundTeleportEntityPacket implements MinecraftPacket {
     private final float pitch;
     private final boolean onGround;
 
-    public ClientboundTeleportEntityPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundTeleportEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -32,7 +32,7 @@ public class ClientboundTeleportEntityPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         out.writeDouble(this.x);
         out.writeDouble(this.y);

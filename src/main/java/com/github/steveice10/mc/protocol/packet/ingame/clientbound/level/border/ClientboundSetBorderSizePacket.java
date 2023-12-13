@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundSetBorderSizePacket implements MinecraftPacket {
     private final double size;
 
-    public ClientboundSetBorderSizePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetBorderSizePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.size = in.readDouble();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeDouble(this.size);
     }
 }

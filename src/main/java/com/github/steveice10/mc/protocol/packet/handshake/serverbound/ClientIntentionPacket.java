@@ -20,7 +20,7 @@ public class ClientIntentionPacket implements MinecraftPacket {
     private final int port;
     private final @NonNull HandshakeIntent intent;
 
-    public ClientIntentionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientIntentionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.protocolVersion = helper.readVarInt(in);
         this.hostname = helper.readString(in);
         this.port = in.readUnsignedShort();
@@ -28,7 +28,7 @@ public class ClientIntentionPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.protocolVersion);
         helper.writeString(out, this.hostname);
         out.writeShort(this.port);

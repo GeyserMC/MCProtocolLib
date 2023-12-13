@@ -18,13 +18,13 @@ public class ClientboundAnimatePacket implements MinecraftPacket {
     private final int entityId;
     private final @Nullable Animation animation;
 
-    public ClientboundAnimatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundAnimatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.animation = Animation.from(in.readUnsignedByte());
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         if (this.animation == null) {
             out.writeByte(-1); // Client does nothing on unknown ID

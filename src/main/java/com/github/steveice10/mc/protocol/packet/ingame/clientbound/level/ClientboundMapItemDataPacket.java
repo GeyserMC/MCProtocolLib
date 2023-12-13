@@ -30,7 +30,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
         this(mapId, scale, locked, icons, null);
     }
 
-    public ClientboundMapItemDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundMapItemDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.mapId = helper.readVarInt(in);
         this.scale = in.readByte();
         this.locked = in.readBoolean();
@@ -65,7 +65,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.mapId);
         out.writeByte(this.scale);
         out.writeBoolean(this.locked);

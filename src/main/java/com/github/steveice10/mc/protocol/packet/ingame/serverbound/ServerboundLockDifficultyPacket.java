@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ServerboundLockDifficultyPacket implements MinecraftPacket {
     private final boolean locked;
 
-    public ServerboundLockDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundLockDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.locked = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeBoolean(this.locked);
     }
 }

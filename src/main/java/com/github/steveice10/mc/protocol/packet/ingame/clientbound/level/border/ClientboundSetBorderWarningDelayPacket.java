@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundSetBorderWarningDelayPacket implements MinecraftPacket {
     private final int warningDelay;
 
-    public ClientboundSetBorderWarningDelayPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetBorderWarningDelayPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.warningDelay = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.warningDelay);
     }
 }

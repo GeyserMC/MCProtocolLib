@@ -15,7 +15,7 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         protected static final OptionalIntReader INSTANCE = new OptionalIntReader();
 
         @Override
-        public OptionalInt read(MinecraftCodecHelper helper, ByteBuf input) throws IOException {
+        public OptionalInt read(MinecraftCodecHelper helper, ByteBuf input) {
             int value = helper.readVarInt(input);
             if (value == 0) {
                 return OptionalInt.empty();
@@ -29,7 +29,7 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         protected static final OptionalIntWriter INSTANCE = new OptionalIntWriter();
 
         @Override
-        public void write(MinecraftCodecHelper helper, ByteBuf output, OptionalInt value) throws IOException {
+        public void write(MinecraftCodecHelper helper, ByteBuf output, OptionalInt value) {
             if (value.isPresent()) {
                 helper.writeVarInt(output, value.getAsInt() + 1);
             } else {

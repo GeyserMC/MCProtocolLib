@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundLoginCompressionPacket implements MinecraftPacket {
     private final int threshold;
 
-    public ClientboundLoginCompressionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLoginCompressionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.threshold = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.threshold);
     }
 

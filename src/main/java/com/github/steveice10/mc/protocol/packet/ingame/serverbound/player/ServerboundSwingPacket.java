@@ -17,12 +17,12 @@ import java.io.IOException;
 public class ServerboundSwingPacket implements MinecraftPacket {
     private final @NonNull Hand hand;
 
-    public ServerboundSwingPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSwingPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.hand = Hand.from(helper.readVarInt(in));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.hand.ordinal());
     }
 }

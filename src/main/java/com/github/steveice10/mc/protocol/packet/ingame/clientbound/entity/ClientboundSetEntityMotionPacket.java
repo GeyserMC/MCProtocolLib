@@ -18,7 +18,7 @@ public class ClientboundSetEntityMotionPacket implements MinecraftPacket {
     private final double motionY;
     private final double motionZ;
 
-    public ClientboundSetEntityMotionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetEntityMotionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.motionX = in.readShort() / 8000D;
         this.motionY = in.readShort() / 8000D;
@@ -26,7 +26,7 @@ public class ClientboundSetEntityMotionPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));

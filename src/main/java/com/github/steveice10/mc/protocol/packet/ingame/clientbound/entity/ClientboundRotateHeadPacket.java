@@ -16,13 +16,13 @@ public class ClientboundRotateHeadPacket implements MinecraftPacket {
     private final int entityId;
     private final float headYaw;
 
-    public ClientboundRotateHeadPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundRotateHeadPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.headYaw = in.readByte() * 360 / 256f;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         out.writeByte((byte) (this.headYaw * 256 / 360));
     }

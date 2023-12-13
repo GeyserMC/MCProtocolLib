@@ -26,7 +26,7 @@ public class ClientboundResourcePackPopPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeNullable(out, this.id, helper::writeUUID);
     }
 }

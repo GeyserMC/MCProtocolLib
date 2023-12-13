@@ -17,14 +17,14 @@ public class ClientboundTakeItemEntityPacket implements MinecraftPacket {
     private final int collectorEntityId;
     private final int itemCount;
 
-    public ClientboundTakeItemEntityPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundTakeItemEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.collectedEntityId = helper.readVarInt(in);
         this.collectorEntityId = helper.readVarInt(in);
         this.itemCount = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.collectedEntityId);
         helper.writeVarInt(out, this.collectorEntityId);
         helper.writeVarInt(out, this.itemCount);

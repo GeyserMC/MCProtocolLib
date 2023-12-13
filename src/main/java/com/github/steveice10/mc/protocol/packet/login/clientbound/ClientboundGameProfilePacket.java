@@ -19,7 +19,7 @@ import java.util.List;
 public class ClientboundGameProfilePacket implements MinecraftPacket {
     private final @NonNull GameProfile profile;
 
-    public ClientboundGameProfilePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundGameProfilePacket(ByteBuf in, MinecraftCodecHelper helper) {
         GameProfile profile = new GameProfile(helper.readUUID(in), helper.readString(in));
         int properties = helper.readVarInt(in);
         List<GameProfile.Property> propertyList = new ArrayList<>();
@@ -39,7 +39,7 @@ public class ClientboundGameProfilePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.profile.getId());
         helper.writeString(out, this.profile.getName());
         helper.writeVarInt(out, this.profile.getProperties().size());

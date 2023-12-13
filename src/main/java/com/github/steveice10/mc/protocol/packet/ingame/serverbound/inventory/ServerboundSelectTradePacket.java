@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ServerboundSelectTradePacket implements MinecraftPacket {
     private final int slot;
 
-    public ServerboundSelectTradePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSelectTradePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.slot);
     }
 }

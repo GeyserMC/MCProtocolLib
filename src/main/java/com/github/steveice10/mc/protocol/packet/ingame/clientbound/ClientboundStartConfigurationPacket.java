@@ -15,6 +15,6 @@ public class ClientboundStartConfigurationPacket implements MinecraftPacket {
     public ClientboundStartConfigurationPacket(ByteBuf in, MinecraftCodecHelper helper) {
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
     }
 }

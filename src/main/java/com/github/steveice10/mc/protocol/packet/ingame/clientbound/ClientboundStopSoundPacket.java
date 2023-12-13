@@ -24,7 +24,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     private final @Nullable SoundCategory category;
     private final @Nullable String sound;
 
-    public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) {
         int flags = in.readByte();
         if ((flags & FLAG_CATEGORY) != 0) {
             this.category = helper.readSoundCategory(in);
@@ -40,7 +40,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         int flags = 0;
         if (this.category != null) {
             flags |= FLAG_CATEGORY;

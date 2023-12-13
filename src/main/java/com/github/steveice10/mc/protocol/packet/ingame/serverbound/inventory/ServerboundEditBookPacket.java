@@ -20,7 +20,7 @@ public class ServerboundEditBookPacket implements MinecraftPacket {
     private final List<String> pages;
     private final @Nullable String title;
 
-    public ServerboundEditBookPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundEditBookPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = helper.readVarInt(in);
         this.pages = new ArrayList<>();
         int pagesSize = helper.readVarInt(in);
@@ -35,7 +35,7 @@ public class ServerboundEditBookPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, slot);
         helper.writeVarInt(out, this.pages.size());
         for (String page : this.pages) {

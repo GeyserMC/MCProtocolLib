@@ -50,7 +50,7 @@ public class PacketDefinition<T extends Packet, H extends PacketCodecHelper> {
         return this.serializer;
     }
 
-    public T newInstance(ByteBuf buf, H helper) throws IOException {
+    public T newInstance(ByteBuf buf, H helper) {
         return this.serializer.deserialize(buf, helper, this);
     }
 }

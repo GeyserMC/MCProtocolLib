@@ -18,13 +18,13 @@ public class ClientboundTabListPacket implements MinecraftPacket {
     private final @NonNull Component header;
     private final @NonNull Component footer;
 
-    public ClientboundTabListPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundTabListPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.header = helper.readComponent(in);
         this.footer = helper.readComponent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.header);
         helper.writeComponent(out, this.footer);
     }

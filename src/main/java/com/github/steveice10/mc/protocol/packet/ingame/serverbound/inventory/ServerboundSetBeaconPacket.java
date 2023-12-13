@@ -17,7 +17,7 @@ public class ServerboundSetBeaconPacket implements MinecraftPacket {
     private final OptionalInt primaryEffect;
     private final OptionalInt secondaryEffect;
 
-    public ServerboundSetBeaconPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSetBeaconPacket(ByteBuf in, MinecraftCodecHelper helper) {
         if (in.readBoolean()) {
             this.primaryEffect = OptionalInt.of(helper.readVarInt(in));
         } else {
@@ -32,7 +32,7 @@ public class ServerboundSetBeaconPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeBoolean(this.primaryEffect.isPresent());
         if (this.primaryEffect.isPresent()) {
             helper.writeVarInt(out, this.primaryEffect.getAsInt());

@@ -15,6 +15,6 @@ public class ClientboundChunkBatchStartPacket implements MinecraftPacket {
     public ClientboundChunkBatchStartPacket(ByteBuf in, MinecraftCodecHelper helper) {
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
     }
 }

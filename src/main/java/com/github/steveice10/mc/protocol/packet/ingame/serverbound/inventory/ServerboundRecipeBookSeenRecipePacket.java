@@ -16,12 +16,12 @@ import java.io.IOException;
 public class ServerboundRecipeBookSeenRecipePacket implements MinecraftPacket {
     private final @NonNull String recipeId;
 
-    public ServerboundRecipeBookSeenRecipePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundRecipeBookSeenRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.recipeId = helper.readString(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.recipeId);
     }
 }

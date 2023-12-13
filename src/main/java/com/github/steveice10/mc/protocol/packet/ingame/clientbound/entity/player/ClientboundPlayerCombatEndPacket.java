@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundPlayerCombatEndPacket implements MinecraftPacket {
     private final int duration;
 
-    public ClientboundPlayerCombatEndPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerCombatEndPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.duration = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.duration);
     }
 }

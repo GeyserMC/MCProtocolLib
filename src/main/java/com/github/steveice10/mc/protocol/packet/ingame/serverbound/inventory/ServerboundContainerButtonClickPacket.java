@@ -16,13 +16,13 @@ public class ServerboundContainerButtonClickPacket implements MinecraftPacket {
     private final int containerId;
     private final int buttonId;
 
-    public ServerboundContainerButtonClickPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundContainerButtonClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = in.readByte();
         this.buttonId = in.readByte();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.containerId);
         out.writeByte(this.buttonId);
     }

@@ -23,7 +23,7 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull List<Attribute> attributes;
 
-    public ClientboundUpdateAttributesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateAttributesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.attributes = new ArrayList<>();
         int length = helper.readVarInt(in);
@@ -42,7 +42,7 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeVarInt(out, this.attributes.size());
         for (Attribute attribute : this.attributes) {

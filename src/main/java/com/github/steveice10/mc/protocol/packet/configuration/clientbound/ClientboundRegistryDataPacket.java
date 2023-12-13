@@ -16,12 +16,12 @@ import java.io.IOException;
 public class ClientboundRegistryDataPacket implements MinecraftPacket {
     private final CompoundTag registry;
 
-    public ClientboundRegistryDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundRegistryDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.registry = helper.readAnyTag(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeAnyTag(out, this.registry);
     }
 }

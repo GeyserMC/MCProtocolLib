@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundPingPacket implements MinecraftPacket {
     private final int id;
 
-    public ClientboundPingPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPingPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.id = in.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeInt(this.id);
     }
 }

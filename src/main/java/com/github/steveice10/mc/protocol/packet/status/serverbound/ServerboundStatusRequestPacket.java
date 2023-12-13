@@ -12,10 +12,10 @@ import java.io.IOException;
 @NoArgsConstructor
 public class ServerboundStatusRequestPacket implements MinecraftPacket {
 
-    public ServerboundStatusRequestPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundStatusRequestPacket(ByteBuf in, MinecraftCodecHelper helper) {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
     }
 }

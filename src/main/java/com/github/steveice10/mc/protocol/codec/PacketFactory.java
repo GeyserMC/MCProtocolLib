@@ -21,5 +21,5 @@ public interface PacketFactory<T extends Packet, H extends PacketCodecHelper> {
      * @param codecHelper the codec helper
      * @return a new packet from the input
      */
-    T construct(ByteBuf buf, H codecHelper) throws IOException;
+    T construct(ByteBuf buf, H codecHelper);
 }

@@ -33,7 +33,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         this(entityId, action, 0, 0, 0, hand, isSneaking);
     }
 
-    public ServerboundInteractPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundInteractPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.action = InteractAction.from(helper.readVarInt(in));
         if (this.action == InteractAction.INTERACT_AT) {
@@ -55,7 +55,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeVarInt(out, this.action.ordinal());
         if (this.action == InteractAction.INTERACT_AT) {

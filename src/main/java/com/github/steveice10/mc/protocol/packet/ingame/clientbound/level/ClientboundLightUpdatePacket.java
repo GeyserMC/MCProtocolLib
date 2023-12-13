@@ -40,14 +40,14 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
         this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates);
     }
 
-    public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.x = helper.readVarInt(in);
         this.z = helper.readVarInt(in);
         this.lightData = helper.readLightUpdateData(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.x);
         helper.writeVarInt(out, this.z);
         helper.writeLightUpdateData(out, this.lightData);

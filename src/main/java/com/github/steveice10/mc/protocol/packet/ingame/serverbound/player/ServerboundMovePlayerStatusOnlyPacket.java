@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ServerboundMovePlayerStatusOnlyPacket implements MinecraftPacket {
     private final boolean onGround;
 
-    public ServerboundMovePlayerStatusOnlyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundMovePlayerStatusOnlyPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.onGround = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeBoolean(this.onGround);
     }
 }

@@ -17,14 +17,14 @@ public class ClientboundSetBorderLerpSizePacket implements MinecraftPacket {
     private final double newSize;
     private final long lerpTime;
 
-    public ClientboundSetBorderLerpSizePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetBorderLerpSizePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.oldSize = in.readDouble();
         this.newSize = in.readDouble();
         this.lerpTime = helper.readVarLong(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeDouble(this.oldSize);
         out.writeDouble(this.newSize);
         helper.writeVarLong(out, this.lerpTime);

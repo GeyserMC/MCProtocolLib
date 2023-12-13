@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundContainerClosePacket implements MinecraftPacket {
     private final int containerId;
 
-    public ClientboundContainerClosePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundContainerClosePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = in.readUnsignedByte();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.containerId);
     }
 }

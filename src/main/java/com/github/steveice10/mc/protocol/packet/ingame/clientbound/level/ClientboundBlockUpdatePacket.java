@@ -17,12 +17,12 @@ import java.io.IOException;
 public class ClientboundBlockUpdatePacket implements MinecraftPacket {
     private final @NonNull BlockChangeEntry entry;
 
-    public ClientboundBlockUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundBlockUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entry = new BlockChangeEntry(helper.readPosition(in), helper.readVarInt(in));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writePosition(out, this.entry.getPosition());
         helper.writeVarInt(out, this.entry.getBlock());
     }

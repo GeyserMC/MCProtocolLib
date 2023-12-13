@@ -18,13 +18,13 @@ public class ClientboundEntityEventPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull EntityEvent event;
 
-    public ClientboundEntityEventPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundEntityEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = in.readInt();
         this.event = helper.readEntityEvent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeInt(this.entityId);
         helper.writeEntityEvent(out, this.event);
     }

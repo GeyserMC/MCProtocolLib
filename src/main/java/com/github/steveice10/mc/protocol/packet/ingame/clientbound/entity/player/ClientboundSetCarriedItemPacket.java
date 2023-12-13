@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundSetCarriedItemPacket implements MinecraftPacket {
     private final int slot;
 
-    public ClientboundSetCarriedItemPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetCarriedItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = in.readByte();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.slot);
     }
 }

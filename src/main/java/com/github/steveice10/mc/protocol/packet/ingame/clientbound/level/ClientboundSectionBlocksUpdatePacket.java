@@ -33,7 +33,7 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
         this.entries = entries;
     }
 
-    public ClientboundSectionBlocksUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSectionBlocksUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         long chunkPosition = in.readLong();
         this.chunkX = (int) (chunkPosition >> 42);
         this.chunkY = (int) (chunkPosition << 44 >> 44);
@@ -50,7 +50,7 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         long chunkPosition = 0;
         chunkPosition |= (this.chunkX & 0x3FFFFFL) << 42;
         chunkPosition |= (this.chunkZ & 0x3FFFFFL) << 20;

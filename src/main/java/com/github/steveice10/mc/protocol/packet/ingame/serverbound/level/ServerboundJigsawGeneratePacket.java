@@ -19,14 +19,14 @@ public class ServerboundJigsawGeneratePacket implements MinecraftPacket {
     private final int levels;
     private final boolean keepJigsaws;
 
-    public ServerboundJigsawGeneratePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundJigsawGeneratePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);
         this.levels = helper.readVarInt(in);
         this.keepJigsaws = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writePosition(out, this.position);
         helper.writeVarInt(out, this.levels);
         out.writeBoolean(this.keepJigsaws);

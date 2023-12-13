@@ -20,13 +20,13 @@ public class ServerboundResourcePackPacket implements MinecraftPacket {
     private final @NonNull UUID id;
     private final @NonNull ResourcePackStatus status;
 
-    public ServerboundResourcePackPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundResourcePackPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.id = helper.readUUID(in);
         this.status = ResourcePackStatus.from(helper.readVarInt(in));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, id);
         helper.writeVarInt(out, this.status.ordinal());
     }

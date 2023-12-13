@@ -29,7 +29,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
     private final EnumSet<PlayerListEntryAction> actions;
     private final PlayerListEntry[] entries;
 
-    public ClientboundPlayerInfoUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerInfoUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.actions = helper.readEnumSet(in, PlayerListEntryAction.VALUES);
         this.entries = new PlayerListEntry[helper.readVarInt(in)];
         for (int count = 0; count < this.entries.length; count++) {
@@ -60,7 +60,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                             try {
                                 publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
                             } catch (GeneralSecurityException e) {
-                                throw new IOException("Could not decode public key.", e);
+                                throw new IllegalStateException("Could not decode public key.", e);
                             }
 
                             entry.setPublicKey(publicKey);
@@ -98,7 +98,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {

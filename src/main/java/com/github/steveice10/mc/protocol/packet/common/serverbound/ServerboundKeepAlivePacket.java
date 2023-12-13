@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ServerboundKeepAlivePacket implements MinecraftPacket {
     private final long pingId;
 
-    public ServerboundKeepAlivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundKeepAlivePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.pingId = in.readLong();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeLong(this.pingId);
     }
 

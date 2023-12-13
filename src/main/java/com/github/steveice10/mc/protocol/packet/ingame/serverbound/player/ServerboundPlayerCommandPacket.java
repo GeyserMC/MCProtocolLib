@@ -23,14 +23,14 @@ public class ServerboundPlayerCommandPacket implements MinecraftPacket {
         this(entityId, state, 0);
     }
 
-    public ServerboundPlayerCommandPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundPlayerCommandPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.state = PlayerState.from(helper.readVarInt(in));
         this.jumpBoost = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeVarInt(out, this.state.ordinal());
         helper.writeVarInt(out, this.jumpBoost);

@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundSetSimulationDistancePacket implements MinecraftPacket {
     private final int simulationDistance;
 
-    public ClientboundSetSimulationDistancePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetSimulationDistancePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.simulationDistance = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.simulationDistance);
     }
 }

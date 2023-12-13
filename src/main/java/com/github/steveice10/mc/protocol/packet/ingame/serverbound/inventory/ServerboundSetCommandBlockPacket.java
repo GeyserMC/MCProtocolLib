@@ -27,7 +27,7 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     private final boolean conditional;
     private final boolean automatic;
 
-    public ServerboundSetCommandBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSetCommandBlockPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);
         this.command = helper.readString(in);
         this.mode = CommandBlockMode.from(helper.readVarInt(in));
@@ -39,7 +39,7 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writePosition(out, this.position);
         helper.writeString(out, this.command);
         helper.writeVarInt(out, this.mode.ordinal());

@@ -16,13 +16,13 @@ public class ServerboundEntityTagQuery implements MinecraftPacket {
     private final int transactionId;
     private final int entityId;
 
-    public ServerboundEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) {
         this.transactionId = helper.readVarInt(in);
         this.entityId = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.transactionId);
         helper.writeVarInt(out, this.entityId);
     }

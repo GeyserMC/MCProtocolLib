@@ -16,12 +16,12 @@ import java.io.IOException;
 public class ServerboundRenameItemPacket implements MinecraftPacket {
     private final @NonNull String name;
 
-    public ServerboundRenameItemPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundRenameItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.name = helper.readString(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.name);
     }
 }

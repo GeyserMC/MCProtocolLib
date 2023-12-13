@@ -29,7 +29,7 @@ public class MapPalette implements Palette {
         this.idToState = new int[this.maxId + 1];
     }
 
-    public MapPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public MapPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) {
         this(bitsPerEntry);
 
         int paletteLength = helper.readVarInt(in);

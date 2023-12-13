@@ -13,7 +13,7 @@ import java.util.Collections;
 
 public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         this.setPackets(
                 new ClientboundLevelChunkWithLightPacket(0, 0,
                         new byte[0], new CompoundTag(""), new BlockEntityInfo[0],

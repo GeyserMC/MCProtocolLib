@@ -21,11 +21,11 @@ public class LightUpdateData {
     private final @NonNull List<byte[]> skyUpdates;
     private final @NonNull List<byte[]> blockUpdates;
 
-    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) {
         return new LightUpdateData(in, helper);
     }
 
-    private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) {
         this.skyYMask = BitSet.valueOf(helper.readLongArray(in));
         this.blockYMask = BitSet.valueOf(helper.readLongArray(in));
         this.emptySkyYMask = BitSet.valueOf(helper.readLongArray(in));
@@ -44,11 +44,11 @@ public class LightUpdateData {
         }
     }
 
-    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) throws IOException {
+    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) {
         data.write(out, helper);
     }
 
-    private void write(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    private void write(ByteBuf out, MinecraftCodecHelper helper) {
         writeBitSet(out, helper, this.skyYMask);
         writeBitSet(out, helper, this.blockYMask);
         writeBitSet(out, helper, this.emptySkyYMask);
@@ -65,7 +65,7 @@ public class LightUpdateData {
         }
     }
 
-    private void writeBitSet(ByteBuf out, MinecraftCodecHelper helper, BitSet bitSet) throws IOException {
+    private void writeBitSet(ByteBuf out, MinecraftCodecHelper helper, BitSet bitSet) {
         long[] array = bitSet.toLongArray();
         helper.writeLongArray(out, array);
     }

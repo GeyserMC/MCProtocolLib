@@ -18,13 +18,13 @@ public class ClientboundChangeDifficultyPacket implements MinecraftPacket {
     private final @NonNull Difficulty difficulty;
     private final boolean difficultyLocked;
 
-    public ClientboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.difficulty = Difficulty.from(in.readUnsignedByte());
         this.difficultyLocked = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.difficulty.ordinal());
         out.writeBoolean(this.difficultyLocked);
     }

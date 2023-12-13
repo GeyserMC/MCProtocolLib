@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface MinecraftPacket extends Packet {
 
-    void serialize(ByteBuf buf, MinecraftCodecHelper helper) throws IOException;
+    void serialize(ByteBuf buf, MinecraftCodecHelper helper);
 }

@@ -27,7 +27,7 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
         this(origin, x, y, z, 0, null);
     }
 
-    public ClientboundPlayerLookAtPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerLookAtPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.origin = RotationOrigin.from(helper.readVarInt(in));
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -43,7 +43,7 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.origin.ordinal());
         out.writeDouble(this.x);
         out.writeDouble(this.y);

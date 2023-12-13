@@ -23,7 +23,7 @@ public class ClientboundTickingStatePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeFloat(tickRate);
         out.writeBoolean(isFrozen);
     }

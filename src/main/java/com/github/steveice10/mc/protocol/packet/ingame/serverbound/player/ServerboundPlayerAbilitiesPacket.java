@@ -17,13 +17,13 @@ public class ServerboundPlayerAbilitiesPacket implements MinecraftPacket {
 
     private final boolean flying;
 
-    public ServerboundPlayerAbilitiesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundPlayerAbilitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         byte flags = in.readByte();
         this.flying = (flags & FLAG_FLYING) > 0;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         int flags = 0;
 
         if (this.flying) {

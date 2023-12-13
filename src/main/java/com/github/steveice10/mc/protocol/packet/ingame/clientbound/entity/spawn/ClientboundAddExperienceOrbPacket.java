@@ -19,7 +19,7 @@ public class ClientboundAddExperienceOrbPacket implements MinecraftPacket {
     private final double z;
     private final int exp;
 
-    public ClientboundAddExperienceOrbPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundAddExperienceOrbPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -28,7 +28,7 @@ public class ClientboundAddExperienceOrbPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         out.writeDouble(this.x);
         out.writeDouble(this.y);

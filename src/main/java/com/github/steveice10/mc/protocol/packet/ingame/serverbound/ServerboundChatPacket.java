@@ -39,7 +39,7 @@ public class ServerboundChatPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.message);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);
