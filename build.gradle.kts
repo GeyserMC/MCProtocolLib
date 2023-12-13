@@ -79,12 +79,12 @@ dependencies {
     // Netty
     api(libs.bundles.netty)
 
-    // Lombok
-    compileOnly(libs.lombok)
-    annotationProcessor(libs.lombok)
-
     // Test dependencies
     testImplementation(libs.junit.jupiter)
+}
+
+lombok {
+    version = libs.versions.lombok.get()
 }
 
 group = "com.github.steveice10"
