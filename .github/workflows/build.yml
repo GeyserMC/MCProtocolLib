@@ -30,4 +30,3 @@ jobs:
         uses: gradle/gradle-build-action@3bfe3a46584a206fb8361cdedd0647b0c4204232
         with:
           arguments: build
-          gradle-home-cache-cleanup: true
