@@ -5,7 +5,7 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>1.20.3-1-SNAPSHOT</version>
+    <version>1.20.4-1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
@@ -22,7 +22,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <adventure.version>4.14.0</adventure.version>
+        <adventure.version>4.15.0-20231207.074016-23</adventure.version>
+        <!-- fixme: update to 4.15.0 when it releases -->
     </properties>
 
     <licenses>
@@ -78,6 +79,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <!-- fixme: remove when adventure 4.15.0 releases -->
+            <id>sonatype-oss-snapshots1</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -103,7 +109,7 @@
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-serializer-gson-legacy-impl</artifactId>
+            <artifactId>adventure-text-serializer-json-legacy-impl</artifactId>
             <version>${adventure.version}</version>
             <scope>compile</scope>
         </dependency>
