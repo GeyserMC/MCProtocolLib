@@ -5,7 +5,7 @@
 
     <groupId>com.github.steveice10</groupId>
     <artifactId>mcprotocollib</artifactId>
-    <version>1.20.4-1</version>
+    <version>1.20.4-2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>MCProtocolLib</name>
@@ -20,8 +20,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <adventure.version>4.15.0-20231207.074016-23</adventure.version>
         <!-- fixme: update to 4.15.0 when it releases -->
     </properties>
