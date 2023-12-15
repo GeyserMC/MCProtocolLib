@@ -340,13 +340,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         if (tag == null) {
             throw new IllegalArgumentException("Got end-tag when trying to read Component");
         }
-        JsonElement json = ComponentSerializer.tagComponentToJson(tag);
+        JsonElement json = NbtComponentSerializer.tagComponentToJson(tag);
         return DefaultComponentSerializer.get().deserializeFromTree(json);
     }
 
     public void writeComponent(ByteBuf buf, Component component) throws IOException {
         JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
-        Tag tag = ComponentSerializer.jsonComponentToTag(json);
+        Tag tag = NbtComponentSerializer.jsonComponentToTag(json);
         writeAnyTag(buf, tag);
     }
 
