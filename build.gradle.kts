@@ -88,7 +88,7 @@ lombok {
 }
 
 group = "com.github.steveice10"
-version = "1.20.2-1-SNAPSHOT"
+version = "1.20.4-2-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
 java {
@@ -100,7 +100,7 @@ java {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-    options.compilerArgs.add("-Xlint:all,-serial,-processing")
+    options.compilerArgs.add("-Xlint:all,-processing")
 }
 
 tasks.withType<Javadoc> {

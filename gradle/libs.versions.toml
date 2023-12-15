@@ -4,11 +4,12 @@ metadata.format.version = "1.1"
 
 indra = "2.2.2"
 lombok = "1.18.30"
+adventure = "4.15.0-20231207.074016-23"
 
 [libraries]
 
-adventure-text-serializer-gson = "net.kyori:adventure-text-serializer-gson:4.14.0"
-adventure-text-serializer-gson-legacy-impl = "net.kyori:adventure-text-serializer-gson-legacy-impl:4.14.0"
+adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
+adventure-text-serializer-gson-legacy-impl = { module = "net.kyori:adventure-text-serializer-gson-legacy-impl", version.ref = "adventure" }
 
 opennbt = "com.github.steveice10:opennbt:1.6"
 mcauthlib = "com.github.GeyserMC:mcauthlib:6621fd0"
