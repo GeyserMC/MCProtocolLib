@@ -104,8 +104,9 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<Javadoc> {
-    options.encoding = "UTF-8"
     title = "MCProtocolLib Javadocs"
-    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+    val options = options as StandardJavadocDocletOptions
+    options.encoding = "UTF-8"
+    options.addStringOption("Xdoclint:all,-missing", "-quiet")
 }
 
