@@ -9,7 +9,7 @@ adventure = "4.15.0-20231207.074016-23"
 [libraries]
 
 adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
-adventure-text-serializer-gson-legacy-impl = { module = "net.kyori:adventure-text-serializer-gson-legacy-impl", version.ref = "adventure" }
+adventure-text-serializer-json-legacy-impl = { module = "net.kyori:adventure-text-serializer-json-legacy-impl", version.ref = "adventure" }
 
 opennbt = "com.github.steveice10:opennbt:1.6"
 mcauthlib = "com.github.GeyserMC:mcauthlib:6621fd0"
@@ -34,7 +34,7 @@ lombok = { id = "io.freefair.lombok", version = "8.4" }
 
 [bundles]
 
-adventure = ["adventure-text-serializer-gson", "adventure-text-serializer-gson-legacy-impl"]
+adventure = ["adventure-text-serializer-gson", "adventure-text-serializer-json-legacy-impl"]
 math = ["math-api", "math-immutable"]
 fastutil = ["fastutil-object2int-maps", "fastutil-int2object-maps"]
 netty = ["netty-all", "netty-incubator-transport-native-io_uring"]
