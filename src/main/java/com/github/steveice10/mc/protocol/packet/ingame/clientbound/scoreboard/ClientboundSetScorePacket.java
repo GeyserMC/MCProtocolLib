@@ -4,7 +4,11 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.chat.numbers.NumberFormat;
 import io.netty.buffer.ByteBuf;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 

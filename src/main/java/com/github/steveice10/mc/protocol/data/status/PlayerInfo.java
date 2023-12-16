@@ -1,7 +1,11 @@
 package com.github.steveice10.mc.protocol.data.status;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.List;
 

@@ -7,7 +7,11 @@ import com.github.steveice10.mc.protocol.data.game.scoreboard.NameTagVisibility;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamAction;
 import com.github.steveice10.mc.protocol.data.game.scoreboard.TeamColor;
 import io.netty.buffer.ByteBuf;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 

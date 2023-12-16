@@ -1,6 +1,12 @@
 package com.github.steveice10.mc.protocol.data.game.chunk;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 @Data
 @Setter(AccessLevel.NONE)

@@ -5,7 +5,11 @@ import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
 import com.github.steveice10.mc.protocol.data.game.recipe.RecipeType;
-import com.github.steveice10.mc.protocol.data.game.recipe.data.*;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.CookedRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapedRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.ShapelessRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.SmithingTransformRecipeData;
+import com.github.steveice10.mc.protocol.data.game.recipe.data.StoneCuttingRecipeData;
 import com.github.steveice10.mc.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
