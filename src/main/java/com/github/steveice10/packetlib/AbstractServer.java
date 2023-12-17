@@ -1,19 +1,9 @@
 package com.github.steveice10.packetlib;
 
-import com.github.steveice10.packetlib.event.server.ServerBoundEvent;
-import com.github.steveice10.packetlib.event.server.ServerClosedEvent;
-import com.github.steveice10.packetlib.event.server.ServerClosingEvent;
-import com.github.steveice10.packetlib.event.server.ServerEvent;
-import com.github.steveice10.packetlib.event.server.ServerListener;
-import com.github.steveice10.packetlib.event.server.SessionAddedEvent;
-import com.github.steveice10.packetlib.event.server.SessionRemovedEvent;
+import com.github.steveice10.packetlib.event.server.*;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public abstract class AbstractServer implements Server {

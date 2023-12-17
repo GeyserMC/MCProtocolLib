@@ -158,11 +158,11 @@ public class MetadataType<T> {
 
         return VALUES.get(id);
     }
-
+    
     public static MetadataType<?> from(int id) {
         return VALUES.get(id);
     }
-
+    
     public static int size() {
         return VALUES.size();
     }
