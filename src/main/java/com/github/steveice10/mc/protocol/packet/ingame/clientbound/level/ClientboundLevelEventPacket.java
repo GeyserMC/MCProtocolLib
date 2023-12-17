@@ -3,21 +3,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
-import com.github.steveice10.mc.protocol.data.game.level.event.BonemealGrowEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.BreakBlockEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.BreakPotionEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.ComposterEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.DragonFireballEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.ElectricSparkData;
-import com.github.steveice10.mc.protocol.data.game.level.event.FireExtinguishData;
-import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
-import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType;
-import com.github.steveice10.mc.protocol.data.game.level.event.RecordEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.SculkBlockChargeEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.SmokeEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.TrialSpawnerDetectEventData;
-import com.github.steveice10.mc.protocol.data.game.level.event.UnknownLevelEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +11,7 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 @Data
@@ -33,7 +20,7 @@ import java.io.IOException;
 public class ClientboundLevelEventPacket implements MinecraftPacket {
     private final @NonNull LevelEvent event;
     private final @NonNull Vector3i position;
-    private final @NonNull LevelEventData data;
+    private final @Nonnull LevelEventData data;
     private final boolean broadcast;
 
     public ClientboundLevelEventPacket(@NonNull LevelEvent event, @NonNull Vector3i position, @NonNull LevelEventData data) {

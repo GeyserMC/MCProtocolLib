@@ -10,10 +10,7 @@ import lombok.ToString;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.GeneralSecurityException;
-import java.security.Key;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 
 @ToString
 @EqualsAndHashCode

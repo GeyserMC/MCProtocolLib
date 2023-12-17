@@ -2,6 +2,9 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
+import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
