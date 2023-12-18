@@ -103,7 +103,7 @@ public class DataPalette {
         }
     }
 
-    private static int index(int x, int y, int z) {
-        return y << 8 | z << 4 | x;
+    private int index(int x, int y, int z) {
+        return y << paletteType.getMaxBitsPerEntry() | z << paletteType.getMinBitsPerEntry() | x;
     }
 }
