@@ -47,9 +47,9 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         this.pushX = in.readFloat();
         this.pushY = in.readFloat();
         this.pushZ = in.readFloat();
+        this.blockInteraction = ExplosionInteraction.from(helper.readVarInt(in)); // different order than mojang fields
         this.smallExplosionParticles = helper.readParticle(in);
         this.largeExplosionParticles = helper.readParticle(in);
-        this.blockInteraction = ExplosionInteraction.from(helper.readVarInt(in));
         this.explosionSound = helper.readSoundEvent(in);
     }
 
@@ -69,9 +69,9 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         out.writeFloat(this.pushX);
         out.writeFloat(this.pushY);
         out.writeFloat(this.pushZ);
+        helper.writeVarInt(out, this.blockInteraction.ordinal()); // different order than mojang fields
         helper.writeParticle(out, this.smallExplosionParticles);
         helper.writeParticle(out, this.largeExplosionParticles);
-        helper.writeVarInt(out, this.blockInteraction.ordinal());
         helper.writeSoundEvent(out, this.explosionSound);
     }
 }
