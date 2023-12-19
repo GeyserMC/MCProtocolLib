@@ -2,10 +2,10 @@ plugins {
     idea
     `java-library`
     `maven-publish`
-    id("net.kyori.indra") version "3.1.3"
-    id("net.kyori.indra.git") version "3.1.3"
-    id("net.kyori.indra.publishing") version "3.1.3"
-    id("io.freefair.lombok") version "8.4"
+    alias(libs.plugins.indra)
+    alias(libs.plugins.indra.git)
+    alias(libs.plugins.indra.publishing)
+    alias(libs.plugins.lombok)
 }
 
 indra {
@@ -84,7 +84,7 @@ dependencies {
 }
 
 lombok {
-    version = libs.versions.lombok.get()
+    version = libs.versions.lombok.version.get()
 }
 
 group = "com.github.steveice10"
