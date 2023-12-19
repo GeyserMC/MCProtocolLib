@@ -45,6 +45,10 @@ dependencies {
 
 To use snapshot builds, switch the URL to `https://repo.opencollab.dev/maven-snapshots/`.
 
+### Javadocs
+
+You can find the Javadocs for MCProtocolLib [on opencollab](https://ci.opencollab.dev/job/GeyserMC/job/MCProtocolLib/job/master/javadoc/overview-summary.html).
+
 ## Building the Source
 
 MCProtocolLib uses Maven to manage dependencies. To build the source code, run `mvn clean install` in the project root directory.

@@ -1,13 +1,31 @@
-bin
-lib
-target
-testing
+# Compiled plugin files
+target/
 
-.settings
+# IDE files
+.idea/
+.vscode/*
+.settings/*
+*.iml
+*.iws
+*.ipr
 .classpath
 .project
-.directory
+.factorypath
 
-*.iml
-.idea
+# UML
+*.plantuml
 
+# Gradle
+.gradle
+**/build/
+!src/**/build/
+**/run/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache

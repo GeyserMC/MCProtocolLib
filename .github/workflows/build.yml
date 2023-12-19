@@ -1,12 +1,11 @@
-name: Deploy
+name: Java CI with Gradle
 
-on:
-  push:
-    branches:
-      - master
+on: [push, pull_request]
 
 jobs:
   build:
+    # Only run on PRs if the source branch is on someone else's repo
+    if: "${{ github.event_name != 'pull_request' || github.repository != github.event.pull_request.head.repo.full_name }}"
 
     runs-on: ubuntu-latest
 
@@ -26,11 +25,8 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      - name: Publish to Maven Repository
-        if: ${{ success() && github.repository == 'GeyserMC/MCProtocolLib' && github.ref_name == 'master' }}
+      - name: Build
+        # See https://github.com/gradle/gradle-build-action/commits
         uses: gradle/gradle-build-action@3bfe3a46584a206fb8361cdedd0647b0c4204232
-        env:
-          OPENCOLLAB_USERNAME: ${{ vars.DEPLOY_USER }}
-          OPENCOLLAB_PASSWORD: ${{ secrets.DEPLOY_PASS }}
         with:
-          arguments: publish
+          arguments: build

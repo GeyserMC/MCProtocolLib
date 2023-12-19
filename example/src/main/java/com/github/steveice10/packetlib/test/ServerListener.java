@@ -10,7 +10,7 @@ import com.github.steveice10.packetlib.event.server.SessionRemovedEvent;
 import javax.crypto.SecretKey;
 
 public class ServerListener extends ServerAdapter {
-    private SecretKey key;
+    private final SecretKey key;
 
     public ServerListener(SecretKey key) {
         this.key = key;
