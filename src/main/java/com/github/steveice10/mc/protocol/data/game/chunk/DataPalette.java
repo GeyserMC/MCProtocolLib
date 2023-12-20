@@ -9,33 +9,66 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class DataPalette {
+
+    /*
+     * @deprecated globalPaletteBits is no longer in use.
+     */
+    @Deprecated(forRemoval = true)
     public static final int GLOBAL_PALETTE_BITS_PER_ENTRY = 14;
 
     private @NonNull Palette palette;
     private BitStorage storage;
     private final PaletteType paletteType;
-    private final int globalPaletteBits;
+
+    /*
+     * @deprecated globalPaletteBits is no longer in use, use {@link #DataPalette(Palette, BitStorage, PaletteType)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public DataPalette(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int globalPaletteBits) {
+        this(palette, storage, paletteType);
+    }
 
     public DataPalette(DataPalette original) {
-        this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType, original.globalPaletteBits);
+        this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType);
     }
 
     public static DataPalette createForChunk() {
-        return createForChunk(GLOBAL_PALETTE_BITS_PER_ENTRY);
+        return createEmpty(PaletteType.CHUNK);
     }
 
+    /*
+     * @deprecated globalPaletteBits is no longer in use, use {@link #createForChunk()} instead.
+     */
+    @Deprecated(forRemoval = true)
     public static DataPalette createForChunk(int globalPaletteBits) {
-        return createEmpty(PaletteType.CHUNK, globalPaletteBits);
+        return createForChunk();
     }
 
+    /*
+     * @deprecated globalPaletteBits is no longer in use, use {@link #createForBiome()} instead.
+     */
+    @Deprecated(forRemoval = true)
     public static DataPalette createForBiome(int globalPaletteBits) {
-        return createEmpty(PaletteType.BIOME, globalPaletteBits);
+        return createForBiome();
     }
 
-    public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
-        return new DataPalette(new ListPalette(paletteType.getMinBitsPerEntry()),
-                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType, globalPaletteBits);
+    public static DataPalette createForBiome() {
+        return createEmpty(PaletteType.BIOME);
     }
+
+    public static DataPalette createEmpty(PaletteType paletteType) {
+        return new DataPalette(new ListPalette(paletteType.getMinBitsPerEntry()),
+                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType);
+    }
+
+    /*
+     * @deprecated globalPaletteBits is no longer in use, use {@link #createEmpty(PaletteType)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
+        return createEmpty(paletteType);
+    }
+
 
     public int get(int x, int y, int z) {
         if (storage != null) {
@@ -103,7 +136,7 @@ public class DataPalette {
         }
     }
 
-    private static int index(int x, int y, int z) {
-        return y << 8 | z << 4 | x;
+    private int index(int x, int y, int z) {
+        return y << paletteType.getMaxBitsPerEntry() | z << paletteType.getMinBitsPerEntry() | x;
     }
 }
