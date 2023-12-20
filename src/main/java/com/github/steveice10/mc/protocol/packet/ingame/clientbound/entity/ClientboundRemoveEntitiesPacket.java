@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
-    private final @NotNull int[] entityIds;
+    private final @NonNull int[] entityIds;
 
     public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityIds = new int[helper.readVarInt(in)];

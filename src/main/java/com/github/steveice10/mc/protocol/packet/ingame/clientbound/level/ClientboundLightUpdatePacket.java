@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.BitSet;
@@ -20,7 +19,7 @@ import java.util.List;
 public class ClientboundLightUpdatePacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final @NotNull LightUpdateData lightData;
+    private final @NonNull LightUpdateData lightData;
 
     public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
                                         @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,

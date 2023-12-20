@@ -71,8 +71,8 @@ import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -188,7 +188,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return readAnyTag(buf, CompoundTag.class);
     }
 
-    @NotNull
+    @NonNull
     public CompoundTag readAnyTagOrThrow(ByteBuf buf) {
         CompoundTag tag = readAnyTag(buf);
         if (tag == null) {
@@ -624,7 +624,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    @NotNull
+    @NonNull
     public BlockEntityType readBlockEntityType(ByteBuf buf) {
         int id = this.readVarInt(buf);
         BlockEntityType type = BlockEntityType.from(id);

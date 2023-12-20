@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.entity.player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public enum Animation {
     SWING_ARM(0),

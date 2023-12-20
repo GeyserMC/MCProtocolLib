@@ -6,8 +6,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
 import java.util.BitSet;
@@ -16,7 +16,7 @@ import java.util.BitSet;
 @With
 @AllArgsConstructor
 public class ServerboundChatPacket implements MinecraftPacket {
-    private final @NotNull String message;
+    private final @NonNull String message;
     private final long timeStamp;
     private final long salt;
     private final byte @Nullable[] signature;
