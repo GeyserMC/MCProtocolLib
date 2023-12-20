@@ -79,18 +79,16 @@ dependencies {
     // Netty
     api(libs.bundles.netty)
 
-    api(libs.checkerframework.qual)
-
     // Test dependencies
     testImplementation(libs.junit.jupiter)
 }
 
 lombok {
-    version = libs.versions.lombok.get()
+    version = libs.versions.lombok.version.get()
 }
 
 group = "com.github.steveice10"
-version = "1.20.2-1-SNAPSHOT"
+version = "1.20.4-2-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
 java {
@@ -102,12 +100,13 @@ java {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-    options.compilerArgs.add("-Xlint:all,-serial,-processing")
+    options.compilerArgs.add("-Xlint:all,-processing")
 }
 
 tasks.withType<Javadoc> {
-    options.encoding = "UTF-8"
     title = "MCProtocolLib Javadocs"
-    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+    val options = options as StandardJavadocDocletOptions
+    options.encoding = "UTF-8"
+    options.addStringOption("Xdoclint:all,-missing", "-quiet")
 }
 

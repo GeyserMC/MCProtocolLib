@@ -5,3 +5,7 @@ plugins {
 dependencies {
     implementation(rootProject)
 }
+
+tasks.javadoc {
+    onlyIf { false }
+}
