@@ -146,7 +146,6 @@ public abstract class PacketProtocol {
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
-     * @if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")
@@ -212,7 +211,6 @@ public abstract class PacketProtocol {
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
-     * @if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")

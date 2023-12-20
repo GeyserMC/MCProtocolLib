@@ -12,6 +12,7 @@ math = "2.0"
 fastutil-maps = "8.5.3"
 netty = "4.1.103.Final"
 netty-io_uring = "0.0.24.Final"
+checkerframework = "3.42.0"
 junit = "5.8.2"
 
 [libraries]
@@ -30,6 +31,8 @@ fastutil-int2object-maps = { module = "com.nukkitx.fastutil:fastutil-int-object-
 
 netty-all = { module = "io.netty:netty-all", version.ref = "netty" }
 netty-incubator-transport-native-io_uring = { module = "io.netty.incubator:netty-incubator-transport-native-io_uring", version.ref = "netty-io_uring" }
+
+checkerframework-qual = { module = "org.checkerframework:checker-qual", version.ref = "checkerframework" }
 
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 
