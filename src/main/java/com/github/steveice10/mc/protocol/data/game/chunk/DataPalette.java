@@ -66,8 +66,7 @@ public class DataPalette {
      */
     @Deprecated(forRemoval = true)
     public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
-        return new DataPalette(new ListPalette(paletteType.getMinBitsPerEntry()),
-                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType);
+        return createEmpty(paletteType);
     }
 
 
