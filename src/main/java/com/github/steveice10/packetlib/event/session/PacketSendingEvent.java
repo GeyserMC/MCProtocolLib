@@ -7,7 +7,7 @@ import com.github.steveice10.packetlib.packet.Packet;
  * Called when the session is sending a packet.
  */
 public class PacketSendingEvent implements SessionEvent {
-    private Session session;
+    private final Session session;
     private Packet packet;
     private boolean cancelled = false;
 

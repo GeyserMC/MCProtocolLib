@@ -12,14 +12,14 @@ public interface PacketHeader {
      *
      * @return Whether the header's length value can vary in size.
      */
-    public boolean isLengthVariable();
+    boolean isLengthVariable();
 
     /**
      * Gets the size of the header's length value.
      *
      * @return The length value's size.
      */
-    public int getLengthSize();
+    int getLengthSize();
 
     /**
      * Gets the size of the header's length value.
@@ -27,7 +27,7 @@ public interface PacketHeader {
      * @param length Length value to get the size of.
      * @return The length value's size.
      */
-    public int getLengthSize(int length);
+    int getLengthSize(int length);
 
     /**
      * Reads the length of a packet from the given input.
@@ -37,7 +37,7 @@ public interface PacketHeader {
      * @param available   Number of packet bytes available after the length.
      * @return The resulting packet length.
      */
-    public int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available);
+    int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available);
 
     /**
      * Writes the length of a packet to the given output.
@@ -46,7 +46,7 @@ public interface PacketHeader {
      * @param codecHelper The codec helper.
      * @param length      Length to write.
      */
-    public void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length);
+    void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length);
 
     /**
      * Reads the ID of a packet from the given input.
@@ -55,7 +55,7 @@ public interface PacketHeader {
      * @param codecHelper The codec helper.
      * @return The resulting packet ID, or -1 if the packet should not be read yet.
      */
-    public int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper);
+    int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper);
 
     /**
      * Writes the ID of a packet to the given output.
@@ -64,5 +64,5 @@ public interface PacketHeader {
      * @param codecHelper The codec helper.
      * @param packetId    Packet ID to write.
      */
-    public void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId);
+    void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId);
 }

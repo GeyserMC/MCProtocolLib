@@ -6,8 +6,8 @@ import com.github.steveice10.packetlib.Session;
  * Called when a session encounters an error while reading or writing packet data.
  */
 public class PacketErrorEvent implements SessionEvent {
-    private Session session;
-    private Throwable cause;
+    private final Session session;
+    private final Throwable cause;
     private boolean suppress = false;
 
     /**
@@ -42,7 +42,7 @@ public class PacketErrorEvent implements SessionEvent {
     /**
      * Gets whether the error should be suppressed. If the error is not suppressed,
      * it will be passed on through internal error handling and disconnect the session.
-     *
+     * <br/>
      * The default value is false.
      *
      * @return Whether the error should be suppressed.

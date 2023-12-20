@@ -6,11 +6,11 @@ import java.net.SocketAddress;
  * Information describing a network proxy.
  */
 public class ProxyInfo {
-    private Type type;
-    private SocketAddress address;
-    private boolean authenticated;
-    private String username;
-    private String password;
+    private final Type type;
+    private final SocketAddress address;
+    private final boolean authenticated;
+    private final String username;
+    private final String password;
 
     /**
      * Creates a new unauthenticated ProxyInfo instance.
@@ -22,6 +22,8 @@ public class ProxyInfo {
         this.type = type;
         this.address = address;
         this.authenticated = false;
+        this.username = null;
+        this.password = null;
     }
 
     /**
@@ -33,7 +35,8 @@ public class ProxyInfo {
      * @param password Password to authenticate with.
      */
     public ProxyInfo(Type type, SocketAddress address, String username, String password) {
-        this(type, address);
+        this.type = type;
+        this.address = address;
         this.authenticated = true;
         this.username = username;
         this.password = password;
@@ -101,6 +104,6 @@ public class ProxyInfo {
         /**
          * SOCKS5 proxy.
          */
-        SOCKS5;
+        SOCKS5
     }
 }

@@ -24,11 +24,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_COMPRESSION_THRESHOLD;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_BUILDER_KEY;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_INFO_HANDLER_KEY;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
-import static com.github.steveice10.mc.protocol.MinecraftConstants.VERIFY_USERS_KEY;
+import static com.github.steveice10.mc.protocol.MinecraftConstants.*;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -110,8 +106,8 @@ public class MinecraftProtocolTest {
     }
 
     private static class ServerInfoHandlerTest implements ServerInfoHandler {
-        public CountDownLatch status = new CountDownLatch(1);
-        public ServerStatusInfo info;
+        private final CountDownLatch status = new CountDownLatch(1);
+        private ServerStatusInfo info;
 
         @Override
         public void handle(Session session, ServerStatusInfo info) {
@@ -121,13 +117,13 @@ public class MinecraftProtocolTest {
     }
 
     private static class LoginListenerTest extends SessionAdapter {
-        public CountDownLatch login = new CountDownLatch(1);
-        public ClientboundLoginPacket packet;
+        private final CountDownLatch login = new CountDownLatch(1);
+        private ClientboundLoginPacket packet;
 
         @Override
         public void packetReceived(Session session, Packet packet) {
-            if (packet instanceof ClientboundLoginPacket) {
-                this.packet = (ClientboundLoginPacket) packet;
+            if (packet instanceof ClientboundLoginPacket loginPacket) {
+                this.packet = loginPacket;
                 this.login.countDown();
             }
         }

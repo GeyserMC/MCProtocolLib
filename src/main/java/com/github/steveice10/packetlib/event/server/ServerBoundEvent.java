@@ -6,7 +6,7 @@ import com.github.steveice10.packetlib.Server;
  * Called when the server is bound to its host and port.
  */
 public class ServerBoundEvent implements ServerEvent {
-    private Server server;
+    private final Server server;
 
     /**
      * Creates a new ServerBoundEvent instance.

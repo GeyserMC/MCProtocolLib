@@ -13,7 +13,7 @@ import lombok.With;
 @AllArgsConstructor
 public class ClientboundSetPassengersPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull int[] passengerIds;
+    private final int @NonNull [] passengerIds;
 
     public ClientboundSetPassengersPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);

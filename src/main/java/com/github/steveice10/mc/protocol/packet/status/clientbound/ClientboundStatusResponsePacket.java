@@ -73,7 +73,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         JsonObject plrs = new JsonObject();
         plrs.addProperty("max", this.info.getPlayerInfo().getMaxPlayers());
         plrs.addProperty("online", this.info.getPlayerInfo().getOnlinePlayers());
-        if (this.info.getPlayerInfo().getPlayers().size() > 0) {
+        if (!this.info.getPlayerInfo().getPlayers().isEmpty()) {
             JsonArray array = new JsonArray();
             for (GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
                 JsonObject o = new JsonObject();

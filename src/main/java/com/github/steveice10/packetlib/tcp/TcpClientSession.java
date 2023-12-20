@@ -95,7 +95,7 @@ public class TcpClientSession extends TcpSession {
         try {
             final Bootstrap bootstrap = new Bootstrap();
             bootstrap.channel(CHANNEL_CLASS);
-            bootstrap.handler(new ChannelInitializer<Channel>() {
+            bootstrap.handler(new ChannelInitializer<>() {
                 @Override
                 public void initChannel(Channel channel) {
                     PacketProtocol protocol = getPacketProtocol();
@@ -163,12 +163,10 @@ public class TcpClientSession extends TcpSession {
         }
 
         if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
-            DnsNameResolver resolver = null;
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
-            try {
-                resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
-                        .channelType(DATAGRAM_CHANNEL_CLASS)
-                        .build();
+            try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
+                    .channelType(DATAGRAM_CHANNEL_CLASS)
+                    .build()) {
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
                 DnsResponse response = envelope.content();
@@ -184,7 +182,7 @@ public class TcpClientSession extends TcpSession {
                             host = host.substring(0, host.length() - 1);
                         }
 
-                        if(debug) {
+                        if (debug) {
                             System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
                         }
 
@@ -196,7 +194,7 @@ public class TcpClientSession extends TcpSession {
                 } else if (debug) {
                     System.out.println("[PacketLib] No SRV record found.");
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 if (debug) {
                     System.out.println("[PacketLib] Failed to resolve SRV record.");
                     e.printStackTrace();
@@ -204,10 +202,6 @@ public class TcpClientSession extends TcpSession {
             } finally {
                 if (envelope != null) {
                     envelope.release();
-                }
-
-                if (resolver != null) {
-                    resolver.close();
                 }
             }
         } else if(debug) {
@@ -232,33 +226,29 @@ public class TcpClientSession extends TcpSession {
 
     private void addProxy(ChannelPipeline pipeline) {
         if(proxy != null) {
-            switch(proxy.getType()) {
-                case HTTP:
+            switch (proxy.getType()) {
+                case HTTP -> {
                     if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
                     }
-
-                    break;
-                case SOCKS4:
+                }
+                case SOCKS4 -> {
                     if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
                     } else {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
                     }
-
-                    break;
-                case SOCKS5:
+                }
+                case SOCKS5 -> {
                     if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
                     }
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
+                }
+                default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
             }
         }
     }
@@ -296,26 +286,26 @@ public class TcpClientSession extends TcpSession {
         }
 
         switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING:
+            case IO_URING -> {
                 EVENT_LOOP_GROUP = new IOUringEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = IOUringSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
-                break;
-            case EPOLL:
+            }
+            case EPOLL -> {
                 EVENT_LOOP_GROUP = new EpollEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = EpollSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
-                break;
-            case KQUEUE:
+            }
+            case KQUEUE -> {
                 EVENT_LOOP_GROUP = new KQueueEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = KQueueSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
-                break;
-            case NIO:
+            }
+            case NIO -> {
                 EVENT_LOOP_GROUP = new NioEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = NioSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
-                break;
+            }
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(

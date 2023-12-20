@@ -12,7 +12,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 @With
 @AllArgsConstructor
 public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
-    private final @NonNull int[] entityIds;
+    private final int @NonNull [] entityIds;
 
     public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityIds = new int[helper.readVarInt(in)];

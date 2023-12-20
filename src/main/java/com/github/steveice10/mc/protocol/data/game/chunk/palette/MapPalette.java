@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A palette backed by a map.
@@ -54,11 +55,7 @@ public class MapPalette implements Palette {
             this.stateToId.put(state, id);
         }
 
-        if (id != null) {
-            return id;
-        } else {
-            return -1;
-        }
+        return Objects.requireNonNullElse(id, -1);
     }
 
     @Override

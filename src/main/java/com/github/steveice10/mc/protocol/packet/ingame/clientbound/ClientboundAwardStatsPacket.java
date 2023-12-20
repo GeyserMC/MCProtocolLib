@@ -23,38 +23,17 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
         for (int index = 0; index < length; index++) {
             StatisticCategory category = helper.readStatisticCategory(in);
             int statisticId = helper.readVarInt(in);
-            Statistic statistic;
-            switch (category) {
-                case BREAK_BLOCK:
-                    statistic = new BreakBlockStatistic(statisticId);
-                    break;
-                case CRAFT_ITEM:
-                    statistic = new CraftItemStatistic(statisticId);
-                    break;
-                case USE_ITEM:
-                    statistic = new UseItemStatistic(statisticId);
-                    break;
-                case BREAK_ITEM:
-                    statistic = new BreakItemStatistic(statisticId);
-                    break;
-                case PICKED_UP_ITEM:
-                    statistic = new PickupItemStatistic(statisticId);
-                    break;
-                case DROP_ITEM:
-                    statistic = new DropItemStatistic(statisticId);
-                    break;
-                case KILL_ENTITY:
-                    statistic = new KillEntityStatistic(EntityType.from(statisticId));
-                    break;
-                case KILLED_BY_ENTITY:
-                    statistic = new KilledByEntityStatistic(EntityType.from(statisticId));
-                    break;
-                case CUSTOM:
-                    statistic = CustomStatistic.from(statisticId);
-                    break;
-                default:
-                    throw new IllegalStateException();
-            }
+            Statistic statistic = switch (category) {
+                case BREAK_BLOCK -> new BreakBlockStatistic(statisticId);
+                case CRAFT_ITEM -> new CraftItemStatistic(statisticId);
+                case USE_ITEM -> new UseItemStatistic(statisticId);
+                case BREAK_ITEM -> new BreakItemStatistic(statisticId);
+                case PICKED_UP_ITEM -> new PickupItemStatistic(statisticId);
+                case DROP_ITEM -> new DropItemStatistic(statisticId);
+                case KILL_ENTITY -> new KillEntityStatistic(EntityType.from(statisticId));
+                case KILLED_BY_ENTITY -> new KilledByEntityStatistic(EntityType.from(statisticId));
+                case CUSTOM -> CustomStatistic.from(statisticId);
+            };
             this.statistics.put(statistic, helper.readVarInt(in));
         }
     }
