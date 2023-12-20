@@ -19,7 +19,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,11 +94,6 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         obj.addProperty("enforcesSecureChat", this.info.isEnforcesSecureChat());
 
         helper.writeString(out, obj.toString());
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 
     private byte[] stringToIcon(String str) {

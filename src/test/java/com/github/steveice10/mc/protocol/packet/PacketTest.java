@@ -21,7 +21,7 @@ public abstract class PacketTest {
     }
 
     @Test
-    public void testPackets() throws Exception {
+    public void testPackets() {
         MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
         for (MinecraftPacket packet : this.packets) {
             ByteBuf buf = Unpooled.buffer();

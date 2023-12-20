@@ -13,7 +13,7 @@ public class TcpBundlerUnpacker extends MessageToMessageDecoder<MinecraftPacket>
     private List<MinecraftPacket> currentPackets;
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, MinecraftPacket packet, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, MinecraftPacket packet, List<Object> out) {
         if (currentPackets != null) {
             if (packet.getClass() == ClientboundDelimiterPacket.class) {
                 out.add(new ClientboundBundlePacket(currentPackets));

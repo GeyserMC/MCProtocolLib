@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
 import java.util.OptionalInt;
 
 public class OptionalIntMetadataType extends MetadataType<OptionalInt> {

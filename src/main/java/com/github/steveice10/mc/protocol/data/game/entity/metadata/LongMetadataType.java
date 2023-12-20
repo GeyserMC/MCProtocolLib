@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.LongEntityMetadata;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class LongMetadataType extends MetadataType<Long> {
     private final LongReader primitiveReader;
     private final LongWriter primitiveWriter;

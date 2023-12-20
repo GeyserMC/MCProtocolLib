@@ -12,8 +12,6 @@ import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor

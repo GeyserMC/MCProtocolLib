@@ -4,8 +4,6 @@ import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 /**
  * Factory for constructing {@link Packet}s.
  *

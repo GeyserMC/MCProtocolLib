@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
-import java.io.IOException;
-
 @ToString
 @EqualsAndHashCode
 public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {

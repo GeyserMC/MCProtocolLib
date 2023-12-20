@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class BooleanMetadataType extends MetadataType<Boolean> {
     private final BooleanReader primitiveReader;
     private final BooleanWriter primitiveWriter;

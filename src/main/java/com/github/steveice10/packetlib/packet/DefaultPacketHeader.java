@@ -3,8 +3,6 @@ package com.github.steveice10.packetlib.packet;
 import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 /**
  * The default packet header, using a varint packet length and id.
  */

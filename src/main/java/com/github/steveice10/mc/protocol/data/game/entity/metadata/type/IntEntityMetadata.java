@@ -3,11 +3,8 @@ package com.github.steveice10.mc.protocol.data.game.entity.metadata.type;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.IntMetadataType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
-
-import java.io.IOException;
 
 public class IntEntityMetadata extends EntityMetadata<Integer, IntMetadataType> {
     private final int value;

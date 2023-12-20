@@ -4,16 +4,14 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.IntEntityMetadata;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class IntMetadataType extends MetadataType<Integer> {
     private final IntReader primitiveReader;
     private final IntWriter primitiveWriter;
     private final IntEntityMetadataFactory primitiveFactory;
-    
+
     protected IntMetadataType(IntReader reader, IntWriter writer, IntEntityMetadataFactory metadataFactory) {
         super(reader, writer, metadataFactory);
-        
+
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
         this.primitiveFactory = metadataFactory;

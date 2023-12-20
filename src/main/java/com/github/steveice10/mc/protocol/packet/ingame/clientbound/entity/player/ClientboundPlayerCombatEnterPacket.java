@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @NoArgsConstructor

@@ -6,8 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadat
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
-import java.io.IOException;
-
 public class BooleanEntityMetadata extends EntityMetadata<Boolean, BooleanMetadataType> {
     private final boolean value;
 

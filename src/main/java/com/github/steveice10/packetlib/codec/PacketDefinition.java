@@ -3,8 +3,6 @@ package com.github.steveice10.packetlib.codec;
 import com.github.steveice10.packetlib.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 /**
  * Represents a definition of a packet with various
  * information about it, such as it's id, class and

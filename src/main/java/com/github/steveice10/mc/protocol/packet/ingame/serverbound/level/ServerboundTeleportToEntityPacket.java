@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Data

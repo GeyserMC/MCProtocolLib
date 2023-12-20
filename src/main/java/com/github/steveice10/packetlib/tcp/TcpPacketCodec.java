@@ -23,7 +23,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) throws Exception {
+    public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) {
         int initial = buf.writerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
@@ -31,7 +31,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         try {
             int packetId = this.client ? packetProtocol.getServerboundId(packet) : packetProtocol.getClientboundId(packet);
             PacketDefinition definition = this.client ? packetProtocol.getServerboundDefinition(packetId) : packetProtocol.getClientboundDefinition(packetId);
-            
+
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
         } catch (Throwable t) {
@@ -47,7 +47,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
         int initial = buf.readerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();

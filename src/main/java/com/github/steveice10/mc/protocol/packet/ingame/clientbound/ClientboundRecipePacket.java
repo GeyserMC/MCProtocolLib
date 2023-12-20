@@ -6,7 +6,6 @@ import com.github.steveice10.mc.protocol.data.game.UnlockRecipesAction;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 @Data

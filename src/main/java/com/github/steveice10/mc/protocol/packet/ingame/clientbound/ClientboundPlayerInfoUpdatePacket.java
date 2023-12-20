@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -20,7 +19,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @With
