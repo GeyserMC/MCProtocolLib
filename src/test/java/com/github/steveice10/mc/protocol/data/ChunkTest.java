@@ -31,8 +31,8 @@ public class ChunkTest {
         chunkSectionsToTest.add(section);
 
         SingletonPalette singletonPalette = new SingletonPalette(20);
-        DataPalette dataPalette = new DataPalette(singletonPalette, null, PaletteType.CHUNK, DataPalette.GLOBAL_PALETTE_BITS_PER_ENTRY);
-        DataPalette biomePalette = new DataPalette(singletonPalette, null, PaletteType.BIOME, 4);
+        DataPalette dataPalette = new DataPalette(singletonPalette, null, PaletteType.CHUNK);
+        DataPalette biomePalette = new DataPalette(singletonPalette, null, PaletteType.BIOME);
         section = new ChunkSection(4096, dataPalette, biomePalette);
         chunkSectionsToTest.add(section);
     }
@@ -45,7 +45,7 @@ public class ChunkTest {
             helper.writeChunkSection(buf, section);
             ChunkSection decoded;
             try {
-                decoded = helper.readChunkSection(buf, 4);
+                decoded = helper.readChunkSection(buf);
             } catch (Exception e) {
                 System.out.println(section);
                 e.printStackTrace();
