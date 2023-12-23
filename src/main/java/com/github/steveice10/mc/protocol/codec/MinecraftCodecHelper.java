@@ -357,7 +357,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             ret.add(this.readMetadata(buf, id));
         }
 
-        return ret.toArray(new EntityMetadata[0]);
+        return ret.toArray(new EntityMetadata<?, ?>[0]);
     }
 
     public void writeEntityMetadata(ByteBuf buf, EntityMetadata<?, ?>[] metadata) throws IOException {
