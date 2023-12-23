@@ -221,6 +221,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
         return expected.cast(tag);
     }
+
     public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) throws IOException {
         NBTIO.writeAnyTag(new OutputStream() {
             @Override
@@ -479,27 +480,43 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         switch (type) {
             case BLOCK, BLOCK_MARKER -> this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
             case DUST -> {
-                buf.writeFloat(((DustParticleData) data).getRed());
-                buf.writeFloat(((DustParticleData) data).getGreen());
-                buf.writeFloat(((DustParticleData) data).getBlue());
-                buf.writeFloat(((DustParticleData) data).getScale());
+                DustParticleData dust = (DustParticleData) data;
+                buf.writeFloat(dust.getRed());
+                buf.writeFloat(dust.getGreen());
+                buf.writeFloat(dust.getBlue());
+                buf.writeFloat(dust.getScale());
             }
             case DUST_COLOR_TRANSITION -> {
-                buf.writeFloat(((DustParticleData) data).getRed());
-                buf.writeFloat(((DustParticleData) data).getGreen());
-                buf.writeFloat(((DustParticleData) data).getBlue());
-                buf.writeFloat(((DustParticleData) data).getScale());
-                buf.writeFloat(((DustColorTransitionParticleData) data).getNewRed());
-                buf.writeFloat(((DustColorTransitionParticleData) data).getNewGreen());
-                buf.writeFloat(((DustColorTransitionParticleData) data).getNewBlue());
+                DustColorTransitionParticleData dust = (DustColorTransitionParticleData) data;
+                buf.writeFloat(dust.getRed());
+                buf.writeFloat(dust.getGreen());
+                buf.writeFloat(dust.getBlue());
+                buf.writeFloat(dust.getScale());
+
+                buf.writeFloat(dust.getNewRed());
+                buf.writeFloat(dust.getNewGreen());
+                buf.writeFloat(dust.getNewBlue());
             }
-            case FALLING_DUST -> this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
-            case ITEM -> this.writeItemStack(buf, ((ItemParticleData) data).getItemStack());
-            case SCULK_CHARGE -> buf.writeFloat(((SculkChargeParticleData) data).getRoll());
-            case SHRIEK -> this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
+            case FALLING_DUST -> {
+                FallingDustParticleData fallingDust = (FallingDustParticleData) data;
+                this.writeVarInt(buf, fallingDust.getBlockState());
+            }
+            case ITEM -> {
+                ItemParticleData item = (ItemParticleData) data;
+                this.writeItemStack(buf, item.getItemStack());
+            }
+            case SCULK_CHARGE -> {
+                SculkChargeParticleData sculkCharge = (SculkChargeParticleData) data;
+                buf.writeFloat(sculkCharge.getRoll());
+            }
+            case SHRIEK -> {
+                ShriekParticleData shriek = (ShriekParticleData) data;
+                this.writeVarInt(buf, shriek.getDelay());
+            }
             case VIBRATION -> {
-                this.writePositionSource(buf, ((VibrationParticleData) data).getPositionSource());
-                this.writeVarInt(buf, ((VibrationParticleData) data).getArrivalTicks());
+                VibrationParticleData vibration = (VibrationParticleData) data;
+                this.writePositionSource(buf, vibration.getPositionSource());
+                this.writeVarInt(buf, vibration.getArrivalTicks());
             }
         }
     }

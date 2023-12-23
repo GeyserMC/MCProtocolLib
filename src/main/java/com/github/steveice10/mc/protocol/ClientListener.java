@@ -90,22 +90,22 @@ public class ClientListener extends SessionAdapter {
                 session.enableEncryption(protocol.enableEncryption(key));
             } else if (packet instanceof ClientboundGameProfilePacket) {
                 session.send(new ServerboundLoginAcknowledgedPacket());
-            } else if (packet instanceof ClientboundLoginDisconnectPacket) {
-                session.disconnect(((ClientboundLoginDisconnectPacket) packet).getReason());
-            } else if (packet instanceof ClientboundLoginCompressionPacket) {
-                session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), false);
+            } else if (packet instanceof ClientboundLoginDisconnectPacket loginDisconnectPacket) {
+                session.disconnect(loginDisconnectPacket.getReason());
+            } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
+                session.setCompressionThreshold(loginCompressionPacket.getThreshold(), false);
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
-            if (packet instanceof ClientboundStatusResponsePacket) {
-                ServerStatusInfo info = ((ClientboundStatusResponsePacket) packet).getInfo();
+            if (packet instanceof ClientboundStatusResponsePacket statusResponsePacket) {
+                ServerStatusInfo info = statusResponsePacket.getInfo();
                 ServerInfoHandler handler = session.getFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY);
                 if (handler != null) {
                     handler.handle(session, info);
                 }
 
                 session.send(new ServerboundPingRequestPacket(System.currentTimeMillis()));
-            } else if (packet instanceof ClientboundPongResponsePacket) {
-                long time = System.currentTimeMillis() - ((ClientboundPongResponsePacket) packet).getPingTime();
+            } else if (packet instanceof ClientboundPongResponsePacket pongResponsePacket) {
+                long time = System.currentTimeMillis() - pongResponsePacket.getPingTime();
                 ServerPingTimeHandler handler = session.getFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY);
                 if (handler != null) {
                     handler.handle(session, time);
@@ -114,10 +114,10 @@ public class ClientListener extends SessionAdapter {
                 session.disconnect("Finished");
             }
         } else if (protocol.getState() == ProtocolState.GAME) {
-            if (packet instanceof ClientboundKeepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
-                session.send(new ServerboundKeepAlivePacket(((ClientboundKeepAlivePacket) packet).getPingId()));
-            } else if (packet instanceof ClientboundDisconnectPacket) {
-                session.disconnect(((ClientboundDisconnectPacket) packet).getReason());
+            if (packet instanceof ClientboundKeepAlivePacket keepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+                session.send(new ServerboundKeepAlivePacket(keepAlivePacket.getPingId()));
+            } else if (packet instanceof ClientboundDisconnectPacket disconnectPacket) {
+                session.disconnect(disconnectPacket.getReason());
             } else if (packet instanceof ClientboundStartConfigurationPacket) {
                 session.send(new ServerboundConfigurationAcknowledgedPacket());
             }
@@ -153,10 +153,15 @@ public class ClientListener extends SessionAdapter {
     @Override
     public void connected(ConnectedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-        if (this.targetState == ProtocolState.LOGIN) {
-            event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
-        } else if (this.targetState == ProtocolState.STATUS) {
-            event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
-        }
+        event.getSession().send(new ClientIntentionPacket(
+            protocol.getCodec().getProtocolVersion(),
+            event.getSession().getHost(),
+            event.getSession().getPort(),
+            switch (this.targetState) {
+                case LOGIN -> HandshakeIntent.LOGIN;
+                case STATUS -> HandshakeIntent.STATUS;
+                default -> throw new IllegalArgumentException("Invalid target state: " + this.targetState);
+            }
+        ));
     }
 }

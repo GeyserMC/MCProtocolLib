@@ -16,7 +16,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
     private final int slot;
-    private final @NonNull ItemStack clickedItem;
+    private final ItemStack clickedItem;
 
     public ServerboundSetCreativeModeSlotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.slot = in.readShort();

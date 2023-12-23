@@ -182,8 +182,8 @@ public abstract class PacketProtocol {
      * @throws IllegalArgumentException If the packet is not registered.
      */
     public int getClientboundId(Packet packet) {
-        if (packet instanceof BufferedPacket) {
-            return getClientboundId(((BufferedPacket) packet).getPacketClass());
+        if (packet instanceof BufferedPacket bufferedPacket) {
+            return getClientboundId(bufferedPacket.getPacketClass());
         }
 
         return getClientboundId(packet.getClass());
@@ -233,7 +233,7 @@ public abstract class PacketProtocol {
      */
     public int getServerboundId(Class<? extends Packet> packetClass) {
         Integer packetId = this.serverboundIds.get(packetClass);
-        if(packetId == null) {
+        if (packetId == null) {
             throw new IllegalArgumentException("Unregistered serverbound packet class: " + packetClass.getName());
         }
 
@@ -248,8 +248,8 @@ public abstract class PacketProtocol {
      * @throws IllegalArgumentException If the packet is not registered.
      */
     public int getServerboundId(Packet packet) {
-        if (packet instanceof BufferedPacket) {
-            return getServerboundId(((BufferedPacket) packet).getPacketClass());
+        if (packet instanceof BufferedPacket bufferedPacket) {
+            return getServerboundId(bufferedPacket.getPacketClass());
         }
 
         return getServerboundId(packet.getClass());

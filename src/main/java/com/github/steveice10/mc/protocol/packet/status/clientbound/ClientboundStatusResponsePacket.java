@@ -96,11 +96,6 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         helper.writeString(out, obj.toString());
     }
 
-    @Override
-    public boolean isPriority() {
-        return false;
-    }
-
     private byte[] stringToIcon(String str) {
         if (str.startsWith("data:image/png;base64,")) {
             str = str.substring("data:image/png;base64,".length());

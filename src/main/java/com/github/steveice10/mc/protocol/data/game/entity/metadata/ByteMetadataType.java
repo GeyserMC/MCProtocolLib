@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class ByteMetadataType extends MetadataType<Byte> {
     private final ByteReader primitiveReader;
     private final ByteWriter primitiveWriter;

@@ -4,8 +4,6 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class FloatMetadataType extends MetadataType<Float> {
     private final FloatReader primitiveReader;
     private final FloatWriter primitiveWriter;

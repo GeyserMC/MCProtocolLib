@@ -28,6 +28,7 @@ math-immutable = { module = "org.cloudburstmc.math:immutable", version.ref = "ma
 
 fastutil-object2int-maps = { module = "com.nukkitx.fastutil:fastutil-object-int-maps", version.ref = "fastutil-maps" }
 fastutil-int2object-maps = { module = "com.nukkitx.fastutil:fastutil-int-object-maps", version.ref = "fastutil-maps" }
+fastutil-int2int-maps = { module = "com.nukkitx.fastutil:fastutil-int-int-maps", version.ref = "fastutil-maps" }
 
 netty-all = { module = "io.netty:netty-all", version.ref = "netty" }
 netty-incubator-transport-native-io_uring = { module = "io.netty.incubator:netty-incubator-transport-native-io_uring", version.ref = "netty-io_uring" }
@@ -47,5 +48,5 @@ lombok = { id = "io.freefair.lombok", version.ref = "lombok-plugin" }
 
 adventure = ["adventure-text-serializer-gson", "adventure-text-serializer-json-legacy-impl"]
 math = ["math-api", "math-immutable"]
-fastutil = ["fastutil-object2int-maps", "fastutil-int2object-maps"]
+fastutil = ["fastutil-object2int-maps", "fastutil-int2object-maps", "fastutil-int2int-maps"]
 netty = ["netty-all", "netty-incubator-transport-native-io_uring"]
