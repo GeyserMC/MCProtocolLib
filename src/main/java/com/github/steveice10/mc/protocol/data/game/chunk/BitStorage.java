@@ -34,51 +34,82 @@ public class BitStorage {
     @Getter
     private final long @NonNull[] data;
     @Getter
-    private final int bitsPerEntry;
+    private final int bits;
     @Getter
     private final int size;
 
-    private final long maxValue;
+    private final long mask;
     private final int valuesPerLong;
-    private final long divideMultiply;
+    private final long divideMul;
     private final long divideAdd;
     private final int divideShift;
 
-    public BitStorage(int bitsPerEntry, int size) {
-        this(bitsPerEntry, size, null);
+    public BitStorage(int bits, int size) {
+        this(bits, size, null);
     }
 
-    public BitStorage(int bitsPerEntry, int size, long @Nullable[] data) {
-        if (bitsPerEntry < 1 || bitsPerEntry > 32) {
+    public BitStorage(int bits, int size, long @Nullable[] data) {
+        if (bits < 1 || bits > 32) {
             throw new IllegalArgumentException("bitsPerEntry must be between 1 and 32, inclusive.");
         }
 
-        this.bitsPerEntry = bitsPerEntry;
+        this.bits = bits;
         this.size = size;
 
-        this.maxValue = (1L << bitsPerEntry) - 1L;
-        this.valuesPerLong = (char) (64 / bitsPerEntry);
+        this.mask = (1L << bits) - 1L;
+        this.valuesPerLong = (char) (64 / bits);
+
+        int magicIndex = 3 * (this.valuesPerLong - 1);
+        this.divideMul = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex]);
+        this.divideAdd = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex + 1]);
+        this.divideShift = MAGIC_VALUES[magicIndex + 2];
+
         int expectedLength = (size + this.valuesPerLong - 1) / this.valuesPerLong;
         if (data != null) {
             if (data.length != expectedLength) {
-                // Hypixel as of 1.19.0
-                data = Arrays.copyOf(data, expectedLength);
+                throw new IllegalArgumentException("Expected data length of " + expectedLength + ", got " + data.length + ".");
             }
 
             this.data = data;
         } else {
             this.data = new long[expectedLength];
         }
-
-        int magicIndex = 3 * (this.valuesPerLong - 1);
-        this.divideMultiply = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex]);
-        this.divideAdd = Integer.toUnsignedLong(MAGIC_VALUES[magicIndex + 1]);
-        this.divideShift = MAGIC_VALUES[magicIndex + 2];
     }
 
     public BitStorage(BitStorage original) {
-        this(Arrays.copyOf(original.data, original.data.length), original.bitsPerEntry, original.size,
-                original.maxValue, original.valuesPerLong, original.divideMultiply, original.divideAdd, original.divideShift);
+        this(Arrays.copyOf(original.data, original.data.length), original.bits, original.size,
+                original.mask, original.valuesPerLong, original.divideMul, original.divideAdd, original.divideShift);
+    }
+
+    public int getAndSet(int index, int value) {
+        if (index < 0 || index > this.size - 1) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (value < 0 || value > this.mask) {
+            throw new IllegalArgumentException("Value cannot be outside of accepted range.");
+        }
+
+        int cellIndex = cellIndex(index);
+        int bitIndex = bitIndex(index, cellIndex);
+        long currentValue = this.data[cellIndex];
+        int result = (int) (currentValue >> bitIndex & this.mask);
+        this.data[cellIndex] = currentValue & ~(this.mask << bitIndex) | ((long) value & this.mask) << bitIndex;
+        return result;
+    }
+
+    public void set(int index, int value) {
+        if (index < 0 || index > this.size - 1) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        if (value < 0 || value > this.mask) {
+            throw new IllegalArgumentException("Value cannot be outside of accepted range.");
+        }
+
+        int cellIndex = cellIndex(index);
+        int bitIndex = bitIndex(index, cellIndex);
+        this.data[cellIndex] = this.data[cellIndex] & ~(this.mask << bitIndex) | ((long) value & this.mask) << bitIndex;
     }
 
     public int get(int index) {
@@ -88,21 +119,7 @@ public class BitStorage {
 
         int cellIndex = cellIndex(index);
         int bitIndex = bitIndex(index, cellIndex);
-        return (int) (this.data[cellIndex] >> bitIndex & this.maxValue);
-    }
-
-    public void set(int index, int value) {
-        if (index < 0 || index > this.size - 1) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        if (value < 0 || value > this.maxValue) {
-            throw new IllegalArgumentException("Value cannot be outside of accepted range.");
-        }
-
-        int cellIndex = cellIndex(index);
-        int bitIndex = bitIndex(index, cellIndex);
-        this.data[cellIndex] = this.data[cellIndex] & ~(this.maxValue << bitIndex) | ((long) value & this.maxValue) << bitIndex;
+        return (int) (this.data[cellIndex] >> bitIndex & this.mask);
     }
 
     public int[] toIntArray() {
@@ -110,8 +127,8 @@ public class BitStorage {
         int index = 0;
         for (long cell : this.data) {
             for (int bitIndex = 0; bitIndex < this.valuesPerLong; bitIndex++) {
-                result[index++] = (int) (cell & this.maxValue);
-                cell >>= this.bitsPerEntry;
+                result[index++] = (int) (cell & this.mask);
+                cell >>= this.bits;
 
                 if (index >= this.size) {
                     return result;
@@ -123,10 +140,10 @@ public class BitStorage {
     }
 
     private int cellIndex(int index) {
-        return (int) (index * this.divideMultiply + this.divideAdd >> 32 >> this.divideShift);
+        return (int) (index * this.divideMul + this.divideAdd >> 32 >> this.divideShift);
     }
 
     private int bitIndex(int index, int cellIndex) {
-        return (index - cellIndex * this.valuesPerLong) * this.bitsPerEntry;
+        return (index - cellIndex * this.valuesPerLong) * this.bits;
     }
 }

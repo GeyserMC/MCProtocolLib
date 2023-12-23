@@ -80,7 +80,7 @@ public class DataPalette {
         Palette oldPalette = this.palette;
         BitStorage oldData = this.storage;
 
-        int bitsPerEntry = sanitizeBitsPerEntry(oldPalette instanceof SingletonPalette ? 1 : oldData.getBitsPerEntry() + 1);
+        int bitsPerEntry = sanitizeBitsPerEntry(oldPalette instanceof SingletonPalette ? 1 : oldData.getBits() + 1);
         this.palette = createPalette(bitsPerEntry, paletteType);
         this.storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize());
 

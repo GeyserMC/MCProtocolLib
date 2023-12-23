@@ -762,7 +762,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             return;
         }
 
-        buf.writeByte(palette.getStorage().getBitsPerEntry());
+        buf.writeByte(palette.getStorage().getBits());
 
         if (!(palette.getPalette() instanceof GlobalPalette)) {
             int paletteLength = palette.getPalette().size();
