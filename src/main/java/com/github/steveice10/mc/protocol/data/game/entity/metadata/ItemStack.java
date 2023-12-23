@@ -3,7 +3,7 @@ package com.github.steveice10.mc.protocol.data.game.entity.metadata;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Data
 @AllArgsConstructor

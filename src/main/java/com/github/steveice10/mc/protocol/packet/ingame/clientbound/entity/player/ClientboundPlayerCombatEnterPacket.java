@@ -7,19 +7,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @NoArgsConstructor
 public class ClientboundPlayerCombatEnterPacket implements MinecraftPacket {
 
-    public ClientboundPlayerCombatEnterPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerCombatEnterPacket(ByteBuf in, MinecraftCodecHelper helper) {
         // no-op
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         // no-op
     }
 }

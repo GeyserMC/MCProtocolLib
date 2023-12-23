@@ -10,7 +10,7 @@ public class ByteMetadataType extends MetadataType<Byte> {
     private final ByteReader primitiveReader;
     private final ByteWriter primitiveWriter;
     private final ByteEntityMetadataFactory primitiveFactory;
-    
+
     protected ByteMetadataType(ByteReader reader, ByteWriter writer, ByteEntityMetadataFactory metadataFactory) {
         super(reader, writer, metadataFactory);
 
@@ -20,32 +20,32 @@ public class ByteMetadataType extends MetadataType<Byte> {
     }
 
     @Override
-    public EntityMetadata<Byte, ByteMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) throws IOException {
+    public EntityMetadata<Byte, ByteMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 
-    public void writeMetadataPrimitive(ByteBuf output, byte value) throws IOException {
+    public void writeMetadataPrimitive(ByteBuf output, byte value) {
         this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface
     public interface ByteReader extends BasicReader<Byte> {
-        byte readPrimitive(ByteBuf input) throws IOException;
+        byte readPrimitive(ByteBuf input);
 
         @Deprecated
         @Override
-        default Byte read(ByteBuf input) throws IOException {
+        default Byte read(ByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
     public interface ByteWriter extends BasicWriter<Byte> {
-        void writePrimitive(ByteBuf output, byte value) throws IOException;
+        void writePrimitive(ByteBuf output, byte value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Byte value) throws IOException {
+        default void write(ByteBuf output, Byte value) {
             this.writePrimitive(output, value);
         }
     }

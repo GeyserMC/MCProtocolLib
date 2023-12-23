@@ -2,18 +2,12 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
-import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerSpawnInfo;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 @Data
 @With
@@ -30,7 +24,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final boolean doLimitedCrafting;
     private final PlayerSpawnInfo commonPlayerSpawnInfo;
 
-    public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = in.readInt();
         this.hardcore = in.readBoolean();
         int worldCount = helper.readVarInt(in);
@@ -48,7 +42,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeInt(this.entityId);
         out.writeBoolean(this.hardcore);
         helper.writeVarInt(out, this.worldNames.length);

@@ -1,7 +1,6 @@
 package com.github.steveice10.packetlib.tcp;
 
 import com.github.steveice10.packetlib.Session;
-import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -20,7 +19,7 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
+    public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
         int length = in.readableBytes();
         out.ensureWritable(this.session.getPacketProtocol().getPacketHeader().getLengthSize(length) + length);
         this.session.getPacketProtocol().getPacketHeader().writeLength(out, this.session.getCodecHelper(), length);
@@ -28,7 +27,7 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
         buf.markReaderIndex();
         byte[] lengthBytes = new byte[size];
         for (int index = 0; index < lengthBytes.length; index++) {

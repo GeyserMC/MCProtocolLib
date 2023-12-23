@@ -20,7 +20,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @With
@@ -98,7 +97,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {

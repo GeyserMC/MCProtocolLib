@@ -3,8 +3,6 @@ package com.github.steveice10.packetlib.packet;
 import com.github.steveice10.packetlib.codec.PacketCodecHelper;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 /**
  * The default packet header, using a varint packet length and id.
  */
@@ -35,22 +33,22 @@ public class DefaultPacketHeader implements PacketHeader {
     }
 
     @Override
-    public int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available) throws IOException {
+    public int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available) {
         return codecHelper.readVarInt(buf);
     }
 
     @Override
-    public void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length) throws IOException {
+    public void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length) {
         codecHelper.writeVarInt(buf, length);
     }
 
     @Override
-    public int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+    public int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper) {
         return codecHelper.readVarInt(buf);
     }
 
     @Override
-    public void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId) throws IOException {
+    public void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId) {
         codecHelper.writeVarInt(buf, packetId);
     }
 }

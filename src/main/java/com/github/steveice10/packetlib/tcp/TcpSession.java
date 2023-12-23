@@ -17,7 +17,7 @@ import io.netty.handler.timeout.WriteTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.ConnectException;
 import java.net.SocketAddress;

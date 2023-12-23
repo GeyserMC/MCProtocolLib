@@ -6,8 +6,8 @@ import java.net.SocketAddress;
  * Information describing a network proxy.
  */
 public class ProxyInfo {
-    private Type type;
-    private SocketAddress address;
+    private final Type type;
+    private final SocketAddress address;
     private boolean authenticated;
     private String username;
     private String password;

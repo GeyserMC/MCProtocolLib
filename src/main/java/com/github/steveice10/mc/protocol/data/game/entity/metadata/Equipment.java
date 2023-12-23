@@ -4,7 +4,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Data
 @AllArgsConstructor

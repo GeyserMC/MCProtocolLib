@@ -7,14 +7,6 @@ import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.AddressedEnvelope;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
@@ -103,7 +95,7 @@ public class TcpClientSession extends TcpSession {
         try {
             final Bootstrap bootstrap = new Bootstrap();
             bootstrap.channel(CHANNEL_CLASS);
-            bootstrap.handler(new ChannelInitializer<Channel>() {
+            bootstrap.handler(new ChannelInitializer<>() {
                 @Override
                 public void initChannel(Channel channel) {
                     PacketProtocol protocol = getPacketProtocol();
@@ -171,12 +163,10 @@ public class TcpClientSession extends TcpSession {
         }
 
         if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
-            DnsNameResolver resolver = null;
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
-            try {
-                resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
-                        .channelType(DATAGRAM_CHANNEL_CLASS)
-                        .build();
+            try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
+                    .channelType(DATAGRAM_CHANNEL_CLASS)
+                    .build()) {
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
                 DnsResponse response = envelope.content();
@@ -192,7 +182,7 @@ public class TcpClientSession extends TcpSession {
                             host = host.substring(0, host.length() - 1);
                         }
 
-                        if(debug) {
+                        if (debug) {
                             System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
                         }
 
@@ -204,7 +194,7 @@ public class TcpClientSession extends TcpSession {
                 } else if (debug) {
                     System.out.println("[PacketLib] No SRV record found.");
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 if (debug) {
                     System.out.println("[PacketLib] Failed to resolve SRV record.");
                     e.printStackTrace();
@@ -214,9 +204,6 @@ public class TcpClientSession extends TcpSession {
                     envelope.release();
                 }
 
-                if (resolver != null) {
-                    resolver.close();
-                }
             }
         } else if(debug) {
             System.out.println("[PacketLib] Not resolving SRV record for " + this.host);

@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -19,14 +17,14 @@ public class ServerboundRecipeBookChangeSettingsPacket implements MinecraftPacke
     private final boolean bookOpen;
     private final boolean filterActive;
 
-    public ServerboundRecipeBookChangeSettingsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundRecipeBookChangeSettingsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.type = CraftingBookStateType.from(helper.readVarInt(in));
         this.bookOpen = in.readBoolean();
         this.filterActive = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.type.ordinal());
         out.writeBoolean(this.bookOpen);
         out.writeBoolean(this.filterActive);

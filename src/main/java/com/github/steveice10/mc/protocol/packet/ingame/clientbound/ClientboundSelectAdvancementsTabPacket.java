@@ -7,15 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSelectAdvancementsTabPacket implements MinecraftPacket {
     private final String tabId;
 
-    public ClientboundSelectAdvancementsTabPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSelectAdvancementsTabPacket(ByteBuf in, MinecraftCodecHelper helper) {
         if (in.readBoolean()) {
             this.tabId = helper.readString(in);
         } else {
@@ -24,7 +22,7 @@ public class ClientboundSelectAdvancementsTabPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         if (this.tabId != null) {
             out.writeBoolean(true);
             helper.writeString(out, this.tabId);

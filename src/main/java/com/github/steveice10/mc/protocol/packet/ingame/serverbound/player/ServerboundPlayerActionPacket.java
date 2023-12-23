@@ -11,8 +11,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -22,7 +20,7 @@ public class ServerboundPlayerActionPacket implements MinecraftPacket {
     private final @NonNull Direction face;
     private final int sequence;
 
-    public ServerboundPlayerActionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundPlayerActionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.action = PlayerAction.from(helper.readVarInt(in));
         this.position = helper.readPosition(in);
         this.face = Direction.VALUES[in.readUnsignedByte()];
@@ -30,7 +28,7 @@ public class ServerboundPlayerActionPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.action.ordinal());
         helper.writePosition(out, this.position);
         out.writeByte(this.face.ordinal());

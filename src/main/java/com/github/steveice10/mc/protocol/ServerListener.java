@@ -87,8 +87,7 @@ public class ServerListener extends SessionAdapter {
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
         if (protocol.getState() == ProtocolState.HANDSHAKE) {
-            if (packet instanceof ClientIntentionPacket) {
-                ClientIntentionPacket intentionPacket = (ClientIntentionPacket) packet;
+            if (packet instanceof ClientIntentionPacket intentionPacket) {
                 switch (intentionPacket.getIntent()) {
                     case STATUS:
                         protocol.setState(ProtocolState.STATUS);
@@ -115,8 +114,7 @@ public class ServerListener extends SessionAdapter {
                 } else {
                     new Thread(new UserAuthTask(session, null)).start();
                 }
-            } else if (packet instanceof ServerboundKeyPacket) {
-                ServerboundKeyPacket keyPacket = (ServerboundKeyPacket) packet;
+            } else if (packet instanceof ServerboundKeyPacket keyPacket) {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
 
                 if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
@@ -180,7 +178,7 @@ public class ServerListener extends SessionAdapter {
     public void packetSent(Session session, Packet packet) {
         if (packet instanceof ClientboundLoginCompressionPacket) {
             session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), true);
-            session.send(new ClientboundGameProfilePacket((GameProfile) session.getFlag(MinecraftConstants.PROFILE_KEY)));
+            session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY)));
         }
     }
 
@@ -195,8 +193,8 @@ public class ServerListener extends SessionAdapter {
     }
 
     private class UserAuthTask implements Runnable {
-        private Session session;
-        private SecretKey key;
+        private final Session session;
+        private final SecretKey key;
 
         public UserAuthTask(Session session, SecretKey key) {
             this.key = key;
@@ -230,7 +228,7 @@ public class ServerListener extends SessionAdapter {
     }
 
     private class KeepAliveTask implements Runnable {
-        private Session session;
+        private final Session session;
 
         public KeepAliveTask(Session session) {
             this.session = session;

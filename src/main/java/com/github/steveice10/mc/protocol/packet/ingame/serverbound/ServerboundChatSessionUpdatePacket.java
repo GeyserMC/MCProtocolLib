@@ -29,7 +29,7 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
         byte[] keyBytes = helper.readByteArray(in);
         this.keySignature = helper.readByteArray(in);
 
-        PublicKey publicKey = null;
+        PublicKey publicKey;
         try {
             publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
         } catch (GeneralSecurityException e) {
@@ -40,7 +40,7 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.sessionId);
         out.writeLong(this.expiresAt);
         helper.writeByteArray(out, this.publicKey.getEncoded());

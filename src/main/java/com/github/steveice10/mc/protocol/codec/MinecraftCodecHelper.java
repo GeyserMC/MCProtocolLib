@@ -70,11 +70,12 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -193,7 +194,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return readAnyTag(buf, CompoundTag.class);
     }
 
-    @NotNull
+    @NonNull
     public CompoundTag readAnyTagOrThrow(ByteBuf buf) throws IOException {
         CompoundTag tag = readAnyTag(buf);
         if (tag == null) {
@@ -224,7 +225,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) throws IOException {
         NBTIO.writeAnyTag(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
                 buf.writeByte(b);
             }
         }, tag);
@@ -523,28 +524,22 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public NumberFormat readNumberFormat(ByteBuf buf) throws IOException {
         int id = this.readVarInt(buf);
-        switch (id) {
-            case 0:
-                return BlankFormat.INSTANCE;
-            case 1:
-                return new StyledFormat(this.readAnyTagOrThrow(buf));
-            case 2:
-                return new FixedFormat(this.readComponent(buf));
-            default:
-                throw new IllegalArgumentException("Unknown number format type: " + id);
-        }
+        return switch (id) {
+            case 0 -> BlankFormat.INSTANCE;
+            case 1 -> new StyledFormat(this.readAnyTagOrThrow(buf));
+            case 2 -> new FixedFormat(this.readComponent(buf));
+            default -> throw new IllegalArgumentException("Unknown number format type: " + id);
+        };
     }
 
     public void writeNumberFormat(ByteBuf buf, NumberFormat numberFormat) throws IOException {
         if (numberFormat instanceof BlankFormat) {
             this.writeVarInt(buf, 0);
-        } else if (numberFormat instanceof StyledFormat) {
-            StyledFormat styledFormat = (StyledFormat) numberFormat;
+        } else if (numberFormat instanceof StyledFormat styledFormat) {
 
             this.writeVarInt(buf, 1);
             this.writeAnyTag(buf, styledFormat.getStyle());
-        } else if (numberFormat instanceof FixedFormat) {
-            FixedFormat fixedFormat = (FixedFormat) numberFormat;
+        } else if (numberFormat instanceof FixedFormat fixedFormat) {
 
             this.writeVarInt(buf, 2);
             this.writeComponent(buf, fixedFormat.getValue());
@@ -555,14 +550,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public PositionSource readPositionSource(ByteBuf buf) {
         PositionSourceType type = PositionSourceType.from(this.readVarInt(buf));
-        switch (type) {
-            case BLOCK:
-                return new BlockPositionSource(this.readPosition(buf));
-            case ENTITY:
-                return new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
-            default:
-                throw new IllegalStateException("Unknown position source type!");
-        }
+        return switch (type) {
+            case BLOCK -> new BlockPositionSource(this.readPosition(buf));
+            case ENTITY -> new EntityPositionSource(this.readVarInt(buf), buf.readFloat());
+        };
     }
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
@@ -620,7 +611,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    @NotNull
+    @NonNull
     public BlockEntityType readBlockEntityType(ByteBuf buf) {
         int id = this.readVarInt(buf);
         BlockEntityType type = BlockEntityType.from(id);
@@ -784,7 +775,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeLongArray(buf, data);
     }
 
-    private Palette readPalette(ByteBuf buf, PaletteType paletteType, int bitsPerEntry) throws IOException {
+    private Palette readPalette(ByteBuf buf, PaletteType paletteType, int bitsPerEntry) {
         if (bitsPerEntry == 0) {
             return new SingletonPalette(this.readVarInt(buf));
         }

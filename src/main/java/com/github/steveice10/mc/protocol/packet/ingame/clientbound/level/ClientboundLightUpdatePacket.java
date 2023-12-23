@@ -10,7 +10,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.BitSet;
 import java.util.List;
 
@@ -20,7 +19,7 @@ import java.util.List;
 public class ClientboundLightUpdatePacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final @NotNull LightUpdateData lightData;
+    private final @NonNull LightUpdateData lightData;
 
     public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
                                         @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
@@ -40,14 +39,14 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
         this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates);
     }
 
-    public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.x = helper.readVarInt(in);
         this.z = helper.readVarInt(in);
         this.lightData = helper.readLightUpdateData(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.x);
         helper.writeVarInt(out, this.z);
         helper.writeLightUpdateData(out, this.lightData);

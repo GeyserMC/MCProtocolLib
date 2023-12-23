@@ -20,7 +20,7 @@ import java.security.spec.X509EncodedKeySpec;
 public class ClientboundHelloPacket implements MinecraftPacket {
     private final @NonNull String serverId;
     private final @NonNull PublicKey publicKey;
-    private final @NonNull byte[] challenge;
+    private final byte @NonNull [] challenge;
 
     public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.serverId = helper.readString(in);
@@ -35,7 +35,7 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.serverId);
         byte[] encoded = this.publicKey.getEncoded();
         helper.writeByteArray(out, encoded);

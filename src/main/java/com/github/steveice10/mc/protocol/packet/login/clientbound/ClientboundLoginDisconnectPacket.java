@@ -10,8 +10,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -25,13 +23,13 @@ public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
         this(DefaultComponentSerializer.get().deserialize(text));
     }
 
-    public ClientboundLoginDisconnectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLoginDisconnectPacket(ByteBuf in, MinecraftCodecHelper helper) {
         // uses the old json serialization rather than the 1.20.3 NBT serialization
         this.reason = DefaultComponentSerializer.get().deserialize(helper.readString(in, MAX_COMPONENT_STRING_LENGTH));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, DefaultComponentSerializer.get().serialize(reason));
     }
 

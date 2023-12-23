@@ -11,8 +11,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -81,7 +79,7 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeLevelEvent(out, this.event);
         helper.writePosition(out, this.position);
         int value;

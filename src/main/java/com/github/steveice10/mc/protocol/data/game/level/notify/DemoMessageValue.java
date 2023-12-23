@@ -20,7 +20,7 @@ public enum DemoMessageValue implements GameEventValue {
         return this.id;
     }
 
-    private static Int2ObjectMap<DemoMessageValue> VALUES = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<DemoMessageValue> VALUES = new Int2ObjectOpenHashMap<>();
 
     public static DemoMessageValue from(int id) {
         return VALUES.get(id);

@@ -54,7 +54,7 @@ public class ClientListener extends SessionAdapter {
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
         if (protocol.getState() == ProtocolState.LOGIN) {
-            if (packet instanceof ClientboundHelloPacket) {
+            if (packet instanceof ClientboundHelloPacket helloPacket) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
                 String accessToken = session.getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
 
@@ -62,7 +62,6 @@ public class ClientListener extends SessionAdapter {
                     throw new UnexpectedEncryptionException();
                 }
 
-                ClientboundHelloPacket helloPacket = (ClientboundHelloPacket) packet;
                 SecretKey key;
                 try {
                     KeyGenerator gen = KeyGenerator.getInstance("AES");

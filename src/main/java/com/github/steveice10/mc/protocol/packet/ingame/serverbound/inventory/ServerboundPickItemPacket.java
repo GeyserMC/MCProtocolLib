@@ -7,20 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundPickItemPacket implements MinecraftPacket {
     private final int slot;
 
-    public ServerboundPickItemPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundPickItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.slot);
     }
 }
