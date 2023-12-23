@@ -16,7 +16,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.InetSocketAddress;
 import java.util.function.Supplier;
@@ -158,14 +157,11 @@ public class TcpServer extends AbstractServer {
                 } catch(InterruptedException e) {
                 }
             } else {
-                future.addListener(new GenericFutureListener() {
-                    @Override
-                    public void operationComplete(Future future) {
-                        if(!future.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
-                            System.err.println("[ERROR] Failed to asynchronously close connection listener.");
-                            if(future.cause() != null) {
-                                future.cause().printStackTrace();
-                            }
+                future.addListener(future1 -> {
+                    if(!future1.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
+                        System.err.println("[ERROR] Failed to asynchronously close connection listener.");
+                        if(future1.cause() != null) {
+                            future1.cause().printStackTrace();
                         }
                     }
                 });

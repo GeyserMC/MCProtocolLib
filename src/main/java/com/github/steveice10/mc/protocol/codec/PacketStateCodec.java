@@ -75,11 +75,11 @@ public class PacketStateCodec extends PacketProtocol {
 
         public PacketStateCodec build() {
             PacketStateCodec codec = new PacketStateCodec();
-            for (Map.Entry<Integer, PacketDefinition<? extends MinecraftPacket, MinecraftCodecHelper>> entry : this.clientboundPackets.entrySet()) {
+            for (Int2ObjectMap.Entry<PacketDefinition<? extends MinecraftPacket, MinecraftCodecHelper>> entry : this.clientboundPackets.int2ObjectEntrySet()) {
                 codec.registerClientbound(entry.getValue());
             }
 
-            for (Map.Entry<Integer, PacketDefinition<? extends MinecraftPacket, MinecraftCodecHelper>> entry : this.serverboundPackets.entrySet()) {
+            for (Int2ObjectMap.Entry<PacketDefinition<? extends MinecraftPacket, MinecraftCodecHelper>> entry : this.serverboundPackets.int2ObjectEntrySet()) {
                 codec.registerServerbound(entry.getValue());
             }
 
