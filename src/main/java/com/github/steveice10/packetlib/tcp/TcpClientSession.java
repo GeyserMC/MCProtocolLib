@@ -227,33 +227,29 @@ public class TcpClientSession extends TcpSession {
 
     private void addProxy(ChannelPipeline pipeline) {
         if(proxy != null) {
-            switch(proxy.getType()) {
-                case HTTP:
+            switch (proxy.getType()) {
+                case HTTP -> {
                     if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
                     }
-
-                    break;
-                case SOCKS4:
+                }
+                case SOCKS4 -> {
                     if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
                     } else {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
                     }
-
-                    break;
-                case SOCKS5:
+                }
+                case SOCKS5 -> {
                     if (proxy.isAuthenticated()) {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
                     }
-
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
+                }
+                default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
             }
         }
     }
@@ -291,26 +287,26 @@ public class TcpClientSession extends TcpSession {
         }
 
         switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING:
+            case IO_URING -> {
                 EVENT_LOOP_GROUP = new IOUringEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = IOUringSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
-                break;
-            case EPOLL:
+            }
+            case EPOLL -> {
                 EVENT_LOOP_GROUP = new EpollEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = EpollSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
-                break;
-            case KQUEUE:
+            }
+            case KQUEUE -> {
                 EVENT_LOOP_GROUP = new KQueueEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = KQueueSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
-                break;
-            case NIO:
+            }
+            case NIO -> {
                 EVENT_LOOP_GROUP = new NioEventLoopGroup(newThreadFactory());
                 CHANNEL_CLASS = NioSocketChannel.class;
                 DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
-                break;
+            }
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(

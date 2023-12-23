@@ -447,53 +447,44 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) throws IOException {
-        switch (type) {
-            case BLOCK:
-            case BLOCK_MARKER:
-                return new BlockParticleData(this.readVarInt(buf));
-            case DUST:
+        return switch (type) {
+            case BLOCK, BLOCK_MARKER -> new BlockParticleData(this.readVarInt(buf));
+            case DUST -> {
                 float red = buf.readFloat();
                 float green = buf.readFloat();
                 float blue = buf.readFloat();
                 float scale = buf.readFloat();
-                return new DustParticleData(red, green, blue, scale);
-            case DUST_COLOR_TRANSITION:
-                red = buf.readFloat();
-                green = buf.readFloat();
-                blue = buf.readFloat();
-                scale = buf.readFloat();
+                yield new DustParticleData(red, green, blue, scale);
+            }
+            case DUST_COLOR_TRANSITION -> {
+                float red = buf.readFloat();
+                float green = buf.readFloat();
+                float blue = buf.readFloat();
+                float scale = buf.readFloat();
                 float newRed = buf.readFloat();
                 float newGreen = buf.readFloat();
                 float newBlue = buf.readFloat();
-                return new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
-            case FALLING_DUST:
-                return new FallingDustParticleData(this.readVarInt(buf));
-            case ITEM:
-                return new ItemParticleData(this.readItemStack(buf));
-            case SCULK_CHARGE:
-                return new SculkChargeParticleData(buf.readFloat());
-            case SHRIEK:
-                return new ShriekParticleData(this.readVarInt(buf));
-            case VIBRATION:
-                return new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
-            default:
-                return null;
-        }
+                yield new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
+            }
+            case FALLING_DUST -> new FallingDustParticleData(this.readVarInt(buf));
+            case ITEM -> new ItemParticleData(this.readItemStack(buf));
+            case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
+            case SHRIEK -> new ShriekParticleData(this.readVarInt(buf));
+            case VIBRATION -> new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
+            default -> null;
+        };
     }
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) throws IOException {
         switch (type) {
-            case BLOCK:
-            case BLOCK_MARKER:
-                this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
-                break;
-            case DUST:
+            case BLOCK, BLOCK_MARKER -> this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
+            case DUST -> {
                 buf.writeFloat(((DustParticleData) data).getRed());
                 buf.writeFloat(((DustParticleData) data).getGreen());
                 buf.writeFloat(((DustParticleData) data).getBlue());
                 buf.writeFloat(((DustParticleData) data).getScale());
-                break;
-            case DUST_COLOR_TRANSITION:
+            }
+            case DUST_COLOR_TRANSITION -> {
                 buf.writeFloat(((DustParticleData) data).getRed());
                 buf.writeFloat(((DustParticleData) data).getGreen());
                 buf.writeFloat(((DustParticleData) data).getBlue());
@@ -501,23 +492,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewRed());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewGreen());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewBlue());
-                break;
-            case FALLING_DUST:
-                this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
-                break;
-            case ITEM:
-                this.writeItemStack(buf, ((ItemParticleData) data).getItemStack());
-                break;
-            case SCULK_CHARGE:
-                buf.writeFloat(((SculkChargeParticleData) data).getRoll());
-                break;
-            case SHRIEK:
-                this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
-                break;
-            case VIBRATION:
+            }
+            case FALLING_DUST -> this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
+            case ITEM -> this.writeItemStack(buf, ((ItemParticleData) data).getItemStack());
+            case SCULK_CHARGE -> buf.writeFloat(((SculkChargeParticleData) data).getRoll());
+            case SHRIEK -> this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
+            case VIBRATION -> {
                 this.writePositionSource(buf, ((VibrationParticleData) data).getPositionSource());
                 this.writeVarInt(buf, ((VibrationParticleData) data).getArrivalTicks());
-                break;
+            }
         }
     }
 
@@ -535,11 +518,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         if (numberFormat instanceof BlankFormat) {
             this.writeVarInt(buf, 0);
         } else if (numberFormat instanceof StyledFormat styledFormat) {
-
             this.writeVarInt(buf, 1);
             this.writeAnyTag(buf, styledFormat.getStyle());
         } else if (numberFormat instanceof FixedFormat fixedFormat) {
-
             this.writeVarInt(buf, 2);
             this.writeComponent(buf, fixedFormat.getValue());
         } else {
@@ -557,11 +538,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writePositionSource(ByteBuf buf, PositionSource positionSource) {
         this.writeVarInt(buf, positionSource.getType().ordinal());
-        if (positionSource instanceof BlockPositionSource) {
-            this.writePosition(buf, ((BlockPositionSource) positionSource).getPosition());
-        } else if (positionSource instanceof EntityPositionSource) {
-            this.writeVarInt(buf, ((EntityPositionSource) positionSource).getEntityId());
-            buf.writeFloat(((EntityPositionSource) positionSource).getYOffset());
+        if (positionSource instanceof BlockPositionSource blockPositionSource) {
+            this.writePosition(buf, blockPositionSource.getPosition());
+        } else if (positionSource instanceof EntityPositionSource entityPositionSource) {
+            this.writeVarInt(buf, entityPositionSource.getEntityId());
+            buf.writeFloat(entityPositionSource.getYOffset());
         } else {
             throw new IllegalStateException("Unknown position source type!");
         }

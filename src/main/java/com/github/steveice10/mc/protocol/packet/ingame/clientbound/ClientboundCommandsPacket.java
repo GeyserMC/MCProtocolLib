@@ -62,7 +62,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
             if (type == CommandType.ARGUMENT) {
                 parser = CommandParser.from(helper.readVarInt(in));
                 switch (parser) {
-                    case DOUBLE: {
+                    case DOUBLE -> {
                         byte numberFlags = in.readByte();
                         double min = -Double.MAX_VALUE;
                         double max = Double.MAX_VALUE;
@@ -75,9 +75,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new DoubleProperties(min, max);
-                        break;
                     }
-                    case FLOAT: {
+                    case FLOAT -> {
                         byte numberFlags = in.readByte();
                         float min = -Float.MAX_VALUE;
                         float max = Float.MAX_VALUE;
@@ -90,9 +89,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new FloatProperties(min, max);
-                        break;
                     }
-                    case INTEGER: {
+                    case INTEGER -> {
                         byte numberFlags = in.readByte();
                         int min = Integer.MIN_VALUE;
                         int max = Integer.MAX_VALUE;
@@ -105,9 +103,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new IntegerProperties(min, max);
-                        break;
                     }
-                    case LONG: {
+                    case LONG -> {
                         byte numberFlags = in.readByte();
                         long min = Long.MIN_VALUE;
                         long max = Long.MAX_VALUE;
@@ -120,31 +117,19 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         properties = new LongProperties(min, max);
-                        break;
                     }
-                    case STRING:
-                        properties = StringProperties.from(helper.readVarInt(in));
-                        break;
-                    case ENTITY: {
+                    case STRING -> properties = StringProperties.from(helper.readVarInt(in));
+                    case ENTITY -> {
                         byte entityFlags = in.readByte();
                         properties = new EntityProperties((entityFlags & ENTITY_FLAG_SINGLE_TARGET) != 0,
                                 (entityFlags & ENTITY_FLAG_PLAYERS_ONLY) != 0);
-                        break;
                     }
-                    case SCORE_HOLDER:
-                        properties = new ScoreHolderProperties(in.readBoolean());
-                        break;
-                    case TIME:
-                        properties = new TimeProperties(in.readInt());
-                        break;
-                    case RESOURCE_OR_TAG:
-                    case RESOURCE_OR_TAG_KEY:
-                    case RESOURCE:
-                    case RESOURCE_KEY:
-                        properties = new ResourceProperties(helper.readString(in));
-                        break;
-                    default:
-                        break;
+                    case SCORE_HOLDER -> properties = new ScoreHolderProperties(in.readBoolean());
+                    case TIME -> properties = new TimeProperties(in.readInt());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY ->
+                            properties = new ResourceProperties(helper.readString(in));
+                    default -> {
+                    }
                 }
 
                 if ((flags & FLAG_SUGGESTION_TYPE) != 0) {
@@ -193,7 +178,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
             if (node.getType() == CommandType.ARGUMENT) {
                 helper.writeVarInt(out, node.getParser().ordinal());
                 switch (node.getParser()) {
-                    case DOUBLE: {
+                    case DOUBLE -> {
                         DoubleProperties properties = (DoubleProperties) node.getProperties();
 
                         int numberFlags = 0;
@@ -213,10 +198,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeDouble(properties.getMax());
                         }
-
-                        break;
                     }
-                    case FLOAT: {
+                    case FLOAT -> {
                         FloatProperties properties = (FloatProperties) node.getProperties();
 
                         int numberFlags = 0;
@@ -236,10 +219,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeFloat(properties.getMax());
                         }
-
-                        break;
                     }
-                    case INTEGER: {
+                    case INTEGER -> {
                         IntegerProperties properties = (IntegerProperties) node.getProperties();
 
                         int numberFlags = 0;
@@ -259,10 +240,8 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeInt(properties.getMax());
                         }
-
-                        break;
                     }
-                    case LONG: {
+                    case LONG -> {
                         LongProperties properties = (LongProperties) node.getProperties();
 
                         int numberFlags = 0;
@@ -282,13 +261,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
                             out.writeLong(properties.getMax());
                         }
-
-                        break;
                     }
-                    case STRING:
-                        helper.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
-                        break;
-                    case ENTITY: {
+                    case STRING -> helper.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
+                    case ENTITY -> {
                         EntityProperties properties = (EntityProperties) node.getProperties();
                         int entityFlags = 0;
                         if (properties.isSingleTarget()) {
@@ -300,22 +275,14 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
 
                         out.writeByte(entityFlags);
-                        break;
                     }
-                    case SCORE_HOLDER:
-                        out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
-                        break;
-                    case TIME:
-                        out.writeInt(((TimeProperties) node.getProperties()).getMin());
-                        break;
-                    case RESOURCE_OR_TAG:
-                    case RESOURCE_OR_TAG_KEY:
-                    case RESOURCE:
-                    case RESOURCE_KEY:
-                        helper.writeString(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
-                        break;
-                    default:
-                        break;
+                    case SCORE_HOLDER ->
+                            out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
+                    case TIME -> out.writeInt(((TimeProperties) node.getProperties()).getMin());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY ->
+                            helper.writeString(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
+                    default -> {
+                    }
                 }
 
                 if (node.getSuggestionType() != null) {

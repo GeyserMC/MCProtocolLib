@@ -42,22 +42,22 @@ public class TcpServer extends AbstractServer {
         }
 
         switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING:
+            case IO_URING -> {
                 this.group = new IOUringEventLoopGroup();
                 this.serverSocketChannel = IOUringServerSocketChannel.class;
-                break;
-            case EPOLL:
+            }
+            case EPOLL -> {
                 this.group = new EpollEventLoopGroup();
                 this.serverSocketChannel = EpollServerSocketChannel.class;
-                break;
-            case KQUEUE:
+            }
+            case KQUEUE -> {
                 this.group = new KQueueEventLoopGroup();
                 this.serverSocketChannel = KQueueServerSocketChannel.class;
-                break;
-            case NIO:
+            }
+            case NIO -> {
                 this.group = new NioEventLoopGroup();
                 this.serverSocketChannel = NioServerSocketChannel.class;
-                break;
+            }
         }
 
         ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<>() {
