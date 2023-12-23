@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.data.game.command;
 
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Locale;

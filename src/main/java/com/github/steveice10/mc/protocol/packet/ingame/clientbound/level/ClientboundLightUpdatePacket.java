@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.BitSet;
 import java.util.List;

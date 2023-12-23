@@ -74,7 +74,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
-import org.jetbrains.annotations.NotNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
