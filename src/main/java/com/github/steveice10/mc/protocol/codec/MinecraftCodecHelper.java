@@ -736,7 +736,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int globalPaletteBits) throws IOException {
+    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType) throws IOException {
         int bitsPerEntry = buf.readByte() & 0xFF;
         Palette palette = this.readPalette(buf, paletteType, bitsPerEntry);
         BitStorage storage;
@@ -751,7 +751,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             storage = null;
         }
 
-        return new DataPalette(palette, storage, paletteType, globalPaletteBits);
+        return new DataPalette(palette, storage, paletteType);
+    }
+
+    /**
+     * @deprecated globalPaletteBits is no longer in use, use {@link #readDataPalette(ByteBuf, PaletteType)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int globalPaletteBits) throws IOException {
+        return this.readDataPalette(buf, paletteType);
     }
 
     public void writeDataPalette(ByteBuf buf, DataPalette palette) {
@@ -789,12 +797,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public ChunkSection readChunkSection(ByteBuf buf, int globalBiomePaletteBits) throws IOException {
+    public ChunkSection readChunkSection(ByteBuf buf) throws IOException {
         int blockCount = buf.readShort();
 
-        DataPalette chunkPalette = this.readDataPalette(buf, PaletteType.CHUNK, DataPalette.GLOBAL_PALETTE_BITS_PER_ENTRY);
-        DataPalette biomePalette = this.readDataPalette(buf, PaletteType.BIOME, globalBiomePaletteBits);
+        DataPalette chunkPalette = this.readDataPalette(buf, PaletteType.CHUNK);
+        DataPalette biomePalette = this.readDataPalette(buf, PaletteType.BIOME);
         return new ChunkSection(blockCount, chunkPalette, biomePalette);
+    }
+
+    /**
+     * @deprecated globalBiomePaletteBits is no longer in use, use {@link #readChunkSection(ByteBuf)} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public ChunkSection readChunkSection(ByteBuf buf, int globalBiomePaletteBits) throws IOException {
+        return this.readChunkSection(buf);
     }
 
     public void writeChunkSection(ByteBuf buf, ChunkSection section) {
