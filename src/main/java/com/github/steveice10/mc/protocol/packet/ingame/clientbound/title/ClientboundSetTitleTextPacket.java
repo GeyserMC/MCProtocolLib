@@ -24,6 +24,6 @@ public class ClientboundSetTitleTextPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeString(out, DefaultComponentSerializer.get().serializeOr(this.text, "null"));
+        helper.writeComponent(out, getText() != null ? getText() : Component.text("null"));
     }
 }
