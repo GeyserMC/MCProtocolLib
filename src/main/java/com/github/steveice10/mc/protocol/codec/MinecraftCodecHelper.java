@@ -242,7 +242,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return new ItemStack(item, buf.readByte(), this.readAnyTag(buf));
     }
 
-    public void writeItemStack(ByteBuf buf, ItemStack item) throws IOException {
+    public void writeItemStack(ByteBuf buf, @Nullable ItemStack item) throws IOException {
         buf.writeBoolean(item != null);
         if (item != null) {
             this.writeVarInt(buf, item.getId());

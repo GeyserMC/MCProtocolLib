@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
     private final int slot;
-    private final ItemStack clickedItem;
+    private final @Nullable ItemStack clickedItem;
 
     public ServerboundSetCreativeModeSlotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.slot = in.readShort();
