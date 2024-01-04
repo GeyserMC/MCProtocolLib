@@ -9,8 +9,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -18,13 +16,13 @@ public class ClientboundSetDefaultSpawnPositionPacket implements MinecraftPacket
     private final @NonNull Vector3i position;
     private final float angle;
 
-    public ClientboundSetDefaultSpawnPositionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetDefaultSpawnPositionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);
         this.angle = in.readFloat();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writePosition(out, this.position);
         out.writeFloat(this.angle);
     }

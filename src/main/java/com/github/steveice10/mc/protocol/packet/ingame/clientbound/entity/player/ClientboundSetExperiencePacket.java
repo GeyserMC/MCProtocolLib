@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -17,14 +15,14 @@ public class ClientboundSetExperiencePacket implements MinecraftPacket {
     private final int level;
     private final int totalExperience;
 
-    public ClientboundSetExperiencePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetExperiencePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.experience = in.readFloat();
         this.level = helper.readVarInt(in);
         this.totalExperience = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeFloat(this.experience);
         helper.writeVarInt(out, this.level);
         helper.writeVarInt(out, this.totalExperience);

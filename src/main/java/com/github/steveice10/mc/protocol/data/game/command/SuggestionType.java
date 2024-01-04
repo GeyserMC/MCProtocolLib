@@ -1,7 +1,7 @@
 package com.github.steveice10.mc.protocol.data.game.command;
 
 import com.github.steveice10.mc.protocol.data.game.Identifier;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -25,7 +25,7 @@ public enum SuggestionType {
 
     private static final Map<String, SuggestionType> VALUES = new HashMap<>();
 
-    @NotNull
+    @NonNull
     public static SuggestionType from(String resourceLocation) {
         // Vanilla behavior as of 1.19.3
         // 1.16.5 still has AVAILABLE_BIOMES and vanilla doesn't care

@@ -5,18 +5,16 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
-    private final @NotNull int[] entityIds;
+    private final int @NonNull [] entityIds;
 
-    public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityIds = new int[helper.readVarInt(in)];
         for (int i = 0; i < this.entityIds.length; i++) {
             this.entityIds[i] = helper.readVarInt(in);
@@ -24,7 +22,7 @@ public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityIds.length);
         for (int entityId : this.entityIds) {
             helper.writeVarInt(out, entityId);

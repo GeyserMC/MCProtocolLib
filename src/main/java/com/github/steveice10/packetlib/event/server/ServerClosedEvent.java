@@ -6,7 +6,7 @@ import com.github.steveice10.packetlib.Server;
  * Called when the server is closed.
  */
 public class ServerClosedEvent implements ServerEvent {
-    private Server server;
+    private final Server server;
 
     /**
      * Creates a new ServerClosedEvent instance.

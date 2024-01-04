@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -17,18 +16,18 @@ import java.util.Arrays;
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ListPalette implements Palette {
-    private final int maxId;
+    private final int capacity;
 
     private final int[] data;
     private int nextId = 0;
 
     public ListPalette(int bitsPerEntry) {
-        this.maxId = (1 << bitsPerEntry) - 1;
+        this.capacity = 1 << bitsPerEntry;
 
-        this.data = new int[this.maxId + 1];
+        this.data = new int[this.capacity];
     }
 
-    public ListPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ListPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) {
         this(bitsPerEntry);
 
         int paletteLength = helper.readVarInt(in);
@@ -53,7 +52,7 @@ public class ListPalette implements Palette {
                 break;
             }
         }
-        if (id == -1 && this.size() < this.maxId + 1) {
+        if (id == -1 && this.size() < this.capacity) {
             id = this.nextId++;
             this.data[id] = state;
         }
@@ -72,6 +71,6 @@ public class ListPalette implements Palette {
 
     @Override
     public ListPalette copy() {
-        return new ListPalette(this.maxId, Arrays.copyOf(this.data, this.data.length), this.nextId);
+        return new ListPalette(this.capacity, Arrays.copyOf(this.data, this.data.length), this.nextId);
     }
 }

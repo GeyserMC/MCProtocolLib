@@ -6,8 +6,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.IOException;
-
 @Data
 @NoArgsConstructor
 public class ServerboundConfigurationAcknowledgedPacket implements MinecraftPacket {

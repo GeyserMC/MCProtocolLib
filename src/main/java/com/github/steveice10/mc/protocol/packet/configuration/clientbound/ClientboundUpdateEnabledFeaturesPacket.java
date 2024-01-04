@@ -7,22 +7,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundUpdateEnabledFeaturesPacket implements MinecraftPacket {
     private final String[] features;
 
-    public ClientboundUpdateEnabledFeaturesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateEnabledFeaturesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.features = new String[helper.readVarInt(in)];
         for (int i = 0; i < this.features.length; i++) {
             this.features[i] = helper.readString(in);
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.features.length);
         for (String feature : this.features) {
             helper.writeString(out, feature);

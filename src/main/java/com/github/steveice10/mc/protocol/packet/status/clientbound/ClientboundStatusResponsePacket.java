@@ -19,7 +19,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     private final @NonNull ServerStatusInfo info;
 
-    public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
         JsonObject obj = new Gson().fromJson(helper.readString(in), JsonObject.class);
         JsonElement desc = obj.get("description");
         Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
@@ -66,7 +65,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         JsonObject obj = new JsonObject();
         JsonObject ver = new JsonObject();
         ver.addProperty("name", this.info.getVersionInfo().getVersionName());
@@ -74,7 +73,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         JsonObject plrs = new JsonObject();
         plrs.addProperty("max", this.info.getPlayerInfo().getMaxPlayers());
         plrs.addProperty("online", this.info.getPlayerInfo().getOnlinePlayers());
-        if (this.info.getPlayerInfo().getPlayers().size() > 0) {
+        if (!this.info.getPlayerInfo().getPlayers().isEmpty()) {
             JsonArray array = new JsonArray();
             for (GameProfile profile : this.info.getPlayerInfo().getPlayers()) {
                 JsonObject o = new JsonObject();
@@ -95,11 +94,6 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         obj.addProperty("enforcesSecureChat", this.info.isEnforcesSecureChat());
 
         helper.writeString(out, obj.toString());
-    }
-
-    @Override
-    public boolean isPriority() {
-        return false;
     }
 
     private byte[] stringToIcon(String str) {

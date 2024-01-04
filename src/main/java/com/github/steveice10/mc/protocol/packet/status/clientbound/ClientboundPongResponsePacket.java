@@ -7,20 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundPongResponsePacket implements MinecraftPacket {
     private final long pingTime;
 
-    public ClientboundPongResponsePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPongResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.pingTime = in.readLong();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeLong(this.pingTime);
     }
 }

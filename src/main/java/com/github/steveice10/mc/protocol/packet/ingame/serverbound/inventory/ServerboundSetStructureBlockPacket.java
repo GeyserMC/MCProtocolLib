@@ -13,8 +13,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -38,7 +36,7 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
     private final boolean showAir;
     private final boolean showBoundingBox;
 
-    public ServerboundSetStructureBlockPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSetStructureBlockPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.position = helper.readPosition(in);
         this.action = UpdateStructureBlockAction.from(helper.readVarInt(in));
         this.mode = UpdateStructureBlockMode.from(helper.readVarInt(in));
@@ -58,7 +56,7 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writePosition(out, this.position);
         helper.writeVarInt(out, this.action.ordinal());
         helper.writeVarInt(out, this.mode.ordinal());

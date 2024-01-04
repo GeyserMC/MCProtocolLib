@@ -7,20 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundPongPacket implements MinecraftPacket {
     private final int id;
 
-    public ServerboundPongPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundPongPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.id = in.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeInt(this.id);
     }
 }

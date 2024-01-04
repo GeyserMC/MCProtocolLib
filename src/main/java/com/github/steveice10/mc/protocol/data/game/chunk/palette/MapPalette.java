@@ -2,13 +2,12 @@ package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
-import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -17,19 +16,21 @@ import java.util.Arrays;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode
 public class MapPalette implements Palette {
-    private final int maxId;
+    private static final int MISSING_ID = -1;
+    private final int capacity;
 
     private final int[] idToState;
-    private final IntObjectMap<Integer> stateToId = new IntObjectHashMap<>();
+    private final Int2IntMap stateToId = new Int2IntOpenHashMap();
     private int nextId = 0;
 
     public MapPalette(int bitsPerEntry) {
-        this.maxId = (1 << bitsPerEntry) - 1;
+        this.capacity = 1 << bitsPerEntry;
 
-        this.idToState = new int[this.maxId + 1];
+        this.idToState = new int[this.capacity];
+        this.stateToId.defaultReturnValue(MISSING_ID);
     }
 
-    public MapPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public MapPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) {
         this(bitsPerEntry);
 
         int paletteLength = helper.readVarInt(in);
@@ -48,18 +49,14 @@ public class MapPalette implements Palette {
 
     @Override
     public int stateToId(int state) {
-        Integer id = this.stateToId.get(state);
-        if (id == null && this.size() < this.maxId + 1) {
+        int id = this.stateToId.get(state);
+        if (id == MISSING_ID && this.size() < this.capacity) {
             id = this.nextId++;
             this.idToState[id] = state;
             this.stateToId.put(state, id);
         }
 
-        if (id != null) {
-            return id;
-        } else {
-            return -1;
-        }
+        return id;
     }
 
     @Override
@@ -73,7 +70,7 @@ public class MapPalette implements Palette {
 
     @Override
     public MapPalette copy() {
-        MapPalette mapPalette = new MapPalette(this.maxId, Arrays.copyOf(this.idToState, this.idToState.length), this.nextId);
+        MapPalette mapPalette = new MapPalette(this.capacity, Arrays.copyOf(this.idToState, this.idToState.length), this.nextId);
         mapPalette.stateToId.putAll(this.stateToId);
         return mapPalette;
     }

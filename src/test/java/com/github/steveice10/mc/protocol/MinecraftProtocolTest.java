@@ -110,7 +110,7 @@ public class MinecraftProtocolTest {
     }
 
     private static class ServerInfoHandlerTest implements ServerInfoHandler {
-        public CountDownLatch status = new CountDownLatch(1);
+        public final CountDownLatch status = new CountDownLatch(1);
         public ServerStatusInfo info;
 
         @Override
@@ -121,7 +121,7 @@ public class MinecraftProtocolTest {
     }
 
     private static class LoginListenerTest extends SessionAdapter {
-        public CountDownLatch login = new CountDownLatch(1);
+        public final CountDownLatch login = new CountDownLatch(1);
         public ClientboundLoginPacket packet;
 
         @Override

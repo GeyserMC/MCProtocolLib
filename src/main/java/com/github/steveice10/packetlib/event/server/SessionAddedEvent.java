@@ -7,8 +7,8 @@ import com.github.steveice10.packetlib.Session;
  * Called when a session is added to the server.
  */
 public class SessionAddedEvent implements ServerEvent {
-    private Server server;
-    private Session session;
+    private final Server server;
+    private final Session session;
 
     /**
      * Creates a new SessionAddedEvent instance.

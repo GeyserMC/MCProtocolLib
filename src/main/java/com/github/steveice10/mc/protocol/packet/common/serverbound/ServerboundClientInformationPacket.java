@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
      */
     private final boolean allowsListing;
 
-    public ServerboundClientInformationPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundClientInformationPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.locale = helper.readString(in);
         this.renderDistance = in.readByte();
         this.chatVisibility = ChatVisibility.from(helper.readVarInt(in));
@@ -52,7 +51,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.locale);
         out.writeByte(this.renderDistance);
         helper.writeVarInt(out, this.chatVisibility.ordinal());

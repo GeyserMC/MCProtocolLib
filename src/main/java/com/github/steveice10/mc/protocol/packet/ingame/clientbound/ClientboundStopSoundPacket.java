@@ -2,17 +2,12 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
-import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
-import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.SoundCategory;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Data
 @With
@@ -24,7 +19,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     private final @Nullable SoundCategory category;
     private final @Nullable String sound;
 
-    public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) {
         int flags = in.readByte();
         if ((flags & FLAG_CATEGORY) != 0) {
             this.category = helper.readSoundCategory(in);
@@ -40,7 +35,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         int flags = 0;
         if (this.category != null) {
             flags |= FLAG_CATEGORY;

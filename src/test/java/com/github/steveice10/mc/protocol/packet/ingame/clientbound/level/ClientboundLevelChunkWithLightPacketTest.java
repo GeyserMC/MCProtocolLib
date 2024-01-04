@@ -7,13 +7,12 @@ import com.github.steveice10.mc.protocol.packet.PacketTest;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.IOException;
 import java.util.BitSet;
 import java.util.Collections;
 
 public class ClientboundLevelChunkWithLightPacketTest extends PacketTest {
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         this.setPackets(
                 new ClientboundLevelChunkWithLightPacket(0, 0,
                         new byte[0], new CompoundTag(""), new BlockEntityInfo[0],

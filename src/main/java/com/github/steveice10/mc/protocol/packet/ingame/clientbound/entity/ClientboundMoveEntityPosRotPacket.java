@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class ClientboundMoveEntityPosRotPacket implements MinecraftPacket {
     private final float pitch;
     private final boolean onGround;
 
-    public ClientboundMoveEntityPosRotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundMoveEntityPosRotPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.moveX = in.readShort() / 4096D;
         this.moveY = in.readShort() / 4096D;
@@ -32,7 +30,7 @@ public class ClientboundMoveEntityPosRotPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         out.writeShort((int) (this.moveX * 4096));
         out.writeShort((int) (this.moveY * 4096));

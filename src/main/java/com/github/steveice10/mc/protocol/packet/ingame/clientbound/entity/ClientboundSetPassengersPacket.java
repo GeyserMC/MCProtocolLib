@@ -8,16 +8,14 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetPassengersPacket implements MinecraftPacket {
     private final int entityId;
-    private final @NonNull int[] passengerIds;
+    private final int @NonNull [] passengerIds;
 
-    public ClientboundSetPassengersPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetPassengersPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.passengerIds = new int[helper.readVarInt(in)];
         for (int index = 0; index < this.passengerIds.length; index++) {
@@ -26,7 +24,7 @@ public class ClientboundSetPassengersPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeVarInt(out, this.passengerIds.length);
         for (int entityId : this.passengerIds) {

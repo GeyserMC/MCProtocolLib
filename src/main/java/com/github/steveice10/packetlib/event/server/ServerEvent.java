@@ -9,5 +9,5 @@ public interface ServerEvent {
      *
      * @param listener Listener to call the event on.
      */
-    public void call(ServerListener listener);
+    void call(ServerListener listener);
 }

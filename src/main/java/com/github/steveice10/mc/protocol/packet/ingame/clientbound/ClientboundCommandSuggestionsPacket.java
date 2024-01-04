@@ -2,7 +2,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NonNull;
@@ -18,10 +17,10 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
     private final int transactionId;
     private final int start;
     private final int length;
-    private final @NonNull String[] matches;
-    private final @NonNull Component[] tooltips;
+    private final @NonNull String @NonNull [] matches;
+    private final Component @NonNull [] tooltips;
 
-    public ClientboundCommandSuggestionsPacket(int transactionId, int start, int length, @NonNull String[] matches, @NonNull Component[] tooltips) {
+    public ClientboundCommandSuggestionsPacket(int transactionId, int start, int length, @NonNull String @NonNull [] matches, Component @NonNull [] tooltips) {
         if (tooltips.length != matches.length) {
             throw new IllegalArgumentException("Length of matches and tooltips must be equal.");
         }

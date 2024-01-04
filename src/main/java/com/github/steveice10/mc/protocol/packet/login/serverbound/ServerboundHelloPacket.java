@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Data
@@ -18,7 +17,7 @@ public class ServerboundHelloPacket implements MinecraftPacket {
     private final @NonNull String username;
     private final @NonNull UUID profileId;
 
-    public ServerboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.username = helper.readString(in);
         this.profileId = helper.readUUID(in);
     }

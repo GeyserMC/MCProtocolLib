@@ -6,9 +6,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Data
@@ -26,7 +25,7 @@ public class ClientboundResourcePackPopPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeNullable(out, this.id, helper::writeUUID);
     }
 }

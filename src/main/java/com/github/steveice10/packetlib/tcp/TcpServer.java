@@ -5,13 +5,6 @@ import com.github.steveice10.packetlib.BuiltinFlags;
 import com.github.steveice10.packetlib.helper.TransportHelper;
 import com.github.steveice10.packetlib.packet.PacketProtocol;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.*;
@@ -23,7 +16,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 
 import java.net.InetSocketAddress;
 import java.util.function.Supplier;
@@ -49,25 +41,25 @@ public class TcpServer extends AbstractServer {
         }
 
         switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING:
+            case IO_URING -> {
                 this.group = new IOUringEventLoopGroup();
                 this.serverSocketChannel = IOUringServerSocketChannel.class;
-                break;
-            case EPOLL:
+            }
+            case EPOLL -> {
                 this.group = new EpollEventLoopGroup();
                 this.serverSocketChannel = EpollServerSocketChannel.class;
-                break;
-            case KQUEUE:
+            }
+            case KQUEUE -> {
                 this.group = new KQueueEventLoopGroup();
                 this.serverSocketChannel = KQueueServerSocketChannel.class;
-                break;
-            case NIO:
+            }
+            case NIO -> {
                 this.group = new NioEventLoopGroup();
                 this.serverSocketChannel = NioServerSocketChannel.class;
-                break;
+            }
         }
 
-        ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<Channel>() {
+        ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<>() {
             @Override
             public void initChannel(Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
@@ -165,14 +157,11 @@ public class TcpServer extends AbstractServer {
                 } catch(InterruptedException e) {
                 }
             } else {
-                future.addListener(new GenericFutureListener() {
-                    @Override
-                    public void operationComplete(Future future) {
-                        if(!future.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
-                            System.err.println("[ERROR] Failed to asynchronously close connection listener.");
-                            if(future.cause() != null) {
-                                future.cause().printStackTrace();
-                            }
+                future.addListener(future1 -> {
+                    if(!future1.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
+                        System.err.println("[ERROR] Failed to asynchronously close connection listener.");
+                        if(future1.cause() != null) {
+                            future1.cause().printStackTrace();
                         }
                     }
                 });
