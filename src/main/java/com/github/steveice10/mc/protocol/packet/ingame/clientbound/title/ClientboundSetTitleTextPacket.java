@@ -15,7 +15,7 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ClientboundSetTitleTextPacket implements MinecraftPacket {
-    private @NotNull final Component text;
+    private final @NotNull Component text;
 
     public ClientboundSetTitleTextPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.text = helper.readComponent(in);
@@ -23,6 +23,6 @@ public class ClientboundSetTitleTextPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeComponent(out, getText());
+        helper.writeComponent(out, this.text);
     }
 }
