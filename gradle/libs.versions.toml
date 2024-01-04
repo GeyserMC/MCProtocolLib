@@ -20,7 +20,7 @@ junit = "5.8.2"
 adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 adventure-text-serializer-json-legacy-impl = { module = "net.kyori:adventure-text-serializer-json-legacy-impl", version.ref = "adventure" }
 
-opennbt = { module = "com.github.steveice10:opennbt", version.ref = "opennbt" }
+opennbt = { module = "org.geysermc:opennbt", version.ref = "opennbt" }
 mcauthlib = { module = "com.github.GeyserMC:mcauthlib", version.ref = "mcauthlib" }
 
 math-api = { module = "org.cloudburstmc.math:api", version.ref = "math" }

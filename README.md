@@ -8,7 +8,7 @@ See the [example](https://github.com/GeyserMC/MCProtocolLib/tree/master/example/
 
 ## Adding as a Dependency
 
-MCProtocolLib builds are published to the [Open Collaboration repository](https://repo.opencollab.dev/ui/packages/gav:%2F%2Fcom.github.steveice10:mcprotocollib). Follow the below steps to add MCProtocolLib as a dependency to your project.
+MCProtocolLib builds are published to the [Open Collaboration repository](https://repo.opencollab.dev/ui/packages/gav:%2F%2Forg.geysermc:mcprotocollib). Follow the below steps to add MCProtocolLib as a dependency to your project.
 
 ### Maven
 
@@ -21,7 +21,7 @@ MCProtocolLib builds are published to the [Open Collaboration repository](https:
 </repositories>
 
 <dependency>
-    <groupId>com.github.steveice10</groupId>
+    <groupId>org.geysermc</groupId>
     <artifactId>mcprotocollib</artifactId>
     <version>(version here)</version>
 </dependency>
@@ -37,7 +37,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.steveice10:mcprotocollib:(version here)'
+    implementation 'org.geysermc:mcprotocollib:(version here)'
 }
 ```
 

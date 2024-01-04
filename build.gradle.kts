@@ -25,14 +25,14 @@ indra {
             }
             developers {
                 developer {
-                    id = "steveice10"
-                    name = "Steveice10"
-                    email = "Steveice10@gmail.com"
-                }
-                developer {
                     id = "GeyserMC"
                     name = "GeyserMC"
                     url = "https://geysermc.org/"
+                }
+                developer {
+                    id = "steveice10"
+                    name = "Steveice10"
+                    properties.put("state", "left-project")
                 }
             }
         }
@@ -90,7 +90,7 @@ lombok {
     version = libs.versions.lombok.version.get()
 }
 
-group = "com.github.steveice10"
+group = "org.geysermc"
 version = "1.20.4-2-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
