@@ -17,16 +17,16 @@ import java.util.Arrays;
 @EqualsAndHashCode
 public class MapPalette implements Palette {
     private static final int MISSING_ID = -1;
-    private final int size;
+    private final int capacity;
 
     private final int[] idToState;
     private final Int2IntMap stateToId = new Int2IntOpenHashMap();
     private int nextId = 0;
 
     public MapPalette(int bitsPerEntry) {
-        this.size = 1 << bitsPerEntry;
+        this.capacity = 1 << bitsPerEntry;
 
-        this.idToState = new int[this.size];
+        this.idToState = new int[this.capacity];
         this.stateToId.defaultReturnValue(MISSING_ID);
     }
 
@@ -50,7 +50,7 @@ public class MapPalette implements Palette {
     @Override
     public int stateToId(int state) {
         int id = this.stateToId.get(state);
-        if (id == MISSING_ID && this.size() < this.size) {
+        if (id == MISSING_ID && this.size() < this.capacity) {
             id = this.nextId++;
             this.idToState[id] = state;
             this.stateToId.put(state, id);
@@ -70,7 +70,7 @@ public class MapPalette implements Palette {
 
     @Override
     public MapPalette copy() {
-        MapPalette mapPalette = new MapPalette(this.size, Arrays.copyOf(this.idToState, this.idToState.length), this.nextId);
+        MapPalette mapPalette = new MapPalette(this.capacity, Arrays.copyOf(this.idToState, this.idToState.length), this.nextId);
         mapPalette.stateToId.putAll(this.stateToId);
         return mapPalette;
     }
