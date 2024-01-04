@@ -1,7 +1,7 @@
 package org.geysermc.mc.protocol;
 
-import org.geysermc.mc.auth.data.GameProfile;
-import org.geysermc.mc.auth.service.SessionService;
+import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.service.SessionService;
 import org.geysermc.packetlib.packet.DefaultPacketHeader;
 import org.geysermc.packetlib.packet.PacketHeader;
 

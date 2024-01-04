@@ -1,6 +1,6 @@
 package org.geysermc.mc.protocol.codec;
 
-import org.geysermc.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.data.GameProfile;
 import org.geysermc.mc.protocol.CheckedBiConsumer;
 import org.geysermc.mc.protocol.CheckedFunction;
 import org.geysermc.mc.protocol.data.DefaultComponentSerializer;

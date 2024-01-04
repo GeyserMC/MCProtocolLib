@@ -1,6 +1,6 @@
 package org.geysermc.mc.protocol.packet.ingame.clientbound;
 
-import org.geysermc.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.data.GameProfile;
 import org.geysermc.mc.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mc.protocol.codec.MinecraftPacket;
 import org.geysermc.mc.protocol.data.game.PlayerListEntry;

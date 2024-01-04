@@ -1,7 +1,7 @@
 package org.geysermc.mc.protocol.packet.status.clientbound;
 
-import org.geysermc.mc.auth.data.GameProfile;
-import org.geysermc.mc.auth.util.Base64;
+import com.github.steveice10.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.util.Base64;
 import org.geysermc.mc.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mc.protocol.codec.MinecraftPacket;
 import org.geysermc.mc.protocol.data.DefaultComponentSerializer;

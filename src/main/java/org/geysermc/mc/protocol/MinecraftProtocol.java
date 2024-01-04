@@ -1,6 +1,6 @@
 package org.geysermc.mc.protocol;
 
-import org.geysermc.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.data.GameProfile;
 import org.geysermc.mc.protocol.codec.MinecraftCodec;
 import org.geysermc.mc.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mc.protocol.codec.PacketCodec;

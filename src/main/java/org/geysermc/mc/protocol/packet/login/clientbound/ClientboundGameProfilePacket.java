@@ -1,6 +1,6 @@
 package org.geysermc.mc.protocol.packet.login.clientbound;
 
-import org.geysermc.mc.auth.data.GameProfile;
+import com.github.steveice10.mc.auth.data.GameProfile;
 import org.geysermc.mc.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
