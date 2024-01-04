@@ -7,20 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundSetCarriedItemPacket implements MinecraftPacket {
     private final int slot;
 
-    public ServerboundSetCarriedItemPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSetCarriedItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = in.readShort();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeShort(this.slot);
     }
 }

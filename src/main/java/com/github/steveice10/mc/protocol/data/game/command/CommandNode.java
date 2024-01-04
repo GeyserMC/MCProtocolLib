@@ -23,7 +23,7 @@ public class CommandNode {
     /**
      * Child node indices.
      */
-    private final @NonNull int[] childIndices;
+    private final int @NonNull [] childIndices;
 
     /**
      * Redirect index, or empty if none is set.

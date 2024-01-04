@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -20,14 +18,14 @@ public class ClientboundBlockDestructionPacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
     private final @NonNull BlockBreakStage stage;
 
-    public ClientboundBlockDestructionPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundBlockDestructionPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.breakerEntityId = helper.readVarInt(in);
         this.position = helper.readPosition(in);
         this.stage = helper.readBlockBreakStage(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.breakerEntityId);
         helper.writePosition(out, this.position);
         helper.writeBlockBreakStage(out, this.stage);

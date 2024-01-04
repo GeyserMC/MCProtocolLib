@@ -5,21 +5,20 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
 import java.util.BitSet;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundChatPacket implements MinecraftPacket {
-    private final @NotNull String message;
+    private final @NonNull String message;
     private final long timeStamp;
     private final long salt;
-    private final byte @Nullable[] signature;
+    private final byte @Nullable [] signature;
     private final int offset;
     private final BitSet acknowledgedMessages;
 
@@ -39,7 +38,7 @@ public class ServerboundChatPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.message);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);

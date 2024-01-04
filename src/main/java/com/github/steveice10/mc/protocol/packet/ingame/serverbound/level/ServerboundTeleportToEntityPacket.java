@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Data
@@ -17,12 +16,12 @@ import java.util.UUID;
 public class ServerboundTeleportToEntityPacket implements MinecraftPacket {
     private final @NonNull UUID target;
 
-    public ServerboundTeleportToEntityPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundTeleportToEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.target = helper.readUUID(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.target);
     }
 }

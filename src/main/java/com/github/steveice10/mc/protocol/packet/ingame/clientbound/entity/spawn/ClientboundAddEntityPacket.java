@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.UUID;
 
 @Data
@@ -49,7 +48,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, motionX, motionY, motionZ);
     }
 
-    public ClientboundAddEntityPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundAddEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.uuid = helper.readUUID(in);
         this.type = EntityType.from(helper.readVarInt(in));
@@ -89,7 +88,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeUUID(out, this.uuid);
         helper.writeVarInt(out, this.type.ordinal());

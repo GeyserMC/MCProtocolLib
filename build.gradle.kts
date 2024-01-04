@@ -79,6 +79,9 @@ dependencies {
     // Netty
     api(libs.bundles.netty)
 
+    // Checker Framework
+    api(libs.checkerframework.qual)
+
     // Test dependencies
     testImplementation(libs.junit.jupiter)
 }

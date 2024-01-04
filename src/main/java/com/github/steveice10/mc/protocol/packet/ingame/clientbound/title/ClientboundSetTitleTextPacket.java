@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ public class ClientboundSetTitleTextPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.text);
     }
 }

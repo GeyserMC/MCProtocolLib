@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -27,7 +25,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final PlayerSpawnInfo commonPlayerSpawnInfo;
     private final boolean enforcesSecureChat;
 
-    public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = in.readInt();
         this.hardcore = in.readBoolean();
         int worldCount = helper.readVarInt(in);
@@ -46,7 +44,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeInt(this.entityId);
         out.writeBoolean(this.hardcore);
         helper.writeVarInt(out, this.worldNames.length);

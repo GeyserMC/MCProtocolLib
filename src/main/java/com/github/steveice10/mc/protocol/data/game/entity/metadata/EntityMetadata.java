@@ -39,10 +39,9 @@ public abstract class EntityMetadata<V, T extends MetadataType<V>> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof EntityMetadata)) {
+        if (!(o instanceof EntityMetadata<?, ?> that)) {
             return false;
         }
-        EntityMetadata<?, ?> that = (EntityMetadata<?, ?>) o;
         return this.id == that.id && this.type == that.type && Objects.equals(this.getValue(), that.getValue());
     }
 

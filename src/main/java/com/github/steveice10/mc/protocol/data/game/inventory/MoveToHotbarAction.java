@@ -25,7 +25,7 @@ public enum MoveToHotbarAction implements ContainerAction {
         return id;
     }
 
-    private static Int2ObjectMap<MoveToHotbarAction> VALUES = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<MoveToHotbarAction> VALUES = new Int2ObjectOpenHashMap<>();
 
     public static MoveToHotbarAction from(int id) {
         return VALUES.get(id);

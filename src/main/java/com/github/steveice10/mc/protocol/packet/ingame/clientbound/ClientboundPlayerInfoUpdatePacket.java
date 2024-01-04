@@ -35,7 +35,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
             PlayerListEntry entry = new PlayerListEntry(helper.readUUID(in));
             for (PlayerListEntryAction action : this.actions) {
                 switch (action) {
-                    case ADD_PLAYER: {
+                    case ADD_PLAYER -> {
                         GameProfile profile = new GameProfile(entry.getProfileId(), helper.readString(in, 16));
                         int propertyCount = helper.readVarInt(in);
                         List<GameProfile.Property> propertyList = new ArrayList<>();
@@ -46,9 +46,8 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         profile.setProperties(propertyList);
 
                         entry.setProfile(profile);
-                        break;
                     }
-                    case INITIALIZE_CHAT: {
+                    case INITIALIZE_CHAT -> {
                         if (in.readBoolean()) {
                             entry.setSessionId(helper.readUUID(in));
                             entry.setExpiresAt(in.readLong());
@@ -64,31 +63,26 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
 
                             entry.setPublicKey(publicKey);
                         }
-                        break;
                     }
-                    case UPDATE_GAME_MODE: {
+                    case UPDATE_GAME_MODE -> {
                         GameMode gameMode = GameMode.byId(helper.readVarInt(in));
 
                         entry.setGameMode(gameMode);
-                        break;
                     }
-                    case UPDATE_LISTED: {
+                    case UPDATE_LISTED -> {
                         boolean listed = in.readBoolean();
 
                         entry.setListed(listed);
-                        break;
                     }
-                    case UPDATE_LATENCY: {
+                    case UPDATE_LATENCY -> {
                         int latency = helper.readVarInt(in);
 
                         entry.setLatency(latency);
-                        break;
                     }
-                    case UPDATE_DISPLAY_NAME: {
+                    case UPDATE_DISPLAY_NAME -> {
                         Component displayName = helper.readNullable(in, helper::readComponent);
 
                         entry.setDisplayName(displayName);
-                        break;
                     }
                 }
             }
@@ -104,7 +98,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
             helper.writeUUID(out, entry.getProfileId());
             for (PlayerListEntryAction action : this.actions) {
                 switch (action) {
-                    case ADD_PLAYER:
+                    case ADD_PLAYER -> {
                         GameProfile profile = entry.getProfile();
                         if (profile == null) {
                             throw new IllegalArgumentException("Cannot ADD " + entry.getProfileId() + " without a profile.");
@@ -115,8 +109,8 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         for (GameProfile.Property property : profile.getProperties()) {
                             helper.writeProperty(out, property);
                         }
-                        break;
-                    case INITIALIZE_CHAT:
+                    }
+                    case INITIALIZE_CHAT -> {
                         out.writeBoolean(entry.getPublicKey() != null);
                         if (entry.getPublicKey() != null) {
                             helper.writeUUID(out, entry.getSessionId());
@@ -124,19 +118,12 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                             helper.writeByteArray(out, entry.getPublicKey().getEncoded());
                             helper.writeByteArray(out, entry.getKeySignature());
                         }
-                        break;
-                    case UPDATE_GAME_MODE:
-                        helper.writeVarInt(out, entry.getGameMode().ordinal());
-                        break;
-                    case UPDATE_LISTED:
-                        out.writeBoolean(entry.isListed());
-                        break;
-                    case UPDATE_LATENCY:
-                        helper.writeVarInt(out, entry.getLatency());
-                        break;
-                    case UPDATE_DISPLAY_NAME:
-                        helper.writeNullable(out, entry.getDisplayName(), helper::writeComponent);
-                        break;
+                    }
+                    case UPDATE_GAME_MODE -> helper.writeVarInt(out, entry.getGameMode().ordinal());
+                    case UPDATE_LISTED -> out.writeBoolean(entry.isListed());
+                    case UPDATE_LATENCY -> helper.writeVarInt(out, entry.getLatency());
+                    case UPDATE_DISPLAY_NAME ->
+                            helper.writeNullable(out, entry.getDisplayName(), helper::writeComponent);
                 }
             }
         }

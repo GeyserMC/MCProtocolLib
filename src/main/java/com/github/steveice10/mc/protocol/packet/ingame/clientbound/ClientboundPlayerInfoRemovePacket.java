@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +17,7 @@ import java.util.UUID;
 public class ClientboundPlayerInfoRemovePacket implements MinecraftPacket {
     private final List<UUID> profileIds;
 
-    public ClientboundPlayerInfoRemovePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerInfoRemovePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.profileIds = new ArrayList<>();
         int numIds = helper.readVarInt(in);
         for (int i = 0; i < numIds; i++) {
@@ -26,7 +25,7 @@ public class ClientboundPlayerInfoRemovePacket implements MinecraftPacket {
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.profileIds.size());
         for (UUID id : this.profileIds) {
             helper.writeUUID(out, id);

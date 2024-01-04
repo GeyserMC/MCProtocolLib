@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -16,13 +14,13 @@ public class ClientboundSetEntityLinkPacket implements MinecraftPacket {
     private final int entityId;
     private final int attachedToId;
 
-    public ClientboundSetEntityLinkPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetEntityLinkPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = in.readInt();
         this.attachedToId = in.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeInt(this.entityId);
         out.writeInt(this.attachedToId);
     }

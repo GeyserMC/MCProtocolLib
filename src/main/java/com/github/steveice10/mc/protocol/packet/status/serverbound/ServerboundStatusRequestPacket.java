@@ -6,16 +6,14 @@ import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.IOException;
-
 @Data
 @NoArgsConstructor
 public class ServerboundStatusRequestPacket implements MinecraftPacket {
 
-    public ServerboundStatusRequestPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundStatusRequestPacket(ByteBuf in, MinecraftCodecHelper helper) {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
     }
 }

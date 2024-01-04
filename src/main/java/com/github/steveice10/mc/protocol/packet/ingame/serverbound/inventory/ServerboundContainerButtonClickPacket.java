@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -16,13 +14,13 @@ public class ServerboundContainerButtonClickPacket implements MinecraftPacket {
     private final int containerId;
     private final int buttonId;
 
-    public ServerboundContainerButtonClickPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundContainerButtonClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = helper.readVarInt(in);
         this.buttonId = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.containerId);
         helper.writeVarInt(out, this.buttonId);
     }

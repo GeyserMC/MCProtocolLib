@@ -7,8 +7,8 @@ import com.github.steveice10.packetlib.Session;
  * Called when a session is removed and disconnected from the server.
  */
 public class SessionRemovedEvent implements ServerEvent {
-    private Server server;
-    private Session session;
+    private final Server server;
+    private final Session session;
 
     /**
      * Creates a new SessionRemovedEvent instance.

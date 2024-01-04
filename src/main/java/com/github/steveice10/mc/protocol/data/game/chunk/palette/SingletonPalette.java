@@ -1,17 +1,15 @@
 package com.github.steveice10.mc.protocol.data.game.chunk.palette;
 
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 /**
  * A palette containing one state.
  */
 @EqualsAndHashCode
+@RequiredArgsConstructor
 public class SingletonPalette implements Palette {
     private final int state;
-
-    public SingletonPalette(int state) {
-        this.state = state;
-    }
 
     @Override
     public int size() {
@@ -20,18 +18,12 @@ public class SingletonPalette implements Palette {
 
     @Override
     public int stateToId(int state) {
-        if (this.state == state) {
-            return 0;
-        }
-        return -1;
+        return this.state == state ? 0 : -1;
     }
 
     @Override
     public int idToState(int id) {
-        if (id == 0) {
-            return this.state;
-        }
-        return 0;
+        return id == 0 ? this.state : 0;
     }
 
     @Override

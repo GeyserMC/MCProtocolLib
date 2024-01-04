@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -22,7 +20,7 @@ public class ClientboundInitializeBorderPacket implements MinecraftPacket {
     private final int warningBlocks;
     private final int warningTime;
 
-    public ClientboundInitializeBorderPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundInitializeBorderPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.newCenterX = in.readDouble();
         this.newCenterZ = in.readDouble();
         this.oldSize = in.readDouble();
@@ -34,7 +32,7 @@ public class ClientboundInitializeBorderPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeDouble(this.newCenterX);
         out.writeDouble(this.newCenterZ);
         out.writeDouble(this.oldSize);

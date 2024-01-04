@@ -43,14 +43,9 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.action = AdvancementTabAction.from(helper.readVarInt(in));
         switch (this.action) {
-            case CLOSED_SCREEN:
-                this.tabId = null;
-                break;
-            case OPENED_TAB:
-                this.tabId = helper.readString(in);
-                break;
-            default:
-                throw new IOException("Unknown advancement tab action: " + this.action);
+            case CLOSED_SCREEN -> this.tabId = null;
+            case OPENED_TAB -> this.tabId = helper.readString(in);
+            default -> throw new IOException("Unknown advancement tab action: " + this.action);
         }
     }
 
@@ -58,13 +53,10 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.action.ordinal());
         switch (this.action) {
-            case CLOSED_SCREEN:
-                break;
-            case OPENED_TAB:
-                helper.writeString(out, this.tabId);
-                break;
-            default:
-                throw new IOException("Unknown advancement tab action: " + this.action);
+            case CLOSED_SCREEN -> {
+            }
+            case OPENED_TAB -> helper.writeString(out, this.tabId);
+            default -> throw new IOException("Unknown advancement tab action: " + this.action);
         }
     }
 }

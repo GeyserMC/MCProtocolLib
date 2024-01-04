@@ -9,20 +9,18 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundClientCommandPacket implements MinecraftPacket {
     private final @NonNull ClientCommand request;
 
-    public ServerboundClientCommandPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundClientCommandPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.request = ClientCommand.from(helper.readVarInt(in));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.request.ordinal());
     }
 }

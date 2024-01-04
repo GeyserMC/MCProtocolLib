@@ -38,9 +38,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
 import java.net.Proxy;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.BitSet;
 
 public class MinecraftProtocolTest {
@@ -158,7 +160,7 @@ public class MinecraftProtocolTest {
                     + " / " + info.getPlayerInfo().getMaxPlayers());
             System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers().toArray()));
             System.out.println("Description: " + info.getDescription());
-            System.out.println("Icon: " + info.getIconPng());
+            System.out.println("Icon: " + new String(Base64.getEncoder().encode(info.getIconPng()), StandardCharsets.UTF_8));
         });
 
         client.setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, (ServerPingTimeHandler) (session, pingTime) ->

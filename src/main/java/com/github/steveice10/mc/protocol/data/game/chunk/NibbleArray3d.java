@@ -7,7 +7,7 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 public class NibbleArray3d {
-    private final @NonNull byte[] data;
+    private final byte @NonNull [] data;
 
     public NibbleArray3d(int size) {
         this(new byte[size >> 1]);

@@ -6,7 +6,7 @@ import com.github.steveice10.packetlib.Session;
  * Called when the session connects.
  */
 public class ConnectedEvent implements SessionEvent {
-    private Session session;
+    private final Session session;
 
     /**
      * Creates a new ConnectedEvent instance.

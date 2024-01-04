@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -16,13 +14,13 @@ public class ClientboundCooldownPacket implements MinecraftPacket {
     private final int itemId;
     private final int cooldownTicks;
 
-    public ClientboundCooldownPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundCooldownPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.itemId = helper.readVarInt(in);
         this.cooldownTicks = helper.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.itemId);
         helper.writeVarInt(out, this.cooldownTicks);
     }

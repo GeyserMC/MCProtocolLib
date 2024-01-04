@@ -175,7 +175,7 @@ public class MetadataType<T> {
         };
     }
 
-    public static MetadataType<?> read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public static MetadataType<?> read(ByteBuf in, MinecraftCodecHelper helper) {
         int id = helper.readVarInt(in);
         if (id >= VALUES.size()) {
             throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + VALUES.size() + "!");
@@ -183,11 +183,11 @@ public class MetadataType<T> {
 
         return VALUES.get(id);
     }
-    
+
     public static MetadataType<?> from(int id) {
         return VALUES.get(id);
     }
-    
+
     public static int size() {
         return VALUES.size();
     }

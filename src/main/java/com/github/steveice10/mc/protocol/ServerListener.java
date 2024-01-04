@@ -38,6 +38,7 @@ import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 
 import javax.crypto.SecretKey;
@@ -95,40 +96,35 @@ public class ServerListener extends SessionAdapter {
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
         if (protocol.getState() == ProtocolState.HANDSHAKE) {
-            if (packet instanceof ClientIntentionPacket) {
-                ClientIntentionPacket intentionPacket = (ClientIntentionPacket) packet;
+            if (packet instanceof ClientIntentionPacket intentionPacket) {
                 switch (intentionPacket.getIntent()) {
-                    case STATUS:
-                        protocol.setState(ProtocolState.STATUS);
-                        break;
+                    case STATUS -> protocol.setState(ProtocolState.STATUS);
                     case TRANSFER:
                         if (!session.getFlag(MinecraftConstants.ACCEPT_TRANSFERS_KEY, false)) {
                             session.disconnect("Server does not accept transfers.");
                         }
-                    case LOGIN:
+                    case LOGIN -> {
                         protocol.setState(ProtocolState.LOGIN);
                         if (intentionPacket.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
                             session.disconnect("Outdated server! I'm still on " + protocol.getCodec().getMinecraftVersion() + ".");
                         } else if (intentionPacket.getProtocolVersion() < protocol.getCodec().getProtocolVersion()) {
                             session.disconnect("Outdated client! Please use " + protocol.getCodec().getMinecraftVersion() + ".");
                         }
-
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
+                    }
+                    default ->
+                            throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
         } else if (protocol.getState() == ProtocolState.LOGIN) {
-            if (packet instanceof ServerboundHelloPacket) {
-                this.username = ((ServerboundHelloPacket) packet).getUsername();
+            if (packet instanceof ServerboundHelloPacket helloPacket) {
+                this.username = helloPacket.getUsername();
 
                 if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
                     session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, true));
                 } else {
                     new Thread(new UserAuthTask(session, null)).start();
                 }
-            } else if (packet instanceof ServerboundKeyPacket) {
-                ServerboundKeyPacket keyPacket = (ServerboundKeyPacket) packet;
+            } else if (packet instanceof ServerboundKeyPacket keyPacket) {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
 
                 if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
@@ -175,19 +171,19 @@ public class ServerListener extends SessionAdapter {
 
                 ServerStatusInfo info = builder.buildInfo(session);
                 session.send(new ClientboundStatusResponsePacket(info));
-            } else if (packet instanceof ServerboundPingRequestPacket) {
-                session.send(new ClientboundPongResponsePacket(((ServerboundPingRequestPacket) packet).getPingTime()));
+            } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
+                session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
             }
         } else if (protocol.getState() == ProtocolState.GAME) {
-            if (packet instanceof ServerboundKeepAlivePacket) {
-                if (((ServerboundKeepAlivePacket) packet).getPingId() == this.lastPingId) {
+            if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
+                if (keepAlivePacket.getPingId() == this.lastPingId) {
                     long time = System.currentTimeMillis() - this.lastPingTime;
                     session.setFlag(MinecraftConstants.PING_KEY, time);
                 }
             } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
                 protocol.setState(ProtocolState.CONFIGURATION);
-            } else if (packet instanceof ServerboundPingRequestPacket) {
-                session.send(new ClientboundPongResponsePacket(((ServerboundPingRequestPacket) packet).getPingTime()));
+            } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
+                session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
             }
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundFinishConfigurationPacket) {
@@ -206,9 +202,9 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void packetSent(Session session, Packet packet) {
-        if (packet instanceof ClientboundLoginCompressionPacket) {
-            session.setCompressionThreshold(((ClientboundLoginCompressionPacket) packet).getThreshold(), true);
-            session.send(new ClientboundGameProfilePacket((GameProfile) session.getFlag(MinecraftConstants.PROFILE_KEY), true));
+        if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
+            session.setCompressionThreshold(loginCompressionPacket.getThreshold(), true);
+            session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY), true));
         }
     }
 
@@ -222,14 +218,10 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
+    @RequiredArgsConstructor
     private class UserAuthTask implements Runnable {
-        private Session session;
-        private SecretKey key;
-
-        public UserAuthTask(Session session, SecretKey key) {
-            this.key = key;
-            this.session = session;
-        }
+        private final Session session;
+        private final SecretKey key;
 
         @Override
         public void run() {
@@ -257,12 +249,9 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
+    @RequiredArgsConstructor
     private class KeepAliveTask implements Runnable {
-        private Session session;
-
-        public KeepAliveTask(Session session) {
-            this.session = session;
-        }
+        private final Session session;
 
         @Override
         public void run() {

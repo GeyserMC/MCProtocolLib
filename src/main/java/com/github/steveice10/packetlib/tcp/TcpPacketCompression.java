@@ -35,7 +35,7 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
+    public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
         int readable = in.readableBytes();
         if (readable > MAX_UNCOMPRESSED_SIZE) {
             throw new EncoderException("Packet too big: size of " + readable + " is larger than the protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");

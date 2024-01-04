@@ -7,9 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Data
 @With
@@ -25,7 +23,7 @@ public class ClientboundResetScorePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.owner);
         helper.writeNullable(out, this.objective, helper::writeString);
     }
