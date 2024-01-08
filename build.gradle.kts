@@ -2,6 +2,7 @@ plugins {
     idea
     `java-library`
     `maven-publish`
+    jacoco
     alias(libs.plugins.indra)
     alias(libs.plugins.indra.git)
     alias(libs.plugins.indra.publishing)
@@ -113,3 +114,15 @@ tasks.withType<Javadoc> {
     options.addStringOption("Xdoclint:all,-missing", "-quiet")
 }
 
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
+}
