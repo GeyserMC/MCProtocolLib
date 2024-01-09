@@ -1,6 +1,6 @@
-package org.geysermc.mc.protocol.packet.status.serverbound;
+package org.geysermc.mcprotocollib.protocol.packet.status.serverbound;
 
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ServerboundStatusRequestPacketTest extends PacketTest {

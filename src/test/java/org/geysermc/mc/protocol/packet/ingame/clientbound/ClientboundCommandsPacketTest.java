@@ -1,12 +1,12 @@
-package org.geysermc.mc.protocol.packet.ingame.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import org.geysermc.mc.protocol.data.game.command.CommandNode;
-import org.geysermc.mc.protocol.data.game.command.CommandParser;
-import org.geysermc.mc.protocol.data.game.command.CommandType;
-import org.geysermc.mc.protocol.data.game.command.SuggestionType;
-import org.geysermc.mc.protocol.data.game.command.properties.DoubleProperties;
-import org.geysermc.mc.protocol.data.game.command.properties.StringProperties;
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.data.game.command.CommandNode;
+import org.geysermc.mcprotocollib.protocol.data.game.command.CommandParser;
+import org.geysermc.mcprotocollib.protocol.data.game.command.CommandType;
+import org.geysermc.mcprotocollib.protocol.data.game.command.SuggestionType;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.DoubleProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.StringProperties;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.OptionalInt;

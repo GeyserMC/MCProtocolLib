@@ -1,11 +1,11 @@
-package org.geysermc.mc.protocol.packet.status.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.status.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.geysermc.mc.protocol.codec.MinecraftCodec;
-import org.geysermc.mc.protocol.data.status.PlayerInfo;
-import org.geysermc.mc.protocol.data.status.ServerStatusInfo;
-import org.geysermc.mc.protocol.data.status.VersionInfo;
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
+import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
+import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
+import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.BeforeEach;
 

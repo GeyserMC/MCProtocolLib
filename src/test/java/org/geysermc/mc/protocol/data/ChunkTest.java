@@ -1,10 +1,10 @@
-package org.geysermc.mc.protocol.data;
+package org.geysermc.mcprotocollib.protocol.data;
 
-import org.geysermc.mc.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mc.protocol.data.game.chunk.ChunkSection;
-import org.geysermc.mc.protocol.data.game.chunk.DataPalette;
-import org.geysermc.mc.protocol.data.game.chunk.palette.PaletteType;
-import org.geysermc.mc.protocol.data.game.chunk.palette.SingletonPalette;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.data.game.chunk.ChunkSection;
+import org.geysermc.mcprotocollib.protocol.data.game.chunk.DataPalette;
+import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
+import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPalette;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;

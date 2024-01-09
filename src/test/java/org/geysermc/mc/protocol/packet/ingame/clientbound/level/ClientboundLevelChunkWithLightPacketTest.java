@@ -1,9 +1,9 @@
-package org.geysermc.mc.protocol.packet.ingame.clientbound.level;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.geysermc.mc.protocol.data.game.level.LightUpdateData;
-import org.geysermc.mc.protocol.data.game.level.block.BlockEntityInfo;
-import org.geysermc.mc.protocol.data.game.level.block.BlockEntityType;
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import org.junit.jupiter.api.BeforeEach;
 

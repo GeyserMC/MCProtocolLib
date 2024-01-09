@@ -1,7 +1,7 @@
-package org.geysermc.mc.protocol.packet.login.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.UUID;

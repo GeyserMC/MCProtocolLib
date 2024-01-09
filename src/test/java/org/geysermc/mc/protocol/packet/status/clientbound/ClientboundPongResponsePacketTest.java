@@ -1,6 +1,6 @@
-package org.geysermc.mc.protocol.packet.status.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.status.clientbound;
 
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ClientboundPongResponsePacketTest extends PacketTest {

@@ -1,16 +1,16 @@
-package org.geysermc.mc.protocol.packet.ingame.clientbound.level;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.geysermc.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import org.geysermc.mc.protocol.data.game.entity.metadata.MetadataType;
-import org.geysermc.mc.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
-import org.geysermc.mc.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
-import org.geysermc.mc.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
-import org.geysermc.mc.protocol.data.game.entity.metadata.type.IntEntityMetadata;
-import org.geysermc.mc.protocol.data.game.entity.metadata.type.LongEntityMetadata;
-import org.geysermc.mc.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
-import org.geysermc.mc.protocol.data.game.entity.object.Direction;
-import org.geysermc.mc.protocol.packet.PacketTest;
-import org.geysermc.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.IntEntityMetadata;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.LongEntityMetadata;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.junit.jupiter.api.BeforeEach;
 

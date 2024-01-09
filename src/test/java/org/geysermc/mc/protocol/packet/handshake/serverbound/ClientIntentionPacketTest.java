@@ -1,9 +1,9 @@
-package org.geysermc.mc.protocol.packet.handshake.serverbound;
+package org.geysermc.mcprotocollib.protocol.packet.handshake.serverbound;
 
-import org.geysermc.mc.protocol.codec.MinecraftCodec;
-import org.geysermc.mc.protocol.codec.MinecraftPacket;
-import org.geysermc.mc.protocol.data.handshake.HandshakeIntent;
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.handshake.HandshakeIntent;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;

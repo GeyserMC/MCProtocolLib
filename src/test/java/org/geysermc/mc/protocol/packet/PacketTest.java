@@ -1,8 +1,8 @@
-package org.geysermc.mc.protocol.packet;
+package org.geysermc.mcprotocollib.protocol.packet;
 
-import org.geysermc.mc.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mc.protocol.codec.MinecraftPacket;
-import org.geysermc.packetlib.packet.Packet;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;

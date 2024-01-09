@@ -1,12 +1,12 @@
-package org.geysermc.mc.protocol.packet.ingame.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import org.geysermc.mc.protocol.data.game.entity.metadata.ItemStack;
-import org.geysermc.mc.protocol.data.game.recipe.CraftingBookCategory;
-import org.geysermc.mc.protocol.data.game.recipe.Ingredient;
-import org.geysermc.mc.protocol.data.game.recipe.Recipe;
-import org.geysermc.mc.protocol.data.game.recipe.RecipeType;
-import org.geysermc.mc.protocol.data.game.recipe.data.*;
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.CraftingBookCategory;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.Recipe;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.RecipeType;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.*;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ServerDeclareRecipesTest extends PacketTest {

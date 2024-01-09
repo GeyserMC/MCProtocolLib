@@ -1,10 +1,10 @@
-package org.geysermc.mc.protocol.packet.ingame.clientbound.level;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.geysermc.mc.protocol.data.game.entity.EquipmentSlot;
-import org.geysermc.mc.protocol.data.game.entity.metadata.Equipment;
-import org.geysermc.mc.protocol.data.game.entity.metadata.ItemStack;
-import org.geysermc.mc.protocol.packet.PacketTest;
-import org.geysermc.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Equipment;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ClientboundSetEquipmentPacketTest extends PacketTest {

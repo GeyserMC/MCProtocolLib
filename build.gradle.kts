@@ -90,7 +90,7 @@ lombok {
     version = libs.versions.lombok.version.get()
 }
 
-group = "org.geysermc"
+group = "org.geysermc.mcprotocollib"
 version = "1.20.4-2-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 

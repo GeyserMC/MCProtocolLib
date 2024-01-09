@@ -1,10 +1,10 @@
-package org.geysermc.mc.protocol.packet.ingame.clientbound.level;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.geysermc.mc.protocol.data.game.scoreboard.CollisionRule;
-import org.geysermc.mc.protocol.data.game.scoreboard.NameTagVisibility;
-import org.geysermc.mc.protocol.data.game.scoreboard.TeamColor;
-import org.geysermc.mc.protocol.packet.PacketTest;
-import org.geysermc.mc.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetPlayerTeamPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.CollisionRule;
+import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.NameTagVisibility;
+import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.TeamColor;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.scoreboard.ClientboundSetPlayerTeamPacket;
 import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.BeforeEach;
 

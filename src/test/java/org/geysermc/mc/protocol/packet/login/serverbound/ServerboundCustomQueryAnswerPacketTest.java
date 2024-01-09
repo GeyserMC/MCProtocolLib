@@ -1,6 +1,6 @@
-package org.geysermc.mc.protocol.packet.login.serverbound;
+package org.geysermc.mcprotocollib.protocol.packet.login.serverbound;
 
-import org.geysermc.mc.protocol.packet.PacketTest;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.Random;
