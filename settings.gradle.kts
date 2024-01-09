@@ -1,3 +1,5 @@
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 dependencyResolutionManagement {
     repositories {
         maven("https://repo.opencollab.dev/maven-releases/") {
@@ -19,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "mcprotocollib"
 
-include("example")
+include("protocol", "example")
