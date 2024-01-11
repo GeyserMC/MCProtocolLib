@@ -7,5 +7,5 @@ dependencies {
 }
 
 tasks.javadoc {
-    onlyIf { false }
+    enabled = false
 }

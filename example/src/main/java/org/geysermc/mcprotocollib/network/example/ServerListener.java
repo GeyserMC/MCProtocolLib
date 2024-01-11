@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.test;
+package org.geysermc.mcprotocollib.network.example;
 
 import org.geysermc.mcprotocollib.network.event.server.ServerAdapter;
 import org.geysermc.mcprotocollib.network.event.server.ServerBoundEvent;

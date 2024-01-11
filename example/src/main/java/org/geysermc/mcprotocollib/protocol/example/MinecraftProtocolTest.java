@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.protocol.test;
+package org.geysermc.mcprotocollib.protocol.example;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;

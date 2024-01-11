@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.test;
+package org.geysermc.mcprotocollib.network.example;
 
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.packet.Packet;
