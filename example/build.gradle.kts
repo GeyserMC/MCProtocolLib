@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation(rootProject)
+    implementation(projects.protocol)
 }
 
 tasks.javadoc {
-    onlyIf { false }
+    enabled = false
 }
