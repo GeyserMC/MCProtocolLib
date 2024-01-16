@@ -620,15 +620,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    @NotNull
+    @Nullable
     public BlockEntityType readBlockEntityType(ByteBuf buf) {
-        int id = this.readVarInt(buf);
-        BlockEntityType type = BlockEntityType.from(id);
-
-        if (type == null) {
-            throw new IllegalArgumentException("Unknown BlockEntityType: " + id);
-        }
-        return type;
+        return BlockEntityType.from(this.readVarInt(buf));
     }
 
     public void writeBlockEntityType(ByteBuf buf, BlockEntityType type) {
