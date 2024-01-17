@@ -626,6 +626,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeBlockEntityType(ByteBuf buf, BlockEntityType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Cannot write an unknown BlockEntityType!");
+        }
         this.writeEnum(buf, type);
     }
 

@@ -19,7 +19,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ClientboundBlockEntityDataPacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
-    private final @NonNull BlockEntityType type;
+    private final @Nullable BlockEntityType type;
     private final @Nullable CompoundTag nbt;
 
     public ClientboundBlockEntityDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {

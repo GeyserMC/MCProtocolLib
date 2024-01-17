@@ -11,6 +11,6 @@ public class BlockEntityInfo {
     private final int x;
     private final int y;
     private final int z;
-    private final BlockEntityType type;
+    private final @Nullable BlockEntityType type;
     private final @Nullable CompoundTag nbt;
 }
