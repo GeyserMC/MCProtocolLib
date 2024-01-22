@@ -22,13 +22,7 @@ import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalett
 import com.github.steveice10.mc.protocol.data.game.entity.Effect;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.SnifferState;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.VillagerData;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.*;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.BlockBreakStage;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
@@ -327,6 +321,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeSnifferState(ByteBuf buf, SnifferState state) {
+        this.writeEnum(buf, state);
+    }
+
+    public ArmadilloState readArmadilloState(ByteBuf buf) {
+        return ArmadilloState.from(this.readVarInt(buf));
+    }
+
+    public void writeArmadilloState(ByteBuf buf, ArmadilloState state) {
         this.writeEnum(buf, state);
     }
 

@@ -20,6 +20,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private static final int FLAG_AMBIENT = 0x01;
     private static final int FLAG_SHOW_PARTICLES = 0x02;
     private static final int FLAG_SHOW_ICON = 0x04;
+    private static final int FLAG_BLEND = 0x08;
 
     private final int entityId;
     private final @NonNull Effect effect;
@@ -28,7 +29,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private final boolean ambient;
     private final boolean showParticles;
     private final boolean showIcon;
-    private final @Nullable CompoundTag factorData;
+    private final boolean blend;
 
     public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = helper.readVarInt(in);
@@ -40,7 +41,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
         this.ambient = (flags & FLAG_AMBIENT) != 0;
         this.showParticles = (flags & FLAG_SHOW_PARTICLES) != 0;
         this.showIcon = (flags & FLAG_SHOW_ICON) != 0;
-        this.factorData = helper.readNullable(in, helper::readAnyTagOrThrow);
+        this.blend = (flags & FLAG_BLEND) != 0;
     }
 
     @Override
@@ -60,8 +61,10 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
         if (this.showIcon) {
             flags |= FLAG_SHOW_ICON;
         }
+        if (this.blend) {
+            flags |= FLAG_BLEND;
+        }
 
         out.writeByte(flags);
-        helper.writeNullable(out, this.factorData, helper::writeAnyTag);
     }
 }

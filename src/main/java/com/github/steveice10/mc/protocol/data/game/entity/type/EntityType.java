@@ -3,6 +3,7 @@ package com.github.steveice10.mc.protocol.data.game.entity.type;
 public enum EntityType {
     ALLAY,
     AREA_EFFECT_CLOUD,
+    ARMADILLO,
     ARMOR_STAND,
     ARROW,
     AXOLOTL,
