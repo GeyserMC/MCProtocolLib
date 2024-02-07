@@ -159,5 +159,6 @@ public class ClientListener extends SessionAdapter {
         } else if (this.targetState == ProtocolState.STATUS) {
             event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
         }
+        // TODO: transfer?
     }
 }

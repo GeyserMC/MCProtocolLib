@@ -14,11 +14,11 @@ import java.io.IOException;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundBlockEntityTagQuery implements MinecraftPacket {
+public class ServerboundBlockEntityTagQueryPacket implements MinecraftPacket {
     private final int transactionId;
     private final @NonNull Vector3i position;
 
-    public ServerboundBlockEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundBlockEntityTagQueryPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.transactionId = helper.readVarInt(in);
         this.position = helper.readPosition(in);
     }

@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.level;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
-import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -29,7 +28,6 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
     private final int amount;
 
     public ClientboundLevelParticlesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        ParticleType type = helper.readParticleType(in);
         this.longDistance = in.readBoolean();
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -39,12 +37,12 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         this.offsetZ = in.readFloat();
         this.velocityOffset = in.readFloat();
         this.amount = in.readInt();
+        ParticleType type = helper.readParticleType(in);
         this.particle = new Particle(type, helper.readParticleData(in, type));
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
-        helper.writeParticleType(out, this.particle.getType());
         out.writeBoolean(this.longDistance);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
@@ -54,6 +52,7 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         out.writeFloat(this.offsetZ);
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
+        helper.writeParticleType(out, this.particle.getType());
         helper.writeParticleData(out, this.particle.getType(), this.particle.getData());
     }
 }

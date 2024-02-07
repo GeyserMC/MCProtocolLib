@@ -25,8 +25,8 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.recipes = new Recipe[helper.readVarInt(in)];
         for (int i = 0; i < this.recipes.length; i++) {
-            RecipeType type = RecipeType.from(helper.readResourceLocation(in));
             String identifier = helper.readResourceLocation(in);
+            RecipeType type = RecipeType.from(helper.readVarInt(in));
             RecipeData data;
             switch (type) {
                 case CRAFTING_SHAPELESS: {
@@ -115,8 +115,8 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.recipes.length);
         for (Recipe recipe : this.recipes) {
-            helper.writeResourceLocation(out, recipe.getType().getResourceLocation());
             helper.writeResourceLocation(out, recipe.getIdentifier());
+            helper.writeVarInt(out, recipe.getType().ordinal());
             switch (recipe.getType()) {
                 case CRAFTING_SHAPELESS: {
                     ShapelessRecipeData data = (ShapelessRecipeData) recipe.getData();

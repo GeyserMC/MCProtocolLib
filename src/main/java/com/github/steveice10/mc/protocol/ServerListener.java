@@ -94,6 +94,8 @@ public class ServerListener extends SessionAdapter {
                         protocol.setState(ProtocolState.STATUS);
                         break;
                     case LOGIN:
+                    case TRANSFER:
+                        // TODO: System variable to allow transfers?
                         protocol.setState(ProtocolState.LOGIN);
                         if (intentionPacket.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
                             session.disconnect("Outdated server! I'm still on " + protocol.getCodec().getMinecraftVersion() + ".");
@@ -111,7 +113,7 @@ public class ServerListener extends SessionAdapter {
                 this.username = ((ServerboundHelloPacket) packet).getUsername();
 
                 if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
-                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge));
+                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, true));
                 } else {
                     new Thread(new UserAuthTask(session, null)).start();
                 }

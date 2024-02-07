@@ -70,7 +70,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
             this.numberFormat = helper.readNullable(in, helper::readNumberFormat);
         } else {
             this.displayName = null;
-            this.type = null;
+            this.type = ScoreType.INTEGER;
             this.numberFormat = null;
         }
     }
