@@ -63,6 +63,7 @@ public enum BuiltinSound implements Sound {
     BLOCK_ANVIL_USE("block.anvil.use"),
     ENTITY_ARMADILLO_EAT("entity.armadillo.eat"),
     ENTITY_ARMADILLO_HURT("entity.armadillo.hurt"),
+    ENTITY_ARMADILLO_HURT_REDUCED("entity.armadillo.hurt_reduced"),
     ENTITY_ARMADILLO_AMBIENT("entity.armadillo.ambient"),
     ENTITY_ARMADILLO_STEP("entity.armadillo.step"),
     ENTITY_ARMADILLO_DEATH("entity.armadillo.death"),

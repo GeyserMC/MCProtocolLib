@@ -4,6 +4,7 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
+import com.github.steveice10.mc.protocol.data.game.RegistryEntry;
 import com.github.steveice10.mc.protocol.data.status.PlayerInfo;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.VersionInfo;
@@ -28,6 +29,10 @@ import com.github.steveice10.mc.protocol.packet.status.clientbound.ClientboundSt
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import com.github.steveice10.mc.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.IntTag;
+import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
+import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.DisconnectingEvent;
@@ -40,8 +45,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -131,7 +139,23 @@ public class ServerListener extends SessionAdapter {
                 new Thread(new UserAuthTask(session, key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.CONFIGURATION);
-                session.send(new ClientboundRegistryDataPacket(networkCodec));
+
+                // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
+                for (Map.Entry<String, Tag> entry : networkCodec.getValue().entrySet()) {
+                    CompoundTag entryTag = (CompoundTag) entry.getValue();
+                    StringTag typeTag = entryTag.get("type");
+                    ListTag valueTag = entryTag.get("value");
+                    List<RegistryEntry> entries = new ArrayList<>();
+                    for (Tag tag : valueTag) {
+                        CompoundTag compoundTag = (CompoundTag) tag;
+                        StringTag nameTag = compoundTag.get("name");
+                        int id = ((IntTag) compoundTag.get("id")).getValue();
+                        entries.add(id, new RegistryEntry(nameTag.getValue(), compoundTag.get("element")));
+                    }
+
+                    session.send(new ClientboundRegistryDataPacket(typeTag.getValue(), entries));
+                }
+
                 session.send(new ClientboundFinishConfigurationPacket());
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
