@@ -101,7 +101,8 @@ public enum ParticleType {
     EGG_CRACK,
     DUST_PLUME,
     GUST_DUST,
-    TRIAL_SPAWNER_DETECTION;
+    TRIAL_SPAWNER_DETECTION,
+    VAULT_CONNECTION;
 
     private static final ParticleType[] VALUES = values();
 
