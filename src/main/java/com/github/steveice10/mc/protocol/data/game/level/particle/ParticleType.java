@@ -100,7 +100,6 @@ public enum ParticleType {
     SHRIEK,
     EGG_CRACK,
     DUST_PLUME,
-    GUST_DUST,
     TRIAL_SPAWNER_DETECTION,
     VAULT_CONNECTION;
 
