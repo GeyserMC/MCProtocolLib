@@ -34,7 +34,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.entityId = helper.readVarInt(in);
         this.effect = helper.readEffect(in);
-        this.amplifier = in.readByte();
+        this.amplifier = helper.readVarInt(in);
         this.duration = helper.readVarInt(in);
 
         int flags = in.readByte();
@@ -48,7 +48,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
         helper.writeVarInt(out, this.entityId);
         helper.writeEffect(out, this.effect);
-        out.writeByte(this.amplifier);
+        helper.writeVarInt(out, this.amplifier);
         helper.writeVarInt(out, this.duration);
 
         int flags = 0;
