@@ -459,7 +459,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return switch (type) {
             case BLOCK, BLOCK_MARKER -> {
                 int blockState = this.readVarInt(buf);
-                new BlockParticleData(blockState);
+                yield new BlockParticleData(blockState);
             }
             case DUST -> {
                 float red = buf.readFloat();
