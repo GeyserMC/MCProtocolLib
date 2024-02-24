@@ -133,18 +133,14 @@ public class MetadataType<T> {
     private static <T> BasicWriter<Optional<T>> optionalWriter(BasicWriter<T> writer) {
         return (output, value) -> {
               output.writeBoolean(value.isPresent());
-              if (value.isPresent()) {
-                  writer.write(output, value.get());
-              }
+            value.ifPresent(t -> writer.write(output, t));
         };
     }
 
     private static <T> Writer<Optional<T>> optionalWriter(Writer<T> writer) {
         return (helper, output, value) -> {
             output.writeBoolean(value.isPresent());
-            if (value.isPresent()) {
-                writer.write(helper, output, value.get());
-            }
+            value.ifPresent(t -> writer.write(helper, output, t));
         };
     }
 
