@@ -10,8 +10,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.*;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.io.IOException;
 import java.util.Arrays;
 
 @Data

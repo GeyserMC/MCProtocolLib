@@ -5,8 +5,6 @@ import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
 
-import java.io.IOException;
-
 @RequiredArgsConstructor
 public class MinecraftPacketSerializer<T extends MinecraftPacket> implements PacketSerializer<T, MinecraftCodecHelper> {
     private final PacketFactory<T, MinecraftCodecHelper> factory;

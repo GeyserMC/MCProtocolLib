@@ -9,8 +9,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.io.IOException;
 import java.util.UUID;
 
 @Data

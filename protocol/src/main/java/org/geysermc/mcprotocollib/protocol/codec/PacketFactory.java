@@ -4,8 +4,6 @@ import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 /**
  * Factory for constructing {@link Packet}s.
  *

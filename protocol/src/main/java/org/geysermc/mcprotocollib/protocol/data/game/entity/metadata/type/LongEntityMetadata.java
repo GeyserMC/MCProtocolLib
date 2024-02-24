@@ -6,8 +6,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.LongMetadat
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
-import java.io.IOException;
-
 public class LongEntityMetadata extends EntityMetadata<Long, LongMetadataType> {
     private final long value;
 

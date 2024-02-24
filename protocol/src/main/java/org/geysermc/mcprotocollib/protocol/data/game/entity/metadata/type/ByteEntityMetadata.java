@@ -6,8 +6,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetad
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
-import java.io.IOException;
-
 public class ByteEntityMetadata extends EntityMetadata<Byte, ByteMetadataType> {
     private final byte value;
 

@@ -3,8 +3,6 @@ package org.geysermc.mcprotocollib.network.codec;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 /**
  * Represents a definition of a packet with various
  * information about it, such as it's id, class and

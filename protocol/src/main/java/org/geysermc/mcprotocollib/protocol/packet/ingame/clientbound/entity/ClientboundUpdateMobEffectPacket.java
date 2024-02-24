@@ -11,8 +11,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor

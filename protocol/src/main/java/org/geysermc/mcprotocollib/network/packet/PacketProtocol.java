@@ -8,8 +8,6 @@ import org.geysermc.mcprotocollib.network.Session;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
-import java.io.IOException;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
