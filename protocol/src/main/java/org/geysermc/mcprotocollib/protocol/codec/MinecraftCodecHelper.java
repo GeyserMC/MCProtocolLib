@@ -203,7 +203,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     @Nullable
     public <T extends Tag> T readAnyTag(ByteBuf buf, Class<T> expected) {
-        Tag tag = null;
+        Tag tag;
         try {
             tag = NBTIO.readAnyTag(new InputStream() {
                 @Override
@@ -457,7 +457,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) {
         return switch (type) {
-            case BLOCK, BLOCK_MARKER -> new BlockParticleData(this.readVarInt(buf));
+            case BLOCK, BLOCK_MARKER -> {
+                int blockState = this.readVarInt(buf);
+                new BlockParticleData(blockState);
+            }
             case DUST -> {
                 float red = buf.readFloat();
                 float green = buf.readFloat();
@@ -486,7 +489,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) {
         switch (type) {
-            case BLOCK, BLOCK_MARKER -> this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
+            case BLOCK, BLOCK_MARKER -> {
+                BlockParticleData block = (BlockParticleData) data;
+                this.writeVarInt(buf, block.getBlockState());
+            }
             case DUST -> {
                 DustParticleData dust = (DustParticleData) data;
                 buf.writeFloat(dust.getRed());
