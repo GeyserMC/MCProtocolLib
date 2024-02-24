@@ -212,7 +212,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 }
             });
         } catch (IOException e) {
-            throw new NBTException(e);
+            throw new IllegalArgumentException(e);
         }
 
         if (tag == null) {
@@ -235,7 +235,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 }
             }, tag);
         } catch (IOException e) {
-            throw new NBTException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
