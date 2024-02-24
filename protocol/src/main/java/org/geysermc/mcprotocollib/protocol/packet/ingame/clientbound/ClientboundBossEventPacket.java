@@ -64,7 +64,7 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         this.showFog = showFog;
     }
 
-    public ClientboundBossEventPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundBossEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.uuid = helper.readUUID(in);
         this.action = BossBarAction.from(helper.readVarInt(in));
 
@@ -101,7 +101,7 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.uuid);
         helper.writeVarInt(out, this.action.ordinal());
 

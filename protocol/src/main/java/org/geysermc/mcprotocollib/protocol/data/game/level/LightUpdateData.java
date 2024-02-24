@@ -44,7 +44,7 @@ public class LightUpdateData {
         }
     }
 
-    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) throws IOException {
+    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) {
         data.write(out, helper);
     }
 

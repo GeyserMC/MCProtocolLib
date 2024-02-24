@@ -71,38 +71,38 @@ public class MetadataType<T> {
         VALUES.add(this);
     }
 
-    public EntityMetadata<T, ? extends MetadataType<T>> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) throws IOException {
+    public EntityMetadata<T, ? extends MetadataType<T>> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
         return this.metadataFactory.create(id, this, this.reader.read(helper, input));
     }
 
-    public void writeMetadata(MinecraftCodecHelper helper, ByteBuf output, T value) throws IOException {
+    public void writeMetadata(MinecraftCodecHelper helper, ByteBuf output, T value) {
         this.writer.write(helper, output, value);
     }
 
     @FunctionalInterface
     public interface Reader<V> {
-        V read(MinecraftCodecHelper helper, ByteBuf input) throws IOException;
+        V read(MinecraftCodecHelper helper, ByteBuf input);
     }
 
     @FunctionalInterface
     public interface Writer<V> {
-        void write(MinecraftCodecHelper helper, ByteBuf output, V value) throws IOException;
+        void write(MinecraftCodecHelper helper, ByteBuf output, V value);
     }
 
     @FunctionalInterface
     public interface BasicReader<V> extends Reader<V> {
-        V read(ByteBuf input) throws IOException;
+        V read(ByteBuf input);
 
-        default V read(MinecraftCodecHelper helper, ByteBuf input) throws IOException {
+        default V read(MinecraftCodecHelper helper, ByteBuf input) {
             return this.read(input);
         }
     }
 
     @FunctionalInterface
     public interface BasicWriter<V> extends Writer<V> {
-        void write(ByteBuf output, V value) throws IOException;
+        void write(ByteBuf output, V value);
 
-        default void write(MinecraftCodecHelper helper, ByteBuf output, V value) throws IOException {
+        default void write(MinecraftCodecHelper helper, ByteBuf output, V value) {
             this.write(output, value);
         }
     }

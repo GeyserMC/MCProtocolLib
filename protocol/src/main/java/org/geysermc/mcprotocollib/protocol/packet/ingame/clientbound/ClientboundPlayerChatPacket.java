@@ -37,7 +37,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final Component name;
     private final @Nullable Component targetName;
 
-    public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.sender = helper.readUUID(in);
         this.index = helper.readVarInt(in);
         if (in.readBoolean()) {
@@ -65,7 +65,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.sender);
         helper.writeVarInt(out, this.index);
         out.writeBoolean(this.messageSignature != null);

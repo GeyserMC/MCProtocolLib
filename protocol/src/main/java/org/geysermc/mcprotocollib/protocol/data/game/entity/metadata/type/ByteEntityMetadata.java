@@ -27,7 +27,7 @@ public class ByteEntityMetadata extends EntityMetadata<Byte, ByteMetadataType> {
     }
 
     @Override
-    public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
+    public void write(MinecraftCodecHelper helper, ByteBuf out) {
         this.type.writeMetadataPrimitive(out, this.value);
     }
 }

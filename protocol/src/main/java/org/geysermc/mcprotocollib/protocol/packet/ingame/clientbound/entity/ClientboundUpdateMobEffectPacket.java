@@ -30,7 +30,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private final boolean showIcon;
     private final @Nullable CompoundTag factorData;
 
-    public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.effect = helper.readEffect(in);
         this.amplifier = in.readByte();
@@ -44,7 +44,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeEffect(out, this.effect);
         out.writeByte(this.amplifier);

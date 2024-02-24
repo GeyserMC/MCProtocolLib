@@ -61,7 +61,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
         this.numberFormat = numberFormat;
     }
 
-    public ClientboundSetObjectivePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetObjectivePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.name = helper.readString(in);
         this.action = ObjectiveAction.from(in.readByte());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
@@ -76,7 +76,7 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.name);
         out.writeByte(this.action.ordinal());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {

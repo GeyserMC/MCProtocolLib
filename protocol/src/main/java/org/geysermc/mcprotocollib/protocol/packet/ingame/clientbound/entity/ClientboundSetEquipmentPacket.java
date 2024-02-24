@@ -22,7 +22,7 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull Equipment[] equipment;
 
-    public ClientboundSetEquipmentPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetEquipmentPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         boolean hasNextEntry = true;
         List<Equipment> list = new ArrayList<>();
@@ -37,7 +37,7 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         for (int i = 0; i < this.equipment.length; i++) {
             int rawSlot = this.equipment[i].getSlot().ordinal();

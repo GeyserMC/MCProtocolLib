@@ -38,7 +38,7 @@ public class ChunkTest {
     }
 
     @Test
-    public void testChunkSectionEncoding() throws IOException {
+    public void testChunkSectionEncoding() {
         MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
         for (ChunkSection section : chunkSectionsToTest) {
             ByteBuf buf = Unpooled.buffer();

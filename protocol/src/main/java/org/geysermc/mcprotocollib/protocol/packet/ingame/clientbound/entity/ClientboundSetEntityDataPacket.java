@@ -18,13 +18,13 @@ public class ClientboundSetEntityDataPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull EntityMetadata<?, ?>[] metadata;
 
-    public ClientboundSetEntityDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetEntityDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.metadata = helper.readEntityMetadata(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeEntityMetadata(out, this.metadata);
     }

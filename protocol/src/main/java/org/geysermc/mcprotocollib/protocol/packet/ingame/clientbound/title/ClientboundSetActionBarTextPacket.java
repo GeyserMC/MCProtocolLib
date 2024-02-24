@@ -16,12 +16,12 @@ import java.io.IOException;
 public class ClientboundSetActionBarTextPacket implements MinecraftPacket {
     private final Component text;
 
-    public ClientboundSetActionBarTextPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetActionBarTextPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.text = helper.readComponent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.text);
     }
 }

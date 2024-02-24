@@ -60,7 +60,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.changedSlots = changedSlots;
     }
 
-    public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = in.readByte();
         this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
@@ -96,7 +96,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.containerId);
         helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);

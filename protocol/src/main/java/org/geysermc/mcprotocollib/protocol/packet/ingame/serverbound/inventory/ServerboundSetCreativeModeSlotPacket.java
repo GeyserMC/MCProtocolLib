@@ -19,13 +19,13 @@ public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
     private final int slot;
     private final @Nullable ItemStack clickedItem;
 
-    public ServerboundSetCreativeModeSlotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSetCreativeModeSlotPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = in.readShort();
         this.clickedItem = helper.readItemStack(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeShort(this.slot);
         helper.writeItemStack(out, this.clickedItem);
     }
