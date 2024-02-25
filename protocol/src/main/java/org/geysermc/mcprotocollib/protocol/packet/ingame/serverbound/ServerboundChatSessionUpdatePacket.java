@@ -31,7 +31,7 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
         try {
             publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
         } catch (GeneralSecurityException e) {
-            throw new RuntimeException("Could not decode public key.", e);
+            throw new IllegalStateException("Could not decode public key.", e);
         }
 
         this.publicKey = publicKey;
