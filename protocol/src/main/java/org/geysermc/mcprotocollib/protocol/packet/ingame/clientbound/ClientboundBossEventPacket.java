@@ -8,6 +8,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.BossBarDivision;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
 import net.kyori.adventure.text.Component;
+
 import java.util.UUID;
 
 @Data

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+
 import java.util.Arrays;
 
 @Data
