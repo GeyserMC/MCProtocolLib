@@ -132,7 +132,7 @@ public class MetadataType<T> {
 
     private static <T> BasicWriter<Optional<T>> optionalWriter(BasicWriter<T> writer) {
         return (output, value) -> {
-              output.writeBoolean(value.isPresent());
+            output.writeBoolean(value.isPresent());
             value.ifPresent(t -> writer.write(output, t));
         };
     }
