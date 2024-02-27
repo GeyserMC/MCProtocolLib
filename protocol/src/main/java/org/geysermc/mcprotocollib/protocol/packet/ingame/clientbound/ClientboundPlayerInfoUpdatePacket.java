@@ -20,6 +20,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @With
@@ -95,10 +96,11 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {
-            helper.writeUUID(out, entry.getProfile().getId());
+            helper.writeUUID(out, entry.getProfileId());
             for (PlayerListEntryAction action : this.actions) {
                 switch (action) {
                     case ADD_PLAYER -> {
+                        Objects.requireNonNull(entry.getProfile(), "Profile cannot be null for ADD_PLAYER action");
                         helper.writeString(out, entry.getProfile().getName());
                         helper.writeVarInt(out, entry.getProfile().getProperties().size());
                         for (GameProfile.Property property : entry.getProfile().getProperties()) {
