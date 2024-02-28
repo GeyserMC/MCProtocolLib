@@ -49,7 +49,7 @@ public interface Server {
     /**
      * Checks whether this server has a flag set.
      *
-     * @param flag Key of the flag to check for.
+     * @param flag Flag to check for.
      * @return Whether this server has a flag set.
      */
     boolean hasGlobalFlag(Flag<?> flag);

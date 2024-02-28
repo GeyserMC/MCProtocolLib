@@ -84,7 +84,7 @@ public interface Session {
      * Checks whether this session has a flag set. If this session belongs to a server,
      * the server's flags will also be checked.
      *
-     * @param flag Key of the flag to check for.
+     * @param flag Flag to check for.
      * @return Whether this session has a flag set.
      */
     boolean hasFlag(Flag<?> flag);
