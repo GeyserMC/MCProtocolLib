@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 
-import java.io.IOException;
+import java.util.function.Consumer;
 
 @ToString
 @EqualsAndHashCode
@@ -40,23 +40,22 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         return this.tabId;
     }
 
-    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.action = AdvancementTabAction.from(helper.readVarInt(in));
-        switch (this.action) {
-            case CLOSED_SCREEN -> this.tabId = null;
-            case OPENED_TAB -> this.tabId = helper.readString(in);
-            default -> throw new IOException("Unknown advancement tab action: " + this.action);
-        }
+        this.tabId = switch (this.action) {
+            case CLOSED_SCREEN -> null;
+            case OPENED_TAB -> helper.readString(in);
+        };
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.action.ordinal());
-        switch (this.action) {
-            case CLOSED_SCREEN -> {
-            }
-            case OPENED_TAB -> helper.writeString(out, this.tabId);
-            default -> throw new IOException("Unknown advancement tab action: " + this.action);
-        }
+        Consumer<String> tabIdWriter = switch (this.action) {
+            case CLOSED_SCREEN -> tabId -> {
+            };
+            case OPENED_TAB -> tabId -> helper.writeString(out, tabId);
+        };
+        tabIdWriter.accept(this.tabId);
     }
 }

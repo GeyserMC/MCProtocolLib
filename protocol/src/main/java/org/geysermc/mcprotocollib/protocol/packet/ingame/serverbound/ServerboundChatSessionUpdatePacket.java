@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -23,7 +22,7 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
     private final PublicKey publicKey;
     private final byte[] keySignature;
 
-    public ServerboundChatSessionUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundChatSessionUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.sessionId = helper.readUUID(in);
         this.expiresAt = in.readLong();
         byte[] keyBytes = helper.readByteArray(in);
@@ -33,7 +32,7 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
         try {
             publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
         } catch (GeneralSecurityException e) {
-            throw new IOException("Could not decode public key.", e);
+            throw new IllegalStateException("Could not decode public key.", e);
         }
 
         this.publicKey = publicKey;

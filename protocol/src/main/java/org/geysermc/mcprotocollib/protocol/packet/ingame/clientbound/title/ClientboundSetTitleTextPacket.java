@@ -11,15 +11,13 @@ import net.kyori.adventure.text.Component;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetTitleTextPacket implements MinecraftPacket {
     private final @NonNull Component text;
 
-    public ClientboundSetTitleTextPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetTitleTextPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.text = helper.readComponent(in);
     }
 

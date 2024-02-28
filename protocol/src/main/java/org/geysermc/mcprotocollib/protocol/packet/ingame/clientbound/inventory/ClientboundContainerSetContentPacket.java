@@ -10,8 +10,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
     private final @Nullable ItemStack @NonNull [] items;
     private final @Nullable ItemStack carriedItem;
 
-    public ClientboundContainerSetContentPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundContainerSetContentPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = in.readUnsignedByte();
         this.stateId = helper.readVarInt(in);
         this.items = new ItemStack[helper.readVarInt(in)];
@@ -32,7 +30,7 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.containerId);
         helper.writeVarInt(out, this.stateId);
         helper.writeVarInt(out, this.items.length);

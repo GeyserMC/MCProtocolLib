@@ -9,8 +9,6 @@ import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -18,13 +16,13 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
     private final Component motd;
     private final byte @Nullable[] iconBytes;
 
-    public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.motd = helper.readComponent(in);
         this.iconBytes = helper.readNullable(in, helper::readByteArray);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.motd);
         helper.writeNullable(out, this.iconBytes, helper::writeByteArray);
     }

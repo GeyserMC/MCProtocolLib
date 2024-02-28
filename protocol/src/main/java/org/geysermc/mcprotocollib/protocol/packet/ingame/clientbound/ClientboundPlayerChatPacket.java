@@ -12,7 +12,6 @@ import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +36,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final Component name;
     private final @Nullable Component targetName;
 
-    public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.sender = helper.readUUID(in);
         this.index = helper.readVarInt(in);
         if (in.readBoolean()) {
@@ -65,7 +64,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.sender);
         helper.writeVarInt(out, this.index);
         out.writeBoolean(this.messageSignature != null);

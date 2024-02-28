@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
     private final String registry;
     private final List<RegistryEntry> entries;
 
-    public ClientboundRegistryDataPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundRegistryDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.registry = helper.readResourceLocation(in);
         this.entries = new ArrayList<>();
 
@@ -30,7 +29,7 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeResourceLocation(out, this.registry);
 
         helper.writeVarInt(out, this.entries.size());

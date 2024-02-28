@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-import java.io.IOException;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -146,11 +145,10 @@ public abstract class PacketProtocol {
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
-     * @throws IOException if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")
-    public <H extends PacketCodecHelper> Packet createClientboundPacket(int id, ByteBuf buf, H codecHelper) throws IOException {
+    public <H extends PacketCodecHelper> Packet createClientboundPacket(int id, ByteBuf buf, H codecHelper) {
         PacketDefinition<?, H> definition = (PacketDefinition<?, H>) this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
@@ -212,11 +210,10 @@ public abstract class PacketProtocol {
      * @param buf         The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
-     * @throws IOException if there was an IO error whilst reading the packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")
-    public <H extends PacketCodecHelper> Packet createServerboundPacket(int id, ByteBuf buf, H codecHelper) throws IOException {
+    public <H extends PacketCodecHelper> Packet createServerboundPacket(int id, ByteBuf buf, H codecHelper) {
         PacketDefinition<?, H> definition = (PacketDefinition<?, H>) this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);

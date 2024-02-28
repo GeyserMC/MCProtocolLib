@@ -11,8 +11,6 @@ import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -31,7 +29,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private final boolean showIcon;
     private final boolean blend;
 
-    public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.effect = helper.readEffect(in);
         this.amplifier = helper.readVarInt(in);
@@ -45,7 +43,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeEffect(out, this.effect);
         helper.writeVarInt(out, this.amplifier);

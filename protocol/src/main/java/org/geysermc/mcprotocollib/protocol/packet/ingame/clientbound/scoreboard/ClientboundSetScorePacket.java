@@ -8,8 +8,6 @@ import lombok.*;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -31,7 +29,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
         this.numberFormat = null;
     }
 
-    public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.owner = helper.readString(in);
         this.objective = helper.readString(in);
         this.value = helper.readVarInt(in);
@@ -40,7 +38,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.owner);
         helper.writeString(out, this.objective);
         helper.writeVarInt(out, this.value);

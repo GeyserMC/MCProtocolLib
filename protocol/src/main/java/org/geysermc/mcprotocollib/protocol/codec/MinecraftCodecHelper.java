@@ -1,8 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.protocol.CheckedBiConsumer;
-import org.geysermc.mcprotocollib.protocol.CheckedFunction;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
@@ -94,6 +92,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
@@ -113,7 +112,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     protected CompoundTag registry;
 
     @Nullable
-    public <T, E extends Throwable> T readNullable(ByteBuf buf, CheckedFunction<ByteBuf, T, E> ifPresent) throws E {
+    public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
         if (buf.readBoolean()) {
             return ifPresent.apply(buf);
         } else {
@@ -121,7 +120,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public <T, E extends Throwable> void writeNullable(ByteBuf buf, @Nullable T value, CheckedBiConsumer<ByteBuf, T, E> ifPresent) throws E {
+    public <T> void writeNullable(ByteBuf buf, @Nullable T value, BiConsumer<ByteBuf, T> ifPresent) {
         if (value != null) {
             buf.writeBoolean(true);
             ifPresent.accept(buf, value);
@@ -211,12 +210,12 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     @Nullable
-    public CompoundTag readAnyTag(ByteBuf buf) throws IOException {
+    public CompoundTag readAnyTag(ByteBuf buf) {
         return readAnyTag(buf, CompoundTag.class);
     }
 
     @NonNull
-    public CompoundTag readAnyTagOrThrow(ByteBuf buf) throws IOException {
+    public CompoundTag readAnyTagOrThrow(ByteBuf buf) {
         CompoundTag tag = readAnyTag(buf);
         if (tag == null) {
             throw new IllegalArgumentException("Got end-tag when trying to read CompoundTag");
@@ -225,13 +224,18 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     @Nullable
-    public <T extends Tag> T readAnyTag(ByteBuf buf, Class<T> expected) throws IOException {
-        Tag tag = NBTIO.readAnyTag(new InputStream() {
-            @Override
-            public int read() {
-                return buf.readUnsignedByte();
-            }
-        });
+    public <T extends Tag> T readAnyTag(ByteBuf buf, Class<T> expected) {
+        Tag tag;
+        try {
+            tag = NBTIO.readAnyTag(new InputStream() {
+                @Override
+                public int read() {
+                    return buf.readUnsignedByte();
+                }
+            });
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
 
         if (tag == null) {
             return null;
@@ -244,13 +248,17 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return expected.cast(tag);
     }
 
-    public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) throws IOException {
-        NBTIO.writeAnyTag(new OutputStream() {
-            @Override
-            public void write(int b) {
-                buf.writeByte(b);
-            }
-        }, tag);
+    public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) {
+        try {
+            NBTIO.writeAnyTag(new OutputStream() {
+                @Override
+                public void write(int b) {
+                    buf.writeByte(b);
+                }
+            }, tag);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Nullable
@@ -274,7 +282,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     @NotNull
-    public ItemStack readItemStack(ByteBuf buf) throws IOException {
+    public ItemStack readItemStack(ByteBuf buf) {
         return this.readOptionalItemStack(buf);
     }
 
@@ -355,7 +363,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return new ItemStack(item, count, new DataComponents(dataComponents));
     }
 
-    public void writeTradeItemStack(ByteBuf buf, @NotNull ItemStack item) throws IOException {
+    public void writeTradeItemStack(ByteBuf buf, @NotNull ItemStack item) {
         this.writeVarInt(buf, item.getId());
         this.writeVarInt(buf, item.getAmount());
 
@@ -464,7 +472,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, e.ordinal());
     }
 
-    public Component readComponent(ByteBuf buf) throws IOException {
+    public Component readComponent(ByteBuf buf) {
         // do not use CompoundTag, as mojang serializes a plaintext component as just a single StringTag
         Tag tag = readAnyTag(buf, Tag.class);
         if (tag == null) {
@@ -474,13 +482,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return DefaultComponentSerializer.get().deserializeFromTree(json);
     }
 
-    public void writeComponent(ByteBuf buf, Component component) throws IOException {
+    public void writeComponent(ByteBuf buf, Component component) {
         JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
         Tag tag = NbtComponentSerializer.jsonComponentToTag(json);
         writeAnyTag(buf, tag);
     }
 
-    public EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) throws IOException {
+    public EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) {
         List<EntityMetadata<?, ?>> ret = new ArrayList<>();
         int id;
         while ((id = buf.readUnsignedByte()) != 255) {
@@ -490,7 +498,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return ret.toArray(new EntityMetadata<?, ?>[0]);
     }
 
-    public void writeEntityMetadata(ByteBuf buf, EntityMetadata<?, ?>[] metadata) throws IOException {
+    public void writeEntityMetadata(ByteBuf buf, EntityMetadata<?, ?>[] metadata) {
         for (EntityMetadata<?, ?> meta : metadata) {
             this.writeMetadata(buf, meta);
         }
@@ -498,12 +506,12 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeByte(255);
     }
 
-    public EntityMetadata<?, ?> readMetadata(ByteBuf buf, int id) throws IOException {
+    public EntityMetadata<?, ?> readMetadata(ByteBuf buf, int id) {
         MetadataType<?> type = this.readMetadataType(buf);
         return type.readMetadata(this, buf, id);
     }
 
-    public void writeMetadata(ByteBuf buf, EntityMetadata<?, ?> metadata) throws IOException {
+    public void writeMetadata(ByteBuf buf, EntityMetadata<?, ?> metadata) {
         buf.writeByte(metadata.getId());
         this.writeMetadataType(buf, metadata.getType());
         metadata.write(this, buf);
@@ -566,12 +574,12 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, type);
     }
 
-    public Particle readParticle(ByteBuf buf) throws IOException {
+    public Particle readParticle(ByteBuf buf) {
         ParticleType particleType = this.readParticleType(buf);
         return new Particle(particleType, this.readParticleData(buf, particleType));
     }
 
-    public void writeParticle(ByteBuf buf, Particle particle) throws IOException {
+    public void writeParticle(ByteBuf buf, Particle particle) {
         this.writeEnum(buf, particle.getType());
         this.writeParticleData(buf, particle.getType(), particle.getData());
     }
@@ -607,7 +615,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) throws IOException {
+    public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) {
         switch (type) {
             case BLOCK:
             case BLOCK_MARKER:
@@ -649,7 +657,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public NumberFormat readNumberFormat(ByteBuf buf) throws IOException {
+    public NumberFormat readNumberFormat(ByteBuf buf) {
         int id = this.readVarInt(buf);
         return switch (id) {
             case 0 -> BlankFormat.INSTANCE;
@@ -659,7 +667,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         };
     }
 
-    public void writeNumberFormat(ByteBuf buf, NumberFormat numberFormat) throws IOException {
+    public void writeNumberFormat(ByteBuf buf, NumberFormat numberFormat) {
         if (numberFormat instanceof BlankFormat) {
             this.writeVarInt(buf, 0);
         } else if (numberFormat instanceof StyledFormat styledFormat) {
@@ -830,7 +838,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeByte(event.ordinal());
     }
 
-    public Ingredient readRecipeIngredient(ByteBuf buf) throws IOException {
+    public Ingredient readRecipeIngredient(ByteBuf buf) {
         ItemStack[] options = new ItemStack[this.readVarInt(buf)];
         for (int i = 0; i < options.length; i++) {
             options[i] = this.readOptionalItemStack(buf);
@@ -839,14 +847,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return new Ingredient(options);
     }
 
-    public void writeRecipeIngredient(ByteBuf buf, Ingredient ingredient) throws IOException {
+    public void writeRecipeIngredient(ByteBuf buf, Ingredient ingredient) {
         this.writeVarInt(buf, ingredient.getOptions().length);
         for (ItemStack option : ingredient.getOptions()) {
             this.writeOptionalItemStack(buf, option);
         }
     }
 
-    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType) throws IOException {
+    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType) {
         int bitsPerEntry = buf.readByte() & 0xFF;
         Palette palette = this.readPalette(buf, paletteType, bitsPerEntry);
         BitStorage storage;
@@ -868,7 +876,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
      * @deprecated globalPaletteBits is no longer in use, use {@link #readDataPalette(ByteBuf, PaletteType)} instead.
      */
     @Deprecated(forRemoval = true)
-    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int globalPaletteBits) throws IOException {
+    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int globalPaletteBits) {
         return this.readDataPalette(buf, paletteType);
     }
 
@@ -907,7 +915,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public ChunkSection readChunkSection(ByteBuf buf) throws IOException {
+    public ChunkSection readChunkSection(ByteBuf buf) {
         int blockCount = buf.readShort();
 
         DataPalette chunkPalette = this.readDataPalette(buf, PaletteType.CHUNK);
@@ -919,7 +927,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
      * @deprecated globalBiomePaletteBits is no longer in use, use {@link #readChunkSection(ByteBuf)} instead.
      */
     @Deprecated(forRemoval = true)
-    public ChunkSection readChunkSection(ByteBuf buf, int globalBiomePaletteBits) throws IOException {
+    public ChunkSection readChunkSection(ByteBuf buf, int globalBiomePaletteBits) {
         return this.readChunkSection(buf);
     }
 

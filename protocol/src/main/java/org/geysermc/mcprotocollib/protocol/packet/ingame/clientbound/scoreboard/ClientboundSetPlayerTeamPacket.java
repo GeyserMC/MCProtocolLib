@@ -11,7 +11,6 @@ import lombok.*;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 @Data
@@ -104,7 +103,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    public ClientboundSetPlayerTeamPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundSetPlayerTeamPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.teamName = helper.readString(in);
         this.action = TeamAction.from(in.readByte());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
@@ -141,7 +140,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, this.teamName);
         out.writeByte(this.action.ordinal());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {

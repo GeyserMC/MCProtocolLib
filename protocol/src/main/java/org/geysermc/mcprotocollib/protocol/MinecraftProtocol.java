@@ -25,7 +25,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
@@ -203,7 +202,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public Packet createClientboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+    public Packet createClientboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
         return this.stateCodec.createClientboundPacket(id, buf, codecHelper);
     }
 
@@ -223,7 +222,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public Packet createServerboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) throws IOException {
+    public Packet createServerboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
         return this.stateCodec.createServerboundPacket(id, buf, codecHelper);
     }
 
