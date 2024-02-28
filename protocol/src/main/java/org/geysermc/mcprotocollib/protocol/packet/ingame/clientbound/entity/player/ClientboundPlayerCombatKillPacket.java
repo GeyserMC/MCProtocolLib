@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -17,13 +15,13 @@ public class ClientboundPlayerCombatKillPacket implements MinecraftPacket {
     private final int playerId;
     private final Component message;
 
-    public ClientboundPlayerCombatKillPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundPlayerCombatKillPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.playerId = helper.readVarInt(in);
         this.message = helper.readComponent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.playerId);
         helper.writeComponent(out, this.message);
     }

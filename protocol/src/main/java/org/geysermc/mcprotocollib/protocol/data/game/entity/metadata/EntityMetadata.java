@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.io.IOException;
 import java.util.Objects;
 
 @Data
@@ -25,7 +24,7 @@ public abstract class EntityMetadata<V, T extends MetadataType<V>> {
      * Overridden for primitive classes. This write method still checks for these primitives in the event
      * they are manually created using {@link ObjectEntityMetadata}.
      */
-    public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
+    public void write(MinecraftCodecHelper helper, ByteBuf out) {
         this.type.writeMetadata(helper, out, this.getValue());
     }
 

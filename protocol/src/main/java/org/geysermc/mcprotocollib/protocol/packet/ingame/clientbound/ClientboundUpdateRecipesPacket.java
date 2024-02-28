@@ -14,15 +14,13 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     private final @NonNull Recipe[] recipes;
 
-    public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.recipes = new Recipe[helper.readVarInt(in)];
         for (int i = 0; i < this.recipes.length; i++) {
             RecipeType type = RecipeType.from(helper.readResourceLocation(in));
@@ -102,7 +100,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.recipes.length);
         for (Recipe recipe : this.recipes) {
             helper.writeResourceLocation(out, recipe.getType().getResourceLocation());

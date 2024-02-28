@@ -12,8 +12,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -25,7 +23,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     private final @NonNull BlockEntityInfo @NonNull [] blockEntities;
     private final @NonNull LightUpdateData lightData;
 
-    public ClientboundLevelChunkWithLightPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundLevelChunkWithLightPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.x = in.readInt();
         this.z = in.readInt();
         this.heightMaps = helper.readAnyTagOrThrow(in);
@@ -46,7 +44,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeInt(this.x);
         out.writeInt(this.z);
         helper.writeAnyTag(out, this.heightMaps);

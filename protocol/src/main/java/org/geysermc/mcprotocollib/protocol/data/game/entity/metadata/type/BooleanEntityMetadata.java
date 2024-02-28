@@ -6,8 +6,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetad
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
-import java.io.IOException;
-
 public class BooleanEntityMetadata extends EntityMetadata<Boolean, BooleanMetadataType> {
     private final boolean value;
 
@@ -27,7 +25,7 @@ public class BooleanEntityMetadata extends EntityMetadata<Boolean, BooleanMetada
     }
 
     @Override
-    public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
+    public void write(MinecraftCodecHelper helper, ByteBuf out) {
         this.type.writeMetadataPrimitive(out, this.value);
     }
 }

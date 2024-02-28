@@ -6,8 +6,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.FloatMetada
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
-import java.io.IOException;
-
 public class FloatEntityMetadata extends EntityMetadata<Float, FloatMetadataType> {
     private final float value;
 
@@ -27,7 +25,7 @@ public class FloatEntityMetadata extends EntityMetadata<Float, FloatMetadataType
     }
 
     @Override
-    public void write(MinecraftCodecHelper helper, ByteBuf out) throws IOException {
+    public void write(MinecraftCodecHelper helper, ByteBuf out) {
         this.type.writeMetadataPrimitive(out, this.value);
     }
 }

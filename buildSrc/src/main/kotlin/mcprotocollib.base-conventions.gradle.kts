@@ -19,14 +19,7 @@ indra {
 }
 
 lombok {
-    // ugh https://discuss.gradle.org/t/precompiled-script-plugin-accessing-another-precompiled-script-plugin-extension/46177/4
-    version = project.rootProject
-        .extensions
-        .getByType(VersionCatalogsExtension::class.java)
-        .named("libs")
-        .findVersion("lombok")
-        .get()
-        .displayName
+    version = libs.versions.lombok.version.get()
 }
 
 tasks.withType<JavaCompile> {

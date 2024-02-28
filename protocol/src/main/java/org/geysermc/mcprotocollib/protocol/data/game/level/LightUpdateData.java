@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -44,7 +43,7 @@ public class LightUpdateData {
         }
     }
 
-    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) throws IOException {
+    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) {
         data.write(out, helper);
     }
 

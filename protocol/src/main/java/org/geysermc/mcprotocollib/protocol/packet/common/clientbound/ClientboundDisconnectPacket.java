@@ -10,8 +10,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
-
 @Data
 @With
 @AllArgsConstructor
@@ -22,12 +20,12 @@ public class ClientboundDisconnectPacket implements MinecraftPacket {
         this(DefaultComponentSerializer.get().deserialize(reason));
     }
 
-    public ClientboundDisconnectPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundDisconnectPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.reason = helper.readComponent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.reason);
     }
 

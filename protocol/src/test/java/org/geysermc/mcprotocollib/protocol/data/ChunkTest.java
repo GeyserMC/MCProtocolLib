@@ -10,8 +10,6 @@ import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +36,7 @@ public class ChunkTest {
     }
 
     @Test
-    public void testChunkSectionEncoding() throws IOException {
+    public void testChunkSectionEncoding() {
         MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
         for (ChunkSection section : chunkSectionsToTest) {
             ByteBuf buf = Unpooled.buffer();
