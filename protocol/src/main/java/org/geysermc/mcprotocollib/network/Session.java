@@ -95,7 +95,7 @@ public interface Session {
      * as well.
      *
      * @param <T> Type of the flag.
-     * @param flag Key of the flag.
+     * @param flag Flag to check for.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
@@ -107,7 +107,7 @@ public interface Session {
      * as well. If the flag is not set, the specified default value will be returned.
      *
      * @param <T> Type of the flag.
-     * @param flag Key of the flag.
+     * @param flag Flag to check for.
      * @param def Default value of the flag.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
@@ -118,7 +118,7 @@ public interface Session {
      * Sets the value of a flag. This does not change a server's flags if this session
      * belongs to a server.
      *
-     * @param flag   Key of the flag.
+     * @param flag   Flag to check for.
      * @param value Value to set the flag to.
      */
     <T> void setFlag(Flag<T> flag, T value);

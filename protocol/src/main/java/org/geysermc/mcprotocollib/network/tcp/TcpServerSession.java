@@ -32,12 +32,12 @@ public class TcpServerSession extends TcpSession {
     }
 
     @Override
-    public boolean hasFlag(Flag<?> definition) {
-        if(super.hasFlag(definition)) {
+    public boolean hasFlag(Flag<?> flag) {
+        if(super.hasFlag(flag)) {
             return true;
         }
 
-        return this.server.hasGlobalFlag(definition);
+        return this.server.hasGlobalFlag(flag);
     }
 
     @Override
