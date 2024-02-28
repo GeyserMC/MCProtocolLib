@@ -118,7 +118,8 @@ public interface Session {
      * Sets the value of a flag. This does not change a server's flags if this session
      * belongs to a server.
      *
-     * @param flag   Flag to check for.
+     * @param <T> Type of the flag.
+     * @param flag Flag to check for.
      * @param value Value to set the flag to.
      */
     <T> void setFlag(Flag<T> flag, T value);

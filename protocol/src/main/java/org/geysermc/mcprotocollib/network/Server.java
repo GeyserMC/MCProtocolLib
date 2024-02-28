@@ -80,6 +80,7 @@ public interface Server {
      * Sets the value of a flag. The flag will be used in sessions if a session does
      * not contain a value for the flag.
      *
+     * @param <T> Type of the flag.
      * @param flag Flag to check for.
      * @param value Value to set the flag to.
      */
