@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.network;
 
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
@@ -9,6 +8,7 @@ import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import javax.crypto.SecretKey;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.Map;
@@ -177,16 +177,13 @@ public interface Session {
      * Sets the compression packet length threshold for this session (-1 = disabled).
      *
      * @param threshold The new compression threshold.
-     * @param validateDecompression whether to validate that the decompression fits within size checks.
      */
-    void setCompressionThreshold(int threshold, boolean validateDecompression);
+    void setCompressionThreshold(int threshold);
 
     /**
      * Enables encryption for this session.
-     *
-     * @param encryption the encryption to encrypt with
      */
-    void enableEncryption(PacketEncryption encryption);
+    void enableEncryption(SecretKey key);
 
     /**
      * Gets the connect timeout for this session in seconds.

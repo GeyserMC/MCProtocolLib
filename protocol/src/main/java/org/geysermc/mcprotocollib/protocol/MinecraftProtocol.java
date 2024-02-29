@@ -12,8 +12,6 @@ import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
-import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
@@ -176,14 +174,6 @@ public class MinecraftProtocol extends PacketProtocol {
             }
 
             session.addListener(new ServerListener(DEFAULT_NETWORK_CODEC));
-        }
-    }
-
-    protected PacketEncryption enableEncryption(Key key) {
-        try {
-            return new AESEncryption(key);
-        } catch (GeneralSecurityException e) {
-            throw new Error("Failed to enable protocol encryption.", e);
         }
     }
 

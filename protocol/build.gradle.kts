@@ -19,6 +19,9 @@ dependencies {
     // Stripped down fastutil
     api(libs.bundles.fastutil)
 
+    // Velocity natives
+    api(libs.velocity.native)
+
     // Netty
     api(libs.bundles.netty)
 

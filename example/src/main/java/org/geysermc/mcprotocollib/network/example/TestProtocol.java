@@ -6,33 +6,19 @@ import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
-import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.packet.DefaultPacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.buffer.ByteBuf;
 
 import javax.crypto.SecretKey;
-import java.security.GeneralSecurityException;
 
 public class TestProtocol extends PacketProtocol {
     private final PacketHeader header = new DefaultPacketHeader();
-    private AESEncryption encrypt;
-
-    @SuppressWarnings("unused")
-    public TestProtocol() {
-    }
+    private final SecretKey key;
 
     public TestProtocol(SecretKey key) {
-        this.setSecretKey(key);
-    }
-
-    public PacketCodecHelper createHelper() {
-        return new BasePacketCodecHelper();
-    }
-
-    public void setSecretKey(SecretKey key) {
+        this.key = key;
         this.register(0, PingPacket.class, new PacketSerializer<>() {
             @Override
             public void serialize(ByteBuf buf, PacketCodecHelper helper, PingPacket packet) {
@@ -44,12 +30,10 @@ public class TestProtocol extends PacketProtocol {
                 return new PingPacket(buf, helper);
             }
         });
+    }
 
-        try {
-            this.encrypt = new AESEncryption(key);
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
+    public PacketCodecHelper createHelper() {
+        return new BasePacketCodecHelper();
     }
 
     @Override
@@ -62,17 +46,13 @@ public class TestProtocol extends PacketProtocol {
         return this.header;
     }
 
-    public PacketEncryption getEncryption() {
-        return this.encrypt;
-    }
-
     @Override
     public void newClientSession(Session session) {
-        session.addListener(new ClientSessionListener());
+        session.addListener(new ClientSessionListener(key));
     }
 
     @Override
     public void newServerSession(Server server, Session session) {
-        session.addListener(new ServerSessionListener());
+        session.addListener(new ServerSessionListener(key));
     }
 }

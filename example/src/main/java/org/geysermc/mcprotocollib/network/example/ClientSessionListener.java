@@ -7,7 +7,15 @@ import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 
+import javax.crypto.SecretKey;
+
 public class ClientSessionListener extends SessionAdapter {
+    private final SecretKey key;
+
+    public ClientSessionListener(SecretKey key) {
+        this.key = key;
+    }
+
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (packet instanceof PingPacket) {
@@ -34,7 +42,7 @@ public class ClientSessionListener extends SessionAdapter {
     public void connected(ConnectedEvent event) {
         System.out.println("CLIENT Connected");
 
-        event.getSession().enableEncryption(((TestProtocol) event.getSession().getPacketProtocol()).getEncryption());
+        event.getSession().enableEncryption(key);
         event.getSession().send(new PingPacket("hello"));
     }
 
