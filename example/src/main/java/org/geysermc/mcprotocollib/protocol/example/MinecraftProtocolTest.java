@@ -63,7 +63,7 @@ public class MinecraftProtocolTest {
             Server server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
             server.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
-            server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session ->
+            server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, session ->
                     new ServerStatusInfo(
                             new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
                             new PlayerInfo(100, 0, new ArrayList<>()),
@@ -73,7 +73,7 @@ public class MinecraftProtocolTest {
                     )
             );
 
-            server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, (ServerLoginHandler) session ->
+            server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, session ->
                     session.send(new ClientboundLoginPacket(
                             0,
                             false,
@@ -152,7 +152,7 @@ public class MinecraftProtocolTest {
         MinecraftProtocol protocol = new MinecraftProtocol();
         Session client = new TcpClientSession(HOST, PORT, protocol, PROXY);
         client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
-        client.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, (ServerInfoHandler) (session, info) -> {
+        client.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, (session, info) -> {
             System.out.println("Version: " + info.getVersionInfo().getVersionName()
                     + ", " + info.getVersionInfo().getProtocolVersion());
             System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers()
@@ -162,7 +162,7 @@ public class MinecraftProtocolTest {
             System.out.println("Icon: " + new String(Base64.getEncoder().encode(info.getIconPng()), StandardCharsets.UTF_8));
         });
 
-        client.setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, (ServerPingTimeHandler) (session, pingTime) ->
+        client.setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, (session, pingTime) ->
                 System.out.println("Server ping took " + pingTime + "ms"));
 
         client.connect();

@@ -49,41 +49,42 @@ public interface Server {
     /**
      * Checks whether this server has a flag set.
      *
-     * @param key Key of the flag to check for.
+     * @param flag Flag to check for.
      * @return Whether this server has a flag set.
      */
-    boolean hasGlobalFlag(String key);
+    boolean hasGlobalFlag(Flag<?> flag);
 
     /**
      * Gets the value of the given flag as an instance of the given type.
      *
      * @param <T> Type of the flag.
-     * @param key Key of the flag.
+     * @param flag Flag to check for.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getGlobalFlag(String key);
+    <T> T getGlobalFlag(Flag<T> flag);
 
     /**
      * Gets the value of the given flag as an instance of the given type.
      * If the flag is not set, the specified default value will be returned.
      *
      * @param <T> Type of the flag.
-     * @param key Key of the flag.
+     * @param flag Flag to check for.
      * @param def Default value of the flag.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getGlobalFlag(String key, T def);
+    <T> T getGlobalFlag(Flag<T> flag, T def);
 
     /**
      * Sets the value of a flag. The flag will be used in sessions if a session does
      * not contain a value for the flag.
      *
-     * @param key   Key of the flag.
+     * @param <T> Type of the flag.
+     * @param flag Flag to check for.
      * @param value Value to set the flag to.
      */
-    void setGlobalFlag(String key, Object value);
+    <T> void setGlobalFlag(Flag<T> flag, T value);
 
     /**
      * Gets the listeners listening on this session.
