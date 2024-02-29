@@ -7,17 +7,7 @@ import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.epoll.EpollDatagramChannel;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.*;
-import io.netty.channel.kqueue.KQueueDatagramChannel;
-import io.netty.channel.kqueue.KQueueEventLoopGroup;
-import io.netty.channel.kqueue.KQueueSocketChannel;
-import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
 import io.netty.handler.codec.dns.DefaultDnsRawRecord;
 import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
@@ -32,9 +22,6 @@ import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import io.netty.incubator.channel.uring.IOUringDatagramChannel;
-import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
-import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -44,9 +31,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class TcpClientSession extends TcpSession {
+    private static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
-    private static Class<? extends Channel> CHANNEL_CLASS;
-    private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
     private static EventLoopGroup EVENT_LOOP_GROUP;
 
     /**
@@ -88,13 +74,13 @@ public class TcpClientSession extends TcpSession {
 
         boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
-        if (CHANNEL_CLASS == null) {
+        if (EVENT_LOOP_GROUP == null) {
             createTcpEventLoopGroup();
         }
 
         try {
             final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channel(CHANNEL_CLASS);
+            bootstrap.channelFactory(TRANSPORT_TYPE.socketChannelFactory());
             bootstrap.handler(new ChannelInitializer<>() {
                 @Override
                 public void initChannel(Channel channel) {
@@ -165,7 +151,7 @@ public class TcpClientSession extends TcpSession {
         if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
-                    .channelType(DATAGRAM_CHANNEL_CLASS)
+                    .channelFactory(TRANSPORT_TYPE.datagramChannelFactory())
                     .build()) {
                 envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
 
@@ -282,32 +268,11 @@ public class TcpClientSession extends TcpSession {
     }
 
     private static void createTcpEventLoopGroup() {
-        if (CHANNEL_CLASS != null) {
+        if (EVENT_LOOP_GROUP != null) {
             return;
         }
 
-        switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING -> {
-                EVENT_LOOP_GROUP = new IOUringEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = IOUringSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
-            }
-            case EPOLL -> {
-                EVENT_LOOP_GROUP = new EpollEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = EpollSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
-            }
-            case KQUEUE -> {
-                EVENT_LOOP_GROUP = new KQueueEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = KQueueSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
-            }
-            case NIO -> {
-                EVENT_LOOP_GROUP = new NioEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = NioSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
-            }
-        }
+        EVENT_LOOP_GROUP = TRANSPORT_TYPE.eventLoopGroupFactory().apply(newThreadFactory());
 
         Runtime.getRuntime().addShutdownHook(new Thread(
             () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
