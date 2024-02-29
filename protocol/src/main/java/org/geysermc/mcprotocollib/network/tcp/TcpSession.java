@@ -18,6 +18,7 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.network.Flag;
 
 import java.net.ConnectException;
 import java.net.SocketAddress;
@@ -104,33 +105,32 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public boolean hasFlag(String key) {
-        return this.flags.containsKey(key);
+    public boolean hasFlag(Flag<?> flag) {
+        return this.flags.containsKey(flag.key());
     }
 
     @Override
-    public <T> T getFlag(String key) {
-        return this.getFlag(key, null);
+    public <T> T getFlag(Flag<T> flag) {
+        return this.getFlag(flag, null);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getFlag(String key, T def) {
-        Object value = this.flags.get(key);
+    public <T> T getFlag(Flag<T> flag, T def) {
+        Object value = this.flags.get(flag.key());
         if (value == null) {
             return def;
         }
 
         try {
-            return (T) value;
+            return flag.cast(value);
         } catch (ClassCastException e) {
-            throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
+            throw new IllegalStateException("Tried to get flag \"" + flag.key() + "\" as the wrong type. Actual type: " + value.getClass().getName());
         }
     }
 
     @Override
-    public void setFlag(String key, Object value) {
-        this.flags.put(key, value);
+    public <T> void setFlag(Flag<T> flag, T value) {
+        this.flags.put(flag.key(), value);
     }
 
     @Override

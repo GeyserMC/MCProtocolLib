@@ -47,33 +47,32 @@ public abstract class AbstractServer implements Server {
     }
 
     @Override
-    public boolean hasGlobalFlag(String key) {
-        return this.flags.containsKey(key);
+    public boolean hasGlobalFlag(Flag<?> flag) {
+        return this.flags.containsKey(flag.key());
     }
 
     @Override
-    public <T> T getGlobalFlag(String key) {
-        return this.getGlobalFlag(key, null);
+    public <T> T getGlobalFlag(Flag<T> flag) {
+        return this.getGlobalFlag(flag, null);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> T getGlobalFlag(String key, T def) {
-        Object value = this.flags.get(key);
+    public <T> T getGlobalFlag(Flag<T> flag, T def) {
+        Object value = this.flags.get(flag.key());
         if(value == null) {
             return def;
         }
 
         try {
-            return (T) value;
+            return flag.cast(value);
         } catch(ClassCastException e) {
-            throw new IllegalStateException("Tried to get flag \"" + key + "\" as the wrong type. Actual type: " + value.getClass().getName());
+            throw new IllegalStateException("Tried to get flag \"" + flag.key() + "\" as the wrong type. Actual type: " + value.getClass().getName());
         }
     }
 
     @Override
-    public void setGlobalFlag(String key, Object value) {
-        this.flags.put(key, value);
+    public <T> void setGlobalFlag(Flag<T> flag, T value) {
+        this.flags.put(flag.key(), value);
     }
 
     @Override

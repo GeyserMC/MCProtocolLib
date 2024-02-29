@@ -89,7 +89,7 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void connected(ConnectedEvent event) {
-        event.getSession().setFlag(MinecraftConstants.PING_KEY, 0);
+        event.getSession().setFlag(MinecraftConstants.PING_KEY, 0L);
     }
 
     @Override

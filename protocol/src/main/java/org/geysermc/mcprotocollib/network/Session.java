@@ -92,10 +92,10 @@ public interface Session {
      * Checks whether this session has a flag set. If this session belongs to a server,
      * the server's flags will also be checked.
      *
-     * @param key Key of the flag to check for.
+     * @param flag Flag to check for.
      * @return Whether this session has a flag set.
      */
-    boolean hasFlag(String key);
+    boolean hasFlag(Flag<?> flag);
 
     /**
      * Gets the value of the given flag as an instance of the given type. If this
@@ -103,11 +103,11 @@ public interface Session {
      * as well.
      *
      * @param <T> Type of the flag.
-     * @param key Key of the flag.
+     * @param flag Flag to check for.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getFlag(String key);
+    <T> T getFlag(Flag<T> flag);
 
     /**
      * Gets the value of the given flag as an instance of the given type. If this
@@ -115,21 +115,22 @@ public interface Session {
      * as well. If the flag is not set, the specified default value will be returned.
      *
      * @param <T> Type of the flag.
-     * @param key Key of the flag.
+     * @param flag Flag to check for.
      * @param def Default value of the flag.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getFlag(String key, T def);
+    <T> T getFlag(Flag<T> flag, T def);
 
     /**
      * Sets the value of a flag. This does not change a server's flags if this session
      * belongs to a server.
      *
-     * @param key   Key of the flag.
+     * @param <T> Type of the flag.
+     * @param flag Flag to check for.
      * @param value Value to set the flag to.
      */
-    void setFlag(String key, Object value);
+    <T> void setFlag(Flag<T> flag, T value);
 
     /**
      * Sets the values for a collection of flags.
