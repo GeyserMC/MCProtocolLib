@@ -79,46 +79,52 @@ public class TcpClientSession extends TcpSession {
         }
 
         try {
-            final Bootstrap bootstrap = new Bootstrap();
-            bootstrap.channelFactory(TRANSPORT_TYPE.socketChannelFactory());
-            bootstrap.handler(new ChannelInitializer<>() {
-                @Override
-                public void initChannel(Channel channel) {
-                    PacketProtocol protocol = getPacketProtocol();
-                    protocol.newClientSession(TcpClientSession.this);
+            final Bootstrap bootstrap = new Bootstrap()
+                    .channelFactory(TRANSPORT_TYPE.socketChannelFactory())
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.IP_TOS, 0x18)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000)
+                    .group(EVENT_LOOP_GROUP)
+                    .remoteAddress(resolveAddress())
+                    .localAddress(bindAddress, bindPort)
+                    .handler(new ChannelInitializer<>() {
+                        @Override
+                        public void initChannel(Channel channel) {
+                            PacketProtocol protocol = getPacketProtocol();
+                            protocol.newClientSession(TcpClientSession.this);
 
-                    channel.config().setOption(ChannelOption.IP_TOS, 0x18);
-                    try {
-                        channel.config().setOption(ChannelOption.TCP_NODELAY, true);
-                    } catch (ChannelException e) {
-                        if (debug) {
-                            System.out.println("Exception while trying to set TCP_NODELAY");
-                            e.printStackTrace();
+                            channel.config().setOption(ChannelOption.IP_TOS, 0x18);
+                            try {
+                                channel.config().setOption(ChannelOption.TCP_NODELAY, true);
+                            } catch (ChannelException e) {
+                                if (debug) {
+                                    System.out.println("Exception while trying to set TCP_NODELAY");
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            ChannelPipeline pipeline = channel.pipeline();
+
+                            refreshReadTimeoutHandler(channel);
+                            refreshWriteTimeoutHandler(channel);
+
+                            addProxy(pipeline);
+
+                            int size = protocol.getPacketHeader().getLengthSize();
+                            if (size > 0) {
+                                pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this, size));
+                            }
+
+                            pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
+                            pipeline.addLast("manager", TcpClientSession.this);
+
+                            addHAProxySupport(pipeline);
                         }
-                    }
+                    });
 
-                    ChannelPipeline pipeline = channel.pipeline();
-
-                    refreshReadTimeoutHandler(channel);
-                    refreshWriteTimeoutHandler(channel);
-
-                    addProxy(pipeline);
-
-                    int size = protocol.getPacketHeader().getLengthSize();
-                    if (size > 0) {
-                        pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this, size));
-                    }
-
-                    pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
-                    pipeline.addLast("manager", TcpClientSession.this);
-
-                    addHAProxySupport(pipeline);
-                }
-            }).group(EVENT_LOOP_GROUP).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000);
-
-            InetSocketAddress remoteAddress = resolveAddress();
-            bootstrap.remoteAddress(remoteAddress);
-            bootstrap.localAddress(bindAddress, bindPort);
+            if (TRANSPORT_TYPE.supportsTcpFastOpenClient()) {
+                bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
+            }
 
             ChannelFuture future = bootstrap.connect();
             if (wait) {

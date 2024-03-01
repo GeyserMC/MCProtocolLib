@@ -31,7 +31,13 @@ public class TcpServer extends AbstractServer {
             return;
         }
 
-        ChannelFuture future = new ServerBootstrap().channelFactory(TRANSPORT_TYPE.serverSocketChannelFactory()).childHandler(new ChannelInitializer<>() {
+        ServerBootstrap bootstrap = new ServerBootstrap()
+                .channelFactory(TRANSPORT_TYPE.serverSocketChannelFactory())
+                .group(this.group)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.IP_TOS, 0x18)
+                .localAddress(this.getHost(), this.getPort())
+                .childHandler(new ChannelInitializer<>() {
             @Override
             public void initChannel(Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
@@ -59,7 +65,13 @@ public class TcpServer extends AbstractServer {
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));
                 pipeline.addLast("manager", session);
             }
-        }).group(this.group).localAddress(this.getHost(), this.getPort()).bind();
+        });
+
+        if (TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
+            bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
+        }
+
+        ChannelFuture future = bootstrap.bind();
 
         if(wait) {
             try {
