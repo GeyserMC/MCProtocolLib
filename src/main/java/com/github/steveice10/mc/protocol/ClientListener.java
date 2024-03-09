@@ -12,7 +12,9 @@ import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundSelectKnownPacks;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundSelectKnownPacks;
 import com.github.steveice10.mc.protocol.packet.handshake.serverbound.ClientIntentionPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
@@ -41,6 +43,7 @@ import lombok.SneakyThrows;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 /**
  * Handles making initial login and status requests for clients.
@@ -125,6 +128,8 @@ public class ClientListener extends SessionAdapter {
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ClientboundFinishConfigurationPacket) {
                 session.send(new ServerboundFinishConfigurationPacket());
+            } else if (packet instanceof ClientboundSelectKnownPacks) {
+                session.send(new ServerboundSelectKnownPacks(new ArrayList<>()));
             }
         }
     }

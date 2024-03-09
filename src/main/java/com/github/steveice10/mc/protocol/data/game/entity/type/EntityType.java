@@ -13,6 +13,7 @@ public enum EntityType {
     BLOCK_DISPLAY,
     BOAT,
     BREEZE,
+    BREEZE_WIND_CHARGE,
     CAMEL,
     CAT,
     CAVE_SPIDER,

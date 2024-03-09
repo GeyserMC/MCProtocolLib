@@ -3,7 +3,6 @@ package com.github.steveice10.mc.protocol.packet.configuration.clientbound;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.RegistryEntry;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +25,7 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
 
         int entryCount = helper.readVarInt(in);
         for (int i = 0; i < entryCount; i++) {
-            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readAnyTag(in)));
+            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readNullable(in, helper::readAnyTag)));
         }
     }
 
@@ -37,7 +36,7 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.entries.size());
         for (RegistryEntry entry : this.entries) {
             helper.writeResourceLocation(out, entry.getId());
-            helper.writeAnyTag(out, entry.getData());
+            helper.writeNullable(out, entry.getData(), helper::writeAnyTag);
         }
     }
 }
