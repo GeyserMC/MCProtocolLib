@@ -1,14 +1,13 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
-import org.geysermc.mcprotocollib.network.minecraft.MinecraftCipherCodec;
-import org.geysermc.mcprotocollib.network.minecraft.MinecraftCompressionCodec;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.channel.*;
@@ -20,9 +19,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 
-import javax.crypto.SecretKey;
 import java.net.ConnectException;
 import java.net.SocketAddress;
 import java.util.Collections;
@@ -185,12 +182,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void setCompressionThreshold(int threshold) {
+    public void setCompressionThreshold(int threshold, boolean validateDecompression) {
         this.compressionThreshold = threshold;
         if (this.channel != null) {
             if (this.compressionThreshold >= 0) {
                 if (this.channel.pipeline().get("compression") == null) {
-                    this.channel.pipeline().addBefore("codec", "compression", new MinecraftCompressionCodec(threshold, (MinecraftCodecHelper) getCodecHelper()));
+                    this.channel.pipeline().addBefore("codec", "compression", new TcpPacketCompression(this, validateDecompression));
                 }
             } else if (this.channel.pipeline().get("compression") != null) {
                 this.channel.pipeline().remove("compression");
@@ -199,11 +196,11 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void enableEncryption(SecretKey key) {
+    public void enableEncryption(PacketEncryption encryption) {
         if (channel == null) {
             throw new IllegalStateException("Connect the client before initializing encryption!");
         }
-        channel.pipeline().addBefore("sizer", "encryption", new MinecraftCipherCodec(key, key));
+        channel.pipeline().addBefore("sizer", "encryption", new TcpPacketEncryptor(encryption));
     }
 
     @Override

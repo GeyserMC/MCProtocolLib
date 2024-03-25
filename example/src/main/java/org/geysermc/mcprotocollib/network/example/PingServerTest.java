@@ -21,8 +21,8 @@ public class PingServerTest {
             return;
         }
 
-        Server server = new TcpServer("127.0.0.1", 25565, () -> new TestProtocol(key));
-        server.addListener(new ServerListener());
+        Server server = new TcpServer("127.0.0.1", 25565, TestProtocol::new);
+        server.addListener(new ServerListener(key));
         server.bind();
 
         Session client = new TcpClientSession("127.0.0.1", 25565, new TestProtocol(key));

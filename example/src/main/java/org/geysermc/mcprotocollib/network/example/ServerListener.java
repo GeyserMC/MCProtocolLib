@@ -10,6 +10,12 @@ import org.geysermc.mcprotocollib.network.event.server.SessionRemovedEvent;
 import javax.crypto.SecretKey;
 
 public class ServerListener extends ServerAdapter {
+    private final SecretKey key;
+
+    public ServerListener(SecretKey key) {
+        this.key = key;
+    }
+
     @Override
     public void serverBound(ServerBoundEvent event) {
         System.out.println("SERVER Bound: " + event.getServer().getHost() + ":" + event.getServer().getPort());
@@ -28,6 +34,8 @@ public class ServerListener extends ServerAdapter {
     @Override
     public void sessionAdded(SessionAddedEvent event) {
         System.out.println("SERVER Session Added: " + event.getSession().getHost() + ":" + event.getSession().getPort());
+        ((TestProtocol) event.getSession().getPacketProtocol()).setSecretKey(this.key);
+        event.getSession().enableEncryption(((TestProtocol) event.getSession().getPacketProtocol()).getEncryption());
     }
 
     @Override

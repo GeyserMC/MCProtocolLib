@@ -87,13 +87,13 @@ public class ClientListener extends SessionAdapter {
                 }
 
                 session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()));
-                session.enableEncryption(key);
+                session.enableEncryption(protocol.enableEncryption(key));
             } else if (packet instanceof ClientboundGameProfilePacket) {
                 session.send(new ServerboundLoginAcknowledgedPacket());
             } else if (packet instanceof ClientboundLoginDisconnectPacket loginDisconnectPacket) {
                 session.disconnect(loginDisconnectPacket.getReason());
             } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
-                session.setCompressionThreshold(loginCompressionPacket.getThreshold());
+                session.setCompressionThreshold(loginCompressionPacket.getThreshold(), false);
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
             if (packet instanceof ClientboundStatusResponsePacket statusResponsePacket) {

@@ -7,7 +7,6 @@ opennbt = "1.6"
 mcauthlib = "6621fd0"
 math = "2.0"
 fastutil-maps = "8.5.3"
-velocity-native = "3.1.2-SNAPSHOT"
 netty = "4.1.103.Final"
 netty-io_uring = "0.0.24.Final"
 checkerframework = "3.42.0"
@@ -32,8 +31,6 @@ math-immutable = { module = "org.cloudburstmc.math:immutable", version.ref = "ma
 fastutil-object2int-maps = { module = "com.nukkitx.fastutil:fastutil-object-int-maps", version.ref = "fastutil-maps" }
 fastutil-int2object-maps = { module = "com.nukkitx.fastutil:fastutil-int-object-maps", version.ref = "fastutil-maps" }
 fastutil-int2int-maps = { module = "com.nukkitx.fastutil:fastutil-int-int-maps", version.ref = "fastutil-maps" }
-
-velocity-native = { module = "com.velocitypowered:velocity-native", version.ref = "velocity-native" }
 
 netty-all = { module = "io.netty:netty-all", version.ref = "netty" }
 netty-incubator-transport-native-io_uring = { module = "io.netty.incubator:netty-incubator-transport-native-io_uring", version.ref = "netty-io_uring" }
