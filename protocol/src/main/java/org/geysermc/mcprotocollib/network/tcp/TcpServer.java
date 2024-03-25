@@ -46,12 +46,6 @@ public class TcpServer extends AbstractServer {
                 TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, TcpServer.this);
                 session.getPacketProtocol().newServerSession(TcpServer.this, session);
 
-                channel.config().setOption(ChannelOption.IP_TOS, 0x18);
-                try {
-                    channel.config().setOption(ChannelOption.TCP_NODELAY, true);
-                } catch (ChannelException ignored) {
-                }
-
                 ChannelPipeline pipeline = channel.pipeline();
 
                 session.refreshReadTimeoutHandler(channel);
@@ -67,7 +61,7 @@ public class TcpServer extends AbstractServer {
             }
         });
 
-        if (TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
+        if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
             bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
         }
 

@@ -93,16 +93,6 @@ public class TcpClientSession extends TcpSession {
                             PacketProtocol protocol = getPacketProtocol();
                             protocol.newClientSession(TcpClientSession.this);
 
-                            channel.config().setOption(ChannelOption.IP_TOS, 0x18);
-                            try {
-                                channel.config().setOption(ChannelOption.TCP_NODELAY, true);
-                            } catch (ChannelException e) {
-                                if (debug) {
-                                    System.out.println("Exception while trying to set TCP_NODELAY");
-                                    e.printStackTrace();
-                                }
-                            }
-
                             ChannelPipeline pipeline = channel.pipeline();
 
                             refreshReadTimeoutHandler(channel);
@@ -122,7 +112,7 @@ public class TcpClientSession extends TcpSession {
                         }
                     });
 
-            if (TRANSPORT_TYPE.supportsTcpFastOpenClient()) {
+            if (getFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenClient()) {
                 bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
             }
 
