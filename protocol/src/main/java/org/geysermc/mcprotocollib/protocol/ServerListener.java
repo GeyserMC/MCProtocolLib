@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.exception.request.RequestException;
-import com.github.steveice10.mc.auth.service.SessionService;
+import org.geysermc.mcprotocollib.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
+import org.geysermc.mcprotocollib.auth.service.SessionService;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;

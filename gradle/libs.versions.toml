@@ -4,11 +4,11 @@ metadata.format.version = "1.1"
 
 adventure = "4.15.0"
 opennbt = "1.6"
-mcauthlib = "6621fd0"
 math = "2.0"
 fastutil-maps = "8.5.3"
 netty = "4.1.103.Final"
 netty-io_uring = "0.0.24.Final"
+gson = "2.10.1"
 checkerframework = "3.42.0"
 junit = "5.8.2"
 
@@ -23,7 +23,6 @@ adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer
 adventure-text-serializer-json-legacy-impl = { module = "net.kyori:adventure-text-serializer-json-legacy-impl", version.ref = "adventure" }
 
 opennbt = { module = "com.github.steveice10:opennbt", version.ref = "opennbt" }
-mcauthlib = { module = "com.github.GeyserMC:mcauthlib", version.ref = "mcauthlib" }
 
 math-api = { module = "org.cloudburstmc.math:api", version.ref = "math" }
 math-immutable = { module = "org.cloudburstmc.math:immutable", version.ref = "math" }
@@ -34,6 +33,8 @@ fastutil-int2int-maps = { module = "com.nukkitx.fastutil:fastutil-int-int-maps",
 
 netty-all = { module = "io.netty:netty-all", version.ref = "netty" }
 netty-incubator-transport-native-io_uring = { module = "io.netty.incubator:netty-incubator-transport-native-io_uring", version.ref = "netty-io_uring" }
+
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 checkerframework-qual = { module = "org.checkerframework:checker-qual", version.ref = "checkerframework" }
 
