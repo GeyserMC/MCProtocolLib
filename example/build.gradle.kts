@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(projects.protocol)
+    implementation(projects.auth)
 }
 
 tasks.javadoc {

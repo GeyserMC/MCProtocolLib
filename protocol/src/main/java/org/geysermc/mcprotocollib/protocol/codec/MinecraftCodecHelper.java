@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.auth.data.GameProfile;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;

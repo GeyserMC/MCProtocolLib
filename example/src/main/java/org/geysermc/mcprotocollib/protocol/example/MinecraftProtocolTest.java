@@ -1,10 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.example;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.exception.request.RequestException;
-import com.github.steveice10.mc.auth.service.AuthenticationService;
-import com.github.steveice10.mc.auth.service.MojangAuthenticationService;
-import com.github.steveice10.mc.auth.service.SessionService;
+import org.geysermc.mcprotocollib.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
+import org.geysermc.mcprotocollib.auth.service.AuthenticationService;
+import org.geysermc.mcprotocollib.auth.service.MojangAuthenticationService;
+import org.geysermc.mcprotocollib.auth.service.SessionService;
 import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.ServerLoginHandler;
