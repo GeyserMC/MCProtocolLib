@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
@@ -30,6 +31,8 @@ public class TcpServer extends AbstractServer {
         if(this.group != null || this.channel != null) {
             return;
         }
+
+        this.group = TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
 
         ServerBootstrap bootstrap = new ServerBootstrap()
                 .channelFactory(TRANSPORT_TYPE.serverSocketChannelFactory())
