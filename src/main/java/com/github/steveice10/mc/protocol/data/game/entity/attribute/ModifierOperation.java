@@ -2,8 +2,8 @@ package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
 public enum ModifierOperation {
     ADD,
-    ADD_MULTIPLIED,
-    MULTIPLY;
+    ADD_MULTIPLIED_BASE,
+    ADD_MULTIPLIED_TOTAL;
 
     private static final ModifierOperation[] VALUES = values();
 

@@ -1,6 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.recipe.data;
 
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Data;

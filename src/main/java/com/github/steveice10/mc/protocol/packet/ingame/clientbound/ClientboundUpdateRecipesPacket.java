@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.recipe.CraftingBookCategory;
 import com.github.steveice10.mc.protocol.data.game.recipe.Ingredient;
 import com.github.steveice10.mc.protocol.data.game.recipe.Recipe;
@@ -37,7 +37,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                         ingredients[j] = helper.readRecipeIngredient(in);
                     }
 
-                    ItemStack result = helper.readItemStack(in);
+                    ItemStack result = helper.readOptionalItemStack(in);
 
                     data = new ShapelessRecipeData(group, category, ingredients, result);
                     break;
@@ -54,7 +54,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                         ingredients[j] = helper.readRecipeIngredient(in);
                     }
 
-                    ItemStack result = helper.readItemStack(in);
+                    ItemStack result = helper.readOptionalItemStack(in);
                     boolean showNotification = in.readBoolean();
 
                     data = new ShapedRecipeData(width, height, group, category, ingredients, result, showNotification);
@@ -67,7 +67,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     String group = helper.readString(in);
                     CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
                     Ingredient ingredient = helper.readRecipeIngredient(in);
-                    ItemStack result = helper.readItemStack(in);
+                    ItemStack result = helper.readOptionalItemStack(in);
                     float experience = in.readFloat();
                     int cookingTime = helper.readVarInt(in);
 
@@ -77,7 +77,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                 case STONECUTTING: {
                     String group = helper.readString(in);
                     Ingredient ingredient = helper.readRecipeIngredient(in);
-                    ItemStack result = helper.readItemStack(in);
+                    ItemStack result = helper.readOptionalItemStack(in);
 
                     data = new StoneCuttingRecipeData(group, ingredient, result);
                     break;
@@ -86,7 +86,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     Ingredient template = helper.readRecipeIngredient(in);
                     Ingredient base = helper.readRecipeIngredient(in);
                     Ingredient addition = helper.readRecipeIngredient(in);
-                    ItemStack result = helper.readItemStack(in);
+                    ItemStack result = helper.readOptionalItemStack(in);
 
                     data = new SmithingTransformRecipeData(template, base, addition, result);
                     break;
@@ -128,7 +128,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                         helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeOptionalItemStack(out, data.getResult());
                     break;
                 }
                 case CRAFTING_SHAPED: {
@@ -147,7 +147,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                         helper.writeRecipeIngredient(out, ingredient);
                     }
 
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeOptionalItemStack(out, data.getResult());
                     out.writeBoolean(data.isShowNotification());
                     break;
                 }
@@ -160,7 +160,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     helper.writeString(out, data.getGroup());
                     helper.writeVarInt(out, data.getCategory().ordinal());
                     helper.writeRecipeIngredient(out, data.getIngredient());
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeOptionalItemStack(out, data.getResult());
                     out.writeFloat(data.getExperience());
                     helper.writeVarInt(out, data.getCookingTime());
                     break;
@@ -170,7 +170,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
 
                     helper.writeString(out, data.getGroup());
                     helper.writeRecipeIngredient(out, data.getIngredient());
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeOptionalItemStack(out, data.getResult());
                     break;
                 }
                 case SMITHING_TRANSFORM: {
@@ -179,7 +179,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     helper.writeRecipeIngredient(out, data.getTemplate());
                     helper.writeRecipeIngredient(out, data.getBase());
                     helper.writeRecipeIngredient(out, data.getAddition());
-                    helper.writeItemStack(out, data.getResult());
+                    helper.writeOptionalItemStack(out, data.getResult());
                     break;
                 }
                 case SMITHING_TRIM: {

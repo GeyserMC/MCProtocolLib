@@ -19,7 +19,8 @@ public class ServerboundSelectKnownPacks implements MinecraftPacket {
 
     public ServerboundSelectKnownPacks(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         this.knownPacks = new ArrayList<>();
-        int entryCount = helper.readVarInt(in);
+
+        int entryCount = Math.min(helper.readVarInt(in), 64);
         for (int i = 0; i < entryCount; i++) {
             this.knownPacks.add(new KnownPack(helper.readString(in), helper.readString(in), helper.readString(in)));
         }
@@ -27,6 +28,10 @@ public class ServerboundSelectKnownPacks implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+        if (this.knownPacks.size() > 64) {
+            throw new IllegalArgumentException("KnownPacks is longer than maximum allowed length");
+        }
+
         helper.writeVarInt(out, this.knownPacks.size());
         for (KnownPack entry : this.knownPacks) {
             helper.writeString(out, entry.getNamespace());

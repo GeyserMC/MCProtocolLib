@@ -4,7 +4,7 @@ import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.EquipmentSlot;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Equipment;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
         while (hasNextEntry) {
             int rawSlot = in.readByte();
             EquipmentSlot slot = EquipmentSlot.from(((byte) rawSlot) & 127);
-            ItemStack item = helper.readItemStack(in);
+            ItemStack item = helper.readOptionalItemStack(in);
             list.add(new Equipment(slot, item));
             hasNextEntry = (rawSlot & 128) == 128;
         }
@@ -45,7 +45,7 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
                 rawSlot = rawSlot | 128;
             }
             out.writeByte(rawSlot);
-            helper.writeItemStack(out, this.equipment[i].getItem());
+            helper.writeOptionalItemStack(out, this.equipment[i].getItem());
         }
     }
 }

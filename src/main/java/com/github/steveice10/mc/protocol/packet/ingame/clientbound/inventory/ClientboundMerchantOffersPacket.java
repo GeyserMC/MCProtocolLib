@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.inventory.VillagerTrade;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -29,9 +29,9 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
         int size = helper.readVarInt(in);
         this.trades = new VillagerTrade[size];
         for (int i = 0; i < trades.length; i++) {
-            ItemStack firstInput = helper.readItemStack(in);
-            ItemStack output = helper.readItemStack(in);
-            ItemStack secondInput = helper.readItemStack(in);
+            ItemStack firstInput = helper.readOptionalItemStack(in);
+            ItemStack output = helper.readOptionalItemStack(in);
+            ItemStack secondInput = helper.readOptionalItemStack(in);
 
             boolean tradeDisabled = in.readBoolean();
             int numUses = in.readInt();
@@ -56,9 +56,9 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.trades.length);
         for (VillagerTrade trade : this.trades) {
-            helper.writeItemStack(out, trade.getFirstInput());
-            helper.writeItemStack(out, trade.getOutput());
-            helper.writeItemStack(out, trade.getSecondInput());
+            helper.writeOptionalItemStack(out, trade.getFirstInput());
+            helper.writeOptionalItemStack(out, trade.getOutput());
+            helper.writeOptionalItemStack(out, trade.getSecondInput());
 
             out.writeBoolean(trade.isTradeDisabled());
             out.writeInt(trade.getNumUses());

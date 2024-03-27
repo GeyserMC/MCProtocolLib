@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
         this.containerId = in.readUnsignedByte();
         this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
-        this.item = helper.readItemStack(in);
+        this.item = helper.readOptionalItemStack(in);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
         out.writeByte(this.containerId);
         helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
-        helper.writeItemStack(out, this.item);
+        helper.writeOptionalItemStack(out, this.item);
     }
 }

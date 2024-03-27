@@ -9,6 +9,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.LongEnti
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
+import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
@@ -35,7 +36,7 @@ public class MetadataType<T> {
     public static final MetadataType<String> STRING = new MetadataType<>(MinecraftCodecHelper::readString, MinecraftCodecHelper::writeString, ObjectEntityMetadata::new);
     public static final MetadataType<Component> CHAT = new MetadataType<>(MinecraftCodecHelper::readComponent, MinecraftCodecHelper::writeComponent, ObjectEntityMetadata::new);
     public static final MetadataType<Optional<Component>> OPTIONAL_CHAT = new MetadataType<>(optionalReader(MinecraftCodecHelper::readComponent), optionalWriter(MinecraftCodecHelper::writeComponent), ObjectEntityMetadata::new);
-    public static final MetadataType<ItemStack> ITEM = new MetadataType<>(MinecraftCodecHelper::readItemStack, MinecraftCodecHelper::writeItemStack, ObjectEntityMetadata::new);
+    public static final MetadataType<ItemStack> ITEM = new MetadataType<>(MinecraftCodecHelper::readOptionalItemStack, MinecraftCodecHelper::writeOptionalItemStack, ObjectEntityMetadata::new);
     public static final BooleanMetadataType BOOLEAN = new BooleanMetadataType(ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanEntityMetadata::new);
     public static final MetadataType<Vector3f> ROTATION = new MetadataType<>(MinecraftCodecHelper::readRotation, MinecraftCodecHelper::writeRotation, ObjectEntityMetadata::new);
     public static final MetadataType<Vector3i> POSITION = new MetadataType<>(MinecraftCodecHelper::readPosition, MinecraftCodecHelper::writePosition, ObjectEntityMetadata::new);

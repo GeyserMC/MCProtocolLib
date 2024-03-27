@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory;
 
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.inventory.ClickItemAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ContainerAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ContainerActionType;
@@ -88,11 +88,11 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
             int key = in.readShort();
-            ItemStack value = helper.readItemStack(in);
+            ItemStack value = helper.readOptionalItemStack(in);
             this.changedSlots.put(key, value);
         }
 
-        this.carriedItem = helper.readItemStack(in);
+        this.carriedItem = helper.readOptionalItemStack(in);
     }
 
     @Override
@@ -112,9 +112,9 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.changedSlots.size());
         for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {
             out.writeShort(pair.getIntKey());
-            helper.writeItemStack(out, pair.getValue());
+            helper.writeOptionalItemStack(out, pair.getValue());
         }
 
-        helper.writeItemStack(out, this.carriedItem);
+        helper.writeOptionalItemStack(out, this.carriedItem);
     }
 }

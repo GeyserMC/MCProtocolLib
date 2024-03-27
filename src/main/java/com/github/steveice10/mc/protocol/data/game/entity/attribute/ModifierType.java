@@ -2,7 +2,7 @@ package com.github.steveice10.mc.protocol.data.game.entity.attribute;
 
 import java.util.UUID;
 
-public final class ModifierType {
+public final class ModifierType { // TODO: out of date
     public static final UUID CREATURE_FLEE_SPEED_BONUS = UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A");
     public static final UUID ENDERMAN_ATTACK_SPEED_BOOST = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
     public static final UUID SPRINT_SPEED_BOOST = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
@@ -24,5 +24,6 @@ public final class ModifierType {
     public static final UUID LEGGINGS_MODIFIER = UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D");
     public static final UUID CHESTPLATE_MODIFIER = UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E");
     public static final UUID HELMET_MODIFIER = UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150");
+    public static final UUID BODY_MODIFIER = UUID.fromString("C1C72771-8B8E-BA4A-ACE0-81A93C8928B2");
     public static final UUID COVERED_ARMOR_BONUS = UUID.fromString("7E0292F2-9434-48D5-A29F-9583AF7DF27F");
 }
