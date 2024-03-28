@@ -265,20 +265,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     @Nullable
     public DataComponentPatch readDataComponentPatch(ByteBuf buf) throws IOException {
-        int i = this.readVarInt(buf);
-        int j = this.readVarInt(buf);
-        if (i == 0 & j == 0) {
+        int nonNullComponents = this.readVarInt(buf);
+        int nullComponents = this.readVarInt(buf);
+        if (nonNullComponents == 0 & nullComponents == 0) {
             return null;
         }
 
         List<DataComponent<?, ?>> dataComponents = new ArrayList<>();
-        for (int k = 0; k < i; k++) {
+        for (int k = 0; k < nonNullComponents; k++) {
             DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(ItemCodecHelper.INSTANCE, buf);
             dataComponents.add(dataComponent);
         }
 
-        for (int k = 0; k < j; k++) {
+        for (int k = 0; k < nullComponents; k++) {
             DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readNullDataComponent();
             dataComponents.add(dataComponent);

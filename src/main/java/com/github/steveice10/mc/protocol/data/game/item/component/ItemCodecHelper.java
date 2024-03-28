@@ -52,7 +52,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
     public ItemEnchantments readItemEnchantments(ByteBuf buf) {
         Map<Integer, Integer> enchantments = new HashMap<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        int enchantmentCount = this.readVarInt(buf);
+        for (int i = 0; i < enchantmentCount; i++) {
             enchantments.put(this.readVarInt(buf), this.readVarInt(buf));
         }
 
@@ -71,7 +72,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
     public AdventureModePredicate readAdventureModePredicate(ByteBuf buf) throws IOException {
         List<AdventureModePredicate.BlockPredicate> predicates = new ArrayList<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        int predicateCount = this.readVarInt(buf);
+        for (int i = 0; i < predicateCount; i++) {
             predicates.add(this.readBlockPredicate(buf));
         }
 
@@ -106,7 +108,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
         if (buf.readBoolean()) {
             propertyMatchers = new ArrayList<>();
-            for (int i = 0; i < this.readVarInt(buf); i++) {
+            int matcherCount = this.readVarInt(buf);
+            for (int i = 0; i < matcherCount; i++) {
                 String name = this.readString(buf);
                 if (buf.readBoolean()) {
                     propertyMatchers.add(new AdventureModePredicate.PropertyMatcher(name, this.readString(buf), null, null));
@@ -156,8 +159,9 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
-        List<ItemAttributeModifiers.Entry> entries = new ArrayList<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        List<ItemAttributeModifiers.Entry> modifiers = new ArrayList<>();
+        int modifierCount = this.readVarInt(buf);
+        for (int i = 0; i < modifierCount; i++) {
             int attribute = this.readVarInt(buf);
 
             UUID id = this.readUUID(buf);
@@ -167,10 +171,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
             ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, name, amount, operation);
 
             ItemAttributeModifiers.EquipmentSlotGroup slot = ItemAttributeModifiers.EquipmentSlotGroup.from(this.readVarInt(buf));
-            entries.add(new ItemAttributeModifiers.Entry(attribute, modifier, slot));
+            modifiers.add(new ItemAttributeModifiers.Entry(attribute, modifier, slot));
         }
 
-        return new ItemAttributeModifiers(entries, buf.readBoolean());
+        return new ItemAttributeModifiers(modifiers, buf.readBoolean());
     }
 
     public void writeItemAttributeModifiers(ByteBuf buf, ItemAttributeModifiers modifiers) {
@@ -203,7 +207,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int customColor = buf.readBoolean() ? buf.readInt() : -1;
 
         Int2ObjectMap<PotionContents.MobEffectDetails> customEffects = new Int2ObjectOpenHashMap<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        int effectCount = this.readVarInt(buf);
+        for (int i = 0; i < effectCount; i++) {
             customEffects.put(this.readVarInt(buf), this.readEffectDetails(buf));
         }
         return new PotionContents(potionId, customColor, customEffects);
@@ -261,7 +266,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
     public WritableBookContent readWritableBookContent(ByteBuf buf) {
         List<Filterable<String>> pages = new ArrayList<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        int pageCount = this.readVarInt(buf);
+        for (int i = 0; i < pageCount; i++) {
             pages.add(this.readFilterable(buf, this::readString));
         }
 
@@ -281,7 +287,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int generation = this.readVarInt(buf);
 
         List<Filterable<Component>> pages = new ArrayList<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        int pageCount = this.readVarInt(buf);
+        for (int i = 0; i < pageCount; i++) {
             pages.add(this.readFilterable(buf, this::readComponent));
         }
 
@@ -312,7 +319,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
             float itemModelIndex = buf.readFloat();
 
             Int2ObjectMap<String> overrideArmorMaterials = new Int2ObjectOpenHashMap<>();
-            for (int i = 0; i < this.readVarInt(buf); i++) {
+            int overrideCount = this.readVarInt(buf);
+            for (int i = 0; i < overrideCount; i++) {
                 overrideArmorMaterials.put(this.readVarInt(buf), this.readString(buf));
             }
 
@@ -407,7 +415,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int flightDuration = this.readVarInt(buf);
 
         List<Fireworks.FireworkExplosion> explosions = new ArrayList<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        int explosionCount = this.readVarInt(buf);
+        for (int i = 0; i < explosionCount; i++) {
             explosions.add(this.readFireworkExplosion(buf));
         }
 
@@ -464,7 +473,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         GameProfile profile = new GameProfile(id, name);
 
         List<GameProfile.Property> properties = new ArrayList<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
+        int propertyCount = this.readVarInt(buf);
+        for (int i = 0; i < propertyCount; i++) {
             properties.add(this.readProperty(buf));
         }
         profile.setProperties(properties);
@@ -492,12 +502,13 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public BlockStateProperties readBlockStateProperties(ByteBuf buf) {
-        Map<String, String> props = new HashMap<>();
-        for (int i = 0; i < this.readVarInt(buf); i++) {
-            props.put(this.readString(buf), this.readString(buf));
+        Map<String, String> properties = new HashMap<>();
+        int propertyCount = this.readVarInt(buf);
+        for (int i = 0; i < propertyCount; i++) {
+            properties.put(this.readString(buf), this.readString(buf));
         }
 
-        return new BlockStateProperties(props);
+        return new BlockStateProperties(properties);
     }
 
     public void writeBlockStateProperties(ByteBuf buf, BlockStateProperties props) {
