@@ -402,12 +402,12 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
     }
 
-    public LodestoneTarget readLodestoneTarget(ByteBuf buf) {
-        return new LodestoneTarget(this.readGlobalPos(buf), buf.readBoolean());
+    public LodestoneTracker readLodestoneTarget(ByteBuf buf) {
+        return new LodestoneTracker(this.readNullable(buf, this::readGlobalPos), buf.readBoolean());
     }
 
-    public void writeLodestoneTarget(ByteBuf buf, LodestoneTarget target) {
-        this.writeGlobalPos(buf, target.getPos());
+    public void writeLodestoneTarget(ByteBuf buf, LodestoneTracker target) {
+        this.writeNullable(buf, target.getPos(), this::writeGlobalPos);
         buf.writeBoolean(target.isTracked());
     }
 
@@ -468,7 +468,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public GameProfile readResolvableProfile(ByteBuf buf) {
-        String name = this.readString(buf);
+        String name = this.readNullable(buf, this::readString);
         UUID id = this.readNullable(buf, this::readUUID);
         GameProfile profile = new GameProfile(id, name);
 
@@ -483,8 +483,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public void writeResolvableProfile(ByteBuf buf, GameProfile profile) {
-        this.writeString(buf, profile.getName());
-        this.writeUUID(buf, profile.getId());
+        this.writeNullable(buf, profile.getName(), this::writeString);
+        this.writeNullable(buf, profile.getId(), this::writeUUID);
 
         this.writeVarInt(buf, profile.getProperties().size());
         for (GameProfile.Property property : profile.getProperties()) {

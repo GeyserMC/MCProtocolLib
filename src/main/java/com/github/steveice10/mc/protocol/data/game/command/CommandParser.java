@@ -35,6 +35,7 @@ public enum CommandParser {
     SWIZZLE,
     TEAM,
     ITEM_SLOT,
+    ITEM_SLOTS,
     RESOURCE_LOCATION,
     FUNCTION,
     ENTITY_ANCHOR,
