@@ -48,7 +48,6 @@ import com.github.steveice10.mc.protocol.data.game.level.particle.BlockParticleD
 import com.github.steveice10.mc.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.DustParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.EntityEffectParticleData;
-import com.github.steveice10.mc.protocol.data.game.level.particle.FallingDustParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.ItemParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
 import com.github.steveice10.mc.protocol.data.game.level.particle.ParticleData;
@@ -529,6 +528,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         switch (type) {
             case BLOCK:
             case BLOCK_MARKER:
+            case FALLING_DUST:
+            case DUST_PILLAR:
                 return new BlockParticleData(this.readVarInt(buf));
             case DUST:
                 float red = buf.readFloat();
@@ -547,8 +548,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 return new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
             case ENTITY_EFFECT:
                 return new EntityEffectParticleData(buf.readInt());
-            case FALLING_DUST:
-                return new FallingDustParticleData(this.readVarInt(buf));
             case ITEM:
                 return new ItemParticleData(this.readOptionalItemStack(buf));
             case SCULK_CHARGE:
@@ -566,6 +565,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         switch (type) {
             case BLOCK:
             case BLOCK_MARKER:
+            case FALLING_DUST:
+            case DUST_PILLAR:
                 this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
                 break;
             case DUST:
@@ -585,9 +586,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 break;
             case ENTITY_EFFECT:
                 buf.writeInt(((EntityEffectParticleData) data).getColor());
-            case FALLING_DUST:
-                this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
-                break;
             case ITEM:
                 this.writeOptionalItemStack(buf, ((ItemParticleData) data).getItemStack());
                 break;

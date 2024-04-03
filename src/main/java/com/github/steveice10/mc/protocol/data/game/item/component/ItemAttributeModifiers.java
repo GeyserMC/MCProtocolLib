@@ -39,7 +39,8 @@ public class ItemAttributeModifiers {
         LEGS,
         CHEST,
         HEAD,
-        ARMOR;
+        ARMOR,
+        BODY;
 
         private static final EquipmentSlotGroup[] VALUES = values();
 

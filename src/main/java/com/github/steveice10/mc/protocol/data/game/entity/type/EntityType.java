@@ -62,6 +62,7 @@ public enum EntityType {
     ITEM,
     ITEM_DISPLAY,
     ITEM_FRAME,
+    OMINOUS_ITEM_SPAWNER,
     FIREBALL,
     LEASH_KNOT,
     LIGHTNING_BOLT,

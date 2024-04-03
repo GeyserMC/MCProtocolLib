@@ -327,6 +327,11 @@ public enum BuiltinSound implements Sound {
     BLOCK_CHORUS_FLOWER_DEATH("block.chorus_flower.death"),
     BLOCK_CHORUS_FLOWER_GROW("block.chorus_flower.grow"),
     ITEM_CHORUS_FRUIT_TELEPORT("item.chorus_fruit.teleport"),
+    BLOCK_COBWEB_BREAK("block.cobweb.break"),
+    BLOCK_COBWEB_STEP("block.cobweb.step"),
+    BLOCK_COBWEB_PLACE("block.cobweb.place"),
+    BLOCK_COBWEB_HIT("block.cobweb.hit"),
+    BLOCK_COBWEB_FALL("block.cobweb.fall"),
     ENTITY_COD_AMBIENT("entity.cod.ambient"),
     ENTITY_COD_DEATH("entity.cod.death"),
     ENTITY_COD_FLOP("entity.cod.flop"),
@@ -681,8 +686,13 @@ public enum BuiltinSound implements Sound {
     BLOCK_TRIAL_SPAWNER_HIT("block.trial_spawner.hit"),
     BLOCK_TRIAL_SPAWNER_FALL("block.trial_spawner.fall"),
     BLOCK_TRIAL_SPAWNER_SPAWN_MOB("block.trial_spawner.spawn_mob"),
+    BLOCK_TRIAL_SPAWNER_ABOUT_TO_SPAWN_ITEM("block.trial_spawner.about_to_spawn_item"),
+    BLOCK_TRIAL_SPAWNER_SPAWN_ITEM("block.trial_spawner.spawn_item"),
+    BLOCK_TRIAL_SPAWNER_SPAWN_ITEM_BEGIN("block.trial_spawner.spawn_item_begin"),
     BLOCK_TRIAL_SPAWNER_DETECT_PLAYER("block.trial_spawner.detect_player"),
+    BLOCK_TRIAL_SPAWNER_CHARGE_ACTIVATE("block.trial_spawner.charge_activate"),
     BLOCK_TRIAL_SPAWNER_AMBIENT("block.trial_spawner.ambient"),
+    BLOCK_TRIAL_SPAWNER_AMBIENT_CHARGED("block.trial_spawner.ambient_charged"),
     BLOCK_TRIAL_SPAWNER_OPEN_SHUTTER("block.trial_spawner.open_shutter"),
     BLOCK_TRIAL_SPAWNER_CLOSE_SHUTTER("block.trial_spawner.close_shutter"),
     BLOCK_TRIAL_SPAWNER_EJECT_ITEM("block.trial_spawner.eject_item"),
@@ -1005,6 +1015,7 @@ public enum BuiltinSound implements Sound {
     ENTITY_OCELOT_HURT("entity.ocelot.hurt"),
     ENTITY_OCELOT_AMBIENT("entity.ocelot.ambient"),
     ENTITY_OCELOT_DEATH("entity.ocelot.death"),
+    ITEM_OMINOUS_BOTTLE_DISPOSE("item.ominous_bottle.dispose"),
     ENTITY_PAINTING_BREAK("entity.painting.break"),
     ENTITY_PAINTING_PLACE("entity.painting.place"),
     ENTITY_PANDA_PRE_SNEEZE("entity.panda.pre_sneeze"),
@@ -1599,7 +1610,10 @@ public enum BuiltinSound implements Sound {
     ENTITY_ZOMBIE_VILLAGER_CURE("entity.zombie_villager.cure"),
     ENTITY_ZOMBIE_VILLAGER_DEATH("entity.zombie_villager.death"),
     ENTITY_ZOMBIE_VILLAGER_HURT("entity.zombie_villager.hurt"),
-    ENTITY_ZOMBIE_VILLAGER_STEP("entity.zombie_villager.step");
+    ENTITY_ZOMBIE_VILLAGER_STEP("entity.zombie_villager.step"),
+    EVENT_MOB_EFFECT_BAD_OMEN("event.mob_effect.bad_omen"),
+    EVENT_MOB_EFFECT_TRIAL_OMEN("event.mob_effect.trial_omen"),
+    EVENT_MOB_EFFECT_RAID_OMEN("event.mob_effect.raid_omen");
 
     private final @NonNull String name;
 

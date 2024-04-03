@@ -25,6 +25,7 @@ public enum ParticleType {
     EXPLOSION_EMITTER,
     EXPLOSION,
     GUST,
+    SMALL_GUST,
     GUST_EMITTER_LARGE,
     GUST_EMITTER_SMALL,
     SONIC_BOOM,
@@ -32,6 +33,7 @@ public enum ParticleType {
     FIREWORK,
     FISHING,
     FLAME,
+    INFESTED,
     CHERRY_LEAVES,
     SCULK_SOUL,
     SCULK_CHARGE,
@@ -46,6 +48,7 @@ public enum ParticleType {
     ITEM,
     VIBRATION,
     ITEM_SLIME,
+    ITEM_COBWEB,
     ITEM_SNOWBALL,
     LARGE_SMOKE,
     LAVA,
@@ -100,8 +103,13 @@ public enum ParticleType {
     SHRIEK,
     EGG_CRACK,
     DUST_PLUME,
-    TRIAL_SPAWNER_DETECTION,
-    VAULT_CONNECTION;
+    TRIAL_SPAWNER_DETECTED_PLAYER,
+    TRIAL_SPAWNER_DETECTED_PLAYER_OMINOUS,
+    VAULT_CONNECTION,
+    DUST_PILLAR,
+    OMINOUS_SPAWNING,
+    RAID_OMEN,
+    TRIAL_OMEN;
 
     private static final ParticleType[] VALUES = values();
 

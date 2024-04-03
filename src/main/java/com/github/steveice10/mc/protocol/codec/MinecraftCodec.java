@@ -21,6 +21,7 @@ import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundPo
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundResourcePackPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
+import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundResetChatPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundSelectKnownPacks;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundUpdateEnabledFeaturesPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
@@ -139,6 +140,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.title.Clientb
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChangeDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatAckPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandSignedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatSessionUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
@@ -220,9 +222,9 @@ public class MinecraftCodec {
     }
 
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 181)
+            .protocolVersion((1 << 30) | 182)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-            .minecraftVersion("24w12a")
+            .minecraftVersion("24w13a")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -250,6 +252,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundFinishConfigurationPacket.class, ClientboundFinishConfigurationPacket::new)
                     .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
                     .registerClientboundPacket(ClientboundPingPacket.class, ClientboundPingPacket::new)
+                    .registerClientboundPacket(ClientboundResetChatPacket.class, ClientboundResetChatPacket::new)
                     .registerClientboundPacket(ClientboundRegistryDataPacket.class, ClientboundRegistryDataPacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
@@ -393,6 +396,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundChangeDifficultyPacket.class, ServerboundChangeDifficultyPacket::new)
                     .registerServerboundPacket(ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
                     .registerServerboundPacket(ServerboundChatCommandPacket.class, ServerboundChatCommandPacket::new)
+                    .registerServerboundPacket(ServerboundChatCommandSignedPacket.class, ServerboundChatCommandSignedPacket::new)
                     .registerServerboundPacket(ServerboundChatPacket.class, ServerboundChatPacket::new)
                     .registerServerboundPacket(ServerboundChatSessionUpdatePacket.class, ServerboundChatSessionUpdatePacket::new)
                     .registerServerboundPacket(ServerboundChunkBatchReceivedPacket.class, ServerboundChunkBatchReceivedPacket::new)
