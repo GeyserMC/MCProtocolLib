@@ -5,8 +5,10 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.With;
 
 @Data
+@With
 @AllArgsConstructor
 public class ServerboundChatCommandPacket implements MinecraftPacket {
     private final String command;
