@@ -47,6 +47,7 @@ import com.github.steveice10.mc.protocol.data.game.level.event.UnknownLevelEvent
 import com.github.steveice10.mc.protocol.data.game.level.particle.BlockParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.DustParticleData;
+import com.github.steveice10.mc.protocol.data.game.level.particle.EntityEffectParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.FallingDustParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.ItemParticleData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
@@ -544,6 +545,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 float newGreen = buf.readFloat();
                 float newBlue = buf.readFloat();
                 return new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
+            case ENTITY_EFFECT:
+                return new EntityEffectParticleData(buf.readInt());
             case FALLING_DUST:
                 return new FallingDustParticleData(this.readVarInt(buf));
             case ITEM:
@@ -580,6 +583,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewGreen());
                 buf.writeFloat(((DustColorTransitionParticleData) data).getNewBlue());
                 break;
+            case ENTITY_EFFECT:
+                buf.writeInt(((EntityEffectParticleData) data).getColor());
             case FALLING_DUST:
                 this.writeVarInt(buf, ((FallingDustParticleData) data).getBlockState());
                 break;

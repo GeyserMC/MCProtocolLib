@@ -1,7 +1,6 @@
 package com.github.steveice10.mc.protocol.data.game.level.particle;
 
 public enum ParticleType {
-    AMBIENT_ENTITY_EFFECT,
     ANGRY_VILLAGER,
     BLOCK,
     BLOCK_MARKER,

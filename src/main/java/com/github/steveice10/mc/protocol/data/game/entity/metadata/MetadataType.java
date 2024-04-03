@@ -10,6 +10,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.type.ObjectEn
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.type.PaintingType;
 import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.item.component.DataComponentType;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
@@ -47,6 +48,7 @@ public class MetadataType<T> {
     public static final IntMetadataType OPTIONAL_BLOCK_STATE = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
     public static final MetadataType<CompoundTag> NBT_TAG = new MetadataType<>(MinecraftCodecHelper::readAnyTag, MinecraftCodecHelper::writeAnyTag, ObjectEntityMetadata::new);
     public static final MetadataType<Particle> PARTICLE = new MetadataType<>(MinecraftCodecHelper::readParticle, MinecraftCodecHelper::writeParticle, ObjectEntityMetadata::new);
+    public static final MetadataType<List<Particle>> PARTICLES = new MetadataType<>(listReader(MinecraftCodecHelper::readParticle), listWriter(MinecraftCodecHelper::writeParticle), ObjectEntityMetadata::new);
     public static final MetadataType<VillagerData> VILLAGER_DATA = new MetadataType<>(MinecraftCodecHelper::readVillagerData, MinecraftCodecHelper::writeVillagerData, ObjectEntityMetadata::new);
     public static final OptionalIntMetadataType OPTIONAL_VARINT = new OptionalIntMetadataType(ObjectEntityMetadata::new);
     public static final MetadataType<Pose> POSE = new MetadataType<>(MinecraftCodecHelper::readPose, MinecraftCodecHelper::writePose, ObjectEntityMetadata::new);
@@ -149,6 +151,26 @@ public class MetadataType<T> {
             output.writeBoolean(value.isPresent());
             if (value.isPresent()) {
                 writer.write(helper, output, value.get());
+            }
+        };
+    }
+
+    private static <T> Reader<List<T>> listReader(Reader<T> reader) {
+        return (helper, input) -> {
+            List<T> ret = new ArrayList<>();
+            for (int i = 0; i < helper.readVarInt(input); i++) {
+                ret.add(reader.read(helper, input));
+            }
+
+            return ret;
+        };
+    }
+
+    private static <T> Writer<List<T>> listWriter(Writer<T> writer) {
+        return (helper, output, value) -> {
+            helper.writeVarInt(output, value.size());
+            for (T object : value) {
+                writer.write(helper, output, object);
             }
         };
     }
