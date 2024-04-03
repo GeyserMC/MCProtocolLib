@@ -158,6 +158,54 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeNullable(buf, blockPredicate.getNbt(), this::writeAnyTag);
     }
 
+    public ToolData readToolData(ByteBuf buf) {
+        List<ToolData.Rule> rules = new ArrayList<>();
+        int ruleCount = this.readVarInt(buf);
+        for (int i = 0; i < ruleCount; i++) {
+            String location = null;
+            int[] holders = null;
+
+            int length = this.readVarInt(buf) - 1;
+            if (length == -1) {
+                location = this.readResourceLocation(buf);
+            } else {
+                holders = new int[length];
+                for (int j = 0; j < length; j++) {
+                    holders[j] = this.readVarInt(buf);
+                }
+            }
+
+            Float speed = this.readNullable(buf, ByteBuf::readFloat);
+            Boolean correctForDrops = this.readNullable(buf, ByteBuf::readBoolean);
+            rules.add(new ToolData.Rule(location, holders, speed, correctForDrops));
+        }
+
+        float defaultMiningSpeed = buf.readFloat();
+        int damagePerBlock = this.readVarInt(buf);
+        return new ToolData(rules, defaultMiningSpeed, damagePerBlock);
+    }
+
+    public void writeToolData(ByteBuf buf, ToolData data) {
+        this.writeVarInt(buf, data.getRules().size());
+        for (ToolData.Rule rule : data.getRules()) {
+            if (rule.getLocation() != null) {
+                this.writeVarInt(buf, 0);
+                this.writeResourceLocation(buf, rule.getLocation());
+            } else {
+                this.writeVarInt(buf, rule.getHolders().length + 1);
+                for (int holder : rule.getHolders()) {
+                    this.writeVarInt(buf, holder);
+                }
+            }
+
+            this.writeNullable(buf, rule.getSpeed(), ByteBuf::writeFloat);
+            this.writeNullable(buf, rule.getCorrectForDrops(), ByteBuf::writeBoolean);
+        }
+
+        buf.writeFloat(data.getDefaultMiningSpeed());
+        this.writeVarInt(buf, data.getDamagePerBlock());
+    }
+
     public ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
         List<ItemAttributeModifiers.Entry> modifiers = new ArrayList<>();
         int modifierCount = this.readVarInt(buf);
@@ -206,7 +254,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int potionId = buf.readBoolean() ? this.readVarInt(buf) : -1;
         int customColor = buf.readBoolean() ? buf.readInt() : -1;
 
-        Int2ObjectMap<PotionContents.MobEffectDetails> customEffects = new Int2ObjectOpenHashMap<>();
+        Int2ObjectMap<MobEffectDetails> customEffects = new Int2ObjectOpenHashMap<>();
         int effectCount = this.readVarInt(buf);
         for (int i = 0; i < effectCount; i++) {
             customEffects.put(this.readVarInt(buf), this.readEffectDetails(buf));
@@ -230,23 +278,51 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
 
         this.writeVarInt(buf, contents.getCustomEffects().size());
-        for (Int2ObjectMap.Entry<PotionContents.MobEffectDetails> entry : contents.getCustomEffects().int2ObjectEntrySet()) {
+        for (Int2ObjectMap.Entry<MobEffectDetails> entry : contents.getCustomEffects().int2ObjectEntrySet()) {
             this.writeVarInt(buf, entry.getIntKey());
             this.writeEffectDetails(buf, entry.getValue());
         }
     }
 
-    public PotionContents.MobEffectDetails readEffectDetails(ByteBuf buf) {
+    public FoodProperties readFoodProperties(ByteBuf buf) {
+        int nutrition = this.readVarInt(buf);
+        float saturationModifier = buf.readFloat();
+        boolean canAlwaysEat = buf.readBoolean();
+        float eatSeconds = buf.readFloat();
+
+        List<FoodProperties.PossibleEffect> effects = new ArrayList<>();
+        int effectCount = this.readVarInt(buf);
+        for (int i = 0; i < effectCount; i++) {
+            effects.add(new FoodProperties.PossibleEffect(this.readEffectDetails(buf), buf.readFloat()));
+        }
+
+        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, effects);
+    }
+
+    public void writeFoodProperties(ByteBuf buf, FoodProperties properties) {
+        this.writeVarInt(buf, properties.getNutrition());
+        buf.writeFloat(properties.getSaturationModifier());
+        buf.writeBoolean(properties.isCanAlwaysEat());
+        buf.writeFloat(properties.getEatSeconds());
+
+        this.writeVarInt(buf, properties.getEffects().size());
+        for (FoodProperties.PossibleEffect effect : properties.getEffects()) {
+            this.writeEffectDetails(buf, effect.getEffect());
+            buf.writeFloat(effect.getProbability());
+        }
+    }
+
+    public MobEffectDetails readEffectDetails(ByteBuf buf) {
         int amplifier = this.readVarInt(buf);
         int duration = this.readVarInt(buf);
         boolean ambient = buf.readBoolean();
         boolean showParticles = buf.readBoolean();
         boolean showIcon = buf.readBoolean();
-        PotionContents.MobEffectDetails hiddenEffect = this.readNullable(buf, this::readEffectDetails);
-        return new PotionContents.MobEffectDetails(amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
+        MobEffectDetails hiddenEffect = this.readNullable(buf, this::readEffectDetails);
+        return new MobEffectDetails(amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
     }
 
-    public void writeEffectDetails(ByteBuf buf, PotionContents.MobEffectDetails details) {
+    public void writeEffectDetails(ByteBuf buf, MobEffectDetails details) {
         this.writeVarInt(buf, details.getAmplifier());
         this.writeVarInt(buf, details.getDuration());
         buf.writeBoolean(details.isAmbient());

@@ -799,6 +799,7 @@ public enum BuiltinSound implements Sound {
     ITEM_LODESTONE_COMPASS_LOCK("item.lodestone_compass.lock"),
     ITEM_MACE_SMASH_AIR("item.mace.smash_air"),
     ITEM_MACE_SMASH_GROUND("item.mace.smash_ground"),
+    ITEM_MACE_SMASH_GROUND_HEAVY("item.mace.smash_ground_heavy"),
     ENTITY_MAGMA_CUBE_DEATH("entity.magma_cube.death"),
     ENTITY_MAGMA_CUBE_HURT("entity.magma_cube.hurt"),
     ENTITY_MAGMA_CUBE_HURT_SMALL("entity.magma_cube.hurt_small"),
