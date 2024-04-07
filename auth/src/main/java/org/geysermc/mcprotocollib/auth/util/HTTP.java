@@ -32,19 +32,6 @@ public class HTTP {
     /**
      * Makes an HTTP request.
      *
-     * @param proxy Proxy to use when making the request.
-     * @param uri   URI to make the request to.
-     * @param input Input to provide in the request.
-     * @throws IllegalArgumentException If the given proxy or URI is null.
-     * @throws RequestException If an error occurs while making the request.
-     */
-    public static void makeRequest(Proxy proxy, URI uri, Object input) throws RequestException {
-        makeRequest(proxy, uri, input, null);
-    }
-
-    /**
-     * Makes an HTTP request.
-     *
      * @param proxy        Proxy to use when making the request.
      * @param uri          URI to make the request to.
      * @param input        Input to provide in the request.
@@ -70,8 +57,6 @@ public class HTTP {
         }
 
         if(response != null) {
-            checkForError(response);
-
             if(responseType != null) {
                 return GSON.fromJson(response, responseType);
             }
@@ -81,88 +66,7 @@ public class HTTP {
     }
 
     public static <T> T makeRequest(Proxy proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
-        return makeRequest(proxy, uri, input, responseType, new HashMap<String, String>());
-    }
-
-    /**
-     * Makes an HTTP request as a from.
-     *
-     * @param proxy        Proxy to use when making the request.
-     * @param uri          URI to make the request to.
-     * @param input        Input to provide in the request.
-     * @param responseType Class to provide the response as.
-     * @param <T>          Type to provide the response as.
-     * @return The response of the request.
-     * @throws IllegalArgumentException If the given proxy or URI is null.
-     * @throws RequestException If an error occurs while making the request.
-     */
-    public static <T> T makeRequestForm(Proxy proxy, URI uri, Map<String, String> input, Class<T> responseType) throws RequestException {
-        if(proxy == null) {
-            throw new IllegalArgumentException("Proxy cannot be null.");
-        } else if(uri == null) {
-            throw new IllegalArgumentException("URI cannot be null.");
-        }
-
-        String inputString = formMapToString(input);
-
-        JsonElement response;
-        try {
-            response = performPostRequest(proxy, uri, new HashMap<String, String>(), inputString, "application/x-www-form-urlencoded");
-        } catch(IOException e) {
-            throw new ServiceUnavailableException("Could not make request to '" + uri + "'.", e);
-        }
-
-        if(response != null) {
-            checkForError(response);
-
-            if(responseType != null) {
-                return GSON.fromJson(response, responseType);
-            }
-        }
-
-        return null;
-    }
-
-    public static String formMapToString(Map<String, String> input) {
-        StringBuilder inputString = new StringBuilder();
-        for (Map.Entry<String, String> inputField : input.entrySet()) {
-            if (inputString.length() > 0) {
-                inputString.append("&");
-            }
-
-            try {
-                inputString.append(URLEncoder.encode(inputField.getKey(), StandardCharsets.UTF_8.toString()));
-                inputString.append("=");
-                inputString.append(URLEncoder.encode(inputField.getValue(), StandardCharsets.UTF_8.toString()));
-            } catch (UnsupportedEncodingException ignored) { }
-        }
-
-        return inputString.toString();
-    }
-
-    private static void checkForError(JsonElement response) throws RequestException {
-        if(response.isJsonObject()) {
-            JsonObject object = response.getAsJsonObject();
-            if(object.has("error")) {
-                String error = object.get("error").getAsString();
-                String cause = object.has("cause") ? object.get("cause").getAsString() : "";
-                String errorMessage = object.has("errorMessage") ? object.get("errorMessage").getAsString() : "";
-                errorMessage = object.has("error_description") ? object.get("error_description").getAsString() : errorMessage;
-                if(!error.equals("")) {
-                    if(error.equals("ForbiddenOperationException")) {
-                        if (cause != null && cause.equals("UserMigratedException")) {
-                            throw new UserMigratedException(errorMessage);
-                        } else {
-                            throw new InvalidCredentialsException(errorMessage);
-                        }
-                    } else if (error.equals("authorization_pending")) {
-                        throw new AuthPendingException(errorMessage);
-                    } else {
-                        throw new RequestException(errorMessage);
-                    }
-                }
-            }
-        }
+        return makeRequest(proxy, uri, input, responseType, new HashMap<>());
     }
 
     private static JsonElement performGetRequest(Proxy proxy, URI uri, Map<String, String> extraHeaders) throws IOException {

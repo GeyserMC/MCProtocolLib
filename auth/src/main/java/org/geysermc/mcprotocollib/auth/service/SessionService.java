@@ -98,12 +98,11 @@ public class SessionService extends Service {
      * Fills in the properties of a profile.
      *
      * @param profile Profile to fill in the properties of.
-     * @return The given profile, after filling in its properties.
      * @throws ProfileException If the property lookup fails.
      */
-    public GameProfile fillProfileProperties(GameProfile profile) throws ProfileException {
+    public void fillProfileProperties(GameProfile profile) throws ProfileException {
         if(profile.getId() == null) {
-            return profile;
+            return;
         }
 
         try {
@@ -113,7 +112,6 @@ public class SessionService extends Service {
             }
 
             profile.setProperties(response.properties);
-            return profile;
         } catch(RequestException e) {
             throw new ProfileLookupException("Couldn't look up profile properties for " + profile + ".", e);
         }

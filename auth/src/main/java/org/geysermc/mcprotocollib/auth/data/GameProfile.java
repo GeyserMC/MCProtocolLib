@@ -35,18 +35,9 @@ public class GameProfile {
     private static final Gson GSON;
 
     static {
-        try(InputStream in = SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der")) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-            byte[] buffer = new byte[4096];
-            int length;
-            while((length = in.read(buffer)) != -1) {
-                out.write(buffer, 0, length);
-            }
-
-            out.close();
-
-            SIGNATURE_KEY = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(out.toByteArray()));
+        try(InputStream in = Objects.requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
+            SIGNATURE_KEY = KeyFactory.getInstance("RSA")
+                    .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
         } catch(Exception e) {
             throw new ExceptionInInitializerError("Missing/invalid yggdrasil public key.");
         }
@@ -86,7 +77,7 @@ public class GameProfile {
      * @param name Name of the profile.
      */
     public GameProfile(String id, String name) {
-        this(id == null || id.equals("") ? null : UUID.fromString(id), name);
+        this(id == null || id.isEmpty() ? null : UUID.fromString(id), name);
     }
 
     /**
@@ -96,7 +87,7 @@ public class GameProfile {
      * @param name Name of the profile.
      */
     public GameProfile(UUID id, String name) {
-        if(id == null && (name == null || name.equals(""))) {
+        if(id == null && (name == null || name.isEmpty())) {
             throw new IllegalArgumentException("Name and ID cannot both be blank");
         } else {
             this.id = id;
@@ -110,7 +101,7 @@ public class GameProfile {
      * @return Whether the profile is complete.
      */
     public boolean isComplete() {
-        return this.id != null && this.name != null && !this.name.equals("");
+        return this.id != null && this.name != null && !this.name.isEmpty();
     }
 
     /**
@@ -303,9 +294,9 @@ public class GameProfile {
      * A property belonging to a profile.
      */
     public static class Property {
-        private String name;
-        private String value;
-        private String signature;
+        private final String name;
+        private final String value;
+        private final String signature;
 
         /**
          * Creates a new Property instance.
@@ -415,8 +406,8 @@ public class GameProfile {
      * A texture contained within a profile.
      */
     public static class Texture {
-        private String url;
-        private Map<String, String> metadata;
+        private final String url;
+        private final Map<String, String> metadata;
 
         /**
          * Creates a new Texture instance.

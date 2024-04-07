@@ -2,12 +2,9 @@ package org.geysermc.mcprotocollib.protocol.example;
 
 import org.geysermc.mcprotocollib.auth.data.GameProfile;
 import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.service.AuthenticationService;
-import org.geysermc.mcprotocollib.auth.service.MojangAuthenticationService;
 import org.geysermc.mcprotocollib.auth.service.SessionService;
 import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
-import org.geysermc.mcprotocollib.protocol.ServerLoginHandler;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
@@ -15,9 +12,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnIn
 import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
-import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoBuilder;
-import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoHandler;
-import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerPingTimeHandler;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;

@@ -1,14 +1,15 @@
 package org.geysermc.mcprotocollib.auth.example;
 
+import net.raphimc.minecraftauth.MinecraftAuth;
+import net.raphimc.minecraftauth.step.java.StepMCProfile;
+import net.raphimc.minecraftauth.step.java.StepMCToken;
+import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
+import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
 import org.geysermc.mcprotocollib.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.service.AuthenticationService;
-import org.geysermc.mcprotocollib.auth.service.MojangAuthenticationService;
 import org.geysermc.mcprotocollib.auth.service.ProfileService;
 import org.geysermc.mcprotocollib.auth.service.SessionService;
 
 import java.net.Proxy;
-import java.util.UUID;
 
 public class MinecraftAuthTest {
     private static final String USERNAME = "Username";
@@ -26,7 +27,7 @@ public class MinecraftAuthTest {
     private static void profileLookup() {
         ProfileService repository = new ProfileService();
         repository.setProxy(PROXY);
-        repository.findProfilesByName(new String[] {USERNAME}, new ProfileService.ProfileLookupCallback() {
+        repository.findProfilesByName(new String[]{USERNAME}, new ProfileService.ProfileLookupCallback() {
             @Override
             public void onProfileLookupSucceeded(GameProfile profile) {
                 System.out.println("Found profile: " + profile);
@@ -40,54 +41,33 @@ public class MinecraftAuthTest {
         });
     }
 
-    private static void auth() {
+    private static void auth() throws Exception {
         SessionService service = new SessionService();
         service.setProxy(PROXY);
 
-        String clientToken = UUID.randomUUID().toString();
-        AuthenticationService auth = login(clientToken, PASSWORD, false);
-        for(GameProfile profile : auth.getAvailableProfiles()) {
-            try {
-                service.fillProfileProperties(profile);
-
-                System.out.println("Profile: " + profile);
-                System.out.println("Profile Textures: " + profile.getTextures(REQUIRE_SECURE_TEXTURES));
-            } catch(Exception e) {
-                System.err.println("Failed to get properties and textures of profile " + profile + ".");
-                e.printStackTrace();
-            }
+        StepFullJavaSession.FullJavaSession fullJavaSession;
+        try {
+            fullJavaSession = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
+                    MinecraftAuth.createHttpClient(),
+                    new StepCredentialsMsaCode.MsaCredentials(EMAIL, PASSWORD));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
         }
 
-        auth = login(clientToken, auth.getAccessToken(), true);
-        GameProfile profile = auth.getSelectedProfile();
+        StepMCProfile.MCProfile mcProfile = fullJavaSession.getMcProfile();
+        StepMCToken.MCToken mcToken = mcProfile.getMcToken();
+        GameProfile profile = new GameProfile(mcProfile.getId(), mcProfile.getName());
         try {
             service.fillProfileProperties(profile);
 
             System.out.println("Selected Profile: " + profile);
             System.out.println("Selected Profile Textures: " + profile.getTextures(REQUIRE_SECURE_TEXTURES));
-        } catch(Exception e) {
+            System.out.println("Access Token: " + mcToken.getAccessToken());
+            System.out.println("Expire Time: " + mcToken.getExpireTimeMs());
+        } catch (Exception e) {
             System.err.println("Failed to get properties and textures of selected profile " + profile + ".");
             e.printStackTrace();
         }
-    }
-
-    private static AuthenticationService login(String clientToken, String with, boolean token) {
-        AuthenticationService auth = new MojangAuthenticationService(clientToken);
-        auth.setProxy(PROXY);
-        auth.setUsername(EMAIL);
-        if(token) {
-            auth.setAccessToken(with);
-        } else {
-            auth.setPassword(with);
-        }
-
-        try {
-            auth.login();
-        } catch(RequestException e) {
-            System.err.println("Failed to log in with " + (token ? "token" : "password") + "!");
-            e.printStackTrace();
-        }
-
-        return auth;
     }
 }

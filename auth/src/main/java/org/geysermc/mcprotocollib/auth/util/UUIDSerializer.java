@@ -42,7 +42,7 @@ public class UUIDSerializer extends TypeAdapter<UUID> {
      * @return The resulting UUID.
      */
     public static UUID fromString(String value) {
-        if(value == null || value.equals("")) {
+        if(value == null || value.isEmpty()) {
             return null;
         }
 

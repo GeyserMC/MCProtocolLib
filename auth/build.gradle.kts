@@ -9,6 +9,9 @@ dependencies {
     // Gson
     api(libs.gson)
 
+    // MinecraftAuth for authentication
+    api(libs.minecraftauth)
+
     // Checker Framework
     api(libs.checkerframework.qual)
 

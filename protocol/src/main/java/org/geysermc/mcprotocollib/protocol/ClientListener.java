@@ -78,9 +78,6 @@ public class ClientListener extends SessionAdapter {
                 } catch (ServiceUnavailableException e) {
                     session.disconnect("Login failed: Authentication service unavailable.", e);
                     return;
-                } catch (InvalidCredentialsException e) {
-                    session.disconnect("Login failed: Invalid login session.", e);
-                    return;
                 } catch (RequestException e) {
                     session.disconnect("Login failed: Authentication error: " + e.getMessage(), e);
                     return;
