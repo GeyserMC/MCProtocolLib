@@ -156,14 +156,14 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public void newClientSession(Session session) {
+    public void newClientSession(Session session, boolean transferring) {
         session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
         session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
 
         this.setState(ProtocolState.HANDSHAKE);
 
         if (this.useDefaultListeners) {
-            session.addListener(new ClientListener(this.targetState));
+            session.addListener(new ClientListener(this.targetState, transferring));
         }
     }
 

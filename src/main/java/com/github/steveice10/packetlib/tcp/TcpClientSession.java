@@ -89,7 +89,7 @@ public class TcpClientSession extends TcpSession {
     }
 
     @Override
-    public void connect(boolean wait) {
+    public void connect(boolean wait, boolean transferring) {
         if(this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
         }
@@ -107,7 +107,7 @@ public class TcpClientSession extends TcpSession {
                 @Override
                 public void initChannel(Channel channel) {
                     PacketProtocol protocol = getPacketProtocol();
-                    protocol.newClientSession(TcpClientSession.this);
+                    protocol.newClientSession(TcpClientSession.this, transferring);
 
                     channel.config().setOption(ChannelOption.IP_TOS, 0x18);
                     try {

@@ -33,7 +33,7 @@ public class PacketStateCodec extends PacketProtocol {
     }
 
     @Override
-    public void newClientSession(Session session) {
+    public void newClientSession(Session session, boolean transferring) {
         throw new UnsupportedOperationException("Not supported!");
     }
 

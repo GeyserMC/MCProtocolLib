@@ -31,6 +31,14 @@ public interface Session {
     public void connect(boolean wait);
 
     /**
+     * Connects this session to its host and port.
+     *
+     * @param wait Whether to wait for the connection to be established before returning.
+     * @param transferring Whether the session is a client being transferred.
+     */
+    public void connect(boolean wait, boolean transferring);
+
+    /**
      * Gets the host the session is connected to.
      *
      * @return The connected host.
@@ -122,6 +130,13 @@ public interface Session {
      * @param value Value to set the flag to.
      */
     public void setFlag(String key, Object value);
+
+    /**
+     * Sets the values for a collection of flags.
+     *
+     * @param flags Collection of flags
+     */
+    public void setFlags(Map<String, Object> flags);
 
     /**
      * Gets the listeners listening on this session.

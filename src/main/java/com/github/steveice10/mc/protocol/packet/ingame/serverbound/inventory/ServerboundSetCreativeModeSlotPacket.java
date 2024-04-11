@@ -19,7 +19,7 @@ public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
     private final @NonNull ItemStack clickedItem;
 
     public ServerboundSetCreativeModeSlotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.slot = in.readShort();
+        this.slot = in.readUnsignedShort();
         this.clickedItem = helper.readOptionalItemStack(in);
     }
 

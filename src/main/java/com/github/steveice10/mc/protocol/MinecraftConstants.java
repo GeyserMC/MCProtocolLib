@@ -54,6 +54,11 @@ public final class MinecraftConstants {
     public static final String VERIFY_USERS_KEY = "verify-users";
 
     /**
+     * Session flag for determining whether to accept transferred connections. Server only.
+     */
+    public static final String ACCEPT_TRANSFERS_KEY = "accept-transfers";
+
+    /**
      * Session flag for providing a custom server info response builder. Server only.
      */
     public static final String SERVER_INFO_BUILDER_KEY = "info-builder";

@@ -11,6 +11,7 @@ import com.github.steveice10.mc.protocol.data.handshake.HandshakeIntent;
 import com.github.steveice10.mc.protocol.data.status.ServerStatusInfo;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerInfoHandler;
 import com.github.steveice10.mc.protocol.data.status.handler.ServerPingTimeHandler;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundTransferPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundSelectKnownPacks;
 import com.github.steveice10.mc.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
@@ -36,6 +37,7 @@ import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.ConnectedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class ClientListener extends SessionAdapter {
     private final @NonNull ProtocolState targetState;
+    private final boolean transferring;
 
     @SneakyThrows
     @Override
@@ -124,12 +127,22 @@ public class ClientListener extends SessionAdapter {
                 session.disconnect(((ClientboundDisconnectPacket) packet).getReason());
             } else if (packet instanceof ClientboundStartConfigurationPacket) {
                 session.send(new ServerboundConfigurationAcknowledgedPacket());
+            } else if (packet instanceof ClientboundTransferPacket transferPacket) {
+                TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
+                newSession.setFlags(session.getFlags());
+                session.disconnect("Transferring");
+                newSession.connect(true, true);
             }
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ClientboundFinishConfigurationPacket) {
                 session.send(new ServerboundFinishConfigurationPacket());
             } else if (packet instanceof ClientboundSelectKnownPacks) {
                 session.send(new ServerboundSelectKnownPacks(new ArrayList<>()));
+            } else if (packet instanceof ClientboundTransferPacket transferPacket) {
+                TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
+                newSession.setFlags(session.getFlags());
+                session.disconnect("Transferring");
+                newSession.connect(true, true);
             }
         }
     }
@@ -160,10 +173,13 @@ public class ClientListener extends SessionAdapter {
     public void connected(ConnectedEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
         if (this.targetState == ProtocolState.LOGIN) {
-            event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
+            if (this.transferring) {
+                event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.TRANSFER));
+            } else {
+                event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
+            }
         } else if (this.targetState == ProtocolState.STATUS) {
             event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
         }
-        // TODO: transfer?
     }
 }

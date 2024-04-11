@@ -223,9 +223,9 @@ public class MinecraftCodec {
     }
 
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 184)
+            .protocolVersion((1 << 30) | 185)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-            .minecraftVersion("24w14a")
+            .minecraftVersion("1.20.5-pre1")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )

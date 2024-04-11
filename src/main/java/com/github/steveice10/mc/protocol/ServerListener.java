@@ -101,9 +101,11 @@ public class ServerListener extends SessionAdapter {
                     case STATUS:
                         protocol.setState(ProtocolState.STATUS);
                         break;
-                    case LOGIN:
                     case TRANSFER:
-                        // TODO: System variable to allow transfers?
+                        if (!session.getFlag(MinecraftConstants.ACCEPT_TRANSFERS_KEY, false)) {
+                            session.disconnect("Server does not accept transfers.");
+                        }
+                    case LOGIN:
                         protocol.setState(ProtocolState.LOGIN);
                         if (intentionPacket.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
                             session.disconnect("Outdated server! I'm still on " + protocol.getCodec().getMinecraftVersion() + ".");
