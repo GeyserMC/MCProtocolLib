@@ -7,6 +7,8 @@ import com.github.steveice10.mc.protocol.data.game.item.component.type.BooleanDa
 import com.github.steveice10.mc.protocol.data.game.item.component.type.IntDataComponent;
 import com.github.steveice10.mc.protocol.data.game.item.component.type.ObjectDataComponent;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -61,7 +63,7 @@ public class DataComponentType<T> {
     public static final DataComponentType<CompoundTag> BLOCK_ENTITY_DATA = new DataComponentType<>(ItemCodecHelper::readAnyTag, ItemCodecHelper::writeAnyTag, ObjectDataComponent::new);
     public static final DataComponentType<Instrument> INSTRUMENT = new DataComponentType<>(ItemCodecHelper::readInstrument, ItemCodecHelper::writeInstrument, ObjectDataComponent::new);
     public static final IntComponentType OMINOUS_BOTTLE_AMPLIFIER = new IntComponentType(ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
-    public static final DataComponentType<CompoundTag> RECIPES = new DataComponentType<>(ItemCodecHelper::readAnyTag, ItemCodecHelper::writeAnyTag, ObjectDataComponent::new);
+    public static final DataComponentType<ListTag> RECIPES = new DataComponentType<>(ItemCodecHelper::readRecipes, ItemCodecHelper::writeRecipes, ObjectDataComponent::new);
     public static final DataComponentType<LodestoneTracker> LODESTONE_TRACKER = new DataComponentType<>(ItemCodecHelper::readLodestoneTarget, ItemCodecHelper::writeLodestoneTarget, ObjectDataComponent::new);
     public static final DataComponentType<Fireworks.FireworkExplosion> FIREWORK_EXPLOSION = new DataComponentType<>(ItemCodecHelper::readFireworkExplosion, ItemCodecHelper::writeFireworkExplosion, ObjectDataComponent::new);
     public static final DataComponentType<Fireworks> FIREWORKS = new DataComponentType<>(ItemCodecHelper::readFireworks, ItemCodecHelper::writeFireworks, ObjectDataComponent::new);
@@ -73,7 +75,7 @@ public class DataComponentType<T> {
     public static final DataComponentType<List<ItemStack>> CONTAINER = new DataComponentType<>(listReader(ItemCodecHelper::readOptionalItemStack), listWriter(MinecraftCodecHelper::writeOptionalItemStack), ObjectDataComponent::new);
     public static final DataComponentType<BlockStateProperties> BLOCK_STATE = new DataComponentType<>(ItemCodecHelper::readBlockStateProperties, ItemCodecHelper::writeBlockStateProperties, ObjectDataComponent::new);
     public static final DataComponentType<List<BeehiveOccupant>> BEES = new DataComponentType<>(listReader(ItemCodecHelper::readBeehiveOccupant), listWriter(ItemCodecHelper::writeBeehiveOccupant), ObjectDataComponent::new);
-    public static final DataComponentType<CompoundTag> LOCK = new DataComponentType<>(ItemCodecHelper::readAnyTag, ItemCodecHelper::writeAnyTag, ObjectDataComponent::new);
+    public static final DataComponentType<StringTag> LOCK = new DataComponentType<>(ItemCodecHelper::readLock, ItemCodecHelper::writeLock, ObjectDataComponent::new);
     public static final DataComponentType<CompoundTag> CONTAINER_LOOT = new DataComponentType<>(ItemCodecHelper::readAnyTag, ItemCodecHelper::writeAnyTag, ObjectDataComponent::new);
 
     protected final int id;

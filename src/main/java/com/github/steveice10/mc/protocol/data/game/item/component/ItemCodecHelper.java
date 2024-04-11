@@ -8,6 +8,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOper
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
+import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -478,6 +480,14 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
     }
 
+    public ListTag readRecipes(ByteBuf buf) throws IOException {
+        return this.readAnyTag(buf, ListTag.class);
+    }
+
+    public void writeRecipes(ByteBuf buf, ListTag recipes) throws IOException {
+        this.writeAnyTag(buf, recipes);
+    }
+
     public LodestoneTracker readLodestoneTarget(ByteBuf buf) {
         return new LodestoneTracker(this.readNullable(buf, this::readGlobalPos), buf.readBoolean());
     }
@@ -603,5 +613,13 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeAnyTag(buf, occupant.getEntityData());
         this.writeVarInt(buf, occupant.getTicksInHive());
         this.writeVarInt(buf, occupant.getMinTicksInHive());
+    }
+
+    public StringTag readLock(ByteBuf buf) throws IOException {
+        return this.readAnyTag(buf, StringTag.class);
+    }
+
+    public void writeLock(ByteBuf buf, StringTag key) throws IOException {
+        this.writeAnyTag(buf, key);
     }
 }
