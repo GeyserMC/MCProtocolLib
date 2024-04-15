@@ -88,6 +88,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -271,17 +272,17 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             return null;
         }
 
-        List<DataComponent<?, ?>> dataComponents = new ArrayList<>();
+        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
         for (int k = 0; k < nonNullComponents; k++) {
             DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(ItemCodecHelper.INSTANCE, buf);
-            dataComponents.add(dataComponent);
+            dataComponents.put(dataComponentType, dataComponent);
         }
 
         for (int k = 0; k < nullComponents; k++) {
             DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readNullDataComponent();
-            dataComponents.add(dataComponent);
+            dataComponents.put(dataComponentType, dataComponent);
         }
 
         return new DataComponentPatch(dataComponents);
@@ -294,7 +295,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         } else {
             int i = 0;
             int j = 0;
-            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents()) {
+            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents().values()) {
                 if (component.getValue() != null) {
                     i++;
                 } else {
@@ -305,14 +306,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             this.writeVarInt(buf, i);
             this.writeVarInt(buf, j);
 
-            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents()) {
+            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents().values()) {
                 if (component.getValue() != null) {
                     this.writeVarInt(buf, component.getType().getId());
                     component.write(ItemCodecHelper.INSTANCE, buf);
                 }
             }
 
-            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents()) {
+            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents().values()) {
                 if (component.getValue() == null) {
                     this.writeVarInt(buf, component.getType().getId());
                 }
