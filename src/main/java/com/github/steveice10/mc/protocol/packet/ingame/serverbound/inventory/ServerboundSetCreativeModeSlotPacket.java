@@ -15,11 +15,11 @@ import java.io.IOException;
 @With
 @AllArgsConstructor
 public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
-    private final int slot;
+    private final short slot;
     private final @NonNull ItemStack clickedItem;
 
     public ServerboundSetCreativeModeSlotPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
-        this.slot = in.readUnsignedShort();
+        this.slot = in.readShort();
         this.clickedItem = helper.readOptionalItemStack(in);
     }
 
