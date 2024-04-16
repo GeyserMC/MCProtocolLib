@@ -587,6 +587,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 break;
             case ENTITY_EFFECT:
                 buf.writeInt(((EntityEffectParticleData) data).getColor());
+                break;
             case ITEM:
                 this.writeOptionalItemStack(buf, ((ItemParticleData) data).getItemStack());
                 break;
