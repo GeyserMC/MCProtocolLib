@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ClientboundGameProfilePacket implements MinecraftPacket {
     private final @NonNull GameProfile profile;
+    private final boolean strictErrorHandling;
 
     public ClientboundGameProfilePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
         GameProfile profile = new GameProfile(helper.readUUID(in), helper.readString(in));
@@ -36,6 +37,7 @@ public class ClientboundGameProfilePacket implements MinecraftPacket {
 
         profile.setProperties(propertyList);
         this.profile = profile;
+        this.strictErrorHandling = in.readBoolean();
     }
 
     @Override
@@ -51,6 +53,7 @@ public class ClientboundGameProfilePacket implements MinecraftPacket {
                 helper.writeString(out, property.getSignature());
             }
         }
+        out.writeBoolean(this.strictErrorHandling);
     }
 
     @Override
