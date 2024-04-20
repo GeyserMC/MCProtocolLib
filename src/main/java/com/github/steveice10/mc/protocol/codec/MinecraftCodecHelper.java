@@ -26,7 +26,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.ArmadilloStat
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
 import com.github.steveice10.mc.protocol.data.game.item.component.DataComponent;
-import com.github.steveice10.mc.protocol.data.game.item.component.DataComponentPatch;
+import com.github.steveice10.mc.protocol.data.game.item.component.DataComponents;
 import com.github.steveice10.mc.protocol.data.game.item.component.DataComponentType;
 import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
@@ -251,7 +251,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeByte(item != null ? item.getAmount() : 0);
         if (item != null) {
             this.writeVarInt(buf, item.getId());
-            this.writeDataComponentPatch(buf, item.getDataComponentPatch());
+            this.writeDataComponentPatch(buf, item.getDataComponents());
         }
     }
 
@@ -265,7 +265,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     @Nullable
-    public DataComponentPatch readDataComponentPatch(ByteBuf buf) throws IOException {
+    public DataComponents readDataComponentPatch(ByteBuf buf) throws IOException {
         int nonNullComponents = this.readVarInt(buf);
         int nullComponents = this.readVarInt(buf);
         if (nonNullComponents == 0 & nullComponents == 0) {
@@ -285,17 +285,17 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             dataComponents.put(dataComponentType, dataComponent);
         }
 
-        return new DataComponentPatch(dataComponents);
+        return new DataComponents(dataComponents);
     }
 
-    public void writeDataComponentPatch(ByteBuf buf, DataComponentPatch dataComponentPatch) throws IOException {
-        if (dataComponentPatch == null) {
+    public void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents) throws IOException {
+        if (dataComponents == null) {
             this.writeVarInt(buf, 0);
             this.writeVarInt(buf, 0);
         } else {
             int i = 0;
             int j = 0;
-            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents().values()) {
+            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
                 if (component.getValue() != null) {
                     i++;
                 } else {
@@ -306,14 +306,14 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             this.writeVarInt(buf, i);
             this.writeVarInt(buf, j);
 
-            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents().values()) {
+            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
                 if (component.getValue() != null) {
                     this.writeVarInt(buf, component.getType().getId());
                     component.write(ItemCodecHelper.INSTANCE, buf);
                 }
             }
 
-            for (DataComponent<?, ?> component : dataComponentPatch.getDataComponents().values()) {
+            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
                 if (component.getValue() == null) {
                     this.writeVarInt(buf, component.getType().getId());
                 }

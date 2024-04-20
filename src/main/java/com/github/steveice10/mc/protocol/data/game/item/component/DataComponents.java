@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class DataComponentPatch {
+public class DataComponents {
     private final Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents;
 
     @Nullable
@@ -18,7 +19,16 @@ public class DataComponentPatch {
         return component == null ? null : (T) component.getValue();
     }
 
+    public <T> T getOrDefault(DataComponentType<T> type, T def) {
+        T value = get(type);
+        return value != null ? value : def;
+    }
+
     public <T> void put(DataComponentType<T> type, @NonNull T value) {
         dataComponents.put(type, type.dataComponentFactory.create(type, value));
+    }
+
+    public DataComponents clone() {
+        return new DataComponents(new HashMap<>(dataComponents));
     }
 }
