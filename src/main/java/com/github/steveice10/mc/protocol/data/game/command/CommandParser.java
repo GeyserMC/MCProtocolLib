@@ -51,6 +51,9 @@ public enum CommandParser {
     TEMPLATE_MIRROR,
     TEMPLATE_ROTATION,
     HEIGHTMAP,
+    LOOT_TABLE,
+    LOOT_PREDICATE,
+    LOOT_MODIFIER,
     UUID;
 
     private static final CommandParser[] VALUES = values();
