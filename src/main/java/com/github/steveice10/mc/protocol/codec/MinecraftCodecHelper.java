@@ -269,7 +269,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public DataComponents readDataComponentPatch(ByteBuf buf) throws IOException {
         int nonNullComponents = this.readVarInt(buf);
         int nullComponents = this.readVarInt(buf);
-        if (nonNullComponents == 0 & nullComponents == 0) {
+        if (nonNullComponents == 0 && nullComponents == 0) {
             return null;
         }
 
