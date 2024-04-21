@@ -248,8 +248,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeOptionalItemStack(ByteBuf buf, ItemStack item) throws IOException {
-        buf.writeByte(item != null ? item.getAmount() : 0);
-        if (item != null) {
+        boolean empty = item == null || item.getAmount() <= 0;
+        buf.writeByte(!empty ? item.getAmount() : 0);
+        if (!empty) {
             this.writeVarInt(buf, item.getId());
             this.writeDataComponentPatch(buf, item.getDataComponents());
         }
