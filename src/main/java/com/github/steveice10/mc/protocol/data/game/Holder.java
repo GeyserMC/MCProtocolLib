@@ -1,39 +1,90 @@
 package com.github.steveice10.mc.protocol.data.game;
 
-import lombok.Data;
-
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
-@Data
-public class Holder<T> {
-    private final int id;
-    private final T customValue;
-    private final boolean custom;
-
-    public Holder(int id) {
-        this.id = id;
-        this.customValue = null;
-        this.custom = false;
+/**
+ * Represents an object that could either be a network ID, or a custom-defined one.
+ */
+public interface Holder<T> {
+    static <T> Holder<T> ofId(int id) {
+        return new IdHolder<>(id);
     }
 
-    public Holder(T customValue) {
-        this.id = -1;
-        this.customValue = customValue;
-        this.custom = true;
+    static <T> Holder<T> ofCustom(T object) {
+        return new CustomHolder<>(object);
     }
 
-    public Holder<T> ifId(Consumer<Holder<T>> action) {
-        if (!custom) {
-            action.accept(this);
+    boolean isId();
+
+    int id();
+
+    boolean isCustom();
+
+    T custom();
+
+    Holder<T> ifId(Consumer<Holder<T>> action);
+
+    Holder<T> ifCustom(Consumer<Holder<T>> action);
+
+    record IdHolder<T>(int id) implements Holder<T> {
+        @Override
+        public boolean isId() {
+            return true;
         }
-        return this;
+
+        @Override
+        public boolean isCustom() {
+            return false;
+        }
+
+        @Override
+        public T custom() {
+            throw new IllegalStateException("Check isCustom first!");
+        }
+
+        @Override
+        public Holder<T> ifId(Consumer<Holder<T>> action) {
+            action.accept(this);
+            return this;
+        }
+
+        @Override
+        public Holder<T> ifCustom(Consumer<Holder<T>> action) {
+            // no-op
+            return this;
+        }
     }
 
-    public Holder<T> ifCustom(Consumer<Holder<T>> action) {
-        if (custom) {
-            action.accept(this);
+    record CustomHolder<T>(T object) implements Holder<T> {
+        @Override
+        public boolean isId() {
+            return false;
         }
-        return this;
+
+        @Override
+        public int id() {
+            throw new IllegalStateException("Check isId first!");
+        }
+
+        @Override
+        public boolean isCustom() {
+            return true;
+        }
+
+        @Override
+        public T custom() {
+            return object;
+        }
+
+        @Override
+        public Holder<T> ifId(Consumer<Holder<T>> action) {
+            return this;
+        }
+
+        @Override
+        public Holder<T> ifCustom(Consumer<Holder<T>> action) {
+            action.accept(this);
+            return this;
+        }
     }
 }

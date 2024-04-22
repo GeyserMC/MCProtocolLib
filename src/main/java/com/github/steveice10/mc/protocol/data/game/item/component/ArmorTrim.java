@@ -6,29 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.kyori.adventure.text.Component;
 
-@Data
-@AllArgsConstructor
-public class ArmorTrim {
-    private final Holder<TrimMaterial> material;
-    private final Holder<TrimPattern> pattern;
-    private final boolean showInTooltip;
-
-    @Data
-    @AllArgsConstructor
-    public static class TrimMaterial {
-        private final String assetName;
-        private final int ingredientId;
-        private final float itemModelIndex;
-        private final Int2ObjectMap<String> overrideArmorMaterials;
-        private final Component description;
+public record ArmorTrim(Holder<TrimMaterial> material, Holder<TrimPattern> pattern, boolean showInTooltip) {
+    public record TrimMaterial(String assetName, int ingredientId, float itemModelIndex,
+                               Int2ObjectMap<String> overrideArmorMaterials, Component description) {
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class TrimPattern {
-        private final String assetId;
-        private final int templateItemId;
-        private final Component description;
-        private final boolean decal;
+    public record TrimPattern(String assetId, int templateItemId, Component description, boolean decal) {
     }
 }

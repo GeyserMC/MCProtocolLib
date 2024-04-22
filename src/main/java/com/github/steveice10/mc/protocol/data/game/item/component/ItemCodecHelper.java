@@ -396,9 +396,9 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public void writeArmorTrim(ByteBuf buf, ArmorTrim trim) throws IOException {
-        this.writeHolder(buf, trim.getMaterial(), this::writeTrimMaterial);
-        this.writeHolder(buf, trim.getPattern(), this::writeTrimPattern);
-        buf.writeBoolean(trim.isShowInTooltip());
+        this.writeHolder(buf, trim.material(), this::writeTrimMaterial);
+        this.writeHolder(buf, trim.pattern(), this::writeTrimPattern);
+        buf.writeBoolean(trim.showInTooltip());
     }
 
     public ArmorTrim.TrimMaterial readTrimMaterial(ByteBuf buf) throws IOException {
@@ -417,17 +417,17 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public void writeTrimMaterial(ByteBuf buf, ArmorTrim.TrimMaterial material) throws IOException {
-        this.writeString(buf, material.getAssetName());
-        this.writeVarInt(buf, material.getIngredientId());
-        buf.writeFloat(material.getItemModelIndex());
+        this.writeString(buf, material.assetName());
+        this.writeVarInt(buf, material.ingredientId());
+        buf.writeFloat(material.itemModelIndex());
 
-        this.writeVarInt(buf, material.getOverrideArmorMaterials().size());
-        for (Int2ObjectMap.Entry<String> entry : material.getOverrideArmorMaterials().int2ObjectEntrySet()) {
+        this.writeVarInt(buf, material.overrideArmorMaterials().size());
+        for (Int2ObjectMap.Entry<String> entry : material.overrideArmorMaterials().int2ObjectEntrySet()) {
             this.writeVarInt(buf, entry.getIntKey());
             this.writeString(buf, entry.getValue());
         }
 
-        this.writeComponent(buf, material.getDescription());
+        this.writeComponent(buf, material.description());
     }
 
     public ArmorTrim.TrimPattern readTrimPattern(ByteBuf buf) throws IOException {
@@ -439,10 +439,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public void writeTrimPattern(ByteBuf buf, ArmorTrim.TrimPattern pattern) throws IOException {
-        this.writeResourceLocation(buf, pattern.getAssetId());
-        this.writeVarInt(buf, pattern.getTemplateItemId());
-        this.writeComponent(buf, pattern.getDescription());
-        buf.writeBoolean(pattern.isDecal());
+        this.writeResourceLocation(buf, pattern.assetId());
+        this.writeVarInt(buf, pattern.templateItemId());
+        this.writeComponent(buf, pattern.description());
+        buf.writeBoolean(pattern.decal());
     }
 
     public Holder<Instrument> readInstrument(ByteBuf buf) {
