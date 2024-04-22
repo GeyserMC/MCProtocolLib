@@ -579,11 +579,20 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public BannerPatternLayer readBannerPattern(ByteBuf buf) {
-        return new BannerPatternLayer(this.readVarInt(buf), this.readVarInt(buf));
+        int patternId = this.readVarInt(buf) - 1;
+        if (patternId == -1) {
+            return new BannerPatternLayer(patternId, this.readResourceLocation(buf), this.readString(buf), this.readVarInt(buf));
+        } else {
+            return new BannerPatternLayer(patternId, null, null, this.readVarInt(buf));
+        }
     }
 
     public void writeBannerPattern(ByteBuf buf, BannerPatternLayer pattern) {
-        this.writeVarInt(buf, pattern.getPatternId());
+        this.writeVarInt(buf, pattern.getPatternId() + 1);
+        if (pattern.getPatternId() == -1) {
+            this.writeResourceLocation(buf, pattern.getAssetId());
+            this.writeString(buf, pattern.getTranslationKey());
+        }
         this.writeVarInt(buf, pattern.getColorId());
     }
 
