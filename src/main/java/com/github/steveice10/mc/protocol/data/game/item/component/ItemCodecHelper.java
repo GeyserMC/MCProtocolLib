@@ -4,6 +4,7 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.CheckedBiConsumer;
 import com.github.steveice10.mc.protocol.CheckedFunction;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
+import com.github.steveice10.mc.protocol.data.game.Holder;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
@@ -387,87 +388,74 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeBoolean(content.isResolved());
     }
 
-    // TODO: Could be simplified using readById method, would require more enums. Worth it?
     public ArmorTrim readArmorTrim(ByteBuf buf) throws IOException {
-        ArmorTrim.TrimMaterial material;
-        int materialId = this.readVarInt(buf) - 1;
-        if (materialId == -1) {
-            String assetName = this.readString(buf);
-            int ingredientId = this.readVarInt(buf);
-            float itemModelIndex = buf.readFloat();
-
-            Int2ObjectMap<String> overrideArmorMaterials = new Int2ObjectOpenHashMap<>();
-            int overrideCount = this.readVarInt(buf);
-            for (int i = 0; i < overrideCount; i++) {
-                overrideArmorMaterials.put(this.readVarInt(buf), this.readString(buf));
-            }
-
-            Component description = this.readComponent(buf);
-            material = new ArmorTrim.TrimMaterial(materialId, assetName, ingredientId, itemModelIndex, overrideArmorMaterials, description);
-        } else {
-            material = new ArmorTrim.TrimMaterial(materialId, null, 0, 0, null, null);
-        }
-
-        ArmorTrim.TrimPattern pattern;
-        int patternId = this.readVarInt(buf) - 1;
-        if (patternId == -1) {
-            String assetId = this.readResourceLocation(buf);
-            int templateItemId = this.readVarInt(buf);
-            Component description = this.readComponent(buf);
-            boolean decal = buf.readBoolean();
-            pattern = new ArmorTrim.TrimPattern(patternId, assetId, templateItemId, description, decal);
-        } else {
-            pattern = new ArmorTrim.TrimPattern(patternId, null, 0, null, false);
-        }
-
+        Holder<ArmorTrim.TrimMaterial> material = this.readHolder(buf, this::readTrimMaterial);
+        Holder<ArmorTrim.TrimPattern> pattern = this.readHolder(buf, this::readTrimPattern);
         boolean showInTooltip = buf.readBoolean();
         return new ArmorTrim(material, pattern, showInTooltip);
     }
 
     public void writeArmorTrim(ByteBuf buf, ArmorTrim trim) throws IOException {
-        ArmorTrim.TrimMaterial material = trim.getMaterial();
-        this.writeVarInt(buf, material.getMaterialId() + 1);
-        if (material.getMaterialId() == -1) {
-            this.writeString(buf, material.getAssetName());
-            this.writeVarInt(buf, material.getIngredientId());
-            buf.writeFloat(material.getItemModelIndex());
-
-            this.writeVarInt(buf, material.getOverrideArmorMaterials().size());
-            for (Int2ObjectMap.Entry<String> entry : material.getOverrideArmorMaterials().int2ObjectEntrySet()) {
-                this.writeVarInt(buf, entry.getIntKey());
-                this.writeString(buf, entry.getValue());
-            }
-
-            this.writeComponent(buf, material.getDescription());
-        }
-
-        ArmorTrim.TrimPattern pattern = trim.getPattern();
-        this.writeVarInt(buf, pattern.getPatternId() + 1);
-        if (pattern.getPatternId() == -1) {
-            this.writeResourceLocation(buf, pattern.getAssetId());
-            this.writeVarInt(buf, pattern.getTemplateItemId());
-            this.writeComponent(buf, pattern.getDescription());
-            buf.writeBoolean(pattern.isDecal());
-        }
-
+        this.writeHolder(buf, trim.getMaterial(), this::writeTrimMaterial);
+        this.writeHolder(buf, trim.getPattern(), this::writeTrimPattern);
         buf.writeBoolean(trim.isShowInTooltip());
     }
 
-    public Instrument readInstrument(ByteBuf buf) {
-        int instrumentId = this.readVarInt(buf) - 1;
-        if (instrumentId == -1) {
-            Sound soundEvent = this.readById(buf, BuiltinSound::from, this::readSoundEvent);
-            int useDuration = this.readVarInt(buf);
-            float range = buf.readFloat();
-            return new Instrument(instrumentId, soundEvent, useDuration, range);
-        } else {
-            return new Instrument(instrumentId, null, 0, 0);
+    public ArmorTrim.TrimMaterial readTrimMaterial(ByteBuf buf) throws IOException {
+        String assetName = this.readString(buf);
+        int ingredientId = this.readVarInt(buf);
+        float itemModelIndex = buf.readFloat();
+
+        Int2ObjectMap<String> overrideArmorMaterials = new Int2ObjectOpenHashMap<>();
+        int overrideCount = this.readVarInt(buf);
+        for (int i = 0; i < overrideCount; i++) {
+            overrideArmorMaterials.put(this.readVarInt(buf), this.readString(buf));
         }
+
+        Component description = this.readComponent(buf);
+        return new ArmorTrim.TrimMaterial(assetName, ingredientId, itemModelIndex, overrideArmorMaterials, description);
     }
 
-    public void writeInstrument(ByteBuf buf, Instrument instrument) {
-        this.writeVarInt(buf, instrument.getInstrumentId() + 1);
-        if (instrument.getInstrumentId() == -1) {
+    public void writeTrimMaterial(ByteBuf buf, ArmorTrim.TrimMaterial material) throws IOException {
+        this.writeString(buf, material.getAssetName());
+        this.writeVarInt(buf, material.getIngredientId());
+        buf.writeFloat(material.getItemModelIndex());
+
+        this.writeVarInt(buf, material.getOverrideArmorMaterials().size());
+        for (Int2ObjectMap.Entry<String> entry : material.getOverrideArmorMaterials().int2ObjectEntrySet()) {
+            this.writeVarInt(buf, entry.getIntKey());
+            this.writeString(buf, entry.getValue());
+        }
+
+        this.writeComponent(buf, material.getDescription());
+    }
+
+    public ArmorTrim.TrimPattern readTrimPattern(ByteBuf buf) throws IOException {
+        String assetId = this.readResourceLocation(buf);
+        int templateItemId = this.readVarInt(buf);
+        Component description = this.readComponent(buf);
+        boolean decal = buf.readBoolean();
+        return new ArmorTrim.TrimPattern(assetId, templateItemId, description, decal);
+    }
+
+    public void writeTrimPattern(ByteBuf buf, ArmorTrim.TrimPattern pattern) throws IOException {
+        this.writeResourceLocation(buf, pattern.getAssetId());
+        this.writeVarInt(buf, pattern.getTemplateItemId());
+        this.writeComponent(buf, pattern.getDescription());
+        buf.writeBoolean(pattern.isDecal());
+    }
+
+    public Holder<Instrument> readInstrument(ByteBuf buf) {
+        return this.readHolder(buf, (input) -> {
+            Sound soundEvent = this.readById(input, BuiltinSound::from, this::readSoundEvent);
+            int useDuration = this.readVarInt(input);
+            float range = input.readFloat();
+            return new Instrument(soundEvent, useDuration, range);
+        });
+    }
+
+    public void writeInstrument(ByteBuf buf, Holder<Instrument> instrumentHolder) {
+        this.writeHolder(buf, instrumentHolder, (output, instrument) -> {
             if (instrument.getSoundEvent() instanceof CustomSound) {
                 this.writeVarInt(buf, 0);
                 this.writeSoundEvent(buf, instrument.getSoundEvent());
@@ -477,7 +465,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
             this.writeVarInt(buf, instrument.getUseDuration());
             buf.writeFloat(instrument.getRange());
-        }
+        });
     }
 
     public ListTag readRecipes(ByteBuf buf) throws IOException {
@@ -578,22 +566,22 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
     }
 
-    public BannerPatternLayer readBannerPattern(ByteBuf buf) {
-        int patternId = this.readVarInt(buf) - 1;
-        if (patternId == -1) {
-            return new BannerPatternLayer(patternId, this.readResourceLocation(buf), this.readString(buf), this.readVarInt(buf));
-        } else {
-            return new BannerPatternLayer(patternId, null, null, this.readVarInt(buf));
-        }
+    public BannerPatternLayer readBannerPatternLayer(ByteBuf buf) {
+        return new BannerPatternLayer(this.readHolder(buf, this::readBannerPattern), this.readVarInt(buf));
     }
 
-    public void writeBannerPattern(ByteBuf buf, BannerPatternLayer pattern) {
-        this.writeVarInt(buf, pattern.getPatternId() + 1);
-        if (pattern.getPatternId() == -1) {
-            this.writeResourceLocation(buf, pattern.getAssetId());
-            this.writeString(buf, pattern.getTranslationKey());
-        }
-        this.writeVarInt(buf, pattern.getColorId());
+    public void writeBannerPatternLayer(ByteBuf buf, BannerPatternLayer patternLayer) {
+        this.writeHolder(buf, patternLayer.getPattern(), this::writeBannerPattern);
+        this.writeVarInt(buf, patternLayer.getColorId());
+    }
+
+    public BannerPatternLayer.BannerPattern readBannerPattern(ByteBuf buf) {
+        return new BannerPatternLayer.BannerPattern(this.readResourceLocation(buf), this.readString(buf));
+    }
+
+    public void writeBannerPattern(ByteBuf buf, BannerPatternLayer.BannerPattern pattern) {
+        this.writeResourceLocation(buf, pattern.getAssetId());
+        this.writeString(buf, pattern.getTranslationKey());
     }
 
     public BlockStateProperties readBlockStateProperties(ByteBuf buf) {

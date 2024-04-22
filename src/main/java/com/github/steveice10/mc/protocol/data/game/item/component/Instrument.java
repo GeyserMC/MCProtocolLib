@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Instrument {
-    private final int instrumentId;
     private final Sound soundEvent;
     private final int useDuration;
     private final float range;

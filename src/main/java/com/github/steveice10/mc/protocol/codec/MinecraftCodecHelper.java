@@ -4,6 +4,7 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.CheckedBiConsumer;
 import com.github.steveice10.mc.protocol.CheckedFunction;
 import com.github.steveice10.mc.protocol.data.DefaultComponentSerializer;
+import com.github.steveice10.mc.protocol.data.game.Holder;
 import com.github.steveice10.mc.protocol.data.game.Identifier;
 import com.github.steveice10.mc.protocol.data.game.chat.numbers.BlankFormat;
 import com.github.steveice10.mc.protocol.data.game.chat.numbers.FixedFormat;
@@ -25,6 +26,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOper
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ArmadilloState;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.GlobalPos;
+import com.github.steveice10.mc.protocol.data.game.item.component.BannerPatternLayer;
 import com.github.steveice10.mc.protocol.data.game.item.component.DataComponent;
 import com.github.steveice10.mc.protocol.data.game.item.component.DataComponents;
 import com.github.steveice10.mc.protocol.data.game.item.component.DataComponentType;
@@ -125,6 +127,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             ifPresent.accept(buf, value);
         } else {
             buf.writeBoolean(false);
+        }
+    }
+
+    public <T, E extends Throwable> Holder<T> readHolder(ByteBuf buf, CheckedFunction<ByteBuf, T, E> readCustom) throws E {
+        int registryId = this.readVarInt(buf);
+        return registryId == 0 ? new Holder<>(readCustom.apply(buf)) : new Holder<>(registryId - 1);
+    }
+
+    public <T, E extends Throwable> void writeHolder(ByteBuf buf, Holder<T> holder, CheckedBiConsumer<ByteBuf, T, E> writeCustom) throws E {
+        if (holder.isCustom()) {
+            this.writeVarInt(buf, 0);
+            writeCustom.accept(buf, holder.getCustomValue());
+        } else {
+            this.writeVarInt(buf, holder.getId() + 1);
         }
     }
 
