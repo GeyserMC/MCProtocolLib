@@ -25,7 +25,13 @@ public class DataComponents {
     }
 
     public <T> void put(DataComponentType<T> type, @NonNull T value) {
-        dataComponents.put(type, type.dataComponentFactory.create(type, value));
+        if (type instanceof IntComponentType intType) {
+            dataComponents.put(intType, intType.primitiveFactory.createPrimitive(intType, (Integer) value));
+        } else if (type instanceof BooleanComponentType boolType) {
+            dataComponents.put(boolType, boolType.primitiveFactory.createPrimitive(boolType, (Boolean) value));
+        } else {
+            dataComponents.put(type, type.dataComponentFactory.create(type, value));
+        }
     }
 
     public DataComponents clone() {

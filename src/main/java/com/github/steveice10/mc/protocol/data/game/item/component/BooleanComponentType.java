@@ -6,9 +6,9 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 
 public class BooleanComponentType extends DataComponentType<Boolean> {
-    private final BooleanReader primitiveReader;
-    private final BooleanWriter primitiveWriter;
-    private final BooleanDataComponentFactory primitiveFactory;
+    protected final BooleanReader primitiveReader;
+    protected final BooleanWriter primitiveWriter;
+    protected final BooleanDataComponentFactory primitiveFactory;
 
     protected BooleanComponentType(BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
         super(reader, writer, metadataFactory);

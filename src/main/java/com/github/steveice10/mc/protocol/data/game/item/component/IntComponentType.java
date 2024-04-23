@@ -6,9 +6,9 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 
 public class IntComponentType extends DataComponentType<Integer> {
-    private final IntReader primitiveReader;
-    private final IntWriter primitiveWriter;
-    private final IntDataComponentFactory primitiveFactory;
+    protected final IntReader primitiveReader;
+    protected final IntWriter primitiveWriter;
+    protected final IntDataComponentFactory primitiveFactory;
 
     protected IntComponentType(IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
         super(reader, writer, metadataFactory);
