@@ -7,7 +7,7 @@ description = "MCProtocolLib is a simple library for communicating with Minecraf
 
 dependencies {
     // Minecraft related libraries
-    api(libs.opennbt)
+    api(libs.cloudburstnbt)
     api(libs.mcauthlib)
 
     // Kyori adventure

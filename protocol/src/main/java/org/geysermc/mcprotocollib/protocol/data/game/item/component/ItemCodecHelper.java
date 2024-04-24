@@ -1,14 +1,14 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import org.cloudburstmc.nbt.NbtList;
+import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
-import com.github.steveice10.opennbt.tag.builtin.ListTag;
-import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
@@ -120,7 +120,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
             }
         }
 
-        return new AdventureModePredicate.BlockPredicate(location, holders, propertyMatchers, this.readNullable(buf, this::readAnyTag));
+        return new AdventureModePredicate.BlockPredicate(location, holders, propertyMatchers, this.readNullable(buf, this::readCompoundTag));
     }
 
     public void writeBlockPredicate(ByteBuf buf, AdventureModePredicate.BlockPredicate blockPredicate) {
@@ -466,11 +466,11 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         });
     }
 
-    public ListTag readRecipes(ByteBuf buf) {
-        return this.readAnyTag(buf, ListTag.class);
+    public NbtList<?> readRecipes(ByteBuf buf) {
+        return this.readAnyTag(buf, NbtType.LIST);
     }
 
-    public void writeRecipes(ByteBuf buf, ListTag recipes) {
+    public void writeRecipes(ByteBuf buf, NbtList<?> recipes) {
         this.writeAnyTag(buf, recipes);
     }
 
@@ -601,7 +601,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public BeehiveOccupant readBeehiveOccupant(ByteBuf buf) {
-        return new BeehiveOccupant(this.readAnyTag(buf), this.readVarInt(buf), this.readVarInt(buf));
+        return new BeehiveOccupant(this.readCompoundTag(buf), this.readVarInt(buf), this.readVarInt(buf));
     }
 
     public void writeBeehiveOccupant(ByteBuf buf, BeehiveOccupant occupant) {
@@ -610,11 +610,11 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeVarInt(buf, occupant.getMinTicksInHive());
     }
 
-    public StringTag readLock(ByteBuf buf) {
-        return this.readAnyTag(buf, StringTag.class);
+    public String readLock(ByteBuf buf) {
+        return this.readAnyTag(buf, NbtType.STRING);
     }
 
-    public void writeLock(ByteBuf buf, StringTag key) {
+    public void writeLock(ByteBuf buf, String key) {
         this.writeAnyTag(buf, key);
     }
 }

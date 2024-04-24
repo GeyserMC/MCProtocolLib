@@ -1,18 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import com.github.steveice10.opennbt.tag.builtin.ByteArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.ByteTag;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.DoubleTag;
-import com.github.steveice10.opennbt.tag.builtin.FloatTag;
-import com.github.steveice10.opennbt.tag.builtin.IntArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.IntTag;
-import com.github.steveice10.opennbt.tag.builtin.ListTag;
-import com.github.steveice10.opennbt.tag.builtin.LongArrayTag;
-import com.github.steveice10.opennbt.tag.builtin.LongTag;
-import com.github.steveice10.opennbt.tag.builtin.ShortTag;
-import com.github.steveice10.opennbt.tag.builtin.StringTag;
-import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,6 +7,10 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.LazilyParsedNumber;
 import lombok.AllArgsConstructor;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtList;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
@@ -57,72 +48,86 @@ public class NbtComponentSerializer {
     }
 
     @Contract("null -> null")
-    public static JsonElement tagComponentToJson(@Nullable final Tag tag) {
+    public static JsonElement tagComponentToJson(@Nullable final Object tag) {
         return convertToJson(null, tag);
     }
 
 
-    public static @Nullable Tag jsonComponentToTag(@Nullable final JsonElement component) {
-        return convertToTag("", component);
+    public static @Nullable Object jsonComponentToTag(@Nullable final JsonElement component) {
+        return convertToTag(component);
     }
 
-    @Contract("_, null -> null")
-    private static Tag convertToTag(String name, final @Nullable JsonElement element) {
+    @Contract("null -> null")
+    private static Object convertToTag(final @Nullable JsonElement element) {
         if (element == null || element.isJsonNull()) {
             return null;
         } else if (element.isJsonObject()) {
-            final CompoundTag tag = new CompoundTag(name);
+            final NbtMapBuilder tag = NbtMap.builder();
             final JsonObject jsonObject = element.getAsJsonObject();
             for (final Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                 convertObjectEntry(entry.getKey(), entry.getValue(), tag);
             }
 
             addComponentType(jsonObject, tag);
-            return tag;
+            return tag.build();
         } else if (element.isJsonArray()) {
-            return convertJsonArray(name, element.getAsJsonArray());
+            return convertJsonArray(element.getAsJsonArray());
         } else if (element.isJsonPrimitive()) {
             final JsonPrimitive primitive = element.getAsJsonPrimitive();
             if (primitive.isString()) {
-                return new StringTag(name, primitive.getAsString());
+                return primitive.getAsString();
             } else if (primitive.isBoolean()) {
-                return new ByteTag(name, (byte) (primitive.getAsBoolean() ? 1 : 0));
+                return (byte) (primitive.getAsBoolean() ? 1 : 0);
             }
 
             final Number number = primitive.getAsNumber();
             if (number instanceof Integer) {
-                return new IntTag(name, number.intValue());
+                return number.intValue();
             } else if (number instanceof Byte) {
-                return new ByteTag(name, number.byteValue());
+                return number.byteValue();
             } else if (number instanceof Short) {
-                return new ShortTag(name, number.shortValue());
+                return number.shortValue();
             } else if (number instanceof Long) {
-                return new LongTag(name, number.longValue());
+                return number.longValue();
             } else if (number instanceof Double) {
-                return new DoubleTag(name, number.doubleValue());
+                return number.doubleValue();
             } else if (number instanceof Float) {
-                return new FloatTag(name, number.floatValue());
+                return number.floatValue();
             } else if (number instanceof LazilyParsedNumber) {
                 // TODO: This might need better handling
-                return new IntTag(name, number.intValue());
+                return number.intValue();
             }
-            return new IntTag(name, number.intValue()); // ???
+            return number.intValue(); // ???
         }
         throw new IllegalArgumentException("Unhandled json type " + element.getClass().getSimpleName() + " with value " + element.getAsString());
     }
 
-    private static ListTag convertJsonArray(String name, final JsonArray array) {
+    private static <T> void addToListOrFail(final NbtList<T> list, final Object tag) {
+        Class<T> listClass = list.getType().getTagClass();
+
+        if (listClass.isInstance(tag)) {
+            list.add(listClass.cast(tag));
+        } else {
+            throw new IllegalArgumentException("Cannot add " + tag.getClass().getSimpleName() + " to list of " + listClass.getSimpleName());
+        }
+    }
+
+    private static NbtList<?> convertJsonArray(final JsonArray array) {
         // TODO Number arrays?
-        final ListTag listTag = new ListTag(name);
+        NbtList<?> listTag = null;
         boolean singleType = true;
         for (final JsonElement entry : array) {
-            final Tag convertedEntryTag = convertToTag("", entry);
-            if (listTag.getElementType() != null && listTag.getElementType() != convertedEntryTag.getClass()) {
+            final Object convertedEntryTag = convertToTag(entry);
+            if (listTag == null) {
+                listTag = new NbtList<>(NbtType.byClass(convertedEntryTag.getClass()));
+            }
+
+            if (listTag.getType() != NbtType.byClass(convertedEntryTag.getClass())) {
                 singleType = false;
                 break;
             }
 
-            listTag.add(convertedEntryTag);
+            addToListOrFail(listTag, convertedEntryTag);
         }
 
         if (singleType) {
@@ -131,24 +136,24 @@ public class NbtComponentSerializer {
 
         // Generally, vanilla-esque serializers should not produce this format, so it should be rare
         // Lists are only used for lists of components ("extra" and "with")
-        final ListTag processedListTag = new ListTag(name);
+        final NbtList<NbtMap> processedListTag = new NbtList<>(NbtType.COMPOUND);
         for (final JsonElement entry : array) {
-            final Tag convertedTag = convertToTag("", entry);
-            if (convertedTag instanceof CompoundTag) {
-                processedListTag.add(convertedTag);
+            final Object convertedTag = convertToTag(entry);
+            if (convertedTag instanceof NbtMap nbtMap) {
+                processedListTag.add(nbtMap);
                 continue;
             }
 
             // Wrap all entries in compound tags, as lists can only consist of one type of tag
-            final CompoundTag compoundTag = new CompoundTag("");
-            compoundTag.put(new StringTag("type", "text"));
-            if (convertedTag instanceof ListTag) {
-                compoundTag.put(new StringTag("text"));
-                compoundTag.put(new ListTag("extra", ((ListTag) convertedTag).getValue()));
+            final NbtMapBuilder compoundTag = NbtMap.builder();
+            compoundTag.put("type", "text");
+            if (convertedTag instanceof NbtList<?> list) {
+                compoundTag.put("text", "");
+                compoundTag.put("extra", list);
             } else {
-                compoundTag.put(new StringTag("text", stringValue(convertedTag)));
+                compoundTag.put("text", stringValue(convertedTag));
             }
-            processedListTag.add(compoundTag);
+            processedListTag.add(compoundTag.build());
         }
         return processedListTag;
     }
@@ -160,7 +165,7 @@ public class NbtComponentSerializer {
      * @param value value of the entry
      * @param tag   the resulting compound tag
      */
-    private static void convertObjectEntry(final String key, final JsonElement value, final CompoundTag tag) {
+    private static void convertObjectEntry(final String key, final JsonElement value, final NbtMapBuilder tag) {
         if ((key.equals("contents")) && value.isJsonObject()) {
             // Store show_entity id as int array instead of uuid string
             // Not really required, but we might as well make it more compact
@@ -170,17 +175,17 @@ public class NbtComponentSerializer {
             if (id != null && id.isJsonPrimitive() && (uuid = parseUUID(id.getAsString())) != null) {
                 hoverEvent.remove("id");
 
-                final CompoundTag convertedTag = (CompoundTag) convertToTag(key, value);
-                convertedTag.put(new IntArrayTag("id", toIntArray(uuid)));
-                tag.put(convertedTag);
+                final NbtMap convertedTag = (NbtMap) convertToTag(value);
+                convertedTag.put("id", toIntArray(uuid));
+                tag.put(key, convertedTag);
                 return;
             }
         }
 
-        tag.put(convertToTag(key, value));
+        tag.put(key, convertToTag(value));
     }
 
-    private static void addComponentType(final JsonObject object, final CompoundTag tag) {
+    private static void addComponentType(final JsonObject object, final NbtMapBuilder tag) {
         if (object.has("type")) {
             return;
         }
@@ -188,54 +193,54 @@ public class NbtComponentSerializer {
         // Add the type to speed up deserialization and make DFU errors slightly more useful
         for (final Pair<String, String> pair : COMPONENT_TYPES) {
             if (object.has(pair.value)) {
-                tag.put(new StringTag("type", pair.key));
+                tag.put("type", pair.key);
                 return;
             }
         }
     }
 
-    private static @Nullable JsonElement convertToJson(final @Nullable String key, final @Nullable Tag tag) {
+    private static @Nullable JsonElement convertToJson(final @Nullable String key, final @Nullable Object tag) {
         if (tag == null) {
             return null;
-        } else if (tag instanceof CompoundTag) {
+        } else if (tag instanceof NbtMap nbtMap) {
             final JsonObject object = new JsonObject();
             if (!"value".equals(key)) {
                 removeComponentType(object);
             }
 
-            for (final Tag entry : ((CompoundTag) tag)) {
-                convertCompoundTagEntry(entry.getName(), entry, object);
+            for (Map.Entry<String, Object> entry : nbtMap.entrySet()) {
+                convertNbtMapEntry(entry.getKey(), entry, object);
             }
             return object;
-        } else if (tag instanceof ListTag list) {
+        } else if (tag instanceof NbtList<?> list) {
             final JsonArray array = new JsonArray();
-            for (final Tag listEntry : list) {
+            for (final Object listEntry : list) {
                 array.add(convertToJson(null, listEntry));
             }
             return array;
-        } else if (tag.getValue() instanceof Number number) {
+        } else if (tag instanceof Number number) {
             if (key != null && BOOLEAN_TYPES.contains(key)) {
                 // Booleans don't have a direct representation in nbt
                 return new JsonPrimitive(number.byteValue() != 0);
             }
             return new JsonPrimitive(number);
-        } else if (tag instanceof StringTag) {
-            return new JsonPrimitive(((StringTag) tag).getValue());
-        } else if (tag instanceof ByteArrayTag arrayTag) {
+        } else if (tag instanceof String string) {
+            return new JsonPrimitive(string);
+        } else if (tag instanceof byte[] arrayTag) {
             final JsonArray array = new JsonArray();
-            for (final byte num : arrayTag.getValue()) {
+            for (final byte num : arrayTag) {
                 array.add(num);
             }
             return array;
-        } else if (tag instanceof IntArrayTag arrayTag) {
+        } else if (tag instanceof int[] arrayTag) {
             final JsonArray array = new JsonArray();
-            for (final int num : arrayTag.getValue()) {
+            for (final int num : arrayTag) {
                 array.add(num);
             }
             return array;
-        } else if (tag instanceof LongArrayTag arrayTag) {
+        } else if (tag instanceof long[] arrayTag) {
             final JsonArray array = new JsonArray();
-            for (final long num : arrayTag.getValue()) {
+            for (final long num : arrayTag) {
                 array.add(num);
             }
             return array;
@@ -243,15 +248,15 @@ public class NbtComponentSerializer {
         throw new IllegalArgumentException("Unhandled tag type " + tag.getClass().getSimpleName());
     }
 
-    private static void convertCompoundTagEntry(final String key, final Tag tag, final JsonObject object) {
-        if ((key.equals("contents")) && tag instanceof CompoundTag showEntity) {
+    private static void convertNbtMapEntry(final String key, final Object tag, final JsonObject object) {
+        if ((key.equals("contents")) && tag instanceof NbtMap showEntity) {
             // Back to a UUID string
-            final Tag idTag = showEntity.get("id");
-            if (idTag instanceof IntArrayTag) {
+            final Object idTag = showEntity.get("id");
+            if (idTag instanceof int[] array) {
                 showEntity.remove("id");
 
                 final JsonObject convertedElement = (JsonObject) convertToJson(key, tag);
-                final UUID uuid = fromIntArray(((IntArrayTag) idTag).getValue());
+                final UUID uuid = fromIntArray(array);
                 convertedElement.addProperty("id", uuid.toString());
                 object.add(key, convertedElement);
                 return;
@@ -302,29 +307,29 @@ public class NbtComponentSerializer {
     }
 
     // Last adopted from https://github.com/ViaVersion/ViaNBT/commit/ad8ac024c48c2fc25e18dc689b3ca62602420ab9
-    private static String stringValue(Tag tag) {
-        if (tag instanceof ByteArrayTag) {
-            return Arrays.toString(((ByteArrayTag) tag).getValue());
-        } else if (tag instanceof ByteTag) {
-            return Byte.toString(((ByteTag) tag).getValue());
-        } else if (tag instanceof DoubleTag) {
-            return Double.toString(((DoubleTag) tag).getValue());
-        } else if (tag instanceof FloatTag) {
-            return Float.toString(((FloatTag) tag).getValue());
-        } else if (tag instanceof IntArrayTag) {
-            return Arrays.toString(((IntArrayTag) tag).getValue());
-        } else if (tag instanceof IntTag) {
-            return Integer.toString(((IntTag) tag).getValue());
-        } else if (tag instanceof LongArrayTag) {
-            return Arrays.toString(((LongArrayTag) tag).getValue());
-        } else if (tag instanceof LongTag) {
-            return Long.toString(((LongTag) tag).getValue());
-        } else if (tag instanceof ShortTag) {
-            return Short.toString(((ShortTag) tag).getValue());
-        } else if (tag instanceof StringTag) {
-            return ((StringTag) tag).getValue();
+    private static String stringValue(Object tag) {
+        if (tag instanceof byte[] bytes) {
+            return Arrays.toString(bytes);
+        } else if (tag instanceof Byte byteTag) {
+            return Byte.toString(byteTag);
+        } else if (tag instanceof Double doubleTag) {
+            return Double.toString(doubleTag);
+        } else if (tag instanceof Float floatTag) {
+            return Float.toString(floatTag);
+        } else if (tag instanceof int[] intArray) {
+            return Arrays.toString(intArray);
+        } else if (tag instanceof Integer integer) {
+            return Integer.toString(integer);
+        } else if (tag instanceof long[] longs) {
+            return Arrays.toString(longs);
+        } else if (tag instanceof Long longTag) {
+            return Long.toString(longTag);
+        } else if (tag instanceof Short shortTag) {
+            return Short.toString(shortTag);
+        } else if (tag instanceof String string) {
+            return string;
         } else {
-            return tag.getValue().toString();
+            return tag.toString();
         }
     }
 

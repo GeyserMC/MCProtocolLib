@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.cloudburstmc.nbt.NbtMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class AdventureModePredicate {
         private final @Nullable String location;
         private final int @Nullable[] holders;
         private final @Nullable List<PropertyMatcher> properties;
-        private final @Nullable CompoundTag nbt;
+        private final @Nullable NbtMap nbt;
     }
 
     @Data

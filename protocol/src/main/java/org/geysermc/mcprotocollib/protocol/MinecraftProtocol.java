@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
 import org.geysermc.mcprotocollib.protocol.codec.PacketStateCodec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
@@ -23,14 +23,11 @@ import lombok.NonNull;
 import lombok.Setter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.io.DataInput;
-import java.io.DataInputStream;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.zip.GZIPInputStream;
 
 /**
  * Implements the Minecraft protocol.
@@ -43,7 +40,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * if {@link #isUseDefaultListeners()} is true.
      */
     @Nullable
-    private static CompoundTag DEFAULT_NETWORK_CODEC;
+    private static NbtMap DEFAULT_NETWORK_CODEC;
 
     /**
      * The codec used for the Minecraft protocol.
@@ -251,10 +248,9 @@ public class MinecraftProtocol extends PacketProtocol {
         return this.stateCodec.getClientboundDefinition(id);
     }
 
-    public static CompoundTag loadNetworkCodec() {
-        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt")) ;
-             DataInputStream stream = new DataInputStream(new GZIPInputStream(inputStream))) {
-            return (CompoundTag) NBTIO.readTag((DataInput) stream);
+    public static NbtMap loadNetworkCodec() {
+        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt"))) {
+            return (NbtMap) NbtUtils.createGZIPReader(inputStream).readTag();
         } catch (Exception e) {
             throw new AssertionError("Unable to load network codec.", e);
         }
