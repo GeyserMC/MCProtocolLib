@@ -175,9 +175,9 @@ public class NbtComponentSerializer {
             if (id != null && id.isJsonPrimitive() && (uuid = parseUUID(id.getAsString())) != null) {
                 hoverEvent.remove("id");
 
-                final NbtMap convertedTag = (NbtMap) convertToTag(value);
+                final NbtMapBuilder convertedTag = ((NbtMap) convertToTag(value)).toBuilder();
                 convertedTag.put("id", toIntArray(uuid));
-                tag.put(key, convertedTag);
+                tag.put(key, convertedTag.build());
                 return;
             }
         }
@@ -253,8 +253,6 @@ public class NbtComponentSerializer {
             // Back to a UUID string
             final Object idTag = showEntity.get("id");
             if (idTag instanceof int[] array) {
-                showEntity.remove("id");
-
                 final JsonObject convertedElement = (JsonObject) convertToJson(key, tag);
                 final UUID uuid = fromIntArray(array);
                 convertedElement.addProperty("id", uuid.toString());
