@@ -4,6 +4,7 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
+import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
 import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
@@ -28,6 +29,10 @@ import org.geysermc.mcprotocollib.protocol.packet.status.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.IntTag;
+import com.github.steveice10.opennbt.tag.builtin.ListTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
+import com.github.steveice10.opennbt.tag.builtin.Tag;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
@@ -41,8 +46,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -91,6 +99,11 @@ public class ServerListener extends SessionAdapter {
             if (packet instanceof ClientIntentionPacket intentionPacket) {
                 switch (intentionPacket.getIntent()) {
                     case STATUS -> protocol.setState(ProtocolState.STATUS);
+                    case TRANSFER -> {
+                        if (!session.getFlag(MinecraftConstants.ACCEPT_TRANSFERS_KEY, false)) {
+                            session.disconnect("Server does not accept transfers.");
+                        }
+                    }
                     case LOGIN -> {
                         protocol.setState(ProtocolState.LOGIN);
                         if (intentionPacket.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
@@ -99,8 +112,7 @@ public class ServerListener extends SessionAdapter {
                             session.disconnect("Outdated client! Please use " + protocol.getCodec().getMinecraftVersion() + ".");
                         }
                     }
-                    default ->
-                            throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
+                    default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
         } else if (protocol.getState() == ProtocolState.LOGIN) {
@@ -108,7 +120,7 @@ public class ServerListener extends SessionAdapter {
                 this.username = helloPacket.getUsername();
 
                 if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
-                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge));
+                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, true));
                 } else {
                     new Thread(new UserAuthTask(session, null)).start();
                 }
@@ -124,8 +136,24 @@ public class ServerListener extends SessionAdapter {
                 session.enableEncryption(protocol.enableEncryption(key));
                 new Thread(new UserAuthTask(session, key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
-                ((MinecraftProtocol) session.getPacketProtocol()).setState(ProtocolState.CONFIGURATION);
-                session.send(new ClientboundRegistryDataPacket(networkCodec));
+                protocol.setState(ProtocolState.CONFIGURATION);
+
+                // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
+                for (Map.Entry<String, Tag> entry : networkCodec.getValue().entrySet()) {
+                    CompoundTag entryTag = (CompoundTag) entry.getValue();
+                    StringTag typeTag = entryTag.get("type");
+                    ListTag valueTag = entryTag.get("value");
+                    List<RegistryEntry> entries = new ArrayList<>();
+                    for (Tag tag : valueTag) {
+                        CompoundTag compoundTag = (CompoundTag) tag;
+                        StringTag nameTag = compoundTag.get("name");
+                        int id = ((IntTag) compoundTag.get("id")).getValue();
+                        entries.add(id, new RegistryEntry(nameTag.getValue(), compoundTag.get("element")));
+                    }
+
+                    session.send(new ClientboundRegistryDataPacket(typeTag.getValue(), entries));
+                }
+
                 session.send(new ClientboundFinishConfigurationPacket());
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
@@ -176,7 +204,7 @@ public class ServerListener extends SessionAdapter {
     public void packetSent(Session session, Packet packet) {
         if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
             session.setCompressionThreshold(loginCompressionPacket.getThreshold(), true);
-            session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY)));
+            session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY), true));
         }
     }
 

@@ -9,6 +9,6 @@ import java.util.UUID;
 public class ClientboundGameProfilePacketTest extends PacketTest {
     @BeforeEach
     public void setup() {
-        this.setPackets(new ClientboundGameProfilePacket(new GameProfile(UUID.randomUUID(), "Username")));
+        this.setPackets(new ClientboundGameProfilePacket(new GameProfile(UUID.randomUUID(), "Username"), true));
     }
 }

@@ -36,9 +36,9 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
         if (hasIcons) {
             for (int index = 0; index < this.icons.length; index++) {
                 int type = helper.readVarInt(in);
-                int x = in.readUnsignedByte();
-                int z = in.readUnsignedByte();
-                int rotation = in.readUnsignedByte();
+                int x = in.readByte();
+                int z = in.readByte();
+                int rotation = in.readByte();
                 Component displayName = null;
                 if (in.readBoolean()) {
                     displayName = helper.readComponent(in);

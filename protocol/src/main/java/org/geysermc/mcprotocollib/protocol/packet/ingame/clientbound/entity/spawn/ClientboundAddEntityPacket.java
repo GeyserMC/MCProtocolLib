@@ -69,7 +69,8 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         } else if (this.type == EntityType.POTION) {
             this.data = new SplashPotionData(data);
         } else if (this.type == EntityType.SPECTRAL_ARROW || this.type == EntityType.FIREBALL || this.type == EntityType.SMALL_FIREBALL
-                || this.type == EntityType.DRAGON_FIREBALL || this.type == EntityType.WITHER_SKULL || this.type == EntityType.FISHING_BOBBER) {
+                || this.type == EntityType.DRAGON_FIREBALL || this.type == EntityType.WITHER_SKULL || this.type == EntityType.FISHING_BOBBER
+                || this.type == EntityType.BREEZE_WIND_CHARGE) {
             this.data = new ProjectileData(data);
         } else if (this.type == EntityType.WARDEN) {
             this.data = new WardenData(data);

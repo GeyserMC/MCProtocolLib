@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.recipe.data;
 
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.CraftingBookCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
 import lombok.AllArgsConstructor;

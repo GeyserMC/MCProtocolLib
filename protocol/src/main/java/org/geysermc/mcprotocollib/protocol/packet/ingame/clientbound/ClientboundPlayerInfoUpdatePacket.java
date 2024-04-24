@@ -94,13 +94,18 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {
-            helper.writeUUID(out, entry.getProfile().getId());
+            helper.writeUUID(out, entry.getProfileId());
             for (PlayerListEntryAction action : this.actions) {
                 switch (action) {
                     case ADD_PLAYER -> {
-                        helper.writeString(out, entry.getProfile().getName());
-                        helper.writeVarInt(out, entry.getProfile().getProperties().size());
-                        for (GameProfile.Property property : entry.getProfile().getProperties()) {
+                        GameProfile profile = entry.getProfile();
+                        if (profile == null) {
+                            throw new IllegalArgumentException("Cannot ADD " + entry.getProfileId() + " without a profile.");
+                        }
+
+                        helper.writeString(out, profile.getName());
+                        helper.writeVarInt(out, profile.getProperties().size());
+                        for (GameProfile.Property property : profile.getProperties()) {
                             helper.writeProperty(out, property);
                         }
                     }

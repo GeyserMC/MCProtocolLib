@@ -85,7 +85,7 @@ public class MinecraftProtocolTest {
                             false,
                             false,
                             new PlayerSpawnInfo(
-                                    "minecraft:overworld",
+                                    0,
                                     "minecraft:world",
                                     100,
                                     GameMode.SURVIVAL,
@@ -94,7 +94,8 @@ public class MinecraftProtocolTest {
                                     false,
                                     null,
                                     100
-                            )
+                            ),
+                            true
                     ))
             );
 

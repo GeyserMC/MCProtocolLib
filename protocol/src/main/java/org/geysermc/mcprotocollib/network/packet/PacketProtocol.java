@@ -49,8 +49,9 @@ public abstract class PacketProtocol {
      * Called when a client session is created with this protocol.
      *
      * @param session The created session.
+     * @param transferring If the client is being transferred between servers.
      */
-    public abstract void newClientSession(Session session);
+    public abstract void newClientSession(Session session, boolean transferring);
 
     /**
      * Called when a server session is created with this protocol.

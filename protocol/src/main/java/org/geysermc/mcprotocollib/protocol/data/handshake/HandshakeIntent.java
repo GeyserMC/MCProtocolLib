@@ -2,7 +2,8 @@ package org.geysermc.mcprotocollib.protocol.data.handshake;
 
 public enum HandshakeIntent {
     STATUS,
-    LOGIN;
+    LOGIN,
+    TRANSFER;
 
     private static final HandshakeIntent[] VALUES = values();
 
