@@ -1,9 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.cloudburstmc.nbt.NbtMap;
-import org.cloudburstmc.nbt.NbtType;
-import org.cloudburstmc.nbt.NbtUtils;
+import org.cloudburstmc.nbt.*;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
@@ -81,15 +79,15 @@ import org.cloudburstmc.math.vector.Vector4f;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.ObjIntConsumer;
 import java.util.function.ToIntFunction;
+
+import static org.cloudburstmc.nbt.NbtType.byClass;
 
 @RequiredArgsConstructor
 public class MinecraftCodecHelper extends BasePacketCodecHelper {
@@ -234,29 +232,44 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     @Nullable
     public Object readAnyTag(ByteBuf buf) {
-        Object tag;
         try {
-            tag = NbtUtils.createNetworkReader(new InputStream() {
+            DataInputStream input = new DataInputStream(new InputStream() {
                 @Override
                 public int read() {
                     return buf.readUnsignedByte();
                 }
-            }).readTag();
+            });
+            NBTInputStream nbtInputStream = new NBTInputStream(input);
+
+            int typeId = input.readUnsignedByte();
+            if (typeId == 0) {
+                return null;
+            }
+
+            NbtType<?> type = NbtType.byId(typeId);
+            input.readUTF(); // Root tag name
+
+            return nbtInputStream.readValue(type);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
-
-        return tag;
     }
 
     public void writeAnyTag(ByteBuf buf, @Nullable Object tag) {
         try {
-            NbtUtils.createWriter(new OutputStream() {
+            DataOutputStream output = new DataOutputStream(new OutputStream() {
                 @Override
                 public void write(int b) {
                     buf.writeByte(b);
                 }
-            }).writeTag(tag);
+            });
+
+            if (tag == null) {
+                output.writeByte(0);
+                return;
+            }
+
+            new NBTOutputStream(output).writeTag(tag);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
