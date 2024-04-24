@@ -80,6 +80,7 @@ import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,12 +130,12 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public <T, E extends Throwable> Holder<T> readHolder(ByteBuf buf, CheckedFunction<ByteBuf, T, E> readCustom) throws E {
+    public <T> Holder<T> readHolder(ByteBuf buf, Function<ByteBuf, T> readCustom) {
         int registryId = this.readVarInt(buf);
         return registryId == 0 ? Holder.ofCustom(readCustom.apply(buf)) : Holder.ofId(registryId - 1);
     }
 
-    public <T, E extends Throwable> void writeHolder(ByteBuf buf, Holder<T> holder, CheckedBiConsumer<ByteBuf, T, E> writeCustom) throws E {
+    public <T> void writeHolder(ByteBuf buf, Holder<T> holder, BiConsumer<ByteBuf, T> writeCustom) {
         if (holder.isCustom()) {
             this.writeVarInt(buf, 0);
             writeCustom.accept(buf, holder.custom());
@@ -262,7 +263,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     @Nullable
-    public ItemStack readOptionalItemStack(ByteBuf buf) throws IOException {
+    public ItemStack readOptionalItemStack(ByteBuf buf) {
         byte count = buf.readByte();
         if (count <= 0) {
             return null;
@@ -272,7 +273,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return new ItemStack(item, count, this.readDataComponentPatch(buf));
     }
 
-    public void writeOptionalItemStack(ByteBuf buf, ItemStack item) throws IOException {
+    public void writeOptionalItemStack(ByteBuf buf, ItemStack item) {
         boolean empty = item == null || item.getAmount() <= 0;
         buf.writeByte(!empty ? item.getAmount() : 0);
         if (!empty) {
@@ -286,12 +287,12 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return this.readOptionalItemStack(buf);
     }
 
-    public void writeItemStack(ByteBuf buf, @NotNull ItemStack item) throws IOException {
+    public void writeItemStack(ByteBuf buf, @NotNull ItemStack item) {
         this.writeOptionalItemStack(buf, item);
     }
 
     @Nullable
-    public DataComponents readDataComponentPatch(ByteBuf buf) throws IOException {
+    public DataComponents readDataComponentPatch(ByteBuf buf) {
         int nonNullComponents = this.readVarInt(buf);
         int nullComponents = this.readVarInt(buf);
         if (nonNullComponents == 0 && nullComponents == 0) {
@@ -314,7 +315,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return new DataComponents(dataComponents);
     }
 
-    public void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents) throws IOException {
+    public void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents) {
         if (dataComponents == null) {
             this.writeVarInt(buf, 0);
             this.writeVarInt(buf, 0);
@@ -348,7 +349,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     @NotNull
-    public ItemStack readTradeItemStack(ByteBuf buf) throws IOException {
+    public ItemStack readTradeItemStack(ByteBuf buf) {
         int item = this.readVarInt(buf);
         int count = this.readVarInt(buf);
         int componentsLength = this.readVarInt(buf);
@@ -584,7 +585,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeParticleData(buf, particle.getType(), particle.getData());
     }
 
-    public ParticleData readParticleData(ByteBuf buf, ParticleType type) throws IOException {
+    public ParticleData readParticleData(ByteBuf buf, ParticleType type) {
         switch (type) {
             case BLOCK:
             case BLOCK_MARKER:

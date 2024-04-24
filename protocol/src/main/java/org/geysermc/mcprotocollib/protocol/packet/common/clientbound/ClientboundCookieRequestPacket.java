@@ -1,7 +1,7 @@
-package com.github.steveice10.mc.protocol.packet.common.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
-import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,12 +15,12 @@ import java.io.IOException;
 public class ClientboundCookieRequestPacket implements MinecraftPacket {
     private final String key;
 
-    public ClientboundCookieRequestPacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundCookieRequestPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.key = helper.readResourceLocation(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeResourceLocation(out, this.key);
     }
 }

@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound;
 
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.RegistryEntry;
+import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;

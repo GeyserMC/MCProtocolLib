@@ -1,6 +1,6 @@
-package com.github.steveice10.mc.protocol.data.game.item.component;
+package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import com.github.steveice10.mc.protocol.data.game.item.component.type.ObjectDataComponent;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.ObjectDataComponent;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +23,7 @@ public abstract class DataComponent<V, T extends DataComponentType<V>> {
      * Overridden for primitive classes. This write method still checks for these primitives in the event
      * they are manually created using {@link ObjectDataComponent}.
      */
-    public void write(ItemCodecHelper helper, ByteBuf out) throws IOException {
+    public void write(ItemCodecHelper helper, ByteBuf out) {
         this.type.writeDataComponent(helper, out, this.getValue());
     }
 

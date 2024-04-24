@@ -1,7 +1,7 @@
-package com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
-import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;

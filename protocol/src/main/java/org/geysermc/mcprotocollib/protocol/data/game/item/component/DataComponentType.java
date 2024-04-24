@@ -1,12 +1,12 @@
-package com.github.steveice10.mc.protocol.data.game.item.component;
+package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
-import com.github.steveice10.mc.protocol.data.game.Holder;
-import com.github.steveice10.mc.protocol.data.game.item.ItemStack;
-import com.github.steveice10.mc.protocol.data.game.item.component.type.BooleanDataComponent;
-import com.github.steveice10.mc.protocol.data.game.item.component.type.IntDataComponent;
-import com.github.steveice10.mc.protocol.data.game.item.component.type.ObjectDataComponent;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.data.game.Holder;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntDataComponent;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.ObjectDataComponent;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
@@ -93,7 +93,7 @@ public class DataComponentType<T> {
         VALUES.add(this);
     }
 
-    public DataComponent<T, ? extends DataComponentType<T>> readDataComponent(ItemCodecHelper helper, ByteBuf input) throws IOException {
+    public DataComponent<T, ? extends DataComponentType<T>> readDataComponent(ItemCodecHelper helper, ByteBuf input) {
         return this.dataComponentFactory.create(this, this.reader.read(helper, input));
     }
 
@@ -101,34 +101,34 @@ public class DataComponentType<T> {
         return this.dataComponentFactory.create(this, null);
     }
 
-    public void writeDataComponent(ItemCodecHelper helper, ByteBuf output, T value) throws IOException {
+    public void writeDataComponent(ItemCodecHelper helper, ByteBuf output, T value) {
         this.writer.write(helper, output, value);
     }
 
     @FunctionalInterface
     public interface Reader<V> {
-        V read(ItemCodecHelper helper, ByteBuf input) throws IOException;
+        V read(ItemCodecHelper helper, ByteBuf input);
     }
 
     @FunctionalInterface
     public interface Writer<V> {
-        void write(ItemCodecHelper helper, ByteBuf output, V value) throws IOException;
+        void write(ItemCodecHelper helper, ByteBuf output, V value);
     }
 
     @FunctionalInterface
     public interface BasicReader<V> extends Reader<V> {
-        V read(ByteBuf input) throws IOException;
+        V read(ByteBuf input);
 
-        default V read(ItemCodecHelper helper, ByteBuf input) throws IOException {
+        default V read(ItemCodecHelper helper, ByteBuf input) {
             return this.read(input);
         }
     }
 
     @FunctionalInterface
     public interface BasicWriter<V> extends Writer<V> {
-        void write(ByteBuf output, V Value) throws IOException;
+        void write(ByteBuf output, V Value);
 
-        default void write(ItemCodecHelper helper, ByteBuf output, V value) throws IOException {
+        default void write(ItemCodecHelper helper, ByteBuf output, V value) {
             this.write(output, value);
         }
     }
@@ -167,7 +167,7 @@ public class DataComponentType<T> {
         return (helper, output, value) -> {};
     }
 
-    public static DataComponentType<?> read(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public static DataComponentType<?> read(ByteBuf in, MinecraftCodecHelper helper) {
         int id = helper.readVarInt(in);
         if (id >= VALUES.size()) {
             throw new IllegalArgumentException("Received id " + id + " for DataComponentType when the maximum was " + VALUES.size() + "!");

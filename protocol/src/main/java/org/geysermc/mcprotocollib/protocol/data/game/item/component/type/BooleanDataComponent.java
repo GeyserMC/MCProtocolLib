@@ -1,8 +1,8 @@
-package com.github.steveice10.mc.protocol.data.game.item.component.type;
+package org.geysermc.mcprotocollib.protocol.data.game.item.component.type;
 
-import com.github.steveice10.mc.protocol.data.game.item.component.BooleanComponentType;
-import com.github.steveice10.mc.protocol.data.game.item.component.DataComponent;
-import com.github.steveice10.mc.protocol.data.game.item.component.ItemCodecHelper;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.BooleanComponentType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemCodecHelper;
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
@@ -27,7 +27,7 @@ public class BooleanDataComponent extends DataComponent<Boolean, BooleanComponen
     }
 
     @Override
-    public void write(ItemCodecHelper helper, ByteBuf out) throws IOException {
+    public void write(ItemCodecHelper helper, ByteBuf out) {
         this.type.writeDataComponentPrimitive(out, this.value);
     }
 }

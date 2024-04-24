@@ -60,7 +60,7 @@ public final class MinecraftConstants {
     /**
      * Session flag for determining whether to accept transferred connections. Server only.
      */
-    public static final String ACCEPT_TRANSFERS_KEY = "accept-transfers";
+    public static final Flag<Boolean> ACCEPT_TRANSFERS_KEY = new Flag<>("accept-transfers", Boolean.class);
 
     /**
      * Session flag for providing a custom server info response builder. Server only.

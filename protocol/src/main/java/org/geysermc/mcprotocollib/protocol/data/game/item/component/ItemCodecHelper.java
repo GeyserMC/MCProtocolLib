@@ -1,14 +1,13 @@
-package com.github.steveice10.mc.protocol.data.game.item.component;
+package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.protocol.CheckedBiConsumer;
-import com.github.steveice10.mc.protocol.CheckedFunction;
-import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
-import com.github.steveice10.mc.protocol.data.game.Holder;
-import com.github.steveice10.mc.protocol.data.game.entity.attribute.ModifierOperation;
-import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
-import com.github.steveice10.mc.protocol.data.game.level.sound.CustomSound;
-import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
+import it.unimi.dsi.fastutil.Function;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.data.game.Holder;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import io.netty.buffer.ByteBuf;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 
 public class ItemCodecHelper extends MinecraftCodecHelper {
@@ -34,7 +34,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
 
-    public <T, E extends Throwable> Filterable<T> readFilterable(ByteBuf buf, CheckedFunction<ByteBuf, T, E> reader) throws E {
+    public <T, E extends Throwable> Filterable<T> readFilterable(ByteBuf buf, Function<ByteBuf, T> reader) {
         T raw = reader.apply(buf);
         T filtered = null;
         if (buf.readBoolean()) {
@@ -43,7 +43,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         return new Filterable<>(raw, filtered);
     }
 
-    public <T, E extends Throwable> void writeFilterable(ByteBuf buf, Filterable<T> filterable, CheckedBiConsumer<ByteBuf, T, E> writer) throws E {
+    public <T> void writeFilterable(ByteBuf buf, Filterable<T> filterable, BiConsumer<ByteBuf, T> writer) {
         writer.accept(buf, filterable.getRaw());
         if (filterable.getOptional() != null) {
             buf.writeBoolean(true);
@@ -73,7 +73,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeBoolean(itemEnchantments.isShowInTooltip());
     }
 
-    public AdventureModePredicate readAdventureModePredicate(ByteBuf buf) throws IOException {
+    public AdventureModePredicate readAdventureModePredicate(ByteBuf buf) {
         List<AdventureModePredicate.BlockPredicate> predicates = new ArrayList<>();
         int predicateCount = this.readVarInt(buf);
         for (int i = 0; i < predicateCount; i++) {
@@ -83,7 +83,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         return new AdventureModePredicate(predicates, buf.readBoolean());
     }
 
-    public void writeAdventureModePredicate(ByteBuf buf, AdventureModePredicate adventureModePredicate) throws IOException {
+    public void writeAdventureModePredicate(ByteBuf buf, AdventureModePredicate adventureModePredicate) {
         this.writeVarInt(buf, adventureModePredicate.getPredicates().size());
         for (AdventureModePredicate.BlockPredicate predicate : adventureModePredicate.getPredicates()) {
             this.writeBlockPredicate(buf, predicate);
@@ -92,7 +92,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeBoolean(adventureModePredicate.isShowInTooltip());
     }
 
-    public AdventureModePredicate.BlockPredicate readBlockPredicate(ByteBuf buf) throws IOException {
+    public AdventureModePredicate.BlockPredicate readBlockPredicate(ByteBuf buf) {
         String location = null;
         int[] holders = null;
         List<AdventureModePredicate.PropertyMatcher> propertyMatchers = null;
@@ -125,7 +125,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         return new AdventureModePredicate.BlockPredicate(location, holders, propertyMatchers, this.readNullable(buf, this::readAnyTag));
     }
 
-    public void writeBlockPredicate(ByteBuf buf, AdventureModePredicate.BlockPredicate blockPredicate) throws IOException {
+    public void writeBlockPredicate(ByteBuf buf, AdventureModePredicate.BlockPredicate blockPredicate) {
         if (blockPredicate.getLocation() == null && blockPredicate.getHolders() == null) {
             buf.writeBoolean(false);
         } else {
@@ -360,7 +360,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
     }
 
-    public WrittenBookContent readWrittenBookContent(ByteBuf buf) throws IOException {
+    public WrittenBookContent readWrittenBookContent(ByteBuf buf) {
         Filterable<String> title = this.readFilterable(buf, this::readString);
         String author = this.readString(buf);
         int generation = this.readVarInt(buf);
@@ -375,7 +375,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         return new WrittenBookContent(title, author, generation, pages, resolved);
     }
 
-    public void writeWrittenBookContent(ByteBuf buf, WrittenBookContent content) throws IOException {
+    public void writeWrittenBookContent(ByteBuf buf, WrittenBookContent content) {
         this.writeFilterable(buf, content.getTitle(), this::writeString);
         this.writeString(buf, content.getAuthor());
         this.writeVarInt(buf, content.getGeneration());
@@ -388,20 +388,20 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeBoolean(content.isResolved());
     }
 
-    public ArmorTrim readArmorTrim(ByteBuf buf) throws IOException {
+    public ArmorTrim readArmorTrim(ByteBuf buf) {
         Holder<ArmorTrim.TrimMaterial> material = this.readHolder(buf, this::readTrimMaterial);
         Holder<ArmorTrim.TrimPattern> pattern = this.readHolder(buf, this::readTrimPattern);
         boolean showInTooltip = buf.readBoolean();
         return new ArmorTrim(material, pattern, showInTooltip);
     }
 
-    public void writeArmorTrim(ByteBuf buf, ArmorTrim trim) throws IOException {
+    public void writeArmorTrim(ByteBuf buf, ArmorTrim trim) {
         this.writeHolder(buf, trim.material(), this::writeTrimMaterial);
         this.writeHolder(buf, trim.pattern(), this::writeTrimPattern);
         buf.writeBoolean(trim.showInTooltip());
     }
 
-    public ArmorTrim.TrimMaterial readTrimMaterial(ByteBuf buf) throws IOException {
+    public ArmorTrim.TrimMaterial readTrimMaterial(ByteBuf buf) {
         String assetName = this.readString(buf);
         int ingredientId = this.readVarInt(buf);
         float itemModelIndex = buf.readFloat();
@@ -416,7 +416,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         return new ArmorTrim.TrimMaterial(assetName, ingredientId, itemModelIndex, overrideArmorMaterials, description);
     }
 
-    public void writeTrimMaterial(ByteBuf buf, ArmorTrim.TrimMaterial material) throws IOException {
+    public void writeTrimMaterial(ByteBuf buf, ArmorTrim.TrimMaterial material) {
         this.writeString(buf, material.assetName());
         this.writeVarInt(buf, material.ingredientId());
         buf.writeFloat(material.itemModelIndex());
@@ -430,7 +430,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeComponent(buf, material.description());
     }
 
-    public ArmorTrim.TrimPattern readTrimPattern(ByteBuf buf) throws IOException {
+    public ArmorTrim.TrimPattern readTrimPattern(ByteBuf buf) {
         String assetId = this.readResourceLocation(buf);
         int templateItemId = this.readVarInt(buf);
         Component description = this.readComponent(buf);
@@ -438,7 +438,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         return new ArmorTrim.TrimPattern(assetId, templateItemId, description, decal);
     }
 
-    public void writeTrimPattern(ByteBuf buf, ArmorTrim.TrimPattern pattern) throws IOException {
+    public void writeTrimPattern(ByteBuf buf, ArmorTrim.TrimPattern pattern) {
         this.writeResourceLocation(buf, pattern.assetId());
         this.writeVarInt(buf, pattern.templateItemId());
         this.writeComponent(buf, pattern.description());
@@ -468,11 +468,11 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         });
     }
 
-    public ListTag readRecipes(ByteBuf buf) throws IOException {
+    public ListTag readRecipes(ByteBuf buf) {
         return this.readAnyTag(buf, ListTag.class);
     }
 
-    public void writeRecipes(ByteBuf buf, ListTag recipes) throws IOException {
+    public void writeRecipes(ByteBuf buf, ListTag recipes) {
         this.writeAnyTag(buf, recipes);
     }
 
@@ -602,21 +602,21 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
     }
 
-    public BeehiveOccupant readBeehiveOccupant(ByteBuf buf) throws IOException {
+    public BeehiveOccupant readBeehiveOccupant(ByteBuf buf) {
         return new BeehiveOccupant(this.readAnyTag(buf), this.readVarInt(buf), this.readVarInt(buf));
     }
 
-    public void writeBeehiveOccupant(ByteBuf buf, BeehiveOccupant occupant) throws IOException {
+    public void writeBeehiveOccupant(ByteBuf buf, BeehiveOccupant occupant) {
         this.writeAnyTag(buf, occupant.getEntityData());
         this.writeVarInt(buf, occupant.getTicksInHive());
         this.writeVarInt(buf, occupant.getMinTicksInHive());
     }
 
-    public StringTag readLock(ByteBuf buf) throws IOException {
+    public StringTag readLock(ByteBuf buf) {
         return this.readAnyTag(buf, StringTag.class);
     }
 
-    public void writeLock(ByteBuf buf, StringTag key) throws IOException {
+    public void writeLock(ByteBuf buf, StringTag key) {
         this.writeAnyTag(buf, key);
     }
 }

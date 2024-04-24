@@ -1,6 +1,6 @@
-package com.github.steveice10.mc.protocol.data.game.item.component;
+package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

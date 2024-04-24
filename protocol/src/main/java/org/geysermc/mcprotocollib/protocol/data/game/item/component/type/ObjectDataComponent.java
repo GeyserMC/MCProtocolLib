@@ -1,7 +1,7 @@
-package com.github.steveice10.mc.protocol.data.game.item.component.type;
+package org.geysermc.mcprotocollib.protocol.data.game.item.component.type;
 
-import com.github.steveice10.mc.protocol.data.game.item.component.DataComponent;
-import com.github.steveice10.mc.protocol.data.game.item.component.DataComponentType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
 import lombok.NonNull;
 
 public class ObjectDataComponent<T> extends DataComponent<T, DataComponentType<T>> {

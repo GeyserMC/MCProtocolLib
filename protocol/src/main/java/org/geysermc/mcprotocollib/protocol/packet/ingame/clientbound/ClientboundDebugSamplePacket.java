@@ -1,8 +1,8 @@
-package com.github.steveice10.mc.protocol.packet.ingame.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
-import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.RemoteDebugSampleType;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.RemoteDebugSampleType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,13 +17,13 @@ public class ClientboundDebugSamplePacket implements MinecraftPacket {
     private final long[] sample;
     private final RemoteDebugSampleType debugSampleType;
 
-    public ClientboundDebugSamplePacket(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ClientboundDebugSamplePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.sample = helper.readLongArray(in);
         this.debugSampleType = RemoteDebugSampleType.from(helper.readVarInt(in));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeLongArray(out, this.sample);
         helper.writeVarInt(out, this.debugSampleType.ordinal());
     }

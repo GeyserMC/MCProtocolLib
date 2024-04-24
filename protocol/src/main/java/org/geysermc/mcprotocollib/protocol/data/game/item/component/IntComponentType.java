@@ -1,6 +1,6 @@
-package com.github.steveice10.mc.protocol.data.game.item.component;
+package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import com.github.steveice10.mc.protocol.data.game.item.component.type.IntDataComponent;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntDataComponent;
 import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
@@ -19,32 +19,32 @@ public class IntComponentType extends DataComponentType<Integer> {
     }
 
     @Override
-    public DataComponent<Integer, IntComponentType> readDataComponent(ItemCodecHelper helper, ByteBuf input) throws IOException {
+    public DataComponent<Integer, IntComponentType> readDataComponent(ItemCodecHelper helper, ByteBuf input) {
         return this.primitiveFactory.createPrimitive(this, this.primitiveReader.readPrimitive(helper, input));
     }
 
-    public void writeDataComponentPrimitive(ItemCodecHelper helper, ByteBuf output, int value) throws IOException {
+    public void writeDataComponentPrimitive(ItemCodecHelper helper, ByteBuf output, int value) {
         this.primitiveWriter.writePrimitive(helper, output, value);
     }
 
     @FunctionalInterface
     public interface IntReader extends Reader<Integer> {
-        int readPrimitive(ItemCodecHelper helper, ByteBuf input) throws IOException;
+        int readPrimitive(ItemCodecHelper helper, ByteBuf input);
 
         @Deprecated
         @Override
-        default Integer read(ItemCodecHelper helper, ByteBuf input) throws IOException {
+        default Integer read(ItemCodecHelper helper, ByteBuf input) {
             return this.readPrimitive(helper, input);
         }
     }
 
     @FunctionalInterface
     public interface IntWriter extends Writer<Integer> {
-        void writePrimitive(ItemCodecHelper helper, ByteBuf output, int value) throws IOException;
+        void writePrimitive(ItemCodecHelper helper, ByteBuf output, int value);
 
         @Deprecated
         @Override
-        default void write(ItemCodecHelper helper, ByteBuf output, Integer value) throws IOException {
+        default void write(ItemCodecHelper helper, ByteBuf output, Integer value) {
             this.writePrimitive(helper, output, value);
         }
     }

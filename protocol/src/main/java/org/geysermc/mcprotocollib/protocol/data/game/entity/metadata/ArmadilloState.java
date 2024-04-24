@@ -1,4 +1,4 @@
-package com.github.steveice10.mc.protocol.data.game.entity.metadata;
+package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
 public enum ArmadilloState {
     IDLE,

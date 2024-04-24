@@ -1,8 +1,8 @@
-package com.github.steveice10.mc.protocol.packet.configuration.serverbound;
+package org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound;
 
-import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
-import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
-import com.github.steveice10.mc.protocol.data.game.KnownPack;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.KnownPack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +17,7 @@ import java.util.List;
 public class ServerboundSelectKnownPacks implements MinecraftPacket {
     private final List<KnownPack> knownPacks;
 
-    public ServerboundSelectKnownPacks(ByteBuf in, MinecraftCodecHelper helper) throws IOException {
+    public ServerboundSelectKnownPacks(ByteBuf in, MinecraftCodecHelper helper) {
         this.knownPacks = new ArrayList<>();
 
         int entryCount = Math.min(helper.readVarInt(in), 64);
@@ -27,7 +27,7 @@ public class ServerboundSelectKnownPacks implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) throws IOException {
+    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         if (this.knownPacks.size() > 64) {
             throw new IllegalArgumentException("KnownPacks is longer than maximum allowed length");
         }
