@@ -16,7 +16,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.kyori.adventure.text.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,8 +32,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         super(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
     }
 
-
-    public <T, E extends Throwable> Filterable<T> readFilterable(ByteBuf buf, Function<ByteBuf, T> reader) {
+    public <T> Filterable<T> readFilterable(ByteBuf buf, Function<ByteBuf, T> reader) {
         T raw = reader.apply(buf);
         T filtered = null;
         if (buf.readBoolean()) {

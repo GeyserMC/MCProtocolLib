@@ -6,7 +6,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemCodecHel
 import io.netty.buffer.ByteBuf;
 import lombok.NonNull;
 
-import java.io.IOException;
 
 public class IntDataComponent extends DataComponent<Integer, IntComponentType> {
     private final Integer value;

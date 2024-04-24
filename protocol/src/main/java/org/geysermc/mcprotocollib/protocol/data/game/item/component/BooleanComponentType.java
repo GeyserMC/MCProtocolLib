@@ -3,8 +3,6 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
-
 public class BooleanComponentType extends DataComponentType<Boolean> {
     protected final BooleanReader primitiveReader;
     protected final BooleanWriter primitiveWriter;
