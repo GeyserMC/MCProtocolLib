@@ -29,9 +29,12 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
         int size = helper.readVarInt(in);
         this.trades = new VillagerTrade[size];
         for (int i = 0; i < trades.length; i++) {
-            ItemStack firstInput = helper.readOptionalItemStack(in);
+            ItemStack firstInput = helper.readTradeItemStack(in);
             ItemStack output = helper.readOptionalItemStack(in);
-            ItemStack secondInput = helper.readOptionalItemStack(in);
+            ItemStack secondInput = null;
+            if (in.readBoolean()) {
+                secondInput = helper.readTradeItemStack(in);
+            }
 
             boolean tradeDisabled = in.readBoolean();
             int numUses = in.readInt();

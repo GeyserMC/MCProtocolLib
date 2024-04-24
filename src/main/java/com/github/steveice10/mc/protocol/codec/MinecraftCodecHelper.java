@@ -338,6 +338,22 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
+    @NotNull
+    public ItemStack readTradeItemStack(ByteBuf buf) throws IOException {
+        int item = this.readVarInt(buf);
+        int count = this.readVarInt(buf);
+        int componentsLength = this.readVarInt(buf);
+
+        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
+        for (int i = 0; i < componentsLength; i++) {
+            DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
+            DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(ItemCodecHelper.INSTANCE, buf);
+            dataComponents.put(dataComponentType, dataComponent);
+        }
+
+        return new ItemStack(item, count, new DataComponents(dataComponents));
+    }
+
     public Vector3i readPosition(ByteBuf buf) {
         long val = buf.readLong();
 
