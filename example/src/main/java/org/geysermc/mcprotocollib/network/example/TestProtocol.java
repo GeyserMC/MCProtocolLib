@@ -67,7 +67,7 @@ public class TestProtocol extends PacketProtocol {
     }
 
     @Override
-    public void newClientSession(Session session) {
+    public void newClientSession(Session session, boolean transferring) {
         session.addListener(new ClientSessionListener());
     }
 

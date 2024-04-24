@@ -58,6 +58,11 @@ public final class MinecraftConstants {
     public static final Flag<Boolean> VERIFY_USERS_KEY = new Flag<>("verify-users", Boolean.class);
 
     /**
+     * Session flag for determining whether to accept transferred connections. Server only.
+     */
+    public static final String ACCEPT_TRANSFERS_KEY = "accept-transfers";
+
+    /**
      * Session flag for providing a custom server info response builder. Server only.
      */
     public static final Flag<ServerInfoBuilder> SERVER_INFO_BUILDER_KEY = new Flag<>("info-builder", ServerInfoBuilder.class);

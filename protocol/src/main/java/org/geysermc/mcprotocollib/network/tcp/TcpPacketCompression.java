@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 
 import java.util.List;
 import java.util.zip.Deflater;
@@ -36,6 +37,9 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
         int readable = in.readableBytes();
+        if (readable > MAX_UNCOMPRESSED_SIZE) {
+            throw new EncoderException("Packet too big: size of " + readable + " is larger than the protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
+        }
         if(readable < this.session.getCompressionThreshold()) {
             this.session.getCodecHelper().writeVarInt(out, 0);
             out.writeBytes(in);

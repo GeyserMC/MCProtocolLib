@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
         this.containerId = in.readUnsignedByte();
         this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
-        this.item = helper.readItemStack(in);
+        this.item = helper.readOptionalItemStack(in);
     }
 
     @Override
@@ -30,6 +30,6 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
         out.writeByte(this.containerId);
         helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
-        helper.writeItemStack(out, this.item);
+        helper.writeOptionalItemStack(out, this.item);
     }
 }

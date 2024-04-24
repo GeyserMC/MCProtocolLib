@@ -67,6 +67,11 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void connect(boolean wait) {
+        this.connect(wait, false);
+    }
+
+    @Override
+    public void connect(boolean wait, boolean transferring) {
     }
 
     @Override
@@ -126,6 +131,11 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @Override
     public <T> void setFlag(Flag<T> flag, T value) {
         this.flags.put(flag.key(), value);
+    }
+
+    @Override
+    public void setFlags(Map<String, Object> flags) {
+        this.flags.putAll(flags);
     }
 
     @Override

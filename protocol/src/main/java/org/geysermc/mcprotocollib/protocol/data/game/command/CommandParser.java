@@ -35,6 +35,7 @@ public enum CommandParser {
     SWIZZLE,
     TEAM,
     ITEM_SLOT,
+    ITEM_SLOTS,
     RESOURCE_LOCATION,
     FUNCTION,
     ENTITY_ANCHOR,
@@ -50,6 +51,9 @@ public enum CommandParser {
     TEMPLATE_MIRROR,
     TEMPLATE_ROTATION,
     HEIGHTMAP,
+    LOOT_TABLE,
+    LOOT_PREDICATE,
+    LOOT_MODIFIER,
     UUID;
 
     private static final CommandParser[] VALUES = values();

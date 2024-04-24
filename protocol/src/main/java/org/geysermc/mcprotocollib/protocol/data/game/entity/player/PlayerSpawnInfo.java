@@ -9,7 +9,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @Data
 @AllArgsConstructor
 public class PlayerSpawnInfo {
-    private final @NonNull String dimension;
+    private final int dimension;
     private final @NonNull String worldName;
     private final long hashedSeed;
     private final @NonNull GameMode gameMode;

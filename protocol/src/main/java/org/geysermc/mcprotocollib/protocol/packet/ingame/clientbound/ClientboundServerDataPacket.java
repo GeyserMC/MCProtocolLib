@@ -15,18 +15,15 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public class ClientboundServerDataPacket implements MinecraftPacket {
     private final Component motd;
     private final byte @Nullable[] iconBytes;
-    private final boolean enforcesSecureChat;
 
     public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.motd = helper.readComponent(in);
         this.iconBytes = helper.readNullable(in, helper::readByteArray);
-        this.enforcesSecureChat = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.motd);
         helper.writeNullable(out, this.iconBytes, helper::writeByteArray);
-        out.writeBoolean(this.enforcesSecureChat);
     }
 }

@@ -15,13 +15,13 @@ public class ServerboundContainerButtonClickPacket implements MinecraftPacket {
     private final int buttonId;
 
     public ServerboundContainerButtonClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
-        this.buttonId = in.readByte();
+        this.containerId = helper.readVarInt(in);
+        this.buttonId = helper.readVarInt(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
-        out.writeByte(this.buttonId);
+        helper.writeVarInt(out, this.containerId);
+        helper.writeVarInt(out, this.buttonId);
     }
 }
