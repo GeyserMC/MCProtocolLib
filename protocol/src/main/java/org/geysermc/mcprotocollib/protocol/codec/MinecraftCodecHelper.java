@@ -85,14 +85,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -586,13 +579,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) {
-        switch (type) {
-            case BLOCK:
-            case BLOCK_MARKER:
-            case FALLING_DUST:
-            case DUST_PILLAR:
-                return new BlockParticleData(this.readVarInt(buf));
-            case DUST:
+        return switch (type) {
+            case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR -> new BlockParticleData(this.readVarInt(buf));
+            case DUST -> {
                 float red = buf.readFloat();
                 float green = buf.readFloat();
                 float blue = buf.readFloat();
@@ -600,61 +589,52 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 float newRed = buf.readFloat();
                 float newGreen = buf.readFloat();
                 float newBlue = buf.readFloat();
-                return new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
-            case ENTITY_EFFECT:
-                return new EntityEffectParticleData(buf.readInt());
-            case ITEM:
-                return new ItemParticleData(this.readOptionalItemStack(buf));
-            case SCULK_CHARGE:
-                return new SculkChargeParticleData(buf.readFloat());
-            case SHRIEK:
-                return new ShriekParticleData(this.readVarInt(buf));
-            case VIBRATION:
-                return new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
-            default:
-                return null;
-        }
+                yield new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
+            }
+            case ENTITY_EFFECT -> new EntityEffectParticleData(buf.readInt());
+            case ITEM -> new ItemParticleData(this.readOptionalItemStack(buf));
+            case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
+            case SHRIEK -> new ShriekParticleData(this.readVarInt(buf));
+            case VIBRATION -> new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
+            default -> null;
+        };
     }
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) {
-        switch (type) {
-            case BLOCK:
-            case BLOCK_MARKER:
-            case FALLING_DUST:
-            case DUST_PILLAR:
-                this.writeVarInt(buf, ((BlockParticleData) data).getBlockState());
-                break;
-            case DUST:
-                buf.writeFloat(((DustParticleData) data).getRed());
-                buf.writeFloat(((DustParticleData) data).getGreen());
-                buf.writeFloat(((DustParticleData) data).getBlue());
-                buf.writeFloat(((DustParticleData) data).getScale());
-                break;
-            case DUST_COLOR_TRANSITION:
-                buf.writeFloat(((DustParticleData) data).getRed());
-                buf.writeFloat(((DustParticleData) data).getGreen());
-                buf.writeFloat(((DustParticleData) data).getBlue());
-                buf.writeFloat(((DustParticleData) data).getScale());
-                buf.writeFloat(((DustColorTransitionParticleData) data).getNewRed());
-                buf.writeFloat(((DustColorTransitionParticleData) data).getNewGreen());
-                buf.writeFloat(((DustColorTransitionParticleData) data).getNewBlue());
-                break;
-            case ENTITY_EFFECT:
-                buf.writeInt(((EntityEffectParticleData) data).getColor());
-                break;
-            case ITEM:
-                this.writeOptionalItemStack(buf, ((ItemParticleData) data).getItemStack());
-                break;
-            case SCULK_CHARGE:
-                buf.writeFloat(((SculkChargeParticleData) data).getRoll());
-                break;
-            case SHRIEK:
-                this.writeVarInt(buf, ((ShriekParticleData) data).getDelay());
-                break;
-            case VIBRATION:
-                this.writePositionSource(buf, ((VibrationParticleData) data).getPositionSource());
-                this.writeVarInt(buf, ((VibrationParticleData) data).getArrivalTicks());
-                break;
+        if (Objects.requireNonNull(type) == ParticleType.BLOCK || type == ParticleType.BLOCK_MARKER || type == ParticleType.FALLING_DUST || type == ParticleType.DUST_PILLAR) {
+            BlockParticleData blockData = (BlockParticleData) data;
+            this.writeVarInt(buf, blockData.getBlockState());
+        } else if (type == ParticleType.DUST) {
+            DustParticleData dustData = (DustParticleData) data;
+            buf.writeFloat(dustData.getRed());
+            buf.writeFloat(dustData.getGreen());
+            buf.writeFloat(dustData.getBlue());
+            buf.writeFloat(dustData.getScale());
+        } else if (type == ParticleType.DUST_COLOR_TRANSITION) {
+            DustColorTransitionParticleData dustData = (DustColorTransitionParticleData) data;
+            buf.writeFloat(dustData.getRed());
+            buf.writeFloat(dustData.getGreen());
+            buf.writeFloat(dustData.getBlue());
+            buf.writeFloat(dustData.getScale());
+            buf.writeFloat(dustData.getNewRed());
+            buf.writeFloat(dustData.getNewGreen());
+            buf.writeFloat(dustData.getNewBlue());
+        } else if (type == ParticleType.ENTITY_EFFECT) {
+            EntityEffectParticleData entityData = (EntityEffectParticleData) data;
+            buf.writeInt(entityData.getColor());
+        } else if (type == ParticleType.ITEM) {
+            ItemParticleData itemData = (ItemParticleData) data;
+            this.writeOptionalItemStack(buf, itemData.getItemStack());
+        } else if (type == ParticleType.SCULK_CHARGE) {
+            SculkChargeParticleData sculkData = (SculkChargeParticleData) data;
+            buf.writeFloat(sculkData.getRoll());
+        } else if (type == ParticleType.SHRIEK) {
+            ShriekParticleData shriekData = (ShriekParticleData) data;
+            this.writeVarInt(buf, shriekData.getDelay());
+        } else if (type == ParticleType.VIBRATION) {
+            VibrationParticleData vibrationData = (VibrationParticleData) data;
+            this.writePositionSource(buf, vibrationData.getPositionSource());
+            this.writeVarInt(buf, vibrationData.getArrivalTicks());
         }
     }
 
