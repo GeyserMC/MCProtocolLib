@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.status;
 
-import org.geysermc.mcprotocollib.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
-import org.geysermc.mcprotocollib.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 

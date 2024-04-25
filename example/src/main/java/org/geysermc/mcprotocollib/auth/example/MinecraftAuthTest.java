@@ -5,14 +5,12 @@ import net.raphimc.minecraftauth.step.java.StepMCProfile;
 import net.raphimc.minecraftauth.step.java.StepMCToken;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
-import org.geysermc.mcprotocollib.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.auth.service.ProfileService;
-import org.geysermc.mcprotocollib.auth.service.SessionService;
+import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.auth.SessionService;
 
 import java.net.Proxy;
 
 public class MinecraftAuthTest {
-    private static final String USERNAME = "Username";
     private static final String EMAIL = "Username@mail.com";
     private static final String PASSWORD = "Password";
     private static final boolean REQUIRE_SECURE_TEXTURES = true;
@@ -20,25 +18,7 @@ public class MinecraftAuthTest {
     private static final Proxy PROXY = Proxy.NO_PROXY;
 
     public static void main(String[] args) {
-        profileLookup();
         auth();
-    }
-
-    private static void profileLookup() {
-        ProfileService repository = new ProfileService();
-        repository.setProxy(PROXY);
-        repository.findProfilesByName(new String[]{USERNAME}, new ProfileService.ProfileLookupCallback() {
-            @Override
-            public void onProfileLookupSucceeded(GameProfile profile) {
-                System.out.println("Found profile: " + profile);
-            }
-
-            @Override
-            public void onProfileLookupFailed(GameProfile profile, Exception e) {
-                System.out.println("Lookup for profile " + profile.getName() + " failed!");
-                e.printStackTrace();
-            }
-        });
     }
 
     private static void auth() {

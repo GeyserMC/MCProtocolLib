@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game;
 
-import org.geysermc.mcprotocollib.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;

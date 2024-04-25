@@ -1,9 +1,8 @@
-package org.geysermc.mcprotocollib.auth.data;
+package org.geysermc.mcprotocollib.auth;
 
 import org.geysermc.mcprotocollib.auth.exception.property.ProfileTextureException;
 import org.geysermc.mcprotocollib.auth.exception.property.PropertyException;
 import org.geysermc.mcprotocollib.auth.exception.property.SignatureValidateException;
-import org.geysermc.mcprotocollib.auth.service.SessionService;
 import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -434,7 +433,7 @@ public class GameProfile {
          * @return The metadata value corresponding to the given key.
          */
         public String getMetadata(String key) {
-            return this.metadata != null ? this.metadata.get(key) : null;
+            return this.metadata.get(key);
         }
 
         /**

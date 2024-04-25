@@ -1,6 +1,8 @@
-package org.geysermc.mcprotocollib.auth.service;
+package org.geysermc.mcprotocollib.auth;
 
-import org.geysermc.mcprotocollib.auth.data.GameProfile;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileException;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileLookupException;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileNotFoundException;
@@ -10,6 +12,7 @@ import org.geysermc.mcprotocollib.auth.util.UUIDUtils;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -22,10 +25,15 @@ import java.util.UUID;
 /**
  * Service used for session-related queries.
  */
-public class SessionService extends Service {
+@Setter
+@Getter
+public class SessionService {
     private static final URI JOIN_ENDPOINT = URI.create("https://sessionserver.mojang.com/session/minecraft/join");
     private static final String HAS_JOINED_ENDPOINT = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
     private static final String PROFILE_ENDPOINT = "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false";
+
+    @NonNull
+    private Proxy proxy = Proxy.NO_PROXY;
 
     /**
      * Calculates the server ID from a base string, public key, and secret key.

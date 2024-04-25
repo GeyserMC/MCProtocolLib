@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import org.geysermc.mcprotocollib.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.auth.exception.request.InvalidCredentialsException;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
 import org.geysermc.mcprotocollib.auth.exception.request.ServiceUnavailableException;
-import org.geysermc.mcprotocollib.auth.service.SessionService;
+import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.UnexpectedEncryptionException;
 import org.geysermc.mcprotocollib.protocol.data.handshake.HandshakeIntent;
