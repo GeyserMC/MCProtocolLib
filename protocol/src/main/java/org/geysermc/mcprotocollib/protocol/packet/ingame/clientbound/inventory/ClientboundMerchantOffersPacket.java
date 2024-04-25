@@ -29,10 +29,7 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
         for (int i = 0; i < trades.length; i++) {
             ItemStack firstInput = helper.readTradeItemStack(in);
             ItemStack output = helper.readOptionalItemStack(in);
-            ItemStack secondInput = null;
-            if (in.readBoolean()) {
-                secondInput = helper.readTradeItemStack(in);
-            }
+            ItemStack secondInput = helper.readNullable(in, helper::readTradeItemStack);
 
             boolean tradeDisabled = in.readBoolean();
             int numUses = in.readInt();
@@ -59,10 +56,7 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
         for (VillagerTrade trade : this.trades) {
             helper.writeTradeItemStack(out, trade.getFirstInput());
             helper.writeOptionalItemStack(out, trade.getOutput());
-            out.writeBoolean(trade.getSecondInput() != null);
-            if (trade.getSecondInput() != null) {
-                helper.writeTradeItemStack(out, trade.getSecondInput());
-            }
+            helper.writeNullable(out, trade.getSecondInput(), helper::writeTradeItemStack);
 
             out.writeBoolean(trade.isTradeDisabled());
             out.writeInt(trade.getNumUses());

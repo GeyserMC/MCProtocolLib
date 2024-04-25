@@ -369,7 +369,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, item.getAmount());
 
         DataComponents dataComponents = item.getDataComponents();
-        if (item.getDataComponents() == null) {
+        if (dataComponents == null) {
             this.writeVarInt(buf, 0);
             return;
         }
