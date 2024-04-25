@@ -4,13 +4,11 @@ import org.geysermc.mcprotocollib.auth.exception.request.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,11 +18,9 @@ import java.util.UUID;
  * Utilities for making HTTP requests.
  */
 public class HTTP {
-    private static final Gson GSON;
-
-    static {
-        GSON = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDSerializer()).create();
-    }
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(UUID.class, new UndashedUUIDAdapter())
+            .create();
 
     private HTTP() {
     }

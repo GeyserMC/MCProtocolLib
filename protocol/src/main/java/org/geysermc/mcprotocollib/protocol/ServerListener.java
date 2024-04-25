@@ -201,7 +201,7 @@ public class ServerListener extends SessionAdapter {
             if (this.key != null) {
                 SessionService sessionService = this.session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
                 try {
-                    profile = sessionService.getProfileByServer(username, sessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
+                    profile = sessionService.getProfileByServer(username, SessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
                 } catch (RequestException e) {
                     this.session.disconnect("Failed to make session service request.", e);
                     return;

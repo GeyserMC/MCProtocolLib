@@ -41,7 +41,7 @@ public class MinecraftAuthTest {
         });
     }
 
-    private static void auth() throws Exception {
+    private static void auth() {
         SessionService service = new SessionService();
         service.setProxy(PROXY);
 
@@ -51,8 +51,7 @@ public class MinecraftAuthTest {
                     MinecraftAuth.createHttpClient(),
                     new StepCredentialsMsaCode.MsaCredentials(EMAIL, PASSWORD));
         } catch (Exception e) {
-            e.printStackTrace();
-            return;
+            throw new RuntimeException(e);
         }
 
         StepMCProfile.MCProfile mcProfile = fullJavaSession.getMcProfile();

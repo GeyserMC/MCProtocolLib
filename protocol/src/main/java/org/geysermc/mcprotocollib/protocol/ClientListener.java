@@ -72,7 +72,7 @@ public class ClientListener extends SessionAdapter {
                 }
 
                 SessionService sessionService = session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
-                String serverId = sessionService.getServerId(helloPacket.getServerId(), helloPacket.getPublicKey(), key);
+                String serverId = SessionService.getServerId(helloPacket.getServerId(), helloPacket.getPublicKey(), key);
                 try {
                     sessionService.joinServer(profile, accessToken, serverId);
                 } catch (ServiceUnavailableException e) {

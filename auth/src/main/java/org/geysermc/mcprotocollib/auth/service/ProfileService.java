@@ -16,20 +16,12 @@ import java.util.UUID;
  * Repository for looking up profiles by name.
  */
 public class ProfileService extends Service {
-    private static final URI DEFAULT_BASE_URI = URI.create("https://api.mojang.com/profiles/");
-    private static final String SEARCH_ENDPOINT = "minecraft";
+    private static final URI SEARCH_ENDPOINT = URI.create("https://api.mojang.com/profiles/minecraft");
 
     private static final int MAX_FAIL_COUNT = 3;
     private static final int DELAY_BETWEEN_PAGES = 100;
     private static final int DELAY_BETWEEN_FAILURES = 750;
     private static final int PROFILES_PER_REQUEST = 100;
-
-    /**
-     * Creates a new ProfileService instance.
-     */
-    public ProfileService() {
-        super(DEFAULT_BASE_URI);
-    }
 
     /**
      * Locates profiles by their names.
@@ -64,7 +56,7 @@ public class ProfileService extends Service {
                 while(failCount < MAX_FAIL_COUNT && tryAgain) {
                     tryAgain = false;
                     try {
-                        GameProfile[] profiles = HTTP.makeRequest(getProxy(), getEndpointUri(SEARCH_ENDPOINT), request, GameProfile[].class);
+                        GameProfile[] profiles = HTTP.makeRequest(getProxy(), SEARCH_ENDPOINT, request, GameProfile[].class);
                         failCount = 0;
                         Set<String> missing = new HashSet<String>(request);
                         for(GameProfile profile : profiles) {

@@ -6,36 +6,28 @@ import org.geysermc.mcprotocollib.auth.exception.profile.ProfileLookupException;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileNotFoundException;
 import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
 import org.geysermc.mcprotocollib.auth.util.HTTP;
-import org.geysermc.mcprotocollib.auth.util.UUIDSerializer;
+import org.geysermc.mcprotocollib.auth.util.UUIDUtils;
+import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
  * Service used for session-related queries.
  */
 public class SessionService extends Service {
-    private static final URI DEFAULT_BASE_URI = URI.create("https://sessionserver.mojang.com/session/minecraft/");
-    private static final String JOIN_ENDPOINT = "join";
-    private static final String HAS_JOINED_ENDPOINT = "hasJoined";
-    private static final String PROFILE_ENDPOINT = "profile";
-
-    /**
-     * Creates a new SessionService instance.
-     */
-    public SessionService() {
-        super(DEFAULT_BASE_URI);
-    }
+    private static final URI JOIN_ENDPOINT = URI.create("https://sessionserver.mojang.com/session/minecraft/join");
+    private static final String HAS_JOINED_ENDPOINT = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
+    private static final String PROFILE_ENDPOINT = "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false";
 
     /**
      * Calculates the server ID from a base string, public key, and secret key.
@@ -46,7 +38,7 @@ public class SessionService extends Service {
      * @return The calculated server ID.
      * @throws IllegalStateException If the server ID hash algorithm is unavailable.
      */
-    public String getServerId(String base, PublicKey publicKey, SecretKey secretKey) {
+    public static String getServerId(String base, PublicKey publicKey, SecretKey secretKey) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             digest.update(base.getBytes(StandardCharsets.ISO_8859_1));
@@ -68,7 +60,7 @@ public class SessionService extends Service {
      */
     public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws RequestException {
         JoinServerRequest request = new JoinServerRequest(authenticationToken, profile.getId(), serverId);
-        HTTP.makeRequest(this.getProxy(), this.getEndpointUri(JOIN_ENDPOINT), request, null);
+        HTTP.makeRequest(this.getProxy(), JOIN_ENDPOINT, request, null);
     }
 
     /**
@@ -80,11 +72,11 @@ public class SessionService extends Service {
      * @throws RequestException If an error occurs while making the request.
      */
     public GameProfile getProfileByServer(String name, String serverId) throws RequestException {
-        Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("username", name);
-        queryParams.put("serverId", serverId);
-
-        HasJoinedResponse response = HTTP.makeRequest(this.getProxy(), this.getEndpointUri(HAS_JOINED_ENDPOINT, queryParams), null, HasJoinedResponse.class);
+        HasJoinedResponse response = HTTP.makeRequest(this.getProxy(),
+                URI.create(String.format(HAS_JOINED_ENDPOINT,
+                        URLEncoder.encode(name, StandardCharsets.UTF_8),
+                        URLEncoder.encode(serverId, StandardCharsets.UTF_8))),
+                null, HasJoinedResponse.class);
         if(response != null && response.id != null) {
             GameProfile result = new GameProfile(response.id, name);
             result.setProperties(response.properties);
@@ -106,7 +98,7 @@ public class SessionService extends Service {
         }
 
         try {
-            MinecraftProfileResponse response = HTTP.makeRequest(this.getProxy(), this.getEndpointUri(PROFILE_ENDPOINT + "/" + UUIDSerializer.fromUUID(profile.getId()), Collections.singletonMap("unsigned", "false")), null, MinecraftProfileResponse.class);
+            MinecraftProfileResponse response = HTTP.makeRequest(this.getProxy(), URI.create(String.format(PROFILE_ENDPOINT, UUIDUtils.convertToNoDashes(profile.getId()))), null, MinecraftProfileResponse.class);
             if(response == null) {
                 throw new ProfileNotFoundException("Couldn't fetch profile properties for " + profile + " as the profile does not exist.");
             }
@@ -122,16 +114,7 @@ public class SessionService extends Service {
         return "SessionService{}";
     }
 
-    private static class JoinServerRequest {
-        private String accessToken;
-        private UUID selectedProfile;
-        private String serverId;
-
-        protected JoinServerRequest(String accessToken, UUID selectedProfile, String serverId) {
-            this.accessToken = accessToken;
-            this.selectedProfile = selectedProfile;
-            this.serverId = serverId;
-        }
+    private record JoinServerRequest(String accessToken, UUID selectedProfile, String serverId) {
     }
 
     private static class HasJoinedResponse {

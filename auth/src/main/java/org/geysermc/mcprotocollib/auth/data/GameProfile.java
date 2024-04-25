@@ -4,11 +4,10 @@ import org.geysermc.mcprotocollib.auth.exception.property.ProfileTextureExceptio
 import org.geysermc.mcprotocollib.auth.exception.property.PropertyException;
 import org.geysermc.mcprotocollib.auth.exception.property.SignatureValidateException;
 import org.geysermc.mcprotocollib.auth.service.SessionService;
-import org.geysermc.mcprotocollib.auth.util.UUIDSerializer;
+import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,7 +41,7 @@ public class GameProfile {
             throw new ExceptionInInitializerError("Missing/invalid yggdrasil public key.");
         }
 
-        GSON = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDSerializer()).create();
+        GSON = new GsonBuilder().registerTypeAdapter(UUID.class, new UndashedUUIDAdapter()).create();
     }
 
     private static boolean isWhitelistedDomain(String url) {

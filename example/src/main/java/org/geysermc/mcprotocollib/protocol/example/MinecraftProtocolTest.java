@@ -1,5 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.example;
 
+import net.raphimc.minecraftauth.MinecraftAuth;
+import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
+import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
 import org.geysermc.mcprotocollib.auth.data.GameProfile;
 import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
 import org.geysermc.mcprotocollib.auth.service.SessionService;
@@ -172,19 +175,21 @@ public class MinecraftProtocolTest {
     private static void login() {
         MinecraftProtocol protocol;
         if (VERIFY_USERS) {
+            StepFullJavaSession.FullJavaSession fullJavaSession;
             try {
-                AuthenticationService authService = new MojangAuthenticationService();
-                authService.setUsername(USERNAME);
-                authService.setPassword(PASSWORD);
-                authService.setProxy(AUTH_PROXY);
-                authService.login();
-
-                protocol = new MinecraftProtocol(authService.getSelectedProfile(), authService.getAccessToken());
-                System.out.println("Successfully authenticated user.");
-            } catch (RequestException e) {
-                e.printStackTrace();
-                return;
+                fullJavaSession = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
+                        MinecraftAuth.createHttpClient(),
+                        new StepCredentialsMsaCode.MsaCredentials(USERNAME, PASSWORD));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+
+            var mcProfile = fullJavaSession.getMcProfile();
+            var mcToken = mcProfile.getMcToken();
+            protocol = new MinecraftProtocol(
+                    new GameProfile(mcProfile.getId(), mcProfile.getName()),
+                    mcToken.getAccessToken());
+            System.out.println("Successfully authenticated user.");
         } else {
             protocol = new MinecraftProtocol(USERNAME);
         }
