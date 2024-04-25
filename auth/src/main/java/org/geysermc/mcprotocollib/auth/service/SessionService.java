@@ -5,9 +5,8 @@ import org.geysermc.mcprotocollib.auth.exception.profile.ProfileException;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileLookupException;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileNotFoundException;
 import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.util.HTTP;
+import org.geysermc.mcprotocollib.auth.util.HTTPUtils;
 import org.geysermc.mcprotocollib.auth.util.UUIDUtils;
-import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
 
 import javax.crypto.SecretKey;
 import java.math.BigInteger;
@@ -17,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,7 +58,7 @@ public class SessionService extends Service {
      */
     public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws RequestException {
         JoinServerRequest request = new JoinServerRequest(authenticationToken, profile.getId(), serverId);
-        HTTP.makeRequest(this.getProxy(), JOIN_ENDPOINT, request, null);
+        HTTPUtils.makeRequest(this.getProxy(), JOIN_ENDPOINT, request, null);
     }
 
     /**
@@ -72,7 +70,7 @@ public class SessionService extends Service {
      * @throws RequestException If an error occurs while making the request.
      */
     public GameProfile getProfileByServer(String name, String serverId) throws RequestException {
-        HasJoinedResponse response = HTTP.makeRequest(this.getProxy(),
+        HasJoinedResponse response = HTTPUtils.makeRequest(this.getProxy(),
                 URI.create(String.format(HAS_JOINED_ENDPOINT,
                         URLEncoder.encode(name, StandardCharsets.UTF_8),
                         URLEncoder.encode(serverId, StandardCharsets.UTF_8))),
@@ -98,7 +96,7 @@ public class SessionService extends Service {
         }
 
         try {
-            MinecraftProfileResponse response = HTTP.makeRequest(this.getProxy(), URI.create(String.format(PROFILE_ENDPOINT, UUIDUtils.convertToNoDashes(profile.getId()))), null, MinecraftProfileResponse.class);
+            MinecraftProfileResponse response = HTTPUtils.makeRequest(this.getProxy(), URI.create(String.format(PROFILE_ENDPOINT, UUIDUtils.convertToNoDashes(profile.getId()))), null, MinecraftProfileResponse.class);
             if(response == null) {
                 throw new ProfileNotFoundException("Couldn't fetch profile properties for " + profile + " as the profile does not exist.");
             }
