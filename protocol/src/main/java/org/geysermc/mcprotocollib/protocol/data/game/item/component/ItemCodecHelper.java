@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.auth.data.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;

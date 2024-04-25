@@ -36,21 +36,18 @@ public class HTTPUtils {
             throw new IllegalArgumentException("URI cannot be null.");
         }
 
-        JsonElement responseObject;
         try {
             HttpResponse response = createHttpClient().execute(input == null ? new HttpRequest("GET", uri.toURL()) :
                     new HttpContentRequest("POST", uri.toURL()).setContent(HttpContent.string(GSON.toJson(input))));
 
-            responseObject = GSON.fromJson(new InputStreamReader(new ByteArrayInputStream(response.getContent())), JsonElement.class);
+            if (responseType == null) {
+                return null;
+            }
+
+            return GSON.fromJson(new InputStreamReader(new ByteArrayInputStream(response.getContent())), responseType);
         } catch(IOException e) {
             throw new ServiceUnavailableException("Could not make request to '" + uri + "'.", e);
         }
-
-        if(responseObject != null && responseType != null) {
-            return GSON.fromJson(responseObject, responseType);
-        }
-
-        return null;
     }
 
     public static HttpClient createHttpClient() {
