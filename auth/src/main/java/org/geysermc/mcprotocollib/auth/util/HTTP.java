@@ -33,12 +33,11 @@ public class HTTP {
      * @param input        Input to provide in the request.
      * @param responseType Class to provide the response as.
      * @param <T>          Type to provide the response as.
-     * @param extraHeaders Extra headers to add to the request.
      * @return The response of the request.
      * @throws IllegalArgumentException If the given proxy or URI is null.
      * @throws RequestException If an error occurs while making the request.
      */
-    public static <T> T makeRequest(Proxy proxy, URI uri, Object input, Class<T> responseType, Map<String, String> extraHeaders) throws RequestException {
+    public static <T> T makeRequest(Proxy proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
         if(proxy == null) {
             throw new IllegalArgumentException("Proxy cannot be null.");
         } else if(uri == null) {
@@ -47,43 +46,31 @@ public class HTTP {
 
         JsonElement response;
         try {
-            response = input == null ? performGetRequest(proxy, uri, extraHeaders) : performPostRequest(proxy, uri, extraHeaders, GSON.toJson(input), "application/json");
+            response = input == null ? performGetRequest(proxy, uri) : performPostRequest(proxy, uri, GSON.toJson(input), "application/json");
         } catch(IOException e) {
             throw new ServiceUnavailableException("Could not make request to '" + uri + "'.", e);
         }
 
-        if(response != null) {
-            if(responseType != null) {
-                return GSON.fromJson(response, responseType);
-            }
+        if(response != null && responseType != null) {
+            return GSON.fromJson(response, responseType);
         }
 
         return null;
     }
 
-    public static <T> T makeRequest(Proxy proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
-        return makeRequest(proxy, uri, input, responseType, new HashMap<>());
-    }
-
-    private static JsonElement performGetRequest(Proxy proxy, URI uri, Map<String, String> extraHeaders) throws IOException {
+    private static JsonElement performGetRequest(Proxy proxy, URI uri) throws IOException {
         HttpURLConnection connection = createUrlConnection(proxy, uri);
-        for (Map.Entry<String, String> header : extraHeaders.entrySet()) {
-            connection.setRequestProperty(header.getKey(), header.getValue());
-        }
         connection.setDoInput(true);
 
         return processResponse(connection);
     }
 
-    private static JsonElement performPostRequest(Proxy proxy, URI uri, Map<String, String> extraHeaders, String post, String type) throws IOException {
+    private static JsonElement performPostRequest(Proxy proxy, URI uri, String post, String type) throws IOException {
         byte[] bytes = post.getBytes(StandardCharsets.UTF_8);
 
         HttpURLConnection connection = createUrlConnection(proxy, uri);
         connection.setRequestProperty("Content-Type", type + "; charset=utf-8");
         connection.setRequestProperty("Content-Length", String.valueOf(bytes.length));
-        for (Map.Entry<String, String> header : extraHeaders.entrySet()) {
-            connection.setRequestProperty(header.getKey(), header.getValue());
-        }
         connection.setDoInput(true);
         connection.setDoOutput(true);
 
