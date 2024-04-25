@@ -3,7 +3,8 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 public enum ArmadilloState {
     IDLE,
     ROLLING,
-    SCARED;
+    SCARED,
+    UNROLLING;
 
     private static final ArmadilloState[] VALUES = values();
 
