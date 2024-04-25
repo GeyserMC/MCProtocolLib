@@ -12,11 +12,11 @@ import org.cloudburstmc.math.vector.Vector3i;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundBlockEntityTagQuery implements MinecraftPacket {
+public class ServerboundBlockEntityTagQueryPacket implements MinecraftPacket {
     private final int transactionId;
     private final @NonNull Vector3i position;
 
-    public ServerboundBlockEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundBlockEntityTagQueryPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.transactionId = helper.readVarInt(in);
         this.position = helper.readPosition(in);
     }

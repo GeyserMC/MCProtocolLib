@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.advancement;
 
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;

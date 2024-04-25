@@ -3,13 +3,17 @@ package org.geysermc.mcprotocollib.protocol.codec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCookieRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundPingPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundResourcePackPopPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundResourcePackPushPacket;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundStoreCookiePacket;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundTransferPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundUpdateTagsPacket;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ServerboundCookieResponsePacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
@@ -17,8 +21,11 @@ import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.Serverbound
 import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundResourcePackPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
+import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundResetChatPacket;
+import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundSelectKnownPacks;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundUpdateEnabledFeaturesPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
+import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundSelectKnownPacks;
 import org.geysermc.mcprotocollib.protocol.packet.handshake.serverbound.ClientIntentionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundAwardStatsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundBossEventPacket;
@@ -27,6 +34,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundCommandsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundCooldownPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundCustomChatCompletionsPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDebugSamplePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDeleteChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDisguisedChatPacket;
@@ -56,6 +64,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.Clie
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityPosRotPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityRotPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundMoveVehiclePacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundProjectilePowerPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundRemoveEntitiesPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundRemoveMobEffectPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundRotateHeadPacket;
@@ -132,11 +141,13 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title.Clien
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChangeDifficultyPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatAckPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatCommandSignedPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatSessionUpdatePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundDebugSampleSubscriptionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundLockDifficultyPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundContainerButtonClickPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClickPacket;
@@ -157,7 +168,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.S
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundSetJigsawBlockPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundSetStructureBlockPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundAcceptTeleportationPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundBlockEntityTagQuery;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundBlockEntityTagQueryPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundChunkBatchReceivedPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundEntityTagQuery;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundJigsawGeneratePacket;
@@ -212,9 +223,9 @@ public class MinecraftCodec {
     }
 
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion(765)
+            .protocolVersion(766)
             .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
-            .minecraftVersion("1.20.4")
+            .minecraftVersion("1.20.5")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -224,32 +235,41 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundGameProfilePacket.class, ClientboundGameProfilePacket::new)
                     .registerClientboundPacket(ClientboundLoginCompressionPacket.class, ClientboundLoginCompressionPacket::new)
                     .registerClientboundPacket(ClientboundCustomQueryPacket.class, ClientboundCustomQueryPacket::new)
+                    .registerClientboundPacket(ClientboundCookieRequestPacket.class, ClientboundCookieRequestPacket::new)
                     .registerServerboundPacket(ServerboundHelloPacket.class, ServerboundHelloPacket::new)
                     .registerServerboundPacket(ServerboundKeyPacket.class, ServerboundKeyPacket::new)
                     .registerServerboundPacket(ServerboundCustomQueryAnswerPacket.class, ServerboundCustomQueryAnswerPacket::new)
                     .registerServerboundPacket(ServerboundLoginAcknowledgedPacket.class, ServerboundLoginAcknowledgedPacket::new)
+                    .registerServerboundPacket(ServerboundCookieResponsePacket.class, ServerboundCookieResponsePacket::new)
             ).state(ProtocolState.STATUS, PacketStateCodec.builder()
                     .registerClientboundPacket(ClientboundStatusResponsePacket.class, ClientboundStatusResponsePacket::new)
                     .registerClientboundPacket(ClientboundPongResponsePacket.class, ClientboundPongResponsePacket::new)
                     .registerServerboundPacket(ServerboundStatusRequestPacket.class, ServerboundStatusRequestPacket::new)
                     .registerServerboundPacket(ServerboundPingRequestPacket.class, ServerboundPingRequestPacket::new)
             ).state(ProtocolState.CONFIGURATION, PacketStateCodec.builder()
+                    .registerClientboundPacket(ClientboundCookieRequestPacket.class, ClientboundCookieRequestPacket::new)
                     .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
                     .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
                     .registerClientboundPacket(ClientboundFinishConfigurationPacket.class, ClientboundFinishConfigurationPacket::new)
                     .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
                     .registerClientboundPacket(ClientboundPingPacket.class, ClientboundPingPacket::new)
+                    .registerClientboundPacket(ClientboundResetChatPacket.class, ClientboundResetChatPacket::new)
                     .registerClientboundPacket(ClientboundRegistryDataPacket.class, ClientboundRegistryDataPacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
+                    .registerClientboundPacket(ClientboundStoreCookiePacket.class, ClientboundStoreCookiePacket::new)
+                    .registerClientboundPacket(ClientboundTransferPacket.class, ClientboundTransferPacket::new)
                     .registerClientboundPacket(ClientboundUpdateEnabledFeaturesPacket.class, ClientboundUpdateEnabledFeaturesPacket::new)
                     .registerClientboundPacket(ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
+                    .registerClientboundPacket(ClientboundSelectKnownPacks.class, ClientboundSelectKnownPacks::new)
                     .registerServerboundPacket(ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
+                    .registerServerboundPacket(ServerboundCookieResponsePacket.class, ServerboundCookieResponsePacket::new)
                     .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
                     .registerServerboundPacket(ServerboundFinishConfigurationPacket.class, ServerboundFinishConfigurationPacket::new)
                     .registerServerboundPacket(ServerboundKeepAlivePacket.class, ServerboundKeepAlivePacket::new)
                     .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
                     .registerServerboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
+                    .registerServerboundPacket(ServerboundSelectKnownPacks.class, ServerboundSelectKnownPacks::new)
             ).state(ProtocolState.GAME, PacketStateCodec.builder()
                     .registerClientboundPacket(ClientboundDelimiterPacket.class, ClientboundDelimiterPacket::new)
                     .registerClientboundPacket(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new)
@@ -273,10 +293,12 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundContainerSetContentPacket.class, ClientboundContainerSetContentPacket::new)
                     .registerClientboundPacket(ClientboundContainerSetDataPacket.class, ClientboundContainerSetDataPacket::new)
                     .registerClientboundPacket(ClientboundContainerSetSlotPacket.class, ClientboundContainerSetSlotPacket::new)
+                    .registerClientboundPacket(ClientboundCookieRequestPacket.class, ClientboundCookieRequestPacket::new)
                     .registerClientboundPacket(ClientboundCooldownPacket.class, ClientboundCooldownPacket::new)
                     .registerClientboundPacket(ClientboundCustomChatCompletionsPacket.class, ClientboundCustomChatCompletionsPacket::new)
                     .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
                     .registerClientboundPacket(ClientboundDamageEventPacket.class, ClientboundDamageEventPacket::new)
+                    .registerClientboundPacket(ClientboundDebugSamplePacket.class, ClientboundDebugSamplePacket::new)
                     .registerClientboundPacket(ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new)
                     .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
                     .registerClientboundPacket(ClientboundDisguisedChatPacket.class, ClientboundDisguisedChatPacket::new)
@@ -356,6 +378,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundSoundPacket.class, ClientboundSoundPacket::new)
                     .registerClientboundPacket(ClientboundStartConfigurationPacket.class, ClientboundStartConfigurationPacket::new)
                     .registerClientboundPacket(ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new)
+                    .registerClientboundPacket(ClientboundStoreCookiePacket.class, ClientboundStoreCookiePacket::new)
                     .registerClientboundPacket(ClientboundSystemChatPacket.class, ClientboundSystemChatPacket::new)
                     .registerClientboundPacket(ClientboundTabListPacket.class, ClientboundTabListPacket::new)
                     .registerClientboundPacket(ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
@@ -363,16 +386,19 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundTeleportEntityPacket.class, ClientboundTeleportEntityPacket::new)
                     .registerClientboundPacket(ClientboundTickingStatePacket.class, ClientboundTickingStatePacket::new)
                     .registerClientboundPacket(ClientboundTickingStepPacket.class, ClientboundTickingStepPacket::new)
+                    .registerClientboundPacket(ClientboundTransferPacket.class, ClientboundTransferPacket::new)
                     .registerClientboundPacket(ClientboundUpdateAdvancementsPacket.class, ClientboundUpdateAdvancementsPacket::new)
                     .registerClientboundPacket(ClientboundUpdateAttributesPacket.class, ClientboundUpdateAttributesPacket::new)
                     .registerClientboundPacket(ClientboundUpdateMobEffectPacket.class, ClientboundUpdateMobEffectPacket::new)
                     .registerClientboundPacket(ClientboundUpdateRecipesPacket.class, ClientboundUpdateRecipesPacket::new)
                     .registerClientboundPacket(ClientboundUpdateTagsPacket.class, ClientboundUpdateTagsPacket::new)
+                    .registerClientboundPacket(ClientboundProjectilePowerPacket.class, ClientboundProjectilePowerPacket::new)
                     .registerServerboundPacket(ServerboundAcceptTeleportationPacket.class, ServerboundAcceptTeleportationPacket::new)
-                    .registerServerboundPacket(ServerboundBlockEntityTagQuery.class, ServerboundBlockEntityTagQuery::new)
+                    .registerServerboundPacket(ServerboundBlockEntityTagQueryPacket.class, ServerboundBlockEntityTagQueryPacket::new)
                     .registerServerboundPacket(ServerboundChangeDifficultyPacket.class, ServerboundChangeDifficultyPacket::new)
                     .registerServerboundPacket(ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
                     .registerServerboundPacket(ServerboundChatCommandPacket.class, ServerboundChatCommandPacket::new)
+                    .registerServerboundPacket(ServerboundChatCommandSignedPacket.class, ServerboundChatCommandSignedPacket::new)
                     .registerServerboundPacket(ServerboundChatPacket.class, ServerboundChatPacket::new)
                     .registerServerboundPacket(ServerboundChatSessionUpdatePacket.class, ServerboundChatSessionUpdatePacket::new)
                     .registerServerboundPacket(ServerboundChunkBatchReceivedPacket.class, ServerboundChunkBatchReceivedPacket::new)
@@ -384,7 +410,9 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundContainerClickPacket.class, ServerboundContainerClickPacket::new)
                     .registerServerboundPacket(ServerboundContainerClosePacket.class, ServerboundContainerClosePacket::new)
                     .registerServerboundPacket(ServerboundContainerSlotStateChangedPacket.class, ServerboundContainerSlotStateChangedPacket::new)
+                    .registerServerboundPacket(ServerboundCookieResponsePacket.class, ServerboundCookieResponsePacket::new)
                     .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
+                    .registerServerboundPacket(ServerboundDebugSampleSubscriptionPacket.class, ServerboundDebugSampleSubscriptionPacket::new)
                     .registerServerboundPacket(ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
                     .registerServerboundPacket(ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)
                     .registerServerboundPacket(ServerboundInteractPacket.class, ServerboundInteractPacket::new)

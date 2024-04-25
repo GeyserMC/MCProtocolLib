@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class FallingDustParticleData implements ParticleData {
-    private final int blockState;
+public class EntityEffectParticleData implements ParticleData {
+    private final int color;
 }

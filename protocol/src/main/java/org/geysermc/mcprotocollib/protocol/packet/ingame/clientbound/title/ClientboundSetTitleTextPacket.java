@@ -8,13 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetTitleTextPacket implements MinecraftPacket {
-    private final @Nullable Component text;
+    private final @NonNull Component text;
 
     public ClientboundSetTitleTextPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.text = helper.readComponent(in);
@@ -22,6 +23,6 @@ public class ClientboundSetTitleTextPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, DefaultComponentSerializer.get().serializeOr(this.text, "null"));
+        helper.writeComponent(out, this.text);
     }
 }

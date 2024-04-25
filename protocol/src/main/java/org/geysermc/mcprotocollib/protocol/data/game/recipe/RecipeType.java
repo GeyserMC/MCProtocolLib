@@ -1,11 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.data.game.recipe;
 
-import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 public enum RecipeType {
     CRAFTING_SHAPED,
     CRAFTING_SHAPELESS,
@@ -31,25 +25,9 @@ public enum RecipeType {
     SMITHING_TRIM,
     CRAFTING_DECORATED_POT;
 
-    private final String resourceLocation;
+    private static final RecipeType[] VALUES = values();
 
-    RecipeType() {
-        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
-    }
-
-    public String getResourceLocation() {
-        return resourceLocation;
-    }
-
-    private static final Map<String, RecipeType> VALUES = new HashMap<>();
-
-    public static RecipeType from(String resourceLocation) {
-        return VALUES.get(resourceLocation);
-    }
-
-    static {
-        for (RecipeType type : values()) {
-            VALUES.put(type.resourceLocation, type);
-        }
+    public static RecipeType from(int id) {
+        return VALUES[id];
     }
 }

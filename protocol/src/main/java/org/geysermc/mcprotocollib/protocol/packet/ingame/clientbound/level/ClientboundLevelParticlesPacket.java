@@ -26,7 +26,6 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
     private final int amount;
 
     public ClientboundLevelParticlesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        ParticleType type = helper.readParticleType(in);
         this.longDistance = in.readBoolean();
         this.x = in.readDouble();
         this.y = in.readDouble();
@@ -36,12 +35,12 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         this.offsetZ = in.readFloat();
         this.velocityOffset = in.readFloat();
         this.amount = in.readInt();
+        ParticleType type = helper.readParticleType(in);
         this.particle = new Particle(type, helper.readParticleData(in, type));
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeParticleType(out, this.particle.getType());
         out.writeBoolean(this.longDistance);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
@@ -51,6 +50,7 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         out.writeFloat(this.offsetZ);
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
+        helper.writeParticleType(out, this.particle.getType());
         helper.writeParticleData(out, this.particle.getType(), this.particle.getData());
     }
 }

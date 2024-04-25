@@ -18,6 +18,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private static final int FLAG_AMBIENT = 0x01;
     private static final int FLAG_SHOW_PARTICLES = 0x02;
     private static final int FLAG_SHOW_ICON = 0x04;
+    private static final int FLAG_BLEND = 0x08;
 
     private final int entityId;
     private final @NonNull Effect effect;
@@ -26,26 +27,26 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private final boolean ambient;
     private final boolean showParticles;
     private final boolean showIcon;
-    private final @Nullable CompoundTag factorData;
+    private final boolean blend;
 
     public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = helper.readVarInt(in);
         this.effect = helper.readEffect(in);
-        this.amplifier = in.readByte();
+        this.amplifier = helper.readVarInt(in);
         this.duration = helper.readVarInt(in);
 
         int flags = in.readByte();
         this.ambient = (flags & FLAG_AMBIENT) != 0;
         this.showParticles = (flags & FLAG_SHOW_PARTICLES) != 0;
         this.showIcon = (flags & FLAG_SHOW_ICON) != 0;
-        this.factorData = helper.readNullable(in, helper::readAnyTagOrThrow);
+        this.blend = (flags & FLAG_BLEND) != 0;
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.entityId);
         helper.writeEffect(out, this.effect);
-        out.writeByte(this.amplifier);
+        helper.writeVarInt(out, this.amplifier);
         helper.writeVarInt(out, this.duration);
 
         int flags = 0;
@@ -58,8 +59,10 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
         if (this.showIcon) {
             flags |= FLAG_SHOW_ICON;
         }
+        if (this.blend) {
+            flags |= FLAG_BLEND;
+        }
 
         out.writeByte(flags);
-        helper.writeNullable(out, this.factorData, helper::writeAnyTag);
     }
 }

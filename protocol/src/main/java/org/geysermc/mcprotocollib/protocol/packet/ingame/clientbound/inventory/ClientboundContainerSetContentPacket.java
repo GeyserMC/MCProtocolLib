@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,9 +24,9 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
         this.stateId = helper.readVarInt(in);
         this.items = new ItemStack[helper.readVarInt(in)];
         for (int index = 0; index < this.items.length; index++) {
-            this.items[index] = helper.readItemStack(in);
+            this.items[index] = helper.readOptionalItemStack(in);
         }
-        this.carriedItem = helper.readItemStack(in);
+        this.carriedItem = helper.readOptionalItemStack(in);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.stateId);
         helper.writeVarInt(out, this.items.length);
         for (ItemStack item : this.items) {
-            helper.writeItemStack(out, item);
+            helper.writeOptionalItemStack(out, item);
         }
-        helper.writeItemStack(out, this.carriedItem);
+        helper.writeOptionalItemStack(out, this.carriedItem);
     }
 }
