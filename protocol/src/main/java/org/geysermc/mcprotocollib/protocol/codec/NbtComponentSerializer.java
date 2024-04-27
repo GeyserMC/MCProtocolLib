@@ -25,16 +25,16 @@ import java.util.UUID;
  */
 public class NbtComponentSerializer {
 
-    private static final Set<String> BOOLEAN_TYPES = new HashSet<>(Arrays.asList(
+    private static final Set<String> BOOLEAN_TYPES = Set.of(
         "interpret",
         "bold",
         "italic",
         "underlined",
         "strikethrough",
         "obfuscated"
-    ));
+    );
     // Order is important
-    private static final List<Pair<String, String>> COMPONENT_TYPES = Arrays.asList(
+    private static final List<Pair<String, String>> COMPONENT_TYPES = List.of(
         new Pair<>("text", "text"),
         new Pair<>("translatable", "translate"),
         new Pair<>("score", "score"),
@@ -209,7 +209,7 @@ public class NbtComponentSerializer {
             }
 
             for (Map.Entry<String, Object> entry : nbtMap.entrySet()) {
-                convertNbtMapEntry(entry.getKey(), entry, object);
+                convertNbtMapEntry(entry.getKey(), entry.getValue(), object);
             }
             return object;
         } else if (tag instanceof NbtList<?> list) {

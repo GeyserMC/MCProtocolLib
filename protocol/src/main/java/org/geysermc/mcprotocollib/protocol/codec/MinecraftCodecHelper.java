@@ -1,6 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import org.cloudburstmc.nbt.*;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
@@ -233,13 +235,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     @Nullable
     public Object readAnyTag(ByteBuf buf) {
         try {
-            DataInputStream input = new DataInputStream(new InputStream() {
-                @Override
-                public int read() {
-                    return buf.readUnsignedByte();
-                }
-            });
-            NBTInputStream nbtInputStream = new NBTInputStream(input);
+            ByteBufInputStream input = new ByteBufInputStream(buf);
 
             int typeId = input.readUnsignedByte();
             if (typeId == 0) {
@@ -247,9 +243,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             }
 
             NbtType<?> type = NbtType.byId(typeId);
-            input.readUTF(); // Root tag name
 
-            return nbtInputStream.readValue(type);
+            return new NBTInputStream(input).readValue(type);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -257,19 +252,17 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeAnyTag(ByteBuf buf, @Nullable Object tag) {
         try {
-            DataOutputStream output = new DataOutputStream(new OutputStream() {
-                @Override
-                public void write(int b) {
-                    buf.writeByte(b);
-                }
-            });
+            ByteBufOutputStream output = new ByteBufOutputStream(buf);
 
             if (tag == null) {
                 output.writeByte(0);
                 return;
             }
 
-            new NBTOutputStream(output).writeTag(tag);
+            NbtType<?> type = NbtType.byClass(tag.getClass());
+            output.writeByte(type.getId());
+
+            new NBTOutputStream(output).writeValue(tag);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
