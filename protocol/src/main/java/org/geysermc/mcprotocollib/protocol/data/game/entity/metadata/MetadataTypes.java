@@ -24,39 +24,67 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class MetadataTypes {
-    public static final ByteMetadataType BYTE = new ByteMetadataType(ByteBuf::readByte, ByteBuf::writeByte, ByteEntityMetadata::new);
-    public static final IntMetadataType INT = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
-    public static final LongMetadataType LONG = new LongMetadataType(MinecraftCodecHelper::readVarLong, MinecraftCodecHelper::writeVarLong, LongEntityMetadata::new);
-    public static final FloatMetadataType FLOAT = new FloatMetadataType(ByteBuf::readFloat, ByteBuf::writeFloat, FloatEntityMetadata::new);
-    public static final MetadataType<String> STRING = new MetadataType<>(MinecraftCodecHelper::readString, MinecraftCodecHelper::writeString, ObjectEntityMetadata::new);
-    public static final MetadataType<Component> CHAT = new MetadataType<>(MinecraftCodecHelper::readComponent, MinecraftCodecHelper::writeComponent, ObjectEntityMetadata::new);
-    public static final MetadataType<Optional<Component>> OPTIONAL_CHAT = new MetadataType<>(optionalReader(MinecraftCodecHelper::readComponent), optionalWriter(MinecraftCodecHelper::writeComponent), ObjectEntityMetadata::new);
-    public static final MetadataType<ItemStack> ITEM = new MetadataType<>(MinecraftCodecHelper::readOptionalItemStack, MinecraftCodecHelper::writeOptionalItemStack, ObjectEntityMetadata::new);
-    public static final BooleanMetadataType BOOLEAN = new BooleanMetadataType(ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanEntityMetadata::new);
-    public static final MetadataType<Vector3f> ROTATION = new MetadataType<>(MinecraftCodecHelper::readRotation, MinecraftCodecHelper::writeRotation, ObjectEntityMetadata::new);
-    public static final MetadataType<Vector3i> POSITION = new MetadataType<>(MinecraftCodecHelper::readPosition, MinecraftCodecHelper::writePosition, ObjectEntityMetadata::new);
-    public static final MetadataType<Optional<Vector3i>> OPTIONAL_POSITION = new MetadataType<>(optionalReader(MinecraftCodecHelper::readPosition), optionalWriter(MinecraftCodecHelper::writePosition), ObjectEntityMetadata::new);
-    public static final MetadataType<Direction> DIRECTION = new MetadataType<>(MinecraftCodecHelper::readDirection, MinecraftCodecHelper::writeDirection, ObjectEntityMetadata::new);
-    public static final MetadataType<Optional<UUID>> OPTIONAL_UUID = new MetadataType<>(optionalReader(MinecraftCodecHelper::readUUID), optionalWriter(MinecraftCodecHelper::writeUUID), ObjectEntityMetadata::new);
-    public static final IntMetadataType BLOCK_STATE = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
-    public static final IntMetadataType OPTIONAL_BLOCK_STATE = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
-    public static final MetadataType<NbtMap> NBT_TAG = new MetadataType<>(MinecraftCodecHelper::readCompoundTag, MinecraftCodecHelper::writeAnyTag, ObjectEntityMetadata::new);
-    public static final MetadataType<Particle> PARTICLE = new MetadataType<>(MinecraftCodecHelper::readParticle, MinecraftCodecHelper::writeParticle, ObjectEntityMetadata::new);
-    public static final MetadataType<List<Particle>> PARTICLES = new MetadataType<>(listReader(MinecraftCodecHelper::readParticle), listWriter(MinecraftCodecHelper::writeParticle), ObjectEntityMetadata::new);
-    public static final MetadataType<VillagerData> VILLAGER_DATA = new MetadataType<>(MinecraftCodecHelper::readVillagerData, MinecraftCodecHelper::writeVillagerData, ObjectEntityMetadata::new);
-    public static final OptionalIntMetadataType OPTIONAL_VARINT = new OptionalIntMetadataType(ObjectEntityMetadata::new);
-    public static final MetadataType<Pose> POSE = new MetadataType<>(MinecraftCodecHelper::readPose, MinecraftCodecHelper::writePose, ObjectEntityMetadata::new);
-    public static final IntMetadataType CAT_VARIANT = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
-    public static final IntMetadataType WOLF_VARIANT = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
-    public static final IntMetadataType FROG_VARIANT = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
-    public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = new MetadataType<>(optionalReader(MinecraftCodecHelper::readGlobalPos), optionalWriter(MinecraftCodecHelper::writeGlobalPos), ObjectEntityMetadata::new);
-    public static final MetadataType<PaintingType> PAINTING_VARIANT = new MetadataType<>(MinecraftCodecHelper::readPaintingType, MinecraftCodecHelper::writePaintingType, ObjectEntityMetadata::new);
-    public static final MetadataType<SnifferState> SNIFFER_STATE = new MetadataType<>(MinecraftCodecHelper::readSnifferState, MinecraftCodecHelper::writeSnifferState, ObjectEntityMetadata::new);
-    public static final MetadataType<ArmadilloState> ARMADILLO_STATE = new MetadataType<>(MinecraftCodecHelper::readArmadilloState, MinecraftCodecHelper::writeArmadilloState, ObjectEntityMetadata::new);
-    public static final MetadataType<Vector3f> VECTOR3 = new MetadataType<>(MinecraftCodecHelper::readRotation, MinecraftCodecHelper::writeRotation, ObjectEntityMetadata::new);
-    public static final MetadataType<Vector4f> QUATERNION = new MetadataType<>(MinecraftCodecHelper::readQuaternion, MinecraftCodecHelper::writeQuaternion, ObjectEntityMetadata::new);
+    private static final List<MetadataType<?>> VALUES = new ArrayList<>();
+
+    public static final ByteMetadataType BYTE = register(new ByteMetadataType(nextId(), ByteBuf::readByte, ByteBuf::writeByte, ByteEntityMetadata::new));
+    public static final IntMetadataType INT = register(new IntMetadataType(nextId(), MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new));
+    public static final LongMetadataType LONG = register(new LongMetadataType(nextId(), MinecraftCodecHelper::readVarLong, MinecraftCodecHelper::writeVarLong, LongEntityMetadata::new));
+    public static final FloatMetadataType FLOAT = register(new FloatMetadataType(nextId(), ByteBuf::readFloat, ByteBuf::writeFloat, FloatEntityMetadata::new));
+    public static final MetadataType<String> STRING = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readString, MinecraftCodecHelper::writeString, ObjectEntityMetadata::new));
+    public static final MetadataType<Component> CHAT = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readComponent, MinecraftCodecHelper::writeComponent, ObjectEntityMetadata::new));
+    public static final MetadataType<Optional<Component>> OPTIONAL_CHAT = register(new MetadataType<>(nextId(), optionalReader(MinecraftCodecHelper::readComponent), optionalWriter(MinecraftCodecHelper::writeComponent), ObjectEntityMetadata::new));
+    public static final MetadataType<ItemStack> ITEM = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readOptionalItemStack, MinecraftCodecHelper::writeOptionalItemStack, ObjectEntityMetadata::new));
+    public static final BooleanMetadataType BOOLEAN = register(new BooleanMetadataType(nextId(), ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanEntityMetadata::new));
+    public static final MetadataType<Vector3f> ROTATION = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readRotation, MinecraftCodecHelper::writeRotation, ObjectEntityMetadata::new));
+    public static final MetadataType<Vector3i> POSITION = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readPosition, MinecraftCodecHelper::writePosition, ObjectEntityMetadata::new));
+    public static final MetadataType<Optional<Vector3i>> OPTIONAL_POSITION = register(new MetadataType<>(nextId(), optionalReader(MinecraftCodecHelper::readPosition), optionalWriter(MinecraftCodecHelper::writePosition), ObjectEntityMetadata::new));
+    public static final MetadataType<Direction> DIRECTION = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readDirection, MinecraftCodecHelper::writeDirection, ObjectEntityMetadata::new));
+    public static final MetadataType<Optional<UUID>> OPTIONAL_UUID = register(new MetadataType<>(nextId(), optionalReader(MinecraftCodecHelper::readUUID), optionalWriter(MinecraftCodecHelper::writeUUID), ObjectEntityMetadata::new));
+    public static final IntMetadataType BLOCK_STATE = register(new IntMetadataType(nextId(), MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType OPTIONAL_BLOCK_STATE = register(new IntMetadataType(nextId(), MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new));
+    public static final MetadataType<NbtMap> NBT_TAG = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readCompoundTag, MinecraftCodecHelper::writeAnyTag, ObjectEntityMetadata::new));
+    public static final MetadataType<Particle> PARTICLE = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readParticle, MinecraftCodecHelper::writeParticle, ObjectEntityMetadata::new));
+    public static final MetadataType<List<Particle>> PARTICLES = register(new MetadataType<>(nextId(), listReader(MinecraftCodecHelper::readParticle), listWriter(MinecraftCodecHelper::writeParticle), ObjectEntityMetadata::new));
+    public static final MetadataType<VillagerData> VILLAGER_DATA = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readVillagerData, MinecraftCodecHelper::writeVillagerData, ObjectEntityMetadata::new));
+    public static final OptionalIntMetadataType OPTIONAL_VARINT = register(new OptionalIntMetadataType(nextId(), ObjectEntityMetadata::new));
+    public static final MetadataType<Pose> POSE = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readPose, MinecraftCodecHelper::writePose, ObjectEntityMetadata::new));
+    public static final IntMetadataType CAT_VARIANT = register(new IntMetadataType(nextId(), MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType WOLF_VARIANT = register(new IntMetadataType(nextId(), MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType FROG_VARIANT = register(new IntMetadataType(nextId(), MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new));
+    public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = register(new MetadataType<>(nextId(), optionalReader(MinecraftCodecHelper::readGlobalPos), optionalWriter(MinecraftCodecHelper::writeGlobalPos), ObjectEntityMetadata::new));
+    public static final MetadataType<PaintingType> PAINTING_VARIANT = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readPaintingType, MinecraftCodecHelper::writePaintingType, ObjectEntityMetadata::new));
+    public static final MetadataType<SnifferState> SNIFFER_STATE = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readSnifferState, MinecraftCodecHelper::writeSnifferState, ObjectEntityMetadata::new));
+    public static final MetadataType<ArmadilloState> ARMADILLO_STATE = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readArmadilloState, MinecraftCodecHelper::writeArmadilloState, ObjectEntityMetadata::new));
+    public static final MetadataType<Vector3f> VECTOR3 = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readRotation, MinecraftCodecHelper::writeRotation, ObjectEntityMetadata::new));
+    public static final MetadataType<Vector4f> QUATERNION = register(new MetadataType<>(nextId(), MinecraftCodecHelper::readQuaternion, MinecraftCodecHelper::writeQuaternion, ObjectEntityMetadata::new));
 
     private MetadataTypes() {
+    }
+
+    public static int nextId() {
+        return VALUES.size();
+    }
+
+    public static <T extends MetadataType<?>> T register(T type) {
+        VALUES.add(type);
+        return type;
+    }
+
+    public static MetadataType<?> read(ByteBuf in, MinecraftCodecHelper helper) {
+        int id = helper.readVarInt(in);
+        if (id >= VALUES.size()) {
+            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + VALUES.size() + "!");
+        }
+
+        return VALUES.get(id);
+    }
+
+    public static MetadataType<?> from(int id) {
+        return VALUES.get(id);
+    }
+
+    public static int size() {
+        return VALUES.size();
     }
 
     private static <T> MetadataType.Reader<Optional<T>> optionalReader(MetadataType.Reader<T> reader) {

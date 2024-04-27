@@ -42,6 +42,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
@@ -535,11 +536,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public MetadataType<?> readMetadataType(ByteBuf buf) {
         int id = this.readVarInt(buf);
-        if (id >= MetadataType.size()) {
-            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataType.size() + "!");
+        if (id >= MetadataTypes.size()) {
+            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataTypes.size() + "!");
         }
 
-        return MetadataType.from(id);
+        return MetadataTypes.from(id);
     }
 
     public void writeMetadataType(ByteBuf buf, MetadataType<?> type) {

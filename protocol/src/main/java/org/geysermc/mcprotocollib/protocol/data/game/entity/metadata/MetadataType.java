@@ -9,36 +9,16 @@ import java.util.List;
 
 @Getter
 public class MetadataType<T> {
-    private static final List<MetadataType<?>> VALUES = new ArrayList<>();
     protected final int id;
     protected final Reader<T> reader;
     protected final Writer<T> writer;
     protected final EntityMetadataFactory<T> metadataFactory;
 
-    protected MetadataType(Reader<T> reader, Writer<T> writer, EntityMetadataFactory<T> metadataFactory) {
-        this.id = VALUES.size();
+    protected MetadataType(int id, Reader<T> reader, Writer<T> writer, EntityMetadataFactory<T> metadataFactory) {
+        this.id = id;
         this.reader = reader;
         this.writer = writer;
         this.metadataFactory = metadataFactory;
-
-        VALUES.add(this);
-    }
-
-    public static MetadataType<?> read(ByteBuf in, MinecraftCodecHelper helper) {
-        int id = helper.readVarInt(in);
-        if (id >= VALUES.size()) {
-            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + VALUES.size() + "!");
-        }
-
-        return VALUES.get(id);
-    }
-
-    public static MetadataType<?> from(int id) {
-        return VALUES.get(id);
-    }
-
-    public static int size() {
-        return VALUES.size();
     }
 
     public EntityMetadata<T, ? extends MetadataType<T>> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
