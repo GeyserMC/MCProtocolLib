@@ -1,9 +1,19 @@
 package org.geysermc.mcprotocollib.network;
 
-import org.geysermc.mcprotocollib.network.event.server.*;
+import org.geysermc.mcprotocollib.network.event.server.ServerBoundEvent;
+import org.geysermc.mcprotocollib.network.event.server.ServerClosedEvent;
+import org.geysermc.mcprotocollib.network.event.server.ServerClosingEvent;
+import org.geysermc.mcprotocollib.network.event.server.ServerEvent;
+import org.geysermc.mcprotocollib.network.event.server.ServerListener;
+import org.geysermc.mcprotocollib.network.event.server.SessionAddedEvent;
+import org.geysermc.mcprotocollib.network.event.server.SessionRemovedEvent;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public abstract class AbstractServer implements Server {

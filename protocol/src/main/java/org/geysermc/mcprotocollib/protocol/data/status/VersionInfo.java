@@ -1,6 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.status;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.Setter;
 
 @Data
 @Setter(AccessLevel.NONE)

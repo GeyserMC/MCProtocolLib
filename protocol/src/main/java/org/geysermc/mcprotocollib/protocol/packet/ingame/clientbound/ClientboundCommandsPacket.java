@@ -10,7 +10,16 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandNode;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandParser;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandType;
-import org.geysermc.mcprotocollib.protocol.data.game.command.properties.*;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.CommandProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.DoubleProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.EntityProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.FloatProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.IntegerProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.LongProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.ResourceProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.ScoreHolderProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.StringProperties;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.TimeProperties;
 
 import java.util.OptionalInt;
 

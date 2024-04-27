@@ -1,6 +1,11 @@
 package org.geysermc.mcprotocollib.network.example;
 
-import org.geysermc.mcprotocollib.network.event.server.*;
+import org.geysermc.mcprotocollib.network.event.server.ServerAdapter;
+import org.geysermc.mcprotocollib.network.event.server.ServerBoundEvent;
+import org.geysermc.mcprotocollib.network.event.server.ServerClosedEvent;
+import org.geysermc.mcprotocollib.network.event.server.ServerClosingEvent;
+import org.geysermc.mcprotocollib.network.event.server.SessionAddedEvent;
+import org.geysermc.mcprotocollib.network.event.server.SessionRemovedEvent;
 
 import javax.crypto.SecretKey;
 
