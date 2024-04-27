@@ -26,23 +26,23 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
     }
 
     @FunctionalInterface
-    public interface BooleanReader extends BasicReader<Boolean> {
+    public interface BooleanReader extends Reader<Boolean> {
         boolean readPrimitive(ByteBuf input);
 
         @Deprecated
         @Override
-        default Boolean read(ByteBuf input) {
+        default Boolean read(ItemCodecHelper helper, ByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
-    public interface BooleanWriter extends BasicWriter<Boolean> {
+    public interface BooleanWriter extends Writer<Boolean> {
         void writePrimitive(ByteBuf output, boolean value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Boolean value) {
+        default void write(ItemCodecHelper helper, ByteBuf output, Boolean value) {
             this.writePrimitive(output, value);
         }
     }
