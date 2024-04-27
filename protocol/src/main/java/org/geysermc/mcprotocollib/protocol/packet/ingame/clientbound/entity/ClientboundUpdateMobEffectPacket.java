@@ -3,13 +3,11 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Data
 @With

@@ -24,7 +24,7 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
 
         int entryCount = helper.readVarInt(in);
         for (int i = 0; i < entryCount; i++) {
-            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readNullable(in, helper::readAnyTag)));
+            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readNullable(in, helper::readCompoundTag)));
         }
     }
 

@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.cloudburstmc.nbt.NbtMap;
 
 @Data
 @AllArgsConstructor
 public class BeehiveOccupant {
-    private final CompoundTag entityData;
+    private final NbtMap entityData;
     private final int ticksInHive;
     private final int minTicksInHive;
 }

@@ -3,6 +3,8 @@ package org.geysermc.mcprotocollib.protocol;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
 import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
@@ -28,11 +30,6 @@ import org.geysermc.mcprotocollib.protocol.packet.status.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.status.clientbound.ClientboundStatusResponsePacket;
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.IntTag;
-import com.github.steveice10.opennbt.tag.builtin.ListTag;
-import com.github.steveice10.opennbt.tag.builtin.StringTag;
-import com.github.steveice10.opennbt.tag.builtin.Tag;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
@@ -46,13 +43,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Handles initial login and status requests for servers.
@@ -74,7 +65,7 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
-    private final CompoundTag networkCodec;
+    private final NbtMap networkCodec;
 
     private final byte[] challenge = new byte[4];
     private String username = "";
@@ -82,7 +73,7 @@ public class ServerListener extends SessionAdapter {
     private long lastPingTime = 0;
     private int lastPingId = 0;
 
-    public ServerListener(CompoundTag networkCodec) {
+    public ServerListener(NbtMap networkCodec) {
         this.networkCodec = networkCodec;
         new Random().nextBytes(this.challenge);
     }
@@ -139,19 +130,18 @@ public class ServerListener extends SessionAdapter {
                 protocol.setState(ProtocolState.CONFIGURATION);
 
                 // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
-                for (Map.Entry<String, Tag> entry : networkCodec.getValue().entrySet()) {
-                    CompoundTag entryTag = (CompoundTag) entry.getValue();
-                    StringTag typeTag = entryTag.get("type");
-                    ListTag valueTag = entryTag.get("value");
+                for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
+                    NbtMap entryTag = (NbtMap) entry.getValue();
+                    String typeTag = entryTag.getString("type");
+                    List<NbtMap> valueTag = entryTag.getList("value", NbtType.COMPOUND);
                     List<RegistryEntry> entries = new ArrayList<>();
-                    for (Tag tag : valueTag) {
-                        CompoundTag compoundTag = (CompoundTag) tag;
-                        StringTag nameTag = compoundTag.get("name");
-                        int id = ((IntTag) compoundTag.get("id")).getValue();
-                        entries.add(id, new RegistryEntry(nameTag.getValue(), compoundTag.get("element")));
+                    for (NbtMap compoundTag : valueTag) {
+                        String nameTag = compoundTag.getString("name");
+                        int id = compoundTag.getInt("id");
+                        entries.add(id, new RegistryEntry(nameTag, compoundTag.getCompound("element")));
                     }
 
-                    session.send(new ClientboundRegistryDataPacket(typeTag.getValue(), entries));
+                    session.send(new ClientboundRegistryDataPacket(typeTag, entries));
                 }
 
                 session.send(new ClientboundFinishConfigurationPacket());
