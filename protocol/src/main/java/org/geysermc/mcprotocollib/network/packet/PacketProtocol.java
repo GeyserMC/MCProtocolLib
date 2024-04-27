@@ -48,7 +48,7 @@ public abstract class PacketProtocol {
     /**
      * Called when a client session is created with this protocol.
      *
-     * @param session      The created session.
+     * @param session The created session.
      * @param transferring If the client is being transferred between servers.
      */
     public abstract void newClientSession(Session session, boolean transferring);
@@ -56,7 +56,7 @@ public abstract class PacketProtocol {
     /**
      * Called when a server session is created with this protocol.
      *
-     * @param server  The server that the session belongs to.
+     * @param server The server that the session belongs to.
      * @param session The created session.
      */
     public abstract void newServerSession(Server server, Session session);
@@ -74,8 +74,8 @@ public abstract class PacketProtocol {
     /**
      * Registers a packet to this protocol as both serverbound and clientbound.
      *
-     * @param id         Id to register the packet to.
-     * @param packet     Packet to register.
+     * @param id Id to register the packet to.
+     * @param packet Packet to register.
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
      */
@@ -98,8 +98,8 @@ public abstract class PacketProtocol {
     /**
      * Registers a serverbound packet to this protocol.
      *
-     * @param id         Id to register the packet to.
-     * @param packet     Packet to register.
+     * @param id Id to register the packet to.
+     * @param packet Packet to register.
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation.
      */
@@ -120,8 +120,8 @@ public abstract class PacketProtocol {
     /**
      * Registers a clientbound packet to this protocol.
      *
-     * @param id         Id to register the packet to.
-     * @param packet     Packet to register.
+     * @param id Id to register the packet to.
+     * @param packet Packet to register.
      * @param serializer The packet serializer.
      */
     public final <T extends Packet, H extends PacketCodecHelper> void registerClientbound(int id, Class<T> packet, PacketSerializer<T, H> serializer) {
@@ -141,8 +141,8 @@ public abstract class PacketProtocol {
     /**
      * Creates a new instance of a clientbound packet with the given id and read the clientbound input.
      *
-     * @param id          Id of the packet to create.
-     * @param buf         The buffer to read the packet from.
+     * @param id Id of the packet to create.
+     * @param buf The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
@@ -207,8 +207,8 @@ public abstract class PacketProtocol {
     /**
      * Creates a new instance of a serverbound packet with the given id and read the serverbound input.
      *
-     * @param id          Id of the packet to create.
-     * @param buf         The buffer to read the packet from.
+     * @param id Id of the packet to create.
+     * @param buf The buffer to read the packet from.
      * @param codecHelper The codec helper.
      * @return The created packet.
      * @throws IllegalArgumentException If the packet ID is not registered.

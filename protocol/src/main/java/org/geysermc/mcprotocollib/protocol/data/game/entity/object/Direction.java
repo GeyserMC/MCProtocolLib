@@ -14,6 +14,7 @@ public enum Direction implements ObjectData {
     private static final Direction[] HORIZONTAL_VALUES = {NORTH, SOUTH, WEST, EAST};
     @Getter
     private final int horizontalIndex;
+
     Direction(int horizontalIndex) {
         this.horizontalIndex = horizontalIndex;
     }

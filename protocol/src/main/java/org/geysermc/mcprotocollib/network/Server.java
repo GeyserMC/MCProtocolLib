@@ -57,7 +57,7 @@ public interface Server {
     /**
      * Gets the value of the given flag as an instance of the given type.
      *
-     * @param <T>  Type of the flag.
+     * @param <T> Type of the flag.
      * @param flag Flag to check for.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
@@ -68,9 +68,9 @@ public interface Server {
      * Gets the value of the given flag as an instance of the given type.
      * If the flag is not set, the specified default value will be returned.
      *
-     * @param <T>  Type of the flag.
+     * @param <T> Type of the flag.
      * @param flag Flag to check for.
-     * @param def  Default value of the flag.
+     * @param def Default value of the flag.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
@@ -80,8 +80,8 @@ public interface Server {
      * Sets the value of a flag. The flag will be used in sessions if a session does
      * not contain a value for the flag.
      *
-     * @param <T>   Type of the flag.
-     * @param flag  Flag to check for.
+     * @param <T> Type of the flag.
+     * @param flag Flag to check for.
      * @param value Value to set the flag to.
      */
     <T> void setGlobalFlag(Flag<T> flag, T value);
@@ -132,7 +132,7 @@ public interface Server {
     /**
      * Binds the listener to its host and port.
      *
-     * @param wait     Whether to wait for the listener to finish binding.
+     * @param wait Whether to wait for the listener to finish binding.
      * @param callback Callback to call when the listener has finished binding.
      * @return The server.
      */
@@ -153,7 +153,7 @@ public interface Server {
     /**
      * Closes the listener.
      *
-     * @param wait     Whether to wait for the listener to finish closing.
+     * @param wait Whether to wait for the listener to finish closing.
      * @param callback Callback to call when the listener has finished closing.
      */
     void close(boolean wait, Runnable callback);

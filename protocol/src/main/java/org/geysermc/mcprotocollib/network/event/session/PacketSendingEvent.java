@@ -15,7 +15,7 @@ public class PacketSendingEvent implements SessionEvent {
      * Creates a new PacketSendingEvent instance.
      *
      * @param session Session sending the packet.
-     * @param packet  Packet being sent.
+     * @param packet Packet being sent.
      */
     public PacketSendingEvent(Session session, Packet packet) {
         this.session = session;

@@ -41,10 +41,10 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
     /**
      * Constructs a ServerScoreboardObjectivePacket for adding or updating an objective.
      *
-     * @param name         Name of the objective.
-     * @param action       Action to perform.
-     * @param displayName  Display name of the objective.
-     * @param type         Type of score.
+     * @param name Name of the objective.
+     * @param action Action to perform.
+     * @param displayName Display name of the objective.
+     * @param type Type of score.
      * @param numberFormat Number formatting.
      */
     public ClientboundSetObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, @Nullable Component displayName, @Nullable ScoreType type, @Nullable NumberFormat numberFormat) {

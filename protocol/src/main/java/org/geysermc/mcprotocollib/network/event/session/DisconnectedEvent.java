@@ -15,8 +15,8 @@ public class DisconnectedEvent implements SessionEvent {
      * Creates a new DisconnectedEvent instance.
      *
      * @param session Session being disconnected.
-     * @param reason  Reason for the session to disconnect.
-     * @param cause   Throwable that caused the disconnect.
+     * @param reason Reason for the session to disconnect.
+     * @param cause Throwable that caused the disconnect.
      */
     public DisconnectedEvent(Session session, Component reason, Throwable cause) {
         this.session = session;

@@ -100,7 +100,7 @@ public class MinecraftProtocol extends PacketProtocol {
     /**
      * Constructs a new MinecraftProtocol instance for logging in using offline mode.
      *
-     * @param codec    The packet codec to use.
+     * @param codec The packet codec to use.
      * @param username Username to use.
      */
     public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull String username) {
@@ -110,7 +110,7 @@ public class MinecraftProtocol extends PacketProtocol {
     /**
      * Constructs a new MinecraftProtocol instance for logging in.
      *
-     * @param profile     GameProfile to use.
+     * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
     public MinecraftProtocol(@NonNull GameProfile profile, String accessToken) {
@@ -120,8 +120,8 @@ public class MinecraftProtocol extends PacketProtocol {
     /**
      * Constructs a new MinecraftProtocol instance for logging in.
      *
-     * @param codec       The packet codec to use.
-     * @param profile     GameProfile to use.
+     * @param codec The packet codec to use.
+     * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
     public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull GameProfile profile, String accessToken) {

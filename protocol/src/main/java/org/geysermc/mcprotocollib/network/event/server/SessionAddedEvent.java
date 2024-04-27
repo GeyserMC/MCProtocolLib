@@ -13,7 +13,7 @@ public class SessionAddedEvent implements ServerEvent {
     /**
      * Creates a new SessionAddedEvent instance.
      *
-     * @param server  Server the session is being added to.
+     * @param server Server the session is being added to.
      * @param session Session being added.
      */
     public SessionAddedEvent(Server server, Session session) {

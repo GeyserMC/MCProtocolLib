@@ -2,22 +2,10 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import org.cloudburstmc.math.vector.Vector3f;
-import org.cloudburstmc.math.vector.Vector3i;
-import org.cloudburstmc.math.vector.Vector4f;
-import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.*;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.type.PaintingType;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
-import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Getter
 public class MetadataType<T> {

@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
 import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.*;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;

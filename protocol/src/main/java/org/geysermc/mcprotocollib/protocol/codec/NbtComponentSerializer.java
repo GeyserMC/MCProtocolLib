@@ -156,9 +156,9 @@ public class NbtComponentSerializer {
     /**
      * Converts a json object entry to a tag entry.
      *
-     * @param key   key of the entry
+     * @param key key of the entry
      * @param value value of the entry
-     * @param tag   the resulting compound tag
+     * @param tag the resulting compound tag
      */
     private static void convertObjectEntry(final String key, final JsonElement value, final NbtMapBuilder tag) {
         if ((key.equals("contents")) && value.isJsonObject()) {

@@ -32,9 +32,9 @@ public interface PacketHeader {
     /**
      * Reads the length of a packet from the given input.
      *
-     * @param buf         Buffer to read from.
+     * @param buf Buffer to read from.
      * @param codecHelper The codec helper.
-     * @param available   Number of packet bytes available after the length.
+     * @param available Number of packet bytes available after the length.
      * @return The resulting packet length.
      */
     int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available);
@@ -42,16 +42,16 @@ public interface PacketHeader {
     /**
      * Writes the length of a packet to the given output.
      *
-     * @param buf         Buffer to write to.
+     * @param buf Buffer to write to.
      * @param codecHelper The codec helper.
-     * @param length      Length to write.
+     * @param length Length to write.
      */
     void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length);
 
     /**
      * Reads the ID of a packet from the given input.
      *
-     * @param buf         Buffer to read from.
+     * @param buf Buffer to read from.
      * @param codecHelper The codec helper.
      * @return The resulting packet ID, or -1 if the packet should not be read yet.
      */
@@ -60,9 +60,9 @@ public interface PacketHeader {
     /**
      * Writes the ID of a packet to the given output.
      *
-     * @param buf         Buffer to write to.
+     * @param buf Buffer to write to.
      * @param codecHelper The codec helper.
-     * @param packetId    Packet ID to write.
+     * @param packetId Packet ID to write.
      */
     void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId);
 }

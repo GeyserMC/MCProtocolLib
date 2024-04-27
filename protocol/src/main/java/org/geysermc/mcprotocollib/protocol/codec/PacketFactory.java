@@ -15,7 +15,7 @@ public interface PacketFactory<T extends Packet, H extends PacketCodecHelper> {
     /**
      * Constructs a new {@link Packet}.
      *
-     * @param buf         the input buffer
+     * @param buf the input buffer
      * @param codecHelper the codec helper
      * @return a new packet from the input
      */
