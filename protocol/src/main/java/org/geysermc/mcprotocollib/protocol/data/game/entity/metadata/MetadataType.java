@@ -152,7 +152,8 @@ public class MetadataType<T> {
     private static <T> Reader<List<T>> listReader(Reader<T> reader) {
         return (helper, input) -> {
             List<T> ret = new ArrayList<>();
-            for (int i = 0; i < helper.readVarInt(input); i++) {
+            int size = helper.readVarInt(input);
+            for (int i = 0; i < size; i++) {
                 ret.add(reader.read(helper, input));
             }
 
