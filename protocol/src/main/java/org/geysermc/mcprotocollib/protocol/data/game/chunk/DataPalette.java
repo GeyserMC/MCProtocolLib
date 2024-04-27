@@ -10,25 +10,13 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.*;
 @ToString
 public class DataPalette {
 
-    /*
-     * @deprecated globalPaletteBits is no longer in use.
-     */
-    @Deprecated(forRemoval = true)
     public static final int GLOBAL_PALETTE_BITS_PER_ENTRY = 14;
     private final PaletteType paletteType;
     private @NonNull Palette palette;
     private BitStorage storage;
 
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #DataPalette(Palette, BitStorage, PaletteType)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public DataPalette(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int globalPaletteBits) {
-        this(palette, storage, paletteType);
-    }
-
     public DataPalette(DataPalette original) {
-        this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType);
+        this(original.paletteType, original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage));
     }
 
     public static DataPalette createForChunk() {
@@ -56,8 +44,8 @@ public class DataPalette {
     }
 
     public static DataPalette createEmpty(PaletteType paletteType) {
-        return new DataPalette(new ListPalette(paletteType.getMinBitsPerEntry()),
-                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType);
+        return new DataPalette(paletteType, new ListPalette(paletteType.getMinBitsPerEntry()),
+                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()));
     }
 
     /*

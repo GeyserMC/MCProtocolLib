@@ -30,8 +30,8 @@ public class ChunkTest {
         chunkSectionsToTest.add(section);
 
         SingletonPalette singletonPalette = new SingletonPalette(20);
-        DataPalette dataPalette = new DataPalette(singletonPalette, null, PaletteType.CHUNK);
-        DataPalette biomePalette = new DataPalette(singletonPalette, null, PaletteType.BIOME);
+        DataPalette dataPalette = new DataPalette(PaletteType.CHUNK, singletonPalette, null);
+        DataPalette biomePalette = new DataPalette(PaletteType.BIOME, singletonPalette, null);
         section = new ChunkSection(4096, dataPalette, biomePalette);
         chunkSectionsToTest.add(section);
     }

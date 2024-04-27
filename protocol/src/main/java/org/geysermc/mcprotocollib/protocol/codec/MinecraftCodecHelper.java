@@ -848,7 +848,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             storage = null;
         }
 
-        return new DataPalette(palette, storage, paletteType);
+        return new DataPalette(paletteType, palette, storage);
     }
 
     /**
