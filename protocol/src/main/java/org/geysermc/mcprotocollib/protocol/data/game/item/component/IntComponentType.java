@@ -8,8 +8,8 @@ public class IntComponentType extends DataComponentType<Integer> {
     protected final IntWriter primitiveWriter;
     protected final IntDataComponentFactory primitiveFactory;
 
-    protected IntComponentType(IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
-        super(reader, writer, metadataFactory);
+    protected IntComponentType(int id, IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
+        super(id, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
