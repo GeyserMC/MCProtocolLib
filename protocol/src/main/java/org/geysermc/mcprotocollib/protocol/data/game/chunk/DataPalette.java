@@ -23,22 +23,6 @@ public class DataPalette {
         return createEmpty(PaletteType.CHUNK);
     }
 
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #createForChunk()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static DataPalette createForChunk(int globalPaletteBits) {
-        return createForChunk();
-    }
-
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #createForBiome()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static DataPalette createForBiome(int globalPaletteBits) {
-        return createForBiome();
-    }
-
     public static DataPalette createForBiome() {
         return createEmpty(PaletteType.BIOME);
     }
@@ -46,14 +30,6 @@ public class DataPalette {
     public static DataPalette createEmpty(PaletteType paletteType) {
         return new DataPalette(paletteType, new ListPalette(paletteType.getMinBitsPerEntry()),
                 new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()));
-    }
-
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #createEmpty(PaletteType)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
-        return createEmpty(paletteType);
     }
 
     private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {

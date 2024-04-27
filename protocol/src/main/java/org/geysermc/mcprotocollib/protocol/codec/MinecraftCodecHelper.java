@@ -851,14 +851,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return new DataPalette(paletteType, palette, storage);
     }
 
-    /**
-     * @deprecated globalPaletteBits is no longer in use, use {@link #readDataPalette(ByteBuf, PaletteType)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int globalPaletteBits) {
-        return this.readDataPalette(buf, paletteType);
-    }
-
     public void writeDataPalette(ByteBuf buf, DataPalette palette) {
         if (palette.getPalette() instanceof SingletonPalette) {
             buf.writeByte(0); // Bits per entry
@@ -900,14 +892,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         DataPalette chunkPalette = this.readDataPalette(buf, PaletteType.CHUNK);
         DataPalette biomePalette = this.readDataPalette(buf, PaletteType.BIOME);
         return new ChunkSection(blockCount, chunkPalette, biomePalette);
-    }
-
-    /**
-     * @deprecated globalBiomePaletteBits is no longer in use, use {@link #readChunkSection(ByteBuf)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public ChunkSection readChunkSection(ByteBuf buf, int globalBiomePaletteBits) {
-        return this.readChunkSection(buf);
     }
 
     public void writeChunkSection(ByteBuf buf, ChunkSection section) {
