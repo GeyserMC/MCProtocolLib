@@ -5,10 +5,9 @@ import java.net.SocketAddress;
 /**
  * Information describing a network proxy.
  */
-public class ProxyInfo {
+public class TCPProxyInfo {
     private final Type type;
     private final SocketAddress address;
-    private boolean authenticated;
     private String username;
     private String password;
 
@@ -18,10 +17,9 @@ public class ProxyInfo {
      * @param type    Type of proxy.
      * @param address Network address of the proxy.
      */
-    public ProxyInfo(Type type, SocketAddress address) {
+    public TCPProxyInfo(Type type, SocketAddress address) {
         this.type = type;
         this.address = address;
-        this.authenticated = false;
     }
 
     /**
@@ -32,9 +30,8 @@ public class ProxyInfo {
      * @param username Username to authenticate with.
      * @param password Password to authenticate with.
      */
-    public ProxyInfo(Type type, SocketAddress address, String username, String password) {
+    public TCPProxyInfo(Type type, SocketAddress address, String username, String password) {
         this(type, address);
-        this.authenticated = true;
         this.username = username;
         this.password = password;
     }
@@ -55,15 +52,6 @@ public class ProxyInfo {
      */
     public SocketAddress getAddress() {
         return this.address;
-    }
-
-    /**
-     * Gets whether the proxy is authenticated with.
-     *
-     * @return Whether to authenticate with the proxy.
-     */
-    public boolean isAuthenticated() {
-        return this.authenticated;
     }
 
     /**

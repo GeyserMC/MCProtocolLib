@@ -5,6 +5,7 @@ import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
+import org.geysermc.mcprotocollib.auth.util.HTTPProxyInfo;
 import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
@@ -17,7 +18,7 @@ import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
-import org.geysermc.mcprotocollib.network.ProxyInfo;
+import org.geysermc.mcprotocollib.network.TCPProxyInfo;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.server.ServerAdapter;
@@ -46,8 +47,8 @@ public class MinecraftProtocolTest {
     private static final boolean VERIFY_USERS = false;
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 25565;
-    private static final ProxyInfo PROXY = null;
-    private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
+    private static final TCPProxyInfo PROXY = null;
+    private static final HTTPProxyInfo AUTH_PROXY = null;
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
 

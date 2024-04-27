@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
-import org.geysermc.mcprotocollib.network.ProxyInfo;
+import org.geysermc.mcprotocollib.network.TCPProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
@@ -57,14 +57,14 @@ public class TcpClientSession extends TcpSession {
 
     private final String bindAddress;
     private final int bindPort;
-    private final ProxyInfo proxy;
+    private final TCPProxyInfo proxy;
     private final PacketCodecHelper codecHelper;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
         this(host, port, protocol, null);
     }
 
-    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxy) {
+    public TcpClientSession(String host, int port, PacketProtocol protocol, TCPProxyInfo proxy) {
         this(host, port, "0.0.0.0", 0, protocol, proxy);
     }
 
@@ -72,7 +72,7 @@ public class TcpClientSession extends TcpSession {
         this(host, port, bindAddress, bindPort, protocol, null);
     }
 
-    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, TCPProxyInfo proxy) {
         super(host, port, protocol);
         this.bindAddress = bindAddress;
         this.bindPort = bindPort;
@@ -229,21 +229,21 @@ public class TcpClientSession extends TcpSession {
         if(proxy != null) {
             switch (proxy.getType()) {
                 case HTTP -> {
-                    if (proxy.isAuthenticated()) {
+                    if (proxy.getUsername() != null && proxy.getPassword() != null) {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
                     }
                 }
                 case SOCKS4 -> {
-                    if (proxy.isAuthenticated()) {
+                    if (proxy.getUsername() != null) {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
                     } else {
                         pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
                     }
                 }
                 case SOCKS5 -> {
-                    if (proxy.isAuthenticated()) {
+                    if (proxy.getUsername() != null && proxy.getPassword() != null) {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
                     } else {
                         pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
