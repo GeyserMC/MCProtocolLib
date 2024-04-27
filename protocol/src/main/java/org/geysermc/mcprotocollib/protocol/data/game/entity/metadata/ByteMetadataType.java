@@ -27,23 +27,23 @@ public class ByteMetadataType extends MetadataType<Byte> {
     }
 
     @FunctionalInterface
-    public interface ByteReader extends BasicReader<Byte> {
+    public interface ByteReader extends Reader<Byte> {
         byte readPrimitive(ByteBuf input);
 
         @Deprecated
         @Override
-        default Byte read(ByteBuf input) {
+        default Byte read(MinecraftCodecHelper helper, ByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
-    public interface ByteWriter extends BasicWriter<Byte> {
+    public interface ByteWriter extends Writer<Byte> {
         void writePrimitive(ByteBuf output, byte value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Byte value) {
+        default void write(MinecraftCodecHelper helper, ByteBuf output, Byte value) {
             this.writePrimitive(output, value);
         }
     }

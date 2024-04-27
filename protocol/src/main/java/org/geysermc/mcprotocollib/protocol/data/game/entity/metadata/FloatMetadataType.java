@@ -27,23 +27,23 @@ public class FloatMetadataType extends MetadataType<Float> {
     }
 
     @FunctionalInterface
-    public interface FloatReader extends BasicReader<Float> {
+    public interface FloatReader extends Reader<Float> {
         float readPrimitive(ByteBuf input);
 
         @Deprecated
         @Override
-        default Float read(ByteBuf input) {
+        default Float read(MinecraftCodecHelper helper, ByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
-    public interface FloatWriter extends BasicWriter<Float> {
+    public interface FloatWriter extends Writer<Float> {
         void writePrimitive(ByteBuf output, float value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Float value) {
+        default void write(MinecraftCodecHelper helper, ByteBuf output, Float value) {
             this.writePrimitive(output, value);
         }
     }
