@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.ArrayList;
 import java.util.List;

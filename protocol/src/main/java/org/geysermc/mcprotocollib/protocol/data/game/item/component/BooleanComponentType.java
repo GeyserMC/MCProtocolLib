@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
 import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
 
 public class BooleanComponentType extends DataComponentType<Boolean> {
     protected final BooleanReader primitiveReader;

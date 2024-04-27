@@ -1,16 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.chat.BuiltinChatType;
-import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatFilterType;
-import org.geysermc.mcprotocollib.protocol.data.game.chat.MessageSignature;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.BuiltinChatType;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatFilterType;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.MessageSignature;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final UUID sender;
     private final int index;
-    private final byte @Nullable[] messageSignature;
+    private final byte @Nullable [] messageSignature;
     private final String content;
     private final long timeStamp;
     private final long salt;

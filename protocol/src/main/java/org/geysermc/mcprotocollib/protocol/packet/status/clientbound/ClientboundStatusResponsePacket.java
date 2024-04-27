@@ -2,12 +2,6 @@ package org.geysermc.mcprotocollib.protocol.packet.status.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.util.Base64;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
-import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
-import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
-import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -18,6 +12,12 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
+import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
+import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
+import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

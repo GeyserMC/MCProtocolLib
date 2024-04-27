@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.statistic;
 
-import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 
 @Data
 @AllArgsConstructor

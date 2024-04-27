@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
+import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
-import io.netty.buffer.ByteBuf;
 
 public class FloatMetadataType extends MetadataType<Float> {
     private final FloatReader primitiveReader;

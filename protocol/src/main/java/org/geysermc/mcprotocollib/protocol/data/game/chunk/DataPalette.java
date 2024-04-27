@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chunk;
 
-import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.*;
 import lombok.*;
+import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.*;
 
 @Getter
 @Setter
@@ -15,10 +15,9 @@ public class DataPalette {
      */
     @Deprecated(forRemoval = true)
     public static final int GLOBAL_PALETTE_BITS_PER_ENTRY = 14;
-
+    private final PaletteType paletteType;
     private @NonNull Palette palette;
     private BitStorage storage;
-    private final PaletteType paletteType;
 
     /*
      * @deprecated globalPaletteBits is no longer in use, use {@link #DataPalette(Palette, BitStorage, PaletteType)} instead.
@@ -69,6 +68,15 @@ public class DataPalette {
         return createEmpty(paletteType);
     }
 
+    private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {
+        if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
+            return new ListPalette(bitsPerEntry);
+        } else if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
+            return new MapPalette(bitsPerEntry);
+        } else {
+            return new GlobalPalette();
+        }
+    }
 
     public int get(int x, int y, int z) {
         if (storage != null) {
@@ -123,16 +131,6 @@ public class DataPalette {
             for (int i = 0; i < paletteType.getStorageSize(); i++) {
                 this.storage.set(i, this.palette.stateToId(oldPalette.idToState(oldData.get(i))));
             }
-        }
-    }
-
-    private static Palette createPalette(int bitsPerEntry, PaletteType paletteType) {
-        if (bitsPerEntry <= paletteType.getMinBitsPerEntry()) {
-            return new ListPalette(bitsPerEntry);
-        } else if (bitsPerEntry <= paletteType.getMaxBitsPerEntry()) {
-            return new MapPalette(bitsPerEntry);
-        } else {
-            return new GlobalPalette();
         }
     }
 

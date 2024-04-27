@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.network.packet;
 
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
-import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
-import org.geysermc.mcprotocollib.network.Server;
-import org.geysermc.mcprotocollib.network.Session;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import org.geysermc.mcprotocollib.network.Server;
+import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
+import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -48,7 +48,7 @@ public abstract class PacketProtocol {
     /**
      * Called when a client session is created with this protocol.
      *
-     * @param session The created session.
+     * @param session      The created session.
      * @param transferring If the client is being transferred between servers.
      */
     public abstract void newClientSession(Session session, boolean transferring);
@@ -166,7 +166,7 @@ public abstract class PacketProtocol {
      */
     public int getClientboundId(Class<? extends Packet> packetClass) {
         Integer packetId = this.clientboundIds.get(packetClass);
-        if(packetId == null) {
+        if (packetId == null) {
             throw new IllegalArgumentException("Unregistered clientbound packet class: " + packetClass.getName());
         }
 
@@ -190,6 +190,7 @@ public abstract class PacketProtocol {
 
     /**
      * Gets the packet class for a packet id.
+     *
      * @param id The packet id.
      * @return The registered packet's class
      * @throws IllegalArgumentException If the packet ID is not registered.
@@ -255,6 +256,7 @@ public abstract class PacketProtocol {
 
     /**
      * Gets the packet class for a packet id.
+     *
      * @param id The packet id.
      * @return The registered packet's class
      * @throws IllegalArgumentException If the packet ID is not registered.

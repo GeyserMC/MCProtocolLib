@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network.codec;
 
-import org.geysermc.mcprotocollib.network.packet.Packet;
 import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 
 /**
  * Represents a definition of a packet with various

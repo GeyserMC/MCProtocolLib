@@ -1,10 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -19,10 +19,6 @@ public class LightUpdateData {
     private final @NonNull BitSet emptyBlockYMask;
     private final @NonNull List<byte[]> skyUpdates;
     private final @NonNull List<byte[]> blockUpdates;
-
-    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) {
-        return new LightUpdateData(in, helper);
-    }
 
     private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) {
         this.skyYMask = BitSet.valueOf(helper.readLongArray(in));
@@ -41,6 +37,10 @@ public class LightUpdateData {
         for (int i = 0; i < blockUpdateSize; i++) {
             blockUpdates.add(helper.readByteArray(in));
         }
+    }
+
+    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) {
+        return new LightUpdateData(in, helper);
     }
 
     public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) {

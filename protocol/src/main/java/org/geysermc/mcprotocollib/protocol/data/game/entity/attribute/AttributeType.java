@@ -3,11 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.attribute;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public interface AttributeType {
 
@@ -59,25 +55,25 @@ public interface AttributeType {
         ZOMBIE_SPAWN_REINFORCEMENTS("minecraft:zombie.spawn_reinforcements", 0, 0, 1),
         GENERIC_STEP_HEIGHT("minecraft:generic.step_height", 0.6, 0, 10);
 
-        private final String identifier;
-        private final double def;
-        private final double min;
-        private final double max;
-
-        public int getId() {
-            return this.ordinal();
-        }
-
         public static final Int2ObjectMap<AttributeType> BUILTIN = new Int2ObjectOpenHashMap<>();
-
-        public static AttributeType from(int id) {
-            return BUILTIN.get(id);
-        }
 
         static {
             for (Builtin attribute : values()) {
                 BUILTIN.put(attribute.ordinal(), attribute);
             }
+        }
+
+        private final String identifier;
+        private final double def;
+        private final double min;
+        private final double max;
+
+        public static AttributeType from(int id) {
+            return BUILTIN.get(id);
+        }
+
+        public int getId() {
+            return this.ordinal();
         }
     }
 }

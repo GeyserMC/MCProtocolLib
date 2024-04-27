@@ -1,13 +1,9 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
-import org.geysermc.mcprotocollib.network.AbstractServer;
-import org.geysermc.mcprotocollib.network.BuiltinFlags;
-import org.geysermc.mcprotocollib.network.helper.TransportHelper;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
-import io.netty.channel.*;
 import io.netty.channel.kqueue.KQueueEventLoopGroup;
 import io.netty.channel.kqueue.KQueueServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,6 +12,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
 import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
 import io.netty.util.concurrent.Future;
+import org.geysermc.mcprotocollib.network.AbstractServer;
+import org.geysermc.mcprotocollib.network.BuiltinFlags;
+import org.geysermc.mcprotocollib.network.helper.TransportHelper;
+import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.net.InetSocketAddress;
 import java.util.function.Supplier;
@@ -36,7 +36,7 @@ public class TcpServer extends AbstractServer {
 
     @Override
     public void bindImpl(boolean wait, final Runnable callback) {
-        if(this.group != null || this.channel != null) {
+        if (this.group != null || this.channel != null) {
             return;
         }
 
@@ -89,26 +89,26 @@ public class TcpServer extends AbstractServer {
             }
         }).group(this.group).localAddress(this.getHost(), this.getPort()).bind();
 
-        if(wait) {
+        if (wait) {
             try {
                 future.sync();
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
             }
 
             channel = future.channel();
-            if(callback != null) {
+            if (callback != null) {
                 callback.run();
             }
         } else {
             future.addListener((ChannelFutureListener) future1 -> {
-                if(future1.isSuccess()) {
+                if (future1.isSuccess()) {
                     channel = future1.channel();
-                    if(callback != null) {
+                    if (callback != null) {
                         callback.run();
                     }
                 } else {
                     System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
-                    if(future1.cause() != null) {
+                    if (future1.cause() != null) {
                         future1.cause().printStackTrace();
                     }
                 }
@@ -118,27 +118,27 @@ public class TcpServer extends AbstractServer {
 
     @Override
     public void closeImpl(boolean wait, final Runnable callback) {
-        if(this.channel != null) {
-            if(this.channel.isOpen()) {
+        if (this.channel != null) {
+            if (this.channel.isOpen()) {
                 ChannelFuture future = this.channel.close();
-                if(wait) {
+                if (wait) {
                     try {
                         future.sync();
-                    } catch(InterruptedException e) {
+                    } catch (InterruptedException e) {
                     }
 
-                    if(callback != null) {
+                    if (callback != null) {
                         callback.run();
                     }
                 } else {
                     future.addListener((ChannelFutureListener) future1 -> {
-                        if(future1.isSuccess()) {
-                            if(callback != null) {
+                        if (future1.isSuccess()) {
+                            if (callback != null) {
                                 callback.run();
                             }
                         } else {
                             System.err.println("[ERROR] Failed to asynchronously close connection listener.");
-                            if(future1.cause() != null) {
+                            if (future1.cause() != null) {
                                 future1.cause().printStackTrace();
                             }
                         }
@@ -149,18 +149,18 @@ public class TcpServer extends AbstractServer {
             this.channel = null;
         }
 
-        if(this.group != null) {
+        if (this.group != null) {
             Future<?> future = this.group.shutdownGracefully();
-            if(wait) {
+            if (wait) {
                 try {
                     future.sync();
-                } catch(InterruptedException e) {
+                } catch (InterruptedException e) {
                 }
             } else {
                 future.addListener(future1 -> {
-                    if(!future1.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
+                    if (!future1.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
                         System.err.println("[ERROR] Failed to asynchronously close connection listener.");
-                        if(future1.cause() != null) {
+                        if (future1.cause() != null) {
                             future1.cause().printStackTrace();
                         }
                     }

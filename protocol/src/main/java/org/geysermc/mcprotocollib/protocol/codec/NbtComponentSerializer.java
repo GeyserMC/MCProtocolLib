@@ -13,12 +13,7 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.jetbrains.annotations.Contract;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Taken from <a href="https://github.com/ViaVersion/ViaVersion/blob/4aefc23bb8074303c713a94d7f583ba4020dda04/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_3to1_20_2/util/ComponentConverter.java">ViaVersion's ComponentConverter</a>
@@ -26,21 +21,21 @@ import java.util.UUID;
 public class NbtComponentSerializer {
 
     private static final Set<String> BOOLEAN_TYPES = Set.of(
-        "interpret",
-        "bold",
-        "italic",
-        "underlined",
-        "strikethrough",
-        "obfuscated"
+            "interpret",
+            "bold",
+            "italic",
+            "underlined",
+            "strikethrough",
+            "obfuscated"
     );
     // Order is important
     private static final List<Pair<String, String>> COMPONENT_TYPES = List.of(
-        new Pair<>("text", "text"),
-        new Pair<>("translatable", "translate"),
-        new Pair<>("score", "score"),
-        new Pair<>("selector", "selector"),
-        new Pair<>("keybind", "keybind"),
-        new Pair<>("nbt", "nbt")
+            new Pair<>("text", "text"),
+            new Pair<>("translatable", "translate"),
+            new Pair<>("score", "score"),
+            new Pair<>("selector", "selector"),
+            new Pair<>("keybind", "keybind"),
+            new Pair<>("nbt", "nbt")
     );
 
     private NbtComponentSerializer() {

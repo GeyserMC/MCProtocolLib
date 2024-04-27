@@ -1,17 +1,17 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement;
-import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData;
-import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData.AdvancementType;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement;
+import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData;
+import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData.AdvancementType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,19 +30,6 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     private final @NonNull Advancement[] advancements;
     private final @NonNull String[] removedAdvancements;
     private final @NonNull Map<String, Map<String, Long>> progress;
-
-    public Map<String, Long> getProgress(@NonNull String advancementId) {
-        return this.progress.get(advancementId);
-    }
-
-    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
-        Map<String, Long> progress = this.getProgress(advancementId);
-        if (progress == null || !progress.containsKey(criterionId)) {
-            return -1;
-        }
-
-        return progress.get(criterionId);
-    }
 
     public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.reset = in.readBoolean();
@@ -107,6 +94,19 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
 
             this.progress.put(advancementId, advancementProgress);
         }
+    }
+
+    public Map<String, Long> getProgress(@NonNull String advancementId) {
+        return this.progress.get(advancementId);
+    }
+
+    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
+        Map<String, Long> progress = this.getProgress(advancementId);
+        if (progress == null || !progress.containsKey(criterionId)) {
+            return -1;
+        }
+
+        return progress.get(criterionId);
     }
 
     @Override

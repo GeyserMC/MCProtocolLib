@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import io.netty.buffer.ByteBuf;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
-import org.geysermc.mcprotocollib.protocol.codec.PacketStateCodec;
-import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
@@ -17,11 +17,11 @@ import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import io.netty.buffer.ByteBuf;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
+import org.geysermc.mcprotocollib.protocol.codec.PacketStateCodec;
+import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -47,12 +47,9 @@ public class MinecraftProtocol extends PacketProtocol {
      */
     @Getter
     private final PacketCodec codec;
-
+    private final ProtocolState targetState;
     private ProtocolState state;
     private PacketStateCodec stateCodec;
-
-    private final ProtocolState targetState;
-
     /**
      * The player's identity.
      */
@@ -134,6 +131,14 @@ public class MinecraftProtocol extends PacketProtocol {
         this.accessToken = accessToken;
 
         this.setState(ProtocolState.HANDSHAKE);
+    }
+
+    public static NbtMap loadNetworkCodec() {
+        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt"))) {
+            return (NbtMap) NbtUtils.createGZIPReader(inputStream).readTag();
+        } catch (Exception e) {
+            throw new AssertionError("Unable to load network codec.", e);
+        }
     }
 
     @Override
@@ -246,13 +251,5 @@ public class MinecraftProtocol extends PacketProtocol {
     @Override
     public PacketDefinition<?, ?> getClientboundDefinition(int id) {
         return this.stateCodec.getClientboundDefinition(id);
-    }
-
-    public static NbtMap loadNetworkCodec() {
-        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt"))) {
-            return (NbtMap) NbtUtils.createGZIPReader(inputStream).readTag();
-        } catch (Exception e) {
-            throw new AssertionError("Unable to load network codec.", e);
-        }
     }
 }

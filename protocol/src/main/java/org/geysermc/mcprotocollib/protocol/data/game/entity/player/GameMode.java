@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
-import org.geysermc.mcprotocollib.protocol.data.game.level.notify.GameEventValue;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.data.game.level.notify.GameEventValue;
 
 public enum GameMode implements GameEventValue {
     SURVIVAL,

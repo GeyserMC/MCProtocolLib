@@ -1,6 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import io.netty.buffer.ByteBuf;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
@@ -9,17 +12,12 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntDataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.ObjectDataComponent;
-import io.netty.buffer.ByteBuf;
-import lombok.Getter;
-import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 public class DataComponentType<T> {
-    private static final List<DataComponentType<?>> VALUES = new ArrayList<>();
-
     public static final DataComponentType<NbtMap> CUSTOM_DATA = new DataComponentType<>(ItemCodecHelper::readCompoundTag, ItemCodecHelper::writeAnyTag, ObjectDataComponent::new);
     public static final IntComponentType MAX_STACK_SIZE = new IntComponentType(ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
     public static final IntComponentType MAX_DAMAGE = new IntComponentType(ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
@@ -71,12 +69,12 @@ public class DataComponentType<T> {
     public static final DataComponentType<List<BannerPatternLayer>> BANNER_PATTERNS = new DataComponentType<>(listReader(ItemCodecHelper::readBannerPatternLayer), listWriter(ItemCodecHelper::writeBannerPatternLayer), ObjectDataComponent::new);
     public static final IntComponentType BASE_COLOR = new IntComponentType(ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
     public static final DataComponentType<List<Integer>> POT_DECORATIONS = new DataComponentType<>(listReader(ItemCodecHelper::readVarInt), listWriter(ItemCodecHelper::writeVarInt), ObjectDataComponent::new);
-    public static final DataComponentType<List<ItemStack>> CONTAINER = new DataComponentType<>(listReader(ItemCodecHelper::readOptionalItemStack), listWriter(MinecraftCodecHelper::writeOptionalItemStack), ObjectDataComponent::new);
     public static final DataComponentType<BlockStateProperties> BLOCK_STATE = new DataComponentType<>(ItemCodecHelper::readBlockStateProperties, ItemCodecHelper::writeBlockStateProperties, ObjectDataComponent::new);
     public static final DataComponentType<List<BeehiveOccupant>> BEES = new DataComponentType<>(listReader(ItemCodecHelper::readBeehiveOccupant), listWriter(ItemCodecHelper::writeBeehiveOccupant), ObjectDataComponent::new);
     public static final DataComponentType<String> LOCK = new DataComponentType<>(ItemCodecHelper::readLock, ItemCodecHelper::writeLock, ObjectDataComponent::new);
     public static final DataComponentType<NbtMap> CONTAINER_LOOT = new DataComponentType<>(ItemCodecHelper::readCompoundTag, ItemCodecHelper::writeAnyTag, ObjectDataComponent::new);
-
+    private static final List<DataComponentType<?>> VALUES = new ArrayList<>();
+    public static final DataComponentType<List<ItemStack>> CONTAINER = new DataComponentType<>(listReader(ItemCodecHelper::readOptionalItemStack), listWriter(MinecraftCodecHelper::writeOptionalItemStack), ObjectDataComponent::new);
     protected final int id;
     protected final Reader<T> reader;
     protected final Writer<T> writer;
@@ -89,6 +87,53 @@ public class DataComponentType<T> {
         this.dataComponentFactory = dataComponentFactory;
 
         VALUES.add(this);
+    }
+
+    private static <T> Reader<List<T>> listReader(Reader<T> reader) {
+        return (helper, input) -> {
+            List<T> ret = new ArrayList<>();
+            int size = helper.readVarInt(input);
+            for (int i = 0; i < size; i++) {
+                ret.add(reader.read(helper, input));
+            }
+
+            return ret;
+        };
+    }
+
+    private static <T> Writer<List<T>> listWriter(Writer<T> writer) {
+        return (helper, output, value) -> {
+            helper.writeVarInt(output, value.size());
+            for (T object : value) {
+                writer.write(helper, output, object);
+            }
+        };
+    }
+
+    private static Reader<Unit> unitReader() {
+        return (helper, input) -> Unit.INSTANCE;
+    }
+
+    private static Writer<Unit> unitWriter() {
+        return (helper, output, value) -> {
+        };
+    }
+
+    public static DataComponentType<?> read(ByteBuf in, MinecraftCodecHelper helper) {
+        int id = helper.readVarInt(in);
+        if (id >= VALUES.size()) {
+            throw new IllegalArgumentException("Received id " + id + " for DataComponentType when the maximum was " + VALUES.size() + "!");
+        }
+
+        return VALUES.get(id);
+    }
+
+    public static DataComponentType<?> from(int id) {
+        return VALUES.get(id);
+    }
+
+    public static int size() {
+        return VALUES.size();
     }
 
     public DataComponent<T, ? extends DataComponentType<T>> readDataComponent(ItemCodecHelper helper, ByteBuf input) {
@@ -134,51 +179,5 @@ public class DataComponentType<T> {
     @FunctionalInterface
     public interface DataComponentFactory<V> {
         DataComponent<V, ? extends DataComponentType<V>> create(DataComponentType<V> type, V value);
-    }
-
-    private static <T> Reader<List<T>> listReader(Reader<T> reader) {
-        return (helper, input) -> {
-            List<T> ret = new ArrayList<>();
-            int size = helper.readVarInt(input);
-            for (int i = 0; i < size; i++) {
-                ret.add(reader.read(helper, input));
-            }
-
-            return ret;
-        };
-    }
-
-    private static <T> Writer<List<T>> listWriter(Writer<T> writer) {
-        return (helper, output, value) -> {
-            helper.writeVarInt(output, value.size());
-            for (T object : value) {
-                writer.write(helper, output, object);
-            }
-        };
-    }
-
-    private static Reader<Unit> unitReader() {
-        return (helper, input) -> Unit.INSTANCE;
-    }
-
-    private static Writer<Unit> unitWriter() {
-        return (helper, output, value) -> {};
-    }
-
-    public static DataComponentType<?> read(ByteBuf in, MinecraftCodecHelper helper) {
-        int id = helper.readVarInt(in);
-        if (id >= VALUES.size()) {
-            throw new IllegalArgumentException("Received id " + id + " for DataComponentType when the maximum was " + VALUES.size() + "!");
-        }
-
-        return VALUES.get(id);
-    }
-
-    public static DataComponentType<?> from(int id) {
-        return VALUES.get(id);
-    }
-
-    public static int size() {
-        return VALUES.size();
     }
 }

@@ -15,25 +15,25 @@ public enum BuiltinChatType {
     TEAM_MSG_COMMAND_OUTGOING,
     EMOTE_COMMAND;
 
+    private static final Map<String, BuiltinChatType> VALUES = new HashMap<>();
+
+    static {
+        for (BuiltinChatType type : values()) {
+            VALUES.put(type.getResourceLocation(), type);
+        }
+    }
+
     private final String resourceLocation;
 
     BuiltinChatType() {
         this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
     }
 
-    public String getResourceLocation() {
-        return resourceLocation;
-    }
-
-    private static final Map<String, BuiltinChatType> VALUES = new HashMap<>();
-
     public static BuiltinChatType from(String resourceLocation) {
         return VALUES.get(resourceLocation);
     }
 
-    static {
-        for (BuiltinChatType type : values()) {
-            VALUES.put(type.getResourceLocation(), type);
-        }
+    public String getResourceLocation() {
+        return resourceLocation;
     }
 }

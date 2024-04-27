@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
+import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import io.netty.buffer.ByteBuf;
 
 /**
  * Factory for constructing {@link Packet}s.

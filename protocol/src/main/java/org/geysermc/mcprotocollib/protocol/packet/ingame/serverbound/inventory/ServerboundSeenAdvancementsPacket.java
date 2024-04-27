@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.AdvancementTabAction;
 import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.inventory.AdvancementTabAction;
 
 import java.util.function.Consumer;
 
@@ -28,6 +28,14 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         this.tabId = tabId;
     }
 
+    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.action = AdvancementTabAction.from(helper.readVarInt(in));
+        this.tabId = switch (this.action) {
+            case CLOSED_SCREEN -> null;
+            case OPENED_TAB -> helper.readString(in);
+        };
+    }
+
     /**
      * @throws IllegalStateException if #getAction() is not {@link AdvancementTabAction#OPENED_TAB}.
      */
@@ -38,14 +46,6 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         }
 
         return this.tabId;
-    }
-
-    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.action = AdvancementTabAction.from(helper.readVarInt(in));
-        this.tabId = switch (this.action) {
-            case CLOSED_SCREEN -> null;
-            case OPENED_TAB -> helper.readString(in);
-        };
     }
 
     @Override

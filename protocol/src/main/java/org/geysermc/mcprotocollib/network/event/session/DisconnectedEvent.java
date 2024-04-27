@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network.event.session;
 
-import org.geysermc.mcprotocollib.network.Session;
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.network.Session;
 
 /**
  * Called when the session is disconnected.

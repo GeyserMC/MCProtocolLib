@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ClientboundLoginDisconnectPacketTest extends PacketTest {

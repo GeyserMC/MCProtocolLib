@@ -1,16 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.WobbleStyle;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.WobbleStyle;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.*;
 
 @Data
 @With
@@ -61,7 +61,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         } else if (this.blockId == BELL) {
             this.type = BellValueType.from(type - 1);
             this.value = new BellValue(Direction.from(Math.abs(value % 6)));
-         } else if (this.blockId == DECORATED_POT) {
+        } else if (this.blockId == DECORATED_POT) {
             this.type = DecoratedPotValueType.from(type - 1);
             this.value = new DecoratedPotValue(WobbleStyle.from(Math.abs(value % 2)));
         } else {

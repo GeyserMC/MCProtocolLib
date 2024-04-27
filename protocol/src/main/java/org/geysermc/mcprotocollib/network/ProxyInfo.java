@@ -27,8 +27,8 @@ public class ProxyInfo {
     /**
      * Creates a new authenticated ProxyInfo instance.
      *
-     * @param type    Type of proxy.
-     * @param address Network address of the proxy.
+     * @param type     Type of proxy.
+     * @param address  Network address of the proxy.
      * @param username Username to authenticate with.
      * @param password Password to authenticate with.
      */

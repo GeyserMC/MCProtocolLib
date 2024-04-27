@@ -1615,7 +1615,15 @@ public enum BuiltinSound implements Sound {
     EVENT_MOB_EFFECT_TRIAL_OMEN("event.mob_effect.trial_omen"),
     EVENT_MOB_EFFECT_RAID_OMEN("event.mob_effect.raid_omen");
 
+    /**
+     * For grabbing when the SoundPacket is sent.
+     */
+    private static final BuiltinSound[] VALUES = values();
     private final @NonNull String name;
+
+    public static BuiltinSound from(int id) {
+        return VALUES[id];
+    }
 
     @Override
     public boolean isNewSystem() {
@@ -1625,14 +1633,5 @@ public enum BuiltinSound implements Sound {
     @Override
     public float getRange() {
         return 16F;
-    }
-
-    /**
-     * For grabbing when the SoundPacket is sent.
-     */
-    private static final BuiltinSound[] VALUES = values();
-
-    public static BuiltinSound from(int id) {
-        return VALUES[id];
     }
 }

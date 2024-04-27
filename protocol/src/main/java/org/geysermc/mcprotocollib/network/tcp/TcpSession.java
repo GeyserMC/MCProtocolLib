@@ -1,15 +1,5 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
-import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
-import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
-import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
-import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
-import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
-import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
-import org.geysermc.mcprotocollib.network.event.session.SessionListener;
-import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.channel.*;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -19,6 +9,11 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
+import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
+import org.geysermc.mcprotocollib.network.event.session.*;
+import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.net.ConnectException;
 import java.net.SocketAddress;
@@ -30,29 +25,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
+    private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
+    private static final int SHUTDOWN_TIMEOUT_MS = 500;
     /**
      * Controls whether non-priority packets are handled in a separate event loop
      */
     public static boolean USE_EVENT_LOOP_FOR_PACKETS = true;
     private static EventLoopGroup PACKET_EVENT_LOOP;
-    private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
-    private static final int SHUTDOWN_TIMEOUT_MS = 500;
-
-    protected String host;
-    protected int port;
     private final PacketProtocol protocol;
     private final EventLoop eventLoop = createEventLoop();
-
+    private final Map<String, Object> flags = new HashMap<>();
+    private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
+    protected String host;
+    protected int port;
+    protected boolean disconnected = false;
     private int compressionThreshold = -1;
     private int connectTimeout = 30;
     private int readTimeout = 30;
     private int writeTimeout = 0;
-
-    private final Map<String, Object> flags = new HashMap<>();
-    private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
-
     private Channel channel;
-    protected boolean disconnected = false;
 
     public TcpSession(String host, int port, PacketProtocol protocol) {
         this.host = host;
@@ -105,6 +96,11 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
+    public void setFlags(Map<String, Object> flags) {
+        this.flags.putAll(flags);
+    }
+
+    @Override
     public boolean hasFlag(Flag<?> flag) {
         return this.flags.containsKey(flag.key());
     }
@@ -131,11 +127,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @Override
     public <T> void setFlag(Flag<T> flag, T value) {
         this.flags.put(flag.key(), value);
-    }
-
-    @Override
-    public void setFlags(Map<String, Object> flags) {
-        this.flags.putAll(flags);
     }
 
     @Override
@@ -252,7 +243,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void send(Packet packet) {
-        if(this.channel == null) {
+        if (this.channel == null) {
             return;
         }
 
@@ -262,7 +253,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         if (!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
             this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
-                if(future.isSuccess()) {
+                if (future.isSuccess()) {
                     callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
@@ -314,7 +305,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             // daemon threads and their interaction with the runtime.
             PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
             Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+                    () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
         }
         return PACKET_EVENT_LOOP.next();
     }

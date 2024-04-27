@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
+import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.IntEntityMetadata;
-import io.netty.buffer.ByteBuf;
 
 public class IntMetadataType extends MetadataType<Integer> {
     private final IntReader primitiveReader;

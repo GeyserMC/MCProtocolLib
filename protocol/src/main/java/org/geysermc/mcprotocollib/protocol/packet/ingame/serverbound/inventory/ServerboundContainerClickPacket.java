@@ -1,17 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.ClickItemAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerActionType;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.CreativeGrabAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.DropItemAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.FillStackAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.MoveToHotbarAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.ShiftClickItemAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.SpreadItemAction;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -19,6 +7,10 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.inventory.*;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 import java.util.Map;
 

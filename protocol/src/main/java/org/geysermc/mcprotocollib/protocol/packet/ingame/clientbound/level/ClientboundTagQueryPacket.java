@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
 @With

@@ -1,34 +1,20 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
-import org.geysermc.mcprotocollib.network.BuiltinFlags;
-import org.geysermc.mcprotocollib.network.ProxyInfo;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.helper.TransportHelper;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.*;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
-import io.netty.channel.*;
 import io.netty.channel.kqueue.KQueueDatagramChannel;
 import io.netty.channel.kqueue.KQueueEventLoopGroup;
 import io.netty.channel.kqueue.KQueueSocketChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.dns.DefaultDnsQuestion;
-import io.netty.handler.codec.dns.DefaultDnsRawRecord;
-import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
-import io.netty.handler.codec.dns.DnsRecordType;
-import io.netty.handler.codec.dns.DnsResponse;
-import io.netty.handler.codec.dns.DnsSection;
-import io.netty.handler.codec.haproxy.HAProxyCommand;
-import io.netty.handler.codec.haproxy.HAProxyMessage;
-import io.netty.handler.codec.haproxy.HAProxyMessageEncoder;
-import io.netty.handler.codec.haproxy.HAProxyProtocolVersion;
-import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
+import io.netty.handler.codec.dns.*;
+import io.netty.handler.codec.haproxy.*;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
@@ -38,23 +24,29 @@ import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import org.geysermc.mcprotocollib.network.BuiltinFlags;
+import org.geysermc.mcprotocollib.network.ProxyInfo;
+import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.helper.TransportHelper;
+import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class TcpClientSession extends TcpSession {
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
-    private static Class<? extends Channel> CHANNEL_CLASS;
-    private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
-    private static EventLoopGroup EVENT_LOOP_GROUP;
-
     /**
      * See {@link EventLoopGroup#shutdownGracefully(long, long, TimeUnit)}
      */
     private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
     private static final int SHUTDOWN_TIMEOUT_MS = 500;
-
+    private static Class<? extends Channel> CHANNEL_CLASS;
+    private static Class<? extends DatagramChannel> DATAGRAM_CHANNEL_CLASS;
+    private static EventLoopGroup EVENT_LOOP_GROUP;
     private final String bindAddress;
     private final int bindPort;
     private final ProxyInfo proxy;
@@ -80,9 +72,51 @@ public class TcpClientSession extends TcpSession {
         this.codecHelper = protocol.createHelper();
     }
 
+    private static void createTcpEventLoopGroup() {
+        if (CHANNEL_CLASS != null) {
+            return;
+        }
+
+        switch (TransportHelper.determineTransportMethod()) {
+            case IO_URING -> {
+                EVENT_LOOP_GROUP = new IOUringEventLoopGroup(newThreadFactory());
+                CHANNEL_CLASS = IOUringSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
+            }
+            case EPOLL -> {
+                EVENT_LOOP_GROUP = new EpollEventLoopGroup(newThreadFactory());
+                CHANNEL_CLASS = EpollSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
+            }
+            case KQUEUE -> {
+                EVENT_LOOP_GROUP = new KQueueEventLoopGroup(newThreadFactory());
+                CHANNEL_CLASS = KQueueSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
+            }
+            case NIO -> {
+                EVENT_LOOP_GROUP = new NioEventLoopGroup(newThreadFactory());
+                CHANNEL_CLASS = NioSocketChannel.class;
+                DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
+            }
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(
+                () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+    }
+
+    protected static ThreadFactory newThreadFactory() {
+        // Create a new daemon thread. When the last non daemon thread ends
+        // the runtime environment will call the shutdown hooks. One of the
+        // hooks will try to shut down the event loop group which will
+        // normally lead to the thread exiting. If not, it will be forcibly
+        // killed after SHUTDOWN_TIMEOUT_MS along with the other
+        // daemon threads as the runtime exits.
+        return new DefaultThreadFactory(TcpClientSession.class, true);
+    }
+
     @Override
     public void connect(boolean wait, boolean transferring) {
-        if(this.disconnected) {
+        if (this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
         }
 
@@ -144,7 +178,7 @@ public class TcpClientSession extends TcpSession {
                     exceptionCaught(null, futureListener.cause());
                 }
             });
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             exceptionCaught(null, t);
         }
     }
@@ -162,7 +196,7 @@ public class TcpClientSession extends TcpSession {
             System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
         }
 
-        if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
+        if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
                     .channelType(DATAGRAM_CHANNEL_CLASS)
@@ -205,7 +239,7 @@ public class TcpClientSession extends TcpSession {
                 }
 
             }
-        } else if(debug) {
+        } else if (debug) {
             System.out.println("[PacketLib] Not resolving SRV record for " + this.host);
         }
 
@@ -226,7 +260,7 @@ public class TcpClientSession extends TcpSession {
     }
 
     private void addProxy(ChannelPipeline pipeline) {
-        if(proxy != null) {
+        if (proxy != null) {
             switch (proxy.getType()) {
                 case HTTP -> {
                     if (proxy.isAuthenticated()) {
@@ -279,47 +313,5 @@ public class TcpClientSession extends TcpSession {
     @Override
     public void disconnect(String reason, Throwable cause) {
         super.disconnect(reason, cause);
-    }
-
-    private static void createTcpEventLoopGroup() {
-        if (CHANNEL_CLASS != null) {
-            return;
-        }
-
-        switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING -> {
-                EVENT_LOOP_GROUP = new IOUringEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = IOUringSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = IOUringDatagramChannel.class;
-            }
-            case EPOLL -> {
-                EVENT_LOOP_GROUP = new EpollEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = EpollSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = EpollDatagramChannel.class;
-            }
-            case KQUEUE -> {
-                EVENT_LOOP_GROUP = new KQueueEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = KQueueSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = KQueueDatagramChannel.class;
-            }
-            case NIO -> {
-                EVENT_LOOP_GROUP = new NioEventLoopGroup(newThreadFactory());
-                CHANNEL_CLASS = NioSocketChannel.class;
-                DATAGRAM_CHANNEL_CLASS = NioDatagramChannel.class;
-            }
-        }
-
-        Runtime.getRuntime().addShutdownHook(new Thread(
-            () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
-    }
-
-    protected static ThreadFactory newThreadFactory() {
-       // Create a new daemon thread. When the last non daemon thread ends
-       // the runtime environment will call the shutdown hooks. One of the
-       // hooks will try to shut down the event loop group which will
-       // normally lead to the thread exiting. If not, it will be forcibly
-       // killed after SHUTDOWN_TIMEOUT_MS along with the other
-       // daemon threads as the runtime exits.
-       return new DefaultThreadFactory(TcpClientSession.class, true);
     }
 }

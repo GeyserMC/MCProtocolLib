@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.network;
 
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -33,7 +33,7 @@ public interface Session {
     /**
      * Connects this session to its host and port.
      *
-     * @param wait Whether to wait for the connection to be established before returning.
+     * @param wait         Whether to wait for the connection to be established before returning.
      * @param transferring Whether the session is a client being transferred.
      */
     public void connect(boolean wait, boolean transferring);
@@ -89,6 +89,13 @@ public interface Session {
     Map<String, Object> getFlags();
 
     /**
+     * Sets the values for a collection of flags.
+     *
+     * @param flags Collection of flags
+     */
+    public void setFlags(Map<String, Object> flags);
+
+    /**
      * Checks whether this session has a flag set. If this session belongs to a server,
      * the server's flags will also be checked.
      *
@@ -102,7 +109,7 @@ public interface Session {
      * session belongs to a server, the server's flags will be checked for the flag
      * as well.
      *
-     * @param <T> Type of the flag.
+     * @param <T>  Type of the flag.
      * @param flag Flag to check for.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
@@ -114,9 +121,9 @@ public interface Session {
      * session belongs to a server, the server's flags will be checked for the flag
      * as well. If the flag is not set, the specified default value will be returned.
      *
-     * @param <T> Type of the flag.
+     * @param <T>  Type of the flag.
      * @param flag Flag to check for.
-     * @param def Default value of the flag.
+     * @param def  Default value of the flag.
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
@@ -126,18 +133,11 @@ public interface Session {
      * Sets the value of a flag. This does not change a server's flags if this session
      * belongs to a server.
      *
-     * @param <T> Type of the flag.
-     * @param flag Flag to check for.
+     * @param <T>   Type of the flag.
+     * @param flag  Flag to check for.
      * @param value Value to set the flag to.
      */
     <T> void setFlag(Flag<T> flag, T value);
-
-    /**
-     * Sets the values for a collection of flags.
-     *
-     * @param flags Collection of flags
-     */
-    public void setFlags(Map<String, Object> flags);
 
     /**
      * Gets the listeners listening on this session.
@@ -191,7 +191,7 @@ public interface Session {
     /**
      * Sets the compression packet length threshold for this session (-1 = disabled).
      *
-     * @param threshold The new compression threshold.
+     * @param threshold             The new compression threshold.
      * @param validateDecompression whether to validate that the decompression fits within size checks.
      */
     void setCompressionThreshold(int threshold, boolean validateDecompression);

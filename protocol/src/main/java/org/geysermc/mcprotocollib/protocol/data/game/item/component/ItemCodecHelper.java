@@ -1,6 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
@@ -9,18 +14,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOp
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
-import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.kyori.adventure.text.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 

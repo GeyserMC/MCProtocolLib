@@ -15,25 +15,25 @@ public enum MoveToHotbarAction implements ContainerAction {
     SLOT_9(8),
     OFF_HAND(40);
 
+    private static final Int2ObjectMap<MoveToHotbarAction> VALUES = new Int2ObjectOpenHashMap<>();
+
+    static {
+        for (MoveToHotbarAction action : values()) {
+            VALUES.putIfAbsent(action.id, action);
+        }
+    }
+
     private final int id;
 
     MoveToHotbarAction(int id) {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    private static final Int2ObjectMap<MoveToHotbarAction> VALUES = new Int2ObjectOpenHashMap<>();
-
     public static MoveToHotbarAction from(int id) {
         return VALUES.get(id);
     }
 
-    static {
-        for (MoveToHotbarAction action : values()) {
-            VALUES.putIfAbsent(action.id, action);
-        }
+    public int getId() {
+        return id;
     }
 }

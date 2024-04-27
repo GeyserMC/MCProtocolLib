@@ -1,23 +1,18 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
-import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.IntEntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.LongEntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.type.PaintingType;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
-import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
+import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.*;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.type.PaintingType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +21,6 @@ import java.util.UUID;
 
 @Getter
 public class MetadataType<T> {
-    private static final List<MetadataType<?>> VALUES = new ArrayList<>();
-
     public static final ByteMetadataType BYTE = new ByteMetadataType(ByteBuf::readByte, ByteBuf::writeByte, ByteEntityMetadata::new);
     public static final IntMetadataType INT = new IntMetadataType(MinecraftCodecHelper::readVarInt, MinecraftCodecHelper::writeVarInt, IntEntityMetadata::new);
     public static final LongMetadataType LONG = new LongMetadataType(MinecraftCodecHelper::readVarLong, MinecraftCodecHelper::writeVarLong, LongEntityMetadata::new);
@@ -59,7 +52,7 @@ public class MetadataType<T> {
     public static final MetadataType<ArmadilloState> ARMADILLO_STATE = new MetadataType<>(MinecraftCodecHelper::readArmadilloState, MinecraftCodecHelper::writeArmadilloState, ObjectEntityMetadata::new);
     public static final MetadataType<Vector3f> VECTOR3 = new MetadataType<>(MinecraftCodecHelper::readRotation, MinecraftCodecHelper::writeRotation, ObjectEntityMetadata::new);
     public static final MetadataType<Vector4f> QUATERNION = new MetadataType<>(MinecraftCodecHelper::readQuaternion, MinecraftCodecHelper::writeQuaternion, ObjectEntityMetadata::new);
-
+    private static final List<MetadataType<?>> VALUES = new ArrayList<>();
     protected final int id;
     protected final Reader<T> reader;
     protected final Writer<T> writer;
@@ -72,47 +65,6 @@ public class MetadataType<T> {
         this.metadataFactory = metadataFactory;
 
         VALUES.add(this);
-    }
-
-    public EntityMetadata<T, ? extends MetadataType<T>> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
-        return this.metadataFactory.create(id, this, this.reader.read(helper, input));
-    }
-
-    public void writeMetadata(MinecraftCodecHelper helper, ByteBuf output, T value) {
-        this.writer.write(helper, output, value);
-    }
-
-    @FunctionalInterface
-    public interface Reader<V> {
-        V read(MinecraftCodecHelper helper, ByteBuf input);
-    }
-
-    @FunctionalInterface
-    public interface Writer<V> {
-        void write(MinecraftCodecHelper helper, ByteBuf output, V value);
-    }
-
-    @FunctionalInterface
-    public interface BasicReader<V> extends Reader<V> {
-        V read(ByteBuf input);
-
-        default V read(MinecraftCodecHelper helper, ByteBuf input) {
-            return this.read(input);
-        }
-    }
-
-    @FunctionalInterface
-    public interface BasicWriter<V> extends Writer<V> {
-        void write(ByteBuf output, V value);
-
-        default void write(MinecraftCodecHelper helper, ByteBuf output, V value) {
-            this.write(output, value);
-        }
-    }
-
-    @FunctionalInterface
-    public interface EntityMetadataFactory<V> {
-        EntityMetadata<V, ? extends MetadataType<V>> create(int id, MetadataType<V> type, V value);
     }
 
     private static <T> BasicReader<Optional<T>> optionalReader(BasicReader<T> reader) {
@@ -185,5 +137,46 @@ public class MetadataType<T> {
 
     public static int size() {
         return VALUES.size();
+    }
+
+    public EntityMetadata<T, ? extends MetadataType<T>> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
+        return this.metadataFactory.create(id, this, this.reader.read(helper, input));
+    }
+
+    public void writeMetadata(MinecraftCodecHelper helper, ByteBuf output, T value) {
+        this.writer.write(helper, output, value);
+    }
+
+    @FunctionalInterface
+    public interface Reader<V> {
+        V read(MinecraftCodecHelper helper, ByteBuf input);
+    }
+
+    @FunctionalInterface
+    public interface Writer<V> {
+        void write(MinecraftCodecHelper helper, ByteBuf output, V value);
+    }
+
+    @FunctionalInterface
+    public interface BasicReader<V> extends Reader<V> {
+        V read(ByteBuf input);
+
+        default V read(MinecraftCodecHelper helper, ByteBuf input) {
+            return this.read(input);
+        }
+    }
+
+    @FunctionalInterface
+    public interface BasicWriter<V> extends Writer<V> {
+        void write(ByteBuf output, V value);
+
+        default void write(MinecraftCodecHelper helper, ByteBuf output, V value) {
+            this.write(output, value);
+        }
+    }
+
+    @FunctionalInterface
+    public interface EntityMetadataFactory<V> {
+        EntityMetadata<V, ? extends MetadataType<V>> create(int id, MetadataType<V> type, V value);
     }
 }
