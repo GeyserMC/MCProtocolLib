@@ -1,5 +1,13 @@
 package org.geysermc.mcprotocollib.protocol;
 
+import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.network.Server;
+import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
+import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
+import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
+import org.geysermc.mcprotocollib.network.tcp.TcpServer;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
@@ -9,14 +17,6 @@ import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoBuilder;
 import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoHandler;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import org.geysermc.mcprotocollib.network.Server;
-import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
-import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.tcp.TcpClientSession;
-import org.geysermc.mcprotocollib.network.tcp.TcpServer;
-import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,12 +24,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.SERVER_COMPRESSION_THRESHOLD;
-import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.SERVER_INFO_BUILDER_KEY;
-import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.SERVER_INFO_HANDLER_KEY;
-import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.SERVER_LOGIN_HANDLER_KEY;
-import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.VERIFY_USERS_KEY;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MinecraftProtocolTest {

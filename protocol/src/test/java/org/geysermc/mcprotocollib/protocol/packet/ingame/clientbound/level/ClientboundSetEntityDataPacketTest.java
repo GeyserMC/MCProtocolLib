@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
+import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
@@ -11,7 +12,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.Object
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
-import org.cloudburstmc.math.vector.Vector3i;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.OptionalInt;

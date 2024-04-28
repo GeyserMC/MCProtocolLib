@@ -1,13 +1,17 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
+import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.With;
+import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarAction;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarColor;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarDivision;
-import io.netty.buffer.ByteBuf;
-import lombok.*;
-import net.kyori.adventure.text.Component;
 
 import java.util.UUID;
 
