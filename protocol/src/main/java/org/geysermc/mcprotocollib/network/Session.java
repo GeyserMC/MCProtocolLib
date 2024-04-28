@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.network;
 
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -270,7 +270,7 @@ public interface Session {
      * Disconnects the session.
      *
      * @param reason Reason for disconnecting.
-     * @param cause Throwable responsible for disconnecting.
+     * @param cause  Throwable responsible for disconnecting.
      */
     void disconnect(@Nullable String reason, Throwable cause);
 
@@ -285,7 +285,7 @@ public interface Session {
      * Disconnects the session.
      *
      * @param reason Reason for disconnecting.
-     * @param cause Throwable responsible for disconnecting.
+     * @param cause  Throwable responsible for disconnecting.
      */
     void disconnect(@Nullable Component reason, Throwable cause);
 }

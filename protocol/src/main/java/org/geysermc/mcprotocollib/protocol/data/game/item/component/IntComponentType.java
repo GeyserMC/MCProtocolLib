@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntDataComponent;
+import io.netty.buffer.ByteBuf;
 
 public class IntComponentType extends DataComponentType<Integer> {
     protected final IntReader primitiveReader;

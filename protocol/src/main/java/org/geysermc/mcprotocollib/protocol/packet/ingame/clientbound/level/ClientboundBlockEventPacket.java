@@ -1,33 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.WobbleStyle;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.WobbleStyle;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.BellValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.BellValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.BlockValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.BlockValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.ChestValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.ChestValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.DecoratedPotValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.DecoratedPotValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.EndGatewayValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.EndGatewayValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.GenericBlockValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.GenericBlockValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.MobSpawnerValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.MobSpawnerValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.NoteBlockValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.NoteBlockValueType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PistonValue;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PistonValueType;
 
 @Data
 @With
@@ -78,7 +61,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         } else if (this.blockId == BELL) {
             this.type = BellValueType.from(type - 1);
             this.value = new BellValue(Direction.from(Math.abs(value % 6)));
-        } else if (this.blockId == DECORATED_POT) {
+         } else if (this.blockId == DECORATED_POT) {
             this.type = DecoratedPotValueType.from(type - 1);
             this.value = new DecoratedPotValue(WobbleStyle.from(Math.abs(value % 2)));
         } else {

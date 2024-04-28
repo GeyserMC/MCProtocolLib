@@ -1,10 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type;
 
-import io.netty.buffer.ByteBuf;
-import lombok.NonNull;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.LongMetadataType;
+import io.netty.buffer.ByteBuf;
+import lombok.NonNull;
 
 public class LongEntityMetadata extends EntityMetadata<Long, LongMetadataType> {
     private final long value;

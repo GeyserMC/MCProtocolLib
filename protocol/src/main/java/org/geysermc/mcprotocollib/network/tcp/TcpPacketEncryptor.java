@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
+import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class TcpPacketEncryptor extends ByteToMessageCodec<ByteBuf> {
         int length = in.readableBytes();
         byte[] bytes = this.getBytes(in);
         int outLength = this.encryption.getEncryptOutputSize(length);
-        if (this.encryptedArray.length < outLength) {
+        if( this.encryptedArray.length < outLength) {
             this.encryptedArray = new byte[outLength];
         }
 

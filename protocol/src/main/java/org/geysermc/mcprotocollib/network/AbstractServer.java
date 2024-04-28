@@ -1,19 +1,9 @@
 package org.geysermc.mcprotocollib.network;
 
-import org.geysermc.mcprotocollib.network.event.server.ServerBoundEvent;
-import org.geysermc.mcprotocollib.network.event.server.ServerClosedEvent;
-import org.geysermc.mcprotocollib.network.event.server.ServerClosingEvent;
-import org.geysermc.mcprotocollib.network.event.server.ServerEvent;
-import org.geysermc.mcprotocollib.network.event.server.ServerListener;
-import org.geysermc.mcprotocollib.network.event.server.SessionAddedEvent;
-import org.geysermc.mcprotocollib.network.event.server.SessionRemovedEvent;
+import org.geysermc.mcprotocollib.network.event.server.*;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public abstract class AbstractServer implements Server {
@@ -69,13 +59,13 @@ public abstract class AbstractServer implements Server {
     @Override
     public <T> T getGlobalFlag(Flag<T> flag, T def) {
         Object value = this.flags.get(flag.key());
-        if (value == null) {
+        if(value == null) {
             return def;
         }
 
         try {
             return flag.cast(value);
-        } catch (ClassCastException e) {
+        } catch(ClassCastException e) {
             throw new IllegalStateException("Tried to get flag \"" + flag.key() + "\" as the wrong type. Actual type: " + value.getClass().getName());
         }
     }
@@ -101,7 +91,7 @@ public abstract class AbstractServer implements Server {
     }
 
     protected void callEvent(ServerEvent event) {
-        for (ServerListener listener : this.listeners) {
+        for(ServerListener listener : this.listeners) {
             event.call(listener);
         }
     }
@@ -118,7 +108,7 @@ public abstract class AbstractServer implements Server {
 
     public void removeSession(Session session) {
         this.sessions.remove(session);
-        if (session.isConnected()) {
+        if(session.isConnected()) {
             session.disconnect("Connection closed.");
         }
 
@@ -139,7 +129,7 @@ public abstract class AbstractServer implements Server {
     public AbstractServer bind(boolean wait, Runnable callback) {
         this.bindImpl(wait, () -> {
             callEvent(new ServerBoundEvent(AbstractServer.this));
-            if (callback != null) {
+            if(callback != null) {
                 callback.run();
             }
         });
@@ -162,15 +152,15 @@ public abstract class AbstractServer implements Server {
     @Override
     public void close(boolean wait, Runnable callback) {
         this.callEvent(new ServerClosingEvent(this));
-        for (Session session : this.getSessions()) {
-            if (session.isConnected()) {
+        for(Session session : this.getSessions()) {
+            if(session.isConnected()) {
                 session.disconnect("Server closed.");
             }
         }
 
         this.closeImpl(wait, () -> {
             callEvent(new ServerClosedEvent(AbstractServer.this));
-            if (callback != null) {
+            if(callback != null) {
                 callback.run();
             }
         });

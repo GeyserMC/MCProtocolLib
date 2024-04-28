@@ -15,7 +15,7 @@ public class PacketSendingEvent implements SessionEvent {
      * Creates a new PacketSendingEvent instance.
      *
      * @param session Session sending the packet.
-     * @param packet Packet being sent.
+     * @param packet  Packet being sent.
      */
     public PacketSendingEvent(Session session, Packet packet) {
         this.session = session;
@@ -42,7 +42,7 @@ public class PacketSendingEvent implements SessionEvent {
     public <T extends Packet> T getPacket() {
         try {
             return (T) this.packet;
-        } catch (ClassCastException e) {
+        } catch(ClassCastException e) {
             throw new IllegalStateException("Tried to get packet as the wrong type. Actual type: " + this.packet.getClass().getName());
         }
     }

@@ -22,10 +22,10 @@ public class ClientboundSetEntityDataPacketTest extends PacketTest {
     public void setup() {
         this.setPackets(
                 new ClientboundSetEntityDataPacket(0, new EntityMetadata<?, ?>[0]),
-                new ClientboundSetEntityDataPacket(20, new EntityMetadata<?, ?>[]{
+                new ClientboundSetEntityDataPacket(20, new EntityMetadata<?, ?>[] {
                         new ObjectEntityMetadata<>(1, MetadataType.STRING, "Hello!")
                 }),
-                new ClientboundSetEntityDataPacket(2, new EntityMetadata<?, ?>[]{
+                new ClientboundSetEntityDataPacket(2, new EntityMetadata<?, ?>[] {
                         new BooleanEntityMetadata(0, MetadataType.BOOLEAN, true),
                         new ByteEntityMetadata(4, MetadataType.BYTE, (byte) 45),
                         new IntEntityMetadata(2, MetadataType.INT, 555),
@@ -36,7 +36,7 @@ public class ClientboundSetEntityDataPacketTest extends PacketTest {
                         new ObjectEntityMetadata<>(6, MetadataType.DIRECTION, Direction.EAST),
                         new ObjectEntityMetadata<>(7, MetadataType.OPTIONAL_VARINT, OptionalInt.of(1038))
                 }),
-                new ClientboundSetEntityDataPacket(700, new EntityMetadata<?, ?>[]{
+                new ClientboundSetEntityDataPacket(700, new EntityMetadata<?, ?>[] {
                         // Boxed variation test
                         new ObjectEntityMetadata<>(0, MetadataType.INT, 0),
                         new ObjectEntityMetadata<>(1, MetadataType.FLOAT, 1.0f)

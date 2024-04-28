@@ -1,11 +1,11 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
+import org.geysermc.mcprotocollib.network.Session;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.CorruptedFrameException;
-import org.geysermc.mcprotocollib.network.Session;
 
 import java.util.List;
 

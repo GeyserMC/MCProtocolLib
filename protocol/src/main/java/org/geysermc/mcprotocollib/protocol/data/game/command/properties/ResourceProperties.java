@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.command.properties;
 
-import lombok.Data;
 import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
+import lombok.Data;
 
 @Data
 public class ResourceProperties implements CommandProperties {

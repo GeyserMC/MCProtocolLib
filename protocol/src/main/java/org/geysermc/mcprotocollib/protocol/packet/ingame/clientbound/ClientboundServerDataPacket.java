@@ -14,7 +14,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @AllArgsConstructor
 public class ClientboundServerDataPacket implements MinecraftPacket {
     private final Component motd;
-    private final byte @Nullable [] iconBytes;
+    private final byte @Nullable[] iconBytes;
 
     public ClientboundServerDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.motd = helper.readComponent(in);

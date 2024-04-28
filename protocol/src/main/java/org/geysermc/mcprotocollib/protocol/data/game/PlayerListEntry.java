@@ -1,12 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.data.game;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 
 import java.security.PublicKey;
 import java.util.UUID;
@@ -23,7 +23,7 @@ public class PlayerListEntry {
     private UUID sessionId;
     private long expiresAt;
     private @Nullable PublicKey publicKey;
-    private byte @Nullable [] keySignature;
+    private byte @Nullable[] keySignature;
 
     public PlayerListEntry(UUID profileId) {
         this(profileId, null, false, 0, GameMode.SURVIVAL, null, null, 0, null, null);
