@@ -103,8 +103,7 @@ public class ServerListener extends SessionAdapter {
                             session.disconnect("Outdated client! Please use " + protocol.getCodec().getMinecraftVersion() + ".");
                         }
                     }
-                    default ->
-                            throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
+                    default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
         } else if (protocol.getState() == ProtocolState.LOGIN) {

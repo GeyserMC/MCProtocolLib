@@ -10,8 +10,7 @@ public class TransportHelper {
     }
 
     public static TransportMethod determineTransportMethod() {
-        if (isClassAvailable("io.netty.incubator.channel.uring.IOUring") && IOUring.isAvailable())
-            return TransportMethod.IO_URING;
+        if (isClassAvailable("io.netty.incubator.channel.uring.IOUring") && IOUring.isAvailable()) return TransportMethod.IO_URING;
         if (isClassAvailable("io.netty.channel.epoll.Epoll") && Epoll.isAvailable()) return TransportMethod.EPOLL;
         if (isClassAvailable("io.netty.channel.kqueue.KQueue") && KQueue.isAvailable()) return TransportMethod.KQUEUE;
         return TransportMethod.NIO;
