@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 
 import java.util.List;
 import java.util.UUID;

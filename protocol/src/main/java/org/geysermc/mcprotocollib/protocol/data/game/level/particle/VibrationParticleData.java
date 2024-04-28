@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.particle;
 
-import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSource;
 
 @Data
 @AllArgsConstructor

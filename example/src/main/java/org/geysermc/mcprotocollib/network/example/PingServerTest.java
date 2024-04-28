@@ -16,7 +16,7 @@ public class PingServerTest {
             KeyGenerator gen = KeyGenerator.getInstance("AES");
             gen.init(128);
             key = gen.generateKey();
-        } catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             System.err.println("AES algorithm not supported, exiting...");
             return;
         }

@@ -1,16 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.scoreboard;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
-import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ObjectiveAction;
-import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ScoreType;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
+import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ObjectiveAction;
+import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ScoreType;
 
 @Data
 @With
@@ -41,11 +41,11 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
     /**
      * Constructs a ServerScoreboardObjectivePacket for adding or updating an objective.
      *
-     * @param name          Name of the objective.
-     * @param action        Action to perform.
-     * @param displayName   Display name of the objective.
-     * @param type          Type of score.
-     * @param numberFormat  Number formatting.
+     * @param name Name of the objective.
+     * @param action Action to perform.
+     * @param displayName Display name of the objective.
+     * @param type Type of score.
+     * @param numberFormat Number formatting.
      */
     public ClientboundSetObjectivePacket(@NonNull String name, @NonNull ObjectiveAction action, @Nullable Component displayName, @Nullable ScoreType type, @Nullable NumberFormat numberFormat) {
         if ((action == ObjectiveAction.ADD || action == ObjectiveAction.UPDATE) && (displayName == null || type == null)) {

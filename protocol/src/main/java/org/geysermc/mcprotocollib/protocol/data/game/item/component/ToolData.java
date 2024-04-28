@@ -17,7 +17,7 @@ public class ToolData {
     @AllArgsConstructor
     public static class Rule {
         private final @Nullable String location;
-        private final int @Nullable[] holders;
+        private final int @Nullable [] holders;
         private final @Nullable Float speed;
         private final @Nullable Boolean correctForDrops;
     }

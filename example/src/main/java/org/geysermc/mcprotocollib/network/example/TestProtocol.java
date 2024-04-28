@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.network.example;
 
+import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
@@ -11,7 +12,6 @@ import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.packet.DefaultPacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import io.netty.buffer.ByteBuf;
 
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;

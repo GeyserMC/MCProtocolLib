@@ -1,19 +1,19 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundCustomPayloadPacket implements MinecraftPacket {
     private final @NonNull String channel;
-    private final byte @NonNull[] data;
+    private final byte @NonNull [] data;
 
     public ClientboundCustomPayloadPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.channel = helper.readString(in);

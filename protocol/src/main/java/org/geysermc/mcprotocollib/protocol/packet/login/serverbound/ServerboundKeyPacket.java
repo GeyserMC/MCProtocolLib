@@ -1,22 +1,25 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.serverbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 @ToString
 @EqualsAndHashCode
 public class ServerboundKeyPacket implements MinecraftPacket {
-    private final byte @NonNull[] sharedKey;
-    private final byte @NonNull[] encryptedChallenge;
+    private final byte @NonNull [] sharedKey;
+    private final byte @NonNull [] encryptedChallenge;
 
     public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] challenge) {
         this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());

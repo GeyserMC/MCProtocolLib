@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.network.packet;
 
+import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
-import io.netty.buffer.ByteBuf;
 
 public class BufferedPacket implements Packet, PacketSerializer<BufferedPacket, PacketCodecHelper> {
     private final Class<? extends Packet> packetClass;

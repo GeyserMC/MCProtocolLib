@@ -1,10 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
 @NoArgsConstructor

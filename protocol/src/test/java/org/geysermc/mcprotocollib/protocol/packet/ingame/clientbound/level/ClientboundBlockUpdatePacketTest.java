@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
+import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockChangeEntry;
 import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
-import org.cloudburstmc.math.vector.Vector3i;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ClientboundBlockUpdatePacketTest extends PacketTest {

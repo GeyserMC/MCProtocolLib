@@ -13,7 +13,7 @@ public class SessionRemovedEvent implements ServerEvent {
     /**
      * Creates a new SessionRemovedEvent instance.
      *
-     * @param server  Server the session is being removed from.
+     * @param server Server the session is being removed from.
      * @param session Session being removed.
      */
     public SessionRemovedEvent(Server server, Session session) {

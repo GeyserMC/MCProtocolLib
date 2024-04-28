@@ -1,16 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntry;
-import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntryAction;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntry;
+import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntryAction;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -121,8 +121,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                     case UPDATE_GAME_MODE -> helper.writeVarInt(out, entry.getGameMode().ordinal());
                     case UPDATE_LISTED -> out.writeBoolean(entry.isListed());
                     case UPDATE_LATENCY -> helper.writeVarInt(out, entry.getLatency());
-                    case UPDATE_DISPLAY_NAME ->
-                            helper.writeNullable(out, entry.getDisplayName(), helper::writeComponent);
+                    case UPDATE_DISPLAY_NAME -> helper.writeNullable(out, entry.getDisplayName(), helper::writeComponent);
                 }
             }
         }
