@@ -1,21 +1,25 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
-import org.geysermc.mcprotocollib.network.BuiltinFlags;
-import org.geysermc.mcprotocollib.network.ProxyInfo;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.helper.TransportHelper;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.AddressedEnvelope;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelException;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.DatagramChannel;
-import io.netty.channel.*;
 import io.netty.channel.kqueue.KQueueDatagramChannel;
 import io.netty.channel.kqueue.KQueueEventLoopGroup;
 import io.netty.channel.kqueue.KQueueSocketChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.dns.DefaultDnsQuestion;
@@ -38,8 +42,16 @@ import io.netty.incubator.channel.uring.IOUringSocketChannel;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import org.geysermc.mcprotocollib.network.BuiltinFlags;
+import org.geysermc.mcprotocollib.network.ProxyInfo;
+import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.helper.TransportHelper;
+import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -82,7 +94,7 @@ public class TcpClientSession extends TcpSession {
 
     @Override
     public void connect(boolean wait, boolean transferring) {
-        if(this.disconnected) {
+        if (this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
         }
 
@@ -144,7 +156,7 @@ public class TcpClientSession extends TcpSession {
                     exceptionCaught(null, futureListener.cause());
                 }
             });
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             exceptionCaught(null, t);
         }
     }
@@ -162,7 +174,7 @@ public class TcpClientSession extends TcpSession {
             System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
         }
 
-        if(getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
+        if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
                     .channelType(DATAGRAM_CHANNEL_CLASS)
@@ -205,7 +217,7 @@ public class TcpClientSession extends TcpSession {
                 }
 
             }
-        } else if(debug) {
+        } else if (debug) {
             System.out.println("[PacketLib] Not resolving SRV record for " + this.host);
         }
 
@@ -226,7 +238,7 @@ public class TcpClientSession extends TcpSession {
     }
 
     private void addProxy(ChannelPipeline pipeline) {
-        if(proxy != null) {
+        if (proxy != null) {
             switch (proxy.getType()) {
                 case HTTP -> {
                     if (proxy.isAuthenticated()) {
@@ -310,16 +322,16 @@ public class TcpClientSession extends TcpSession {
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(
-            () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+                () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
     }
 
     protected static ThreadFactory newThreadFactory() {
-       // Create a new daemon thread. When the last non daemon thread ends
-       // the runtime environment will call the shutdown hooks. One of the
-       // hooks will try to shut down the event loop group which will
-       // normally lead to the thread exiting. If not, it will be forcibly
-       // killed after SHUTDOWN_TIMEOUT_MS along with the other
-       // daemon threads as the runtime exits.
-       return new DefaultThreadFactory(TcpClientSession.class, true);
+        // Create a new daemon thread. When the last non daemon thread ends
+        // the runtime environment will call the shutdown hooks. One of the
+        // hooks will try to shut down the event loop group which will
+        // normally lead to the thread exiting. If not, it will be forcibly
+        // killed after SHUTDOWN_TIMEOUT_MS along with the other
+        // daemon threads as the runtime exits.
+        return new DefaultThreadFactory(TcpClientSession.class, true);
     }
 }

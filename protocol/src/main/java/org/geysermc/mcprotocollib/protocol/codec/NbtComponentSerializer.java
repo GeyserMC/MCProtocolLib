@@ -26,21 +26,21 @@ import java.util.UUID;
 public class NbtComponentSerializer {
 
     private static final Set<String> BOOLEAN_TYPES = Set.of(
-        "interpret",
-        "bold",
-        "italic",
-        "underlined",
-        "strikethrough",
-        "obfuscated"
+            "interpret",
+            "bold",
+            "italic",
+            "underlined",
+            "strikethrough",
+            "obfuscated"
     );
     // Order is important
     private static final List<Pair<String, String>> COMPONENT_TYPES = List.of(
-        new Pair<>("text", "text"),
-        new Pair<>("translatable", "translate"),
-        new Pair<>("score", "score"),
-        new Pair<>("selector", "selector"),
-        new Pair<>("keybind", "keybind"),
-        new Pair<>("nbt", "nbt")
+            new Pair<>("text", "text"),
+            new Pair<>("translatable", "translate"),
+            new Pair<>("score", "score"),
+            new Pair<>("selector", "selector"),
+            new Pair<>("keybind", "keybind"),
+            new Pair<>("nbt", "nbt")
     );
 
     private NbtComponentSerializer() {
@@ -161,9 +161,9 @@ public class NbtComponentSerializer {
     /**
      * Converts a json object entry to a tag entry.
      *
-     * @param key   key of the entry
+     * @param key key of the entry
      * @param value value of the entry
-     * @param tag   the resulting compound tag
+     * @param tag the resulting compound tag
      */
     private static void convertObjectEntry(final String key, final JsonElement value, final NbtMapBuilder tag) {
         if ((key.equals("contents")) && value.isJsonObject()) {

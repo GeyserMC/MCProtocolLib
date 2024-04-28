@@ -23,10 +23,10 @@ public interface PacketEncryption {
     /**
      * Decrypts the given data.
      *
-     * @param input        Input data to decrypt.
-     * @param inputOffset  Offset of the data to start decrypting at.
-     * @param inputLength  Length of the data to be decrypted.
-     * @param output       Array to output decrypted data to.
+     * @param input Input data to decrypt.
+     * @param inputOffset Offset of the data to start decrypting at.
+     * @param inputLength Length of the data to be decrypted.
+     * @param output Array to output decrypted data to.
      * @param outputOffset Offset of the output array to start at.
      * @return The number of bytes stored in the output array.
      * @throws Exception If an error occurs.
@@ -36,10 +36,10 @@ public interface PacketEncryption {
     /**
      * Encrypts the given data.
      *
-     * @param input        Input data to encrypt.
-     * @param inputOffset  Offset of the data to start encrypting at.
-     * @param inputLength  Length of the data to be encrypted.
-     * @param output       Array to output encrypted data to.
+     * @param input Input data to encrypt.
+     * @param inputOffset Offset of the data to start encrypting at.
+     * @param inputLength Length of the data to be encrypted.
+     * @param output Array to output encrypted data to.
      * @param outputOffset Offset of the output array to start at.
      * @return The number of bytes stored in the output array.
      * @throws Exception If an error occurs.

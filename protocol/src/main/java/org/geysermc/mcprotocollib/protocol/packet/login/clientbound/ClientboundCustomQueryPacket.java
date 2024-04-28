@@ -14,7 +14,7 @@ import lombok.With;
 public class ClientboundCustomQueryPacket implements MinecraftPacket {
     private final int messageId;
     private final @NonNull String channel;
-    private final byte @NonNull[] data;
+    private final byte @NonNull [] data;
 
     public ClientboundCustomQueryPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.messageId = helper.readVarInt(in);

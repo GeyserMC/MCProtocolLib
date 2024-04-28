@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type;
 
+import lombok.NonNull;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
-import lombok.NonNull;
 
 public class ObjectEntityMetadata<T> extends EntityMetadata<T, MetadataType<T>> {
     private final T value;

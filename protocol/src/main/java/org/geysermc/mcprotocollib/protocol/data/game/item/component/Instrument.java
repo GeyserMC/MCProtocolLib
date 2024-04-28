@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
-import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
 @Data
 @AllArgsConstructor

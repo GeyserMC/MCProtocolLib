@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.data.game.command;
 
-import org.geysermc.mcprotocollib.protocol.data.game.command.properties.CommandProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import org.geysermc.mcprotocollib.protocol.data.game.command.properties.CommandProperties;
 
 import java.util.OptionalInt;
 

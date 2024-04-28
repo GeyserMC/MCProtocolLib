@@ -13,7 +13,7 @@ import lombok.With;
 @AllArgsConstructor
 public class ClientboundCustomPayloadPacket implements MinecraftPacket {
     private final @NonNull String channel;
-    private final byte @NonNull[] data;
+    private final byte @NonNull [] data;
 
     public ClientboundCustomPayloadPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.channel = helper.readString(in);

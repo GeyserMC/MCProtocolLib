@@ -1,6 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chunk;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
@@ -32,7 +36,7 @@ public class BitStorage {
     };
 
     @Getter
-    private final long @NonNull[] data;
+    private final long @NonNull [] data;
     @Getter
     private final int bitsPerEntry;
     @Getter
@@ -48,7 +52,7 @@ public class BitStorage {
         this(bitsPerEntry, size, null);
     }
 
-    public BitStorage(int bitsPerEntry, int size, long @Nullable[] data) {
+    public BitStorage(int bitsPerEntry, int size, long @Nullable [] data) {
         if (bitsPerEntry < 1 || bitsPerEntry > 32) {
             throw new IllegalArgumentException("bitsPerEntry must be between 1 and 32, inclusive.");
         }

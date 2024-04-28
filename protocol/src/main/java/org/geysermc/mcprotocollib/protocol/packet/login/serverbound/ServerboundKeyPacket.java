@@ -15,8 +15,8 @@ import java.security.*;
 @ToString
 @EqualsAndHashCode
 public class ServerboundKeyPacket implements MinecraftPacket {
-    private final byte @NonNull[] sharedKey;
-    private final byte @NonNull[] encryptedChallenge;
+    private final byte @NonNull [] sharedKey;
+    private final byte @NonNull [] encryptedChallenge;
 
     public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] challenge) {
         this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
