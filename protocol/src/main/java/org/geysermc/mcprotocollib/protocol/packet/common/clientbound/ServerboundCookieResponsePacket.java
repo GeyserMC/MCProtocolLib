@@ -1,11 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.jetbrains.annotations.Nullable;
 
 @Data
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 public class ServerboundCookieResponsePacket implements MinecraftPacket {
     private final String key;
-    private final byte @Nullable[] payload;
+    private final byte @Nullable [] payload;
 
     public ServerboundCookieResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.key = helper.readResourceLocation(in);

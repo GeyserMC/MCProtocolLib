@@ -3,11 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.attribute;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public interface AttributeType {
 

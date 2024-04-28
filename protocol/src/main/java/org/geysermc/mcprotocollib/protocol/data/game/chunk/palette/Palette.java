@@ -32,6 +32,7 @@ public interface Palette {
     /**
      * Creates a copy of this palette.
      * This performs a deep copy of the palette's internal data.
+     *
      * @return The palette's copy.
      */
     Palette copy();

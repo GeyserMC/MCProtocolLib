@@ -1,15 +1,13 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
 @With

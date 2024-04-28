@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 
 import java.util.OptionalInt;
 

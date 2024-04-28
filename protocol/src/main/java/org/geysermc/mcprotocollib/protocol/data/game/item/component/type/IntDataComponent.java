@@ -1,10 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component.type;
 
+import io.netty.buffer.ByteBuf;
+import lombok.NonNull;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.IntComponentType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemCodecHelper;
-import io.netty.buffer.ByteBuf;
-import lombok.NonNull;
 
 
 public class IntDataComponent extends DataComponent<Integer, IntComponentType> {

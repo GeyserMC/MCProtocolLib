@@ -1,12 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chunk.palette;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 
 import java.util.Arrays;
 
