@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
-import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
+import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
+import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 
 @RequiredArgsConstructor
 public class MinecraftPacketSerializer<T extends MinecraftPacket> implements PacketSerializer<T, MinecraftCodecHelper> {
