@@ -1,13 +1,13 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
 
 @Data
 @With
@@ -23,6 +23,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final boolean enableRespawnScreen;
     private final boolean doLimitedCrafting;
     private final PlayerSpawnInfo commonPlayerSpawnInfo;
+    private final boolean enforcesSecureChat;
 
     public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.entityId = in.readInt();
@@ -39,6 +40,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         this.enableRespawnScreen = in.readBoolean();
         this.doLimitedCrafting = in.readBoolean();
         this.commonPlayerSpawnInfo = helper.readPlayerSpawnInfo(in);
+        this.enforcesSecureChat = in.readBoolean();
     }
 
     @Override
@@ -56,5 +58,6 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         out.writeBoolean(this.enableRespawnScreen);
         out.writeBoolean(this.doLimitedCrafting);
         helper.writePlayerSpawnInfo(out, this.commonPlayerSpawnInfo);
+        out.writeBoolean(this.enforcesSecureChat);
     }
 }

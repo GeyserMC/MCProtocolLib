@@ -23,6 +23,6 @@ public class ClientboundHelloPacketTest extends PacketTest {
         byte[] verifyToken = new byte[4];
         new Random().nextBytes(verifyToken);
 
-        this.setPackets(new ClientboundHelloPacket("ServerID", keyPair.getPublic(), verifyToken));
+        this.setPackets(new ClientboundHelloPacket("ServerID", keyPair.getPublic(), verifyToken, true));
     }
 }

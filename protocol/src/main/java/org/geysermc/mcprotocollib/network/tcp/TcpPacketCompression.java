@@ -1,11 +1,12 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
-import org.geysermc.mcprotocollib.network.Session;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
+import org.geysermc.mcprotocollib.network.Session;
 
 import java.util.List;
 import java.util.zip.Deflater;
@@ -36,7 +37,10 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
         int readable = in.readableBytes();
-        if(readable < this.session.getCompressionThreshold()) {
+        if (readable > MAX_UNCOMPRESSED_SIZE) {
+            throw new EncoderException("Packet too big: size of " + readable + " is larger than the protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
+        }
+        if (readable < this.session.getCompressionThreshold()) {
             this.session.getCodecHelper().writeVarInt(out, 0);
             out.writeBytes(in);
         } else {
@@ -45,7 +49,7 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
             this.session.getCodecHelper().writeVarInt(out, bytes.length);
             this.deflater.setInput(bytes, 0, readable);
             this.deflater.finish();
-            while(!this.deflater.finished()) {
+            while (!this.deflater.finished()) {
                 int length = this.deflater.deflate(this.buf);
                 out.writeBytes(this.buf, 0, length);
             }

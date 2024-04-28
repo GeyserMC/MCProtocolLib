@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.particle;
 
 public enum ParticleType {
-    AMBIENT_ENTITY_EFFECT,
     ANGRY_VILLAGER,
     BLOCK,
     BLOCK_MARKER,
@@ -26,12 +25,15 @@ public enum ParticleType {
     EXPLOSION_EMITTER,
     EXPLOSION,
     GUST,
-    GUST_EMITTER,
+    SMALL_GUST,
+    GUST_EMITTER_LARGE,
+    GUST_EMITTER_SMALL,
     SONIC_BOOM,
     FALLING_DUST,
     FIREWORK,
     FISHING,
     FLAME,
+    INFESTED,
     CHERRY_LEAVES,
     SCULK_SOUL,
     SCULK_CHARGE,
@@ -46,6 +48,7 @@ public enum ParticleType {
     ITEM,
     VIBRATION,
     ITEM_SLIME,
+    ITEM_COBWEB,
     ITEM_SNOWBALL,
     LARGE_SMOKE,
     LAVA,
@@ -100,8 +103,13 @@ public enum ParticleType {
     SHRIEK,
     EGG_CRACK,
     DUST_PLUME,
-    GUST_DUST,
-    TRIAL_SPAWNER_DETECTION;
+    TRIAL_SPAWNER_DETECTED_PLAYER,
+    TRIAL_SPAWNER_DETECTED_PLAYER_OMINOUS,
+    VAULT_CONNECTION,
+    DUST_PILLAR,
+    OMINOUS_SPAWNING,
+    RAID_OMEN,
+    TRIAL_OMEN;
 
     private static final ParticleType[] VALUES = values();
 

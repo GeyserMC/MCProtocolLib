@@ -132,7 +132,7 @@ public interface Server {
     /**
      * Binds the listener to its host and port.
      *
-     * @param wait     Whether to wait for the listener to finish binding.
+     * @param wait Whether to wait for the listener to finish binding.
      * @param callback Callback to call when the listener has finished binding.
      * @return The server.
      */
@@ -153,7 +153,7 @@ public interface Server {
     /**
      * Closes the listener.
      *
-     * @param wait     Whether to wait for the listener to finish closing.
+     * @param wait Whether to wait for the listener to finish closing.
      * @param callback Callback to call when the listener has finished closing.
      */
     void close(boolean wait, Runnable callback);

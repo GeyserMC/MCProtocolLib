@@ -1,16 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.cloudburstmc.nbt.NbtMap;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 
 @Data
 @With
@@ -19,14 +19,14 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     private final int x;
     private final int z;
     private final byte @NonNull [] chunkData;
-    private final @NonNull CompoundTag heightMaps;
+    private final @NonNull NbtMap heightMaps;
     private final @NonNull BlockEntityInfo @NonNull [] blockEntities;
     private final @NonNull LightUpdateData lightData;
 
     public ClientboundLevelChunkWithLightPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.x = in.readInt();
         this.z = in.readInt();
-        this.heightMaps = helper.readAnyTagOrThrow(in);
+        this.heightMaps = helper.readCompoundTagOrThrow(in);
         this.chunkData = helper.readByteArray(in);
 
         this.blockEntities = new BlockEntityInfo[helper.readVarInt(in)];
@@ -36,7 +36,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
             int blockEntityZ = xz & 15;
             int blockEntityY = in.readShort();
             BlockEntityType type = helper.readBlockEntityType(in);
-            CompoundTag tag = helper.readAnyTag(in);
+            NbtMap tag = helper.readCompoundTag(in);
             this.blockEntities[i] = new BlockEntityInfo(blockEntityX, blockEntityY, blockEntityZ, type, tag);
         }
 

@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 
 /**
  * Interface for handling a session logging in to a server.

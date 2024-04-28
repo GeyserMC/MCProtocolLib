@@ -1,16 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntry;
-import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntryAction;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntry;
+import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntryAction;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -94,13 +94,18 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
         helper.writeVarInt(out, this.entries.length);
         for (PlayerListEntry entry : this.entries) {
-            helper.writeUUID(out, entry.getProfile().getId());
+            helper.writeUUID(out, entry.getProfileId());
             for (PlayerListEntryAction action : this.actions) {
                 switch (action) {
                     case ADD_PLAYER -> {
-                        helper.writeString(out, entry.getProfile().getName());
-                        helper.writeVarInt(out, entry.getProfile().getProperties().size());
-                        for (GameProfile.Property property : entry.getProfile().getProperties()) {
+                        GameProfile profile = entry.getProfile();
+                        if (profile == null) {
+                            throw new IllegalArgumentException("Cannot ADD " + entry.getProfileId() + " without a profile.");
+                        }
+
+                        helper.writeString(out, profile.getName());
+                        helper.writeVarInt(out, profile.getProperties().size());
+                        for (GameProfile.Property property : profile.getProperties()) {
                             helper.writeProperty(out, property);
                         }
                     }
@@ -116,8 +121,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                     case UPDATE_GAME_MODE -> helper.writeVarInt(out, entry.getGameMode().ordinal());
                     case UPDATE_LISTED -> out.writeBoolean(entry.isListed());
                     case UPDATE_LATENCY -> helper.writeVarInt(out, entry.getLatency());
-                    case UPDATE_DISPLAY_NAME ->
-                            helper.writeNullable(out, entry.getDisplayName(), helper::writeComponent);
+                    case UPDATE_DISPLAY_NAME -> helper.writeNullable(out, entry.getDisplayName(), helper::writeComponent);
                 }
             }
         }

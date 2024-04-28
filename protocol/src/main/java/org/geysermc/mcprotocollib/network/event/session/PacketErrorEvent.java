@@ -14,7 +14,7 @@ public class PacketErrorEvent implements SessionEvent {
      * Creates a new SessionErrorEvent instance.
      *
      * @param session Session that the error came from.
-     * @param cause   Cause of the error.
+     * @param cause Cause of the error.
      */
     public PacketErrorEvent(Session session, Throwable cause) {
         this.session = session;

@@ -1,7 +1,25 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
+import com.google.gson.JsonElement;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.math.vector.Vector3f;
+import org.cloudburstmc.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector4f;
+import org.cloudburstmc.nbt.NBTInputStream;
+import org.cloudburstmc.nbt.NBTOutputStream;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtType;
+import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
+import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.FixedFormat;
@@ -20,9 +38,9 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPale
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EntityEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
@@ -32,6 +50,11 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakSta
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.PaintingType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEvent;
@@ -40,7 +63,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.event.UnknownLevelEve
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.BlockParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustParticleData;
-import org.geysermc.mcprotocollib.protocol.data.game.level.particle.FallingDustParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.EntityEffectParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ItemParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleData;
@@ -59,28 +82,14 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.StatisticCategory;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.Tag;
-import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
-import com.google.gson.JsonElement;
-import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.cloudburstmc.math.vector.Vector3f;
-import org.cloudburstmc.math.vector.Vector3i;
-import org.cloudburstmc.math.vector.Vector4f;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -101,7 +110,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private final Int2ObjectMap<LevelEventType> levelEvents;
     private final Map<String, BuiltinSound> soundNames;
 
-    protected CompoundTag registry;
+    protected NbtMap registry;
 
     @Nullable
     public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
@@ -118,6 +127,20 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             ifPresent.accept(buf, value);
         } else {
             buf.writeBoolean(false);
+        }
+    }
+
+    public <T> Holder<T> readHolder(ByteBuf buf, Function<ByteBuf, T> readCustom) {
+        int registryId = this.readVarInt(buf);
+        return registryId == 0 ? Holder.ofCustom(readCustom.apply(buf)) : Holder.ofId(registryId - 1);
+    }
+
+    public <T> void writeHolder(ByteBuf buf, Holder<T> holder, BiConsumer<ByteBuf, T> writeCustom) {
+        if (holder.isCustom()) {
+            this.writeVarInt(buf, 0);
+            writeCustom.accept(buf, holder.custom());
+        } else {
+            this.writeVarInt(buf, holder.id() + 1);
         }
     }
 
@@ -188,74 +211,187 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     @Nullable
-    public CompoundTag readAnyTag(ByteBuf buf) {
-        return readAnyTag(buf, CompoundTag.class);
+    public NbtMap readCompoundTag(ByteBuf buf) {
+        return readAnyTag(buf, NbtType.COMPOUND);
     }
 
     @NonNull
-    public CompoundTag readAnyTagOrThrow(ByteBuf buf) {
-        CompoundTag tag = readAnyTag(buf);
+    public NbtMap readCompoundTagOrThrow(ByteBuf buf) {
+        NbtMap tag = readCompoundTag(buf);
         if (tag == null) {
-            throw new IllegalArgumentException("Got end-tag when trying to read CompoundTag");
+            throw new IllegalArgumentException("Got end-tag when trying to read NbtMap");
         }
         return tag;
     }
 
     @Nullable
-    public <T extends Tag> T readAnyTag(ByteBuf buf, Class<T> expected) {
-        Tag tag;
-        try {
-            tag = NBTIO.readAnyTag(new InputStream() {
-                @Override
-                public int read() {
-                    return buf.readUnsignedByte();
-                }
-            });
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+    public <T> T readAnyTag(ByteBuf buf, NbtType<T> expected) {
+        Object tag = this.readAnyTag(buf);
 
         if (tag == null) {
             return null;
         }
 
-        if (!expected.isInstance(tag)) {
-            throw new IllegalArgumentException("Expected tag of type " + expected.getName() + " but got " + tag.getClass().getName());
+        Class<T> tagClass = expected.getTagClass();
+        if (!tagClass.isInstance(tag)) {
+            throw new IllegalArgumentException("Expected tag of type " + tagClass.getName() + " but got " + tag.getClass().getName());
         }
 
-        return expected.cast(tag);
+        return tagClass.cast(tag);
     }
 
-    public <T extends Tag> void writeAnyTag(ByteBuf buf, @Nullable T tag) {
+    @Nullable
+    public Object readAnyTag(ByteBuf buf) {
         try {
-            NBTIO.writeAnyTag(new OutputStream() {
-                @Override
-                public void write(int b) {
-                    buf.writeByte(b);
-                }
-            }, tag);
+            ByteBufInputStream input = new ByteBufInputStream(buf);
+
+            int typeId = input.readUnsignedByte();
+            if (typeId == 0) {
+                return null;
+            }
+
+            NbtType<?> type = NbtType.byId(typeId);
+
+            return new NBTInputStream(input).readValue(type);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public void writeAnyTag(ByteBuf buf, @Nullable Object tag) {
+        try {
+            ByteBufOutputStream output = new ByteBufOutputStream(buf);
+
+            if (tag == null) {
+                output.writeByte(0);
+                return;
+            }
+
+            NbtType<?> type = NbtType.byClass(tag.getClass());
+            output.writeByte(type.getId());
+
+            new NBTOutputStream(output).writeValue(tag);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
     @Nullable
-    public ItemStack readItemStack(ByteBuf buf) {
-        boolean present = buf.readBoolean();
-        if (!present) {
+    public ItemStack readOptionalItemStack(ByteBuf buf) {
+        byte count = buf.readByte();
+        if (count <= 0) {
             return null;
         }
 
         int item = this.readVarInt(buf);
-        return new ItemStack(item, buf.readByte(), this.readAnyTag(buf));
+        return new ItemStack(item, count, this.readDataComponentPatch(buf));
     }
 
-    public void writeItemStack(ByteBuf buf, @Nullable ItemStack item) {
-        buf.writeBoolean(item != null);
-        if (item != null) {
+    public void writeOptionalItemStack(ByteBuf buf, ItemStack item) {
+        boolean empty = item == null || item.getAmount() <= 0;
+        buf.writeByte(!empty ? item.getAmount() : 0);
+        if (!empty) {
             this.writeVarInt(buf, item.getId());
-            buf.writeByte(item.getAmount());
-            this.writeAnyTag(buf, item.getNbt());
+            this.writeDataComponentPatch(buf, item.getDataComponents());
+        }
+    }
+
+    @NotNull
+    public ItemStack readItemStack(ByteBuf buf) {
+        return this.readOptionalItemStack(buf);
+    }
+
+    public void writeItemStack(ByteBuf buf, @NotNull ItemStack item) {
+        this.writeOptionalItemStack(buf, item);
+    }
+
+    @Nullable
+    public DataComponents readDataComponentPatch(ByteBuf buf) {
+        int nonNullComponents = this.readVarInt(buf);
+        int nullComponents = this.readVarInt(buf);
+        if (nonNullComponents == 0 && nullComponents == 0) {
+            return null;
+        }
+
+        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
+        for (int k = 0; k < nonNullComponents; k++) {
+            DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
+            DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(ItemCodecHelper.INSTANCE, buf);
+            dataComponents.put(dataComponentType, dataComponent);
+        }
+
+        for (int k = 0; k < nullComponents; k++) {
+            DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
+            DataComponent<?, ?> dataComponent = dataComponentType.readNullDataComponent();
+            dataComponents.put(dataComponentType, dataComponent);
+        }
+
+        return new DataComponents(dataComponents);
+    }
+
+    public void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents) {
+        if (dataComponents == null) {
+            this.writeVarInt(buf, 0);
+            this.writeVarInt(buf, 0);
+        } else {
+            int i = 0;
+            int j = 0;
+            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+                if (component.getValue() != null) {
+                    i++;
+                } else {
+                    j++;
+                }
+            }
+
+            this.writeVarInt(buf, i);
+            this.writeVarInt(buf, j);
+
+            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+                if (component.getValue() != null) {
+                    this.writeVarInt(buf, component.getType().getId());
+                    component.write(ItemCodecHelper.INSTANCE, buf);
+                }
+            }
+
+            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+                if (component.getValue() == null) {
+                    this.writeVarInt(buf, component.getType().getId());
+                }
+            }
+        }
+    }
+
+    @NotNull
+    public ItemStack readTradeItemStack(ByteBuf buf) {
+        int item = this.readVarInt(buf);
+        int count = this.readVarInt(buf);
+        int componentsLength = this.readVarInt(buf);
+
+        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
+        for (int i = 0; i < componentsLength; i++) {
+            DataComponentType<?> dataComponentType = DataComponentType.from(this.readVarInt(buf));
+            DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(ItemCodecHelper.INSTANCE, buf);
+            dataComponents.put(dataComponentType, dataComponent);
+        }
+
+        return new ItemStack(item, count, new DataComponents(dataComponents));
+    }
+
+    public void writeTradeItemStack(ByteBuf buf, @NotNull ItemStack item) {
+        this.writeVarInt(buf, item.getId());
+        this.writeVarInt(buf, item.getAmount());
+
+        DataComponents dataComponents = item.getDataComponents();
+        if (dataComponents == null) {
+            this.writeVarInt(buf, 0);
+            return;
+        }
+
+        this.writeVarInt(buf, dataComponents.getDataComponents().size());
+        for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+            this.writeVarInt(buf, component.getType().getId());
+            component.write(ItemCodecHelper.INSTANCE, buf);
         }
     }
 
@@ -339,13 +475,21 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, state);
     }
 
+    public ArmadilloState readArmadilloState(ByteBuf buf) {
+        return ArmadilloState.from(this.readVarInt(buf));
+    }
+
+    public void writeArmadilloState(ByteBuf buf, ArmadilloState state) {
+        this.writeEnum(buf, state);
+    }
+
     private void writeEnum(ByteBuf buf, Enum<?> e) {
         this.writeVarInt(buf, e.ordinal());
     }
 
     public Component readComponent(ByteBuf buf) {
-        // do not use CompoundTag, as mojang serializes a plaintext component as just a single StringTag
-        Tag tag = readAnyTag(buf, Tag.class);
+        // do not use NbtMap, as mojang serializes a plaintext component as just a single StringTag
+        Object tag = readAnyTag(buf);
         if (tag == null) {
             throw new IllegalArgumentException("Got end-tag when trying to read Component");
         }
@@ -355,7 +499,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeComponent(ByteBuf buf, Component component) {
         JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
-        Tag tag = NbtComponentSerializer.jsonComponentToTag(json);
+        Object tag = NbtComponentSerializer.jsonComponentToTag(json);
         writeAnyTag(buf, tag);
     }
 
@@ -413,7 +557,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public PlayerSpawnInfo readPlayerSpawnInfo(ByteBuf buf) {
-        String dimension = this.readString(buf);
+        int dimension = this.readVarInt(buf);
         String worldName = this.readString(buf);
         long hashedSeed = buf.readLong();
         GameMode gameMode = GameMode.byId(buf.readByte());
@@ -426,7 +570,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
-        this.writeString(buf, info.getDimension());
+        this.writeVarInt(buf, info.getDimension());
         this.writeString(buf, info.getWorldName());
         buf.writeLong(info.getHashedSeed());
         buf.writeByte(info.getGameMode().ordinal());
@@ -457,18 +601,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) {
         return switch (type) {
-            case BLOCK, BLOCK_MARKER -> {
-                int blockState = this.readVarInt(buf);
-                yield new BlockParticleData(blockState);
-            }
+            case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR -> new BlockParticleData(this.readVarInt(buf));
             case DUST -> {
-                float red = buf.readFloat();
-                float green = buf.readFloat();
-                float blue = buf.readFloat();
-                float scale = buf.readFloat();
-                yield new DustParticleData(red, green, blue, scale);
-            }
-            case DUST_COLOR_TRANSITION -> {
                 float red = buf.readFloat();
                 float green = buf.readFloat();
                 float blue = buf.readFloat();
@@ -478,8 +612,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 float newBlue = buf.readFloat();
                 yield new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
             }
-            case FALLING_DUST -> new FallingDustParticleData(this.readVarInt(buf));
-            case ITEM -> new ItemParticleData(this.readItemStack(buf));
+            case ENTITY_EFFECT -> new EntityEffectParticleData(buf.readInt());
+            case ITEM -> new ItemParticleData(this.readOptionalItemStack(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(this.readVarInt(buf));
             case VIBRATION -> new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
@@ -489,48 +623,47 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) {
         switch (type) {
-            case BLOCK, BLOCK_MARKER -> {
-                BlockParticleData block = (BlockParticleData) data;
-                this.writeVarInt(buf, block.getBlockState());
+            case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR -> {
+                BlockParticleData blockData = (BlockParticleData) data;
+                this.writeVarInt(buf, blockData.getBlockState());
             }
             case DUST -> {
-                DustParticleData dust = (DustParticleData) data;
-                buf.writeFloat(dust.getRed());
-                buf.writeFloat(dust.getGreen());
-                buf.writeFloat(dust.getBlue());
-                buf.writeFloat(dust.getScale());
+                DustParticleData dustData = (DustParticleData) data;
+                buf.writeFloat(dustData.getRed());
+                buf.writeFloat(dustData.getGreen());
+                buf.writeFloat(dustData.getBlue());
+                buf.writeFloat(dustData.getScale());
             }
             case DUST_COLOR_TRANSITION -> {
-                DustColorTransitionParticleData dust = (DustColorTransitionParticleData) data;
-                buf.writeFloat(dust.getRed());
-                buf.writeFloat(dust.getGreen());
-                buf.writeFloat(dust.getBlue());
-                buf.writeFloat(dust.getScale());
-
-                buf.writeFloat(dust.getNewRed());
-                buf.writeFloat(dust.getNewGreen());
-                buf.writeFloat(dust.getNewBlue());
+                DustColorTransitionParticleData dustData = (DustColorTransitionParticleData) data;
+                buf.writeFloat(dustData.getRed());
+                buf.writeFloat(dustData.getGreen());
+                buf.writeFloat(dustData.getBlue());
+                buf.writeFloat(dustData.getScale());
+                buf.writeFloat(dustData.getNewRed());
+                buf.writeFloat(dustData.getNewGreen());
+                buf.writeFloat(dustData.getNewBlue());
             }
-            case FALLING_DUST -> {
-                FallingDustParticleData fallingDust = (FallingDustParticleData) data;
-                this.writeVarInt(buf, fallingDust.getBlockState());
+            case ENTITY_EFFECT -> {
+                EntityEffectParticleData entityEffectData = (EntityEffectParticleData) data;
+                buf.writeInt(entityEffectData.getColor());
             }
             case ITEM -> {
-                ItemParticleData item = (ItemParticleData) data;
-                this.writeItemStack(buf, item.getItemStack());
+                ItemParticleData itemData = (ItemParticleData) data;
+                this.writeOptionalItemStack(buf, itemData.getItemStack());
             }
             case SCULK_CHARGE -> {
-                SculkChargeParticleData sculkCharge = (SculkChargeParticleData) data;
-                buf.writeFloat(sculkCharge.getRoll());
+                SculkChargeParticleData sculkData = (SculkChargeParticleData) data;
+                buf.writeFloat(sculkData.getRoll());
             }
             case SHRIEK -> {
-                ShriekParticleData shriek = (ShriekParticleData) data;
-                this.writeVarInt(buf, shriek.getDelay());
+                ShriekParticleData shriekData = (ShriekParticleData) data;
+                this.writeVarInt(buf, shriekData.getDelay());
             }
             case VIBRATION -> {
-                VibrationParticleData vibration = (VibrationParticleData) data;
-                this.writePositionSource(buf, vibration.getPositionSource());
-                this.writeVarInt(buf, vibration.getArrivalTicks());
+                VibrationParticleData vibrationData = (VibrationParticleData) data;
+                this.writePositionSource(buf, vibrationData.getPositionSource());
+                this.writeVarInt(buf, vibrationData.getArrivalTicks());
             }
         }
     }
@@ -539,7 +672,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         int id = this.readVarInt(buf);
         return switch (id) {
             case 0 -> BlankFormat.INSTANCE;
-            case 1 -> new StyledFormat(this.readAnyTagOrThrow(buf));
+            case 1 -> new StyledFormat(this.readCompoundTagOrThrow(buf));
             case 2 -> new FixedFormat(this.readComponent(buf));
             default -> throw new IllegalArgumentException("Unknown number format type: " + id);
         };
@@ -622,15 +755,9 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    @NonNull
+    @Nullable
     public BlockEntityType readBlockEntityType(ByteBuf buf) {
-        int id = this.readVarInt(buf);
-        BlockEntityType type = BlockEntityType.from(id);
-
-        if (type == null) {
-            throw new IllegalArgumentException("Unknown BlockEntityType: " + id);
-        }
-        return type;
+        return BlockEntityType.from(this.readVarInt(buf));
     }
 
     public void writeBlockEntityType(ByteBuf buf, BlockEntityType type) {
@@ -725,7 +852,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public Ingredient readRecipeIngredient(ByteBuf buf) {
         ItemStack[] options = new ItemStack[this.readVarInt(buf)];
         for (int i = 0; i < options.length; i++) {
-            options[i] = this.readItemStack(buf);
+            options[i] = this.readOptionalItemStack(buf);
         }
 
         return new Ingredient(options);
@@ -734,7 +861,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     public void writeRecipeIngredient(ByteBuf buf, Ingredient ingredient) {
         this.writeVarInt(buf, ingredient.getOptions().length);
         for (ItemStack option : ingredient.getOptions()) {
-            this.writeItemStack(buf, option);
+            this.writeOptionalItemStack(buf, option);
         }
     }
 
@@ -909,11 +1036,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
      * @return the game registry
      */
     @Nullable
-    public CompoundTag getRegistry() {
+    public NbtMap getRegistry() {
         return this.registry;
     }
 
-    public void setRegistry(CompoundTag registry) {
+    public void setRegistry(NbtMap registry) {
         this.registry = registry;
     }
 }

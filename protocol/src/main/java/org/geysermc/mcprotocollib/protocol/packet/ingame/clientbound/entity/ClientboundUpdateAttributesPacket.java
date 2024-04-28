@@ -1,16 +1,15 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.Attribute;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.AttributeModifier;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.AttributeType;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.Attribute;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.AttributeModifier;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.AttributeType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
         this.attributes = new ArrayList<>();
         int length = helper.readVarInt(in);
         for (int index = 0; index < length; index++) {
-            String key = helper.readString(in);
+            int attributeId = helper.readVarInt(in);
             double value = in.readDouble();
             List<AttributeModifier> modifiers = new ArrayList<>();
             int len = helper.readVarInt(in);
@@ -35,7 +34,7 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
                 modifiers.add(new AttributeModifier(helper.readUUID(in), in.readDouble(), helper.readModifierOperation(in)));
             }
 
-            AttributeType type = AttributeType.Builtin.BUILTIN.computeIfAbsent(Identifier.formalize(key), AttributeType.Custom::new);
+            AttributeType type = AttributeType.Builtin.BUILTIN.get(attributeId); //.computeIfAbsent(attributeId, AttributeType.Custom::new); TODO
             this.attributes.add(new Attribute(type, value, modifiers));
         }
     }
@@ -45,7 +44,7 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.entityId);
         helper.writeVarInt(out, this.attributes.size());
         for (Attribute attribute : this.attributes) {
-            helper.writeString(out, attribute.getType().getIdentifier());
+            helper.writeVarInt(out, attribute.getType().getId());
             out.writeDouble(attribute.getValue());
             helper.writeVarInt(out, attribute.getModifiers().size());
             for (AttributeModifier modifier : attribute.getModifiers()) {

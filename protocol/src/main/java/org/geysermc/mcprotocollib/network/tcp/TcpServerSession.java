@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import io.netty.channel.ChannelHandlerContext;
 import org.geysermc.mcprotocollib.network.Flag;
+import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class TcpServerSession extends TcpSession {
 
     @Override
     public boolean hasFlag(Flag<?> flag) {
-        if(super.hasFlag(flag)) {
+        if (super.hasFlag(flag)) {
             return true;
         }
 
@@ -43,7 +43,7 @@ public class TcpServerSession extends TcpSession {
     @Override
     public <T> T getFlag(Flag<T> flag, T def) {
         T ret = super.getFlag(flag, null);
-        if(ret != null) {
+        if (ret != null) {
             return ret;
         }
 

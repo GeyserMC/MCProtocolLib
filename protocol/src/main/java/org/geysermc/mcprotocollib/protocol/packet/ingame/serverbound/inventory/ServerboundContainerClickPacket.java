@@ -1,8 +1,14 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
+import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.With;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ClickItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerActionType;
@@ -12,13 +18,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.inventory.FillStackAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.MoveToHotbarAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ShiftClickItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.SpreadItemAction;
-import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.With;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 import java.util.Map;
 
@@ -87,11 +87,11 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
             int key = in.readShort();
-            ItemStack value = helper.readItemStack(in);
+            ItemStack value = helper.readOptionalItemStack(in);
             this.changedSlots.put(key, value);
         }
 
-        this.carriedItem = helper.readItemStack(in);
+        this.carriedItem = helper.readOptionalItemStack(in);
     }
 
     @Override
@@ -111,9 +111,9 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.changedSlots.size());
         for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {
             out.writeShort(pair.getIntKey());
-            helper.writeItemStack(out, pair.getValue());
+            helper.writeOptionalItemStack(out, pair.getValue());
         }
 
-        helper.writeItemStack(out, this.carriedItem);
+        helper.writeOptionalItemStack(out, this.carriedItem);
     }
 }

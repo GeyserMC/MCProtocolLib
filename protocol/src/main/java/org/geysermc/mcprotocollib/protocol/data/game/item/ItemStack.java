@@ -1,16 +1,16 @@
-package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
+package org.geysermc.mcprotocollib.protocol.data.game.item;
 
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 
 @Data
 @AllArgsConstructor
 public class ItemStack {
     private final int id;
     private final int amount;
-    private final @Nullable CompoundTag nbt;
+    private final @Nullable DataComponents dataComponents;
 
     public ItemStack(int id) {
         this(id, 1);

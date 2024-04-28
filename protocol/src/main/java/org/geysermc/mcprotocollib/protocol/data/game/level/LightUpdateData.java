@@ -1,10 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 
 import java.util.ArrayList;
 import java.util.BitSet;

@@ -1,15 +1,15 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 
 @Data
 @AllArgsConstructor
 public class PlayerSpawnInfo {
-    private final @NonNull String dimension;
+    private final int dimension;
     private final @NonNull String worldName;
     private final long hashedSeed;
     private final @NonNull GameMode gameMode;

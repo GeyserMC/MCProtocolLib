@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network.packet;
 
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 
 /**
  * The default packet header, using a varint packet length and id.
@@ -19,13 +19,13 @@ public class DefaultPacketHeader implements PacketHeader {
 
     @Override
     public int getLengthSize(int length) {
-        if((length & -128) == 0) {
+        if ((length & -128) == 0) {
             return 1;
-        } else if((length & -16384) == 0) {
+        } else if ((length & -16384) == 0) {
             return 2;
-        } else if((length & -2097152) == 0) {
+        } else if ((length & -2097152) == 0) {
             return 3;
-        } else if((length & -268435456) == 0) {
+        } else if ((length & -268435456) == 0) {
             return 4;
         } else {
             return 5;

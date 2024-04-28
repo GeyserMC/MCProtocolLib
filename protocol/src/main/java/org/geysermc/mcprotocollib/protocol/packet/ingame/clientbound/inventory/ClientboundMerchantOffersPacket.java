@@ -1,14 +1,14 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ItemStack;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 @Data
 @With
@@ -27,9 +27,9 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
         int size = helper.readVarInt(in);
         this.trades = new VillagerTrade[size];
         for (int i = 0; i < trades.length; i++) {
-            ItemStack firstInput = helper.readItemStack(in);
-            ItemStack output = helper.readItemStack(in);
-            ItemStack secondInput = helper.readItemStack(in);
+            ItemStack firstInput = helper.readTradeItemStack(in);
+            ItemStack output = helper.readOptionalItemStack(in);
+            ItemStack secondInput = helper.readNullable(in, helper::readTradeItemStack);
 
             boolean tradeDisabled = in.readBoolean();
             int numUses = in.readInt();
@@ -54,9 +54,9 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.trades.length);
         for (VillagerTrade trade : this.trades) {
-            helper.writeItemStack(out, trade.getFirstInput());
-            helper.writeItemStack(out, trade.getOutput());
-            helper.writeItemStack(out, trade.getSecondInput());
+            helper.writeTradeItemStack(out, trade.getFirstInput());
+            helper.writeOptionalItemStack(out, trade.getOutput());
+            helper.writeNullable(out, trade.getSecondInput(), helper::writeTradeItemStack);
 
             out.writeBoolean(trade.isTradeDisabled());
             out.writeInt(trade.getNumUses());

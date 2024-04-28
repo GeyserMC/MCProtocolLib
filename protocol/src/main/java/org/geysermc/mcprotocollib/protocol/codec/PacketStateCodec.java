@@ -1,14 +1,14 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
 
 public class PacketStateCodec extends PacketProtocol {
 
@@ -32,7 +32,7 @@ public class PacketStateCodec extends PacketProtocol {
     }
 
     @Override
-    public void newClientSession(Session session) {
+    public void newClientSession(Session session, boolean transferring) {
         throw new UnsupportedOperationException("Not supported!");
     }
 
