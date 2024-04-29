@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.LazilyParsedNumber;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
@@ -13,6 +14,7 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -101,41 +103,33 @@ public class NbtComponentSerializer {
         throw new IllegalArgumentException("Unhandled json type " + element.getClass().getSimpleName() + " with value " + element.getAsString());
     }
 
-    private static <T> void addToListOrFail(final NbtList<T> list, final Object tag) {
-        Class<T> listClass = list.getType().getTagClass();
-
-        if (listClass.isInstance(tag)) {
-            list.add(listClass.cast(tag));
-        } else {
-            throw new IllegalArgumentException("Cannot add " + tag.getClass().getSimpleName() + " to list of " + listClass.getSimpleName());
-        }
-    }
-
     private static NbtList<?> convertJsonArray(final JsonArray array) {
         // TODO Number arrays?
-        NbtList<?> listTag = null;
-        boolean singleType = true;
+        NbtListBuilder<?> listBuilder = null;
         for (final JsonElement entry : array) {
             final Object convertedEntryTag = convertToTag(entry);
-            if (listTag == null) {
-                listTag = new NbtList<>(NbtType.byClass(convertedEntryTag.getClass()));
+            NbtType<?> convertedTagType = NbtType.byClass(convertedEntryTag.getClass());
+
+            if (listBuilder == null) {
+                listBuilder = new NbtListBuilder<>(convertedTagType);
             }
 
-            if (listTag.getType() != NbtType.byClass(convertedEntryTag.getClass())) {
-                singleType = false;
+            // If we have different types mixed, fallback to compounds below.
+            if (listBuilder.type != convertedTagType) {
+                listBuilder = null;
                 break;
             }
 
-            addToListOrFail(listTag, convertedEntryTag);
+            listBuilder.addUnsafe(convertedEntryTag);
         }
 
-        if (singleType) {
-            return listTag;
+        if (listBuilder != null) {
+            return listBuilder.build();
         }
 
         // Generally, vanilla-esque serializers should not produce this format, so it should be rare
         // Lists are only used for lists of components ("extra" and "with")
-        final NbtList<NbtMap> processedListTag = new NbtList<>(NbtType.COMPOUND);
+        final NbtListBuilder<NbtMap> processedListTag = new NbtListBuilder<>(NbtType.COMPOUND);
         for (final JsonElement entry : array) {
             final Object convertedTag = convertToTag(entry);
             if (convertedTag instanceof NbtMap nbtMap) {
@@ -154,7 +148,8 @@ public class NbtComponentSerializer {
             }
             processedListTag.add(compoundTag.build());
         }
-        return processedListTag;
+
+        return processedListTag.build();
     }
 
     /**
@@ -335,5 +330,23 @@ public class NbtComponentSerializer {
     private static class Pair<K, V> {
         private final K key;
         private final V value;
+    }
+
+    @RequiredArgsConstructor
+    private static class NbtListBuilder<T> {
+        private final NbtType<T> type;
+        private final List<T> list = new ArrayList<>();
+
+        public void add(T value) {
+            list.add(value);
+        }
+
+        public void addUnsafe(Object value) {
+            add(type.getTagClass().cast(value));
+        }
+
+        public NbtList<T> build() {
+            return new NbtList<>(type, list);
+        }
     }
 }
