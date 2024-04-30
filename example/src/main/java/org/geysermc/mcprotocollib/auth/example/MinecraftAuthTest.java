@@ -7,16 +7,14 @@ import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
-import org.geysermc.mcprotocollib.auth.util.HTTPProxyInfo;
-
-import java.net.Proxy;
+import org.geysermc.mcprotocollib.auth.util.ProxyInfo;
 
 public class MinecraftAuthTest {
     private static final String EMAIL = "Username@mail.com";
     private static final String PASSWORD = "Password";
     private static final boolean REQUIRE_SECURE_TEXTURES = true;
 
-    private static final HTTPProxyInfo PROXY = null;
+    private static final ProxyInfo PROXY = null;
 
     public static void main(String[] args) {
         auth();

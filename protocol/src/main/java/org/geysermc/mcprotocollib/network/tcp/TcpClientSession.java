@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
+import org.geysermc.mcprotocollib.auth.util.ProxyInfo;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
-import org.geysermc.mcprotocollib.network.TCPProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
@@ -57,14 +57,14 @@ public class TcpClientSession extends TcpSession {
 
     private final String bindAddress;
     private final int bindPort;
-    private final TCPProxyInfo proxy;
+    private final ProxyInfo proxy;
     private final PacketCodecHelper codecHelper;
 
     public TcpClientSession(String host, int port, PacketProtocol protocol) {
         this(host, port, protocol, null);
     }
 
-    public TcpClientSession(String host, int port, PacketProtocol protocol, TCPProxyInfo proxy) {
+    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxy) {
         this(host, port, "0.0.0.0", 0, protocol, proxy);
     }
 
@@ -72,7 +72,7 @@ public class TcpClientSession extends TcpSession {
         this(host, port, bindAddress, bindPort, protocol, null);
     }
 
-    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, TCPProxyInfo proxy) {
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
         super(host, port, protocol);
         this.bindAddress = bindAddress;
         this.bindPort = bindPort;
@@ -227,29 +227,29 @@ public class TcpClientSession extends TcpSession {
 
     private void addProxy(ChannelPipeline pipeline) {
         if(proxy != null) {
-            switch (proxy.getType()) {
+            switch (proxy.type()) {
                 case HTTP -> {
-                    if (proxy.getUsername() != null && proxy.getPassword() != null) {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                    if (proxy.username() != null && proxy.password() != null) {
+                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address(), proxy.username(), proxy.password()));
                     } else {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
+                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address()));
                     }
                 }
                 case SOCKS4 -> {
-                    if (proxy.getUsername() != null) {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
+                    if (proxy.username() != null) {
+                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address(), proxy.username()));
                     } else {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
+                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address()));
                     }
                 }
                 case SOCKS5 -> {
-                    if (proxy.getUsername() != null && proxy.getPassword() != null) {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                    if (proxy.username() != null && proxy.password() != null) {
+                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address(), proxy.username(), proxy.password()));
                     } else {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
+                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address()));
                     }
                 }
-                default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
+                default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.type());
             }
         }
     }

@@ -29,7 +29,7 @@ public class HTTPUtils {
     private HTTPUtils() {
     }
 
-    public static <T> T makeRequest(@Nullable HTTPProxyInfo proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
+    public static <T> T makeRequest(@Nullable ProxyInfo proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
         if(proxy == null) {
             throw new IllegalArgumentException("Proxy cannot be null.");
         } else if(uri == null) {
@@ -50,7 +50,7 @@ public class HTTPUtils {
         }
     }
 
-    public static HttpClient createHttpClient(@Nullable HTTPProxyInfo proxy) {
+    public static HttpClient createHttpClient(@Nullable ProxyInfo proxy) {
         final int timeout = 5000;
 
         HttpClient client = new HttpClient()
@@ -66,7 +66,7 @@ public class HTTPUtils {
                 case HTTP -> ProxyType.HTTP;
                 case SOCKS4 -> ProxyType.SOCKS4;
                 case SOCKS5 -> ProxyType.SOCKS5;
-            }, proxy.host(), proxy.port(), proxy.username(), proxy.password()));
+            }, proxy.address(), proxy.username(), proxy.password()));
         }
 
         return client;

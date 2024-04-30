@@ -6,7 +6,7 @@ import org.geysermc.mcprotocollib.auth.exception.profile.ProfileException;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileLookupException;
 import org.geysermc.mcprotocollib.auth.exception.profile.ProfileNotFoundException;
 import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.util.HTTPProxyInfo;
+import org.geysermc.mcprotocollib.auth.util.ProxyInfo;
 import org.geysermc.mcprotocollib.auth.util.HTTPUtils;
 import org.geysermc.mcprotocollib.auth.util.UUIDUtils;
 
@@ -30,7 +30,7 @@ public class SessionService {
     private static final URI JOIN_ENDPOINT = URI.create("https://sessionserver.mojang.com/session/minecraft/join");
     private static final String HAS_JOINED_ENDPOINT = "https://sessionserver.mojang.com/session/minecraft/hasJoined?username=%s&serverId=%s";
     private static final String PROFILE_ENDPOINT = "https://sessionserver.mojang.com/session/minecraft/profile/%s?unsigned=false";
-    private HTTPProxyInfo proxy;
+    private ProxyInfo proxy;
 
     /**
      * Calculates the server ID from a base string, public key, and secret key.
