@@ -1,12 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
 
         int entryCount = helper.readVarInt(in);
         for (int i = 0; i < entryCount; i++) {
-            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readNullable(in, helper::readAnyTag)));
+            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readNullable(in, helper::readCompoundTag)));
         }
     }
 

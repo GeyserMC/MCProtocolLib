@@ -1,11 +1,13 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.type;
 
+import lombok.Getter;
+
 public enum EntityType {
     ALLAY,
     AREA_EFFECT_CLOUD,
     ARMADILLO,
     ARMOR_STAND,
-    ARROW,
+    ARROW(true),
     AXOLOTL,
     BAT,
     BEE,
@@ -14,7 +16,7 @@ public enum EntityType {
     BOAT,
     BOGGED,
     BREEZE,
-    BREEZE_WIND_CHARGE,
+    BREEZE_WIND_CHARGE(true),
     CAMEL,
     CAT,
     CAVE_SPIDER,
@@ -27,22 +29,22 @@ public enum EntityType {
     CREEPER,
     DOLPHIN,
     DONKEY,
-    DRAGON_FIREBALL,
+    DRAGON_FIREBALL(true),
     DROWNED,
-    EGG,
+    EGG(true),
     ELDER_GUARDIAN,
     END_CRYSTAL,
     ENDER_DRAGON,
-    ENDER_PEARL,
+    ENDER_PEARL(true),
     ENDERMAN,
     ENDERMITE,
     EVOKER,
     EVOKER_FANGS,
-    EXPERIENCE_BOTTLE,
+    EXPERIENCE_BOTTLE(true),
     EXPERIENCE_ORB,
     EYE_OF_ENDER,
     FALLING_BLOCK,
-    FIREWORK_ROCKET,
+    FIREWORK_ROCKET(true),
     FOX,
     FROG,
     FURNACE_MINECART,
@@ -63,11 +65,11 @@ public enum EntityType {
     ITEM_DISPLAY,
     ITEM_FRAME,
     OMINOUS_ITEM_SPAWNER,
-    FIREBALL,
+    FIREBALL(true),
     LEASH_KNOT,
     LIGHTNING_BOLT,
     LLAMA,
-    LLAMA_SPIT,
+    LLAMA_SPIT(true),
     MAGMA_CUBE,
     MARKER,
     MINECART,
@@ -83,24 +85,24 @@ public enum EntityType {
     PIGLIN_BRUTE,
     PILLAGER,
     POLAR_BEAR,
-    POTION,
+    POTION(true),
     PUFFERFISH,
     RABBIT,
     RAVAGER,
     SALMON,
     SHEEP,
     SHULKER,
-    SHULKER_BULLET,
+    SHULKER_BULLET(true),
     SILVERFISH,
     SKELETON,
     SKELETON_HORSE,
     SLIME,
-    SMALL_FIREBALL,
+    SMALL_FIREBALL(true),
     SNIFFER,
     SNOW_GOLEM,
-    SNOWBALL,
+    SNOWBALL(true),
     SPAWNER_MINECART,
-    SPECTRAL_ARROW,
+    SPECTRAL_ARROW(true),
     SPIDER,
     SQUID,
     STRAY,
@@ -110,7 +112,7 @@ public enum EntityType {
     TNT,
     TNT_MINECART,
     TRADER_LLAMA,
-    TRIDENT,
+    TRIDENT(true),
     TROPICAL_FISH,
     TURTLE,
     VEX,
@@ -118,11 +120,11 @@ public enum EntityType {
     VINDICATOR,
     WANDERING_TRADER,
     WARDEN,
-    WIND_CHARGE,
+    WIND_CHARGE(true),
     WITCH,
     WITHER,
     WITHER_SKELETON,
-    WITHER_SKULL,
+    WITHER_SKULL(true),
     WOLF,
     ZOGLIN,
     ZOMBIE,
@@ -130,7 +132,18 @@ public enum EntityType {
     ZOMBIE_VILLAGER,
     ZOMBIFIED_PIGLIN,
     PLAYER,
-    FISHING_BOBBER;
+    FISHING_BOBBER(true);
+
+    @Getter
+    private final boolean projectile;
+    
+    EntityType() {
+        this.projectile = false;
+    }
+
+    EntityType(boolean projectile) {
+        this.projectile = projectile;
+    }
 
     private static final EntityType[] VALUES = values();
 

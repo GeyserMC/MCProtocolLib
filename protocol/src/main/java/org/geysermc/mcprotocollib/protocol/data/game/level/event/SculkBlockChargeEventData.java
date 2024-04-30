@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.event;
 
-import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import lombok.Value;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 
 import java.util.EnumSet;
 import java.util.Set;

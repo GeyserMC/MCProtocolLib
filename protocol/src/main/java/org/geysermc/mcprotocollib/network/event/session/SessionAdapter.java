@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network.event.session;
 
-import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.packet.Packet;
 
 /**
  * An adapter for picking session events to listen for.

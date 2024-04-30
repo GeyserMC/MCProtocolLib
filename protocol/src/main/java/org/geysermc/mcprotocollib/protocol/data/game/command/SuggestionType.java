@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.command;
 
-import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
 
 import java.util.HashMap;
 import java.util.Locale;

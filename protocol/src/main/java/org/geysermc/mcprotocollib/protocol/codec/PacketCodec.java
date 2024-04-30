@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 
 import java.util.EnumMap;
 import java.util.function.Supplier;

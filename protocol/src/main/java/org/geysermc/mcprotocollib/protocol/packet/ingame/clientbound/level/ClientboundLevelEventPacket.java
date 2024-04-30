@@ -1,15 +1,29 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
-import org.geysermc.mcprotocollib.protocol.data.game.level.event.*;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.BonemealGrowEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.BreakBlockEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.BreakPotionEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.ComposterEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.DragonFireballEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.ElectricSparkData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.FireExtinguishData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEvent;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.RecordEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.SculkBlockChargeEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.SmokeEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.TrialSpawnerDetectEventData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.event.UnknownLevelEventData;
 
 @Data
 @With
@@ -37,10 +51,8 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
                 case BREAK_SPLASH_POTION, BREAK_SPLASH_POTION2 -> this.data = new BreakPotionEventData(value);
                 case BONEMEAL_GROW, BONEMEAL_GROW_WITH_SOUND -> this.data = new BonemealGrowEventData(value);
                 case COMPOSTER -> this.data = value > 0 ? ComposterEventData.FILL_SUCCESS : ComposterEventData.FILL;
-                case ENDERDRAGON_FIREBALL_EXPLODE ->
-                        this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
-                case ELECTRIC_SPARK ->
-                        this.data = value >= 0 && value < 6 ? new ElectricSparkData(Direction.from(value)) : new UnknownLevelEventData(value);
+                case ENDERDRAGON_FIREBALL_EXPLODE -> this.data = value == 1 ? DragonFireballEventData.HAS_SOUND : DragonFireballEventData.NO_SOUND;
+                case ELECTRIC_SPARK -> this.data = value >= 0 && value < 6 ? new ElectricSparkData(Direction.from(value)) : new UnknownLevelEventData(value);
                 case SCULK_BLOCK_CHARGE -> this.data = new SculkBlockChargeEventData(value);
                 case TRIAL_SPAWNER_DETECT_PLAYER -> this.data = new TrialSpawnerDetectEventData(value);
                 default -> this.data = new UnknownLevelEventData(value);

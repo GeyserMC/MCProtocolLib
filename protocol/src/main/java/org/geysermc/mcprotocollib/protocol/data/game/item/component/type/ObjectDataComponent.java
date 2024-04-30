@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component.type;
 
+import lombok.NonNull;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
-import lombok.NonNull;
 
 public class ObjectDataComponent<T> extends DataComponent<T, DataComponentType<T>> {
     private final T value;

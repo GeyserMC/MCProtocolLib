@@ -1,5 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
+import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
@@ -7,12 +12,14 @@ import org.geysermc.mcprotocollib.protocol.data.game.recipe.CraftingBookCategory
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Recipe;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.RecipeType;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.*;
-import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.With;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.CookedRecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.RecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.ShapedRecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.ShapelessRecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.SimpleCraftingRecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.SmithingTransformRecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.SmithingTrimRecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.StoneCuttingRecipeData;
 
 @Data
 @With

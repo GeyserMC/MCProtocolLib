@@ -1,5 +1,21 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ConnectTimeoutException;
+import io.netty.channel.DefaultEventLoopGroup;
+import io.netty.channel.EventLoop;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.ReadTimeoutException;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutException;
+import io.netty.handler.timeout.WriteTimeoutHandler;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
@@ -10,15 +26,6 @@ import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import io.netty.channel.*;
-import io.netty.handler.timeout.ReadTimeoutException;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutException;
-import io.netty.handler.timeout.WriteTimeoutHandler;
-import io.netty.util.concurrent.DefaultThreadFactory;
-import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.network.Flag;
 
 import java.net.ConnectException;
 import java.net.SocketAddress;
@@ -252,7 +259,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void send(Packet packet) {
-        if(this.channel == null) {
+        if (this.channel == null) {
             return;
         }
 
@@ -262,7 +269,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         if (!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
             this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
-                if(future.isSuccess()) {
+                if (future.isSuccess()) {
                     callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
@@ -314,7 +321,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             // daemon threads and their interaction with the runtime.
             PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
             Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+                    () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
         }
         return PACKET_EVENT_LOOP.next();
     }
