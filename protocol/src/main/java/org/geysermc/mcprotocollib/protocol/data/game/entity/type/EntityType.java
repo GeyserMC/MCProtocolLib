@@ -136,7 +136,7 @@ public enum EntityType {
 
     @Getter
     private final boolean projectile;
-    
+
     EntityType() {
         this.projectile = false;
     }

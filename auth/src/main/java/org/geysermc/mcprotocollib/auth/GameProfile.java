@@ -1,11 +1,11 @@
 package org.geysermc.mcprotocollib.auth;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.geysermc.mcprotocollib.auth.exception.property.ProfileTextureException;
 import org.geysermc.mcprotocollib.auth.exception.property.PropertyException;
 import org.geysermc.mcprotocollib.auth.exception.property.SignatureValidateException;
 import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -28,15 +28,15 @@ import java.util.UUID;
  * Information about a user profile.
  */
 public class GameProfile {
-    private static final String[] WHITELISTED_DOMAINS = { ".minecraft.net", ".mojang.com" };
+    private static final String[] WHITELISTED_DOMAINS = {".minecraft.net", ".mojang.com"};
     private static final PublicKey SIGNATURE_KEY;
     private static final Gson GSON;
 
     static {
-        try(InputStream in = Objects.requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
+        try (InputStream in = Objects.requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
             SIGNATURE_KEY = KeyFactory.getInstance("RSA")
                     .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new ExceptionInInitializerError("Missing/invalid yggdrasil public key.");
         }
 
@@ -52,8 +52,8 @@ public class GameProfile {
         }
 
         String domain = uri.getHost();
-        for(String whitelistedDomain : WHITELISTED_DOMAINS) {
-            if(domain.endsWith(whitelistedDomain)) {
+        for (String whitelistedDomain : WHITELISTED_DOMAINS) {
+            if (domain.endsWith(whitelistedDomain)) {
                 return true;
             }
         }
@@ -71,7 +71,7 @@ public class GameProfile {
     /**
      * Creates a new GameProfile instance.
      *
-     * @param id   ID of the profile.
+     * @param id ID of the profile.
      * @param name Name of the profile.
      */
     public GameProfile(String id, String name) {
@@ -81,11 +81,11 @@ public class GameProfile {
     /**
      * Creates a new GameProfile instance.
      *
-     * @param id   ID of the profile.
+     * @param id ID of the profile.
      * @param name Name of the profile.
      */
     public GameProfile(UUID id, String name) {
-        if(id == null && (name == null || name.isEmpty())) {
+        if (id == null && (name == null || name.isEmpty())) {
             throw new IllegalArgumentException("Name and ID cannot both be blank");
         } else {
             this.id = id;
@@ -135,7 +135,7 @@ public class GameProfile {
      * @return The profile's properties.
      */
     public List<Property> getProperties() {
-        if(this.properties == null) {
+        if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
 
@@ -148,13 +148,13 @@ public class GameProfile {
      * @param properties Properties belonging to this profile.
      */
     public void setProperties(List<Property> properties) {
-        if(this.properties == null) {
+        if (this.properties == null) {
             this.properties = new ArrayList<>();
         } else {
             this.properties.clear();
         }
 
-        if(properties != null) {
+        if (properties != null) {
             this.properties.addAll(properties);
         }
 
@@ -170,8 +170,8 @@ public class GameProfile {
      * @return The property with the specified name.
      */
     public Property getProperty(String name) {
-        for(Property property : this.getProperties()) {
-            if(property.getName().equals(name)) {
+        for (Property property : this.getProperties()) {
+            if (property.getName().equals(name)) {
                 return property;
             }
         }
@@ -197,15 +197,15 @@ public class GameProfile {
      * @throws PropertyException If an error occurs decoding the profile's texture property.
      */
     public Map<TextureType, Texture> getTextures(boolean requireSecure) throws PropertyException {
-        if(this.textures == null || (requireSecure && !this.texturesVerified)) {
+        if (this.textures == null || (requireSecure && !this.texturesVerified)) {
             GameProfile.Property textures = this.getProperty("textures");
-            if(textures != null) {
-                if(requireSecure) {
-                    if(!textures.hasSignature()) {
+            if (textures != null) {
+                if (requireSecure) {
+                    if (!textures.hasSignature()) {
                         throw new ProfileTextureException("Signature is missing from textures payload.");
                     }
 
-                    if(!textures.isSignatureValid(SIGNATURE_KEY)) {
+                    if (!textures.isSignatureValid(SIGNATURE_KEY)) {
                         throw new ProfileTextureException("Textures payload has been tampered with. (signature invalid)");
                     }
                 }
@@ -214,13 +214,13 @@ public class GameProfile {
                 try {
                     String json = new String(Base64.getDecoder().decode(textures.getValue().getBytes(StandardCharsets.UTF_8)));
                     result = GSON.fromJson(json, MinecraftTexturesPayload.class);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     throw new ProfileTextureException("Could not decode texture payload.", e);
                 }
 
-                if(result != null && result.textures != null) {
-                    if(requireSecure) {
-                        for(GameProfile.Texture texture : result.textures.values()) {
+                if (result != null && result.textures != null) {
+                    if (requireSecure) {
+                        for (GameProfile.Texture texture : result.textures.values()) {
                             if (!isWhitelistedDomain(texture.getURL())) {
                                 throw new ProfileTextureException("Textures payload has been tampered with. (non-whitelisted domain)");
                             }
@@ -266,9 +266,9 @@ public class GameProfile {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) {
+        if (this == o) {
             return true;
-        } else if(o != null && this.getClass() == o.getClass()) {
+        } else if (o != null && this.getClass() == o.getClass()) {
             GameProfile that = (GameProfile) o;
             return Objects.equals(this.id, that.id) && Objects.equals(this.name, that.name);
         } else {
@@ -299,7 +299,7 @@ public class GameProfile {
         /**
          * Creates a new Property instance.
          *
-         * @param name  Name of the property.
+         * @param name Name of the property.
          * @param value Value of the property.
          */
         public Property(String name, String value) {
@@ -309,8 +309,8 @@ public class GameProfile {
         /**
          * Creates a new Property instance.
          *
-         * @param name      Name of the property.
-         * @param value     Value of the property.
+         * @param name Name of the property.
+         * @param value Value of the property.
          * @param signature Signature used to verify the property.
          */
         public Property(String name, String value, String signature) {
@@ -363,7 +363,7 @@ public class GameProfile {
          * @throws SignatureValidateException If the signature could not be validated.
          */
         public boolean isSignatureValid(PublicKey key) throws SignatureValidateException {
-            if(!this.hasSignature()) {
+            if (!this.hasSignature()) {
                 return false;
             }
 
@@ -372,7 +372,7 @@ public class GameProfile {
                 sig.initVerify(key);
                 sig.update(this.value.getBytes());
                 return sig.verify(Base64.getDecoder().decode(this.signature.getBytes("UTF-8")));
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new SignatureValidateException("Could not validate property signature.", e);
             }
         }
@@ -410,7 +410,7 @@ public class GameProfile {
         /**
          * Creates a new Texture instance.
          *
-         * @param url      URL of the texture.
+         * @param url URL of the texture.
          * @param metadata Metadata of the texture.
          */
         public Texture(String url, Map<String, String> metadata) {
@@ -455,7 +455,7 @@ public class GameProfile {
             String url = this.url.endsWith("/") ? this.url.substring(0, this.url.length() - 1) : this.url;
             int slash = url.lastIndexOf("/");
             int dot = url.lastIndexOf(".");
-            if(dot < slash) {
+            if (dot < slash) {
                 dot = url.length();
             }
 

@@ -1,5 +1,7 @@
 package org.geysermc.mcprotocollib.auth.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.lenni0451.commons.httpclient.HttpResponse;
 import net.lenni0451.commons.httpclient.constants.ContentTypes;
@@ -10,11 +12,12 @@ import net.lenni0451.commons.httpclient.proxy.ProxyType;
 import net.lenni0451.commons.httpclient.requests.HttpContentRequest;
 import net.lenni0451.commons.httpclient.requests.HttpRequest;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.auth.exception.request.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
+import org.geysermc.mcprotocollib.auth.exception.request.ServiceUnavailableException;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.UUID;
 
@@ -30,9 +33,9 @@ public class HTTPUtils {
     }
 
     public static <T> T makeRequest(@Nullable ProxyInfo proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
-        if(proxy == null) {
+        if (proxy == null) {
             throw new IllegalArgumentException("Proxy cannot be null.");
-        } else if(uri == null) {
+        } else if (uri == null) {
             throw new IllegalArgumentException("URI cannot be null.");
         }
 
@@ -45,7 +48,7 @@ public class HTTPUtils {
             }
 
             return GSON.fromJson(new InputStreamReader(new ByteArrayInputStream(response.getContent())), responseType);
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new ServiceUnavailableException("Could not make request to '" + uri + "'.", e);
         }
     }

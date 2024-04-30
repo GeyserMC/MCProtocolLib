@@ -1,12 +1,12 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import org.geysermc.mcprotocollib.auth.GameProfile;
-import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.exception.request.ServiceUnavailableException;
-import org.geysermc.mcprotocollib.auth.SessionService;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.auth.SessionService;
+import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
+import org.geysermc.mcprotocollib.auth.exception.request.ServiceUnavailableException;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;

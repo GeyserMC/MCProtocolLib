@@ -1,11 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.data.game;
 
-import org.geysermc.mcprotocollib.auth.GameProfile;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 
 import java.security.PublicKey;

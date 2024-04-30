@@ -1,12 +1,12 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import org.geysermc.mcprotocollib.auth.GameProfile;
-import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.SessionService;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
+import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.auth.SessionService;
+import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;

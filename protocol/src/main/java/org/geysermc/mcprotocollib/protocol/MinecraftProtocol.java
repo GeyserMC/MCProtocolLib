@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import org.geysermc.mcprotocollib.auth.GameProfile;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NonNull;
@@ -8,6 +7,7 @@ import lombok.Setter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
