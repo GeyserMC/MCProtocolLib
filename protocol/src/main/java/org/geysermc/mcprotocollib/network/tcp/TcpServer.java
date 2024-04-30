@@ -2,22 +2,12 @@ package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollServerSocketChannel;
-import io.netty.channel.kqueue.KQueueEventLoopGroup;
-import io.netty.channel.kqueue.KQueueServerSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
-import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
 import io.netty.util.concurrent.Future;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
@@ -28,8 +18,8 @@ import java.net.InetSocketAddress;
 import java.util.function.Supplier;
 
 public class TcpServer extends AbstractServer {
+    private static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
     private EventLoopGroup group;
-    private Class<? extends ServerSocketChannel> serverSocketChannel;
     private Channel channel;
 
     public TcpServer(String host, int port, Supplier<? extends PacketProtocol> protocol) {
@@ -47,26 +37,15 @@ public class TcpServer extends AbstractServer {
             return;
         }
 
-        switch (TransportHelper.determineTransportMethod()) {
-            case IO_URING -> {
-                this.group = new IOUringEventLoopGroup();
-                this.serverSocketChannel = IOUringServerSocketChannel.class;
-            }
-            case EPOLL -> {
-                this.group = new EpollEventLoopGroup();
-                this.serverSocketChannel = EpollServerSocketChannel.class;
-            }
-            case KQUEUE -> {
-                this.group = new KQueueEventLoopGroup();
-                this.serverSocketChannel = KQueueServerSocketChannel.class;
-            }
-            case NIO -> {
-                this.group = new NioEventLoopGroup();
-                this.serverSocketChannel = NioServerSocketChannel.class;
-            }
-        }
+        this.group = TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
 
-        ChannelFuture future = new ServerBootstrap().channel(this.serverSocketChannel).childHandler(new ChannelInitializer<>() {
+        ServerBootstrap bootstrap = new ServerBootstrap()
+                .channelFactory(TRANSPORT_TYPE.serverSocketChannelFactory())
+                .group(this.group)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.IP_TOS, 0x18)
+                .localAddress(this.getHost(), this.getPort())
+                .childHandler(new ChannelInitializer<>() {
             @Override
             public void initChannel(Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
@@ -74,12 +53,6 @@ public class TcpServer extends AbstractServer {
 
                 TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, TcpServer.this);
                 session.getPacketProtocol().newServerSession(TcpServer.this, session);
-
-                channel.config().setOption(ChannelOption.IP_TOS, 0x18);
-                try {
-                    channel.config().setOption(ChannelOption.TCP_NODELAY, true);
-                } catch (ChannelException ignored) {
-                }
 
                 ChannelPipeline pipeline = channel.pipeline();
 
@@ -94,7 +67,13 @@ public class TcpServer extends AbstractServer {
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));
                 pipeline.addLast("manager", session);
             }
-        }).group(this.group).localAddress(this.getHost(), this.getPort()).bind();
+        });
+
+        if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
+            bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
+        }
+
+        ChannelFuture future = bootstrap.bind();
 
         if (wait) {
             try {
