@@ -607,9 +607,16 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 float green = buf.readFloat();
                 float blue = buf.readFloat();
                 float scale = buf.readFloat();
+                yield new DustParticleData(red, green, blue, scale);
+            }
+            case DUST_COLOR_TRANSITION -> {
+                float red = buf.readFloat();
+                float green = buf.readFloat();
+                float blue = buf.readFloat();
                 float newRed = buf.readFloat();
                 float newGreen = buf.readFloat();
                 float newBlue = buf.readFloat();
+                float scale = buf.readFloat();
                 yield new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
             }
             case ENTITY_EFFECT -> new EntityEffectParticleData(buf.readInt());
@@ -639,10 +646,10 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 buf.writeFloat(dustData.getRed());
                 buf.writeFloat(dustData.getGreen());
                 buf.writeFloat(dustData.getBlue());
-                buf.writeFloat(dustData.getScale());
                 buf.writeFloat(dustData.getNewRed());
                 buf.writeFloat(dustData.getNewGreen());
                 buf.writeFloat(dustData.getNewBlue());
+                buf.writeFloat(dustData.getScale());
             }
             case ENTITY_EFFECT -> {
                 EntityEffectParticleData entityEffectData = (EntityEffectParticleData) data;
