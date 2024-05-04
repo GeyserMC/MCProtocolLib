@@ -10,6 +10,8 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.ExplosionInteraction;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
 import java.util.ArrayList;
@@ -49,7 +51,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         this.blockInteraction = ExplosionInteraction.from(helper.readVarInt(in)); // different order than mojang fields
         this.smallExplosionParticles = helper.readParticle(in);
         this.largeExplosionParticles = helper.readParticle(in);
-        this.explosionSound = helper.readSoundEvent(in);
+        this.explosionSound = helper.readById(in, BuiltinSound::from, helper::readSoundEvent);
     }
 
     @Override
@@ -71,6 +73,11 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         helper.writeVarInt(out, this.blockInteraction.ordinal()); // different order than mojang fields
         helper.writeParticle(out, this.smallExplosionParticles);
         helper.writeParticle(out, this.largeExplosionParticles);
-        helper.writeSoundEvent(out, this.explosionSound);
+        if (this.explosionSound instanceof CustomSound) {
+            helper.writeVarInt(out, 0);
+            helper.writeSoundEvent(out, this.explosionSound);
+        } else {
+            helper.writeVarInt(out, ((BuiltinSound) this.explosionSound).ordinal() + 1);
+        }
     }
 }
