@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.scoreboard;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,6 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.CollisionRule;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.NameTagVisibility;
@@ -107,21 +106,21 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    public ClientboundSetPlayerTeamPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.teamName = helper.readString(in);
-        this.action = TeamAction.from(in.readByte());
+    public ClientboundSetPlayerTeamPacket(MinecraftByteBuf buf) {
+        this.teamName = buf.readString();
+        this.action = TeamAction.from(buf.readByte());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            this.displayName = helper.readComponent(in);
-            byte flags = in.readByte();
+            this.displayName = buf.readComponent();
+            byte flags = buf.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
-            this.nameTagVisibility = NameTagVisibility.from(helper.readString(in));
-            this.collisionRule = CollisionRule.from(helper.readString(in));
+            this.nameTagVisibility = NameTagVisibility.from(buf.readString());
+            this.collisionRule = CollisionRule.from(buf.readString());
 
-            this.color = TeamColor.VALUES[helper.readVarInt(in)];
+            this.color = TeamColor.VALUES[buf.readVarInt()];
 
-            this.prefix = helper.readComponent(in);
-            this.suffix = helper.readComponent(in);
+            this.prefix = buf.readComponent();
+            this.suffix = buf.readComponent();
         } else {
             this.displayName = null;
             this.prefix = null;
@@ -134,9 +133,9 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         }
 
         if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
-            this.players = new String[helper.readVarInt(in)];
+            this.players = new String[buf.readVarInt()];
             for (int index = 0; index < this.players.length; index++) {
-                this.players[index] = helper.readString(in);
+                this.players[index] = buf.readString();
             }
         } else {
             this.players = null;
@@ -144,24 +143,24 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.teamName);
-        out.writeByte(this.action.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.teamName);
+        buf.writeByte(this.action.ordinal());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            helper.writeComponent(out, this.displayName);
-            out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
-            helper.writeString(out, this.nameTagVisibility == null ? "" : this.nameTagVisibility.getName());
-            helper.writeString(out, this.collisionRule == null ? "" : this.collisionRule.getName());
-            helper.writeVarInt(out, this.color.ordinal());
-            helper.writeComponent(out, this.prefix);
-            helper.writeComponent(out, this.suffix);
+            buf.writeComponent(this.displayName);
+            buf.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
+            buf.writeString(this.nameTagVisibility == null ? "" : this.nameTagVisibility.getName());
+            buf.writeString(this.collisionRule == null ? "" : this.collisionRule.getName());
+            buf.writeVarInt(this.color.ordinal());
+            buf.writeComponent(this.prefix);
+            buf.writeComponent(this.suffix);
         }
 
         if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
-            helper.writeVarInt(out, this.players.length);
+            buf.writeVarInt(this.players.length);
             for (String player : this.players) {
                 if (player != null) {
-                    helper.writeString(out, player);
+                    buf.writeString(player);
                 }
             }
         }

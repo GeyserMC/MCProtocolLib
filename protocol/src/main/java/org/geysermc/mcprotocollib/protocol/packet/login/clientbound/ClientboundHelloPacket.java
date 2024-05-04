@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.security.GeneralSecurityException;
@@ -22,11 +21,11 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     private final byte @NonNull [] challenge;
     private final boolean shouldAuthenticate;
 
-    public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.serverId = helper.readString(in);
-        byte[] publicKey = helper.readByteArray(in);
-        this.challenge = helper.readByteArray(in);
-        this.shouldAuthenticate = in.readBoolean();
+    public ClientboundHelloPacket(MinecraftByteBuf buf) {
+        this.serverId = buf.readString();
+        byte[] publicKey = buf.readByteArray();
+        this.challenge = buf.readByteArray();
+        this.shouldAuthenticate = buf.readBoolean();
 
         try {
             this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(publicKey));
@@ -36,12 +35,12 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.serverId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.serverId);
         byte[] encoded = this.publicKey.getEncoded();
-        helper.writeByteArray(out, encoded);
-        helper.writeByteArray(out, this.challenge);
-        out.writeBoolean(this.shouldAuthenticate);
+        buf.writeByteArray(encoded);
+        buf.writeByteArray(this.challenge);
+        buf.writeBoolean(this.shouldAuthenticate);
     }
 
     @Override

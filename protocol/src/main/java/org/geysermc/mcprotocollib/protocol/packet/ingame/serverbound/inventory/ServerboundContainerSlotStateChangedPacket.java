@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -16,16 +15,16 @@ public class ServerboundContainerSlotStateChangedPacket implements MinecraftPack
     private final int containerId;
     private final boolean newState;
 
-    public ServerboundContainerSlotStateChangedPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.slotId = helper.readVarInt(in);
-        this.containerId = helper.readVarInt(in);
-        this.newState = in.readBoolean();
+    public ServerboundContainerSlotStateChangedPacket(MinecraftByteBuf buf) {
+        this.slotId = buf.readVarInt();
+        this.containerId = buf.readVarInt();
+        this.newState = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.slotId);
-        helper.writeVarInt(out, this.containerId);
-        out.writeBoolean(this.newState);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.slotId);
+        buf.writeVarInt(this.containerId);
+        buf.writeBoolean(this.newState);
     }
 }

@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.HandPreference;
 import org.geysermc.mcprotocollib.protocol.data.game.setting.ChatVisibility;
@@ -30,14 +29,14 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
      */
     private final boolean allowsListing;
 
-    public ServerboundClientInformationPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.locale = helper.readString(in);
-        this.renderDistance = in.readByte();
-        this.chatVisibility = ChatVisibility.from(helper.readVarInt(in));
-        this.useChatColors = in.readBoolean();
+    public ServerboundClientInformationPacket(MinecraftByteBuf buf) {
+        this.locale = buf.readString();
+        this.renderDistance = buf.readByte();
+        this.chatVisibility = ChatVisibility.from(buf.readVarInt());
+        this.useChatColors = buf.readBoolean();
         this.visibleParts = new ArrayList<>();
 
-        int flags = in.readUnsignedByte();
+        int flags = buf.readUnsignedByte();
         for (SkinPart part : SkinPart.VALUES) {
             int bit = 1 << part.ordinal();
             if ((flags & bit) == bit) {
@@ -45,27 +44,27 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
             }
         }
 
-        this.mainHand = HandPreference.from(helper.readVarInt(in));
-        this.textFilteringEnabled = in.readBoolean();
-        this.allowsListing = in.readBoolean();
+        this.mainHand = HandPreference.from(buf.readVarInt());
+        this.textFilteringEnabled = buf.readBoolean();
+        this.allowsListing = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.locale);
-        out.writeByte(this.renderDistance);
-        helper.writeVarInt(out, this.chatVisibility.ordinal());
-        out.writeBoolean(this.useChatColors);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.locale);
+        buf.writeByte(this.renderDistance);
+        buf.writeVarInt(this.chatVisibility.ordinal());
+        buf.writeBoolean(this.useChatColors);
 
         int flags = 0;
         for (SkinPart part : this.visibleParts) {
             flags |= 1 << part.ordinal();
         }
 
-        out.writeByte(flags);
+        buf.writeByte(flags);
 
-        helper.writeVarInt(out, this.mainHand.ordinal());
-        out.writeBoolean(this.textFilteringEnabled);
-        out.writeBoolean(allowsListing);
+        buf.writeVarInt(this.mainHand.ordinal());
+        buf.writeBoolean(this.textFilteringEnabled);
+        buf.writeBoolean(allowsListing);
     }
 }

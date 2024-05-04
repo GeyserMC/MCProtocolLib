@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundClearTitlesPacket implements MinecraftPacket {
     private final boolean resetTimes;
 
-    public ClientboundClearTitlesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.resetTimes = in.readBoolean();
+    public ClientboundClearTitlesPacket(MinecraftByteBuf buf) {
+        this.resetTimes = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeBoolean(this.resetTimes);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeBoolean(this.resetTimes);
     }
 }

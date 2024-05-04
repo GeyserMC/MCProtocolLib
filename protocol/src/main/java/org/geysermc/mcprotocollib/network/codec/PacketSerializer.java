@@ -3,9 +3,9 @@ package org.geysermc.mcprotocollib.network.codec;
 import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 
-public interface PacketSerializer<T extends Packet, H extends PacketCodecHelper> {
+public interface PacketSerializer<T extends Packet, B extends CodecByteBuf> {
 
-    void serialize(ByteBuf buf, H helper, T packet);
+    void serialize(B buf, T packet);
 
-    T deserialize(ByteBuf buf, H helper, PacketDefinition<T, H> definition);
+    T deserialize(B buf, PacketDefinition<T, B> definition);
 }

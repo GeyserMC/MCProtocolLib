@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 
@@ -18,16 +17,16 @@ public class ClientboundBlockDestructionPacket implements MinecraftPacket {
     private final @NonNull Vector3i position;
     private final @NonNull BlockBreakStage stage;
 
-    public ClientboundBlockDestructionPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.breakerEntityId = helper.readVarInt(in);
-        this.position = helper.readPosition(in);
-        this.stage = helper.readBlockBreakStage(in);
+    public ClientboundBlockDestructionPacket(MinecraftByteBuf buf) {
+        this.breakerEntityId = buf.readVarInt();
+        this.position = buf.readPosition();
+        this.stage = buf.readBlockBreakStage();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.breakerEntityId);
-        helper.writePosition(out, this.position);
-        helper.writeBlockBreakStage(out, this.stage);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.breakerEntityId);
+        buf.writePosition(this.position);
+        buf.writeBlockBreakStage(this.stage);
     }
 }

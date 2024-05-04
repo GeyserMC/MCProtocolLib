@@ -22,7 +22,7 @@ public class TcpServer extends AbstractServer {
     private EventLoopGroup group;
     private Channel channel;
 
-    public TcpServer(String host, int port, Supplier<? extends PacketProtocol> protocol) {
+    public TcpServer(String host, int port, Supplier<? extends PacketProtocol<?>> protocol) {
         super(host, port, protocol);
     }
 
@@ -49,7 +49,7 @@ public class TcpServer extends AbstractServer {
             @Override
             public void initChannel(Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-                PacketProtocol protocol = createPacketProtocol();
+                PacketProtocol<?> protocol = createPacketProtocol();
 
                 TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, TcpServer.this);
                 session.getPacketProtocol().newServerSession(TcpServer.this, session);

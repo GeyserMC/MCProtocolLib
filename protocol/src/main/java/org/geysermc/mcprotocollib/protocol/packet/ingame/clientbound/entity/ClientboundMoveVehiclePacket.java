@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -17,20 +16,20 @@ public class ClientboundMoveVehiclePacket implements MinecraftPacket {
     private final float yaw;
     private final float pitch;
 
-    public ClientboundMoveVehiclePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.x = in.readDouble();
-        this.y = in.readDouble();
-        this.z = in.readDouble();
-        this.yaw = in.readFloat();
-        this.pitch = in.readFloat();
+    public ClientboundMoveVehiclePacket(MinecraftByteBuf buf) {
+        this.x = buf.readDouble();
+        this.y = buf.readDouble();
+        this.z = buf.readDouble();
+        this.yaw = buf.readFloat();
+        this.pitch = buf.readFloat();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeDouble(this.x);
-        out.writeDouble(this.y);
-        out.writeDouble(this.z);
-        out.writeFloat(this.yaw);
-        out.writeFloat(this.pitch);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeDouble(this.x);
+        buf.writeDouble(this.y);
+        buf.writeDouble(this.z);
+        buf.writeFloat(this.yaw);
+        buf.writeFloat(this.pitch);
     }
 }

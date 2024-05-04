@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.setting.Difficulty;
 
@@ -16,14 +15,14 @@ public class ClientboundChangeDifficultyPacket implements MinecraftPacket {
     private final @NonNull Difficulty difficulty;
     private final boolean difficultyLocked;
 
-    public ClientboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.difficulty = Difficulty.from(in.readUnsignedByte());
-        this.difficultyLocked = in.readBoolean();
+    public ClientboundChangeDifficultyPacket(MinecraftByteBuf buf) {
+        this.difficulty = Difficulty.from(buf.readUnsignedByte());
+        this.difficultyLocked = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.difficulty.ordinal());
-        out.writeBoolean(this.difficultyLocked);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeByte(this.difficulty.ordinal());
+        buf.writeBoolean(this.difficultyLocked);
     }
 }

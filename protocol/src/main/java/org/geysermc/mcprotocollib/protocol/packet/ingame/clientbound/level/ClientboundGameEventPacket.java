@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.DemoMessageValue;
@@ -25,9 +24,9 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     private final @NonNull GameEvent notification;
     private final GameEventValue value;
 
-    public ClientboundGameEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.notification = GameEvent.from(in.readUnsignedByte());
-        float value = in.readFloat();
+    public ClientboundGameEventPacket(MinecraftByteBuf buf) {
+        this.notification = GameEvent.from(buf.readUnsignedByte());
+        float value = buf.readFloat();
         // TODO: Handle this in MinecraftCodecHelper
         if (this.notification == GameEvent.AFFECTED_BY_ELDER_GUARDIAN) {
             this.value = new ElderGuardianEffectValue(value);
@@ -51,8 +50,8 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.notification.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeByte(this.notification.ordinal());
         float value = 0;
         // TODO: Handle this in MinecraftCodecHelper
         if (this.value instanceof DemoMessageValue) {
@@ -65,6 +64,6 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
             value = ((ThunderStrengthValue) this.value).getStrength();
         }
 
-        out.writeFloat(value);
+        buf.writeFloat(value);
     }
 }

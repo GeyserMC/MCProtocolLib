@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetBorderWarningDelayPacket implements MinecraftPacket {
     private final int warningDelay;
 
-    public ClientboundSetBorderWarningDelayPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.warningDelay = helper.readVarInt(in);
+    public ClientboundSetBorderWarningDelayPacket(MinecraftByteBuf buf) {
+        this.warningDelay = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.warningDelay);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.warningDelay);
     }
 }

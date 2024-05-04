@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -23,19 +22,19 @@ public class ClientboundPlayerAbilitiesPacket implements MinecraftPacket {
     private final float flySpeed;
     private final float walkSpeed;
 
-    public ClientboundPlayerAbilitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        byte flags = in.readByte();
+    public ClientboundPlayerAbilitiesPacket(MinecraftByteBuf buf) {
+        byte flags = buf.readByte();
         this.invincible = (flags & FLAG_INVINCIBLE) > 0;
         this.canFly = (flags & FLAG_CAN_FLY) > 0;
         this.flying = (flags & FLAG_FLYING) > 0;
         this.creative = (flags & FLAG_CREATIVE) > 0;
 
-        this.flySpeed = in.readFloat();
-        this.walkSpeed = in.readFloat();
+        this.flySpeed = buf.readFloat();
+        this.walkSpeed = buf.readFloat();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
         int flags = 0;
         if (this.invincible) {
             flags |= FLAG_INVINCIBLE;
@@ -53,9 +52,9 @@ public class ClientboundPlayerAbilitiesPacket implements MinecraftPacket {
             flags |= FLAG_CREATIVE;
         }
 
-        out.writeByte(flags);
+        buf.writeByte(flags);
 
-        out.writeFloat(this.flySpeed);
-        out.writeFloat(this.walkSpeed);
+        buf.writeFloat(this.flySpeed);
+        buf.writeFloat(this.walkSpeed);
     }
 }

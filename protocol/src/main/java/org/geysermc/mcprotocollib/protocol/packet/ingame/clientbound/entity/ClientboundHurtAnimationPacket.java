@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ClientboundHurtAnimationPacket implements MinecraftPacket {
     private final int id;
     private final float yaw;
 
-    public ClientboundHurtAnimationPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = helper.readVarInt(in);
-        this.yaw = in.readFloat();
+    public ClientboundHurtAnimationPacket(MinecraftByteBuf buf) {
+        this.id = buf.readVarInt();
+        this.yaw = buf.readFloat();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.id);
-        out.writeFloat(this.yaw);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.id);
+        buf.writeFloat(this.yaw);
     }
 }

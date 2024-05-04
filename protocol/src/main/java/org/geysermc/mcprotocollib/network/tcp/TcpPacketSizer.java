@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.CorruptedFrameException;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.codec.BaseCodecByteBuf;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
         int length = in.readableBytes();
         out.ensureWritable(this.session.getPacketProtocol().getPacketHeader().getLengthSize(length) + length);
-        this.session.getPacketProtocol().getPacketHeader().writeLength(out, this.session.getCodecHelper(), length);
+        this.session.getPacketProtocol().getPacketHeader().writeLength(this.session.getPacketProtocol().getByteBufWrapper().wrap(out), length);
         out.writeBytes(in);
     }
 
@@ -38,7 +39,7 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
 
             lengthBytes[index] = buf.readByte();
             if ((this.session.getPacketProtocol().getPacketHeader().isLengthVariable() && lengthBytes[index] >= 0) || index == size - 1) {
-                int length = this.session.getPacketProtocol().getPacketHeader().readLength(Unpooled.wrappedBuffer(lengthBytes), this.session.getCodecHelper(), buf.readableBytes());
+                int length = this.session.getPacketProtocol().getPacketHeader().readLength(this.session.getPacketProtocol().getByteBufWrapper().wrap(Unpooled.wrappedBuffer(lengthBytes)), buf.readableBytes());
                 if (buf.readableBytes() < length) {
                     buf.resetReaderIndex();
                     return;

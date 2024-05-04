@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
-import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
 
 public class ByteMetadataType extends MetadataType<Byte> {
@@ -18,32 +17,32 @@ public class ByteMetadataType extends MetadataType<Byte> {
     }
 
     @Override
-    public EntityMetadata<Byte, ByteMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
+    public EntityMetadata<Byte, ByteMetadataType> readMetadata(MinecraftByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 
-    public void writeMetadataPrimitive(ByteBuf output, byte value) {
+    public void writeMetadataPrimitive(MinecraftByteBuf output, byte value) {
         this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface
-    public interface ByteReader extends BasicReader<Byte> {
-        byte readPrimitive(ByteBuf input);
+    public interface ByteReader extends Reader<Byte> {
+        byte readPrimitive(MinecraftByteBuf input);
 
         @Deprecated
         @Override
-        default Byte read(ByteBuf input) {
+        default Byte read(MinecraftByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
-    public interface ByteWriter extends BasicWriter<Byte> {
-        void writePrimitive(ByteBuf output, byte value);
+    public interface ByteWriter extends Writer<Byte> {
+        void writePrimitive(MinecraftByteBuf output, byte value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Byte value) {
+        default void write(MinecraftByteBuf output, Byte value) {
             this.writePrimitive(output, value);
         }
     }

@@ -10,7 +10,7 @@ import org.geysermc.mcprotocollib.network.packet.Packet;
  *
  * @param <T> the packet type
  */
-public class PacketDefinition<T extends Packet, H extends PacketCodecHelper> {
+public class PacketDefinition<T extends Packet, H extends CodecByteBuf> {
     private final int id;
     private final Class<T> packetClass;
     private final PacketSerializer<T, H> serializer;
@@ -48,7 +48,7 @@ public class PacketDefinition<T extends Packet, H extends PacketCodecHelper> {
         return this.serializer;
     }
 
-    public T newInstance(ByteBuf buf, H helper) {
-        return this.serializer.deserialize(buf, helper, this);
+    public T newInstance(H buf) {
+        return this.serializer.deserialize(buf, this);
     }
 }

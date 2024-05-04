@@ -3,8 +3,9 @@ package org.geysermc.mcprotocollib.network.example;
 import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.codec.BaseCodecByteBuf;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
+import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
@@ -16,7 +17,7 @@ import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
 
-public class TestProtocol extends PacketProtocol {
+public class TestProtocol extends PacketProtocol<BaseCodecByteBuf> {
     private final PacketHeader header = new DefaultPacketHeader();
     private AESEncryption encrypt;
 
@@ -28,20 +29,20 @@ public class TestProtocol extends PacketProtocol {
         this.setSecretKey(key);
     }
 
-    public PacketCodecHelper createHelper() {
-        return new BasePacketCodecHelper();
+    public ByteBufWrapper<BaseCodecByteBuf> getByteBufWrapper() {
+        return BaseCodecByteBuf::new;
     }
 
     public void setSecretKey(SecretKey key) {
         this.register(0, PingPacket.class, new PacketSerializer<>() {
             @Override
-            public void serialize(ByteBuf buf, PacketCodecHelper helper, PingPacket packet) {
-                helper.writeString(buf, packet.getPingId());
+            public void serialize(BaseCodecByteBuf buf, PingPacket packet) {
+                buf.writeString(packet.getPingId());
             }
 
             @Override
-            public PingPacket deserialize(ByteBuf buf, PacketCodecHelper helper, PacketDefinition<PingPacket, PacketCodecHelper> definition) {
-                return new PingPacket(buf, helper);
+            public PingPacket deserialize(BaseCodecByteBuf buf, PacketDefinition<PingPacket, BaseCodecByteBuf> definition) {
+                return new PingPacket(buf);
             }
         });
 

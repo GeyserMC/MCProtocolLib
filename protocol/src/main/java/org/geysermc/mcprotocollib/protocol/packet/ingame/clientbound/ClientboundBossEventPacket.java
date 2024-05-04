@@ -1,13 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarAction;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarColor;
@@ -67,32 +66,32 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         this.showFog = showFog;
     }
 
-    public ClientboundBossEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.uuid = helper.readUUID(in);
-        this.action = BossBarAction.from(helper.readVarInt(in));
+    public ClientboundBossEventPacket(MinecraftByteBuf buf) {
+        this.uuid = buf.readUUID();
+        this.action = BossBarAction.from(buf.readVarInt());
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            this.title = helper.readComponent(in);
+            this.title = buf.readComponent();
         } else {
             this.title = null;
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
-            this.health = in.readFloat();
+            this.health = buf.readFloat();
         } else {
             this.health = 0f;
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            this.color = BossBarColor.from(helper.readVarInt(in));
-            this.division = BossBarDivision.from(helper.readVarInt(in));
+            this.color = BossBarColor.from(buf.readVarInt());
+            this.division = BossBarDivision.from(buf.readVarInt());
         } else {
             this.color = null;
             this.division = null;
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {
-            int flags = in.readUnsignedByte();
+            int flags = buf.readUnsignedByte();
             this.darkenSky = (flags & 0x1) == 0x1;
             this.playEndMusic = (flags & 0x2) == 0x2;
             this.showFog = (flags & 0x4) == 0x4;
@@ -104,21 +103,21 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.uuid);
-        helper.writeVarInt(out, this.action.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeUUID(this.uuid);
+        buf.writeVarInt(this.action.ordinal());
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            helper.writeComponent(out, this.title);
+            buf.writeComponent(this.title);
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
-            out.writeFloat(this.health);
+            buf.writeFloat(this.health);
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            helper.writeVarInt(out, this.color.ordinal());
-            helper.writeVarInt(out, this.division.ordinal());
+            buf.writeVarInt(this.color.ordinal());
+            buf.writeVarInt(this.division.ordinal());
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {
@@ -135,7 +134,7 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
                 flags |= 0x4;
             }
 
-            out.writeByte(flags);
+            buf.writeByte(flags);
         }
     }
 }

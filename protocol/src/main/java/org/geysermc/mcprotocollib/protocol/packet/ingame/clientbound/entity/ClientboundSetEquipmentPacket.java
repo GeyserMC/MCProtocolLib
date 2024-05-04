@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Equipment;
@@ -21,14 +20,14 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull Equipment[] equipment;
 
-    public ClientboundSetEquipmentPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
+    public ClientboundSetEquipmentPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readVarInt();
         boolean hasNextEntry = true;
         List<Equipment> list = new ArrayList<>();
         while (hasNextEntry) {
-            int rawSlot = in.readByte();
+            int rawSlot = buf.readByte();
             EquipmentSlot slot = EquipmentSlot.from(((byte) rawSlot) & 127);
-            ItemStack item = helper.readOptionalItemStack(in);
+            ItemStack item = buf.readOptionalItemStack();
             list.add(new Equipment(slot, item));
             hasNextEntry = (rawSlot & 128) == 128;
         }
@@ -36,15 +35,15 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityId);
         for (int i = 0; i < this.equipment.length; i++) {
             int rawSlot = this.equipment[i].getSlot().ordinal();
             if (i != equipment.length - 1) {
                 rawSlot = rawSlot | 128;
             }
-            out.writeByte(rawSlot);
-            helper.writeOptionalItemStack(out, this.equipment[i].getItem());
+            buf.writeByte(rawSlot);
+            buf.writeOptionalItemStack(this.equipment[i].getItem());
         }
     }
 }

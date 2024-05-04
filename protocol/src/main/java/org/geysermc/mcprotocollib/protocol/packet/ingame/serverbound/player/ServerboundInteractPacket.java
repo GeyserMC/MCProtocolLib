@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.InteractAction;
@@ -31,13 +30,13 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         this(entityId, action, 0, 0, 0, hand, isSneaking);
     }
 
-    public ServerboundInteractPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.action = InteractAction.from(helper.readVarInt(in));
+    public ServerboundInteractPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readVarInt();
+        this.action = InteractAction.from(buf.readVarInt());
         if (this.action == InteractAction.INTERACT_AT) {
-            this.targetX = in.readFloat();
-            this.targetY = in.readFloat();
-            this.targetZ = in.readFloat();
+            this.targetX = buf.readFloat();
+            this.targetY = buf.readFloat();
+            this.targetZ = buf.readFloat();
         } else {
             this.targetX = 0;
             this.targetY = 0;
@@ -45,26 +44,26 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         }
 
         if (this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
-            this.hand = Hand.from(helper.readVarInt(in));
+            this.hand = Hand.from(buf.readVarInt());
         } else {
             this.hand = null;
         }
-        this.isSneaking = in.readBoolean();
+        this.isSneaking = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeVarInt(out, this.action.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityId);
+        buf.writeVarInt(this.action.ordinal());
         if (this.action == InteractAction.INTERACT_AT) {
-            out.writeFloat(this.targetX);
-            out.writeFloat(this.targetY);
-            out.writeFloat(this.targetZ);
+            buf.writeFloat(this.targetX);
+            buf.writeFloat(this.targetY);
+            buf.writeFloat(this.targetZ);
         }
 
         if (this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
-            helper.writeVarInt(out, this.hand.ordinal());
+            buf.writeVarInt(this.hand.ordinal());
         }
-        out.writeBoolean(this.isSneaking);
+        buf.writeBoolean(this.isSneaking);
     }
 }

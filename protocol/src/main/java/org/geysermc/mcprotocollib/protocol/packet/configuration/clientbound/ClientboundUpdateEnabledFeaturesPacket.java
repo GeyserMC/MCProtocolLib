@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,17 +12,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundUpdateEnabledFeaturesPacket implements MinecraftPacket {
     private final String[] features;
 
-    public ClientboundUpdateEnabledFeaturesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.features = new String[helper.readVarInt(in)];
+    public ClientboundUpdateEnabledFeaturesPacket(MinecraftByteBuf buf) {
+        this.features = new String[buf.readVarInt()];
         for (int i = 0; i < this.features.length; i++) {
-            this.features[i] = helper.readString(in);
+            this.features[i] = buf.readString();
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.features.length);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.features.length);
         for (String feature : this.features) {
-            helper.writeString(out, feature);
+            buf.writeString(feature);
         }
     }
 }

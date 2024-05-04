@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
-import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
 
 public class BooleanMetadataType extends MetadataType<Boolean> {
@@ -18,32 +17,32 @@ public class BooleanMetadataType extends MetadataType<Boolean> {
     }
 
     @Override
-    public EntityMetadata<Boolean, BooleanMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
+    public EntityMetadata<Boolean, BooleanMetadataType> readMetadata(MinecraftByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 
-    public void writeMetadataPrimitive(ByteBuf output, boolean value) {
+    public void writeMetadataPrimitive(MinecraftByteBuf output, boolean value) {
         this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface
-    public interface BooleanReader extends BasicReader<Boolean> {
-        boolean readPrimitive(ByteBuf input);
+    public interface BooleanReader extends Reader<Boolean> {
+        boolean readPrimitive(MinecraftByteBuf input);
 
         @Deprecated
         @Override
-        default Boolean read(ByteBuf input) {
+        default Boolean read(MinecraftByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
-    public interface BooleanWriter extends BasicWriter<Boolean> {
-        void writePrimitive(ByteBuf output, boolean value);
+    public interface BooleanWriter extends Writer<Boolean> {
+        void writePrimitive(MinecraftByteBuf output, boolean value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Boolean value) {
+        default void write(MinecraftByteBuf output, Boolean value) {
             this.writePrimitive(output, value);
         }
     }

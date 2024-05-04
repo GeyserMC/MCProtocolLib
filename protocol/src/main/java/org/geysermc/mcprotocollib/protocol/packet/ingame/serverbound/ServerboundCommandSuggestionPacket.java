@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,14 +14,14 @@ public class ServerboundCommandSuggestionPacket implements MinecraftPacket {
     private final int transactionId;
     private final @NonNull String text;
 
-    public ServerboundCommandSuggestionPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.transactionId = helper.readVarInt(in);
-        this.text = helper.readString(in);
+    public ServerboundCommandSuggestionPacket(MinecraftByteBuf buf) {
+        this.transactionId = buf.readVarInt();
+        this.text = buf.readString();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.transactionId);
-        helper.writeString(out, this.text);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.transactionId);
+        buf.writeString(this.text);
     }
 }

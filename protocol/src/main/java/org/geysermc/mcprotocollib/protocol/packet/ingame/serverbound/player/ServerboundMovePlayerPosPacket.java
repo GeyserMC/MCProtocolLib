@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -16,18 +15,18 @@ public class ServerboundMovePlayerPosPacket implements MinecraftPacket {
     private final double y;
     private final double z;
 
-    public ServerboundMovePlayerPosPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.x = in.readDouble();
-        this.y = in.readDouble();
-        this.z = in.readDouble();
-        this.onGround = in.readBoolean();
+    public ServerboundMovePlayerPosPacket(MinecraftByteBuf buf) {
+        this.x = buf.readDouble();
+        this.y = buf.readDouble();
+        this.z = buf.readDouble();
+        this.onGround = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeDouble(this.x);
-        out.writeDouble(this.y);
-        out.writeDouble(this.z);
-        out.writeBoolean(this.onGround);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeDouble(this.x);
+        buf.writeDouble(this.y);
+        buf.writeDouble(this.z);
+        buf.writeBoolean(this.onGround);
     }
 }

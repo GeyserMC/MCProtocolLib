@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.UnlockRecipesAction;
 
@@ -74,56 +73,56 @@ public class ClientboundRecipePacket implements MinecraftPacket {
         this.alreadyKnownRecipes = Arrays.copyOf(alreadyKnownRecipes, alreadyKnownRecipes.length);
     }
 
-    public ClientboundRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.action = UnlockRecipesAction.from(helper.readVarInt(in));
+    public ClientboundRecipePacket(MinecraftByteBuf buf) {
+        this.action = UnlockRecipesAction.from(buf.readVarInt());
 
-        this.openCraftingBook = in.readBoolean();
-        this.activateCraftingFiltering = in.readBoolean();
-        this.openSmeltingBook = in.readBoolean();
-        this.activateSmeltingFiltering = in.readBoolean();
-        this.openBlastingBook = in.readBoolean();
-        this.activateBlastingFiltering = in.readBoolean();
-        this.openSmokingBook = in.readBoolean();
-        this.activateSmokingFiltering = in.readBoolean();
+        this.openCraftingBook = buf.readBoolean();
+        this.activateCraftingFiltering = buf.readBoolean();
+        this.openSmeltingBook = buf.readBoolean();
+        this.activateSmeltingFiltering = buf.readBoolean();
+        this.openBlastingBook = buf.readBoolean();
+        this.activateBlastingFiltering = buf.readBoolean();
+        this.openSmokingBook = buf.readBoolean();
+        this.activateSmokingFiltering = buf.readBoolean();
 
         if (this.action == UnlockRecipesAction.INIT) {
-            this.alreadyKnownRecipes = new String[helper.readVarInt(in)];
+            this.alreadyKnownRecipes = new String[buf.readVarInt()];
             for (int i = 0; i < this.alreadyKnownRecipes.length; i++) {
-                this.alreadyKnownRecipes[i] = helper.readString(in);
+                this.alreadyKnownRecipes[i] = buf.readString();
             }
         } else {
             this.alreadyKnownRecipes = null;
         }
 
-        this.recipes = new String[helper.readVarInt(in)];
+        this.recipes = new String[buf.readVarInt()];
         for (int i = 0; i < this.recipes.length; i++) {
-            this.recipes[i] = helper.readString(in);
+            this.recipes[i] = buf.readString();
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.action.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.action.ordinal());
 
-        out.writeBoolean(this.openCraftingBook);
-        out.writeBoolean(this.activateCraftingFiltering);
-        out.writeBoolean(this.openSmeltingBook);
-        out.writeBoolean(this.activateSmeltingFiltering);
-        out.writeBoolean(this.openBlastingBook);
-        out.writeBoolean(this.activateBlastingFiltering);
-        out.writeBoolean(this.openSmokingBook);
-        out.writeBoolean(this.activateSmokingFiltering);
+        buf.writeBoolean(this.openCraftingBook);
+        buf.writeBoolean(this.activateCraftingFiltering);
+        buf.writeBoolean(this.openSmeltingBook);
+        buf.writeBoolean(this.activateSmeltingFiltering);
+        buf.writeBoolean(this.openBlastingBook);
+        buf.writeBoolean(this.activateBlastingFiltering);
+        buf.writeBoolean(this.openSmokingBook);
+        buf.writeBoolean(this.activateSmokingFiltering);
 
         if (this.action == UnlockRecipesAction.INIT) {
-            helper.writeVarInt(out, this.alreadyKnownRecipes.length);
+            buf.writeVarInt(this.alreadyKnownRecipes.length);
             for (String recipeId : this.alreadyKnownRecipes) {
-                helper.writeString(out, recipeId);
+                buf.writeString(recipeId);
             }
         }
 
-        helper.writeVarInt(out, this.recipes.length);
+        buf.writeVarInt(this.recipes.length);
         for (String recipeId : this.recipes) {
-            helper.writeString(out, recipeId);
+            buf.writeString(recipeId);
         }
     }
 }

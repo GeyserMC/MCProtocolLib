@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetBorderSizePacket implements MinecraftPacket {
     private final double size;
 
-    public ClientboundSetBorderSizePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.size = in.readDouble();
+    public ClientboundSetBorderSizePacket(MinecraftByteBuf buf) {
+        this.size = buf.readDouble();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeDouble(this.size);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeDouble(this.size);
     }
 }

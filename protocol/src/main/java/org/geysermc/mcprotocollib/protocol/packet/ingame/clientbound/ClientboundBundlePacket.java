@@ -1,9 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.List;
@@ -14,6 +13,6 @@ public class ClientboundBundlePacket implements MinecraftPacket {
     private final List<MinecraftPacket> packets;
 
     @Override
-    public void serialize(ByteBuf buf, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
     }
 }

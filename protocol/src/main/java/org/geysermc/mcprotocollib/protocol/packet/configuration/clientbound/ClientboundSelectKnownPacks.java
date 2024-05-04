@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.KnownPack;
 
@@ -17,21 +16,21 @@ import java.util.List;
 public class ClientboundSelectKnownPacks implements MinecraftPacket {
     private final List<KnownPack> knownPacks;
 
-    public ClientboundSelectKnownPacks(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundSelectKnownPacks(MinecraftByteBuf buf) {
         this.knownPacks = new ArrayList<>();
-        int entryCount = helper.readVarInt(in);
+        int entryCount = buf.readVarInt();
         for (int i = 0; i < entryCount; i++) {
-            this.knownPacks.add(new KnownPack(helper.readString(in), helper.readString(in), helper.readString(in)));
+            this.knownPacks.add(new KnownPack(buf.readString(), buf.readString(), buf.readString()));
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.knownPacks.size());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.knownPacks.size());
         for (KnownPack entry : this.knownPacks) {
-            helper.writeString(out, entry.getNamespace());
-            helper.writeString(out, entry.getId());
-            helper.writeString(out, entry.getVersion());
+            buf.writeString(entry.getNamespace());
+            buf.writeString(entry.getId());
+            buf.writeString(entry.getVersion());
         }
     }
 }

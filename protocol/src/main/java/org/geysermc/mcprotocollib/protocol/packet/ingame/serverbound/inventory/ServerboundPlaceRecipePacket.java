@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -16,16 +15,16 @@ public class ServerboundPlaceRecipePacket implements MinecraftPacket {
     private final @NonNull String recipeId;
     private final boolean makeAll;
 
-    public ServerboundPlaceRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
-        this.recipeId = helper.readString(in);
-        this.makeAll = in.readBoolean();
+    public ServerboundPlaceRecipePacket(MinecraftByteBuf buf) {
+        this.containerId = buf.readByte();
+        this.recipeId = buf.readString();
+        this.makeAll = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
-        helper.writeString(out, this.recipeId);
-        out.writeBoolean(this.makeAll);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeByte(this.containerId);
+        buf.writeString(this.recipeId);
+        buf.writeBoolean(this.makeAll);
     }
 }

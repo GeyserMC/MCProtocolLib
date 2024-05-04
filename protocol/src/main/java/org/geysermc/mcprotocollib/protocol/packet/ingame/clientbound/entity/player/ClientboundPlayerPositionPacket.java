@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PositionElement;
 
@@ -29,15 +28,15 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
         this(x, y, z, yaw, pitch, teleportId, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
-    public ClientboundPlayerPositionPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.x = in.readDouble();
-        this.y = in.readDouble();
-        this.z = in.readDouble();
-        this.yaw = in.readFloat();
-        this.pitch = in.readFloat();
+    public ClientboundPlayerPositionPacket(MinecraftByteBuf buf) {
+        this.x = buf.readDouble();
+        this.y = buf.readDouble();
+        this.z = buf.readDouble();
+        this.yaw = buf.readFloat();
+        this.pitch = buf.readFloat();
 
         this.relative = new ArrayList<>();
-        int flags = in.readUnsignedByte();
+        int flags = buf.readUnsignedByte();
         for (PositionElement element : PositionElement.values()) {
             int bit = 1 << element.ordinal();
             if ((flags & bit) == bit) {
@@ -45,24 +44,24 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
             }
         }
 
-        this.teleportId = helper.readVarInt(in);
+        this.teleportId = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeDouble(this.x);
-        out.writeDouble(this.y);
-        out.writeDouble(this.z);
-        out.writeFloat(this.yaw);
-        out.writeFloat(this.pitch);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeDouble(this.x);
+        buf.writeDouble(this.y);
+        buf.writeDouble(this.z);
+        buf.writeFloat(this.yaw);
+        buf.writeFloat(this.pitch);
 
         int flags = 0;
         for (PositionElement element : this.relative) {
             flags |= 1 << element.ordinal();
         }
 
-        out.writeByte(flags);
+        buf.writeByte(flags);
 
-        helper.writeVarInt(out, this.teleportId);
+        buf.writeVarInt(this.teleportId);
     }
 }

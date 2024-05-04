@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,14 +14,14 @@ public class ClientboundTickingStatePacket implements MinecraftPacket {
     private final float tickRate;
     private final boolean isFrozen;
 
-    public ClientboundTickingStatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.tickRate = in.readFloat();
-        this.isFrozen = in.readBoolean();
+    public ClientboundTickingStatePacket(MinecraftByteBuf buf) {
+        this.tickRate = buf.readFloat();
+        this.isFrozen = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeFloat(tickRate);
-        out.writeBoolean(isFrozen);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeFloat(tickRate);
+        buf.writeBoolean(isFrozen);
     }
 }

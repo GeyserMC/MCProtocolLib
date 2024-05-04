@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetSimulationDistancePacket implements MinecraftPacket {
     private final int simulationDistance;
 
-    public ClientboundSetSimulationDistancePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.simulationDistance = helper.readVarInt(in);
+    public ClientboundSetSimulationDistancePacket(MinecraftByteBuf buf) {
+        this.simulationDistance = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.simulationDistance);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.simulationDistance);
     }
 }

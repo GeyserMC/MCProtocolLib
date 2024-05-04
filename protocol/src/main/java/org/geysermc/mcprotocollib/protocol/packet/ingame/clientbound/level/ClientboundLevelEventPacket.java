@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.BonemealGrowEventData;
@@ -38,10 +37,10 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
         this(event, position, data, false);
     }
 
-    public ClientboundLevelEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.event = helper.readLevelEvent(in);
-        this.position = helper.readPosition(in);
-        int value = in.readInt();
+    public ClientboundLevelEventPacket(MinecraftByteBuf buf) {
+        this.event = buf.readLevelEvent();
+        this.position = buf.readPosition();
+        int value = buf.readInt();
         if (this.event instanceof LevelEventType levelEventType) {
             switch (levelEventType) {
                 case BLOCK_FIRE_EXTINGUISH -> this.data = FireExtinguishData.from(value);
@@ -61,13 +60,13 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
             this.data = new UnknownLevelEventData(value);
         }
 
-        this.broadcast = in.readBoolean();
+        this.broadcast = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeLevelEvent(out, this.event);
-        helper.writePosition(out, this.position);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeLevelEvent(this.event);
+        buf.writePosition(this.position);
         int value;
         if (this.data instanceof FireExtinguishData) {
             value = ((FireExtinguishData) this.data).ordinal();
@@ -93,7 +92,7 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
             value = ((UnknownLevelEventData) data).getData();
         }
 
-        out.writeInt(value);
-        out.writeBoolean(this.broadcast);
+        buf.writeInt(value);
+        buf.writeBoolean(this.broadcast);
     }
 }

@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.CraftingBookCategory;
@@ -27,76 +26,76 @@ import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.StoneCuttingRec
 public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     private final @NonNull Recipe[] recipes;
 
-    public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.recipes = new Recipe[helper.readVarInt(in)];
+    public ClientboundUpdateRecipesPacket(MinecraftByteBuf buf) {
+        this.recipes = new Recipe[buf.readVarInt()];
         for (int i = 0; i < this.recipes.length; i++) {
-            String identifier = helper.readResourceLocation(in);
-            RecipeType type = RecipeType.from(helper.readVarInt(in));
+            String identifier = buf.readResourceLocation();
+            RecipeType type = RecipeType.from(buf.readVarInt());
             RecipeData data;
             switch (type) {
                 case CRAFTING_SHAPELESS -> {
-                    String group = helper.readString(in);
-                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
-                    Ingredient[] ingredients = new Ingredient[helper.readVarInt(in)];
+                    String group = buf.readString();
+                    CraftingBookCategory category = CraftingBookCategory.from(buf.readVarInt());
+                    Ingredient[] ingredients = new Ingredient[buf.readVarInt()];
                     for (int j = 0; j < ingredients.length; j++) {
-                        ingredients[j] = helper.readRecipeIngredient(in);
+                        ingredients[j] = buf.readRecipeIngredient();
                     }
 
-                    ItemStack result = helper.readOptionalItemStack(in);
+                    ItemStack result = buf.readOptionalItemStack();
 
                     data = new ShapelessRecipeData(group, category, ingredients, result);
                 }
                 case CRAFTING_SHAPED -> {
-                    String group = helper.readString(in);
-                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
+                    String group = buf.readString();
+                    CraftingBookCategory category = CraftingBookCategory.from(buf.readVarInt());
 
                     // ShapedRecipePattern in vanilla
-                    int width = helper.readVarInt(in);
-                    int height = helper.readVarInt(in);
+                    int width = buf.readVarInt();
+                    int height = buf.readVarInt();
                     Ingredient[] ingredients = new Ingredient[width * height];
                     for (int j = 0; j < ingredients.length; j++) {
-                        ingredients[j] = helper.readRecipeIngredient(in);
+                        ingredients[j] = buf.readRecipeIngredient();
                     }
 
-                    ItemStack result = helper.readOptionalItemStack(in);
-                    boolean showNotification = in.readBoolean();
+                    ItemStack result = buf.readOptionalItemStack();
+                    boolean showNotification = buf.readBoolean();
 
                     data = new ShapedRecipeData(width, height, group, category, ingredients, result, showNotification);
                 }
                 case SMELTING, BLASTING, SMOKING, CAMPFIRE_COOKING -> {
-                    String group = helper.readString(in);
-                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
-                    Ingredient ingredient = helper.readRecipeIngredient(in);
-                    ItemStack result = helper.readOptionalItemStack(in);
-                    float experience = in.readFloat();
-                    int cookingTime = helper.readVarInt(in);
+                    String group = buf.readString();
+                    CraftingBookCategory category = CraftingBookCategory.from(buf.readVarInt());
+                    Ingredient ingredient = buf.readRecipeIngredient();
+                    ItemStack result = buf.readOptionalItemStack();
+                    float experience = buf.readFloat();
+                    int cookingTime = buf.readVarInt();
 
                     data = new CookedRecipeData(group, category, ingredient, result, experience, cookingTime);
                 }
                 case STONECUTTING -> {
-                    String group = helper.readString(in);
-                    Ingredient ingredient = helper.readRecipeIngredient(in);
-                    ItemStack result = helper.readOptionalItemStack(in);
+                    String group = buf.readString();
+                    Ingredient ingredient = buf.readRecipeIngredient();
+                    ItemStack result = buf.readOptionalItemStack();
 
                     data = new StoneCuttingRecipeData(group, ingredient, result);
                 }
                 case SMITHING_TRANSFORM -> {
-                    Ingredient template = helper.readRecipeIngredient(in);
-                    Ingredient base = helper.readRecipeIngredient(in);
-                    Ingredient addition = helper.readRecipeIngredient(in);
-                    ItemStack result = helper.readOptionalItemStack(in);
+                    Ingredient template = buf.readRecipeIngredient();
+                    Ingredient base = buf.readRecipeIngredient();
+                    Ingredient addition = buf.readRecipeIngredient();
+                    ItemStack result = buf.readOptionalItemStack();
 
                     data = new SmithingTransformRecipeData(template, base, addition, result);
                 }
                 case SMITHING_TRIM -> {
-                    Ingredient template = helper.readRecipeIngredient(in);
-                    Ingredient base = helper.readRecipeIngredient(in);
-                    Ingredient addition = helper.readRecipeIngredient(in);
+                    Ingredient template = buf.readRecipeIngredient();
+                    Ingredient base = buf.readRecipeIngredient();
+                    Ingredient addition = buf.readRecipeIngredient();
 
                     data = new SmithingTrimRecipeData(template, base, addition);
                 }
                 default -> {
-                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
+                    CraftingBookCategory category = CraftingBookCategory.from(buf.readVarInt());
 
                     data = new SimpleCraftingRecipeData(category);
                 }
@@ -107,23 +106,23 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.recipes.length);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.recipes.length);
         for (Recipe recipe : this.recipes) {
-            helper.writeResourceLocation(out, recipe.getIdentifier());
-            helper.writeVarInt(out, recipe.getType().ordinal());
+            buf.writeResourceLocation(recipe.getIdentifier());
+            buf.writeVarInt(recipe.getType().ordinal());
             switch (recipe.getType()) {
                 case CRAFTING_SHAPELESS -> {
                     ShapelessRecipeData data = (ShapelessRecipeData) recipe.getData();
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeVarInt(out, data.getCategory().ordinal());
-                    helper.writeVarInt(out, data.getIngredients().length);
+                    buf.writeString(data.getGroup());
+                    buf.writeVarInt(data.getCategory().ordinal());
+                    buf.writeVarInt(data.getIngredients().length);
                     for (Ingredient ingredient : data.getIngredients()) {
-                        helper.writeRecipeIngredient(out, ingredient);
+                        buf.writeRecipeIngredient(ingredient);
                     }
 
-                    helper.writeOptionalItemStack(out, data.getResult());
+                    buf.writeOptionalItemStack(data.getResult());
                 }
                 case CRAFTING_SHAPED -> {
                     ShapedRecipeData data = (ShapedRecipeData) recipe.getData();
@@ -131,55 +130,55 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                         throw new IllegalStateException("Shaped recipe must have ingredient count equal to width * height.");
                     }
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeVarInt(out, data.getCategory().ordinal());
+                    buf.writeString(data.getGroup());
+                    buf.writeVarInt(data.getCategory().ordinal());
 
                     // ShapedRecipePattern in vanilla
-                    helper.writeVarInt(out, data.getWidth());
-                    helper.writeVarInt(out, data.getHeight());
+                    buf.writeVarInt(data.getWidth());
+                    buf.writeVarInt(data.getHeight());
                     for (Ingredient ingredient : data.getIngredients()) {
-                        helper.writeRecipeIngredient(out, ingredient);
+                        buf.writeRecipeIngredient(ingredient);
                     }
 
-                    helper.writeOptionalItemStack(out, data.getResult());
-                    out.writeBoolean(data.isShowNotification());
+                    buf.writeOptionalItemStack(data.getResult());
+                    buf.writeBoolean(data.isShowNotification());
                 }
                 case SMELTING, BLASTING, SMOKING, CAMPFIRE_COOKING -> {
                     CookedRecipeData data = (CookedRecipeData) recipe.getData();
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeVarInt(out, data.getCategory().ordinal());
-                    helper.writeRecipeIngredient(out, data.getIngredient());
-                    helper.writeOptionalItemStack(out, data.getResult());
-                    out.writeFloat(data.getExperience());
-                    helper.writeVarInt(out, data.getCookingTime());
+                    buf.writeString(data.getGroup());
+                    buf.writeVarInt(data.getCategory().ordinal());
+                    buf.writeRecipeIngredient(data.getIngredient());
+                    buf.writeOptionalItemStack(data.getResult());
+                    buf.writeFloat(data.getExperience());
+                    buf.writeVarInt(data.getCookingTime());
                 }
                 case STONECUTTING -> {
                     StoneCuttingRecipeData data = (StoneCuttingRecipeData) recipe.getData();
 
-                    helper.writeString(out, data.getGroup());
-                    helper.writeRecipeIngredient(out, data.getIngredient());
-                    helper.writeOptionalItemStack(out, data.getResult());
+                    buf.writeString(data.getGroup());
+                    buf.writeRecipeIngredient(data.getIngredient());
+                    buf.writeOptionalItemStack(data.getResult());
                 }
                 case SMITHING_TRANSFORM -> {
                     SmithingTransformRecipeData data = (SmithingTransformRecipeData) recipe.getData();
 
-                    helper.writeRecipeIngredient(out, data.getTemplate());
-                    helper.writeRecipeIngredient(out, data.getBase());
-                    helper.writeRecipeIngredient(out, data.getAddition());
-                    helper.writeOptionalItemStack(out, data.getResult());
+                    buf.writeRecipeIngredient(data.getTemplate());
+                    buf.writeRecipeIngredient(data.getBase());
+                    buf.writeRecipeIngredient(data.getAddition());
+                    buf.writeOptionalItemStack(data.getResult());
                 }
                 case SMITHING_TRIM -> {
                     SmithingTrimRecipeData data = (SmithingTrimRecipeData) recipe.getData();
 
-                    helper.writeRecipeIngredient(out, data.getTemplate());
-                    helper.writeRecipeIngredient(out, data.getBase());
-                    helper.writeRecipeIngredient(out, data.getAddition());
+                    buf.writeRecipeIngredient(data.getTemplate());
+                    buf.writeRecipeIngredient(data.getBase());
+                    buf.writeRecipeIngredient(data.getAddition());
                 }
                 default -> {
                     SimpleCraftingRecipeData data = (SimpleCraftingRecipeData) recipe.getData();
 
-                    helper.writeVarInt(out, data.getCategory().ordinal());
+                    buf.writeVarInt(data.getCategory().ordinal());
                 }
             }
         }

@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundSetCarriedItemPacket implements MinecraftPacket {
     private final int slot;
 
-    public ServerboundSetCarriedItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.slot = in.readShort();
+    public ServerboundSetCarriedItemPacket(MinecraftByteBuf buf) {
+        this.slot = buf.readShort();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeShort(this.slot);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeShort(this.slot);
     }
 }

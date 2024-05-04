@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -22,26 +21,26 @@ public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
     private final int selectionPriority;
     private final int placementPriority;
 
-    public ServerboundSetJigsawBlockPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
-        this.name = helper.readString(in);
-        this.target = helper.readString(in);
-        this.pool = helper.readString(in);
-        this.finalState = helper.readString(in);
-        this.jointType = helper.readString(in);
-        this.selectionPriority = helper.readVarInt(in);
-        this.placementPriority = helper.readVarInt(in);
+    public ServerboundSetJigsawBlockPacket(MinecraftByteBuf buf) {
+        this.position = buf.readPosition();
+        this.name = buf.readString();
+        this.target = buf.readString();
+        this.pool = buf.readString();
+        this.finalState = buf.readString();
+        this.jointType = buf.readString();
+        this.selectionPriority = buf.readVarInt();
+        this.placementPriority = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.position);
-        helper.writeString(out, this.name);
-        helper.writeString(out, this.target);
-        helper.writeString(out, this.pool);
-        helper.writeString(out, this.finalState);
-        helper.writeString(out, this.jointType);
-        helper.writeVarInt(out, this.selectionPriority);
-        helper.writeVarInt(out, this.placementPriority);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writePosition(this.position);
+        buf.writeString(this.name);
+        buf.writeString(this.target);
+        buf.writeString(this.pool);
+        buf.writeString(this.finalState);
+        buf.writeString(this.jointType);
+        buf.writeVarInt(this.selectionPriority);
+        buf.writeVarInt(this.placementPriority);
     }
 }

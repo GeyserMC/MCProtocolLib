@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerType;
@@ -19,10 +18,10 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     private final @NonNull ContainerType type;
     private final @NonNull Component title;
 
-    public ClientboundOpenScreenPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
-        this.type = ContainerType.from(helper.readVarInt(in));
-        this.title = helper.readComponent(in);
+    public ClientboundOpenScreenPacket(MinecraftByteBuf buf) {
+        this.containerId = buf.readVarInt();
+        this.type = ContainerType.from(buf.readVarInt());
+        this.title = buf.readComponent();
     }
 
     @Deprecated
@@ -33,10 +32,10 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
-        helper.writeVarInt(out, this.type.ordinal());
-        helper.writeComponent(out, this.title);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.containerId);
+        buf.writeVarInt(this.type.ordinal());
+        buf.writeComponent(this.title);
     }
 
     @Deprecated

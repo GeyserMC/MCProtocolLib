@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,16 +14,16 @@ public class ClientboundSetTitlesAnimationPacket implements MinecraftPacket {
     private final int stay;
     private final int fadeOut;
 
-    public ClientboundSetTitlesAnimationPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.fadeIn = in.readInt();
-        this.stay = in.readInt();
-        this.fadeOut = in.readInt();
+    public ClientboundSetTitlesAnimationPacket(MinecraftByteBuf buf) {
+        this.fadeIn = buf.readInt();
+        this.stay = buf.readInt();
+        this.fadeOut = buf.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeInt(this.fadeIn);
-        out.writeInt(this.stay);
-        out.writeInt(this.fadeOut);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeInt(this.fadeIn);
+        buf.writeInt(this.stay);
+        buf.writeInt(this.fadeOut);
     }
 }

@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundBlockChangedAckPacket implements MinecraftPacket {
     private final int sequence;
 
-    public ClientboundBlockChangedAckPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sequence = helper.readVarInt(in);
+    public ClientboundBlockChangedAckPacket(MinecraftByteBuf buf) {
+        this.sequence = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.sequence);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.sequence);
     }
 }

@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.scoreboard;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ObjectiveAction;
@@ -59,13 +58,13 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
         this.numberFormat = numberFormat;
     }
 
-    public ClientboundSetObjectivePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.name = helper.readString(in);
-        this.action = ObjectiveAction.from(in.readByte());
+    public ClientboundSetObjectivePacket(MinecraftByteBuf buf) {
+        this.name = buf.readString();
+        this.action = ObjectiveAction.from(buf.readByte());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            this.displayName = helper.readComponent(in);
-            this.type = ScoreType.from(helper.readVarInt(in));
-            this.numberFormat = helper.readNullable(in, helper::readNumberFormat);
+            this.displayName = buf.readComponent();
+            this.type = ScoreType.from(buf.readVarInt());
+            this.numberFormat = buf.readNullable(buf::readNumberFormat);
         } else {
             this.displayName = null;
             this.type = ScoreType.INTEGER;
@@ -74,13 +73,13 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.name);
-        out.writeByte(this.action.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.name);
+        buf.writeByte(this.action.ordinal());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            helper.writeComponent(out, this.displayName);
-            helper.writeVarInt(out, this.type.ordinal());
-            helper.writeNullable(out, this.numberFormat, helper::writeNumberFormat);
+            buf.writeComponent(this.displayName);
+            buf.writeVarInt(this.type.ordinal());
+            buf.writeNullable(this.numberFormat, buf::writeNumberFormat);
         }
     }
 }

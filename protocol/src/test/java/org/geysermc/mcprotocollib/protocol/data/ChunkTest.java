@@ -3,7 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.ChunkSection;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.DataPalette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
@@ -38,13 +38,12 @@ public class ChunkTest {
 
     @Test
     public void testChunkSectionEncoding() {
-        MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
         for (ChunkSection section : chunkSectionsToTest) {
-            ByteBuf buf = Unpooled.buffer();
-            helper.writeChunkSection(buf, section);
+            MinecraftByteBuf buf = new MinecraftByteBuf(Int2ObjectMaps.emptyMap(), Collections.emptyMap(), Unpooled.buffer());
+            buf.writeChunkSection(section);
             ChunkSection decoded;
             try {
-                decoded = helper.readChunkSection(buf);
+                decoded = buf.readChunkSection();
             } catch (Exception e) {
                 System.out.println(section);
                 e.printStackTrace();

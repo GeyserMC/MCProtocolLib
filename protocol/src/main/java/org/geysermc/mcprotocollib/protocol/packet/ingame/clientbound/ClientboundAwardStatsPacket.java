@@ -1,13 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.BreakBlockStatistic;
@@ -28,11 +27,11 @@ import org.geysermc.mcprotocollib.protocol.data.game.statistic.UseItemStatistic;
 public class ClientboundAwardStatsPacket implements MinecraftPacket {
     private final @NonNull Object2IntMap<Statistic> statistics = new Object2IntOpenHashMap<>();
 
-    public ClientboundAwardStatsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        int length = helper.readVarInt(in);
+    public ClientboundAwardStatsPacket(MinecraftByteBuf buf) {
+        int length = buf.readVarInt();
         for (int index = 0; index < length; index++) {
-            StatisticCategory category = helper.readStatisticCategory(in);
-            int statisticId = helper.readVarInt(in);
+            StatisticCategory category = buf.readStatisticCategory();
+            int statisticId = buf.readVarInt();
             Statistic statistic = switch (category) {
                 case BREAK_BLOCK -> new BreakBlockStatistic(statisticId);
                 case CRAFT_ITEM -> new CraftItemStatistic(statisticId);
@@ -44,13 +43,13 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
                 case KILLED_BY_ENTITY -> new KilledByEntityStatistic(EntityType.from(statisticId));
                 case CUSTOM -> CustomStatistic.from(statisticId);
             };
-            this.statistics.put(statistic, helper.readVarInt(in));
+            this.statistics.put(statistic, buf.readVarInt());
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.statistics.size());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.statistics.size());
         for (Object2IntMap.Entry<Statistic> entry : statistics.object2IntEntrySet()) {
             Statistic statistic = entry.getKey();
 
@@ -86,9 +85,9 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
             } else {
                 throw new IllegalStateException();
             }
-            helper.writeStatisticCategory(out, category);
-            helper.writeVarInt(out, statisticId);
-            helper.writeVarInt(out, entry.getIntValue());
+            buf.writeStatisticCategory(category);
+            buf.writeVarInt(statisticId);
+            buf.writeVarInt(entry.getIntValue());
         }
     }
 }

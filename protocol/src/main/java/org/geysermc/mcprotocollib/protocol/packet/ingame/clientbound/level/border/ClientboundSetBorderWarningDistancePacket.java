@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetBorderWarningDistancePacket implements MinecraftPacket {
     private final int warningBlocks;
 
-    public ClientboundSetBorderWarningDistancePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.warningBlocks = helper.readVarInt(in);
+    public ClientboundSetBorderWarningDistancePacket(MinecraftByteBuf buf) {
+        this.warningBlocks = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.warningBlocks);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.warningBlocks);
     }
 }

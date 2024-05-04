@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundKeepAlivePacket implements MinecraftPacket {
     private final long pingId;
 
-    public ClientboundKeepAlivePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.pingId = in.readLong();
+    public ClientboundKeepAlivePacket(MinecraftByteBuf buf) {
+        this.pingId = buf.readLong();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeLong(this.pingId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeLong(this.pingId);
     }
 }

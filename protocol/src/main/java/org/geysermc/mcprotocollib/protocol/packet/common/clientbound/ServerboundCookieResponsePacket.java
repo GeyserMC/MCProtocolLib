@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,14 +14,14 @@ public class ServerboundCookieResponsePacket implements MinecraftPacket {
     private final String key;
     private final byte @Nullable [] payload;
 
-    public ServerboundCookieResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.key = helper.readResourceLocation(in);
-        this.payload = helper.readNullable(in, helper::readByteArray);
+    public ServerboundCookieResponsePacket(MinecraftByteBuf buf) {
+        this.key = buf.readResourceLocation();
+        this.payload = buf.readNullable(buf::readByteArray);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeResourceLocation(out, this.key);
-        helper.writeNullable(out, this.payload, helper::writeByteArray);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeResourceLocation(this.key);
+        buf.writeNullable(this.payload, buf::writeByteArray);
     }
 }

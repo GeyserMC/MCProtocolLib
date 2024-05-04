@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.ArrayList;
@@ -19,30 +18,30 @@ public class ServerboundEditBookPacket implements MinecraftPacket {
     private final List<String> pages;
     private final @Nullable String title;
 
-    public ServerboundEditBookPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.slot = helper.readVarInt(in);
+    public ServerboundEditBookPacket(MinecraftByteBuf buf) {
+        this.slot = buf.readVarInt();
         this.pages = new ArrayList<>();
-        int pagesSize = helper.readVarInt(in);
+        int pagesSize = buf.readVarInt();
         for (int i = 0; i < pagesSize; i++) {
-            this.pages.add(helper.readString(in));
+            this.pages.add(buf.readString());
         }
-        if (in.readBoolean()) {
-            this.title = helper.readString(in);
+        if (buf.readBoolean()) {
+            this.title = buf.readString();
         } else {
             this.title = null;
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, slot);
-        helper.writeVarInt(out, this.pages.size());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(slot);
+        buf.writeVarInt(this.pages.size());
         for (String page : this.pages) {
-            helper.writeString(out, page);
+            buf.writeString(page);
         }
-        out.writeBoolean(this.title != null);
+        buf.writeBoolean(this.title != null);
         if (this.title != null) {
-            helper.writeString(out, title);
+            buf.writeString(title);
         }
     }
 }

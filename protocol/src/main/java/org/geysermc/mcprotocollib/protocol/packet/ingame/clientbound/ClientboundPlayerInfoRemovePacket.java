@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.ArrayList;
@@ -17,18 +16,18 @@ import java.util.UUID;
 public class ClientboundPlayerInfoRemovePacket implements MinecraftPacket {
     private final List<UUID> profileIds;
 
-    public ClientboundPlayerInfoRemovePacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundPlayerInfoRemovePacket(MinecraftByteBuf buf) {
         this.profileIds = new ArrayList<>();
-        int numIds = helper.readVarInt(in);
+        int numIds = buf.readVarInt();
         for (int i = 0; i < numIds; i++) {
-            this.profileIds.add(helper.readUUID(in));
+            this.profileIds.add(buf.readUUID());
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.profileIds.size());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.profileIds.size());
         for (UUID id : this.profileIds) {
-            helper.writeUUID(out, id);
+            buf.writeUUID(id);
         }
     }
 }

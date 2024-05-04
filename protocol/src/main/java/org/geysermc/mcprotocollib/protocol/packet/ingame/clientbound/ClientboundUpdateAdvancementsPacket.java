@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement;
 import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData;
@@ -44,64 +43,64 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
         return progress.get(criterionId);
     }
 
-    public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.reset = in.readBoolean();
+    public ClientboundUpdateAdvancementsPacket(MinecraftByteBuf buf) {
+        this.reset = buf.readBoolean();
 
-        this.advancements = new Advancement[helper.readVarInt(in)];
+        this.advancements = new Advancement[buf.readVarInt()];
         for (int i = 0; i < this.advancements.length; i++) {
-            String id = helper.readString(in);
-            String parentId = helper.readNullable(in, helper::readString);
+            String id = buf.readString();
+            String parentId = buf.readNullable(buf::readString);
             DisplayData displayData = null;
-            if (in.readBoolean()) {
-                Component title = helper.readComponent(in);
-                Component description = helper.readComponent(in);
-                ItemStack icon = helper.readOptionalItemStack(in);
-                AdvancementType advancementType = AdvancementType.from(helper.readVarInt(in));
+            if (buf.readBoolean()) {
+                Component title = buf.readComponent();
+                Component description = buf.readComponent();
+                ItemStack icon = buf.readOptionalItemStack();
+                AdvancementType advancementType = AdvancementType.from(buf.readVarInt());
 
-                int flags = in.readInt();
+                int flags = buf.readInt();
                 boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
                 boolean showToast = (flags & FLAG_SHOW_TOAST) != 0;
                 boolean hidden = (flags & FLAG_HIDDEN) != 0;
 
-                String backgroundTexture = hasBackgroundTexture ? helper.readString(in) : null;
-                float posX = in.readFloat();
-                float posY = in.readFloat();
+                String backgroundTexture = hasBackgroundTexture ? buf.readString() : null;
+                float posX = buf.readFloat();
+                float posY = buf.readFloat();
 
                 displayData = new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
             }
 
             List<List<String>> requirements = new ArrayList<>();
-            int requirementCount = helper.readVarInt(in);
+            int requirementCount = buf.readVarInt();
             for (int j = 0; j < requirementCount; j++) {
                 List<String> requirement = new ArrayList<>();
-                int componentCount = helper.readVarInt(in);
+                int componentCount = buf.readVarInt();
                 for (int k = 0; k < componentCount; k++) {
-                    requirement.add(helper.readString(in));
+                    requirement.add(buf.readString());
                 }
 
                 requirements.add(requirement);
             }
 
-            boolean sendTelemetryEvent = in.readBoolean();
+            boolean sendTelemetryEvent = buf.readBoolean();
 
             this.advancements[i] = new Advancement(id, requirements, parentId, displayData, sendTelemetryEvent);
         }
 
-        this.removedAdvancements = new String[helper.readVarInt(in)];
+        this.removedAdvancements = new String[buf.readVarInt()];
         for (int i = 0; i < this.removedAdvancements.length; i++) {
-            this.removedAdvancements[i] = helper.readString(in);
+            this.removedAdvancements[i] = buf.readString();
         }
 
         this.progress = new HashMap<>();
-        int progressCount = helper.readVarInt(in);
+        int progressCount = buf.readVarInt();
         for (int i = 0; i < progressCount; i++) {
-            String advancementId = helper.readString(in);
+            String advancementId = buf.readString();
 
             Map<String, Long> advancementProgress = new HashMap<>();
-            int criterionCount = helper.readVarInt(in);
+            int criterionCount = buf.readVarInt();
             for (int j = 0; j < criterionCount; j++) {
-                String criterionId = helper.readString(in);
-                long achievedDate = in.readBoolean() ? in.readLong() : -1;
+                String criterionId = buf.readString();
+                long achievedDate = buf.readBoolean() ? buf.readLong() : -1;
                 advancementProgress.put(criterionId, achievedDate);
             }
 
@@ -110,26 +109,26 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeBoolean(this.reset);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeBoolean(this.reset);
 
-        helper.writeVarInt(out, this.advancements.length);
+        buf.writeVarInt(this.advancements.length);
         for (Advancement advancement : this.advancements) {
-            helper.writeString(out, advancement.getId());
+            buf.writeString(advancement.getId());
             if (advancement.getParentId() != null) {
-                out.writeBoolean(true);
-                helper.writeString(out, advancement.getParentId());
+                buf.writeBoolean(true);
+                buf.writeString(advancement.getParentId());
             } else {
-                out.writeBoolean(false);
+                buf.writeBoolean(false);
             }
 
             DisplayData displayData = advancement.getDisplayData();
             if (displayData != null) {
-                out.writeBoolean(true);
-                helper.writeComponent(out, displayData.getTitle());
-                helper.writeComponent(out, displayData.getDescription());
-                helper.writeOptionalItemStack(out, displayData.getIcon());
-                helper.writeVarInt(out, displayData.getAdvancementType().ordinal());
+                buf.writeBoolean(true);
+                buf.writeComponent(displayData.getTitle());
+                buf.writeComponent(displayData.getDescription());
+                buf.writeOptionalItemStack(displayData.getIcon());
+                buf.writeVarInt(displayData.getAdvancementType().ordinal());
                 String backgroundTexture = displayData.getBackgroundTexture();
 
                 int flags = 0;
@@ -145,46 +144,46 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                     flags |= FLAG_HIDDEN;
                 }
 
-                out.writeInt(flags);
+                buf.writeInt(flags);
 
                 if (backgroundTexture != null) {
-                    helper.writeString(out, backgroundTexture);
+                    buf.writeString(backgroundTexture);
                 }
 
-                out.writeFloat(displayData.getPosX());
-                out.writeFloat(displayData.getPosY());
+                buf.writeFloat(displayData.getPosX());
+                buf.writeFloat(displayData.getPosY());
             } else {
-                out.writeBoolean(false);
+                buf.writeBoolean(false);
             }
 
-            helper.writeVarInt(out, advancement.getRequirements().size());
+            buf.writeVarInt(advancement.getRequirements().size());
             for (List<String> requirement : advancement.getRequirements()) {
-                helper.writeVarInt(out, requirement.size());
+                buf.writeVarInt(requirement.size());
                 for (String criterion : requirement) {
-                    helper.writeString(out, criterion);
+                    buf.writeString(criterion);
                 }
             }
 
-            out.writeBoolean(advancement.isSendsTelemetryEvent());
+            buf.writeBoolean(advancement.isSendsTelemetryEvent());
         }
 
-        helper.writeVarInt(out, this.removedAdvancements.length);
+        buf.writeVarInt(this.removedAdvancements.length);
         for (String id : this.removedAdvancements) {
-            helper.writeString(out, id);
+            buf.writeString(id);
         }
 
-        helper.writeVarInt(out, this.progress.size());
+        buf.writeVarInt(this.progress.size());
         for (Map.Entry<String, Map<String, Long>> advancement : this.progress.entrySet()) {
-            helper.writeString(out, advancement.getKey());
+            buf.writeString(advancement.getKey());
             Map<String, Long> advancementProgress = advancement.getValue();
-            helper.writeVarInt(out, advancementProgress.size());
+            buf.writeVarInt(advancementProgress.size());
             for (Map.Entry<String, Long> criterion : advancementProgress.entrySet()) {
-                helper.writeString(out, criterion.getKey());
+                buf.writeString(criterion.getKey());
                 if (criterion.getValue() != -1) {
-                    out.writeBoolean(true);
-                    out.writeLong(criterion.getValue());
+                    buf.writeBoolean(true);
+                    buf.writeLong(criterion.getValue());
                 } else {
-                    out.writeBoolean(false);
+                    buf.writeBoolean(false);
                 }
             }
         }

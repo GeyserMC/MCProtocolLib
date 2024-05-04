@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockChangeEntry;
 
@@ -15,13 +14,13 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockChangeEntr
 public class ClientboundBlockUpdatePacket implements MinecraftPacket {
     private final @NonNull BlockChangeEntry entry;
 
-    public ClientboundBlockUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entry = new BlockChangeEntry(helper.readPosition(in), helper.readVarInt(in));
+    public ClientboundBlockUpdatePacket(MinecraftByteBuf buf) {
+        this.entry = new BlockChangeEntry(buf.readPosition(), buf.readVarInt());
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.entry.getPosition());
-        helper.writeVarInt(out, this.entry.getBlock());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writePosition(this.entry.getPosition());
+        buf.writeVarInt(this.entry.getBlock());
     }
 }

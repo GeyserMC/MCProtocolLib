@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.AdvancementTabAction;
 
@@ -40,21 +39,21 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         return this.tabId;
     }
 
-    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.action = AdvancementTabAction.from(helper.readVarInt(in));
+    public ServerboundSeenAdvancementsPacket(MinecraftByteBuf buf) {
+        this.action = AdvancementTabAction.from(buf.readVarInt());
         this.tabId = switch (this.action) {
             case CLOSED_SCREEN -> null;
-            case OPENED_TAB -> helper.readString(in);
+            case OPENED_TAB -> buf.readString();
         };
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.action.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.action.ordinal());
         Consumer<String> tabIdWriter = switch (this.action) {
             case CLOSED_SCREEN -> tabId -> {
             };
-            case OPENED_TAB -> tabId -> helper.writeString(out, tabId);
+            case OPENED_TAB -> tabId -> buf.writeString(tabId);
         };
         tabIdWriter.accept(this.tabId);
     }

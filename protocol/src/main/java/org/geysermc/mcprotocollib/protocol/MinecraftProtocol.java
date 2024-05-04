@@ -1,7 +1,8 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
@@ -18,7 +19,6 @@ import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
 import org.geysermc.mcprotocollib.protocol.codec.PacketStateCodec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
@@ -32,7 +32,7 @@ import java.util.UUID;
 /**
  * Implements the Minecraft protocol.
  */
-public class MinecraftProtocol extends PacketProtocol {
+public class MinecraftProtocol extends PacketProtocol<MinecraftByteBuf> {
 
     /**
      * The network codec sent from the server to the client during {@link ProtocolState#CONFIGURATION}.
@@ -147,8 +147,8 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public MinecraftCodecHelper createHelper() {
-        return this.codec.getHelperFactory().get();
+    public ByteBufWrapper<MinecraftByteBuf> getByteBufWrapper() {
+        return this.codec.getHelperFactory();
     }
 
     @Override
@@ -199,8 +199,8 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public Packet createClientboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
-        return this.stateCodec.createClientboundPacket(id, buf, codecHelper);
+    public Packet createClientboundPacket(int id, MinecraftByteBuf buf) {
+        return this.stateCodec.createClientboundPacket(id, buf);
     }
 
     @Override
@@ -219,8 +219,8 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public Packet createServerboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
-        return this.stateCodec.createServerboundPacket(id, buf, codecHelper);
+    public Packet createServerboundPacket(int id, MinecraftByteBuf buf) {
+        return this.stateCodec.createServerboundPacket(id, buf);
     }
 
     @Override
@@ -239,12 +239,12 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public PacketDefinition<?, ?> getServerboundDefinition(int id) {
+    public PacketDefinition<?, MinecraftByteBuf> getServerboundDefinition(int id) {
         return this.stateCodec.getServerboundDefinition(id);
     }
 
     @Override
-    public PacketDefinition<?, ?> getClientboundDefinition(int id) {
+    public PacketDefinition<?, MinecraftByteBuf> getClientboundDefinition(int id) {
         return this.stateCodec.getClientboundDefinition(id);
     }
 

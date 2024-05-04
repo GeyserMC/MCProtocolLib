@@ -4,7 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
+import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
 import org.geysermc.mcprotocollib.network.packet.Packet;
@@ -27,13 +28,13 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         int initial = buf.writerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
-        PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
             int packetId = this.client ? packetProtocol.getServerboundId(packet) : packetProtocol.getClientboundId(packet);
             PacketDefinition definition = this.client ? packetProtocol.getServerboundDefinition(packetId) : packetProtocol.getClientboundDefinition(packetId);
 
-            packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
-            definition.getSerializer().serialize(buf, codecHelper, packet);
+            CodecByteBuf codecBuf = packetProtocol.getByteBufWrapper().wrap(buf);
+            packetProtocol.getPacketHeader().writePacketId(codecBuf, packetId);
+            definition.getSerializer().serialize(codecBuf, packet);
         } catch (Throwable t) {
             // Reset writer index to make sure incomplete data is not written out.
             buf.writerIndex(initial);
@@ -50,16 +51,16 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
         int initial = buf.readerIndex();
 
-        PacketProtocol packetProtocol = this.session.getPacketProtocol();
-        PacketCodecHelper codecHelper = this.session.getCodecHelper();
+        PacketProtocol<?> packetProtocol = this.session.getPacketProtocol();
+        CodecByteBuf codecBuf = packetProtocol.getByteBufWrapper().wrap(buf);
         try {
-            int id = packetProtocol.getPacketHeader().readPacketId(buf, codecHelper);
+            int id = packetProtocol.getPacketHeader().readPacketId(codecBuf);
             if (id == -1) {
                 buf.readerIndex(initial);
                 return;
             }
 
-            Packet packet = this.client ? packetProtocol.createClientboundPacket(id, buf, codecHelper) : packetProtocol.createServerboundPacket(id, buf, codecHelper);
+            Packet packet = this.client ? packetProtocol.createClientboundPacket(id, buf) : packetProtocol.createServerboundPacket(id, buf);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");

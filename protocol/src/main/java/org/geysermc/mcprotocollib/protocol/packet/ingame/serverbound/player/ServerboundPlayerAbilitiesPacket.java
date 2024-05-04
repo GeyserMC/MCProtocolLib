@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,19 +14,19 @@ public class ServerboundPlayerAbilitiesPacket implements MinecraftPacket {
 
     private final boolean flying;
 
-    public ServerboundPlayerAbilitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        byte flags = in.readByte();
+    public ServerboundPlayerAbilitiesPacket(MinecraftByteBuf buf) {
+        byte flags = buf.readByte();
         this.flying = (flags & FLAG_FLYING) > 0;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
         int flags = 0;
 
         if (this.flying) {
             flags |= FLAG_FLYING;
         }
 
-        out.writeByte(flags);
+        buf.writeByte(flags);
     }
 }

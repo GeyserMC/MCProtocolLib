@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.HashMap;
@@ -17,18 +16,18 @@ import java.util.Map;
 public class ClientboundUpdateTagsPacket implements MinecraftPacket {
     private final @NonNull Map<String, Map<String, int[]>> tags = new HashMap<>();
 
-    public ClientboundUpdateTagsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        int totalTagCount = helper.readVarInt(in);
+    public ClientboundUpdateTagsPacket(MinecraftByteBuf buf) {
+        int totalTagCount = buf.readVarInt();
         for (int i = 0; i < totalTagCount; i++) {
             Map<String, int[]> tag = new HashMap<>();
-            String tagName = helper.readResourceLocation(in);
-            int tagsCount = helper.readVarInt(in);
+            String tagName = buf.readResourceLocation();
+            int tagsCount = buf.readVarInt();
             for (int j = 0; j < tagsCount; j++) {
-                String name = helper.readResourceLocation(in);
-                int entriesCount = helper.readVarInt(in);
+                String name = buf.readResourceLocation();
+                int entriesCount = buf.readVarInt();
                 int[] entries = new int[entriesCount];
                 for (int index = 0; index < entriesCount; index++) {
-                    entries[index] = helper.readVarInt(in);
+                    entries[index] = buf.readVarInt();
                 }
 
                 tag.put(name, entries);
@@ -38,16 +37,16 @@ public class ClientboundUpdateTagsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, tags.size());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(tags.size());
         for (Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
-            helper.writeResourceLocation(out, tagSet.getKey());
-            helper.writeVarInt(out, tagSet.getValue().size());
+            buf.writeResourceLocation(tagSet.getKey());
+            buf.writeVarInt(tagSet.getValue().size());
             for (Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
-                helper.writeResourceLocation(out, tag.getKey());
-                helper.writeVarInt(out, tag.getValue().length);
+                buf.writeResourceLocation(tag.getKey());
+                buf.writeVarInt(tag.getValue().length);
                 for (int id : tag.getValue()) {
-                    helper.writeVarInt(out, id);
+                    buf.writeVarInt(id);
                 }
             }
         }

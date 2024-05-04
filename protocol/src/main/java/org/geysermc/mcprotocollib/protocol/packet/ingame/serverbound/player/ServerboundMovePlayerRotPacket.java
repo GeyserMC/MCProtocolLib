@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,16 +14,16 @@ public class ServerboundMovePlayerRotPacket implements MinecraftPacket {
     private final float yaw;
     private final float pitch;
 
-    public ServerboundMovePlayerRotPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.yaw = in.readFloat();
-        this.pitch = in.readFloat();
-        this.onGround = in.readBoolean();
+    public ServerboundMovePlayerRotPacket(MinecraftByteBuf buf) {
+        this.yaw = buf.readFloat();
+        this.pitch = buf.readFloat();
+        this.onGround = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeFloat(this.yaw);
-        out.writeFloat(this.pitch);
-        out.writeBoolean(this.onGround);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeFloat(this.yaw);
+        buf.writeFloat(this.pitch);
+        buf.writeBoolean(this.onGround);
     }
 }

@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 
@@ -27,13 +26,13 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private final boolean showIcon;
     private final boolean blend;
 
-    public ClientboundUpdateMobEffectPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.effect = helper.readEffect(in);
-        this.amplifier = helper.readVarInt(in);
-        this.duration = helper.readVarInt(in);
+    public ClientboundUpdateMobEffectPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readVarInt();
+        this.effect = buf.readEffect();
+        this.amplifier = buf.readVarInt();
+        this.duration = buf.readVarInt();
 
-        int flags = in.readByte();
+        int flags = buf.readByte();
         this.ambient = (flags & FLAG_AMBIENT) != 0;
         this.showParticles = (flags & FLAG_SHOW_PARTICLES) != 0;
         this.showIcon = (flags & FLAG_SHOW_ICON) != 0;
@@ -41,11 +40,11 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeEffect(out, this.effect);
-        helper.writeVarInt(out, this.amplifier);
-        helper.writeVarInt(out, this.duration);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityId);
+        buf.writeEffect(this.effect);
+        buf.writeVarInt(this.amplifier);
+        buf.writeVarInt(this.duration);
 
         int flags = 0;
         if (this.ambient) {
@@ -61,6 +60,6 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
             flags |= FLAG_BLEND;
         }
 
-        out.writeByte(flags);
+        buf.writeByte(flags);
     }
 }

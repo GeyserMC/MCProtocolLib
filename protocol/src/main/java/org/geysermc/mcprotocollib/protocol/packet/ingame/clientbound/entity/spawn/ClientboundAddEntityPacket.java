@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.spawn;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.FallingBlockData;
@@ -54,18 +53,18 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, motionX, motionY, motionZ);
     }
 
-    public ClientboundAddEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.uuid = helper.readUUID(in);
-        this.type = EntityType.from(helper.readVarInt(in));
-        this.x = in.readDouble();
-        this.y = in.readDouble();
-        this.z = in.readDouble();
-        this.pitch = in.readByte() * 360 / 256f;
-        this.yaw = in.readByte() * 360 / 256f;
-        this.headYaw = in.readByte() * 360 / 256f;
+    public ClientboundAddEntityPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readVarInt();
+        this.uuid = buf.readUUID();
+        this.type = EntityType.from(buf.readVarInt());
+        this.x = buf.readDouble();
+        this.y = buf.readDouble();
+        this.z = buf.readDouble();
+        this.pitch = buf.readByte() * 360 / 256f;
+        this.yaw = buf.readByte() * 360 / 256f;
+        this.headYaw = buf.readByte() * 360 / 256f;
 
-        int data = helper.readVarInt(in);
+        int data = buf.readVarInt();
         if (this.type == EntityType.MINECART) {
             this.data = MinecartType.from(data);
         } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME || this.type == EntityType.PAINTING) {
@@ -84,22 +83,22 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
             }
         }
 
-        this.motionX = in.readShort() / 8000D;
-        this.motionY = in.readShort() / 8000D;
-        this.motionZ = in.readShort() / 8000D;
+        this.motionX = buf.readShort() / 8000D;
+        this.motionY = buf.readShort() / 8000D;
+        this.motionZ = buf.readShort() / 8000D;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeUUID(out, this.uuid);
-        helper.writeVarInt(out, this.type.ordinal());
-        out.writeDouble(this.x);
-        out.writeDouble(this.y);
-        out.writeDouble(this.z);
-        out.writeByte((byte) (this.pitch * 256 / 360));
-        out.writeByte((byte) (this.yaw * 256 / 360));
-        out.writeByte((byte) (this.headYaw * 256 / 360));
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityId);
+        buf.writeUUID(this.uuid);
+        buf.writeVarInt(this.type.ordinal());
+        buf.writeDouble(this.x);
+        buf.writeDouble(this.y);
+        buf.writeDouble(this.z);
+        buf.writeByte((byte) (this.pitch * 256 / 360));
+        buf.writeByte((byte) (this.yaw * 256 / 360));
+        buf.writeByte((byte) (this.headYaw * 256 / 360));
 
         int data = 0;
         if (this.data instanceof MinecartType) {
@@ -114,10 +113,10 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
             data = ((GenericObjectData) this.data).getValue();
         }
 
-        helper.writeVarInt(out, data);
+        buf.writeVarInt(data);
 
-        out.writeShort((int) (this.motionX * 8000));
-        out.writeShort((int) (this.motionY * 8000));
-        out.writeShort((int) (this.motionZ * 8000));
+        buf.writeShort((int) (this.motionX * 8000));
+        buf.writeShort((int) (this.motionY * 8000));
+        buf.writeShort((int) (this.motionZ * 8000));
     }
 }

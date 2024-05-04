@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.BuiltinChatType;
 
@@ -23,18 +22,18 @@ public class ClientboundDisguisedChatPacket implements MinecraftPacket {
     private final @Nullable Component targetName;
 
 
-    public ClientboundDisguisedChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.message = helper.readComponent(in);
-        this.chatType = helper.readVarInt(in);
-        this.name = helper.readComponent(in);
-        this.targetName = helper.readNullable(in, helper::readComponent);
+    public ClientboundDisguisedChatPacket(MinecraftByteBuf buf) {
+        this.message = buf.readComponent();
+        this.chatType = buf.readVarInt();
+        this.name = buf.readComponent();
+        this.targetName = buf.readNullable(buf::readComponent);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeComponent(out, this.message);
-        helper.writeVarInt(out, this.chatType);
-        helper.writeComponent(out, this.name);
-        helper.writeNullable(out, this.targetName, helper::writeComponent);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeComponent(this.message);
+        buf.writeVarInt(this.chatType);
+        buf.writeComponent(this.name);
+        buf.writeNullable(this.targetName, buf::writeComponent);
     }
 }

@@ -1,8 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.NonNull;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.FloatMetadataType;
 
@@ -25,7 +24,7 @@ public class FloatEntityMetadata extends EntityMetadata<Float, FloatMetadataType
     }
 
     @Override
-    public void write(MinecraftCodecHelper helper, ByteBuf out) {
+    public void write(MinecraftByteBuf out) {
         this.type.writeMetadataPrimitive(out, this.value);
     }
 }

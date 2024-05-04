@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerAction;
@@ -20,18 +19,18 @@ public class ServerboundPlayerActionPacket implements MinecraftPacket {
     private final @NonNull Direction face;
     private final int sequence;
 
-    public ServerboundPlayerActionPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.action = PlayerAction.from(helper.readVarInt(in));
-        this.position = helper.readPosition(in);
-        this.face = Direction.VALUES[in.readUnsignedByte()];
-        this.sequence = helper.readVarInt(in);
+    public ServerboundPlayerActionPacket(MinecraftByteBuf buf) {
+        this.action = PlayerAction.from(buf.readVarInt());
+        this.position = buf.readPosition();
+        this.face = Direction.VALUES[buf.readUnsignedByte()];
+        this.sequence = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.action.ordinal());
-        helper.writePosition(out, this.position);
-        out.writeByte(this.face.ordinal());
-        helper.writeVarInt(out, this.sequence);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.action.ordinal());
+        buf.writePosition(this.position);
+        buf.writeByte(this.face.ordinal());
+        buf.writeVarInt(this.sequence);
     }
 }

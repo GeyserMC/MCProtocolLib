@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,21 +12,21 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSelectAdvancementsTabPacket implements MinecraftPacket {
     private final String tabId;
 
-    public ClientboundSelectAdvancementsTabPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        if (in.readBoolean()) {
-            this.tabId = helper.readString(in);
+    public ClientboundSelectAdvancementsTabPacket(MinecraftByteBuf buf) {
+        if (buf.readBoolean()) {
+            this.tabId = buf.readString();
         } else {
             this.tabId = null;
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
         if (this.tabId != null) {
-            out.writeBoolean(true);
-            helper.writeString(out, this.tabId);
+            buf.writeBoolean(true);
+            buf.writeString(this.tabId);
         } else {
-            out.writeBoolean(false);
+            buf.writeBoolean(false);
         }
     }
 }

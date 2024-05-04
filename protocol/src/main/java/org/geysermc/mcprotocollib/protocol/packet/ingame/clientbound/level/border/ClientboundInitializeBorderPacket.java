@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -20,26 +19,26 @@ public class ClientboundInitializeBorderPacket implements MinecraftPacket {
     private final int warningBlocks;
     private final int warningTime;
 
-    public ClientboundInitializeBorderPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.newCenterX = in.readDouble();
-        this.newCenterZ = in.readDouble();
-        this.oldSize = in.readDouble();
-        this.newSize = in.readDouble();
-        this.lerpTime = helper.readVarLong(in);
-        this.newAbsoluteMaxSize = helper.readVarInt(in);
-        this.warningBlocks = helper.readVarInt(in);
-        this.warningTime = helper.readVarInt(in);
+    public ClientboundInitializeBorderPacket(MinecraftByteBuf buf) {
+        this.newCenterX = buf.readDouble();
+        this.newCenterZ = buf.readDouble();
+        this.oldSize = buf.readDouble();
+        this.newSize = buf.readDouble();
+        this.lerpTime = buf.readVarLong();
+        this.newAbsoluteMaxSize = buf.readVarInt();
+        this.warningBlocks = buf.readVarInt();
+        this.warningTime = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeDouble(this.newCenterX);
-        out.writeDouble(this.newCenterZ);
-        out.writeDouble(this.oldSize);
-        out.writeDouble(this.newSize);
-        helper.writeVarLong(out, this.lerpTime);
-        helper.writeVarInt(out, this.newAbsoluteMaxSize);
-        helper.writeVarInt(out, this.warningBlocks);
-        helper.writeVarInt(out, this.warningTime);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeDouble(this.newCenterX);
+        buf.writeDouble(this.newCenterZ);
+        buf.writeDouble(this.oldSize);
+        buf.writeDouble(this.newSize);
+        buf.writeVarLong(this.lerpTime);
+        buf.writeVarInt(this.newAbsoluteMaxSize);
+        buf.writeVarInt(this.warningBlocks);
+        buf.writeVarInt(this.warningTime);
     }
 }

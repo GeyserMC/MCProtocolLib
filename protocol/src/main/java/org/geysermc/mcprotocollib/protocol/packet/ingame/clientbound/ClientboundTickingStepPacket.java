@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,12 +13,12 @@ public class ClientboundTickingStepPacket implements MinecraftPacket {
 
     private final int tickSteps;
 
-    public ClientboundTickingStepPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.tickSteps = helper.readVarInt(in);
+    public ClientboundTickingStepPacket(MinecraftByteBuf buf) {
+        this.tickSteps = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.tickSteps);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.tickSteps);
     }
 }

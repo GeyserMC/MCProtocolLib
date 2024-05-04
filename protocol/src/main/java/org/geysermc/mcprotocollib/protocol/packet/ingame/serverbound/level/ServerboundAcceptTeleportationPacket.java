@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundAcceptTeleportationPacket implements MinecraftPacket {
     private final int id;
 
-    public ServerboundAcceptTeleportationPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = helper.readVarInt(in);
+    public ServerboundAcceptTeleportationPacket(MinecraftByteBuf buf) {
+        this.id = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.id);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.id);
     }
 }

@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -16,16 +15,16 @@ public class ClientboundCustomQueryPacket implements MinecraftPacket {
     private final @NonNull String channel;
     private final byte @NonNull [] data;
 
-    public ClientboundCustomQueryPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.messageId = helper.readVarInt(in);
-        this.channel = helper.readString(in);
-        this.data = helper.readByteArray(in, ByteBuf::readableBytes);
+    public ClientboundCustomQueryPacket(MinecraftByteBuf buf) {
+        this.messageId = buf.readVarInt();
+        this.channel = buf.readString();
+        this.data = buf.readByteArray(buf::readableBytes);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.messageId);
-        helper.writeString(out, this.channel);
-        out.writeBytes(this.data);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.messageId);
+        buf.writeString(this.channel);
+        buf.writeBytes(this.data);
     }
 }

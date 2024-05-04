@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ServerboundEntityTagQuery implements MinecraftPacket {
     private final int transactionId;
     private final int entityId;
 
-    public ServerboundEntityTagQuery(ByteBuf in, MinecraftCodecHelper helper) {
-        this.transactionId = helper.readVarInt(in);
-        this.entityId = helper.readVarInt(in);
+    public ServerboundEntityTagQuery(MinecraftByteBuf buf) {
+        this.transactionId = buf.readVarInt();
+        this.entityId = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.transactionId);
-        helper.writeVarInt(out, this.entityId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.transactionId);
+        buf.writeVarInt(this.entityId);
     }
 }

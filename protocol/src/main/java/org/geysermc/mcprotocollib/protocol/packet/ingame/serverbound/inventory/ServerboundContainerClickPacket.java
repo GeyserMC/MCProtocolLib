@@ -1,13 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ClickItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerAction;
@@ -59,12 +58,12 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.changedSlots = changedSlots;
     }
 
-    public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
-        this.stateId = helper.readVarInt(in);
-        this.slot = in.readShort();
-        byte param = in.readByte();
-        this.action = ContainerActionType.from(in.readByte());
+    public ServerboundContainerClickPacket(MinecraftByteBuf buf) {
+        this.containerId = buf.readByte();
+        this.stateId = buf.readVarInt();
+        this.slot = buf.readShort();
+        byte param = buf.readByte();
+        this.action = ContainerActionType.from(buf.readByte());
         if (this.action == ContainerActionType.CLICK_ITEM) {
             this.param = ClickItemAction.from(param);
         } else if (this.action == ContainerActionType.SHIFT_CLICK_ITEM) {
@@ -83,37 +82,37 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
             throw new IllegalStateException();
         }
 
-        int changedItemsSize = helper.readVarInt(in);
+        int changedItemsSize = buf.readVarInt();
         this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
-            int key = in.readShort();
-            ItemStack value = helper.readOptionalItemStack(in);
+            int key = buf.readShort();
+            ItemStack value = buf.readOptionalItemStack();
             this.changedSlots.put(key, value);
         }
 
-        this.carriedItem = helper.readOptionalItemStack(in);
+        this.carriedItem = buf.readOptionalItemStack();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
-        helper.writeVarInt(out, this.stateId);
-        out.writeShort(this.slot);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeByte(this.containerId);
+        buf.writeVarInt(this.stateId);
+        buf.writeShort(this.slot);
 
         int param = this.param.getId();
         if (this.action == ContainerActionType.DROP_ITEM) {
             param %= 2;
         }
 
-        out.writeByte(param);
-        out.writeByte(this.action.ordinal());
+        buf.writeByte(param);
+        buf.writeByte(this.action.ordinal());
 
-        helper.writeVarInt(out, this.changedSlots.size());
+        buf.writeVarInt(this.changedSlots.size());
         for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {
-            out.writeShort(pair.getIntKey());
-            helper.writeOptionalItemStack(out, pair.getValue());
+            buf.writeShort(pair.getIntKey());
+            buf.writeOptionalItemStack(pair.getValue());
         }
 
-        helper.writeOptionalItemStack(out, this.carriedItem);
+        buf.writeOptionalItemStack(this.carriedItem);
     }
 }

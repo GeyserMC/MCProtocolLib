@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.BitSet;
@@ -22,32 +21,32 @@ public class ServerboundChatPacket implements MinecraftPacket {
     private final int offset;
     private final BitSet acknowledgedMessages;
 
-    public ServerboundChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.message = helper.readString(in);
-        this.timeStamp = in.readLong();
-        this.salt = in.readLong();
-        if (in.readBoolean()) {
+    public ServerboundChatPacket(MinecraftByteBuf buf) {
+        this.message = buf.readString();
+        this.timeStamp = buf.readLong();
+        this.salt = buf.readLong();
+        if (buf.readBoolean()) {
             this.signature = new byte[256];
-            in.readBytes(this.signature);
+            buf.readBytes(this.signature);
         } else {
             this.signature = null;
         }
 
-        this.offset = helper.readVarInt(in);
-        this.acknowledgedMessages = helper.readFixedBitSet(in, 20);
+        this.offset = buf.readVarInt();
+        this.acknowledgedMessages = buf.readFixedBitSet(20);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.message);
-        out.writeLong(this.timeStamp);
-        out.writeLong(this.salt);
-        out.writeBoolean(this.signature != null);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.message);
+        buf.writeLong(this.timeStamp);
+        buf.writeLong(this.salt);
+        buf.writeBoolean(this.signature != null);
         if (this.signature != null) {
-            out.writeBytes(this.signature);
+            buf.writeBytes(this.signature);
         }
 
-        helper.writeVarInt(out, this.offset);
-        helper.writeFixedBitSet(out, this.acknowledgedMessages, 20);
+        buf.writeVarInt(this.offset);
+        buf.writeFixedBitSet(this.acknowledgedMessages, 20);
     }
 }

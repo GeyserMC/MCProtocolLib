@@ -5,19 +5,22 @@ import io.netty.buffer.ByteBufUtil;
 
 import java.nio.charset.StandardCharsets;
 
-public class BasePacketCodecHelper implements PacketCodecHelper {
-
-    @Override
-    public void writeVarInt(ByteBuf buf, int value) {
-        this.writeVarLong(buf, value & 0xFFFFFFFFL);
+public class BaseCodecByteBuf extends DelegatedByteBuf implements CodecByteBuf {
+    public BaseCodecByteBuf(ByteBuf buf) {
+        super(buf);
     }
 
     @Override
-    public int readVarInt(ByteBuf buf) {
+    public void writeVarInt(int value) {
+        this.writeVarLong(value & 0xFFFFFFFFL);
+    }
+
+    @Override
+    public int readVarInt() {
         int value = 0;
         int size = 0;
         int b;
-        while (((b = buf.readByte()) & 0x80) == 0x80) {
+        while (((b = this.readByte()) & 0x80) == 0x80) {
             value |= (b & 0x7F) << (size++ * 7);
             if (size > 5) {
                 throw new IllegalArgumentException("VarInt too long (length must be <= 5)");
@@ -30,45 +33,45 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
     // Based off of Andrew Steinborn's blog post:
     // https://steinborn.me/posts/performance/how-fast-can-you-write-a-varint/
     @Override
-    public void writeVarLong(ByteBuf buf, long value) {
+    public void writeVarLong(long value) {
         // Peel the one and two byte count cases explicitly as they are the most common VarInt sizes
         // that the server will write, to improve inlining.
         if ((value & ~0x7FL) == 0) {
-            buf.writeByte((byte) value);
+            this.writeByte((byte) value);
         } else if ((value & ~0x3FFFL) == 0) {
             int w = (int) ((value & 0x7FL | 0x80L) << 8 |
                     (value >>> 7));
-            buf.writeShort(w);
+            this.writeShort(w);
         } else {
-            writeVarLongFull(buf, value);
+            writeVarLongFull(value);
         }
     }
 
-    private static void writeVarLongFull(ByteBuf buf, long value) {
+    private void writeVarLongFull(long value) {
         if ((value & ~0x7FL) == 0) {
-            buf.writeByte((byte) value);
+            this.writeByte((byte) value);
         } else if ((value & ~0x3FFFL) == 0) {
             int w = (int) ((value & 0x7FL | 0x80L) << 8 |
                     (value >>> 7));
-            buf.writeShort(w);
+            this.writeShort(w);
         } else if ((value & ~0x1FFFFFL) == 0) {
             int w = (int) ((value & 0x7FL | 0x80L) << 16 |
                     ((value >>> 7) & 0x7FL | 0x80L) << 8 |
                     (value >>> 14));
-            buf.writeMedium(w);
+            this.writeMedium(w);
         } else if ((value & ~0xFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
                     (((value >>> 7) & 0x7F | 0x80) << 16) |
                     ((value >>> 14) & 0x7F | 0x80) << 8 |
                     (value >>> 21));
-            buf.writeInt(w);
+            this.writeInt(w);
         } else if ((value & ~0x7FFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
                     ((value >>> 7) & 0x7F | 0x80) << 16 |
                     ((value >>> 14) & 0x7F | 0x80) << 8 |
                     ((value >>> 21) & 0x7F | 0x80));
-            buf.writeInt(w);
-            buf.writeByte((int) (value >>> 28));
+            this.writeInt(w);
+            this.writeByte((int) (value >>> 28));
         } else if ((value & ~0x3FFFFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
                     ((value >>> 7) & 0x7F | 0x80) << 16 |
@@ -76,8 +79,8 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
                     ((value >>> 21) & 0x7F | 0x80));
             int w2 = (int) (((value >>> 28) & 0x7FL | 0x80L) << 8 |
                     (value >>> 35));
-            buf.writeInt(w);
-            buf.writeShort(w2);
+            this.writeInt(w);
+            this.writeShort(w2);
         } else if ((value & ~0x1FFFFFFFFFFFFL) == 0) {
             int w = (int) ((value & 0x7F | 0x80) << 24 |
                     ((value >>> 7) & 0x7F | 0x80) << 16 |
@@ -86,8 +89,8 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
             int w2 = (int) ((((value >>> 28) & 0x7FL | 0x80L) << 16 |
                     ((value >>> 35) & 0x7FL | 0x80L) << 8) |
                     (value >>> 42));
-            buf.writeInt(w);
-            buf.writeMedium(w2);
+            this.writeInt(w);
+            this.writeMedium(w2);
         } else if ((value & ~0xFFFFFFFFFFFFFFL) == 0) {
             long w = (value & 0x7F | 0x80) << 56 |
                     ((value >>> 7) & 0x7F | 0x80) << 48 |
@@ -97,7 +100,7 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
                     ((value >>> 35) & 0x7FL | 0x80L) << 16 |
                     ((value >>> 42) & 0x7FL | 0x80L) << 8 |
                     (value >>> 49);
-            buf.writeLong(w);
+            this.writeLong(w);
         } else if ((value & ~0x7FFFFFFFFFFFFFFFL) == 0) {
             long w = (value & 0x7F | 0x80) << 56 |
                     ((value >>> 7) & 0x7F | 0x80) << 48 |
@@ -107,8 +110,8 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
                     ((value >>> 35) & 0x7FL | 0x80L) << 16 |
                     ((value >>> 42) & 0x7FL | 0x80L) << 8 |
                     (value >>> 49);
-            buf.writeLong(w);
-            buf.writeByte((byte) (value >>> 56));
+            this.writeLong(w);
+            this.writeByte((byte) (value >>> 56));
         } else {
             long w = (value & 0x7F | 0x80) << 56 |
                     ((value >>> 7) & 0x7F | 0x80) << 48 |
@@ -120,17 +123,17 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
                     (value >>> 49);
             int w2 = (int) (((value >>> 56) & 0x7FL | 0x80L) << 8 |
                     (value >>> 63));
-            buf.writeLong(w);
-            buf.writeShort(w2);
+            this.writeLong(w);
+            this.writeShort(w2);
         }
     }
 
     @Override
-    public long readVarLong(ByteBuf buf) {
+    public long readVarLong() {
         int value = 0;
         int size = 0;
         int b;
-        while (((b = buf.readByte()) & 0x80) == 0x80) {
+        while (((b = this.readByte()) & 0x80) == 0x80) {
             value |= (b & 0x7F) << (size++ * 7);
             if (size > 10) {
                 throw new IllegalArgumentException("VarLong too long (length must be <= 10)");
@@ -140,17 +143,17 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
         return value | ((b & 0x7FL) << (size * 7));
     }
 
-    public String readString(ByteBuf buf) {
-        return this.readString(buf, Short.MAX_VALUE);
+    public String readString() {
+        return this.readString(Short.MAX_VALUE);
     }
 
     @Override
-    public String readString(ByteBuf buf, int maxLength) {
-        int length = this.readVarInt(buf);
+    public String readString(int maxLength) {
+        int length = this.readVarInt();
         if (length > maxLength * 3) {
-            throw new IllegalArgumentException("String buffer is longer than maximum allowed length");
+            throw new IllegalArgumentException("String thisfer is longer than maximum allowed length");
         }
-        String string = (String) buf.readCharSequence(length, StandardCharsets.UTF_8);
+        String string = (String) this.readCharSequence(length, StandardCharsets.UTF_8);
         if (string.length() > maxLength) {
             throw new IllegalArgumentException("String is longer than maximum allowed length");
         }
@@ -159,8 +162,8 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
     }
 
     @Override
-    public void writeString(ByteBuf buf, String value) {
-        this.writeVarInt(buf, ByteBufUtil.utf8Bytes(value));
-        buf.writeCharSequence(value, StandardCharsets.UTF_8);
+    public void writeString(String value) {
+        this.writeVarInt(ByteBufUtil.utf8Bytes(value));
+        this.writeCharSequence(value, StandardCharsets.UTF_8);
     }
 }

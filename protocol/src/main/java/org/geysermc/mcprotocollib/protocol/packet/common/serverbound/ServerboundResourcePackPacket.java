@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.ResourcePackStatus;
 
@@ -19,14 +18,14 @@ public class ServerboundResourcePackPacket implements MinecraftPacket {
     private final @NonNull UUID id;
     private final @NonNull ResourcePackStatus status;
 
-    public ServerboundResourcePackPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = helper.readUUID(in);
-        this.status = ResourcePackStatus.from(helper.readVarInt(in));
+    public ServerboundResourcePackPacket(MinecraftByteBuf buf) {
+        this.id = buf.readUUID();
+        this.status = ResourcePackStatus.from(buf.readVarInt());
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, id);
-        helper.writeVarInt(out, this.status.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeUUID(id);
+        buf.writeVarInt(this.status.ordinal());
     }
 }

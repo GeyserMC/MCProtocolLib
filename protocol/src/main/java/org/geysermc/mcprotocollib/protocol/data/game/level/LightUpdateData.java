@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -20,52 +19,52 @@ public class LightUpdateData {
     private final @NonNull List<byte[]> skyUpdates;
     private final @NonNull List<byte[]> blockUpdates;
 
-    public static LightUpdateData read(ByteBuf in, MinecraftCodecHelper helper) {
-        return new LightUpdateData(in, helper);
+    public static LightUpdateData read(MinecraftByteBuf in) {
+        return new LightUpdateData(in);
     }
 
-    private LightUpdateData(ByteBuf in, MinecraftCodecHelper helper) {
-        this.skyYMask = BitSet.valueOf(helper.readLongArray(in));
-        this.blockYMask = BitSet.valueOf(helper.readLongArray(in));
-        this.emptySkyYMask = BitSet.valueOf(helper.readLongArray(in));
-        this.emptyBlockYMask = BitSet.valueOf(helper.readLongArray(in));
+    private LightUpdateData(MinecraftByteBuf in) {
+        this.skyYMask = BitSet.valueOf(in.readLongArray());
+        this.blockYMask = BitSet.valueOf(in.readLongArray());
+        this.emptySkyYMask = BitSet.valueOf(in.readLongArray());
+        this.emptyBlockYMask = BitSet.valueOf(in.readLongArray());
 
-        int skyUpdateSize = helper.readVarInt(in);
+        int skyUpdateSize = in.readVarInt();
         skyUpdates = new ArrayList<>(skyUpdateSize);
         for (int i = 0; i < skyUpdateSize; i++) {
-            skyUpdates.add(helper.readByteArray(in));
+            skyUpdates.add(in.readByteArray());
         }
 
-        int blockUpdateSize = helper.readVarInt(in);
+        int blockUpdateSize = in.readVarInt();
         blockUpdates = new ArrayList<>(blockUpdateSize);
         for (int i = 0; i < blockUpdateSize; i++) {
-            blockUpdates.add(helper.readByteArray(in));
+            blockUpdates.add(in.readByteArray());
         }
     }
 
-    public static void write(ByteBuf out, MinecraftCodecHelper helper, LightUpdateData data) {
-        data.write(out, helper);
+    public static void write(MinecraftByteBuf out, LightUpdateData data) {
+        data.write(out);
     }
 
-    private void write(ByteBuf out, MinecraftCodecHelper helper) {
-        writeBitSet(out, helper, this.skyYMask);
-        writeBitSet(out, helper, this.blockYMask);
-        writeBitSet(out, helper, this.emptySkyYMask);
-        writeBitSet(out, helper, this.emptyBlockYMask);
+    private void write(MinecraftByteBuf out) {
+        writeBitSet(out, this.skyYMask);
+        writeBitSet(out, this.blockYMask);
+        writeBitSet(out, this.emptySkyYMask);
+        writeBitSet(out, this.emptyBlockYMask);
 
-        helper.writeVarInt(out, this.skyUpdates.size());
+        out.writeVarInt(this.skyUpdates.size());
         for (byte[] array : this.skyUpdates) {
-            helper.writeByteArray(out, array);
+            out.writeByteArray(array);
         }
 
-        helper.writeVarInt(out, this.blockUpdates.size());
+        out.writeVarInt(this.blockUpdates.size());
         for (byte[] array : this.blockUpdates) {
-            helper.writeByteArray(out, array);
+            out.writeByteArray(array);
         }
     }
 
-    private void writeBitSet(ByteBuf out, MinecraftCodecHelper helper, BitSet bitSet) {
+    private void writeBitSet(MinecraftByteBuf out, BitSet bitSet) {
         long[] array = bitSet.toLongArray();
-        helper.writeLongArray(out, array);
+        out.writeLongArray(array);
     }
 }

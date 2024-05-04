@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ClientboundTransferPacket implements MinecraftPacket {
     private final String host;
     private final int port;
 
-    public ClientboundTransferPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.host = helper.readString(in);
-        this.port = helper.readVarInt(in);
+    public ClientboundTransferPacket(MinecraftByteBuf buf) {
+        this.host = buf.readString();
+        this.port = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.host);
-        helper.writeVarInt(out, this.port);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.host);
+        buf.writeVarInt(this.port);
     }
 }

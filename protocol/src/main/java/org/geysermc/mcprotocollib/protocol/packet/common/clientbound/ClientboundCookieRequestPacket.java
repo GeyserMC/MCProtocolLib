@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundCookieRequestPacket implements MinecraftPacket {
     private final String key;
 
-    public ClientboundCookieRequestPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.key = helper.readResourceLocation(in);
+    public ClientboundCookieRequestPacket(MinecraftByteBuf buf) {
+        this.key = buf.readResourceLocation();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeResourceLocation(out, this.key);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeResourceLocation(this.key);
     }
 }

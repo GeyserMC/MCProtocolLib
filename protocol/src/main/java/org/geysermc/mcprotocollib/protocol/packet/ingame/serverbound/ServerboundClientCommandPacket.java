@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.ClientCommand;
 
@@ -15,12 +14,12 @@ import org.geysermc.mcprotocollib.protocol.data.game.ClientCommand;
 public class ServerboundClientCommandPacket implements MinecraftPacket {
     private final @NonNull ClientCommand request;
 
-    public ServerboundClientCommandPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.request = ClientCommand.from(helper.readVarInt(in));
+    public ServerboundClientCommandPacket(MinecraftByteBuf buf) {
+        this.request = ClientCommand.from(buf.readVarInt());
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.request.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.request.ordinal());
     }
 }

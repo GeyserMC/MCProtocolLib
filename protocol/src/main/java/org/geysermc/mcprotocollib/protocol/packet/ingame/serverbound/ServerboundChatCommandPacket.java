@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundChatCommandPacket implements MinecraftPacket {
     private final String command;
 
-    public ServerboundChatCommandPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.command = helper.readString(in);
+    public ServerboundChatCommandPacket(MinecraftByteBuf buf) {
+        this.command = buf.readString();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.command);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.command);
     }
 }

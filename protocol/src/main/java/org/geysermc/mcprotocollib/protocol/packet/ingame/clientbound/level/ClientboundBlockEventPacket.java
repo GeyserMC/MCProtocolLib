@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.WobbleStyle;
@@ -52,11 +51,11 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private final @NonNull BlockValue value;
     private final int blockId;
 
-    public ClientboundBlockEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
-        int type = in.readUnsignedByte();
-        int value = in.readUnsignedByte();
-        this.blockId = helper.readVarInt(in);
+    public ClientboundBlockEventPacket(MinecraftByteBuf buf) {
+        this.position = buf.readPosition();
+        int type = buf.readUnsignedByte();
+        int value = buf.readUnsignedByte();
+        this.blockId = buf.readVarInt();
 
         // TODO: Handle this in MinecraftCodecHelper
         if (this.blockId == NOTE_BLOCK) {
@@ -88,7 +87,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
         int val = 0;
         int type = 0;
         // TODO: Handle this in MinecraftCodecHelper
@@ -110,9 +109,9 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
             type = ((GenericBlockValueType) this.type).ordinal();
         }
 
-        helper.writePosition(out, this.position);
-        out.writeByte(type);
-        out.writeByte(val);
-        helper.writeVarInt(out, this.blockId);
+        buf.writePosition(this.position);
+        buf.writeByte(type);
+        buf.writeByte(val);
+        buf.writeVarInt(this.blockId);
     }
 }

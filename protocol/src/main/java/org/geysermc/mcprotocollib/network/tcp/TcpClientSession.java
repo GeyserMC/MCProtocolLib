@@ -30,9 +30,10 @@ import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -55,26 +56,24 @@ public class TcpClientSession extends TcpSession {
     private final String bindAddress;
     private final int bindPort;
     private final ProxyInfo proxy;
-    private final PacketCodecHelper codecHelper;
 
-    public TcpClientSession(String host, int port, PacketProtocol protocol) {
+    public TcpClientSession(String host, int port, PacketProtocol<?> protocol) {
         this(host, port, protocol, null);
     }
 
-    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxy) {
+    public TcpClientSession(String host, int port, PacketProtocol<?> protocol, ProxyInfo proxy) {
         this(host, port, "0.0.0.0", 0, protocol, proxy);
     }
 
-    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol) {
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol<?> protocol) {
         this(host, port, bindAddress, bindPort, protocol, null);
     }
 
-    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol<?> protocol, ProxyInfo proxy) {
         super(host, port, protocol);
         this.bindAddress = bindAddress;
         this.bindPort = bindPort;
         this.proxy = proxy;
-        this.codecHelper = protocol.createHelper();
     }
 
     @Override
@@ -101,7 +100,7 @@ public class TcpClientSession extends TcpSession {
                     .handler(new ChannelInitializer<>() {
                         @Override
                         public void initChannel(Channel channel) {
-                            PacketProtocol protocol = getPacketProtocol();
+                            PacketProtocol<?> protocol = getPacketProtocol();
                             protocol.newClientSession(TcpClientSession.this, transferring);
 
                             ChannelPipeline pipeline = channel.pipeline();
@@ -140,11 +139,6 @@ public class TcpClientSession extends TcpSession {
         } catch (Throwable t) {
             exceptionCaught(null, t);
         }
-    }
-
-    @Override
-    public PacketCodecHelper getCodecHelper() {
-        return this.codecHelper;
     }
 
     private InetSocketAddress resolveAddress() {

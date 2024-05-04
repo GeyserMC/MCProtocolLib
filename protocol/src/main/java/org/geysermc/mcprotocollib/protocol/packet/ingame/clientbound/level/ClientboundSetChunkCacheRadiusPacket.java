@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetChunkCacheRadiusPacket implements MinecraftPacket {
     private final int viewDistance;
 
-    public ClientboundSetChunkCacheRadiusPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.viewDistance = helper.readVarInt(in);
+    public ClientboundSetChunkCacheRadiusPacket(MinecraftByteBuf buf) {
+        this.viewDistance = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.viewDistance);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.viewDistance);
     }
 }

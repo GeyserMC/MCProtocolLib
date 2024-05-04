@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,18 +13,18 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
     private final int @NonNull [] entityIds;
 
-    public ClientboundRemoveEntitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityIds = new int[helper.readVarInt(in)];
+    public ClientboundRemoveEntitiesPacket(MinecraftByteBuf buf) {
+        this.entityIds = new int[buf.readVarInt()];
         for (int i = 0; i < this.entityIds.length; i++) {
-            this.entityIds[i] = helper.readVarInt(in);
+            this.entityIds[i] = buf.readVarInt();
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityIds.length);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityIds.length);
         for (int entityId : this.entityIds) {
-            helper.writeVarInt(out, entityId);
+            buf.writeVarInt(entityId);
         }
     }
 }

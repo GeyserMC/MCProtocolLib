@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
@@ -25,31 +24,31 @@ public class ClientboundSoundPacket implements MinecraftPacket {
     private final float pitch;
     private final long seed;
 
-    public ClientboundSoundPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sound = helper.readById(in, BuiltinSound::from, helper::readSoundEvent);
-        this.category = helper.readSoundCategory(in);
-        this.x = in.readInt() / 8D;
-        this.y = in.readInt() / 8D;
-        this.z = in.readInt() / 8D;
-        this.volume = in.readFloat();
-        this.pitch = in.readFloat();
-        this.seed = in.readLong();
+    public ClientboundSoundPacket(MinecraftByteBuf buf) {
+        this.sound = buf.readById(BuiltinSound::from, buf::readSoundEvent);
+        this.category = buf.readSoundCategory();
+        this.x = buf.readInt() / 8D;
+        this.y = buf.readInt() / 8D;
+        this.z = buf.readInt() / 8D;
+        this.volume = buf.readFloat();
+        this.pitch = buf.readFloat();
+        this.seed = buf.readLong();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
         if (this.sound instanceof CustomSound) {
-            helper.writeVarInt(out, 0);
-            helper.writeSoundEvent(out, this.sound);
+            buf.writeVarInt(0);
+            buf.writeSoundEvent(this.sound);
         } else {
-            helper.writeVarInt(out, ((BuiltinSound) this.sound).ordinal() + 1);
+            buf.writeVarInt(((BuiltinSound) this.sound).ordinal() + 1);
         }
-        helper.writeSoundCategory(out, this.category);
-        out.writeInt((int) (this.x * 8));
-        out.writeInt((int) (this.y * 8));
-        out.writeInt((int) (this.z * 8));
-        out.writeFloat(this.volume);
-        out.writeFloat(this.pitch);
-        out.writeLong(this.seed);
+        buf.writeSoundCategory(this.category);
+        buf.writeInt((int) (this.x * 8));
+        buf.writeInt((int) (this.y * 8));
+        buf.writeInt((int) (this.z * 8));
+        buf.writeFloat(this.volume);
+        buf.writeFloat(this.pitch);
+        buf.writeLong(this.seed);
     }
 }

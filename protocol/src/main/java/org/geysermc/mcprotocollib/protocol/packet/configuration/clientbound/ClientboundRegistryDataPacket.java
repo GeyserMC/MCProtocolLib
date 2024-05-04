@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
 
@@ -18,24 +17,24 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
     private final String registry;
     private final List<RegistryEntry> entries;
 
-    public ClientboundRegistryDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.registry = helper.readResourceLocation(in);
+    public ClientboundRegistryDataPacket(MinecraftByteBuf buf) {
+        this.registry = buf.readResourceLocation();
         this.entries = new ArrayList<>();
 
-        int entryCount = helper.readVarInt(in);
+        int entryCount = buf.readVarInt();
         for (int i = 0; i < entryCount; i++) {
-            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readNullable(in, helper::readCompoundTag)));
+            this.entries.add(new RegistryEntry(buf.readResourceLocation(), buf.readNullable(buf::readCompoundTag)));
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeResourceLocation(out, this.registry);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeResourceLocation(this.registry);
 
-        helper.writeVarInt(out, this.entries.size());
+        buf.writeVarInt(this.entries.size());
         for (RegistryEntry entry : this.entries) {
-            helper.writeResourceLocation(out, entry.getId());
-            helper.writeNullable(out, entry.getData(), helper::writeAnyTag);
+            buf.writeResourceLocation(entry.getId());
+            buf.writeNullable(entry.getData(), buf::writeAnyTag);
         }
     }
 }

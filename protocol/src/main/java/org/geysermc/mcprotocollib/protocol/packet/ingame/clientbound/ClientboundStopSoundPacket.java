@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
 
@@ -19,23 +18,23 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     private final @Nullable SoundCategory category;
     private final @Nullable String sound;
 
-    public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        int flags = in.readByte();
+    public ClientboundStopSoundPacket(MinecraftByteBuf buf) {
+        int flags = buf.readByte();
         if ((flags & FLAG_CATEGORY) != 0) {
-            this.category = helper.readSoundCategory(in);
+            this.category = buf.readSoundCategory();
         } else {
             this.category = null;
         }
 
         if ((flags & FLAG_SOUND) != 0) {
-            this.sound = helper.readResourceLocation(in);
+            this.sound = buf.readResourceLocation();
         } else {
             this.sound = null;
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
         int flags = 0;
         if (this.category != null) {
             flags |= FLAG_CATEGORY;
@@ -45,13 +44,13 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
             flags |= FLAG_SOUND;
         }
 
-        out.writeByte(flags);
+        buf.writeByte(flags);
         if (this.category != null) {
-            out.writeByte(this.category.ordinal());
+            buf.writeByte(this.category.ordinal());
         }
 
         if (this.sound != null) {
-            helper.writeResourceLocation(out, this.sound);
+            buf.writeResourceLocation(this.sound);
         }
     }
 }

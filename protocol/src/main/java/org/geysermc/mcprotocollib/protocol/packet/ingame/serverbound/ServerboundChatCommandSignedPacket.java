@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.ArgumentSignature;
 
@@ -23,34 +22,34 @@ public class ServerboundChatCommandSignedPacket implements MinecraftPacket {
     private final int offset;
     private final BitSet acknowledgedMessages;
 
-    public ServerboundChatCommandSignedPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.command = helper.readString(in);
-        this.timeStamp = in.readLong();
-        this.salt = in.readLong();
+    public ServerboundChatCommandSignedPacket(MinecraftByteBuf buf) {
+        this.command = buf.readString();
+        this.timeStamp = buf.readLong();
+        this.salt = buf.readLong();
         this.signatures = new ArrayList<>();
-        int signatureCount = Math.min(helper.readVarInt(in), 8);
+        int signatureCount = Math.min(buf.readVarInt(), 8);
         for (int i = 0; i < signatureCount; i++) {
             byte[] signature = new byte[256];
-            signatures.add(new ArgumentSignature(helper.readString(in, 16), signature));
-            in.readBytes(signature);
+            signatures.add(new ArgumentSignature(buf.readString(16), signature));
+            buf.readBytes(signature);
         }
 
-        this.offset = helper.readVarInt(in);
-        this.acknowledgedMessages = helper.readFixedBitSet(in, 20);
+        this.offset = buf.readVarInt();
+        this.acknowledgedMessages = buf.readFixedBitSet(20);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.command);
-        out.writeLong(this.timeStamp);
-        out.writeLong(this.salt);
-        helper.writeVarInt(out, this.signatures.size());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.command);
+        buf.writeLong(this.timeStamp);
+        buf.writeLong(this.salt);
+        buf.writeVarInt(this.signatures.size());
         for (ArgumentSignature signature : this.signatures) {
-            helper.writeString(out, signature.getName());
-            out.writeBytes(signature.getSignature());
+            buf.writeString(signature.getName());
+            buf.writeBytes(signature.getSignature());
         }
 
-        helper.writeVarInt(out, this.offset);
-        helper.writeFixedBitSet(out, this.acknowledgedMessages, 20);
+        buf.writeVarInt(this.offset);
+        buf.writeFixedBitSet(this.acknowledgedMessages, 20);
     }
 }

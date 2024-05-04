@@ -5,7 +5,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
+import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 
@@ -16,9 +17,9 @@ import java.util.Map;
  * A protocol for packet sending and receiving.
  * All implementations must have a constructor that takes in a {@link ByteBuf}.
  */
-public abstract class PacketProtocol {
-    private final Int2ObjectMap<PacketDefinition<? extends Packet, ?>> serverbound = new Int2ObjectOpenHashMap<>();
-    private final Int2ObjectMap<PacketDefinition<? extends Packet, ?>> clientbound = new Int2ObjectOpenHashMap<>();
+public abstract class PacketProtocol<B extends CodecByteBuf> {
+    private final Int2ObjectMap<PacketDefinition<? extends Packet, B>> serverbound = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<PacketDefinition<? extends Packet, B>> clientbound = new Int2ObjectOpenHashMap<>();
 
     private final Map<Class<? extends Packet>, Integer> clientboundIds = new IdentityHashMap<>();
     private final Map<Class<? extends Packet>, Integer> serverboundIds = new IdentityHashMap<>();
@@ -38,12 +39,12 @@ public abstract class PacketProtocol {
     public abstract PacketHeader getPacketHeader();
 
     /**
-     * Creates a new {@link PacketCodecHelper} that can be used
+     * Creates a new {@link ByteBufWrapper} that can be used
      * for each session.
      *
-     * @return A new {@link PacketCodecHelper}.
+     * @return A new {@link ByteBufWrapper}.
      */
-    public abstract PacketCodecHelper createHelper();
+    public abstract ByteBufWrapper<B> getByteBufWrapper();
 
     /**
      * Called when a client session is created with this protocol.
@@ -79,7 +80,7 @@ public abstract class PacketProtocol {
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
      */
-    public final <T extends Packet, H extends PacketCodecHelper> void register(int id, Class<T> packet, PacketSerializer<T, H> serializer) {
+    public final <T extends Packet> void register(int id, Class<T> packet, PacketSerializer<T, B> serializer) {
         this.registerServerbound(id, packet, serializer);
         this.registerClientbound(id, packet, serializer);
     }
@@ -90,7 +91,7 @@ public abstract class PacketProtocol {
      * @param definition The packet definition.
      * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
      */
-    public final void register(PacketDefinition<? extends Packet, ?> definition) {
+    public final void register(PacketDefinition<? extends Packet, B> definition) {
         this.registerServerbound(definition);
         this.registerClientbound(definition);
     }
@@ -103,7 +104,7 @@ public abstract class PacketProtocol {
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation.
      */
-    public final <T extends Packet, H extends PacketCodecHelper> void registerServerbound(int id, Class<T> packet, PacketSerializer<T, H> serializer) {
+    public final <T extends Packet> void registerServerbound(int id, Class<T> packet, PacketSerializer<T, B> serializer) {
         this.registerServerbound(new PacketDefinition<>(id, packet, serializer));
     }
 
@@ -112,7 +113,7 @@ public abstract class PacketProtocol {
      *
      * @param definition The packet definition.
      */
-    public final void registerServerbound(PacketDefinition<? extends Packet, ?> definition) {
+    public final void registerServerbound(PacketDefinition<? extends Packet, B> definition) {
         this.serverbound.put(definition.getId(), definition);
         this.serverboundIds.put(definition.getPacketClass(), definition.getId());
     }
@@ -124,7 +125,7 @@ public abstract class PacketProtocol {
      * @param packet Packet to register.
      * @param serializer The packet serializer.
      */
-    public final <T extends Packet, H extends PacketCodecHelper> void registerClientbound(int id, Class<T> packet, PacketSerializer<T, H> serializer) {
+    public final <T extends Packet> void registerClientbound(int id, Class<T> packet, PacketSerializer<T, B> serializer) {
         this.registerClientbound(new PacketDefinition<>(id, packet, serializer));
     }
 
@@ -133,9 +134,13 @@ public abstract class PacketProtocol {
      *
      * @param definition The packet definition.
      */
-    public final void registerClientbound(PacketDefinition<? extends Packet, ?> definition) {
+    public final void registerClientbound(PacketDefinition<? extends Packet, B> definition) {
         this.clientbound.put(definition.getId(), definition);
         this.clientboundIds.put(definition.getPacketClass(), definition.getId());
+    }
+
+    public Packet createClientboundPacket(int id, ByteBuf buf) {
+        return createClientboundPacket(id, getByteBufWrapper().wrap(buf));
     }
 
     /**
@@ -143,18 +148,16 @@ public abstract class PacketProtocol {
      *
      * @param id Id of the packet to create.
      * @param buf The buffer to read the packet from.
-     * @param codecHelper The codec helper.
      * @return The created packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    @SuppressWarnings("unchecked")
-    public <H extends PacketCodecHelper> Packet createClientboundPacket(int id, ByteBuf buf, H codecHelper) {
-        PacketDefinition<?, H> definition = (PacketDefinition<?, H>) this.clientbound.get(id);
+    public Packet createClientboundPacket(int id, B buf) {
+        PacketDefinition<?, B> definition = this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
 
-        return definition.newInstance(buf, codecHelper);
+        return definition.newInstance(buf);
     }
 
     /**
@@ -181,10 +184,6 @@ public abstract class PacketProtocol {
      * @throws IllegalArgumentException If the packet is not registered.
      */
     public int getClientboundId(Packet packet) {
-        if (packet instanceof BufferedPacket bufferedPacket) {
-            return getClientboundId(bufferedPacket.getPacketClass());
-        }
-
         return getClientboundId(packet.getClass());
     }
 
@@ -204,23 +203,25 @@ public abstract class PacketProtocol {
         return definition.getPacketClass();
     }
 
+    public Packet createServerboundPacket(int id, ByteBuf buf) {
+        return createServerboundPacket(id, getByteBufWrapper().wrap(buf));
+    }
+
     /**
      * Creates a new instance of a serverbound packet with the given id and read the serverbound input.
      *
      * @param id Id of the packet to create.
      * @param buf The buffer to read the packet from.
-     * @param codecHelper The codec helper.
      * @return The created packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
-    @SuppressWarnings("unchecked")
-    public <H extends PacketCodecHelper> Packet createServerboundPacket(int id, ByteBuf buf, H codecHelper) {
-        PacketDefinition<?, H> definition = (PacketDefinition<?, H>) this.serverbound.get(id);
+    public Packet createServerboundPacket(int id, B buf) {
+        PacketDefinition<?, B> definition = (PacketDefinition<?, B>) this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
 
-        return definition.newInstance(buf, codecHelper);
+        return definition.newInstance(buf);
     }
 
     /**
@@ -247,10 +248,6 @@ public abstract class PacketProtocol {
      * @throws IllegalArgumentException If the packet is not registered.
      */
     public int getServerboundId(Packet packet) {
-        if (packet instanceof BufferedPacket bufferedPacket) {
-            return getServerboundId(bufferedPacket.getPacketClass());
-        }
-
         return getServerboundId(packet.getClass());
     }
 
@@ -276,8 +273,8 @@ public abstract class PacketProtocol {
      * @param id The packet id.
      * @return The registered packet's class
      */
-    public PacketDefinition<?, ?> getServerboundDefinition(int id) {
-        PacketDefinition<?, ?> definition = this.serverbound.get(id);
+    public PacketDefinition<?, B> getServerboundDefinition(int id) {
+        PacketDefinition<?, B> definition = this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
@@ -291,8 +288,8 @@ public abstract class PacketProtocol {
      * @param id The packet id.
      * @return The registered packet's class
      */
-    public PacketDefinition<?, ?> getClientboundDefinition(int id) {
-        PacketDefinition<?, ?> definition = this.clientbound.get(id);
+    public PacketDefinition<?, B> getClientboundDefinition(int id) {
+        PacketDefinition<?, B> definition = this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }

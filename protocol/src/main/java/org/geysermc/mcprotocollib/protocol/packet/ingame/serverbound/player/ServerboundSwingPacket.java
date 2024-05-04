@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 
@@ -15,12 +14,12 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 public class ServerboundSwingPacket implements MinecraftPacket {
     private final @NonNull Hand hand;
 
-    public ServerboundSwingPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.hand = Hand.from(helper.readVarInt(in));
+    public ServerboundSwingPacket(MinecraftByteBuf buf) {
+        this.hand = Hand.from(buf.readVarInt());
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.hand.ordinal());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.hand.ordinal());
     }
 }

@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatCompletionAction;
 
@@ -15,20 +14,20 @@ public class ClientboundCustomChatCompletionsPacket implements MinecraftPacket {
     private final ChatCompletionAction action;
     private final String[] entries;
 
-    public ClientboundCustomChatCompletionsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.action = ChatCompletionAction.from(helper.readVarInt(in));
-        this.entries = new String[helper.readVarInt(in)];
+    public ClientboundCustomChatCompletionsPacket(MinecraftByteBuf buf) {
+        this.action = ChatCompletionAction.from(buf.readVarInt());
+        this.entries = new String[buf.readVarInt()];
         for (int i = 0; i < this.entries.length; i++) {
-            this.entries[i] = helper.readString(in);
+            this.entries[i] = buf.readString();
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.action.ordinal());
-        helper.writeVarInt(out, this.entries.length);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.action.ordinal());
+        buf.writeVarInt(this.entries.length);
         for (String entry : this.entries) {
-            helper.writeString(out, entry);
+            buf.writeString(entry);
         }
     }
 }

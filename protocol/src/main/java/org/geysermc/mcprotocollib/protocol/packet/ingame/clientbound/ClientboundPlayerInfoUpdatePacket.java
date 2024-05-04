@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntry;
 import org.geysermc.mcprotocollib.protocol.data.game.PlayerListEntryAction;
@@ -27,19 +26,19 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
     private final EnumSet<PlayerListEntryAction> actions;
     private final PlayerListEntry[] entries;
 
-    public ClientboundPlayerInfoUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.actions = helper.readEnumSet(in, PlayerListEntryAction.VALUES);
-        this.entries = new PlayerListEntry[helper.readVarInt(in)];
+    public ClientboundPlayerInfoUpdatePacket(MinecraftByteBuf buf) {
+        this.actions = buf.readEnumSet(PlayerListEntryAction.VALUES);
+        this.entries = new PlayerListEntry[buf.readVarInt()];
         for (int count = 0; count < this.entries.length; count++) {
-            PlayerListEntry entry = new PlayerListEntry(helper.readUUID(in));
+            PlayerListEntry entry = new PlayerListEntry(buf.readUUID());
             for (PlayerListEntryAction action : this.actions) {
                 switch (action) {
                     case ADD_PLAYER -> {
-                        GameProfile profile = new GameProfile(entry.getProfileId(), helper.readString(in, 16));
-                        int propertyCount = helper.readVarInt(in);
+                        GameProfile profile = new GameProfile(entry.getProfileId(), buf.readString(16));
+                        int propertyCount = buf.readVarInt();
                         List<GameProfile.Property> propertyList = new ArrayList<>();
                         for (int index = 0; index < propertyCount; index++) {
-                            propertyList.add(helper.readProperty(in));
+                            propertyList.add(buf.readProperty());
                         }
 
                         profile.setProperties(propertyList);
@@ -47,11 +46,11 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         entry.setProfile(profile);
                     }
                     case INITIALIZE_CHAT -> {
-                        if (in.readBoolean()) {
-                            entry.setSessionId(helper.readUUID(in));
-                            entry.setExpiresAt(in.readLong());
-                            byte[] keyBytes = helper.readByteArray(in);
-                            entry.setKeySignature(helper.readByteArray(in));
+                        if (buf.readBoolean()) {
+                            entry.setSessionId(buf.readUUID());
+                            entry.setExpiresAt(buf.readLong());
+                            byte[] keyBytes = buf.readByteArray();
+                            entry.setKeySignature(buf.readByteArray());
 
                             PublicKey publicKey;
                             try {
@@ -64,22 +63,22 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         }
                     }
                     case UPDATE_GAME_MODE -> {
-                        GameMode gameMode = GameMode.byId(helper.readVarInt(in));
+                        GameMode gameMode = GameMode.byId(buf.readVarInt());
 
                         entry.setGameMode(gameMode);
                     }
                     case UPDATE_LISTED -> {
-                        boolean listed = in.readBoolean();
+                        boolean listed = buf.readBoolean();
 
                         entry.setListed(listed);
                     }
                     case UPDATE_LATENCY -> {
-                        int latency = helper.readVarInt(in);
+                        int latency = buf.readVarInt();
 
                         entry.setLatency(latency);
                     }
                     case UPDATE_DISPLAY_NAME -> {
-                        Component displayName = helper.readNullable(in, helper::readComponent);
+                        Component displayName = buf.readNullable(buf::readComponent);
 
                         entry.setDisplayName(displayName);
                     }
@@ -90,11 +89,11 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
         }
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeEnumSet(out, this.actions, PlayerListEntryAction.VALUES);
-        helper.writeVarInt(out, this.entries.length);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeEnumSet(this.actions, PlayerListEntryAction.VALUES);
+        buf.writeVarInt(this.entries.length);
         for (PlayerListEntry entry : this.entries) {
-            helper.writeUUID(out, entry.getProfileId());
+            buf.writeUUID(entry.getProfileId());
             for (PlayerListEntryAction action : this.actions) {
                 switch (action) {
                     case ADD_PLAYER -> {
@@ -103,25 +102,25 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                             throw new IllegalArgumentException("Cannot ADD " + entry.getProfileId() + " without a profile.");
                         }
 
-                        helper.writeString(out, profile.getName());
-                        helper.writeVarInt(out, profile.getProperties().size());
+                        buf.writeString(profile.getName());
+                        buf.writeVarInt(profile.getProperties().size());
                         for (GameProfile.Property property : profile.getProperties()) {
-                            helper.writeProperty(out, property);
+                            buf.writeProperty(property);
                         }
                     }
                     case INITIALIZE_CHAT -> {
-                        out.writeBoolean(entry.getPublicKey() != null);
+                        buf.writeBoolean(entry.getPublicKey() != null);
                         if (entry.getPublicKey() != null) {
-                            helper.writeUUID(out, entry.getSessionId());
-                            out.writeLong(entry.getExpiresAt());
-                            helper.writeByteArray(out, entry.getPublicKey().getEncoded());
-                            helper.writeByteArray(out, entry.getKeySignature());
+                            buf.writeUUID(entry.getSessionId());
+                            buf.writeLong(entry.getExpiresAt());
+                            buf.writeByteArray(entry.getPublicKey().getEncoded());
+                            buf.writeByteArray(entry.getKeySignature());
                         }
                     }
-                    case UPDATE_GAME_MODE -> helper.writeVarInt(out, entry.getGameMode().ordinal());
-                    case UPDATE_LISTED -> out.writeBoolean(entry.isListed());
-                    case UPDATE_LATENCY -> helper.writeVarInt(out, entry.getLatency());
-                    case UPDATE_DISPLAY_NAME -> helper.writeNullable(out, entry.getDisplayName(), helper::writeComponent);
+                    case UPDATE_GAME_MODE -> buf.writeVarInt(entry.getGameMode().ordinal());
+                    case UPDATE_LISTED -> buf.writeBoolean(entry.isListed());
+                    case UPDATE_LATENCY -> buf.writeVarInt(entry.getLatency());
+                    case UPDATE_DISPLAY_NAME -> buf.writeNullable(entry.getDisplayName(), buf::writeComponent);
                 }
             }
         }

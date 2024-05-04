@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.OptionalInt;
@@ -16,30 +15,30 @@ public class ServerboundSetBeaconPacket implements MinecraftPacket {
     private final OptionalInt primaryEffect;
     private final OptionalInt secondaryEffect;
 
-    public ServerboundSetBeaconPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        if (in.readBoolean()) {
-            this.primaryEffect = OptionalInt.of(helper.readVarInt(in));
+    public ServerboundSetBeaconPacket(MinecraftByteBuf buf) {
+        if (buf.readBoolean()) {
+            this.primaryEffect = OptionalInt.of(buf.readVarInt());
         } else {
             this.primaryEffect = OptionalInt.empty();
         }
 
-        if (in.readBoolean()) {
-            this.secondaryEffect = OptionalInt.of(helper.readVarInt(in));
+        if (buf.readBoolean()) {
+            this.secondaryEffect = OptionalInt.of(buf.readVarInt());
         } else {
             this.secondaryEffect = OptionalInt.empty();
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeBoolean(this.primaryEffect.isPresent());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeBoolean(this.primaryEffect.isPresent());
         if (this.primaryEffect.isPresent()) {
-            helper.writeVarInt(out, this.primaryEffect.getAsInt());
+            buf.writeVarInt(this.primaryEffect.getAsInt());
         }
 
-        out.writeBoolean(this.secondaryEffect.isPresent());
+        buf.writeBoolean(this.secondaryEffect.isPresent());
         if (this.secondaryEffect.isPresent()) {
-            helper.writeVarInt(out, this.secondaryEffect.getAsInt());
+            buf.writeVarInt(this.secondaryEffect.getAsInt());
         }
     }
 }

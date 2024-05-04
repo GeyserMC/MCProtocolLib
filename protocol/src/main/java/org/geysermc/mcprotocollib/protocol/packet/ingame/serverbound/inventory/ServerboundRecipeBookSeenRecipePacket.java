@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,12 +13,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundRecipeBookSeenRecipePacket implements MinecraftPacket {
     private final @NonNull String recipeId;
 
-    public ServerboundRecipeBookSeenRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.recipeId = helper.readString(in);
+    public ServerboundRecipeBookSeenRecipePacket(MinecraftByteBuf buf) {
+        this.recipeId = buf.readString();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.recipeId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeString(this.recipeId);
     }
 }

@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
-import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
 
 public class FloatMetadataType extends MetadataType<Float> {
@@ -18,32 +17,32 @@ public class FloatMetadataType extends MetadataType<Float> {
     }
 
     @Override
-    public EntityMetadata<Float, FloatMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
+    public EntityMetadata<Float, FloatMetadataType> readMetadata(MinecraftByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 
-    public void writeMetadataPrimitive(ByteBuf output, float value) {
+    public void writeMetadataPrimitive(MinecraftByteBuf output, float value) {
         this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface
-    public interface FloatReader extends BasicReader<Float> {
-        float readPrimitive(ByteBuf input);
+    public interface FloatReader extends Reader<Float> {
+        float readPrimitive(MinecraftByteBuf input);
 
         @Deprecated
         @Override
-        default Float read(ByteBuf input) {
+        default Float read(MinecraftByteBuf input) {
             return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
-    public interface FloatWriter extends BasicWriter<Float> {
-        void writePrimitive(ByteBuf output, float value);
+    public interface FloatWriter extends Writer<Float> {
+        void writePrimitive(MinecraftByteBuf output, float value);
 
         @Deprecated
         @Override
-        default void write(ByteBuf output, Float value) {
+        default void write(MinecraftByteBuf output, Float value) {
             this.writePrimitive(output, value);
         }
     }

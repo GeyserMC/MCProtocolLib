@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
 
@@ -25,39 +24,39 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final PlayerSpawnInfo commonPlayerSpawnInfo;
     private final boolean enforcesSecureChat;
 
-    public ClientboundLoginPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = in.readInt();
-        this.hardcore = in.readBoolean();
-        int worldCount = helper.readVarInt(in);
+    public ClientboundLoginPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readInt();
+        this.hardcore = buf.readBoolean();
+        int worldCount = buf.readVarInt();
         this.worldNames = new String[worldCount];
         for (int i = 0; i < worldCount; i++) {
-            this.worldNames[i] = helper.readString(in);
+            this.worldNames[i] = buf.readString();
         }
-        this.maxPlayers = helper.readVarInt(in);
-        this.viewDistance = helper.readVarInt(in);
-        this.simulationDistance = helper.readVarInt(in);
-        this.reducedDebugInfo = in.readBoolean();
-        this.enableRespawnScreen = in.readBoolean();
-        this.doLimitedCrafting = in.readBoolean();
-        this.commonPlayerSpawnInfo = helper.readPlayerSpawnInfo(in);
-        this.enforcesSecureChat = in.readBoolean();
+        this.maxPlayers = buf.readVarInt();
+        this.viewDistance = buf.readVarInt();
+        this.simulationDistance = buf.readVarInt();
+        this.reducedDebugInfo = buf.readBoolean();
+        this.enableRespawnScreen = buf.readBoolean();
+        this.doLimitedCrafting = buf.readBoolean();
+        this.commonPlayerSpawnInfo = buf.readPlayerSpawnInfo();
+        this.enforcesSecureChat = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeInt(this.entityId);
-        out.writeBoolean(this.hardcore);
-        helper.writeVarInt(out, this.worldNames.length);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeInt(this.entityId);
+        buf.writeBoolean(this.hardcore);
+        buf.writeVarInt(this.worldNames.length);
         for (String worldName : this.worldNames) {
-            helper.writeString(out, worldName);
+            buf.writeString(worldName);
         }
-        helper.writeVarInt(out, this.maxPlayers);
-        helper.writeVarInt(out, this.viewDistance);
-        helper.writeVarInt(out, this.simulationDistance);
-        out.writeBoolean(this.reducedDebugInfo);
-        out.writeBoolean(this.enableRespawnScreen);
-        out.writeBoolean(this.doLimitedCrafting);
-        helper.writePlayerSpawnInfo(out, this.commonPlayerSpawnInfo);
-        out.writeBoolean(this.enforcesSecureChat);
+        buf.writeVarInt(this.maxPlayers);
+        buf.writeVarInt(this.viewDistance);
+        buf.writeVarInt(this.simulationDistance);
+        buf.writeBoolean(this.reducedDebugInfo);
+        buf.writeBoolean(this.enableRespawnScreen);
+        buf.writeBoolean(this.doLimitedCrafting);
+        buf.writePlayerSpawnInfo(this.commonPlayerSpawnInfo);
+        buf.writeBoolean(this.enforcesSecureChat);
     }
 }

@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.Arrays;
@@ -27,21 +26,21 @@ public class ServerboundSignUpdatePacket implements MinecraftPacket {
         this.isFrontText = isFrontText;
     }
 
-    public ServerboundSignUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
-        this.isFrontText = in.readBoolean();
+    public ServerboundSignUpdatePacket(MinecraftByteBuf buf) {
+        this.position = buf.readPosition();
+        this.isFrontText = buf.readBoolean();
         this.lines = new String[4];
         for (int count = 0; count < this.lines.length; count++) {
-            this.lines[count] = helper.readString(in);
+            this.lines[count] = buf.readString();
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.position);
-        out.writeBoolean(this.isFrontText);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writePosition(this.position);
+        buf.writeBoolean(this.isFrontText);
         for (String line : this.lines) {
-            helper.writeString(out, line);
+            buf.writeString(line);
         }
     }
 }

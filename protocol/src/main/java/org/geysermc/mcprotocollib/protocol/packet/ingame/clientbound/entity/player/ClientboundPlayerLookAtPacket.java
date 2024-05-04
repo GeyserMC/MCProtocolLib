@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.RotationOrigin;
 
@@ -25,15 +24,15 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
         this(origin, x, y, z, 0, null);
     }
 
-    public ClientboundPlayerLookAtPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.origin = RotationOrigin.from(helper.readVarInt(in));
-        this.x = in.readDouble();
-        this.y = in.readDouble();
-        this.z = in.readDouble();
+    public ClientboundPlayerLookAtPacket(MinecraftByteBuf buf) {
+        this.origin = RotationOrigin.from(buf.readVarInt());
+        this.x = buf.readDouble();
+        this.y = buf.readDouble();
+        this.z = buf.readDouble();
 
-        if (in.readBoolean()) {
-            this.targetEntityId = helper.readVarInt(in);
-            this.targetEntityOrigin = RotationOrigin.from(helper.readVarInt(in));
+        if (buf.readBoolean()) {
+            this.targetEntityId = buf.readVarInt();
+            this.targetEntityOrigin = RotationOrigin.from(buf.readVarInt());
         } else {
             this.targetEntityId = 0;
             this.targetEntityOrigin = null;
@@ -41,18 +40,18 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.origin.ordinal());
-        out.writeDouble(this.x);
-        out.writeDouble(this.y);
-        out.writeDouble(this.z);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.origin.ordinal());
+        buf.writeDouble(this.x);
+        buf.writeDouble(this.y);
+        buf.writeDouble(this.z);
 
         if (this.targetEntityOrigin != null) {
-            out.writeBoolean(true);
-            helper.writeVarInt(out, this.targetEntityId);
-            helper.writeVarInt(out, this.origin.ordinal());
+            buf.writeBoolean(true);
+            buf.writeVarInt(this.targetEntityId);
+            buf.writeVarInt(this.origin.ordinal());
         } else {
-            out.writeBoolean(false);
+            buf.writeBoolean(false);
         }
     }
 }

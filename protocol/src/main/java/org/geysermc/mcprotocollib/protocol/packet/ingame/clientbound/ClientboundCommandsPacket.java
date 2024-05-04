@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandNode;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandParser;
@@ -41,119 +40,119 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     private final @NonNull CommandNode[] nodes;
     private final int firstNodeIndex;
 
-    public ClientboundCommandsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.nodes = new CommandNode[helper.readVarInt(in)];
+    public ClientboundCommandsPacket(MinecraftByteBuf buf) {
+        this.nodes = new CommandNode[buf.readVarInt()];
         for (int i = 0; i < this.nodes.length; i++) {
-            byte flags = in.readByte();
+            byte flags = buf.readByte();
             CommandType type = CommandType.from(flags & FLAG_TYPE_MASK);
             boolean executable = (flags & FLAG_EXECUTABLE) != 0;
 
-            int[] children = new int[helper.readVarInt(in)];
+            int[] children = new int[buf.readVarInt()];
             for (int j = 0; j < children.length; j++) {
-                children[j] = helper.readVarInt(in);
+                children[j] = buf.readVarInt();
             }
 
             OptionalInt redirectIndex;
             if ((flags & FLAG_REDIRECT) != 0) {
-                redirectIndex = OptionalInt.of(helper.readVarInt(in));
+                redirectIndex = OptionalInt.of(buf.readVarInt());
             } else {
                 redirectIndex = OptionalInt.empty();
             }
 
             String name = null;
             if (type == CommandType.LITERAL || type == CommandType.ARGUMENT) {
-                name = helper.readString(in);
+                name = buf.readString();
             }
 
             CommandParser parser = null;
             CommandProperties properties = null;
             String suggestionType = null;
             if (type == CommandType.ARGUMENT) {
-                parser = CommandParser.from(helper.readVarInt(in));
+                parser = CommandParser.from(buf.readVarInt());
                 switch (parser) {
                     case DOUBLE -> {
-                        byte numberFlags = in.readByte();
+                        byte numberFlags = buf.readByte();
                         double min = -Double.MAX_VALUE;
                         double max = Double.MAX_VALUE;
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            min = in.readDouble();
+                            min = buf.readDouble();
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            max = in.readDouble();
+                            max = buf.readDouble();
                         }
 
                         properties = new DoubleProperties(min, max);
                     }
                     case FLOAT -> {
-                        byte numberFlags = in.readByte();
+                        byte numberFlags = buf.readByte();
                         float min = -Float.MAX_VALUE;
                         float max = Float.MAX_VALUE;
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            min = in.readFloat();
+                            min = buf.readFloat();
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            max = in.readFloat();
+                            max = buf.readFloat();
                         }
 
                         properties = new FloatProperties(min, max);
                     }
                     case INTEGER -> {
-                        byte numberFlags = in.readByte();
+                        byte numberFlags = buf.readByte();
                         int min = Integer.MIN_VALUE;
                         int max = Integer.MAX_VALUE;
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            min = in.readInt();
+                            min = buf.readInt();
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            max = in.readInt();
+                            max = buf.readInt();
                         }
 
                         properties = new IntegerProperties(min, max);
                     }
                     case LONG -> {
-                        byte numberFlags = in.readByte();
+                        byte numberFlags = buf.readByte();
                         long min = Long.MIN_VALUE;
                         long max = Long.MAX_VALUE;
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            min = in.readLong();
+                            min = buf.readLong();
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            max = in.readLong();
+                            max = buf.readLong();
                         }
 
                         properties = new LongProperties(min, max);
                     }
-                    case STRING -> properties = StringProperties.from(helper.readVarInt(in));
+                    case STRING -> properties = StringProperties.from(buf.readVarInt());
                     case ENTITY -> {
-                        byte entityFlags = in.readByte();
+                        byte entityFlags = buf.readByte();
                         properties = new EntityProperties((entityFlags & ENTITY_FLAG_SINGLE_TARGET) != 0,
                                 (entityFlags & ENTITY_FLAG_PLAYERS_ONLY) != 0);
                     }
-                    case SCORE_HOLDER -> properties = new ScoreHolderProperties(in.readBoolean());
-                    case TIME -> properties = new TimeProperties(in.readInt());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> properties = new ResourceProperties(helper.readString(in));
+                    case SCORE_HOLDER -> properties = new ScoreHolderProperties(buf.readBoolean());
+                    case TIME -> properties = new TimeProperties(buf.readInt());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> properties = new ResourceProperties(buf.readString());
                     default -> {
                     }
                 }
 
                 if ((flags & FLAG_SUGGESTION_TYPE) != 0) {
-                    suggestionType = helper.readResourceLocation(in);
+                    suggestionType = buf.readResourceLocation();
                 }
             }
 
             this.nodes[i] = new CommandNode(type, executable, children, redirectIndex, name, parser, properties, suggestionType);
         }
 
-        this.firstNodeIndex = helper.readVarInt(in);
+        this.firstNodeIndex = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.nodes.length);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.nodes.length);
         for (CommandNode node : this.nodes) {
             int flags = node.getType().ordinal() & FLAG_TYPE_MASK;
             if (node.isExecutable()) {
@@ -168,23 +167,23 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                 flags |= FLAG_SUGGESTION_TYPE;
             }
 
-            out.writeByte(flags);
+            buf.writeByte(flags);
 
-            helper.writeVarInt(out, node.getChildIndices().length);
+            buf.writeVarInt(node.getChildIndices().length);
             for (int childIndex : node.getChildIndices()) {
-                helper.writeVarInt(out, childIndex);
+                buf.writeVarInt(childIndex);
             }
 
             if (node.getRedirectIndex().isPresent()) {
-                helper.writeVarInt(out, node.getRedirectIndex().getAsInt());
+                buf.writeVarInt(node.getRedirectIndex().getAsInt());
             }
 
             if (node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
-                helper.writeString(out, node.getName());
+                buf.writeString(node.getName());
             }
 
             if (node.getType() == CommandType.ARGUMENT) {
-                helper.writeVarInt(out, node.getParser().ordinal());
+                buf.writeVarInt(node.getParser().ordinal());
                 switch (node.getParser()) {
                     case DOUBLE -> {
                         DoubleProperties properties = (DoubleProperties) node.getProperties();
@@ -198,13 +197,13 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
-                        out.writeByte(numberFlags);
+                        buf.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeDouble(properties.getMin());
+                            buf.writeDouble(properties.getMin());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeDouble(properties.getMax());
+                            buf.writeDouble(properties.getMax());
                         }
                     }
                     case FLOAT -> {
@@ -219,13 +218,13 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
-                        out.writeByte(numberFlags);
+                        buf.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeFloat(properties.getMin());
+                            buf.writeFloat(properties.getMin());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeFloat(properties.getMax());
+                            buf.writeFloat(properties.getMax());
                         }
                     }
                     case INTEGER -> {
@@ -240,13 +239,13 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
-                        out.writeByte(numberFlags);
+                        buf.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeInt(properties.getMin());
+                            buf.writeInt(properties.getMin());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeInt(properties.getMax());
+                            buf.writeInt(properties.getMax());
                         }
                     }
                     case LONG -> {
@@ -261,16 +260,16 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                             numberFlags |= NUMBER_FLAG_MAX_DEFINED;
                         }
 
-                        out.writeByte(numberFlags);
+                        buf.writeByte(numberFlags);
                         if ((numberFlags & NUMBER_FLAG_MIN_DEFINED) != 0) {
-                            out.writeLong(properties.getMin());
+                            buf.writeLong(properties.getMin());
                         }
 
                         if ((numberFlags & NUMBER_FLAG_MAX_DEFINED) != 0) {
-                            out.writeLong(properties.getMax());
+                            buf.writeLong(properties.getMax());
                         }
                     }
-                    case STRING -> helper.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
+                    case STRING -> buf.writeVarInt(((StringProperties) node.getProperties()).ordinal());
                     case ENTITY -> {
                         EntityProperties properties = (EntityProperties) node.getProperties();
                         int entityFlags = 0;
@@ -282,21 +281,21 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                             entityFlags |= ENTITY_FLAG_PLAYERS_ONLY;
                         }
 
-                        out.writeByte(entityFlags);
+                        buf.writeByte(entityFlags);
                     }
-                    case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
-                    case TIME -> out.writeInt(((TimeProperties) node.getProperties()).getMin());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> helper.writeString(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
+                    case SCORE_HOLDER -> buf.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
+                    case TIME -> buf.writeInt(((TimeProperties) node.getProperties()).getMin());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> buf.writeString(((ResourceProperties) node.getProperties()).getRegistryKey());
                     default -> {
                     }
                 }
 
                 if (node.getSuggestionType() != null) {
-                    helper.writeResourceLocation(out, node.getSuggestionType());
+                    buf.writeResourceLocation(node.getSuggestionType());
                 }
             }
         }
 
-        helper.writeVarInt(out, this.firstNodeIndex);
+        buf.writeVarInt(this.firstNodeIndex);
     }
 }

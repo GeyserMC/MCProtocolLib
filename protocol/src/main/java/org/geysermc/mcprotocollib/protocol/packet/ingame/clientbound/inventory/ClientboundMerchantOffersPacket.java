@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
@@ -21,55 +20,55 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     private final boolean regularVillager;
     private final boolean canRestock;
 
-    public ClientboundMerchantOffersPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
+    public ClientboundMerchantOffersPacket(MinecraftByteBuf buf) {
+        this.containerId = buf.readVarInt();
 
-        int size = helper.readVarInt(in);
+        int size = buf.readVarInt();
         this.trades = new VillagerTrade[size];
         for (int i = 0; i < trades.length; i++) {
-            ItemStack firstInput = helper.readTradeItemStack(in);
-            ItemStack output = helper.readOptionalItemStack(in);
-            ItemStack secondInput = helper.readNullable(in, helper::readTradeItemStack);
+            ItemStack firstInput = buf.readTradeItemStack();
+            ItemStack output = buf.readOptionalItemStack();
+            ItemStack secondInput = buf.readNullable(buf::readTradeItemStack);
 
-            boolean tradeDisabled = in.readBoolean();
-            int numUses = in.readInt();
-            int maxUses = in.readInt();
-            int xp = in.readInt();
-            int specialPrice = in.readInt();
-            float priceMultiplier = in.readFloat();
-            int demand = in.readInt();
+            boolean tradeDisabled = buf.readBoolean();
+            int numUses = buf.readInt();
+            int maxUses = buf.readInt();
+            int xp = buf.readInt();
+            int specialPrice = buf.readInt();
+            float priceMultiplier = buf.readFloat();
+            int demand = buf.readInt();
 
             this.trades[i] = new VillagerTrade(firstInput, secondInput, output, tradeDisabled, numUses, maxUses, xp, specialPrice, priceMultiplier, demand);
         }
 
-        this.villagerLevel = helper.readVarInt(in);
-        this.experience = helper.readVarInt(in);
-        this.regularVillager = in.readBoolean();
-        this.canRestock = in.readBoolean();
+        this.villagerLevel = buf.readVarInt();
+        this.experience = buf.readVarInt();
+        this.regularVillager = buf.readBoolean();
+        this.canRestock = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.containerId);
 
-        helper.writeVarInt(out, this.trades.length);
+        buf.writeVarInt(this.trades.length);
         for (VillagerTrade trade : this.trades) {
-            helper.writeTradeItemStack(out, trade.getFirstInput());
-            helper.writeOptionalItemStack(out, trade.getOutput());
-            helper.writeNullable(out, trade.getSecondInput(), helper::writeTradeItemStack);
+            buf.writeTradeItemStack(trade.getFirstInput());
+            buf.writeOptionalItemStack(trade.getOutput());
+            buf.writeNullable(trade.getSecondInput(), buf::writeTradeItemStack);
 
-            out.writeBoolean(trade.isTradeDisabled());
-            out.writeInt(trade.getNumUses());
-            out.writeInt(trade.getMaxUses());
-            out.writeInt(trade.getXp());
-            out.writeInt(trade.getSpecialPrice());
-            out.writeFloat(trade.getPriceMultiplier());
-            out.writeInt(trade.getDemand());
+            buf.writeBoolean(trade.isTradeDisabled());
+            buf.writeInt(trade.getNumUses());
+            buf.writeInt(trade.getMaxUses());
+            buf.writeInt(trade.getXp());
+            buf.writeInt(trade.getSpecialPrice());
+            buf.writeFloat(trade.getPriceMultiplier());
+            buf.writeInt(trade.getDemand());
         }
 
-        helper.writeVarInt(out, this.villagerLevel);
-        helper.writeVarInt(out, this.experience);
-        out.writeBoolean(this.regularVillager);
-        out.writeBoolean(this.canRestock);
+        buf.writeVarInt(this.villagerLevel);
+        buf.writeVarInt(this.experience);
+        buf.writeBoolean(this.regularVillager);
+        buf.writeBoolean(this.canRestock);
     }
 }

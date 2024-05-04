@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ClientboundStoreCookiePacket implements MinecraftPacket {
     private final String key;
     private final byte[] payload;
 
-    public ClientboundStoreCookiePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.key = helper.readResourceLocation(in);
-        this.payload = helper.readByteArray(in);
+    public ClientboundStoreCookiePacket(MinecraftByteBuf buf) {
+        this.key = buf.readResourceLocation();
+        this.payload = buf.readByteArray();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeResourceLocation(out, this.key);
-        helper.writeByteArray(out, this.payload);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeResourceLocation(this.key);
+        buf.writeByteArray(this.payload);
     }
 }

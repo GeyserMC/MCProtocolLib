@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,16 +14,16 @@ public class ClientboundHorseScreenOpenPacket implements MinecraftPacket {
     private final int numberOfSlots;
     private final int entityId;
 
-    public ClientboundHorseScreenOpenPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
-        this.numberOfSlots = helper.readVarInt(in);
-        this.entityId = in.readInt();
+    public ClientboundHorseScreenOpenPacket(MinecraftByteBuf buf) {
+        this.containerId = buf.readByte();
+        this.numberOfSlots = buf.readVarInt();
+        this.entityId = buf.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
-        helper.writeVarInt(out, this.numberOfSlots);
-        out.writeInt(this.entityId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeByte(this.containerId);
+        buf.writeVarInt(this.numberOfSlots);
+        buf.writeInt(this.entityId);
     }
 }

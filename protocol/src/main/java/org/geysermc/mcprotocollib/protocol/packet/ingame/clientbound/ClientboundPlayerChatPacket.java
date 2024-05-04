@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.BuiltinChatType;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatFilterType;
@@ -36,58 +35,58 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final Component name;
     private final @Nullable Component targetName;
 
-    public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sender = helper.readUUID(in);
-        this.index = helper.readVarInt(in);
-        if (in.readBoolean()) {
+    public ClientboundPlayerChatPacket(MinecraftByteBuf buf) {
+        this.sender = buf.readUUID();
+        this.index = buf.readVarInt();
+        if (buf.readBoolean()) {
             this.messageSignature = new byte[256];
-            in.readBytes(this.messageSignature);
+            buf.readBytes(this.messageSignature);
         } else {
             this.messageSignature = null;
         }
 
-        this.content = helper.readString(in, 256);
-        this.timeStamp = in.readLong();
-        this.salt = in.readLong();
+        this.content = buf.readString(256);
+        this.timeStamp = buf.readLong();
+        this.salt = buf.readLong();
 
         this.lastSeenMessages = new ArrayList<>();
-        int seenMessageCount = Math.min(helper.readVarInt(in), 20);
+        int seenMessageCount = Math.min(buf.readVarInt(), 20);
         for (int i = 0; i < seenMessageCount; i++) {
-            this.lastSeenMessages.add(MessageSignature.read(in, helper));
+            this.lastSeenMessages.add(MessageSignature.read(buf));
         }
 
-        this.unsignedContent = helper.readNullable(in, helper::readComponent);
-        this.filterMask = ChatFilterType.from(helper.readVarInt(in));
-        this.chatType = helper.readVarInt(in);
-        this.name = helper.readComponent(in);
-        this.targetName = helper.readNullable(in, helper::readComponent);
+        this.unsignedContent = buf.readNullable(buf::readComponent);
+        this.filterMask = ChatFilterType.from(buf.readVarInt());
+        this.chatType = buf.readVarInt();
+        this.name = buf.readComponent();
+        this.targetName = buf.readNullable(buf::readComponent);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.sender);
-        helper.writeVarInt(out, this.index);
-        out.writeBoolean(this.messageSignature != null);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeUUID(this.sender);
+        buf.writeVarInt(this.index);
+        buf.writeBoolean(this.messageSignature != null);
         if (this.messageSignature != null) {
-            out.writeBytes(this.messageSignature);
+            buf.writeBytes(this.messageSignature);
         }
 
-        helper.writeString(out, this.content);
-        out.writeLong(this.timeStamp);
-        out.writeLong(this.salt);
+        buf.writeString(this.content);
+        buf.writeLong(this.timeStamp);
+        buf.writeLong(this.salt);
 
-        helper.writeVarInt(out, this.lastSeenMessages.size());
+        buf.writeVarInt(this.lastSeenMessages.size());
         for (MessageSignature messageSignature : this.lastSeenMessages) {
-            helper.writeVarInt(out, messageSignature.getId() + 1);
+            buf.writeVarInt(messageSignature.getId() + 1);
             if (messageSignature.getMessageSignature() != null) {
-                out.writeBytes(messageSignature.getMessageSignature());
+                buf.writeBytes(messageSignature.getMessageSignature());
             }
         }
 
-        helper.writeNullable(out, this.unsignedContent, helper::writeComponent);
-        helper.writeVarInt(out, this.filterMask.ordinal());
-        helper.writeVarInt(out, this.chatType);
-        helper.writeComponent(out, this.name);
-        helper.writeNullable(out, this.targetName, helper::writeComponent);
+        buf.writeNullable(this.unsignedContent, buf::writeComponent);
+        buf.writeVarInt(this.filterMask.ordinal());
+        buf.writeVarInt(this.chatType);
+        buf.writeComponent(this.name);
+        buf.writeNullable(this.targetName, buf::writeComponent);
     }
 }

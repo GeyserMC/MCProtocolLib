@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundLockDifficultyPacket implements MinecraftPacket {
     private final boolean locked;
 
-    public ServerboundLockDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.locked = in.readBoolean();
+    public ServerboundLockDifficultyPacket(MinecraftByteBuf buf) {
+        this.locked = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeBoolean(this.locked);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeBoolean(this.locked);
     }
 }

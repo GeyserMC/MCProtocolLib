@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.security.GeneralSecurityException;
@@ -22,11 +21,11 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
     private final PublicKey publicKey;
     private final byte[] keySignature;
 
-    public ServerboundChatSessionUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sessionId = helper.readUUID(in);
-        this.expiresAt = in.readLong();
-        byte[] keyBytes = helper.readByteArray(in);
-        this.keySignature = helper.readByteArray(in);
+    public ServerboundChatSessionUpdatePacket(MinecraftByteBuf buf) {
+        this.sessionId = buf.readUUID();
+        this.expiresAt = buf.readLong();
+        byte[] keyBytes = buf.readByteArray();
+        this.keySignature = buf.readByteArray();
 
         PublicKey publicKey;
         try {
@@ -39,10 +38,10 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.sessionId);
-        out.writeLong(this.expiresAt);
-        helper.writeByteArray(out, this.publicKey.getEncoded());
-        helper.writeByteArray(out, this.keySignature);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeUUID(this.sessionId);
+        buf.writeLong(this.expiresAt);
+        buf.writeByteArray(this.publicKey.getEncoded());
+        buf.writeByteArray(this.keySignature);
     }
 }

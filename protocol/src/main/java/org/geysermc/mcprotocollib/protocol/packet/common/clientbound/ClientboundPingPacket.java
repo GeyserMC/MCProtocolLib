@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundPingPacket implements MinecraftPacket {
     private final int id;
 
-    public ClientboundPingPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = in.readInt();
+    public ClientboundPingPacket(MinecraftByteBuf buf) {
+        this.id = buf.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeInt(this.id);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeInt(this.id);
     }
 }

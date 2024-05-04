@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.Attribute;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.AttributeModifier;
@@ -21,17 +20,17 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull List<Attribute> attributes;
 
-    public ClientboundUpdateAttributesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
+    public ClientboundUpdateAttributesPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readVarInt();
         this.attributes = new ArrayList<>();
-        int length = helper.readVarInt(in);
+        int length = buf.readVarInt();
         for (int index = 0; index < length; index++) {
-            int attributeId = helper.readVarInt(in);
-            double value = in.readDouble();
+            int attributeId = buf.readVarInt();
+            double value = buf.readDouble();
             List<AttributeModifier> modifiers = new ArrayList<>();
-            int len = helper.readVarInt(in);
+            int len = buf.readVarInt();
             for (int ind = 0; ind < len; ind++) {
-                modifiers.add(new AttributeModifier(helper.readUUID(in), in.readDouble(), helper.readModifierOperation(in)));
+                modifiers.add(new AttributeModifier(buf.readUUID(), buf.readDouble(), buf.readModifierOperation()));
             }
 
             AttributeType type = AttributeType.Builtin.BUILTIN.get(attributeId); //.computeIfAbsent(attributeId, AttributeType.Custom::new); TODO
@@ -40,17 +39,17 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeVarInt(out, this.attributes.size());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityId);
+        buf.writeVarInt(this.attributes.size());
         for (Attribute attribute : this.attributes) {
-            helper.writeVarInt(out, attribute.getType().getId());
-            out.writeDouble(attribute.getValue());
-            helper.writeVarInt(out, attribute.getModifiers().size());
+            buf.writeVarInt(attribute.getType().getId());
+            buf.writeDouble(attribute.getValue());
+            buf.writeVarInt(attribute.getModifiers().size());
             for (AttributeModifier modifier : attribute.getModifiers()) {
-                helper.writeUUID(out, modifier.getUuid());
-                out.writeDouble(modifier.getAmount());
-                helper.writeModifierOperation(out, modifier.getOperation());
+                buf.writeUUID(modifier.getUuid());
+                buf.writeDouble(modifier.getAmount());
+                buf.writeModifierOperation(modifier.getOperation());
             }
         }
     }

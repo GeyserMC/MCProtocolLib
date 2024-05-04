@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleType;
@@ -25,32 +24,32 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
     private final float velocityOffset;
     private final int amount;
 
-    public ClientboundLevelParticlesPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.longDistance = in.readBoolean();
-        this.x = in.readDouble();
-        this.y = in.readDouble();
-        this.z = in.readDouble();
-        this.offsetX = in.readFloat();
-        this.offsetY = in.readFloat();
-        this.offsetZ = in.readFloat();
-        this.velocityOffset = in.readFloat();
-        this.amount = in.readInt();
-        ParticleType type = helper.readParticleType(in);
-        this.particle = new Particle(type, helper.readParticleData(in, type));
+    public ClientboundLevelParticlesPacket(MinecraftByteBuf buf) {
+        this.longDistance = buf.readBoolean();
+        this.x = buf.readDouble();
+        this.y = buf.readDouble();
+        this.z = buf.readDouble();
+        this.offsetX = buf.readFloat();
+        this.offsetY = buf.readFloat();
+        this.offsetZ = buf.readFloat();
+        this.velocityOffset = buf.readFloat();
+        this.amount = buf.readInt();
+        ParticleType type = buf.readParticleType();
+        this.particle = new Particle(type, buf.readParticleData(type));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeBoolean(this.longDistance);
-        out.writeDouble(this.x);
-        out.writeDouble(this.y);
-        out.writeDouble(this.z);
-        out.writeFloat(this.offsetX);
-        out.writeFloat(this.offsetY);
-        out.writeFloat(this.offsetZ);
-        out.writeFloat(this.velocityOffset);
-        out.writeInt(this.amount);
-        helper.writeParticleType(out, this.particle.getType());
-        helper.writeParticleData(out, this.particle.getType(), this.particle.getData());
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeBoolean(this.longDistance);
+        buf.writeDouble(this.x);
+        buf.writeDouble(this.y);
+        buf.writeDouble(this.z);
+        buf.writeFloat(this.offsetX);
+        buf.writeFloat(this.offsetY);
+        buf.writeFloat(this.offsetZ);
+        buf.writeFloat(this.velocityOffset);
+        buf.writeInt(this.amount);
+        buf.writeParticleType(this.particle.getType());
+        buf.writeParticleData(this.particle.getType(), this.particle.getData());
     }
 }

@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,14 +14,14 @@ public class ClientboundPlaceGhostRecipePacket implements MinecraftPacket {
     private final int containerId;
     private final @NonNull String recipeId;
 
-    public ClientboundPlaceGhostRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
-        this.recipeId = helper.readString(in);
+    public ClientboundPlaceGhostRecipePacket(MinecraftByteBuf buf) {
+        this.containerId = buf.readByte();
+        this.recipeId = buf.readString();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
-        helper.writeString(out, this.recipeId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeByte(this.containerId);
+        buf.writeString(this.recipeId);
     }
 }

@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -17,16 +16,16 @@ public class ServerboundJigsawGeneratePacket implements MinecraftPacket {
     private final int levels;
     private final boolean keepJigsaws;
 
-    public ServerboundJigsawGeneratePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
-        this.levels = helper.readVarInt(in);
-        this.keepJigsaws = in.readBoolean();
+    public ServerboundJigsawGeneratePacket(MinecraftByteBuf buf) {
+        this.position = buf.readPosition();
+        this.levels = buf.readVarInt();
+        this.keepJigsaws = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.position);
-        helper.writeVarInt(out, this.levels);
-        out.writeBoolean(this.keepJigsaws);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writePosition(this.position);
+        buf.writeVarInt(this.levels);
+        buf.writeBoolean(this.keepJigsaws);
     }
 }

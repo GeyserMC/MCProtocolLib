@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetCameraPacket implements MinecraftPacket {
     private final int cameraEntityId;
 
-    public ClientboundSetCameraPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.cameraEntityId = helper.readVarInt(in);
+    public ClientboundSetCameraPacket(MinecraftByteBuf buf) {
+        this.cameraEntityId = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.cameraEntityId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.cameraEntityId);
     }
 }

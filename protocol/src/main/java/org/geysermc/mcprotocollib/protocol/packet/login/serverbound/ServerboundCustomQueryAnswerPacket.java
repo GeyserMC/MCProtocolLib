@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.serverbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -19,14 +18,14 @@ public class ServerboundCustomQueryAnswerPacket implements MinecraftPacket {
         this(transactionId, new byte[0]);
     }
 
-    public ServerboundCustomQueryAnswerPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.transactionId = helper.readVarInt(in);
-        this.data = helper.readNullable(in, buf -> helper.readByteArray(buf, ByteBuf::readableBytes));
+    public ServerboundCustomQueryAnswerPacket(MinecraftByteBuf buf) {
+        this.transactionId = buf.readVarInt();
+        this.data = buf.readNullable(() -> buf.readByteArray(buf::readableBytes));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.transactionId);
-        helper.writeNullable(out, this.data, ByteBuf::writeBytes);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.transactionId);
+        buf.writeNullable(this.data, buf::writeBytes);
     }
 }

@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ServerboundContainerButtonClickPacket implements MinecraftPacket {
     private final int containerId;
     private final int buttonId;
 
-    public ServerboundContainerButtonClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
-        this.buttonId = helper.readVarInt(in);
+    public ServerboundContainerButtonClickPacket(MinecraftByteBuf buf) {
+        this.containerId = buf.readVarInt();
+        this.buttonId = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
-        helper.writeVarInt(out, this.buttonId);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.containerId);
+        buf.writeVarInt(this.buttonId);
     }
 }

@@ -47,7 +47,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     protected String host;
     protected int port;
-    private final PacketProtocol protocol;
+    private final PacketProtocol<?> protocol;
     private final EventLoop eventLoop = createEventLoop();
 
     private int compressionThreshold = -1;
@@ -61,7 +61,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     private Channel channel;
     protected boolean disconnected = false;
 
-    public TcpSession(String host, int port, PacketProtocol protocol) {
+    public TcpSession(String host, int port, PacketProtocol<?> protocol) {
         this.host = host;
         this.port = port;
         this.protocol = protocol;
@@ -102,7 +102,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public PacketProtocol getPacketProtocol() {
+    public PacketProtocol<?> getPacketProtocol() {
         return this.protocol;
     }
 

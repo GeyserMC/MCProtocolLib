@@ -15,7 +15,7 @@ public class DataComponents {
 
     @Nullable
     public <T> T get(DataComponentType<T> type) {
-        DataComponent component = dataComponents.get(type);
+        DataComponent<?, ?> component = dataComponents.get(type);
         return component == null ? null : (T) component.getValue();
     }
 

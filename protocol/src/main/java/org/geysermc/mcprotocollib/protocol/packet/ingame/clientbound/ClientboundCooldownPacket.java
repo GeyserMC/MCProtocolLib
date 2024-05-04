@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ClientboundCooldownPacket implements MinecraftPacket {
     private final int itemId;
     private final int cooldownTicks;
 
-    public ClientboundCooldownPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.itemId = helper.readVarInt(in);
-        this.cooldownTicks = helper.readVarInt(in);
+    public ClientboundCooldownPacket(MinecraftByteBuf buf) {
+        this.itemId = buf.readVarInt();
+        this.cooldownTicks = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.itemId);
-        helper.writeVarInt(out, this.cooldownTicks);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.itemId);
+        buf.writeVarInt(this.cooldownTicks);
     }
 }

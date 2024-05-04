@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chunk.palette;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 
 import java.util.Arrays;
 
@@ -27,12 +26,12 @@ public class ListPalette implements Palette {
         this.data = new int[this.capacity];
     }
 
-    public ListPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) {
+    public ListPalette(int bitsPerEntry, MinecraftByteBuf in) {
         this(bitsPerEntry);
 
-        int paletteLength = helper.readVarInt(in);
+        int paletteLength = in.readVarInt();
         for (int i = 0; i < paletteLength; i++) {
-            this.data[i] = helper.readVarInt(in);
+            this.data[i] = in.readVarInt();
         }
 
         this.nextId = paletteLength;

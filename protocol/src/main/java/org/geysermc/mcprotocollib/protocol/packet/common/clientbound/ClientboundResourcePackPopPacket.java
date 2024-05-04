@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 import java.util.UUID;
@@ -20,12 +19,12 @@ public class ClientboundResourcePackPopPacket implements MinecraftPacket {
      */
     private final @Nullable UUID id;
 
-    public ClientboundResourcePackPopPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = helper.readNullable(in, helper::readUUID);
+    public ClientboundResourcePackPopPacket(MinecraftByteBuf buf) {
+        this.id = buf.readNullable(buf::readUUID);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeNullable(out, this.id, helper::writeUUID);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeNullable(this.id, buf::writeUUID);
     }
 }

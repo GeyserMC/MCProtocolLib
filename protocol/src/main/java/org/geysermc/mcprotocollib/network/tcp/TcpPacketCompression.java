@@ -41,12 +41,12 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
             throw new EncoderException("Packet too big: size of " + readable + " is larger than the protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
         }
         if (readable < this.session.getCompressionThreshold()) {
-            this.session.getCodecHelper().writeVarInt(out, 0);
+            this.session.getPacketProtocol().getByteBufWrapper().wrap(out).writeVarInt(0);
             out.writeBytes(in);
         } else {
             byte[] bytes = new byte[readable];
             in.readBytes(bytes);
-            this.session.getCodecHelper().writeVarInt(out, bytes.length);
+            this.session.getPacketProtocol().getByteBufWrapper().wrap(out).writeVarInt(bytes.length);
             this.deflater.setInput(bytes, 0, readable);
             this.deflater.finish();
             while (!this.deflater.finished()) {
@@ -61,7 +61,7 @@ public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         if (buf.readableBytes() != 0) {
-            int size = this.session.getCodecHelper().readVarInt(buf);
+            int size = this.session.getPacketProtocol().getByteBufWrapper().wrap(buf).readVarInt();
             if (size == 0) {
                 out.add(buf.readBytes(buf.readableBytes()));
             } else {

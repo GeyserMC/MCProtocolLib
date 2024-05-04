@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -16,18 +15,18 @@ public class ClientboundMoveEntityRotPacket implements MinecraftPacket {
     private final float pitch;
     private final boolean onGround;
 
-    public ClientboundMoveEntityRotPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.yaw = in.readByte() * 360 / 256f;
-        this.pitch = in.readByte() * 360 / 256f;
-        this.onGround = in.readBoolean();
+    public ClientboundMoveEntityRotPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readVarInt();
+        this.yaw = buf.readByte() * 360 / 256f;
+        this.pitch = buf.readByte() * 360 / 256f;
+        this.onGround = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        out.writeByte((byte) (this.yaw * 256 / 360));
-        out.writeByte((byte) (this.pitch * 256 / 360));
-        out.writeBoolean(this.onGround);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityId);
+        buf.writeByte((byte) (this.yaw * 256 / 360));
+        buf.writeByte((byte) (this.pitch * 256 / 360));
+        buf.writeBoolean(this.onGround);
     }
 }

@@ -6,13 +6,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
@@ -33,8 +32,8 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     private final @NonNull ServerStatusInfo info;
 
-    public ClientboundStatusResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        JsonObject obj = new Gson().fromJson(helper.readString(in), JsonObject.class);
+    public ClientboundStatusResponsePacket(MinecraftByteBuf buf) {
+        JsonObject obj = new Gson().fromJson(buf.readString(), JsonObject.class);
         JsonElement desc = obj.get("description");
         Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
         JsonObject plrs = obj.get("players").getAsJsonObject();
@@ -65,7 +64,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(MinecraftByteBuf buf) {
         JsonObject obj = new JsonObject();
         JsonObject ver = new JsonObject();
         ver.addProperty("name", this.info.getVersionInfo().getVersionName());
@@ -93,7 +92,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         }
         obj.addProperty("enforcesSecureChat", this.info.isEnforcesSecureChat());
 
-        helper.writeString(out, obj.toString());
+        buf.writeString(obj.toString());
     }
 
     private byte[] stringToIcon(String str) {

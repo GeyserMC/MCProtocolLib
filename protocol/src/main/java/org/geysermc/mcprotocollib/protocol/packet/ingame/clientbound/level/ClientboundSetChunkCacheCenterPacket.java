@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ClientboundSetChunkCacheCenterPacket implements MinecraftPacket {
     private final int chunkX;
     private final int chunkZ;
 
-    public ClientboundSetChunkCacheCenterPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.chunkX = helper.readVarInt(in);
-        this.chunkZ = helper.readVarInt(in);
+    public ClientboundSetChunkCacheCenterPacket(MinecraftByteBuf buf) {
+        this.chunkX = buf.readVarInt();
+        this.chunkZ = buf.readVarInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.chunkX);
-        helper.writeVarInt(out, this.chunkZ);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.chunkX);
+        buf.writeVarInt(this.chunkZ);
     }
 }

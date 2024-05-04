@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 
@@ -38,16 +37,16 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
         this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates);
     }
 
-    public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.x = helper.readVarInt(in);
-        this.z = helper.readVarInt(in);
-        this.lightData = helper.readLightUpdateData(in);
+    public ClientboundLightUpdatePacket(MinecraftByteBuf buf) {
+        this.x = buf.readVarInt();
+        this.z = buf.readVarInt();
+        this.lightData = buf.readLightUpdateData();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.x);
-        helper.writeVarInt(out, this.z);
-        helper.writeLightUpdateData(out, this.lightData);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.x);
+        buf.writeVarInt(this.z);
+        buf.writeLightUpdateData(this.lightData);
     }
 }

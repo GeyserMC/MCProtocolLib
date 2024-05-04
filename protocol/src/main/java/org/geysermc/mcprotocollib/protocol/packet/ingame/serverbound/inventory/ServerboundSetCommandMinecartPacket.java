@@ -1,11 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -16,16 +15,16 @@ public class ServerboundSetCommandMinecartPacket implements MinecraftPacket {
     private final @NonNull String command;
     private final boolean doesTrackOutput;
 
-    public ServerboundSetCommandMinecartPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.command = helper.readString(in);
-        this.doesTrackOutput = in.readBoolean();
+    public ServerboundSetCommandMinecartPacket(MinecraftByteBuf buf) {
+        this.entityId = buf.readVarInt();
+        this.command = buf.readString();
+        this.doesTrackOutput = buf.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeString(out, this.command);
-        out.writeBoolean(this.doesTrackOutput);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeVarInt(this.entityId);
+        buf.writeString(this.command);
+        buf.writeBoolean(this.doesTrackOutput);
     }
 }

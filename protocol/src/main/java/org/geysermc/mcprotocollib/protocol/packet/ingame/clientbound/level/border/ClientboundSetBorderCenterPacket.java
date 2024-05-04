@@ -1,10 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,14 @@ public class ClientboundSetBorderCenterPacket implements MinecraftPacket {
     private final double newCenterX;
     private final double newCenterZ;
 
-    public ClientboundSetBorderCenterPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.newCenterX = in.readDouble();
-        this.newCenterZ = in.readDouble();
+    public ClientboundSetBorderCenterPacket(MinecraftByteBuf buf) {
+        this.newCenterX = buf.readDouble();
+        this.newCenterZ = buf.readDouble();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeDouble(this.newCenterX);
-        out.writeDouble(this.newCenterZ);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writeDouble(this.newCenterX);
+        buf.writeDouble(this.newCenterZ);
     }
 }

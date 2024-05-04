@@ -1,12 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 
-import io.netty.buffer.ByteBuf;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.UpdateStructureBlockAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.UpdateStructureBlockMode;
@@ -36,42 +35,42 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
     private final boolean showAir;
     private final boolean showBoundingBox;
 
-    public ServerboundSetStructureBlockPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
-        this.action = UpdateStructureBlockAction.from(helper.readVarInt(in));
-        this.mode = UpdateStructureBlockMode.from(helper.readVarInt(in));
-        this.name = helper.readString(in);
-        this.offset = Vector3i.from(in.readByte(), in.readByte(), in.readByte());
-        this.size = Vector3i.from(in.readUnsignedByte(), in.readUnsignedByte(), in.readUnsignedByte());
-        this.mirror = StructureMirror.from(helper.readVarInt(in));
-        this.rotation = StructureRotation.from(helper.readVarInt(in));
-        this.metadata = helper.readString(in);
-        this.integrity = in.readFloat();
-        this.seed = helper.readVarLong(in);
+    public ServerboundSetStructureBlockPacket(MinecraftByteBuf buf) {
+        this.position = buf.readPosition();
+        this.action = UpdateStructureBlockAction.from(buf.readVarInt());
+        this.mode = UpdateStructureBlockMode.from(buf.readVarInt());
+        this.name = buf.readString();
+        this.offset = Vector3i.from(buf.readByte(), buf.readByte(), buf.readByte());
+        this.size = Vector3i.from(buf.readUnsignedByte(), buf.readUnsignedByte(), buf.readUnsignedByte());
+        this.mirror = StructureMirror.from(buf.readVarInt());
+        this.rotation = StructureRotation.from(buf.readVarInt());
+        this.metadata = buf.readString();
+        this.integrity = buf.readFloat();
+        this.seed = buf.readVarLong();
 
-        int flags = in.readUnsignedByte();
+        int flags = buf.readUnsignedByte();
         this.ignoreEntities = (flags & FLAG_IGNORE_ENTITIES) != 0;
         this.showAir = (flags & FLAG_SHOW_AIR) != 0;
         this.showBoundingBox = (flags & FLAG_SHOW_BOUNDING_BOX) != 0;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.position);
-        helper.writeVarInt(out, this.action.ordinal());
-        helper.writeVarInt(out, this.mode.ordinal());
-        helper.writeString(out, this.name);
-        out.writeByte(this.offset.getX());
-        out.writeByte(this.offset.getY());
-        out.writeByte(this.offset.getZ());
-        out.writeByte(this.size.getX());
-        out.writeByte(this.size.getY());
-        out.writeByte(this.size.getZ());
-        helper.writeVarInt(out, this.mirror.ordinal());
-        helper.writeVarInt(out, this.rotation.ordinal());
-        helper.writeString(out, this.metadata);
-        out.writeFloat(this.integrity);
-        helper.writeVarLong(out, this.seed);
+    public void serialize(MinecraftByteBuf buf) {
+        buf.writePosition(this.position);
+        buf.writeVarInt(this.action.ordinal());
+        buf.writeVarInt(this.mode.ordinal());
+        buf.writeString(this.name);
+        buf.writeByte(this.offset.getX());
+        buf.writeByte(this.offset.getY());
+        buf.writeByte(this.offset.getZ());
+        buf.writeByte(this.size.getX());
+        buf.writeByte(this.size.getY());
+        buf.writeByte(this.size.getZ());
+        buf.writeVarInt(this.mirror.ordinal());
+        buf.writeVarInt(this.rotation.ordinal());
+        buf.writeString(this.metadata);
+        buf.writeFloat(this.integrity);
+        buf.writeVarLong(this.seed);
 
         int flags = 0;
         if (this.ignoreEntities) {
@@ -86,6 +85,6 @@ public class ServerboundSetStructureBlockPacket implements MinecraftPacket {
             flags |= FLAG_SHOW_BOUNDING_BOX;
         }
 
-        out.writeByte(flags);
+        buf.writeByte(flags);
     }
 }

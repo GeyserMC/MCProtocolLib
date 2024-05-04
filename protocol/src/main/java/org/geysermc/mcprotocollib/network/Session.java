@@ -2,7 +2,8 @@ package org.geysermc.mcprotocollib.network;
 
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
+import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
@@ -71,14 +72,7 @@ public interface Session {
      *
      * @return The session's packet protocol.
      */
-    PacketProtocol getPacketProtocol();
-
-    /**
-     * Gets the session's {@link PacketCodecHelper}.
-     *
-     * @return The session's packet codec helper.
-     */
-    PacketCodecHelper getCodecHelper();
+    PacketProtocol<?> getPacketProtocol();
 
     /**
      * Gets this session's set flags. If this session belongs to a server, the server's
