@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.NonNull;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ByteMetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 

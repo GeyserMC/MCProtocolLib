@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data

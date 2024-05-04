@@ -46,28 +46,28 @@ public class TcpServer extends AbstractServer {
                 .childOption(ChannelOption.IP_TOS, 0x18)
                 .localAddress(this.getHost(), this.getPort())
                 .childHandler(new ChannelInitializer<>() {
-            @Override
-            public void initChannel(Channel channel) {
-                InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-                PacketProtocol<?> protocol = createPacketProtocol();
+                    @Override
+                    public void initChannel(Channel channel) {
+                        InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
+                        PacketProtocol<?> protocol = createPacketProtocol();
 
-                TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, TcpServer.this);
-                session.getPacketProtocol().newServerSession(TcpServer.this, session);
+                        TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, TcpServer.this);
+                        session.getPacketProtocol().newServerSession(TcpServer.this, session);
 
-                ChannelPipeline pipeline = channel.pipeline();
+                        ChannelPipeline pipeline = channel.pipeline();
 
-                session.refreshReadTimeoutHandler(channel);
-                session.refreshWriteTimeoutHandler(channel);
+                        session.refreshReadTimeoutHandler(channel);
+                        session.refreshWriteTimeoutHandler(channel);
 
-                int size = protocol.getPacketHeader().getLengthSize();
-                if (size > 0) {
-                    pipeline.addLast("sizer", new TcpPacketSizer(session, size));
-                }
+                        int size = protocol.getPacketHeader().getLengthSize();
+                        if (size > 0) {
+                            pipeline.addLast("sizer", new TcpPacketSizer(session, size));
+                        }
 
-                pipeline.addLast("codec", new TcpPacketCodec(session, false));
-                pipeline.addLast("manager", session);
-            }
-        });
+                        pipeline.addLast("codec", new TcpPacketCodec(session, false));
+                        pipeline.addLast("manager", session);
+                    }
+                });
 
         if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
             bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);

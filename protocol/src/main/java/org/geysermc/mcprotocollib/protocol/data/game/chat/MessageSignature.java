@@ -1,9 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chat;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 
 @Data
 @AllArgsConstructor

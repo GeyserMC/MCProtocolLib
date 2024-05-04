@@ -1,7 +1,5 @@
 package org.geysermc.mcprotocollib.network.codec;
 
-import io.netty.buffer.ByteBuf;
-
 public interface CodecByteBuf {
     void writeVarInt(int value);
 

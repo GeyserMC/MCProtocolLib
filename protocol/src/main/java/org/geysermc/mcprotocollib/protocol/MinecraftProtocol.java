@@ -1,8 +1,6 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -11,13 +9,14 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
 import org.geysermc.mcprotocollib.protocol.codec.PacketStateCodec;

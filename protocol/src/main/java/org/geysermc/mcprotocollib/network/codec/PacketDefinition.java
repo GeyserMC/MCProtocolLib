@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.network.codec;
 
-import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 
 /**

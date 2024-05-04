@@ -1,11 +1,9 @@
 package org.geysermc.mcprotocollib.network.example;
 
-import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.BaseCodecByteBuf;
 import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
-import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;

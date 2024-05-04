@@ -1,10 +1,10 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chunk.palette;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 
 import java.util.Arrays;
 

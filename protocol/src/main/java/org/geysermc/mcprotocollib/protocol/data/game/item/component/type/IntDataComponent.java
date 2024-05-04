@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component.type;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.NonNull;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.IntComponentType;

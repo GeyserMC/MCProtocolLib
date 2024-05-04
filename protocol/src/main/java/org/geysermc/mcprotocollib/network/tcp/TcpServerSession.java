@@ -2,8 +2,6 @@ package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.geysermc.mcprotocollib.network.Flag;
-import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
-import org.geysermc.mcprotocollib.network.codec.CodecByteBuf;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.util.HashMap;

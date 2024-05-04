@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;

@@ -1,16 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.geysermc.mcprotocollib.network.codec.ByteBufWrapper;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 
 import java.util.EnumMap;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PacketCodec {

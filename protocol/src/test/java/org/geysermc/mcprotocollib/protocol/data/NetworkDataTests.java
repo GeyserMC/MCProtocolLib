@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.data;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;

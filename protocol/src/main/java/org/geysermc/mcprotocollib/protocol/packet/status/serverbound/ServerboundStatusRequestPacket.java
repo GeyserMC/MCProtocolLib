@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.packet.status.serverbound;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data

@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftByteBuf;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.vector.Vector3f;

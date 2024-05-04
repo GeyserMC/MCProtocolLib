@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
 import io.netty.util.internal.ObjectUtil;
 import io.netty.util.internal.StringUtil;
-import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.io.InputStream;
