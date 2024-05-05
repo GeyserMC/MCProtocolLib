@@ -252,7 +252,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
             NbtType<?> type = NbtType.byId(typeId);
 
-            return new NBTInputStream(input).readValue(type);
+            return new NBTInputStream(input).readValue(type, 512);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -270,7 +270,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             NbtType<?> type = NbtType.byClass(tag.getClass());
             output.writeByte(type.getId());
 
-            new NBTOutputStream(output).writeValue(tag);
+            new NBTOutputStream(output).writeValue(tag, 512);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
