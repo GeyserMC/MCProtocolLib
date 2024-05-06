@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @AllArgsConstructor
 public class MobEffectDetails {
+    private final int mobEffectId;
     private final int amplifier;
     private final int duration;
     private final boolean ambient;
