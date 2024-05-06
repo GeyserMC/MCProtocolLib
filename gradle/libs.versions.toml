@@ -4,7 +4,7 @@ metadata.format.version = "1.1"
 
 adventure = "4.15.0"
 cloudburstnbt = "3.0.0.Final"
-mcauthlib = "6621fd0"
+mcauthlib = "e5b0bcc"
 math = "2.0"
 fastutil-maps = "8.5.3"
 netty = "4.1.103.Final"
