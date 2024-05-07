@@ -10,6 +10,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
@@ -313,18 +314,18 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public MobEffectDetails readEffectDetails(ByteBuf buf) {
-        int mobEffectId = this.readVarInt(buf);
+        Effect effect = this.readEffect(buf);
         int amplifier = this.readVarInt(buf);
         int duration = this.readVarInt(buf);
         boolean ambient = buf.readBoolean();
         boolean showParticles = buf.readBoolean();
         boolean showIcon = buf.readBoolean();
         MobEffectDetails hiddenEffect = this.readNullable(buf, this::readEffectDetails);
-        return new MobEffectDetails(mobEffectId, amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
+        return new MobEffectDetails(effect, amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
     }
 
     public void writeEffectDetails(ByteBuf buf, MobEffectDetails details) {
-        this.writeVarInt(buf, details.getMobEffectId());
+        this.writeEffect(buf, details.getEffect());
         this.writeVarInt(buf, details.getAmplifier());
         this.writeVarInt(buf, details.getDuration());
         buf.writeBoolean(details.isAmbient());
