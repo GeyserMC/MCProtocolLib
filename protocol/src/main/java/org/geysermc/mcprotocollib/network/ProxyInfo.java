@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.auth.util;
+package org.geysermc.mcprotocollib.network;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;

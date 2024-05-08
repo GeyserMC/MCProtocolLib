@@ -3,7 +3,7 @@ package org.geysermc.mcprotocollib.auth;
 import lombok.Getter;
 import lombok.Setter;
 import org.geysermc.mcprotocollib.auth.util.HTTPUtils;
-import org.geysermc.mcprotocollib.auth.util.ProxyInfo;
+import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.auth.util.UUIDUtils;
 
 import javax.crypto.SecretKey;
