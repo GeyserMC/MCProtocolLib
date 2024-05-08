@@ -82,12 +82,8 @@ public class GameProfile {
      * @param name Name of the profile.
      */
     public GameProfile(UUID id, String name) {
-        if (id == null && (name == null || name.isEmpty())) {
-            throw new IllegalArgumentException("Name and ID cannot both be blank");
-        } else {
-            this.id = id;
-            this.name = name;
-        }
+        this.id = id;
+        this.name = name;
     }
 
     /**
