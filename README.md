@@ -85,7 +85,7 @@ You can find the Javadocs for MCProtocolLib [on opencollab](https://ci.opencolla
 
 ## Building the Source
 
-MCProtocolLib uses Maven to manage dependencies. To build the source code, run `mvn clean install` in the project root directory.
+MCProtocolLib uses Gradle to manage dependencies. To build the source code, run `./gradlew clean build` in the project root directory.
 
 ## Support and Development
 
@@ -93,4 +93,4 @@ Please join [the GeyserMC Discord server](https://discord.gg/geysermc) and visit
 
 ## License
 
-MCProtocolLib is licensed under the **[MIT license](https://opensource.org/license/mit/)**.
+MCProtocolLib is licensed under the **[MIT license](https://opensource.org/license/mit)**.

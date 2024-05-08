@@ -10,6 +10,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
@@ -255,10 +256,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int potionId = buf.readBoolean() ? this.readVarInt(buf) : -1;
         int customColor = buf.readBoolean() ? buf.readInt() : -1;
 
-        Int2ObjectMap<MobEffectDetails> customEffects = new Int2ObjectOpenHashMap<>();
+        List<MobEffectDetails> customEffects = new ArrayList<>();
         int effectCount = this.readVarInt(buf);
         for (int i = 0; i < effectCount; i++) {
-            customEffects.put(this.readVarInt(buf), this.readEffectDetails(buf));
+            customEffects.add(this.readEffectDetails(buf));
         }
         return new PotionContents(potionId, customColor, customEffects);
     }
@@ -279,9 +280,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
 
         this.writeVarInt(buf, contents.getCustomEffects().size());
-        for (Int2ObjectMap.Entry<MobEffectDetails> entry : contents.getCustomEffects().int2ObjectEntrySet()) {
-            this.writeVarInt(buf, entry.getIntKey());
-            this.writeEffectDetails(buf, entry.getValue());
+        for (MobEffectDetails customEffect : contents.getCustomEffects()) {
+            this.writeEffectDetails(buf, customEffect);
         }
     }
 
@@ -314,16 +314,18 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public MobEffectDetails readEffectDetails(ByteBuf buf) {
+        Effect effect = this.readEffect(buf);
         int amplifier = this.readVarInt(buf);
         int duration = this.readVarInt(buf);
         boolean ambient = buf.readBoolean();
         boolean showParticles = buf.readBoolean();
         boolean showIcon = buf.readBoolean();
         MobEffectDetails hiddenEffect = this.readNullable(buf, this::readEffectDetails);
-        return new MobEffectDetails(amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
+        return new MobEffectDetails(effect, amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
     }
 
     public void writeEffectDetails(ByteBuf buf, MobEffectDetails details) {
+        this.writeEffect(buf, details.getEffect());
         this.writeVarInt(buf, details.getAmplifier());
         this.writeVarInt(buf, details.getDuration());
         buf.writeBoolean(details.isAmbient());
