@@ -22,7 +22,6 @@ dependencyResolutionManagement {
 rootProject.name = "mcprotocollib"
 
 include(
-    "auth",
     "protocol",
     "example"
 )
