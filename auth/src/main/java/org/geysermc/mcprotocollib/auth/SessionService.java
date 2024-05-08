@@ -2,15 +2,12 @@ package org.geysermc.mcprotocollib.auth;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.geysermc.mcprotocollib.auth.exception.profile.ProfileException;
-import org.geysermc.mcprotocollib.auth.exception.profile.ProfileLookupException;
-import org.geysermc.mcprotocollib.auth.exception.profile.ProfileNotFoundException;
-import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
 import org.geysermc.mcprotocollib.auth.util.HTTPUtils;
 import org.geysermc.mcprotocollib.auth.util.ProxyInfo;
 import org.geysermc.mcprotocollib.auth.util.UUIDUtils;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -59,9 +56,9 @@ public class SessionService {
      * @param profile Profile to join the server with.
      * @param authenticationToken Authentication token to join the server with.
      * @param serverId ID of the server to join.
-     * @throws RequestException If an error occurs while making the request.
+     * @throws IOException If an error occurs while making the request.
      */
-    public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws RequestException {
+    public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws IOException {
         JoinServerRequest request = new JoinServerRequest(authenticationToken, profile.getId(), serverId);
         HTTPUtils.makeRequest(this.getProxy(), JOIN_ENDPOINT, request, null);
     }
@@ -72,9 +69,9 @@ public class SessionService {
      * @param name Name of the user to get the profile of.
      * @param serverId ID of the server to check if they're logged in to.
      * @return The profile of the given user, or null if they are not logged in to the given server.
-     * @throws RequestException If an error occurs while making the request.
+     * @throws IOException If an error occurs while making the request.
      */
-    public GameProfile getProfileByServer(String name, String serverId) throws RequestException {
+    public GameProfile getProfileByServer(String name, String serverId) throws IOException {
         HasJoinedResponse response = HTTPUtils.makeRequest(this.getProxy(),
                 URI.create(String.format(HAS_JOINED_ENDPOINT,
                         URLEncoder.encode(name, StandardCharsets.UTF_8),
@@ -93,23 +90,19 @@ public class SessionService {
      * Fills in the properties of a profile.
      *
      * @param profile Profile to fill in the properties of.
-     * @throws ProfileException If the property lookup fails.
+     * @throws IOException If the property lookup fails.
      */
-    public void fillProfileProperties(GameProfile profile) throws ProfileException {
+    public void fillProfileProperties(GameProfile profile) throws IOException {
         if (profile.getId() == null) {
             return;
         }
 
-        try {
-            MinecraftProfileResponse response = HTTPUtils.makeRequest(this.getProxy(), URI.create(String.format(PROFILE_ENDPOINT, UUIDUtils.convertToNoDashes(profile.getId()))), null, MinecraftProfileResponse.class);
-            if (response == null) {
-                throw new ProfileNotFoundException("Couldn't fetch profile properties for " + profile + " as the profile does not exist.");
-            }
-
-            profile.setProperties(response.properties);
-        } catch (RequestException e) {
-            throw new ProfileLookupException("Couldn't look up profile properties for " + profile + ".", e);
+        MinecraftProfileResponse response = HTTPUtils.makeRequest(this.getProxy(), URI.create(String.format(PROFILE_ENDPOINT, UUIDUtils.convertToNoDashes(profile.getId()))), null, MinecraftProfileResponse.class);
+        if (response == null) {
+            throw new IllegalStateException("Couldn't fetch profile properties for " + profile + " as the profile does not exist.");
         }
+
+        profile.setProperties(response.properties);
     }
 
     @Override

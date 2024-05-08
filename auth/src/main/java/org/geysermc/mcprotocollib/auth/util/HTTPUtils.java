@@ -12,8 +12,6 @@ import net.lenni0451.commons.httpclient.proxy.ProxyType;
 import net.lenni0451.commons.httpclient.requests.HttpContentRequest;
 import net.lenni0451.commons.httpclient.requests.HttpRequest;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.exception.request.ServiceUnavailableException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,14 +30,13 @@ public class HTTPUtils {
     private HTTPUtils() {
     }
 
-    public static <T> T makeRequest(@Nullable ProxyInfo proxy, URI uri, Object input, Class<T> responseType) throws RequestException {
+    public static <T> T makeRequest(@Nullable ProxyInfo proxy, URI uri, Object input, Class<T> responseType) throws IOException {
         if (proxy == null) {
             throw new IllegalArgumentException("Proxy cannot be null.");
         } else if (uri == null) {
             throw new IllegalArgumentException("URI cannot be null.");
         }
 
-        try {
             HttpResponse response = createHttpClient(proxy).execute(input == null ? new HttpRequest("GET", uri.toURL()) :
                     new HttpContentRequest("POST", uri.toURL()).setContent(HttpContent.string(GSON.toJson(input))));
 
@@ -48,9 +45,6 @@ public class HTTPUtils {
             }
 
             return GSON.fromJson(new InputStreamReader(new ByteArrayInputStream(response.getContent())), responseType);
-        } catch (IOException e) {
-            throw new ServiceUnavailableException("Could not make request to '" + uri + "'.", e);
-        }
     }
 
     public static HttpClient createHttpClient(@Nullable ProxyInfo proxy) {

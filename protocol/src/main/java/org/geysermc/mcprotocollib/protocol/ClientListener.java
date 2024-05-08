@@ -5,8 +5,6 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
-import org.geysermc.mcprotocollib.auth.exception.request.RequestException;
-import org.geysermc.mcprotocollib.auth.exception.request.ServiceUnavailableException;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
@@ -43,6 +41,7 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
@@ -80,10 +79,7 @@ public class ClientListener extends SessionAdapter {
                 String serverId = SessionService.getServerId(helloPacket.getServerId(), helloPacket.getPublicKey(), key);
                 try {
                     sessionService.joinServer(profile, accessToken, serverId);
-                } catch (ServiceUnavailableException e) {
-                    session.disconnect("Login failed: Authentication service unavailable.", e);
-                    return;
-                } catch (RequestException e) {
+                } catch (IOException e) {
                     session.disconnect("Login failed: Authentication error: " + e.getMessage(), e);
                     return;
                 }

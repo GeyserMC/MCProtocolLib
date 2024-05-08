@@ -2,9 +2,6 @@ package org.geysermc.mcprotocollib.auth;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.geysermc.mcprotocollib.auth.exception.property.ProfileTextureException;
-import org.geysermc.mcprotocollib.auth.exception.property.PropertyException;
-import org.geysermc.mcprotocollib.auth.exception.property.SignatureValidateException;
 import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
 
 import java.io.InputStream;
@@ -183,9 +180,9 @@ public class GameProfile {
      * Gets an immutable map of texture types to textures contained in the profile.
      *
      * @return The profile's textures.
-     * @throws PropertyException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
-    public Map<TextureType, Texture> getTextures() throws PropertyException {
+    public Map<TextureType, Texture> getTextures() throws IllegalStateException {
         return this.getTextures(true);
     }
 
@@ -194,19 +191,19 @@ public class GameProfile {
      *
      * @param requireSecure Whether to require the profile's texture payload to be securely signed.
      * @return The profile's textures.
-     * @throws PropertyException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
-    public Map<TextureType, Texture> getTextures(boolean requireSecure) throws PropertyException {
+    public Map<TextureType, Texture> getTextures(boolean requireSecure) throws IllegalStateException {
         if (this.textures == null || (requireSecure && !this.texturesVerified)) {
             GameProfile.Property textures = this.getProperty("textures");
             if (textures != null) {
                 if (requireSecure) {
                     if (!textures.hasSignature()) {
-                        throw new ProfileTextureException("Signature is missing from textures payload.");
+                        throw new IllegalStateException("Signature is missing from textures payload.");
                     }
 
                     if (!textures.isSignatureValid(SIGNATURE_KEY)) {
-                        throw new ProfileTextureException("Textures payload has been tampered with. (signature invalid)");
+                        throw new IllegalStateException("Textures payload has been tampered with. (signature invalid)");
                     }
                 }
 
@@ -215,14 +212,14 @@ public class GameProfile {
                     String json = new String(Base64.getDecoder().decode(textures.getValue().getBytes(StandardCharsets.UTF_8)));
                     result = GSON.fromJson(json, MinecraftTexturesPayload.class);
                 } catch (Exception e) {
-                    throw new ProfileTextureException("Could not decode texture payload.", e);
+                    throw new IllegalStateException("Could not decode texture payload.", e);
                 }
 
                 if (result != null && result.textures != null) {
                     if (requireSecure) {
                         for (GameProfile.Texture texture : result.textures.values()) {
                             if (!isWhitelistedDomain(texture.getURL())) {
-                                throw new ProfileTextureException("Textures payload has been tampered with. (non-whitelisted domain)");
+                                throw new IllegalStateException("Textures payload has been tampered with. (non-whitelisted domain)");
                             }
                         }
                     }
@@ -246,9 +243,9 @@ public class GameProfile {
      *
      * @param type Type of texture to get.
      * @return The texture of the specified type.
-     * @throws PropertyException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
-    public Texture getTexture(TextureType type) throws PropertyException {
+    public Texture getTexture(TextureType type) throws IllegalStateException {
         return this.getTextures().get(type);
     }
 
@@ -258,9 +255,9 @@ public class GameProfile {
      * @param type Type of texture to get.
      * @param requireSecure Whether to require the profile's texture payload to be securely signed.
      * @return The texture of the specified type.
-     * @throws PropertyException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
-    public Texture getTexture(TextureType type, boolean requireSecure) throws PropertyException {
+    public Texture getTexture(TextureType type, boolean requireSecure) throws IllegalStateException {
         return this.getTextures(requireSecure).get(type);
     }
 
@@ -360,9 +357,9 @@ public class GameProfile {
          *
          * @param key Public key to validate the signature against.
          * @return Whether the signature is valid.
-         * @throws SignatureValidateException If the signature could not be validated.
+         * @throws IllegalStateException If the signature could not be validated.
          */
-        public boolean isSignatureValid(PublicKey key) throws SignatureValidateException {
+        public boolean isSignatureValid(PublicKey key) throws IllegalStateException {
             if (!this.hasSignature()) {
                 return false;
             }
@@ -371,9 +368,9 @@ public class GameProfile {
                 Signature sig = Signature.getInstance("SHA1withRSA");
                 sig.initVerify(key);
                 sig.update(this.value.getBytes());
-                return sig.verify(Base64.getDecoder().decode(this.signature.getBytes("UTF-8")));
+                return sig.verify(Base64.getDecoder().decode(this.signature.getBytes(StandardCharsets.UTF_8)));
             } catch (Exception e) {
-                throw new SignatureValidateException("Could not validate property signature.", e);
+                throw new IllegalStateException("Could not validate property signature.", e);
             }
         }
 
