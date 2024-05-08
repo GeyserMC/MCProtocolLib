@@ -20,6 +20,8 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -29,6 +31,7 @@ import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MinecraftProtocolTest {
+    private static final Logger log = LoggerFactory.getLogger(MinecraftProtocolTest.class);
     private static final String HOST = "localhost";
     private static final int PORT = 25562;
 
@@ -48,14 +51,14 @@ public class MinecraftProtocolTest {
         server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
         server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
-        server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, (ServerInfoBuilder) session -> SERVER_INFO);
-        server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, (ServerLoginHandler) session -> {
+        server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, session -> SERVER_INFO);
+        server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, session -> {
             // Seems like in this setup the server can reply too quickly to ServerboundFinishConfigurationPacket
             // before the client can transition CONFIGURATION -> GAME. There is probably something wrong here and this is just a band-aid.
             try {
                 Thread.sleep(100);
             } catch (Exception e) {
-                System.err.println("Failed to wait to send ClientboundLoginPacket: " + e.getMessage());
+                log.error("Failed to wait to send ClientboundLoginPacket: {}", e.getMessage());
             }
             session.send(JOIN_GAME_PACKET);
         });
@@ -132,10 +135,7 @@ public class MinecraftProtocolTest {
     private static class DisconnectListener extends SessionAdapter {
         @Override
         public void disconnected(DisconnectedEvent event) {
-            System.err.println("Disconnected: " + event.getReason());
-            if (event.getCause() != null) {
-                event.getCause().printStackTrace();
-            }
+            log.error("Disconnected: {}", event.getReason(), event.getCause());
         }
     }
 }
