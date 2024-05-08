@@ -38,14 +38,14 @@ public class HTTPUtils {
             throw new IllegalArgumentException("URI cannot be null.");
         }
 
-            HttpResponse response = createHttpClient(proxy).execute(input == null ? new HttpRequest("GET", uri.toURL()) :
-                    new HttpContentRequest("POST", uri.toURL()).setContent(HttpContent.string(GSON.toJson(input))));
+        HttpResponse response = createHttpClient(proxy).execute(input == null ? new HttpRequest("GET", uri.toURL()) :
+                new HttpContentRequest("POST", uri.toURL()).setContent(HttpContent.string(GSON.toJson(input))));
 
-            if (responseType == null) {
-                return null;
-            }
+        if (responseType == null) {
+            return null;
+        }
 
-            return GSON.fromJson(new InputStreamReader(new ByteArrayInputStream(response.getContent())), responseType);
+        return GSON.fromJson(new InputStreamReader(new ByteArrayInputStream(response.getContent())), responseType);
     }
 
     public static HttpClient createHttpClient(@Nullable ProxyInfo proxy) {
