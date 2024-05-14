@@ -20,7 +20,7 @@ pipeline {
 
             steps {
                 sh './gradlew javadoc'
-                step([$class: 'JavadocArchiver', javadocDir: 'build/docs/javadoc', keepAll: false])
+                step([$class: 'JavadocArchiver', javadocDir: 'protocol/build/docs/javadoc', keepAll: false])
             }
         }
     }
