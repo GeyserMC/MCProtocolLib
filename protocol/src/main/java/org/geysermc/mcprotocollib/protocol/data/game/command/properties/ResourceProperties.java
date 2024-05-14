@@ -8,6 +8,6 @@ public class ResourceProperties implements CommandProperties {
     private final Key registryKey;
 
     public ResourceProperties(String registryKey) {
-        this.registryKey = ResourceLocation.fromString(registryKey);
+        this.registryKey = Key.key(registryKey);
     }
 }

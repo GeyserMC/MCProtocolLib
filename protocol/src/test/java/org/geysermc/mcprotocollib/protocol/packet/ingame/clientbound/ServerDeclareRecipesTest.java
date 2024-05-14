@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.CraftingBookCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
@@ -21,7 +22,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                         new Recipe[]{
                                 new Recipe(
                                         RecipeType.CRAFTING_SHAPELESS,
-                                        ResourceLocation.fromString("minecraft:Recipe1"),
+                                        Key.key("minecraft:recipe1"),
                                         new ShapelessRecipeData(
                                                 "Group1",
                                                 CraftingBookCategory.MISC,
@@ -35,7 +36,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.CRAFTING_SHAPED,
-                                        ResourceLocation.fromString("minecraft:Recipe2"),
+                                        Key.key("minecraft:recipe2"),
                                         new ShapedRecipeData(
                                                 2,
                                                 3,
@@ -67,7 +68,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.SMELTING,
-                                        ResourceLocation.fromString("minecraft:Recipe3"),
+                                        Key.key("minecraft:recipe3"),
                                         new CookedRecipeData(
                                                 "Group3",
                                                 CraftingBookCategory.EQUIPMENT,
@@ -81,7 +82,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.STONECUTTING,
-                                        ResourceLocation.fromString("minecraft:Recipe4"),
+                                        Key.key("minecraft:recipe4"),
                                         new StoneCuttingRecipeData(
                                                 "Group4",
                                                 new Ingredient(new ItemStack[]{
@@ -93,7 +94,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                                 ),
                                 new Recipe(
                                         RecipeType.SMITHING_TRANSFORM,
-                                        ResourceLocation.fromString("minecraft:Recipe5"),
+                                        Key.key("minecraft:recipe5"),
                                         new SmithingTransformRecipeData(
                                                 new Ingredient(new ItemStack[]{
                                                         new ItemStack(10)
