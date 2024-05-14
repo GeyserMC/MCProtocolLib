@@ -558,7 +558,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public PlayerSpawnInfo readPlayerSpawnInfo(ByteBuf buf) {
         int dimension = this.readVarInt(buf);
-        String worldName = this.readString(buf);
+        Key worldName = this.readResourceLocation(buf);
         long hashedSeed = buf.readLong();
         GameMode gameMode = GameMode.byId(buf.readByte());
         GameMode previousGamemode = GameMode.byNullableId(buf.readByte());
@@ -571,7 +571,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
         this.writeVarInt(buf, info.getDimension());
-        this.writeString(buf, info.getWorldName());
+        this.writeResourceLocation(buf, info.getWorldName());
         buf.writeLong(info.getHashedSeed());
         buf.writeByte(info.getGameMode().ordinal());
         buf.writeByte(GameMode.toNullableId(info.getPreviousGamemode()));
