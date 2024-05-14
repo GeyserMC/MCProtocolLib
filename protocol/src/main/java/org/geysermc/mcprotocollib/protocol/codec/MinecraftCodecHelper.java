@@ -20,7 +20,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
-import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
+import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.FixedFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
@@ -144,12 +144,12 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public String readResourceLocation(ByteBuf buf) {
-        return Identifier.formalize(this.readString(buf));
+    public ResourceLocation readResourceLocation(ByteBuf buf) {
+        return ResourceLocation.fromString(this.readString(buf));
     }
 
-    public void writeResourceLocation(ByteBuf buf, String location) {
-        this.writeString(buf, location);
+    public void writeResourceLocation(ByteBuf buf, ResourceLocation location) {
+        this.writeString(buf, location.toString());
     }
 
     public UUID readUUID(ByteBuf buf) {
@@ -546,13 +546,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public GlobalPos readGlobalPos(ByteBuf buf) {
-        String dimension = Identifier.formalize(this.readString(buf));
+        ResourceLocation dimension = ResourceLocation.fromString(this.readString(buf));
         Vector3i pos = this.readPosition(buf);
         return new GlobalPos(dimension, pos);
     }
 
     public void writeGlobalPos(ByteBuf buf, GlobalPos pos) {
-        this.writeString(buf, pos.getDimension());
+        this.writeResourceLocation(buf, pos.getDimension());
         this.writePosition(buf, pos.getPosition());
     }
 

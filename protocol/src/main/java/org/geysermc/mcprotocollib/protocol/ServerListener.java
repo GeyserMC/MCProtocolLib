@@ -14,6 +14,7 @@ import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
+import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.geysermc.mcprotocollib.protocol.data.status.PlayerInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.ServerStatusInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
@@ -137,11 +138,11 @@ public class ServerListener extends SessionAdapter {
                 // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
                 for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
                     NbtMap entryTag = (NbtMap) entry.getValue();
-                    String typeTag = entryTag.getString("type");
+                    ResourceLocation typeTag = ResourceLocation.fromString(entryTag.getString("type"));
                     List<NbtMap> valueTag = entryTag.getList("value", NbtType.COMPOUND);
                     List<RegistryEntry> entries = new ArrayList<>();
                     for (NbtMap compoundTag : valueTag) {
-                        String nameTag = compoundTag.getString("name");
+                        ResourceLocation nameTag = ResourceLocation.fromString(compoundTag.getString("name"));
                         int id = compoundTag.getInt("id");
                         entries.add(id, new RegistryEntry(nameTag, compoundTag.getCompound("element")));
                     }

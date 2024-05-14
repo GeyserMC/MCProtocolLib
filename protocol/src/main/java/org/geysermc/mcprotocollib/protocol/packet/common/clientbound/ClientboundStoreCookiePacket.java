@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundStoreCookiePacket implements MinecraftPacket {
-    private final String key;
+    private final ResourceLocation key;
     private final byte[] payload;
 
     public ClientboundStoreCookiePacket(ByteBuf in, MinecraftCodecHelper helper) {

@@ -6,13 +6,14 @@ import lombok.Data;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ServerboundCookieResponsePacket implements MinecraftPacket {
-    private final String key;
+    private final ResourceLocation key;
     private final byte @Nullable [] payload;
 
     public ServerboundCookieResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {

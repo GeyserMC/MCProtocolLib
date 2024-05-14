@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chat;
 
-import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
+import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -15,19 +15,19 @@ public enum BuiltinChatType {
     TEAM_MSG_COMMAND_OUTGOING,
     EMOTE_COMMAND;
 
-    private final String resourceLocation;
+    private final ResourceLocation resourceLocation;
 
     BuiltinChatType() {
-        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
+        this.resourceLocation = ResourceLocation.fromString(name().toLowerCase(Locale.ROOT));
     }
 
-    public String getResourceLocation() {
+    public ResourceLocation getResourceLocation() {
         return resourceLocation;
     }
 
-    private static final Map<String, BuiltinChatType> VALUES = new HashMap<>();
+    private static final Map<ResourceLocation, BuiltinChatType> VALUES = new HashMap<>();
 
-    public static BuiltinChatType from(String resourceLocation) {
+    public static BuiltinChatType from(ResourceLocation resourceLocation) {
         return VALUES.get(resourceLocation);
     }
 

@@ -10,6 +10,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
+import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
@@ -92,7 +93,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public AdventureModePredicate.BlockPredicate readBlockPredicate(ByteBuf buf) {
-        String location = null;
+        ResourceLocation location = null;
         int[] holders = null;
         List<AdventureModePredicate.PropertyMatcher> propertyMatchers = null;
 
@@ -164,7 +165,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         List<ToolData.Rule> rules = new ArrayList<>();
         int ruleCount = this.readVarInt(buf);
         for (int i = 0; i < ruleCount; i++) {
-            String location = null;
+            ResourceLocation location = null;
             int[] holders = null;
 
             int length = this.readVarInt(buf) - 1;
@@ -431,7 +432,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public ArmorTrim.TrimPattern readTrimPattern(ByteBuf buf) {
-        String assetId = this.readResourceLocation(buf);
+        ResourceLocation assetId = this.readResourceLocation(buf);
         int templateItemId = this.readVarInt(buf);
         Component description = this.readComponent(buf);
         boolean decal = buf.readBoolean();
