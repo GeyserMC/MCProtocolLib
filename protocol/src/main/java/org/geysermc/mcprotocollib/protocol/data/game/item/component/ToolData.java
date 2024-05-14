@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class ToolData {
     @Data
     @AllArgsConstructor
     public static class Rule {
-        private final @Nullable ResourceLocation location;
+        private final @Nullable Key location;
         private final int @Nullable [] holders;
         private final @Nullable Float speed;
         private final @Nullable Boolean correctForDrops;

@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.CraftingBookCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;

@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandNode;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandParser;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandType;
@@ -68,7 +68,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
             CommandParser parser = null;
             CommandProperties properties = null;
-            ResourceLocation suggestionType = null;
+            Key suggestionType = null;
             if (type == CommandType.ARGUMENT) {
                 parser = CommandParser.from(helper.readVarInt(in));
                 switch (parser) {

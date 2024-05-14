@@ -4,10 +4,10 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import net.kyori.adventure.key.Key;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
 
 @Data
@@ -18,7 +18,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     private static final int FLAG_SOUND = 0x02;
 
     private final @Nullable SoundCategory category;
-    private final @Nullable ResourceLocation sound;
+    private final @Nullable Key sound;
 
     public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) {
         int flags = in.readByte();

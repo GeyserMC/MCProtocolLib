@@ -3,7 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.command;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.data.game.command.properties.CommandProperties;
 
 import java.util.OptionalInt;
@@ -50,5 +50,5 @@ public class CommandNode {
      * Suggestions type, if present.
      * See {@link SuggestionType} for vanilla defaults.
      */
-    private final ResourceLocation suggestionType;
+    private final Key suggestionType;
 }

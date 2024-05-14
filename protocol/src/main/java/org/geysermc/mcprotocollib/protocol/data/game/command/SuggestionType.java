@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.command;
 
+import net.kyori.adventure.key.Key;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,20 +13,20 @@ public enum SuggestionType {
     AVAILABLE_SOUNDS,
     SUMMONABLE_ENTITIES;
 
-    private final ResourceLocation resourceLocation;
+    private final Key resourceLocation;
 
     SuggestionType() {
-        this.resourceLocation = ResourceLocation.fromString(name().toLowerCase(Locale.ROOT));
+        this.resourceLocation = Key.key(name().toLowerCase(Locale.ROOT));
     }
 
-    public ResourceLocation getResourceLocation() {
+    public Key getResourceLocation() {
         return resourceLocation;
     }
 
-    private static final Map<ResourceLocation, SuggestionType> VALUES = new HashMap<>();
+    private static final Map<Key, SuggestionType> VALUES = new HashMap<>();
 
     @NonNull
-    public static SuggestionType from(ResourceLocation resourceLocation) {
+    public static SuggestionType from(Key resourceLocation) {
         // Vanilla behavior as of 1.19.3
         // 1.16.5 still has AVAILABLE_BIOMES and vanilla doesn't care
         return VALUES.getOrDefault(resourceLocation, ASK_SERVER);

@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -20,7 +21,6 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
-import org.geysermc.mcprotocollib.protocol.data.game.ResourceLocation;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.FixedFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
@@ -144,11 +144,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public ResourceLocation readResourceLocation(ByteBuf buf) {
-        return ResourceLocation.fromString(this.readString(buf));
+    public Key readResourceLocation(ByteBuf buf) {
+        return Key.key(this.readString(buf));
     }
 
-    public void writeResourceLocation(ByteBuf buf, ResourceLocation location) {
+    public void writeResourceLocation(ByteBuf buf, Key location) {
         this.writeString(buf, location.toString());
     }
 
@@ -546,7 +546,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public GlobalPos readGlobalPos(ByteBuf buf) {
-        ResourceLocation dimension = ResourceLocation.fromString(this.readString(buf));
+        Key dimension = readResourceLocation(buf);
         Vector3i pos = this.readPosition(buf);
         return new GlobalPos(dimension, pos);
     }
