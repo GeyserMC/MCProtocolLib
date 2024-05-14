@@ -95,7 +95,7 @@ public class TcpServer extends AbstractServer {
                         callback.run();
                     }
                 } else {
-                    log.error("[ERROR] Failed to asynchronously bind connection listener.", future1.cause());
+                    log.error("Failed to asynchronously bind connection listener.", future1.cause());
                 }
             });
         }
@@ -122,7 +122,7 @@ public class TcpServer extends AbstractServer {
                                 callback.run();
                             }
                         } else {
-                            log.error("[ERROR] Failed to asynchronously close connection listener.", future1.cause());
+                            log.error("Failed to asynchronously close connection listener.", future1.cause());
                         }
                     });
                 }
