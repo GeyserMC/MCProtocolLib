@@ -144,6 +144,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
+    @SuppressWarnings("PatternValidation")
     public Key readResourceLocation(ByteBuf buf) {
         return Key.key(this.readString(buf));
     }

@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chat;
 
 import net.kyori.adventure.key.Key;
+import org.intellij.lang.annotations.Subst;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -18,7 +19,8 @@ public enum BuiltinChatType {
     private final Key resourceLocation;
 
     BuiltinChatType() {
-        this.resourceLocation = Key.key(name().toLowerCase(Locale.ROOT));
+        @Subst("empty") String lowerCase = name().toLowerCase(Locale.ROOT);
+        this.resourceLocation = Key.key(lowerCase);
     }
 
     public Key getResourceLocation() {

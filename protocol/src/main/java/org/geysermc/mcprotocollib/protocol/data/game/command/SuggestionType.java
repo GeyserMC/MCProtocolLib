@@ -2,6 +2,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.command;
 
 import net.kyori.adventure.key.Key;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.intellij.lang.annotations.Subst;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,7 +17,8 @@ public enum SuggestionType {
     private final Key resourceLocation;
 
     SuggestionType() {
-        this.resourceLocation = Key.key(name().toLowerCase(Locale.ROOT));
+        @Subst("empty") String lowerCase = name().toLowerCase(Locale.ROOT);
+        this.resourceLocation = Key.key(lowerCase);
     }
 
     public Key getResourceLocation() {
