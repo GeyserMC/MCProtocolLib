@@ -26,12 +26,11 @@ public class ServerboundChatPacket implements MinecraftPacket {
         this.message = helper.readString(in);
         this.timeStamp = in.readLong();
         this.salt = in.readLong();
-        if (in.readBoolean()) {
-            this.signature = new byte[256];
-            in.readBytes(this.signature);
-        } else {
-            this.signature = null;
-        }
+        this.signature = helper.readNullable(in, inBuf -> {
+            byte[] signature = new byte[256];
+            inBuf.readBytes(signature);
+            return signature;
+        });
 
         this.offset = helper.readVarInt(in);
         this.acknowledgedMessages = helper.readFixedBitSet(in, 20);
@@ -42,10 +41,7 @@ public class ServerboundChatPacket implements MinecraftPacket {
         helper.writeString(out, this.message);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);
-        out.writeBoolean(this.signature != null);
-        if (this.signature != null) {
-            out.writeBytes(this.signature);
-        }
+        helper.writeNullable(out, this.signature, ByteBuf::writeBytes);
 
         helper.writeVarInt(out, this.offset);
         helper.writeFixedBitSet(out, this.acknowledgedMessages, 20);
