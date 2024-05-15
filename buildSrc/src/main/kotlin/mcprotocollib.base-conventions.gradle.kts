@@ -18,6 +18,10 @@ indra {
     }
 }
 
+tasks.withType<Sign>().configureEach {
+    onlyIf { false }
+}
+
 lombok {
     version = libs.versions.lombok.version.get()
 }
