@@ -7,7 +7,7 @@ import net.kyori.adventure.key.Key;
 public class ResourceProperties implements CommandProperties {
     private final Key registryKey;
 
-    public ResourceProperties(String registryKey) {
-        this.registryKey = Key.key(registryKey);
+    public ResourceProperties(Key registryKey) {
+        this.registryKey = registryKey;
     }
 }
