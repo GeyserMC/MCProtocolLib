@@ -10,5 +10,5 @@ import java.util.List;
 public class PotionContents {
     private final int potionId;
     private final int customColor;
-    private final List<MobEffectDetails> customEffects;
+    private final List<MobEffectInstance> customEffects;
 }

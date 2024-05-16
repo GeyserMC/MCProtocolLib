@@ -256,10 +256,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int potionId = buf.readBoolean() ? this.readVarInt(buf) : -1;
         int customColor = buf.readBoolean() ? buf.readInt() : -1;
 
-        List<MobEffectDetails> customEffects = new ArrayList<>();
+        List<MobEffectInstance> customEffects = new ArrayList<>();
         int effectCount = this.readVarInt(buf);
         for (int i = 0; i < effectCount; i++) {
-            customEffects.add(this.readEffectDetails(buf));
+            customEffects.add(this.readEffectInstance(buf));
         }
         return new PotionContents(potionId, customColor, customEffects);
     }
@@ -280,8 +280,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
 
         this.writeVarInt(buf, contents.getCustomEffects().size());
-        for (MobEffectDetails customEffect : contents.getCustomEffects()) {
-            this.writeEffectDetails(buf, customEffect);
+        for (MobEffectInstance customEffect : contents.getCustomEffects()) {
+            this.writeEffectInstance(buf, customEffect);
         }
     }
 
@@ -294,7 +294,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         List<FoodProperties.PossibleEffect> effects = new ArrayList<>();
         int effectCount = this.readVarInt(buf);
         for (int i = 0; i < effectCount; i++) {
-            effects.add(new FoodProperties.PossibleEffect(this.readEffectDetails(buf), buf.readFloat()));
+            effects.add(new FoodProperties.PossibleEffect(this.readEffectInstance(buf), buf.readFloat()));
         }
 
         return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, effects);
@@ -308,24 +308,32 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
         this.writeVarInt(buf, properties.getEffects().size());
         for (FoodProperties.PossibleEffect effect : properties.getEffects()) {
-            this.writeEffectDetails(buf, effect.getEffect());
+            this.writeEffectInstance(buf, effect.getEffect());
             buf.writeFloat(effect.getProbability());
         }
     }
 
-    public MobEffectDetails readEffectDetails(ByteBuf buf) {
+    public MobEffectInstance readEffectInstance(ByteBuf buf) {
         Effect effect = this.readEffect(buf);
+        return new MobEffectInstance(effect, this.readEffectDetails(buf));
+    }
+
+    public MobEffectDetails readEffectDetails(ByteBuf buf) {
         int amplifier = this.readVarInt(buf);
         int duration = this.readVarInt(buf);
         boolean ambient = buf.readBoolean();
         boolean showParticles = buf.readBoolean();
         boolean showIcon = buf.readBoolean();
         MobEffectDetails hiddenEffect = this.readNullable(buf, this::readEffectDetails);
-        return new MobEffectDetails(effect, amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
+        return new MobEffectDetails(amplifier, duration, ambient, showParticles, showIcon, hiddenEffect);
+    }
+
+    public void writeEffectInstance(ByteBuf buf, MobEffectInstance instance) {
+        this.writeEffect(buf, instance.getEffect());
+        this.writeEffectDetails(buf, instance.getDetails());
     }
 
     public void writeEffectDetails(ByteBuf buf, MobEffectDetails details) {
-        this.writeEffect(buf, details.getEffect());
         this.writeVarInt(buf, details.getAmplifier());
         this.writeVarInt(buf, details.getDuration());
         buf.writeBoolean(details.isAmbient());
