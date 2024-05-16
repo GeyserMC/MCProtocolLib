@@ -26,9 +26,9 @@ public class ServerboundChatPacket implements MinecraftPacket {
         this.message = helper.readString(in);
         this.timeStamp = in.readLong();
         this.salt = in.readLong();
-        this.signature = helper.readNullable(in, inBuf -> {
+        this.signature = helper.readNullable(in, buf -> {
             byte[] signature = new byte[256];
-            inBuf.readBytes(signature);
+            buf.readBytes(signature);
             return signature;
         });
 
