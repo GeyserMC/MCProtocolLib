@@ -13,7 +13,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.Dis
 import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData.AdvancementType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,36 +50,25 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
         for (int i = 0; i < this.advancements.length; i++) {
             String id = helper.readString(in);
             String parentId = helper.readNullable(in, helper::readString);
-            DisplayData displayData = null;
-            if (in.readBoolean()) {
-                Component title = helper.readComponent(in);
-                Component description = helper.readComponent(in);
-                ItemStack icon = helper.readOptionalItemStack(in);
-                AdvancementType advancementType = AdvancementType.from(helper.readVarInt(in));
+            DisplayData displayData = helper.readNullable(in, buf -> {
+                Component title = helper.readComponent(buf);
+                Component description = helper.readComponent(buf);
+                ItemStack icon = helper.readOptionalItemStack(buf);
+                AdvancementType advancementType = AdvancementType.from(helper.readVarInt(buf));
 
-                int flags = in.readInt();
+                int flags = buf.readInt();
                 boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
                 boolean showToast = (flags & FLAG_SHOW_TOAST) != 0;
                 boolean hidden = (flags & FLAG_HIDDEN) != 0;
 
-                String backgroundTexture = hasBackgroundTexture ? helper.readString(in) : null;
-                float posX = in.readFloat();
-                float posY = in.readFloat();
+                String backgroundTexture = hasBackgroundTexture ? helper.readString(buf) : null;
+                float posX = buf.readFloat();
+                float posY = buf.readFloat();
 
-                displayData = new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
-            }
+                return new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
+            });
 
-            List<List<String>> requirements = new ArrayList<>();
-            int requirementCount = helper.readVarInt(in);
-            for (int j = 0; j < requirementCount; j++) {
-                List<String> requirement = new ArrayList<>();
-                int componentCount = helper.readVarInt(in);
-                for (int k = 0; k < componentCount; k++) {
-                    requirement.add(helper.readString(in));
-                }
-
-                requirements.add(requirement);
-            }
+            List<List<String>> requirements = helper.readList(in, buf -> helper.readList(buf, helper::readString));
 
             boolean sendTelemetryEvent = in.readBoolean();
 
@@ -123,47 +111,36 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 out.writeBoolean(false);
             }
 
-            DisplayData displayData = advancement.getDisplayData();
-            if (displayData != null) {
-                out.writeBoolean(true);
-                helper.writeComponent(out, displayData.getTitle());
-                helper.writeComponent(out, displayData.getDescription());
-                helper.writeOptionalItemStack(out, displayData.getIcon());
-                helper.writeVarInt(out, displayData.getAdvancementType().ordinal());
-                String backgroundTexture = displayData.getBackgroundTexture();
+            helper.writeNullable(out, advancement.getDisplayData(), (buf, data) -> {
+                helper.writeComponent(buf, data.getTitle());
+                helper.writeComponent(buf, data.getDescription());
+                helper.writeOptionalItemStack(buf, data.getIcon());
+                helper.writeVarInt(buf, data.getAdvancementType().ordinal());
 
                 int flags = 0;
-                if (backgroundTexture != null) {
+                if (data.getBackgroundTexture() != null) {
                     flags |= FLAG_HAS_BACKGROUND_TEXTURE;
                 }
 
-                if (displayData.isShowToast()) {
+                if (data.isShowToast()) {
                     flags |= FLAG_SHOW_TOAST;
                 }
 
-                if (displayData.isHidden()) {
+                if (data.isHidden()) {
                     flags |= FLAG_HIDDEN;
                 }
 
-                out.writeInt(flags);
+                buf.writeInt(flags);
 
-                if (backgroundTexture != null) {
-                    helper.writeString(out, backgroundTexture);
+                if (data.getBackgroundTexture() != null) {
+                    helper.writeString(buf, data.getBackgroundTexture());
                 }
 
-                out.writeFloat(displayData.getPosX());
-                out.writeFloat(displayData.getPosY());
-            } else {
-                out.writeBoolean(false);
-            }
+                buf.writeFloat(data.getPosX());
+                buf.writeFloat(data.getPosY());
+            });
 
-            helper.writeVarInt(out, advancement.getRequirements().size());
-            for (List<String> requirement : advancement.getRequirements()) {
-                helper.writeVarInt(out, requirement.size());
-                for (String criterion : requirement) {
-                    helper.writeString(out, criterion);
-                }
-            }
+            helper.writeList(out, advancement.getRequirements(), (buf, requirement) -> helper.writeList(buf, requirement, helper::writeString));
 
             out.writeBoolean(advancement.isSendsTelemetryEvent());
         }

@@ -39,10 +39,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
                 int x = in.readByte();
                 int z = in.readByte();
                 int rotation = in.readByte();
-                Component displayName = null;
-                if (in.readBoolean()) {
-                    displayName = helper.readComponent(in);
-                }
+                Component displayName = helper.readNullable(in, helper::readComponent);
 
                 this.icons[index] = new MapIcon(x, z, MapIconType.from(type), rotation, displayName);
             }
@@ -75,12 +72,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
                 out.writeByte(icon.getCenterX());
                 out.writeByte(icon.getCenterZ());
                 out.writeByte(icon.getIconRotation());
-                if (icon.getDisplayName() != null) {
-                    out.writeBoolean(true);
-                    helper.writeComponent(out, icon.getDisplayName());
-                } else {
-                    out.writeBoolean(false);
-                }
+                helper.writeNullable(out, icon.getDisplayName(), helper::writeComponent);
             }
         } else {
             out.writeBoolean(false);
