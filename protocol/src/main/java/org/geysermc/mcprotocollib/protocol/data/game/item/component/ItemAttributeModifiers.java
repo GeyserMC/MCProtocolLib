@@ -32,8 +32,8 @@ public class ItemAttributeModifiers {
 
     public enum EquipmentSlotGroup {
         ANY,
-        MAIN_HAND,
-        OFF_HAND,
+        MAINHAND,
+        OFFHAND,
         HAND,
         FEET,
         LEGS,
