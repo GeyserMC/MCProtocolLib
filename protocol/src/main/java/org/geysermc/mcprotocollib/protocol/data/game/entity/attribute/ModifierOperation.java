@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.attribute;
 
 public enum ModifierOperation {
-    ADD,
+    ADD_VALUE,
     ADD_MULTIPLIED_BASE,
     ADD_MULTIPLIED_TOTAL;
 
