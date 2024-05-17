@@ -50,6 +50,11 @@ public final class MinecraftConstants {
      */
     public static final Flag<ServerPingTimeHandler> SERVER_PING_TIME_HANDLER_KEY = new Flag<>("server-ping-time-handler", ServerPingTimeHandler.class);
 
+    /**
+     * Session flag for determining if an automatic response should be sent to the ClientboundSelectKnownPacks.
+     */
+    public static final Flag<Boolean> SEND_BLANK_KNOWN_PACKS_RESPONSE = new Flag<>("send-blank-known-packs-response", Boolean.class);
+
     // Server Key Constants
 
     /**
