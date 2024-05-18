@@ -55,6 +55,11 @@ public final class MinecraftConstants {
      */
     public static final Flag<Boolean> SEND_BLANK_KNOWN_PACKS_RESPONSE = new Flag<>("send-blank-known-packs-response", Boolean.class);
 
+    /**
+     * Session flag for determining whether to create a new TcpClientSession when the Java server sends a ClientboundTransferPacket.
+     */
+    public static final Flag<Boolean> FOLLOW_TRANFERS = new Flag<>("follow-transfers", Boolean.class);
+
     // Server Key Constants
 
     /**
