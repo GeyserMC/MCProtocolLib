@@ -127,7 +127,7 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundStartConfigurationPacket) {
                 session.send(new ServerboundConfigurationAcknowledgedPacket());
             } else if (packet instanceof ClientboundTransferPacket transferPacket) {
-                if (session.getFlag(MinecraftConstants.FOLLOW_TRANFERS, true)) {
+                if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
                     session.disconnect("Transferring");
@@ -142,7 +142,7 @@ public class ClientListener extends SessionAdapter {
                     session.send(new ServerboundSelectKnownPacks(Collections.emptyList()));
                 }
             } else if (packet instanceof ClientboundTransferPacket transferPacket) {
-                if (session.getFlag(MinecraftConstants.FOLLOW_TRANFERS, true)) {
+                if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
                     session.disconnect("Transferring");

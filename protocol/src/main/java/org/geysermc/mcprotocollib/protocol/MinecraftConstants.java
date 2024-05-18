@@ -58,7 +58,7 @@ public final class MinecraftConstants {
     /**
      * Session flag for determining whether to create a new TcpClientSession when the Java server sends a ClientboundTransferPacket.
      */
-    public static final Flag<Boolean> FOLLOW_TRANFERS = new Flag<>("follow-transfers", Boolean.class);
+    public static final Flag<Boolean> FOLLOW_TRANSFERS = new Flag<>("follow-transfers", Boolean.class);
 
     // Server Key Constants
 
