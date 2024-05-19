@@ -17,7 +17,7 @@ public class ToolData {
     @Data
     @AllArgsConstructor
     public static class Rule {
-        private final @NonNull HolderSet holderSet;
+        private final @NonNull HolderSet blocks;
         private final @Nullable Float speed;
         private final @Nullable Boolean correctForDrops;
     }

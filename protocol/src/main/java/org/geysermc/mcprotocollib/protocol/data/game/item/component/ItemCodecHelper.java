@@ -98,7 +98,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public void writeBlockPredicate(ByteBuf buf, AdventureModePredicate.BlockPredicate blockPredicate) {
-        this.writeNullable(buf, blockPredicate.getHolderSet(), this::writeHolderSet);
+        this.writeNullable(buf, blockPredicate.getBlocks(), this::writeHolderSet);
         this.writeNullable(buf, blockPredicate.getProperties(), (output, properties) -> {
             buf.writeBoolean(true);
             for (AdventureModePredicate.PropertyMatcher matcher : properties) {
@@ -160,7 +160,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
     public void writeToolData(ByteBuf buf, ToolData data) {
         this.writeList(buf, data.getRules(), (output, rule) -> {
-            this.writeHolderSet(output, rule.getHolderSet());
+            this.writeHolderSet(output, rule.getBlocks());
             this.writeNullable(output, rule.getSpeed(), ByteBuf::writeFloat);
             this.writeNullable(output, rule.getCorrectForDrops(), ByteBuf::writeBoolean);
         });

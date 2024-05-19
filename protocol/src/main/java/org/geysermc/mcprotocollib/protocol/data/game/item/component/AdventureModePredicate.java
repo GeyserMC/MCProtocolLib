@@ -16,7 +16,7 @@ public class AdventureModePredicate {
     @Data
     @AllArgsConstructor
     public static class BlockPredicate {
-        private final @Nullable HolderSet holderSet;
+        private final @Nullable HolderSet blocks;
         private final @Nullable List<PropertyMatcher> properties;
         private final @Nullable NbtMap nbt;
     }
