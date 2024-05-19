@@ -12,6 +12,8 @@ public record HolderSet(@Nullable String location, int @Nullable [] holders) {
     public HolderSet {
         if (location == null && holders == null) {
             throw new IllegalArgumentException("Either location or holders must be set");
+        } else if (location != null && holders != null) {
+            throw new IllegalArgumentException("Only one of location or holders can be set");
         }
     }
 
