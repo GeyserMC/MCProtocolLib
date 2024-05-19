@@ -118,30 +118,27 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public HolderSet readHolderSet(ByteBuf buf) {
-        String location = null;
-        int[] holders = null;
-
         int length = this.readVarInt(buf) - 1;
         if (length == -1) {
-            location = this.readResourceLocation(buf);
+            return new HolderSet(this.readResourceLocation(buf));
         } else {
-            holders = new int[length];
+            int[] holders = new int[length];
             for (int i = 0; i < length; i++) {
                 holders[i] = this.readVarInt(buf);
             }
-        }
 
-        return new HolderSet(location, holders);
+            return new HolderSet(holders);
+        }
     }
 
     public void writeHolderSet(ByteBuf buf, HolderSet holderSet) {
-        if (holderSet.location() != null) {
+        if (holderSet.getLocation() != null) {
             this.writeVarInt(buf, 0);
-            this.writeResourceLocation(buf, holderSet.location());
+            this.writeResourceLocation(buf, holderSet.getLocation());
         } else {
-            assert holderSet.holders() != null;
-            this.writeVarInt(buf, holderSet.holders().length + 1);
-            for (int holder : holderSet.holders()) {
+            assert holderSet.getHolders() != null;
+            this.writeVarInt(buf, holderSet.getHolders().length + 1);
+            for (int holder : holderSet.getHolders()) {
                 this.writeVarInt(buf, holder);
             }
         }

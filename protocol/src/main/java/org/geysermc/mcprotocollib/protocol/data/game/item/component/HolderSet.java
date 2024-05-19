@@ -1,5 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
+import lombok.Data;
+import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.function.Function;
@@ -8,13 +10,19 @@ import java.util.function.Function;
  * Represents a set of holders that could either be explicit, or resolved from a tag location.
  * The client has to know how to resolve the tag location to get the holders.
  */
-public record HolderSet(@Nullable String location, int @Nullable [] holders) {
-    public HolderSet {
-        if (location == null && holders == null) {
-            throw new IllegalArgumentException("Either location or holders must be set");
-        } else if (location != null && holders != null) {
-            throw new IllegalArgumentException("Only one of location or holders can be set");
-        }
+@Data
+public final class HolderSet {
+    private final @Nullable String location;
+    private final int @Nullable [] holders;
+
+    public HolderSet(int @NonNull [] holders) {
+        this.location = null;
+        this.holders = holders;
+    }
+
+    public HolderSet(@NonNull String location) {
+        this.location = location;
+        this.holders = null;
     }
 
     /**
