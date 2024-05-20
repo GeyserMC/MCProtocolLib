@@ -35,21 +35,13 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
     public <T> Filterable<T> readFilterable(ByteBuf buf, Function<ByteBuf, T> reader) {
         T raw = reader.apply(buf);
-        T filtered = null;
-        if (buf.readBoolean()) {
-            filtered = reader.apply(buf);
-        }
+        T filtered = this.readNullable(buf, reader);
         return new Filterable<>(raw, filtered);
     }
 
     public <T> void writeFilterable(ByteBuf buf, Filterable<T> filterable, BiConsumer<ByteBuf, T> writer) {
         writer.accept(buf, filterable.getRaw());
-        if (filterable.getOptional() != null) {
-            buf.writeBoolean(true);
-            writer.accept(buf, filterable.getOptional());
-        } else {
-            buf.writeBoolean(false);
-        }
+        this.writeNullable(buf, filterable.getOptional(), writer);
     }
 
     public ItemEnchantments readItemEnchantments(ByteBuf buf) {
@@ -73,12 +65,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public AdventureModePredicate readAdventureModePredicate(ByteBuf buf) {
-        List<AdventureModePredicate.BlockPredicate> predicates = new ArrayList<>();
-        int predicateCount = this.readVarInt(buf);
-        for (int i = 0; i < predicateCount; i++) {
-            predicates.add(this.readBlockPredicate(buf));
-        }
-
+        List<AdventureModePredicate.BlockPredicate> predicates = this.readList(buf, this::readBlockPredicate);
         return new AdventureModePredicate(predicates, buf.readBoolean());
     }
 
@@ -92,59 +79,29 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public AdventureModePredicate.BlockPredicate readBlockPredicate(ByteBuf buf) {
-        String location = null;
-        int[] holders = null;
-        List<AdventureModePredicate.PropertyMatcher> propertyMatchers = null;
-
-        if (buf.readBoolean()) {
-            int length = this.readVarInt(buf) - 1;
-            if (length == -1) {
-                location = this.readResourceLocation(buf);
-            } else {
-                holders = new int[length];
-                for (int i = 0; i < length; i++) {
-                    holders[i] = this.readVarInt(buf);
-                }
-            }
-        }
-
-        if (buf.readBoolean()) {
-            propertyMatchers = new ArrayList<>();
-            int matcherCount = this.readVarInt(buf);
+        HolderSet holderSet = this.readNullable(buf, this::readHolderSet);
+        List<AdventureModePredicate.PropertyMatcher> propertyMatchers = this.readNullable(buf, (input) -> {
+            List<AdventureModePredicate.PropertyMatcher> matchers = new ArrayList<>();
+            int matcherCount = this.readVarInt(input);
             for (int i = 0; i < matcherCount; i++) {
-                String name = this.readString(buf);
-                if (buf.readBoolean()) {
-                    propertyMatchers.add(new AdventureModePredicate.PropertyMatcher(name, this.readString(buf), null, null));
+                String name = this.readString(input);
+                if (input.readBoolean()) {
+                    matchers.add(new AdventureModePredicate.PropertyMatcher(name, this.readString(input), null, null));
                 } else {
-                    propertyMatchers.add(new AdventureModePredicate.PropertyMatcher(name, null, this.readString(buf), this.readString(buf)));
+                    matchers.add(new AdventureModePredicate.PropertyMatcher(name, null, this.readString(input), this.readString(input)));
                 }
             }
-        }
+            return matchers;
+        });
 
-        return new AdventureModePredicate.BlockPredicate(location, holders, propertyMatchers, this.readNullable(buf, this::readCompoundTag));
+        return new AdventureModePredicate.BlockPredicate(holderSet, propertyMatchers, this.readNullable(buf, this::readCompoundTag));
     }
 
     public void writeBlockPredicate(ByteBuf buf, AdventureModePredicate.BlockPredicate blockPredicate) {
-        if (blockPredicate.getLocation() == null && blockPredicate.getHolders() == null) {
-            buf.writeBoolean(false);
-        } else {
+        this.writeNullable(buf, blockPredicate.getBlocks(), this::writeHolderSet);
+        this.writeNullable(buf, blockPredicate.getProperties(), (output, properties) -> {
             buf.writeBoolean(true);
-            if (blockPredicate.getLocation() != null) {
-                this.writeVarInt(buf, 0);
-                this.writeResourceLocation(buf, blockPredicate.getLocation());
-            } else {
-                this.writeVarInt(buf, blockPredicate.getHolders().length + 1);
-                for (int holder : blockPredicate.getHolders()) {
-                    this.writeVarInt(buf, holder);
-                }
-            }
-        }
-
-        if (blockPredicate.getProperties() == null) {
-            buf.writeBoolean(false);
-        } else {
-            buf.writeBoolean(true);
-            for (AdventureModePredicate.PropertyMatcher matcher : blockPredicate.getProperties()) {
+            for (AdventureModePredicate.PropertyMatcher matcher : properties) {
                 this.writeString(buf, matcher.getName());
                 if (matcher.getValue() != null) {
                     buf.writeBoolean(true);
@@ -155,32 +112,46 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
                     this.writeString(buf, matcher.getMaxValue());
                 }
             }
-        }
+        });
 
         this.writeNullable(buf, blockPredicate.getNbt(), this::writeAnyTag);
     }
 
-    public ToolData readToolData(ByteBuf buf) {
-        List<ToolData.Rule> rules = new ArrayList<>();
-        int ruleCount = this.readVarInt(buf);
-        for (int i = 0; i < ruleCount; i++) {
-            String location = null;
-            int[] holders = null;
-
-            int length = this.readVarInt(buf) - 1;
-            if (length == -1) {
-                location = this.readResourceLocation(buf);
-            } else {
-                holders = new int[length];
-                for (int j = 0; j < length; j++) {
-                    holders[j] = this.readVarInt(buf);
-                }
+    public HolderSet readHolderSet(ByteBuf buf) {
+        int length = this.readVarInt(buf) - 1;
+        if (length == -1) {
+            return new HolderSet(this.readResourceLocation(buf));
+        } else {
+            int[] holders = new int[length];
+            for (int i = 0; i < length; i++) {
+                holders[i] = this.readVarInt(buf);
             }
 
-            Float speed = this.readNullable(buf, ByteBuf::readFloat);
-            Boolean correctForDrops = this.readNullable(buf, ByteBuf::readBoolean);
-            rules.add(new ToolData.Rule(location, holders, speed, correctForDrops));
+            return new HolderSet(holders);
         }
+    }
+
+    public void writeHolderSet(ByteBuf buf, HolderSet holderSet) {
+        if (holderSet.getLocation() != null) {
+            this.writeVarInt(buf, 0);
+            this.writeResourceLocation(buf, holderSet.getLocation());
+        } else {
+            assert holderSet.getHolders() != null;
+            this.writeVarInt(buf, holderSet.getHolders().length + 1);
+            for (int holder : holderSet.getHolders()) {
+                this.writeVarInt(buf, holder);
+            }
+        }
+    }
+
+    public ToolData readToolData(ByteBuf buf) {
+        List<ToolData.Rule> rules = this.readList(buf, (input) -> {
+            HolderSet holderSet = this.readHolderSet(input);
+
+            Float speed = this.readNullable(input, ByteBuf::readFloat);
+            Boolean correctForDrops = this.readNullable(input, ByteBuf::readBoolean);
+            return new ToolData.Rule(holderSet, speed, correctForDrops);
+        });
 
         float defaultMiningSpeed = buf.readFloat();
         int damagePerBlock = this.readVarInt(buf);
@@ -188,57 +159,42 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public void writeToolData(ByteBuf buf, ToolData data) {
-        this.writeVarInt(buf, data.getRules().size());
-        for (ToolData.Rule rule : data.getRules()) {
-            if (rule.getLocation() != null) {
-                this.writeVarInt(buf, 0);
-                this.writeResourceLocation(buf, rule.getLocation());
-            } else {
-                this.writeVarInt(buf, rule.getHolders().length + 1);
-                for (int holder : rule.getHolders()) {
-                    this.writeVarInt(buf, holder);
-                }
-            }
-
-            this.writeNullable(buf, rule.getSpeed(), ByteBuf::writeFloat);
-            this.writeNullable(buf, rule.getCorrectForDrops(), ByteBuf::writeBoolean);
-        }
+        this.writeList(buf, data.getRules(), (output, rule) -> {
+            this.writeHolderSet(output, rule.getBlocks());
+            this.writeNullable(output, rule.getSpeed(), ByteBuf::writeFloat);
+            this.writeNullable(output, rule.getCorrectForDrops(), ByteBuf::writeBoolean);
+        });
 
         buf.writeFloat(data.getDefaultMiningSpeed());
         this.writeVarInt(buf, data.getDamagePerBlock());
     }
 
     public ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
-        List<ItemAttributeModifiers.Entry> modifiers = new ArrayList<>();
-        int modifierCount = this.readVarInt(buf);
-        for (int i = 0; i < modifierCount; i++) {
-            int attribute = this.readVarInt(buf);
+        List<ItemAttributeModifiers.Entry> modifiers = this.readList(buf, (input) -> {
+            int attribute = this.readVarInt(input);
 
-            UUID id = this.readUUID(buf);
-            String name = this.readString(buf);
-            double amount = buf.readDouble();
-            ModifierOperation operation = ModifierOperation.from(this.readVarInt(buf));
+            UUID id = this.readUUID(input);
+            String name = this.readString(input);
+            double amount = input.readDouble();
+            ModifierOperation operation = ModifierOperation.from(this.readVarInt(input));
             ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, name, amount, operation);
 
-            ItemAttributeModifiers.EquipmentSlotGroup slot = ItemAttributeModifiers.EquipmentSlotGroup.from(this.readVarInt(buf));
-            modifiers.add(new ItemAttributeModifiers.Entry(attribute, modifier, slot));
-        }
+            ItemAttributeModifiers.EquipmentSlotGroup slot = ItemAttributeModifiers.EquipmentSlotGroup.from(this.readVarInt(input));
+            return new ItemAttributeModifiers.Entry(attribute, modifier, slot);
+        });
 
         return new ItemAttributeModifiers(modifiers, buf.readBoolean());
     }
 
     public void writeItemAttributeModifiers(ByteBuf buf, ItemAttributeModifiers modifiers) {
-        this.writeVarInt(buf, modifiers.getModifiers().size());
-        for (ItemAttributeModifiers.Entry modifier : modifiers.getModifiers()) {
-            this.writeVarInt(buf, modifier.getAttribute());
-
-            this.writeUUID(buf, modifier.getModifier().getId());
-            this.writeString(buf, modifier.getModifier().getName());
-            buf.writeDouble(modifier.getModifier().getAmount());
-            this.writeVarInt(buf, modifier.getModifier().getOperation().ordinal());
-
-            this.writeVarInt(buf, modifier.getSlot().ordinal());
-        }
+        this.writeList(buf, modifiers.getModifiers(), (output, entry) -> {
+            this.writeVarInt(output, entry.getAttribute());
+            this.writeUUID(output, entry.getModifier().getId());
+            this.writeString(output, entry.getModifier().getName());
+            output.writeDouble(entry.getModifier().getAmount());
+            this.writeVarInt(output, entry.getModifier().getOperation().ordinal());
+            this.writeVarInt(output, entry.getSlot().ordinal());
+        });
 
         buf.writeBoolean(modifiers.isShowInTooltip());
     }
@@ -256,11 +212,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int potionId = buf.readBoolean() ? this.readVarInt(buf) : -1;
         int customColor = buf.readBoolean() ? buf.readInt() : -1;
 
-        List<MobEffectInstance> customEffects = new ArrayList<>();
-        int effectCount = this.readVarInt(buf);
-        for (int i = 0; i < effectCount; i++) {
-            customEffects.add(this.readEffectInstance(buf));
-        }
+        List<MobEffectInstance> customEffects = this.readList(buf, this::readEffectInstance);
         return new PotionContents(potionId, customColor, customEffects);
     }
 
@@ -279,10 +231,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
             buf.writeInt(contents.getCustomColor());
         }
 
-        this.writeVarInt(buf, contents.getCustomEffects().size());
-        for (MobEffectInstance customEffect : contents.getCustomEffects()) {
-            this.writeEffectInstance(buf, customEffect);
-        }
+        this.writeList(buf, contents.getCustomEffects(), this::writeEffectInstance);
     }
 
     public FoodProperties readFoodProperties(ByteBuf buf) {
@@ -291,11 +240,11 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         boolean canAlwaysEat = buf.readBoolean();
         float eatSeconds = buf.readFloat();
 
-        List<FoodProperties.PossibleEffect> effects = new ArrayList<>();
-        int effectCount = this.readVarInt(buf);
-        for (int i = 0; i < effectCount; i++) {
-            effects.add(new FoodProperties.PossibleEffect(this.readEffectInstance(buf), buf.readFloat()));
-        }
+        List<FoodProperties.PossibleEffect> effects = this.readList(buf, (input) -> {
+            MobEffectInstance effect = this.readEffectInstance(input);
+            float probability = input.readFloat();
+            return new FoodProperties.PossibleEffect(effect, probability);
+        });
 
         return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, effects);
     }
@@ -306,11 +255,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeBoolean(properties.isCanAlwaysEat());
         buf.writeFloat(properties.getEatSeconds());
 
-        this.writeVarInt(buf, properties.getEffects().size());
-        for (FoodProperties.PossibleEffect effect : properties.getEffects()) {
-            this.writeEffectInstance(buf, effect.getEffect());
-            buf.writeFloat(effect.getProbability());
-        }
+        this.writeList(buf, properties.getEffects(), (output, effect) -> {
+            this.writeEffectInstance(output, effect.getEffect());
+            output.writeFloat(effect.getProbability());
+        });
     }
 
     public MobEffectInstance readEffectInstance(ByteBuf buf) {
@@ -352,20 +300,12 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public WritableBookContent readWritableBookContent(ByteBuf buf) {
-        List<Filterable<String>> pages = new ArrayList<>();
-        int pageCount = this.readVarInt(buf);
-        for (int i = 0; i < pageCount; i++) {
-            pages.add(this.readFilterable(buf, this::readString));
-        }
-
+        List<Filterable<String>> pages = this.readList(buf, (input) -> this.readFilterable(input, this::readString));
         return new WritableBookContent(pages);
     }
 
     public void writeWritableBookContent(ByteBuf buf, WritableBookContent content) {
-        this.writeVarInt(buf, content.getPages().size());
-        for (Filterable<String> page : content.getPages()) {
-            this.writeFilterable(buf, page, this::writeString);
-        }
+        this.writeList(buf, content.getPages(), (output, page) -> this.writeFilterable(output, page, this::writeString));
     }
 
     public WrittenBookContent readWrittenBookContent(ByteBuf buf) {
@@ -373,12 +313,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         String author = this.readString(buf);
         int generation = this.readVarInt(buf);
 
-        List<Filterable<Component>> pages = new ArrayList<>();
-        int pageCount = this.readVarInt(buf);
-        for (int i = 0; i < pageCount; i++) {
-            pages.add(this.readFilterable(buf, this::readComponent));
-        }
-
+        List<Filterable<Component>> pages = this.readList(buf, (input) -> this.readFilterable(input, this::readComponent));
         boolean resolved = buf.readBoolean();
         return new WrittenBookContent(title, author, generation, pages, resolved);
     }
@@ -388,10 +323,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeString(buf, content.getAuthor());
         this.writeVarInt(buf, content.getGeneration());
 
-        this.writeVarInt(buf, content.getPages().size());
-        for (Filterable<Component> page : content.getPages()) {
-            this.writeFilterable(buf, page, this::writeComponent);
-        }
+        this.writeList(buf, content.getPages(), (output, page) -> this.writeFilterable(output, page, this::writeComponent));
 
         buf.writeBoolean(content.isResolved());
     }
@@ -554,11 +486,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         UUID id = this.readNullable(buf, this::readUUID);
         GameProfile profile = new GameProfile(id, name);
 
-        List<GameProfile.Property> properties = new ArrayList<>();
-        int propertyCount = this.readVarInt(buf);
-        for (int i = 0; i < propertyCount; i++) {
-            properties.add(this.readProperty(buf));
-        }
+        List<GameProfile.Property> properties = this.readList(buf, this::readProperty);
         profile.setProperties(properties);
 
         return profile;
@@ -568,10 +496,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeNullable(buf, profile.getName(), this::writeString);
         this.writeNullable(buf, profile.getId(), this::writeUUID);
 
-        this.writeVarInt(buf, profile.getProperties().size());
-        for (GameProfile.Property property : profile.getProperties()) {
-            this.writeProperty(buf, property);
-        }
+        this.writeList(buf, profile.getProperties(), this::writeProperty);
     }
 
     public BannerPatternLayer readBannerPatternLayer(ByteBuf buf) {
