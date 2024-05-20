@@ -8,7 +8,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,28 +20,14 @@ public class ServerboundEditBookPacket implements MinecraftPacket {
 
     public ServerboundEditBookPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = helper.readVarInt(in);
-        this.pages = new ArrayList<>();
-        int pagesSize = helper.readVarInt(in);
-        for (int i = 0; i < pagesSize; i++) {
-            this.pages.add(helper.readString(in));
-        }
-        if (in.readBoolean()) {
-            this.title = helper.readString(in);
-        } else {
-            this.title = null;
-        }
+        this.pages = helper.readList(in, helper::readString);
+        this.title = helper.readNullable(in, helper::readString);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, slot);
-        helper.writeVarInt(out, this.pages.size());
-        for (String page : this.pages) {
-            helper.writeString(out, page);
-        }
-        out.writeBoolean(this.title != null);
-        if (this.title != null) {
-            helper.writeString(out, title);
-        }
+        helper.writeList(out, pages, helper::writeString);
+        helper.writeNullable(out, title, helper::writeString);
     }
 }

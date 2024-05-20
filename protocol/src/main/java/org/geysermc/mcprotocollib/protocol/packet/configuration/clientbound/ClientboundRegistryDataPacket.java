@@ -9,7 +9,6 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,22 +20,15 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
 
     public ClientboundRegistryDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.registry = helper.readResourceLocation(in);
-        this.entries = new ArrayList<>();
-
-        int entryCount = helper.readVarInt(in);
-        for (int i = 0; i < entryCount; i++) {
-            this.entries.add(new RegistryEntry(helper.readResourceLocation(in), helper.readNullable(in, helper::readCompoundTag)));
-        }
+        this.entries = helper.readList(in, buf -> new RegistryEntry(helper.readResourceLocation(buf), helper.readNullable(buf, helper::readCompoundTag)));
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeResourceLocation(out, this.registry);
-
-        helper.writeVarInt(out, this.entries.size());
-        for (RegistryEntry entry : this.entries) {
-            helper.writeResourceLocation(out, entry.getId());
-            helper.writeNullable(out, entry.getData(), helper::writeAnyTag);
-        }
+        helper.writeList(out, this.entries, (buf, entry) -> {
+            helper.writeResourceLocation(buf, entry.getId());
+            helper.writeNullable(buf, entry.getData(), helper::writeAnyTag);
+        });
     }
 }
