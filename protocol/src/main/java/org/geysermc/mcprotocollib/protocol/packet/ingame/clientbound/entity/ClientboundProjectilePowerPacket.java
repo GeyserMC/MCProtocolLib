@@ -12,22 +12,16 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @AllArgsConstructor
 public class ClientboundProjectilePowerPacket implements MinecraftPacket {
     private final int id;
-    private final double xPower;
-    private final double yPower;
-    private final double zPower;
+    private final double accelerationPower;
 
     public ClientboundProjectilePowerPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.id = helper.readVarInt(in);
-        this.xPower = in.readDouble();
-        this.yPower = in.readDouble();
-        this.zPower = in.readDouble();
+        this.accelerationPower = in.readDouble();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.id);
-        out.writeDouble(this.xPower);
-        out.writeDouble(this.yPower);
-        out.writeDouble(this.zPower);
+        out.writeDouble(this.accelerationPower);
     }
 }
