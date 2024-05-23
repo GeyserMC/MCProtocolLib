@@ -48,7 +48,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     public ServerStatusInfo parseInfo() {
         JsonElement desc = data.get("description");
-        Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
+        Component description = DefaultComponentSerializer.get().deserializeFromTree(desc);
 
         JsonObject plrs = data.get("players").getAsJsonObject();
         List<GameProfile> profiles = new ArrayList<>();
@@ -87,7 +87,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
     private static JsonObject toJson(ServerStatusInfo info) {
         JsonObject obj = new JsonObject();
 
-        obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(info.getDescription()), JsonElement.class));
+        obj.add("description", DefaultComponentSerializer.get().serializeToTree(info.getDescription()));
 
         JsonObject plrs = new JsonObject();
         plrs.addProperty("max", info.getPlayerInfo().getMaxPlayers());
