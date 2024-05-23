@@ -49,6 +49,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
     public ServerStatusInfo parseInfo() {
         JsonElement desc = data.get("description");
         Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
+
         JsonObject plrs = data.get("players").getAsJsonObject();
         List<GameProfile> profiles = new ArrayList<>();
         if (plrs.has("sample")) {
@@ -62,8 +63,10 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         }
 
         PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
+
         JsonObject ver = data.get("version").getAsJsonObject();
         VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
+
         byte[] icon = null;
         if (data.has("favicon")) {
             icon = stringToIcon(data.get("favicon").getAsString());
@@ -83,9 +86,9 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     private static JsonObject toJson(ServerStatusInfo info) {
         JsonObject obj = new JsonObject();
-        JsonObject ver = new JsonObject();
-        ver.addProperty("name", info.getVersionInfo().getVersionName());
-        ver.addProperty("protocol", info.getVersionInfo().getProtocolVersion());
+
+        obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(info.getDescription()), JsonElement.class));
+
         JsonObject plrs = new JsonObject();
         plrs.addProperty("max", info.getPlayerInfo().getMaxPlayers());
         plrs.addProperty("online", info.getPlayerInfo().getOnlinePlayers());
@@ -100,13 +103,17 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
             plrs.add("sample", array);
         }
-
-        obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(info.getDescription()), JsonElement.class));
         obj.add("players", plrs);
+
+        JsonObject ver = new JsonObject();
+        ver.addProperty("name", info.getVersionInfo().getVersionName());
+        ver.addProperty("protocol", info.getVersionInfo().getProtocolVersion());
         obj.add("version", ver);
+
         if (info.getIconPng() != null) {
             obj.addProperty("favicon", iconToString(info.getIconPng()));
         }
+
         obj.addProperty("enforcesSecureChat", info.isEnforcesSecureChat());
 
         return obj;
