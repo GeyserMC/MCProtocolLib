@@ -33,7 +33,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     private final @NonNull JsonObject data;
 
-    public ClientboundStatusResponsePacket(ServerStatusInfo info) {
+    public ClientboundStatusResponsePacket(@NonNull ServerStatusInfo info) {
         this(toJson(info));
     }
 
@@ -46,7 +46,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         helper.writeString(out, data.toString());
     }
 
-    public ServerStatusInfo getInfo() {
+    public ServerStatusInfo parseInfo() {
         JsonElement desc = data.get("description");
         Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
         JsonObject plrs = data.get("players").getAsJsonObject();
