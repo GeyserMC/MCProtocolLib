@@ -77,7 +77,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         return new ServerStatusInfo(version, players, description, icon, enforcesSecureChat);
     }
 
-    public ClientboundStatusResponsePacket withInfo(ServerStatusInfo info) {
+    public ClientboundStatusResponsePacket withInfo(@NonNull ServerStatusInfo info) {
         return withData(toJson(info));
     }
 

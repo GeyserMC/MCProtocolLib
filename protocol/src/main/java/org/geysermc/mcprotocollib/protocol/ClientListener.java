@@ -103,7 +103,7 @@ public class ClientListener extends SessionAdapter {
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
             if (packet instanceof ClientboundStatusResponsePacket statusResponsePacket) {
-                ServerStatusInfo info = statusResponsePacket.getInfo();
+                ServerStatusInfo info = statusResponsePacket.parseInfo();
                 ServerInfoHandler handler = session.getFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY);
                 if (handler != null) {
                     handler.handle(session, info);
