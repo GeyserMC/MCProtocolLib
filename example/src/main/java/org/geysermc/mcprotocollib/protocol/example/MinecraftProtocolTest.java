@@ -61,9 +61,9 @@ public class MinecraftProtocolTest {
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, session ->
                     new ServerStatusInfo(
-                            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
-                            new PlayerInfo(100, 0, new ArrayList<>()),
                             Component.text("Hello world!"),
+                            new PlayerInfo(100, 0, new ArrayList<>()),
+                            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
                             null,
                             false
                     )

@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 @Setter(AccessLevel.NONE)
 @AllArgsConstructor
 public class ServerStatusInfo {
-    private @Nullable VersionInfo versionInfo;
-    private @Nullable PlayerInfo playerInfo;
     private @NonNull Component description;
+    private @Nullable PlayerInfo playerInfo;
+    private @Nullable VersionInfo versionInfo;
     private byte[] iconPng;
     private boolean enforcesSecureChat;
 }

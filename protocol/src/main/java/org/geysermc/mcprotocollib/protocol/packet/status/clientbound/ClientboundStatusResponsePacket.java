@@ -83,7 +83,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
             enforcesSecureChat = data.get("enforcesSecureChat").getAsBoolean();
         }
 
-        return new ServerStatusInfo(version, players, description, icon, enforcesSecureChat);
+        return new ServerStatusInfo(description, players, version, icon, enforcesSecureChat);
     }
 
     public ClientboundStatusResponsePacket withInfo(@NonNull ServerStatusInfo info) {
