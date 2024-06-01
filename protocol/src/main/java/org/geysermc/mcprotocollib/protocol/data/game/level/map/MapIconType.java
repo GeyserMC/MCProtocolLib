@@ -34,7 +34,8 @@ public enum MapIconType {
     SNOWY_VILLAGE,
     TAIGA_VILLAGE,
     JUNGLE_TEMPLE,
-    SWAMP_HUT;
+    SWAMP_HUT,
+    TRIAL_CHAMBERS;
 
     private static final MapIconType[] VALUES = values();
 

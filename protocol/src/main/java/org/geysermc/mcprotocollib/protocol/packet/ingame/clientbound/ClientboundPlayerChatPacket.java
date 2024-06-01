@@ -39,12 +39,11 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.sender = helper.readUUID(in);
         this.index = helper.readVarInt(in);
-        if (in.readBoolean()) {
-            this.messageSignature = new byte[256];
-            in.readBytes(this.messageSignature);
-        } else {
-            this.messageSignature = null;
-        }
+        this.messageSignature = helper.readNullable(in, buf -> {
+            byte[] signature = new byte[256];
+            buf.readBytes(signature);
+            return signature;
+        });
 
         this.content = helper.readString(in, 256);
         this.timeStamp = in.readLong();
@@ -67,10 +66,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeUUID(out, this.sender);
         helper.writeVarInt(out, this.index);
-        out.writeBoolean(this.messageSignature != null);
-        if (this.messageSignature != null) {
-            out.writeBytes(this.messageSignature);
-        }
+        helper.writeNullable(out, this.messageSignature, ByteBuf::writeBytes);
 
         helper.writeString(out, this.content);
         out.writeLong(this.timeStamp);

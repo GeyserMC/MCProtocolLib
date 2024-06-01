@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
@@ -11,23 +12,14 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @With
 @AllArgsConstructor
 public class ClientboundSelectAdvancementsTabPacket implements MinecraftPacket {
-    private final String tabId;
+    private final @Nullable String tabId;
 
     public ClientboundSelectAdvancementsTabPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        if (in.readBoolean()) {
-            this.tabId = helper.readString(in);
-        } else {
-            this.tabId = null;
-        }
+        this.tabId = helper.readNullable(in, helper::readString);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        if (this.tabId != null) {
-            out.writeBoolean(true);
-            helper.writeString(out, this.tabId);
-        } else {
-            out.writeBoolean(false);
-        }
+        helper.writeNullable(out, this.tabId, helper::writeString);
     }
 }

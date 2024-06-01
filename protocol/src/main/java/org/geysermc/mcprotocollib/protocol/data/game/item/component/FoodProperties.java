@@ -17,7 +17,7 @@ public class FoodProperties {
     @Data
     @AllArgsConstructor
     public static class PossibleEffect {
-        private final MobEffectDetails effect;
+        private final MobEffectInstance effect;
         private final float probability;
     }
 }
