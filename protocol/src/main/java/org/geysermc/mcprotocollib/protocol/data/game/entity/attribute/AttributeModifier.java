@@ -7,15 +7,12 @@ import java.util.UUID;
 
 @Data
 public class AttributeModifier {
-    /**
-     * Use {@link ModifierType} to determine built-in modifiers.
-     */
-    private final @NonNull UUID uuid;
+    private final @NonNull String id;
     private final double amount;
     private final @NonNull ModifierOperation operation;
 
-    public AttributeModifier(@NonNull UUID uuid, double amount, @NonNull ModifierOperation operation) {
-        this.uuid = uuid;
+    public AttributeModifier(@NonNull String id, double amount, @NonNull ModifierOperation operation) {
+        this.id = id;
         this.amount = amount;
         this.operation = operation;
     }

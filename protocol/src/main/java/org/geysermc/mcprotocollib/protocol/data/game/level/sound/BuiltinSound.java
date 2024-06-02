@@ -1449,6 +1449,7 @@ public enum BuiltinSound implements Sound {
     BLOCK_VAULT_CLOSE_SHUTTER("block.vault.close_shutter"),
     BLOCK_VAULT_DEACTIVATE("block.vault.deactivate"),
     BLOCK_VAULT_EJECT_ITEM("block.vault.eject_item"),
+    BLOCK_VAULT_REJECT_REWARDED_PLAYER("block.vault.reject_rewarded_player"),
     BLOCK_VAULT_FALL("block.vault.fall"),
     BLOCK_VAULT_HIT("block.vault.hit"),
     BLOCK_VAULT_INSERT_ITEM("block.vault.insert_item"),
