@@ -18,10 +18,11 @@ indra {
     }
 }
 
-tasks.withType<Sign>().configureEach {
-    onlyIf { false }
+if (System.getenv("JITPACK") == "true") {
+    tasks.withType<Sign>().configureEach {
+        onlyIf { false }
+    }
 }
-
 lombok {
     version = libs.versions.lombok.version.get()
 }
