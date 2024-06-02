@@ -32,6 +32,8 @@ import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundChatPacket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +44,7 @@ import java.util.Base64;
 import java.util.BitSet;
 
 public class MinecraftProtocolTest {
+    private static final Logger log = LoggerFactory.getLogger(MinecraftProtocolTest.class);
     private static final boolean SPAWN_SERVER = true;
     private static final boolean VERIFY_USERS = false;
     private static final String HOST = "127.0.0.1";
@@ -99,7 +102,7 @@ public class MinecraftProtocolTest {
             server.addListener(new ServerAdapter() {
                 @Override
                 public void serverClosed(ServerClosedEvent event) {
-                    System.out.println("Server closed.");
+                    log.info("Server closed.");
                 }
 
                 @Override
@@ -109,7 +112,7 @@ public class MinecraftProtocolTest {
                         public void packetReceived(Session session, Packet packet) {
                             if (packet instanceof ServerboundChatPacket) {
                                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
-                                System.out.println(profile.getName() + ": " + ((ServerboundChatPacket) packet).getMessage());
+                                log.info("{}: {}", profile.getName(), ((ServerboundChatPacket) packet).getMessage());
 
                                 Component msg = Component.text("Hello, ")
                                         .color(NamedTextColor.GREEN)
@@ -129,7 +132,7 @@ public class MinecraftProtocolTest {
                 public void sessionRemoved(SessionRemovedEvent event) {
                     MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
                     if (protocol.getState() == ProtocolState.GAME) {
-                        System.out.println("Closing server.");
+                        log.info("Closing server.");
                         event.getServer().close(false);
                     }
                 }
@@ -150,24 +153,22 @@ public class MinecraftProtocolTest {
         Session client = new TcpClientSession(HOST, PORT, protocol, PROXY);
         client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, (session, info) -> {
-            System.out.println("Version: " + info.getVersionInfo().getVersionName()
-                    + ", " + info.getVersionInfo().getProtocolVersion());
-            System.out.println("Player Count: " + info.getPlayerInfo().getOnlinePlayers()
-                    + " / " + info.getPlayerInfo().getMaxPlayers());
-            System.out.println("Players: " + Arrays.toString(info.getPlayerInfo().getPlayers().toArray()));
-            System.out.println("Description: " + info.getDescription());
-            System.out.println("Icon: " + new String(Base64.getEncoder().encode(info.getIconPng()), StandardCharsets.UTF_8));
+            log.info("Version: {}, {}", info.getVersionInfo().getVersionName(), info.getVersionInfo().getProtocolVersion());
+            log.info("Player Count: {} / {}", info.getPlayerInfo().getOnlinePlayers(), info.getPlayerInfo().getMaxPlayers());
+            log.info("Players: {}", Arrays.toString(info.getPlayerInfo().getPlayers().toArray()));
+            log.info("Description: {}", info.getDescription());
+            log.info("Icon: {}", new String(Base64.getEncoder().encode(info.getIconPng()), StandardCharsets.UTF_8));
         });
 
         client.setFlag(MinecraftConstants.SERVER_PING_TIME_HANDLER_KEY, (session, pingTime) ->
-                System.out.println("Server ping took " + pingTime + "ms"));
+                log.info("Server ping took {}ms", pingTime));
 
         client.connect();
         while (client.isConnected()) {
             try {
                 Thread.sleep(5);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("Interrupted while waiting for server to disconnect.", e);
             }
         }
     }
@@ -183,9 +184,9 @@ public class MinecraftProtocolTest {
                 authService.login();
 
                 protocol = new MinecraftProtocol(authService.getSelectedProfile(), authService.getAccessToken());
-                System.out.println("Successfully authenticated user.");
+                log.info("Successfully authenticated user.");
             } catch (RequestException e) {
-                e.printStackTrace();
+                log.error("Failed to authenticate user.", e);
                 return;
             }
         } else {
@@ -204,17 +205,14 @@ public class MinecraftProtocolTest {
                     session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0L, null, 0, new BitSet()));
                 } else if (packet instanceof ClientboundSystemChatPacket) {
                     Component message = ((ClientboundSystemChatPacket) packet).getContent();
-                    System.out.println("Received Message: " + message);
+                    log.info("Received Message: {}", message);
                     session.disconnect("Finished");
                 }
             }
 
             @Override
             public void disconnected(DisconnectedEvent event) {
-                System.out.println("Disconnected: " + event.getReason());
-                if (event.getCause() != null) {
-                    event.getCause().printStackTrace();
-                }
+                log.info("Disconnected: {}", event.getReason(), event.getCause());
             }
         });
 
