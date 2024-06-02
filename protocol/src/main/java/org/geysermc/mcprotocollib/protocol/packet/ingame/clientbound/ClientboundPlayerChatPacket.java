@@ -8,8 +8,9 @@ import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.chat.BuiltinChatType;
+import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatFilterType;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.MessageSignature;
 
 import java.util.ArrayList;
@@ -29,10 +30,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final List<MessageSignature> lastSeenMessages;
     private final @Nullable Component unsignedContent;
     private final ChatFilterType filterMask;
-    /**
-     * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
-     */
-    private final int chatType;
+    private final Holder<ChatType> chatType;
     private final Component name;
     private final @Nullable Component targetName;
 
@@ -58,7 +56,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 
         this.unsignedContent = helper.readNullable(in, helper::readComponent);
         this.filterMask = ChatFilterType.from(helper.readVarInt(in));
-        this.chatType = helper.readVarInt(in);
+        this.chatType = helper.readHolder(in, helper::readChatType);
         this.name = helper.readComponent(in);
         this.targetName = helper.readNullable(in, helper::readComponent);
     }
@@ -86,7 +84,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 
         helper.writeNullable(out, this.unsignedContent, helper::writeComponent);
         helper.writeVarInt(out, this.filterMask.ordinal());
-        helper.writeVarInt(out, this.chatType);
+        helper.writeHolder(out, this.chatType, helper::writeChatType);
         helper.writeComponent(out, this.name);
         helper.writeNullable(out, this.targetName, helper::writeComponent);
     }

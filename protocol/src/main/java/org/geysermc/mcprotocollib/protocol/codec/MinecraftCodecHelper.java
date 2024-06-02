@@ -21,6 +21,7 @@ import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.FixedFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
@@ -42,9 +43,11 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.WolfVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
@@ -459,12 +462,56 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, pose);
     }
 
-    public PaintingType readPaintingType(ByteBuf buf) {
-        return PaintingType.from(this.readVarInt(buf));
+    public Holder<WolfVariant> readWolfVariant(ByteBuf buf) {
+        return this.readHolder(buf, input -> {
+            String wildTexture = this.readResourceLocation(input);
+            String tameTexture = this.readResourceLocation(input);
+            String angryTexture = this.readResourceLocation(input);
+            String biomeLocation = null;
+            int[] biomeHolders = null;
+
+            int length = this.readVarInt(input) - 1;
+            if (length == -1) {
+                biomeLocation = this.readResourceLocation(input);
+            } else {
+                biomeHolders = new int[length];
+                for (int j = 0; j < length; j++) {
+                    biomeHolders[j] = this.readVarInt(input);
+                }
+            }
+            return new WolfVariant(wildTexture, tameTexture, angryTexture, biomeLocation, biomeHolders);
+        });
     }
 
-    public void writePaintingType(ByteBuf buf, PaintingType type) {
-        this.writeEnum(buf, type);
+    public void writeWolfVariant(ByteBuf buf, Holder<WolfVariant> variantHolder) {
+        this.writeHolder(buf, variantHolder, (output, variant) -> {
+            this.writeResourceLocation(output, variant.wildTexture());
+            this.writeResourceLocation(output, variant.tameTexture());
+            this.writeResourceLocation(output, variant.angryTexture());
+            if (variant.biomeLocation() != null) {
+                this.writeVarInt(output, 0);
+                this.writeResourceLocation(output, variant.biomeLocation());
+            } else {
+                this.writeVarInt(output, variant.biomeHolders().length + 1);
+                for (int holder : variant.biomeHolders()) {
+                    this.writeVarInt(output, holder);
+                }
+            }
+        });
+    }
+
+    public Holder<PaintingVariant> readPaintingVariant(ByteBuf buf) {
+        return this.readHolder(buf, input -> {
+            return new PaintingVariant(this.readVarInt(input), this.readVarInt(input), this.readResourceLocation(input));
+        });
+    }
+
+    public void writePaintingVariant(ByteBuf buf, Holder<PaintingVariant> variantHolder) {
+        this.writeHolder(buf, variantHolder, (output, variant) -> {
+            this.writeVarInt(buf, variant.width());
+            this.writeVarInt(buf, variant.height());
+            this.writeResourceLocation(buf, variant.assetId());
+        });
     }
 
     public SnifferState readSnifferState(ByteBuf buf) {
@@ -697,6 +744,38 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         } else {
             throw new IllegalArgumentException("Unknown number format: " + numberFormat);
         }
+    }
+
+    public ChatType readChatType(ByteBuf buf) {
+        return new ChatType(readChatTypeDecoration(buf), readChatTypeDecoration(buf));
+    }
+
+    public void writeChatType(ByteBuf buf, ChatType chatType) {
+        this.writeChatTypeDecoration(buf, chatType.chat());
+        this.writeChatTypeDecoration(buf, chatType.narration());
+    }
+
+    public ChatType.ChatTypeDecoration readChatTypeDecoration(ByteBuf buf) {
+        String translationKey = this.readString(buf);
+
+        int[] parameters = new int[this.readVarInt(buf)];
+        for (int i = 0; i < parameters.length; i++) {
+            parameters[i] = this.readVarInt(buf);
+        }
+
+        NbtMap style = this.readCompoundTag(buf);
+        return new ChatType.ChatTypeDecoration(translationKey, parameters, style);
+    }
+
+    public void writeChatTypeDecoration(ByteBuf buf, ChatType.ChatTypeDecoration decoration) {
+        this.writeString(buf, decoration.translationKey());
+
+        this.writeVarInt(buf, decoration.parameters().length);
+        for (int parameter : decoration.parameters()) {
+            this.writeVarInt(buf, parameter);
+        }
+
+        this.writeAnyTag(buf, decoration.style());
     }
 
     public PositionSource readPositionSource(ByteBuf buf) {

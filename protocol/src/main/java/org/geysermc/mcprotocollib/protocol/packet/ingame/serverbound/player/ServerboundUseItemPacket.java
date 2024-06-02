@@ -15,15 +15,21 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 public class ServerboundUseItemPacket implements MinecraftPacket {
     private final @NonNull Hand hand;
     private final int sequence;
+    private final float yRot;
+    private final float xRot;
 
     public ServerboundUseItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.hand = Hand.from(helper.readVarInt(in));
         this.sequence = helper.readVarInt(in);
+        this.yRot = in.readFloat();
+        this.xRot = in.readFloat();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.hand.ordinal());
         helper.writeVarInt(out, this.sequence);
+        out.writeFloat(this.yRot);
+        out.writeFloat(this.xRot);
     }
 }
