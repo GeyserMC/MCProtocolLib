@@ -28,12 +28,13 @@ import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import lombok.extern.slf4j.Slf4j;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -42,10 +43,10 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
 public class TcpClientSession extends TcpSession {
     private static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+    private static final Logger log = LoggerFactory.getLogger(TcpClientSession.class);
     private static EventLoopGroup EVENT_LOOP_GROUP;
 
     /**

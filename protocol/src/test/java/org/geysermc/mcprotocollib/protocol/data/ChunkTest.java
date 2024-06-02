@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.data;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import lombok.extern.slf4j.Slf4j;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.ChunkSection;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.DataPalette;
@@ -11,6 +10,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPalette;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +20,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@Slf4j
 public class ChunkTest {
+    private static final Logger log = LoggerFactory.getLogger(ChunkTest.class);
     private final List<ChunkSection> chunkSectionsToTest = new ArrayList<>();
 
     @BeforeEach

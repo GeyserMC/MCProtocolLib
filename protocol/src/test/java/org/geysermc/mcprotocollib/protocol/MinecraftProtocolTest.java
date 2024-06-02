@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
@@ -20,6 +19,8 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -28,7 +29,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
 public class MinecraftProtocolTest {
     private static final String HOST = "localhost";
     private static final int PORT = 25562;
@@ -41,6 +41,7 @@ public class MinecraftProtocolTest {
             false
     );
     private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, new String[]{"minecraft:world"}, 0, 16, 16, false, false, false, new PlayerSpawnInfo(0, "minecraft:world", 100, GameMode.SURVIVAL, GameMode.SURVIVAL, false, false, null, 100), true);
+    private static final Logger log = LoggerFactory.getLogger(MinecraftProtocolTest.class);
 
     private static Server server;
 
