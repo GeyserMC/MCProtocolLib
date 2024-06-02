@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.ServerLink;
+import org.geysermc.mcprotocollib.protocol.data.game.ServerLinkType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +25,16 @@ public class ClientboundServerLinksPacket implements MinecraftPacket {
 
         int length = helper.readVarInt(in);
         for (int i = 0; i < length; i++) {
-            OptionalInt knownType = OptionalInt.empty();
+            ServerLinkType knownType = null;
             Component unknownType = null;
             if (in.readBoolean()) {
-                knownType = OptionalInt.of(helper.readVarInt(in));
+                knownType = ServerLinkType.from(helper.readVarInt(in));
             } else {
                 unknownType = helper.readComponent(in);
             }
 
-            String url = helper.readString(in);
-            this.links.add(new ServerLink(knownType, unknownType, url));
+            String link = helper.readString(in);
+            this.links.add(new ServerLink(knownType, unknownType, link));
         }
     }
 
@@ -41,14 +42,14 @@ public class ClientboundServerLinksPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.links.size());
         for (ServerLink link : this.links) {
-            out.writeBoolean(link.knownType().isPresent());
-            if (link.knownType().isPresent()) {
-                helper.writeVarInt(out, link.knownType().getAsInt());
+            out.writeBoolean(link.knownType() != null);
+            if (link.knownType() != null) {
+                helper.writeVarInt(out, link.knownType().ordinal());
             } else {
                 helper.writeComponent(out, link.unknownType());
             }
 
-            helper.writeString(out, link.url());
+            helper.writeString(out, link.link());
         }
     }
 }
