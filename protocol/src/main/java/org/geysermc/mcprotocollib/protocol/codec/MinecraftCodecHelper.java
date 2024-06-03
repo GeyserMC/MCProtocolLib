@@ -22,6 +22,7 @@ import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatTypeDecoration;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.FixedFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
@@ -95,6 +96,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -772,24 +774,25 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeChatTypeDecoration(buf, chatType.narration());
     }
 
-    public ChatType.ChatTypeDecoration readChatTypeDecoration(ByteBuf buf) {
+    public ChatTypeDecoration readChatTypeDecoration(ByteBuf buf) {
         String translationKey = this.readString(buf);
 
-        int[] parameters = new int[this.readVarInt(buf)];
-        for (int i = 0; i < parameters.length; i++) {
-            parameters[i] = this.readVarInt(buf);
+        int size = this.readVarInt(buf);
+        List<ChatTypeDecoration.Parameter> parameters = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            parameters.add(ChatTypeDecoration.Parameter.VALUES[this.readVarInt(buf)]);
         }
 
         NbtMap style = this.readCompoundTag(buf);
-        return new ChatType.ChatTypeDecoration(translationKey, parameters, style);
+        return new ChatType.ChatTypeDecorationImpl(translationKey, parameters, style);
     }
 
-    public void writeChatTypeDecoration(ByteBuf buf, ChatType.ChatTypeDecoration decoration) {
+    public void writeChatTypeDecoration(ByteBuf buf, ChatTypeDecoration decoration) {
         this.writeString(buf, decoration.translationKey());
 
-        this.writeVarInt(buf, decoration.parameters().length);
-        for (int parameter : decoration.parameters()) {
-            this.writeVarInt(buf, parameter);
+        this.writeVarInt(buf, decoration.parameters().size());
+        for (ChatTypeDecoration.Parameter parameter : decoration.parameters()) {
+            this.writeVarInt(buf, parameter.ordinal());
         }
 
         this.writeAnyTag(buf, decoration.style());
