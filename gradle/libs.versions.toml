@@ -5,6 +5,7 @@ metadata.format.version = "1.1"
 adventure = "4.15.0"
 cloudburstnbt = "3.0.0.Final"
 mcauthlib = "e5b0bcc"
+slf4j = "2.0.9"
 math = "2.0"
 fastutil-maps = "8.5.3"
 netty = "4.1.103.Final"
@@ -24,6 +25,9 @@ adventure-text-serializer-json-legacy-impl = { module = "net.kyori:adventure-tex
 
 cloudburstnbt = { module = "org.cloudburstmc:nbt", version.ref = "cloudburstnbt" }
 mcauthlib = { module = "com.github.GeyserMC:mcauthlib", version.ref = "mcauthlib" }
+
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
 
 math-api = { module = "org.cloudburstmc.math:api", version.ref = "math" }
 math-immutable = { module = "org.cloudburstmc.math:immutable", version.ref = "math" }

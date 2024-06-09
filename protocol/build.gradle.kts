@@ -10,6 +10,9 @@ dependencies {
     api(libs.cloudburstnbt)
     api(libs.mcauthlib)
 
+    // Slf4j
+    api(libs.slf4j.api)
+
     // Kyori adventure
     api(libs.bundles.adventure)
 
