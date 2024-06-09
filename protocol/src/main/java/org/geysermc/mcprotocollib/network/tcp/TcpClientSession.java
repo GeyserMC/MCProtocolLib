@@ -33,6 +33,8 @@ import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -44,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 public class TcpClientSession extends TcpSession {
     private static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+    private static final Logger log = LoggerFactory.getLogger(TcpClientSession.class);
     private static EventLoopGroup EVENT_LOOP_GROUP;
 
     /**
@@ -82,8 +85,6 @@ public class TcpClientSession extends TcpSession {
         if (this.disconnected) {
             throw new IllegalStateException("Session has already been disconnected.");
         }
-
-        boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
 
         if (EVENT_LOOP_GROUP == null) {
             createTcpEventLoopGroup();
@@ -148,12 +149,8 @@ public class TcpClientSession extends TcpSession {
     }
 
     private InetSocketAddress resolveAddress() {
-        boolean debug = getFlag(BuiltinFlags.PRINT_DEBUG, false);
-
         String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
-        if (debug) {
-            System.out.println("[PacketLib] Attempting SRV lookup for \"" + name + "\".");
-        }
+        log.debug("Attempting SRV lookup for \"{}\".", name);
 
         if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
@@ -175,45 +172,35 @@ public class TcpClientSession extends TcpSession {
                             host = host.substring(0, host.length() - 1);
                         }
 
-                        if (debug) {
-                            System.out.println("[PacketLib] Found SRV record containing \"" + host + ":" + port + "\".");
-                        }
+                        log.debug("Found SRV record containing \"{}:{}\".", host, port);
 
                         this.host = host;
                         this.port = port;
-                    } else if (debug) {
-                        System.out.println("[PacketLib] Received non-SRV record in response.");
+                    } else {
+                        log.debug("Received non-SRV record in response.");
                     }
-                } else if (debug) {
-                    System.out.println("[PacketLib] No SRV record found.");
+                } else {
+                    log.debug("No SRV record found.");
                 }
             } catch (Exception e) {
-                if (debug) {
-                    System.out.println("[PacketLib] Failed to resolve SRV record.");
-                    e.printStackTrace();
-                }
+                log.debug("Failed to resolve SRV record.", e);
             } finally {
                 if (envelope != null) {
                     envelope.release();
                 }
 
             }
-        } else if (debug) {
-            System.out.println("[PacketLib] Not resolving SRV record for " + this.host);
+        } else {
+            log.debug("Not resolving SRV record for {}", this.host);
         }
 
         // Resolve host here
         try {
             InetAddress resolved = InetAddress.getByName(getHost());
-            if (debug) {
-                System.out.printf("[PacketLib] Resolved %s -> %s%n", getHost(), resolved.getHostAddress());
-            }
+            log.debug("Resolved {} -> {}", getHost(), resolved.getHostAddress());
             return new InetSocketAddress(resolved, getPort());
         } catch (UnknownHostException e) {
-            if (debug) {
-                System.out.println("[PacketLib] Failed to resolve host, letting Netty do it instead.");
-                e.printStackTrace();
-            }
+            log.debug("Failed to resolve host, letting Netty do it instead.", e);
             return InetSocketAddress.createUnresolved(getHost(), getPort());
         }
     }

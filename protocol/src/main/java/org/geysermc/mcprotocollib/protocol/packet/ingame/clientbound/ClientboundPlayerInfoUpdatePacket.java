@@ -16,9 +16,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 
 @Data
 @With
@@ -36,13 +34,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                 switch (action) {
                     case ADD_PLAYER -> {
                         GameProfile profile = new GameProfile(entry.getProfileId(), helper.readString(in, 16));
-                        int propertyCount = helper.readVarInt(in);
-                        List<GameProfile.Property> propertyList = new ArrayList<>();
-                        for (int index = 0; index < propertyCount; index++) {
-                            propertyList.add(helper.readProperty(in));
-                        }
-
-                        profile.setProperties(propertyList);
+                        profile.setProperties(helper.readList(in, helper::readProperty));
 
                         entry.setProfile(profile);
                     }
@@ -104,10 +96,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                         }
 
                         helper.writeString(out, profile.getName());
-                        helper.writeVarInt(out, profile.getProperties().size());
-                        for (GameProfile.Property property : profile.getProperties()) {
-                            helper.writeProperty(out, property);
-                        }
+                        helper.writeList(out, profile.getProperties(), helper::writeProperty);
                     }
                     case INITIALIZE_CHAT -> {
                         out.writeBoolean(entry.getPublicKey() != null);

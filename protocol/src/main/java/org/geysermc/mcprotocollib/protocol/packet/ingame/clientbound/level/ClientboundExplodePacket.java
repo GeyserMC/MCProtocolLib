@@ -14,7 +14,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -39,11 +38,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         this.y = in.readDouble();
         this.z = in.readDouble();
         this.radius = in.readFloat();
-        this.exploded = new ArrayList<>();
-        int length = helper.readVarInt(in);
-        for (int count = 0; count < length; count++) {
-            this.exploded.add(Vector3i.from(in.readByte(), in.readByte(), in.readByte()));
-        }
+        this.exploded = helper.readList(in, buf -> Vector3i.from(buf.readByte(), buf.readByte(), buf.readByte()));
 
         this.pushX = in.readFloat();
         this.pushY = in.readFloat();
@@ -60,12 +55,11 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         out.writeDouble(this.y);
         out.writeDouble(this.z);
         out.writeFloat(this.radius);
-        helper.writeVarInt(out, this.exploded.size());
-        for (Vector3i record : this.exploded) {
-            out.writeByte(record.getX());
-            out.writeByte(record.getY());
-            out.writeByte(record.getZ());
-        }
+        helper.writeList(out, this.exploded, (buf, record) -> {
+            buf.writeByte(record.getX());
+            buf.writeByte(record.getY());
+            buf.writeByte(record.getZ());
+        });
 
         out.writeFloat(this.pushX);
         out.writeFloat(this.pushY);

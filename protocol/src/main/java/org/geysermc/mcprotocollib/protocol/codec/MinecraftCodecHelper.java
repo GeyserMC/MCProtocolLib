@@ -130,6 +130,23 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
+    public <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader) {
+        int size = this.readVarInt(buf);
+        List<T> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(reader.apply(buf));
+        }
+
+        return list;
+    }
+
+    public <T> void writeList(ByteBuf buf, List<T> value, BiConsumer<ByteBuf, T> writer) {
+        this.writeVarInt(buf, value.size());
+        for (T t : value) {
+            writer.accept(buf, t);
+        }
+    }
+
     public <T> Holder<T> readHolder(ByteBuf buf, Function<ByteBuf, T> readCustom) {
         int registryId = this.readVarInt(buf);
         return registryId == 0 ? Holder.ofCustom(readCustom.apply(buf)) : Holder.ofId(registryId - 1);

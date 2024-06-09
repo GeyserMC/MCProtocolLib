@@ -33,7 +33,13 @@ public enum Effect {
     DOLPHINS_GRACE,
     BAD_OMEN,
     HERO_OF_THE_VILLAGE,
-    DARKNESS;
+    DARKNESS,
+    TRIAL_OMEN,
+    RAID_OMEN,
+    WIND_CHARGED,
+    WEAVING,
+    OOZING,
+    INFESTED;
 
     public static final Effect[] VALUES = values();
 

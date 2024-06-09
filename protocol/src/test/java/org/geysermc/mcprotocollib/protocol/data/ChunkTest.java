@@ -10,6 +10,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPalette;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ChunkTest {
+    private static final Logger log = LoggerFactory.getLogger(ChunkTest.class);
     private final List<ChunkSection> chunkSectionsToTest = new ArrayList<>();
 
     @BeforeEach
@@ -46,8 +49,7 @@ public class ChunkTest {
             try {
                 decoded = helper.readChunkSection(buf);
             } catch (Exception e) {
-                System.out.println(section);
-                e.printStackTrace();
+                log.error(section.toString(), e);
                 throw e;
             }
 
