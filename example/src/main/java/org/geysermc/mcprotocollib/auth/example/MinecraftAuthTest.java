@@ -8,8 +8,11 @@ import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MinecraftAuthTest {
+    private static final Logger log = LoggerFactory.getLogger(MinecraftAuthTest.class);
     private static final String EMAIL = "Username@mail.com";
     private static final String PASSWORD = "Password";
     private static final boolean REQUIRE_SECURE_TEXTURES = true;
@@ -39,13 +42,12 @@ public class MinecraftAuthTest {
         try {
             service.fillProfileProperties(profile);
 
-            System.out.println("Selected Profile: " + profile);
-            System.out.println("Selected Profile Textures: " + profile.getTextures(REQUIRE_SECURE_TEXTURES));
-            System.out.println("Access Token: " + mcToken.getAccessToken());
-            System.out.println("Expire Time: " + mcToken.getExpireTimeMs());
+            log.info("Selected Profile: {}", profile);
+            log.info("Selected Profile Textures: {}", profile.getTextures(REQUIRE_SECURE_TEXTURES));
+            log.info("Access Token: {}", mcToken.getAccessToken());
+            log.info("Expire Time: {}", mcToken.getExpireTimeMs());
         } catch (Exception e) {
-            System.err.println("Failed to get properties and textures of selected profile " + profile + ".");
-            e.printStackTrace();
+            log.error("Failed to get properties and textures of selected profile {}.", profile, e);
         }
     }
 }
