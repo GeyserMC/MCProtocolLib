@@ -167,7 +167,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public void writeResourceLocation(ByteBuf buf, Key location) {
-        this.writeString(buf, location.toString());
+        this.writeString(buf, location.asString());
     }
 
     public UUID readUUID(ByteBuf buf) {
