@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -20,7 +21,6 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
-import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.FixedFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
@@ -161,12 +161,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         }
     }
 
-    public String readResourceLocation(ByteBuf buf) {
-        return Identifier.formalize(this.readString(buf));
+    @SuppressWarnings("PatternValidation")
+    public Key readResourceLocation(ByteBuf buf) {
+        return Key.key(this.readString(buf));
     }
 
-    public void writeResourceLocation(ByteBuf buf, String location) {
-        this.writeString(buf, location);
+    public void writeResourceLocation(ByteBuf buf, Key location) {
+        this.writeString(buf, location.asString());
     }
 
     public UUID readUUID(ByteBuf buf) {
@@ -563,19 +564,19 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public GlobalPos readGlobalPos(ByteBuf buf) {
-        String dimension = Identifier.formalize(this.readString(buf));
+        Key dimension = readResourceLocation(buf);
         Vector3i pos = this.readPosition(buf);
         return new GlobalPos(dimension, pos);
     }
 
     public void writeGlobalPos(ByteBuf buf, GlobalPos pos) {
-        this.writeString(buf, pos.getDimension());
+        this.writeResourceLocation(buf, pos.getDimension());
         this.writePosition(buf, pos.getPosition());
     }
 
     public PlayerSpawnInfo readPlayerSpawnInfo(ByteBuf buf) {
         int dimension = this.readVarInt(buf);
-        String worldName = this.readString(buf);
+        Key worldName = this.readResourceLocation(buf);
         long hashedSeed = buf.readLong();
         GameMode gameMode = GameMode.byId(buf.readByte());
         GameMode previousGamemode = GameMode.byNullableId(buf.readByte());
@@ -588,7 +589,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
         this.writeVarInt(buf, info.getDimension());
-        this.writeString(buf, info.getWorldName());
+        this.writeResourceLocation(buf, info.getWorldName());
         buf.writeLong(info.getHashedSeed());
         buf.writeByte(info.getGameMode().ordinal());
         buf.writeByte(GameMode.toNullableId(info.getPreviousGamemode()));

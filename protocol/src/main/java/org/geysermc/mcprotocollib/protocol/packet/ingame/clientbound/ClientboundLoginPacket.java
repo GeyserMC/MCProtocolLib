@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
@@ -15,7 +16,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnIn
 public class ClientboundLoginPacket implements MinecraftPacket {
     private final int entityId;
     private final boolean hardcore;
-    private final @NonNull String[] worldNames;
+    private final @NonNull Key[] worldNames;
     private final int maxPlayers;
     private final int viewDistance;
     private final int simulationDistance;
@@ -29,9 +30,9 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         this.entityId = in.readInt();
         this.hardcore = in.readBoolean();
         int worldCount = helper.readVarInt(in);
-        this.worldNames = new String[worldCount];
+        this.worldNames = new Key[worldCount];
         for (int i = 0; i < worldCount; i++) {
-            this.worldNames[i] = helper.readString(in);
+            this.worldNames[i] = helper.readResourceLocation(in);
         }
         this.maxPlayers = helper.readVarInt(in);
         this.viewDistance = helper.readVarInt(in);
@@ -48,8 +49,8 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         out.writeInt(this.entityId);
         out.writeBoolean(this.hardcore);
         helper.writeVarInt(out, this.worldNames.length);
-        for (String worldName : this.worldNames) {
-            helper.writeString(out, worldName);
+        for (Key worldName : this.worldNames) {
+            helper.writeResourceLocation(out, worldName);
         }
         helper.writeVarInt(out, this.maxPlayers);
         helper.writeVarInt(out, this.viewDistance);

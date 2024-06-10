@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
@@ -11,7 +12,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @With
 @AllArgsConstructor
 public class ClientboundCookieRequestPacket implements MinecraftPacket {
-    private final String key;
+    private final Key key;
 
     public ClientboundCookieRequestPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.key = helper.readResourceLocation(in);
