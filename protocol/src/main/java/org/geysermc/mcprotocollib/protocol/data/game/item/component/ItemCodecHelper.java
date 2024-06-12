@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtType;
@@ -371,7 +372,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public ArmorTrim.TrimPattern readTrimPattern(ByteBuf buf) {
-        String assetId = this.readResourceLocation(buf);
+        Key assetId = this.readResourceLocation(buf);
         int templateItemId = this.readVarInt(buf);
         Component description = this.readComponent(buf);
         boolean decal = buf.readBoolean();
@@ -418,7 +419,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
     public JukeboxPlayable readJukeboxPlayable(ByteBuf buf) {
         Holder<JukeboxPlayable.JukeboxSong> songHolder = null;
-        String songLocation = null;
+        Key songLocation = null;
         if (buf.readBoolean()) {
             songHolder = this.readHolder(buf, this::readJukeboxSong);
         } else {

@@ -2,12 +2,13 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.attribute;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.KeyPattern;
 
 public interface AttributeType {
 
-    String getIdentifier();
+    Key getIdentifier();
 
     int getId();
 
@@ -18,19 +19,18 @@ public interface AttributeType {
 //    @Getter
 //    @EqualsAndHashCode
 //    class Custom implements AttributeType {
-//        private final String identifier;
+//        private final Key identifier;
 //
-//        public Custom(String identifier) {
+//        public Custom(Key identifier) {
 //            this.identifier = identifier;
 //        }
 //
-//        public String getIdentifier() {
+//        public Key getIdentifier() {
 //            return identifier;
 //        }
 //    }
 
     @Getter
-    @AllArgsConstructor
     enum Builtin implements AttributeType {
         GENERIC_ARMOR("minecraft:generic.armor", 0, 0, 30),
         GENERIC_ARMOR_TOUGHNESS("minecraft:generic.armor_toughness", 0, 0, 20),
@@ -51,8 +51,8 @@ public interface AttributeType {
         GENERIC_LUCK("minecraft:generic.luck", 0, -1024, 1024),
         GENERIC_MAX_ABSORPTION("minecraft:generic.max_absorption", 0, 0, 2048),
         GENERIC_MAX_HEALTH("minecraft:generic.max_health", 20, 1, 1024),
-        PLAYER_MINING_EFFICIENCY("player.mining_efficiency", 0, 0, 1024),
-        GENERIC_MOVEMENT_EFFICIENCY("generic.movement_efficiency", 0, 0, 1),
+        PLAYER_MINING_EFFICIENCY("minecraft:player.mining_efficiency", 0, 0, 1024),
+        GENERIC_MOVEMENT_EFFICIENCY("minecraft:generic.movement_efficiency", 0, 0, 1),
         GENERIC_MOVEMENT_SPEED("minecraft:generic.movement_speed", 0.7, 0, 1024),
         GENERIC_OXYGEN_BONUS("minecraft:generic.oxygen_bonus", 0, 0, 1024),
         GENERIC_SAFE_FALL_DISTANCE("minecraft:generic.safe_fall_distance", 3, -1024, 1024),
@@ -64,10 +64,17 @@ public interface AttributeType {
         PLAYER_SWEEPING_DAMAGE_RATIO("minecraft:player.sweeping_damage_ratio", 0, 0, 1),
         GENERIC_WATER_MOVEMENT_EFFICIENCY("minecraft:generic.water_movement_efficiency", 0, 0, 1);
 
-        private final String identifier;
+        private final Key identifier;
         private final double def;
         private final double min;
         private final double max;
+
+        Builtin(@KeyPattern String identifier, double def, double min, double max) {
+            this.identifier = Key.key(identifier);
+            this.def = def;
+            this.min = min;
+            this.max = max;
+        }
 
         public int getId() {
             return this.ordinal();

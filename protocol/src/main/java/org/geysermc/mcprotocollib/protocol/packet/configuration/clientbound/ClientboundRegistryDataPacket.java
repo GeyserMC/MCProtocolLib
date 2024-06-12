@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.RegistryEntry;
@@ -14,7 +15,7 @@ import java.util.List;
 @With
 @AllArgsConstructor
 public class ClientboundRegistryDataPacket implements MinecraftPacket {
-    private final String registry;
+    private final Key registry;
     private final List<RegistryEntry> entries;
 
     public ClientboundRegistryDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
