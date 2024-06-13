@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
@@ -30,7 +31,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
     public ClientboundUpdateRecipesPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.recipes = new Recipe[helper.readVarInt(in)];
         for (int i = 0; i < this.recipes.length; i++) {
-            String identifier = helper.readResourceLocation(in);
+            Key identifier = helper.readResourceLocation(in);
             RecipeType type = RecipeType.from(helper.readVarInt(in));
             RecipeData data;
             switch (type) {

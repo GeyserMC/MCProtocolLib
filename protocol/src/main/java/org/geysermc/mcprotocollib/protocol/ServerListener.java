@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
@@ -136,12 +137,15 @@ public class ServerListener extends SessionAdapter {
 
                 // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
                 for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
+                    @SuppressWarnings("PatternValidation")
                     NbtMap entryTag = (NbtMap) entry.getValue();
-                    String typeTag = entryTag.getString("type");
+                    @SuppressWarnings("PatternValidation")
+                    Key typeTag = Key.key(entryTag.getString("type"));
                     List<NbtMap> valueTag = entryTag.getList("value", NbtType.COMPOUND);
                     List<RegistryEntry> entries = new ArrayList<>();
                     for (NbtMap compoundTag : valueTag) {
-                        String nameTag = compoundTag.getString("name");
+                        @SuppressWarnings("PatternValidation")
+                        Key nameTag = Key.key(compoundTag.getString("name"));
                         int id = compoundTag.getInt("id");
                         entries.add(id, new RegistryEntry(nameTag, compoundTag.getCompound("element")));
                     }

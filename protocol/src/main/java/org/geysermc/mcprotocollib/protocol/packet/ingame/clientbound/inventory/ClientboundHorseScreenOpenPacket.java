@@ -12,19 +12,19 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @AllArgsConstructor
 public class ClientboundHorseScreenOpenPacket implements MinecraftPacket {
     private final int containerId;
-    private final int numberOfSlots;
+    private final int inventoryColumns;
     private final int entityId;
 
     public ClientboundHorseScreenOpenPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.containerId = in.readByte();
-        this.numberOfSlots = helper.readVarInt(in);
+        this.inventoryColumns = helper.readVarInt(in);
         this.entityId = in.readInt();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.containerId);
-        helper.writeVarInt(out, this.numberOfSlots);
+        helper.writeVarInt(out, this.inventoryColumns);
         out.writeInt(this.entityId);
     }
 }

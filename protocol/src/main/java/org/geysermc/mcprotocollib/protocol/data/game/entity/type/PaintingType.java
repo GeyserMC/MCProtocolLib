@@ -30,7 +30,27 @@ public enum PaintingType {
     WIND,
     WATER,
     FIRE,
-    DONKEY_KONG;
+    DONKEY_KONG,
+    BAROQUE,
+    HUMBLE,
+    MEDITATIVE,
+    PRAIRIE_RIDE,
+    UNPACKED,
+    BACKYARD,
+    BOUQUET,
+    CAVEBIRD,
+    CHANGING,
+    COTAN,
+    ENDBOSS,
+    FERN,
+    FINDING,
+    LOWMIST,
+    ORB,
+    OWLEMONS,
+    PASSAGE,
+    POND,
+    SUNFLOWERS,
+    TIDES;
 
     private static final PaintingType[] VALUES = values();
 

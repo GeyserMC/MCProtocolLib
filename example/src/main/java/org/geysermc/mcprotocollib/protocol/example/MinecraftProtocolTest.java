@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.example;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -75,7 +76,7 @@ public class MinecraftProtocolTest {
                     session.send(new ClientboundLoginPacket(
                             0,
                             false,
-                            new String[]{"minecraft:world"},
+                            new Key[]{Key.key("minecraft:world")},
                             0,
                             16,
                             16,
@@ -84,7 +85,7 @@ public class MinecraftProtocolTest {
                             false,
                             new PlayerSpawnInfo(
                                     0,
-                                    "minecraft:world",
+                                    Key.key("minecraft:world"),
                                     100,
                                     GameMode.SURVIVAL,
                                     GameMode.SURVIVAL,
