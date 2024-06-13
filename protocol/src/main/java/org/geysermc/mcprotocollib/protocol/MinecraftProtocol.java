@@ -250,7 +250,7 @@ public class MinecraftProtocol extends PacketProtocol {
 
     public static NbtMap loadNetworkCodec() {
         try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkCodec.nbt"))) {
-            return (NbtMap) NbtUtils.createGZIPReader(inputStream).readTag();
+            return (NbtMap) NbtUtils.createGZIPReader(inputStream).readTag(512);
         } catch (Exception e) {
             throw new AssertionError("Unable to load network codec.", e);
         }

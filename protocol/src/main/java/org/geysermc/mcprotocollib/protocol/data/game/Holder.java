@@ -1,6 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game;
 
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
 
 /**
  * Represents an object that could either be a network ID, or a custom-defined one.
@@ -22,9 +24,14 @@ public interface Holder<T> {
 
     T custom();
 
-    Holder<T> ifId(Consumer<Holder<T>> action);
+    Holder<T> ifId(IntConsumer action);
 
-    Holder<T> ifCustom(Consumer<Holder<T>> action);
+    Holder<T> ifCustom(Consumer<T> action);
+
+    /**
+     * Returns the holder as an object, or else looks up the item in the registry.
+     */
+    T getOrCompute(IntFunction<T> supplier);
 
     record IdHolder<T>(int id) implements Holder<T> {
         @Override
@@ -43,15 +50,20 @@ public interface Holder<T> {
         }
 
         @Override
-        public Holder<T> ifId(Consumer<Holder<T>> action) {
-            action.accept(this);
+        public Holder<T> ifId(IntConsumer action) {
+            action.accept(id);
             return this;
         }
 
         @Override
-        public Holder<T> ifCustom(Consumer<Holder<T>> action) {
+        public Holder<T> ifCustom(Consumer<T> action) {
             // no-op
             return this;
+        }
+
+        @Override
+        public T getOrCompute(IntFunction<T> supplier) {
+            return supplier.apply(id);
         }
     }
 
@@ -77,14 +89,19 @@ public interface Holder<T> {
         }
 
         @Override
-        public Holder<T> ifId(Consumer<Holder<T>> action) {
+        public Holder<T> ifId(IntConsumer action) {
             return this;
         }
 
         @Override
-        public Holder<T> ifCustom(Consumer<Holder<T>> action) {
-            action.accept(this);
+        public Holder<T> ifCustom(Consumer<T> action) {
+            action.accept(object);
             return this;
+        }
+
+        @Override
+        public T getOrCompute(IntFunction<T> supplier) {
+            return object;
         }
     }
 }

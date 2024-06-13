@@ -12,18 +12,18 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnIn
 @With
 @AllArgsConstructor
 public class ClientboundRespawnPacket implements MinecraftPacket {
-    private static final byte KEEP_ATTRIBUTES = 1;
+    private static final byte KEEP_ATTRIBUTE_MODIFIERS = 1;
     private static final byte KEEP_ENTITY_DATA = 2;
 
     private final PlayerSpawnInfo commonPlayerSpawnInfo;
     // The following two are the dataToKeep byte
     private final boolean keepMetadata;
-    private final boolean keepAttributes;
+    private final boolean keepAttributeModifiers;
 
     public ClientboundRespawnPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.commonPlayerSpawnInfo = helper.readPlayerSpawnInfo(in);
         byte dataToKeep = in.readByte();
-        this.keepAttributes = (dataToKeep & KEEP_ATTRIBUTES) != 0;
+        this.keepAttributeModifiers = (dataToKeep & KEEP_ATTRIBUTE_MODIFIERS) != 0;
         this.keepMetadata = (dataToKeep & KEEP_ENTITY_DATA) != 0;
     }
 
@@ -34,8 +34,8 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         if (this.keepMetadata) {
             dataToKeep += KEEP_ENTITY_DATA;
         }
-        if (this.keepAttributes) {
-            dataToKeep += KEEP_ATTRIBUTES;
+        if (this.keepAttributeModifiers) {
+            dataToKeep += KEEP_ATTRIBUTE_MODIFIERS;
         }
         out.writeByte(dataToKeep);
     }

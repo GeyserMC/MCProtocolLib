@@ -21,6 +21,8 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatTypeDecoration;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.BlankFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.FixedFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
@@ -42,9 +44,11 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.WolfVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
@@ -92,6 +96,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -477,12 +482,56 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeEnum(buf, pose);
     }
 
-    public PaintingType readPaintingType(ByteBuf buf) {
-        return PaintingType.from(this.readVarInt(buf));
+    public Holder<WolfVariant> readWolfVariant(ByteBuf buf) {
+        return this.readHolder(buf, input -> {
+            Key wildTexture = this.readResourceLocation(input);
+            Key tameTexture = this.readResourceLocation(input);
+            Key angryTexture = this.readResourceLocation(input);
+            Key biomeLocation = null;
+            int[] biomeHolders = null;
+
+            int length = this.readVarInt(input) - 1;
+            if (length == -1) {
+                biomeLocation = this.readResourceLocation(input);
+            } else {
+                biomeHolders = new int[length];
+                for (int j = 0; j < length; j++) {
+                    biomeHolders[j] = this.readVarInt(input);
+                }
+            }
+            return new WolfVariant(wildTexture, tameTexture, angryTexture, biomeLocation, biomeHolders);
+        });
     }
 
-    public void writePaintingType(ByteBuf buf, PaintingType type) {
-        this.writeEnum(buf, type);
+    public void writeWolfVariant(ByteBuf buf, Holder<WolfVariant> variantHolder) {
+        this.writeHolder(buf, variantHolder, (output, variant) -> {
+            this.writeResourceLocation(output, variant.wildTexture());
+            this.writeResourceLocation(output, variant.tameTexture());
+            this.writeResourceLocation(output, variant.angryTexture());
+            if (variant.biomeLocation() != null) {
+                this.writeVarInt(output, 0);
+                this.writeResourceLocation(output, variant.biomeLocation());
+            } else {
+                this.writeVarInt(output, variant.biomeHolders().length + 1);
+                for (int holder : variant.biomeHolders()) {
+                    this.writeVarInt(output, holder);
+                }
+            }
+        });
+    }
+
+    public Holder<PaintingVariant> readPaintingVariant(ByteBuf buf) {
+        return this.readHolder(buf, input -> {
+            return new PaintingVariant(this.readVarInt(input), this.readVarInt(input), this.readResourceLocation(input));
+        });
+    }
+
+    public void writePaintingVariant(ByteBuf buf, Holder<PaintingVariant> variantHolder) {
+        this.writeHolder(buf, variantHolder, (output, variant) -> {
+            this.writeVarInt(buf, variant.width());
+            this.writeVarInt(buf, variant.height());
+            this.writeResourceLocation(buf, variant.assetId());
+        });
     }
 
     public SnifferState readSnifferState(ByteBuf buf) {
@@ -715,6 +764,39 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         } else {
             throw new IllegalArgumentException("Unknown number format: " + numberFormat);
         }
+    }
+
+    public ChatType readChatType(ByteBuf buf) {
+        return new ChatType(readChatTypeDecoration(buf), readChatTypeDecoration(buf));
+    }
+
+    public void writeChatType(ByteBuf buf, ChatType chatType) {
+        this.writeChatTypeDecoration(buf, chatType.chat());
+        this.writeChatTypeDecoration(buf, chatType.narration());
+    }
+
+    public ChatTypeDecoration readChatTypeDecoration(ByteBuf buf) {
+        String translationKey = this.readString(buf);
+
+        int size = this.readVarInt(buf);
+        List<ChatTypeDecoration.Parameter> parameters = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            parameters.add(ChatTypeDecoration.Parameter.VALUES[this.readVarInt(buf)]);
+        }
+
+        NbtMap style = this.readCompoundTag(buf);
+        return new ChatType.ChatTypeDecorationImpl(translationKey, parameters, style);
+    }
+
+    public void writeChatTypeDecoration(ByteBuf buf, ChatTypeDecoration decoration) {
+        this.writeString(buf, decoration.translationKey());
+
+        this.writeVarInt(buf, decoration.parameters().size());
+        for (ChatTypeDecoration.Parameter parameter : decoration.parameters()) {
+            this.writeVarInt(buf, parameter.ordinal());
+        }
+
+        this.writeAnyTag(buf, decoration.style());
     }
 
     public PositionSource readPositionSource(ByteBuf buf) {
