@@ -174,11 +174,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         List<ItemAttributeModifiers.Entry> modifiers = this.readList(buf, (input) -> {
             int attribute = this.readVarInt(input);
 
-            UUID id = this.readUUID(input);
-            String name = this.readString(input);
+            Key id = this.readResourceLocation(input);
             double amount = input.readDouble();
             ModifierOperation operation = ModifierOperation.from(this.readVarInt(input));
-            ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, name, amount, operation);
+            ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, amount, operation);
 
             ItemAttributeModifiers.EquipmentSlotGroup slot = ItemAttributeModifiers.EquipmentSlotGroup.from(this.readVarInt(input));
             return new ItemAttributeModifiers.Entry(attribute, modifier, slot);
@@ -190,8 +189,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     public void writeItemAttributeModifiers(ByteBuf buf, ItemAttributeModifiers modifiers) {
         this.writeList(buf, modifiers.getModifiers(), (output, entry) -> {
             this.writeVarInt(output, entry.getAttribute());
-            this.writeUUID(output, entry.getModifier().getId());
-            this.writeString(output, entry.getModifier().getName());
+            this.writeResourceLocation(output, entry.getModifier().getId());
             output.writeDouble(entry.getModifier().getAmount());
             this.writeVarInt(output, entry.getModifier().getOperation().ordinal());
             this.writeVarInt(output, entry.getSlot().ordinal());
