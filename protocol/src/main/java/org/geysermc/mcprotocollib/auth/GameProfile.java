@@ -32,7 +32,7 @@ public class GameProfile {
     private static PublicKey loadSignatureKey() {
         try (InputStream in = Objects.requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
             return KeyFactory.getInstance("RSA")
-                    .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
+                .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
         } catch (Exception e) {
             throw new RuntimeException("Missing/invalid yggdrasil public key.", e);
         }
