@@ -2,11 +2,10 @@ package org.geysermc.mcprotocollib.auth;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.geysermc.mcprotocollib.auth.util.TextureUrlChecker;
 import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
 
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -25,37 +24,18 @@ import java.util.UUID;
  * Information about a user profile.
  */
 public class GameProfile {
-    private static final String[] WHITELISTED_DOMAINS = {".minecraft.net", ".mojang.com"};
-    private static final PublicKey SIGNATURE_KEY;
-    private static final Gson GSON;
+    private static final PublicKey SIGNATURE_KEY = loadSignatureKey();
+    private static final Gson GSON = new GsonBuilder()
+        .registerTypeAdapter(UUID.class, new UndashedUUIDAdapter())
+        .create();
 
-    static {
+    private static PublicKey loadSignatureKey() {
         try (InputStream in = Objects.requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
-            SIGNATURE_KEY = KeyFactory.getInstance("RSA")
+            return KeyFactory.getInstance("RSA")
                     .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
         } catch (Exception e) {
-            throw new ExceptionInInitializerError("Missing/invalid yggdrasil public key.");
+            throw new RuntimeException("Missing/invalid yggdrasil public key.", e);
         }
-
-        GSON = new GsonBuilder().registerTypeAdapter(UUID.class, new UndashedUUIDAdapter()).create();
-    }
-
-    private static boolean isWhitelistedDomain(String url) {
-        URI uri;
-        try {
-            uri = new URI(url);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid URL \"" + url + "\".");
-        }
-
-        String domain = uri.getHost();
-        for (String whitelistedDomain : WHITELISTED_DOMAINS) {
-            if (domain.endsWith(whitelistedDomain)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private final UUID id;
@@ -214,9 +194,11 @@ public class GameProfile {
                 if (result != null && result.textures != null) {
                     if (requireSecure) {
                         for (GameProfile.Texture texture : result.textures.values()) {
-                            if (!isWhitelistedDomain(texture.getURL())) {
-                                throw new IllegalStateException("Textures payload has been tampered with. (non-whitelisted domain)");
+                            if (TextureUrlChecker.isAllowedTextureDomain(texture.getURL())) {
+                                continue;
                             }
+
+                            throw new IllegalStateException("Textures payload has been tampered with. (non-whitelisted domain)");
                         }
                     }
 
