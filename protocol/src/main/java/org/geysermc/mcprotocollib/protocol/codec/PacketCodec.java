@@ -3,6 +3,7 @@ package org.geysermc.mcprotocollib.protocol.codec;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 
 import java.util.EnumMap;
@@ -17,12 +18,12 @@ public class PacketCodec {
     @Getter
     private final String minecraftVersion;
 
-    private final EnumMap<ProtocolState, PacketRegistryBuilder> stateProtocols;
+    private final EnumMap<ProtocolState, PacketRegistry> stateProtocols;
 
     @Getter
     private final Supplier<MinecraftCodecHelper> helperFactory;
 
-    public PacketRegistryBuilder getCodec(ProtocolState protocolState) {
+    public PacketRegistry getCodec(ProtocolState protocolState) {
         return this.stateProtocols.get(protocolState);
     }
 
@@ -44,7 +45,7 @@ public class PacketCodec {
     public static class Builder {
         private int protocolVersion = -1;
         private String minecraftVersion = null;
-        private EnumMap<ProtocolState, PacketRegistryBuilder> stateProtocols = new EnumMap<>(ProtocolState.class);
+        private EnumMap<ProtocolState, PacketRegistry> stateProtocols = new EnumMap<>(ProtocolState.class);
         private Supplier<MinecraftCodecHelper> helperFactory;
 
         public Builder protocolVersion(int protocolVersion) {
@@ -57,7 +58,7 @@ public class PacketCodec {
             return this;
         }
 
-        public Builder state(ProtocolState state, PacketRegistryBuilder.Builder protocol) {
+        public Builder state(ProtocolState state, PacketRegistryBuilder protocol) {
             this.stateProtocols.put(state, protocol.build());
             return this;
         }
