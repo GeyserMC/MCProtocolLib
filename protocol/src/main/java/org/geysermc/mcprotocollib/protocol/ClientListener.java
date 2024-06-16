@@ -7,6 +7,7 @@ import com.github.steveice10.mc.auth.exception.request.ServiceUnavailableExcepti
 import com.github.steveice10.mc.auth.service.SessionService;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
@@ -77,16 +78,18 @@ public class ClientListener extends SessionAdapter {
 
                 SessionService sessionService = session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
                 String serverId = sessionService.getServerId(helloPacket.getServerId(), helloPacket.getPublicKey(), key);
+
+                // TODO: Add disabled multiplayer and banned from playing online errors
                 try {
                     sessionService.joinServer(profile, accessToken, serverId);
                 } catch (ServiceUnavailableException e) {
-                    session.disconnect("Login failed: Authentication service unavailable.", e);
+                    session.disconnect(Component.translatable("disconnect.loginFailedInfo", Component.translatable("disconnect.loginFailedInfo.serversUnavailable")), e);
                     return;
                 } catch (InvalidCredentialsException e) {
-                    session.disconnect("Login failed: Invalid login session.", e);
+                    session.disconnect(Component.translatable("disconnect.loginFailedInfo", Component.translatable("disconnect.loginFailedInfo.invalidSession")), e);
                     return;
                 } catch (RequestException e) {
-                    session.disconnect("Login failed: Authentication error: " + e.getMessage(), e);
+                    session.disconnect(Component.translatable("disconnect.loginFailedInfo", e.getMessage()), e);
                     return;
                 }
 
@@ -120,7 +123,7 @@ public class ClientListener extends SessionAdapter {
                     handler.handle(session, time);
                 }
 
-                session.disconnect("Finished");
+                session.disconnect(Component.translatable("multiplayer.status.finished"));
             }
         } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ClientboundKeepAlivePacket keepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
@@ -135,7 +138,7 @@ public class ClientListener extends SessionAdapter {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
-                    session.disconnect("Transferring");
+                    session.disconnect(Component.translatable("disconnect.transfer"));
                     newSession.connect(true, true);
                 }
             }
@@ -152,7 +155,7 @@ public class ClientListener extends SessionAdapter {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
-                    session.disconnect("Transferring");
+                    session.disconnect(Component.translatable("disconnect.transfer"));
                     newSession.connect(true, true);
                 }
             }

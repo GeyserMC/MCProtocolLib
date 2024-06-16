@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.network;
 
+import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.network.event.server.ServerBoundEvent;
 import org.geysermc.mcprotocollib.network.event.server.ServerClosedEvent;
 import org.geysermc.mcprotocollib.network.event.server.ServerClosingEvent;
@@ -119,7 +120,7 @@ public abstract class AbstractServer implements Server {
     public void removeSession(Session session) {
         this.sessions.remove(session);
         if (session.isConnected()) {
-            session.disconnect("Connection closed.");
+            session.disconnect(Component.translatable("disconnect.endOfStream"));
         }
 
         this.callEvent(new SessionRemovedEvent(this, session));
@@ -164,7 +165,7 @@ public abstract class AbstractServer implements Server {
         this.callEvent(new ServerClosingEvent(this));
         for (Session session : this.getSessions()) {
             if (session.isConnected()) {
-                session.disconnect("Server closed.");
+                session.disconnect(Component.translatable("multiplayer.disconnect.server_shutdown"));
             }
         }
 

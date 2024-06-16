@@ -2,16 +2,14 @@ package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.DefaultEventLoopGroup;
 import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutException;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
@@ -27,7 +25,6 @@ import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
-import java.net.ConnectException;
 import java.net.SocketAddress;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
     /**
@@ -283,22 +281,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void disconnect(String reason) {
-        this.disconnect(Component.text(reason));
-    }
-
-    @Override
-    public void disconnect(String reason, Throwable cause) {
-        this.disconnect(Component.text(reason), cause);
-    }
-
-    @Override
-    public void disconnect(Component reason) {
+    public void disconnect(@NonNull Component reason) {
         this.disconnect(reason, null);
     }
 
     @Override
-    public void disconnect(final Component reason, final Throwable cause) {
+    public void disconnect(@NonNull Component reason, Throwable cause) {
         if (this.disconnected) {
             return;
         }
@@ -308,10 +296,9 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         if (this.channel != null && this.channel.isOpen()) {
             this.callEvent(new DisconnectingEvent(this, reason, cause));
             this.channel.flush().close().addListener(future ->
-                    callEvent(new DisconnectedEvent(TcpSession.this,
-                            reason != null ? reason : Component.text("Connection closed."), cause)));
+                callEvent(new DisconnectedEvent(TcpSession.this, reason, cause)));
         } else {
-            this.callEvent(new DisconnectedEvent(this, reason != null ? reason : Component.text("Connection closed."), cause));
+            this.callEvent(new DisconnectedEvent(this, reason, cause));
         }
     }
 
@@ -339,7 +326,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             // daemon threads and their interaction with the runtime.
             PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
             Runtime.getRuntime().addShutdownHook(new Thread(
-                    () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+                () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
         }
         return PACKET_EVENT_LOOP.next();
     }
@@ -403,21 +390,17 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if (ctx.channel() == this.channel) {
-            this.disconnect("Connection closed.");
+            this.disconnect(Component.translatable("disconnect.endOfStream"));
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        String message;
-        if (cause instanceof ConnectTimeoutException || (cause instanceof ConnectException && cause.getMessage().contains("connection timed out"))) {
-            message = "Connection timed out.";
-        } else if (cause instanceof ReadTimeoutException) {
-            message = "Read timed out.";
-        } else if (cause instanceof WriteTimeoutException) {
-            message = "Write timed out.";
+        Component message;
+        if (cause instanceof TimeoutException) {
+            message = Component.translatable("disconnect.timeout");
         } else {
-            message = cause.toString();
+            message = Component.translatable("disconnect.genericReason", "Internal Exception: " + cause);
         }
 
         this.disconnect(message, cause);

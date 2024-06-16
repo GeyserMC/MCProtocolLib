@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network;
 
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
@@ -273,7 +273,7 @@ public interface Session {
      *
      * @param reason Reason for disconnecting.
      */
-    void disconnect(@Nullable String reason);
+    void disconnect(@NonNull Component reason);
 
     /**
      * Disconnects the session.
@@ -281,22 +281,7 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @param cause Throwable responsible for disconnecting.
      */
-    void disconnect(@Nullable String reason, Throwable cause);
-
-    /**
-     * Disconnects the session.
-     *
-     * @param reason Reason for disconnecting.
-     */
-    void disconnect(@Nullable Component reason);
-
-    /**
-     * Disconnects the session.
-     *
-     * @param reason Reason for disconnecting.
-     * @param cause Throwable responsible for disconnecting.
-     */
-    void disconnect(@Nullable Component reason, Throwable cause);
+    void disconnect(@NonNull Component reason, Throwable cause);
 
     /**
      * Auto read in netty means that the server is automatically reading from the channel.

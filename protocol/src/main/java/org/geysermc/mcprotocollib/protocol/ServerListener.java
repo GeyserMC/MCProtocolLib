@@ -108,7 +108,7 @@ public class ServerListener extends SessionAdapter {
                             beginLogin(session, protocol, intentionPacket, true);
                         } else {
                             session.switchOutboundProtocol(() -> protocol.setOutboundState(ProtocolState.LOGIN));
-                            session.disconnect("Server does not accept transfers.");
+                            session.disconnect(Component.translatable("multiplayer.disconnect.transfers_disabled"));
                         }
                     }
                     case LOGIN -> {
@@ -129,9 +129,8 @@ public class ServerListener extends SessionAdapter {
             } else if (packet instanceof ServerboundKeyPacket keyPacket) {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
 
-                if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
-                    session.disconnect("Invalid challenge!");
-                    return;
+                if (!Arrays.equals(this.challenge, keyPacket.getDecryptedChallenge(privateKey))) {
+                    throw new IllegalStateException("Protocol error");
                 }
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);
@@ -178,6 +177,7 @@ public class ServerListener extends SessionAdapter {
                 session.send(new ClientboundStatusResponsePacket(info));
             } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
                 session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
+                session.disconnect(Component.translatable("multiplayer.status.request_handled"));
             }
         } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
@@ -240,12 +240,12 @@ public class ServerListener extends SessionAdapter {
             try {
                 profile = sessionService.getProfileByServer(username, sessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), key));
             } catch (RequestException e) {
-                session.disconnect("Failed to make session service request.", e);
+                session.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"), e);
                 return;
             }
 
             if (profile == null) {
-                session.disconnect("Failed to verify username.");
+                session.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
             }
         } else {
             profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)), username);

@@ -21,17 +21,17 @@ public class ServerboundKeyPacket implements MinecraftPacket {
     private final byte @NonNull [] sharedKey;
     private final byte @NonNull [] encryptedChallenge;
 
-    public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] challenge) {
-        this.sharedKey = runEncryption(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
-        this.encryptedChallenge = runEncryption(Cipher.ENCRYPT_MODE, publicKey, challenge);
+    public ServerboundKeyPacket(PublicKey publicKey, SecretKey secretKey, byte[] encryptedChallenge) {
+        this.sharedKey = cipherData(Cipher.ENCRYPT_MODE, publicKey, secretKey.getEncoded());
+        this.encryptedChallenge = cipherData(Cipher.ENCRYPT_MODE, publicKey, encryptedChallenge);
     }
 
     public SecretKey getSecretKey(PrivateKey privateKey) {
-        return new SecretKeySpec(runEncryption(Cipher.DECRYPT_MODE, privateKey, this.sharedKey), "AES");
+        return new SecretKeySpec(cipherData(Cipher.DECRYPT_MODE, privateKey, this.sharedKey), "AES");
     }
 
-    public byte[] getEncryptedChallenge(PrivateKey privateKey) {
-        return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.encryptedChallenge);
+    public byte[] getDecryptedChallenge(PrivateKey privateKey) {
+        return cipherData(Cipher.DECRYPT_MODE, privateKey, this.encryptedChallenge);
     }
 
     public ServerboundKeyPacket(ByteBuf in, MinecraftCodecHelper helper) {
@@ -50,13 +50,13 @@ public class ServerboundKeyPacket implements MinecraftPacket {
         return true;
     }
 
-    private static byte[] runEncryption(int mode, Key key, byte[] data) {
+    private static byte[] cipherData(int mode, Key key, byte[] data) {
         try {
-            Cipher cipher = Cipher.getInstance(key.getAlgorithm().equals("RSA") ? "RSA/ECB/PKCS1Padding" : "AES/CFB8/NoPadding");
+            Cipher cipher = Cipher.getInstance(key.getAlgorithm());
             cipher.init(mode, key);
             return cipher.doFinal(data);
         } catch (GeneralSecurityException e) {
-            throw new IllegalStateException("Failed to " + (mode == Cipher.DECRYPT_MODE ? "decrypt" : "encrypt") + " data.", e);
+            throw new IllegalStateException("Failed to cipher data.", e);
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.network.example;
 
+import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
@@ -22,7 +23,7 @@ public class ClientSessionListener extends SessionAdapter {
             if (id.equals("hello")) {
                 session.send(new PingPacket("exit"));
             } else if (id.equals("exit")) {
-                session.disconnect("Finished");
+                session.disconnect(Component.text("Finished"));
             }
         }
     }

@@ -256,11 +256,6 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    @Override
-    public void disconnect(String reason, Throwable cause) {
-        super.disconnect(reason, cause);
-    }
-
     private static void createTcpEventLoopGroup() {
         if (EVENT_LOOP_GROUP != null) {
             return;

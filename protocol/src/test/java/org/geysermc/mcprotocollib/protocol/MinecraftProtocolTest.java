@@ -78,7 +78,7 @@ public class MinecraftProtocolTest {
             assertNotNull(handler.info, "Failed to get server info.");
             assertEquals(SERVER_INFO, handler.info, "Received incorrect server info.");
         } finally {
-            session.disconnect("Status test complete.");
+            session.disconnect(Component.text("Status test complete."));
         }
     }
 
@@ -95,7 +95,7 @@ public class MinecraftProtocolTest {
             assertNotNull(listener.packet, "Failed to log in.");
             assertEquals(JOIN_GAME_PACKET, listener.packet, "Received incorrect join packet.");
         } finally {
-            session.disconnect("Login test complete.");
+            session.disconnect(Component.text("Login test complete."));
         }
     }
 
