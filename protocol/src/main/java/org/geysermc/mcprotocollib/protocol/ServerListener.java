@@ -92,7 +92,7 @@ public class ServerListener extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
-        if (protocol.getState() == ProtocolState.HANDSHAKE) {
+        if (protocol.getInboundState() == ProtocolState.HANDSHAKE) {
             if (packet instanceof ClientIntentionPacket intentionPacket) {
                 switch (intentionPacket.getIntent()) {
                     case STATUS -> protocol.setState(ProtocolState.STATUS);
@@ -112,7 +112,7 @@ public class ServerListener extends SessionAdapter {
                     default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
-        } else if (protocol.getState() == ProtocolState.LOGIN) {
+        } else if (protocol.getInboundState() == ProtocolState.LOGIN) {
             if (packet instanceof ServerboundHelloPacket helloPacket) {
                 this.username = helloPacket.getUsername();
 
@@ -155,7 +155,7 @@ public class ServerListener extends SessionAdapter {
 
                 session.send(new ClientboundFinishConfigurationPacket());
             }
-        } else if (protocol.getState() == ProtocolState.STATUS) {
+        } else if (protocol.getInboundState() == ProtocolState.STATUS) {
             if (packet instanceof ServerboundStatusRequestPacket) {
                 ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if (builder == null) {
@@ -173,7 +173,7 @@ public class ServerListener extends SessionAdapter {
             } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
                 session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
             }
-        } else if (protocol.getState() == ProtocolState.GAME) {
+        } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
                 if (keepAlivePacket.getPingId() == this.lastPingId) {
                     long time = System.currentTimeMillis() - this.lastPingTime;
@@ -184,7 +184,7 @@ public class ServerListener extends SessionAdapter {
             } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
                 session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
             }
-        } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
+        } else if (protocol.getInboundState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundFinishConfigurationPacket) {
                 protocol.setState(ProtocolState.GAME);
                 ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
@@ -210,9 +210,9 @@ public class ServerListener extends SessionAdapter {
     @Override
     public void disconnecting(DisconnectingEvent event) {
         MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-        if (protocol.getState() == ProtocolState.LOGIN) {
+        if (protocol.getOutboundState() == ProtocolState.LOGIN) {
             event.getSession().send(new ClientboundLoginDisconnectPacket(event.getReason()));
-        } else if (protocol.getState() == ProtocolState.GAME) {
+        } else if (protocol.getOutboundState() == ProtocolState.GAME) {
             event.getSession().send(new ClientboundDisconnectPacket(event.getReason()));
         }
     }

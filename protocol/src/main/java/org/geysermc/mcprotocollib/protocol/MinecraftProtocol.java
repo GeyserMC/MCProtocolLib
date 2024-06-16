@@ -48,8 +48,10 @@ public class MinecraftProtocol extends PacketProtocol {
     @Getter
     private final PacketCodec codec;
 
-    private ProtocolState state;
-    private PacketStateCodec stateCodec;
+    private ProtocolState inboundState;
+    private PacketStateCodec inboundStateCodec;
+    private ProtocolState outboundState;
+    private PacketStateCodec outboundStateCodec;
 
     private final ProtocolState targetState;
 
@@ -88,7 +90,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.codec = codec;
         this.targetState = ProtocolState.STATUS;
 
-        this.setState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
     }
 
     /**
@@ -133,7 +136,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.profile = profile;
         this.accessToken = accessToken;
 
-        this.setState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
     }
 
     @Override
@@ -156,7 +160,8 @@ public class MinecraftProtocol extends PacketProtocol {
         session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
         session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
 
-        this.setState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
 
         if (this.useDefaultListeners) {
             session.addListener(new ClientListener(this.targetState, transferring));
@@ -165,7 +170,8 @@ public class MinecraftProtocol extends PacketProtocol {
 
     @Override
     public void newServerSession(Server server, Session session) {
-        this.setState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
 
         if (this.useDefaultListeners) {
             if (DEFAULT_NETWORK_CODEC == null) {
@@ -185,67 +191,81 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     /**
-     * Gets the current {@link ProtocolState} the client is in.
+     * Gets the current inbound {@link ProtocolState} the client is in.
      *
-     * @return The current {@link ProtocolState}.
+     * @return The current inbound {@link ProtocolState}.
      */
-    public ProtocolState getState() {
-        return this.state;
+    public ProtocolState getInboundState() {
+        return this.inboundState;
     }
 
-    public void setState(ProtocolState state) {
-        this.state = state;
-        this.stateCodec = this.codec.getCodec(state);
+    public void setInboundState(ProtocolState state) {
+        this.inboundState = state;
+        this.inboundStateCodec = this.codec.getCodec(state);
+    }
+
+    /**
+     * Gets the current outbound {@link ProtocolState} the client is in.
+     *
+     * @return The current outbound {@link ProtocolState}.
+     */
+    public ProtocolState getOutboundState() {
+        return this.outboundState;
+    }
+
+    public void setOutboundState(ProtocolState state) {
+        this.outboundState = state;
+        this.outboundStateCodec = this.codec.getCodec(state);
     }
 
     @Override
     public Packet createClientboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
-        return this.stateCodec.createClientboundPacket(id, buf, codecHelper);
+        return this.inboundStateCodec.createClientboundPacket(id, buf, codecHelper);
     }
 
     @Override
     public int getClientboundId(Class<? extends Packet> packetClass) {
-        return this.stateCodec.getClientboundId(packetClass);
+        return this.outboundStateCodec.getClientboundId(packetClass);
     }
 
     @Override
     public int getClientboundId(Packet packet) {
-        return this.stateCodec.getClientboundId(packet);
+        return this.outboundStateCodec.getClientboundId(packet);
     }
 
     @Override
     public Class<? extends Packet> getClientboundClass(int id) {
-        return this.stateCodec.getClientboundClass(id);
+        return this.inboundStateCodec.getClientboundClass(id);
     }
 
     @Override
     public Packet createServerboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
-        return this.stateCodec.createServerboundPacket(id, buf, codecHelper);
+        return this.inboundStateCodec.createServerboundPacket(id, buf, codecHelper);
     }
 
     @Override
     public int getServerboundId(Class<? extends Packet> packetClass) {
-        return this.stateCodec.getServerboundId(packetClass);
+        return this.outboundStateCodec.getServerboundId(packetClass);
     }
 
     @Override
     public int getServerboundId(Packet packet) {
-        return this.stateCodec.getServerboundId(packet);
+        return this.outboundStateCodec.getServerboundId(packet);
     }
 
     @Override
     public Class<? extends Packet> getServerboundClass(int id) {
-        return this.stateCodec.getServerboundClass(id);
+        return this.inboundStateCodec.getServerboundClass(id);
     }
 
     @Override
     public PacketDefinition<?, ?> getServerboundDefinition(int id) {
-        return this.stateCodec.getServerboundDefinition(id);
+        return this.inboundStateCodec.getServerboundDefinition(id);
     }
 
     @Override
     public PacketDefinition<?, ?> getClientboundDefinition(int id) {
-        return this.stateCodec.getClientboundDefinition(id);
+        return this.inboundStateCodec.getClientboundDefinition(id);
     }
 
     public static NbtMap loadNetworkCodec() {

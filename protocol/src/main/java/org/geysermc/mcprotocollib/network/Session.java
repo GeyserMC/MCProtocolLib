@@ -288,4 +288,15 @@ public interface Session {
      * @param cause Throwable responsible for disconnecting.
      */
     void disconnect(@Nullable Component reason, Throwable cause);
+
+    /**
+     * Auto read in netty means that the server is automatically reading from the channel.
+     * Turning it off means that we won't get more packets being decoded unless we call read() on the channel.
+     * We use this to hold off on reading packets until we are ready to process them.
+     * Which is for example when we change the protocol state to
+     *
+     * @param autoRead Whether to enable auto read or not.
+     *                 Default is true.
+     */
+    void setAutoRead(boolean autoRead);
 }

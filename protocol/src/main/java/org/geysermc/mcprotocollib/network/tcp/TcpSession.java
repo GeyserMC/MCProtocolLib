@@ -311,6 +311,13 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         }
     }
 
+    @Override
+    public void setAutoRead(boolean autoRead) {
+        if (this.channel != null) {
+            this.channel.config().setAutoRead(autoRead);
+        }
+    }
+
     private @Nullable EventLoop createEventLoop() {
         if (!USE_EVENT_LOOP_FOR_PACKETS) {
             return null;
