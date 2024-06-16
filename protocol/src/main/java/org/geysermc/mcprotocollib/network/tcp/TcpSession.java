@@ -400,7 +400,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         if (cause instanceof TimeoutException) {
             message = Component.translatable("disconnect.timeout");
         } else {
-            message = Component.translatable("disconnect.genericReason", "Internal Exception: " + cause);
+            message = Component.translatable("disconnect.genericReason", Component.text("Internal Exception: " + cause));
         }
 
         this.disconnect(message, cause);

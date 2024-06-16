@@ -89,7 +89,7 @@ public class ClientListener extends SessionAdapter {
                     session.disconnect(Component.translatable("disconnect.loginFailedInfo", Component.translatable("disconnect.loginFailedInfo.invalidSession")), e);
                     return;
                 } catch (RequestException e) {
-                    session.disconnect(Component.translatable("disconnect.loginFailedInfo", e.getMessage()), e);
+                    session.disconnect(Component.translatable("disconnect.loginFailedInfo", Component.text(e.getMessage())), e);
                     return;
                 }
 
