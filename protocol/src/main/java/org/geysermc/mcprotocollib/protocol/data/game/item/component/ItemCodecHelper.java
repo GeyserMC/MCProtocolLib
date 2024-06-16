@@ -13,6 +13,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
@@ -238,6 +239,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         float saturationModifier = buf.readFloat();
         boolean canAlwaysEat = buf.readBoolean();
         float eatSeconds = buf.readFloat();
+        ItemStack usingConvertsTo = this.readOptionalItemStack(buf);
 
         List<FoodProperties.PossibleEffect> effects = this.readList(buf, (input) -> {
             MobEffectInstance effect = this.readEffectInstance(input);
@@ -245,7 +247,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
             return new FoodProperties.PossibleEffect(effect, probability);
         });
 
-        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, effects);
+        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, usingConvertsTo, effects);
     }
 
     public void writeFoodProperties(ByteBuf buf, FoodProperties properties) {
@@ -253,6 +255,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeFloat(properties.getSaturationModifier());
         buf.writeBoolean(properties.isCanAlwaysEat());
         buf.writeFloat(properties.getEatSeconds());
+        this.writeOptionalItemStack(buf, properties.getUsingConvertsTo());
 
         this.writeList(buf, properties.getEffects(), (output, effect) -> {
             this.writeEffectInstance(output, effect.getEffect());
