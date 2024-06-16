@@ -52,16 +52,7 @@ public class MinecraftProtocolTest {
         server.setGlobalFlag(VERIFY_USERS_KEY, false);
         server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
         server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, session -> SERVER_INFO);
-        server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, session -> {
-            // Seems like in this setup the server can reply too quickly to ServerboundFinishConfigurationPacket
-            // before the client can transition CONFIGURATION -> GAME. There is probably something wrong here and this is just a band-aid.
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {
-                log.error("Failed to wait to send ClientboundLoginPacket: {}", e.getMessage());
-            }
-            session.send(JOIN_GAME_PACKET);
-        });
+        server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, session -> session.send(JOIN_GAME_PACKET));
 
         assertTrue(server.bind(true).isListening(), "Could not bind server.");
     }
@@ -83,7 +74,7 @@ public class MinecraftProtocolTest {
             session.addListener(new DisconnectListener());
             session.connect();
 
-            handler.status.await(4, SECONDS);
+            assertTrue(handler.status.await(4, SECONDS), "Did not get server info in time.");
             assertNotNull(handler.info, "Failed to get server info.");
             assertEquals(SERVER_INFO, handler.info, "Received incorrect server info.");
         } finally {
