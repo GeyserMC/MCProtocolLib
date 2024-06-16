@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chat;
 
-import org.geysermc.mcprotocollib.protocol.data.game.Identifier;
+import net.kyori.adventure.key.Key;
+import org.intellij.lang.annotations.Subst;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -15,19 +16,20 @@ public enum BuiltinChatType {
     TEAM_MSG_COMMAND_OUTGOING,
     EMOTE_COMMAND;
 
-    private final String resourceLocation;
+    private final Key resourceLocation;
 
     BuiltinChatType() {
-        this.resourceLocation = Identifier.formalize(name().toLowerCase(Locale.ROOT));
+        @Subst("empty") String lowerCase = name().toLowerCase(Locale.ROOT);
+        this.resourceLocation = Key.key(lowerCase);
     }
 
-    public String getResourceLocation() {
+    public Key getResourceLocation() {
         return resourceLocation;
     }
 
-    private static final Map<String, BuiltinChatType> VALUES = new HashMap<>();
+    private static final Map<Key, BuiltinChatType> VALUES = new HashMap<>();
 
-    public static BuiltinChatType from(String resourceLocation) {
+    public static BuiltinChatType from(Key resourceLocation) {
         return VALUES.get(resourceLocation);
     }
 

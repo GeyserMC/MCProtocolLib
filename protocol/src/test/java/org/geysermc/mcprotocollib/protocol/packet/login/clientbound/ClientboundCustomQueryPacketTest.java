@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -11,6 +12,6 @@ public class ClientboundCustomQueryPacketTest extends PacketTest {
         byte[] data = new byte[1024];
         new Random().nextBytes(data);
 
-        this.setPackets(new ClientboundCustomQueryPacket(0, "Channel", data));
+        this.setPackets(new ClientboundCustomQueryPacket(0, Key.key("channel"), data));
     }
 }

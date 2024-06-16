@@ -13,12 +13,16 @@ import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.function.Supplier;
 
 public class TcpServer extends AbstractServer {
     private static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
+    private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
+
     private EventLoopGroup group;
     private Channel channel;
 
@@ -93,10 +97,7 @@ public class TcpServer extends AbstractServer {
                         callback.run();
                     }
                 } else {
-                    System.err.println("[ERROR] Failed to asynchronously bind connection listener.");
-                    if (future1.cause() != null) {
-                        future1.cause().printStackTrace();
-                    }
+                    log.error("Failed to asynchronously bind connection listener.", future1.cause());
                 }
             });
         }
@@ -123,10 +124,7 @@ public class TcpServer extends AbstractServer {
                                 callback.run();
                             }
                         } else {
-                            System.err.println("[ERROR] Failed to asynchronously close connection listener.");
-                            if (future1.cause() != null) {
-                                future1.cause().printStackTrace();
-                            }
+                            log.error("Failed to asynchronously close connection listener.", future1.cause());
                         }
                     });
                 }
@@ -144,11 +142,8 @@ public class TcpServer extends AbstractServer {
                 }
             } else {
                 future.addListener(future1 -> {
-                    if (!future1.isSuccess() && getGlobalFlag(BuiltinFlags.PRINT_DEBUG, false)) {
-                        System.err.println("[ERROR] Failed to asynchronously close connection listener.");
-                        if (future1.cause() != null) {
-                            future1.cause().printStackTrace();
-                        }
+                    if (!future1.isSuccess()) {
+                        log.debug("Failed to asynchronously close connection listener.", future1.cause());
                     }
                 });
             }

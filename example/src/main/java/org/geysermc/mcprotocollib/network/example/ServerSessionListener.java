@@ -6,12 +6,16 @@ import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerSessionListener extends SessionAdapter {
+    private static final Logger log = LoggerFactory.getLogger(ServerSessionListener.class);
+
     @Override
     public void packetReceived(Session session, Packet packet) {
         if (packet instanceof PingPacket) {
-            System.out.println("SERVER Received: " + ((PingPacket) packet).getPingId());
+            log.info("SERVER Received: {}", ((PingPacket) packet).getPingId());
             session.send(packet);
         }
     }
@@ -19,22 +23,22 @@ public class ServerSessionListener extends SessionAdapter {
     @Override
     public void packetSent(Session session, Packet packet) {
         if (packet instanceof PingPacket) {
-            System.out.println("SERVER Sent: " + ((PingPacket) packet).getPingId());
+            log.info("SERVER Sent: {}", ((PingPacket) packet).getPingId());
         }
     }
 
     @Override
     public void connected(ConnectedEvent event) {
-        System.out.println("SERVER Connected");
+        log.info("SERVER Connected");
     }
 
     @Override
     public void disconnecting(DisconnectingEvent event) {
-        System.out.println("SERVER Disconnecting: " + event.getReason());
+        log.info("SERVER Disconnecting: {}", event.getReason());
     }
 
     @Override
     public void disconnected(DisconnectedEvent event) {
-        System.out.println("SERVER Disconnected: " + event.getReason());
+        log.info("SERVER Disconnected: {}", event.getReason());
     }
 }

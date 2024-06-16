@@ -140,6 +140,7 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
         return value | ((b & 0x7FL) << (size * 7));
     }
 
+    @Override
     public String readString(ByteBuf buf) {
         return this.readString(buf, Short.MAX_VALUE);
     }

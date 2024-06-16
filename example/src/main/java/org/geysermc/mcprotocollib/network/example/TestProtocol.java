@@ -12,11 +12,14 @@ import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.packet.DefaultPacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.security.GeneralSecurityException;
 
 public class TestProtocol extends PacketProtocol {
+    private static final Logger log = LoggerFactory.getLogger(TestProtocol.class);
     private final PacketHeader header = new DefaultPacketHeader();
     private AESEncryption encrypt;
 
@@ -48,7 +51,7 @@ public class TestProtocol extends PacketProtocol {
         try {
             this.encrypt = new AESEncryption(key);
         } catch (GeneralSecurityException e) {
-            e.printStackTrace();
+            log.error("Failed to create encryption", e);
         }
     }
 

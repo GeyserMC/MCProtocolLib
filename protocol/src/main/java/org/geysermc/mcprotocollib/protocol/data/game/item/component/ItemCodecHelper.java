@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtType;
@@ -173,11 +174,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         List<ItemAttributeModifiers.Entry> modifiers = this.readList(buf, (input) -> {
             int attribute = this.readVarInt(input);
 
-            UUID id = this.readUUID(input);
-            String name = this.readString(input);
+            Key id = this.readResourceLocation(input);
             double amount = input.readDouble();
             ModifierOperation operation = ModifierOperation.from(this.readVarInt(input));
-            ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, name, amount, operation);
+            ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, amount, operation);
 
             ItemAttributeModifiers.EquipmentSlotGroup slot = ItemAttributeModifiers.EquipmentSlotGroup.from(this.readVarInt(input));
             return new ItemAttributeModifiers.Entry(attribute, modifier, slot);
@@ -189,8 +189,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     public void writeItemAttributeModifiers(ByteBuf buf, ItemAttributeModifiers modifiers) {
         this.writeList(buf, modifiers.getModifiers(), (output, entry) -> {
             this.writeVarInt(output, entry.getAttribute());
-            this.writeUUID(output, entry.getModifier().getId());
-            this.writeString(output, entry.getModifier().getName());
+            this.writeResourceLocation(output, entry.getModifier().getId());
             output.writeDouble(entry.getModifier().getAmount());
             this.writeVarInt(output, entry.getModifier().getOperation().ordinal());
             this.writeVarInt(output, entry.getSlot().ordinal());
@@ -371,7 +370,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     }
 
     public ArmorTrim.TrimPattern readTrimPattern(ByteBuf buf) {
-        String assetId = this.readResourceLocation(buf);
+        Key assetId = this.readResourceLocation(buf);
         int templateItemId = this.readVarInt(buf);
         Component description = this.readComponent(buf);
         boolean decal = buf.readBoolean();
@@ -414,6 +413,48 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
     public void writeRecipes(ByteBuf buf, NbtList<?> recipes) {
         this.writeAnyTag(buf, recipes);
+    }
+
+    public JukeboxPlayable readJukeboxPlayable(ByteBuf buf) {
+        Holder<JukeboxPlayable.JukeboxSong> songHolder = null;
+        Key songLocation = null;
+        if (buf.readBoolean()) {
+            songHolder = this.readHolder(buf, this::readJukeboxSong);
+        } else {
+            songLocation = this.readResourceLocation(buf);
+        }
+        boolean showInTooltip = buf.readBoolean();
+        return new JukeboxPlayable(songHolder, songLocation, showInTooltip);
+    }
+
+    public void writeJukeboxPlayable(ByteBuf buf, JukeboxPlayable playable) {
+        buf.writeBoolean(playable.songHolder() != null);
+        if (playable.songHolder() != null) {
+            this.writeHolder(buf, playable.songHolder(), this::writeJukeboxSong);
+        } else {
+            this.writeResourceLocation(buf, playable.songLocation());
+        }
+        buf.writeBoolean(playable.showInTooltip());
+    }
+
+    public JukeboxPlayable.JukeboxSong readJukeboxSong(ByteBuf buf) {
+        Sound soundEvent = this.readById(buf, BuiltinSound::from, this::readSoundEvent);
+        Component description = this.readComponent(buf);
+        float lengthInSeconds = buf.readFloat();
+        int comparatorOutput = this.readVarInt(buf);
+        return new JukeboxPlayable.JukeboxSong(soundEvent, description, lengthInSeconds, comparatorOutput);
+    }
+
+    public void writeJukeboxSong(ByteBuf buf, JukeboxPlayable.JukeboxSong song) {
+        if (song.soundEvent() instanceof CustomSound) {
+            this.writeVarInt(buf, 0);
+            this.writeSoundEvent(buf, song.soundEvent());
+        } else {
+            this.writeVarInt(buf, ((BuiltinSound) song.soundEvent()).ordinal() + 1);
+        }
+        this.writeComponent(buf, song.description());
+        buf.writeFloat(song.lengthInSeconds());
+        this.writeVarInt(buf, song.comparatorOutput());
     }
 
     public LodestoneTracker readLodestoneTarget(ByteBuf buf) {
