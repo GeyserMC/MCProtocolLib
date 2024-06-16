@@ -1,49 +1,51 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageCodec;
+import io.netty.handler.codec.MessageToMessageCodec;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 
 import java.util.List;
 
-public class TcpPacketEncryptor extends ByteToMessageCodec<ByteBuf> {
+public class TcpPacketEncryptor extends MessageToMessageCodec<ByteBuf, ByteBuf> {
     private final PacketEncryption encryption;
-    private byte[] decryptedArray = new byte[0];
-    private byte[] encryptedArray = new byte[0];
 
     public TcpPacketEncryptor(PacketEncryption encryption) {
         this.encryption = encryption;
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws Exception {
-        int length = in.readableBytes();
-        byte[] bytes = this.getBytes(in);
-        int outLength = this.encryption.getEncryptOutputSize(length);
-        if (this.encryptedArray.length < outLength) {
-            this.encryptedArray = new byte[outLength];
-        }
+    public void encode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), in);
 
-        out.writeBytes(this.encryptedArray, 0, this.encryption.encrypt(bytes, 0, length, this.encryptedArray, 0));
+        int inBytes = heapBuf.readableBytes();
+        int baseOffset = heapBuf.arrayOffset() + heapBuf.readerIndex();
+
+        encryption.encrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
+
+        out.add(heapBuf);
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        int length = buf.readableBytes();
-        byte[] bytes = this.getBytes(buf);
-        ByteBuf result = ctx.alloc().heapBuffer(this.encryption.getDecryptOutputSize(length));
-        result.writerIndex(this.encryption.decrypt(bytes, 0, length, result.array(), result.arrayOffset()));
-        out.add(result);
+    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+        ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), msg).slice();
+
+        int inBytes = heapBuf.readableBytes();
+        int baseOffset = heapBuf.arrayOffset() + heapBuf.readerIndex();
+
+        encryption.decrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
+
+        out.add(heapBuf);
     }
 
-    private byte[] getBytes(ByteBuf buf) {
-        int length = buf.readableBytes();
-        if (this.decryptedArray.length < length) {
-            this.decryptedArray = new byte[length];
+    private ByteBuf ensureHeapBuffer(ByteBufAllocator alloc, ByteBuf buf) {
+        if (buf.hasArray()) {
+            return buf.retain();
+        } else {
+            ByteBuf heapBuf = alloc.heapBuffer(buf.readableBytes());
+            heapBuf.writeBytes(buf);
+            return heapBuf;
         }
-
-        buf.readBytes(this.decryptedArray, 0, length);
-        return this.decryptedArray;
     }
 }
