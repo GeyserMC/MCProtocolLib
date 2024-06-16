@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.DefaultEventLoopGroup;
@@ -258,7 +257,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void send(Packet packet) {
+    public void send(Packet packet, Runnable onSent) {
         if (this.channel == null) {
             return;
         }
@@ -268,8 +267,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
         if (!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
-            this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
+            this.channel.writeAndFlush(toSend).addListener(future -> {
                 if (future.isSuccess()) {
+                    if (onSent != null) {
+                        onSent.run();
+                    }
+
                     callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
@@ -303,7 +306,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
         if (this.channel != null && this.channel.isOpen()) {
             this.callEvent(new DisconnectingEvent(this, reason, cause));
-            this.channel.flush().close().addListener((ChannelFutureListener) future ->
+            this.channel.flush().close().addListener(future ->
                     callEvent(new DisconnectedEvent(TcpSession.this,
                             reason != null ? reason : Component.text("Connection closed."), cause)));
         } else {

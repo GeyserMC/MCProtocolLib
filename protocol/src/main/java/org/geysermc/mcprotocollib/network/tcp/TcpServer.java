@@ -118,7 +118,7 @@ public class TcpServer extends AbstractServer {
                         callback.run();
                     }
                 } else {
-                    future.addListener((ChannelFutureListener) future1 -> {
+                    future.addListener(future1 -> {
                         if (future1.isSuccess()) {
                             if (callback != null) {
                                 callback.run();

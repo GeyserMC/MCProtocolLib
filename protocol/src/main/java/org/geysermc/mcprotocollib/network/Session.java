@@ -257,7 +257,16 @@ public interface Session {
      *
      * @param packet Packet to send.
      */
-    void send(Packet packet);
+    default void send(Packet packet) {
+        send(packet, null);
+    }
+
+    /**
+     * Sends a packet.
+     *
+     * @param packet Packet to send.
+     */
+    void send(Packet packet, Runnable onSent);
 
     /**
      * Disconnects the session.

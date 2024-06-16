@@ -91,8 +91,8 @@ public class ClientListener extends SessionAdapter {
                         return;
                     }
 
-                    session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()));
-                    session.enableEncryption(protocol.enableEncryption(key));
+                    session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()),
+                        () -> session.enableEncryption(protocol.enableEncryption(key)));
                 } else if (packet instanceof ClientboundGameProfilePacket) {
                     protocol.setInboundState(ProtocolState.CONFIGURATION);
                     session.send(new ServerboundLoginAcknowledgedPacket());

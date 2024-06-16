@@ -3,7 +3,7 @@ package org.geysermc.mcprotocollib.protocol;
 import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtMap;
@@ -40,6 +40,7 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -48,8 +49,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Handles initial login and status requests for servers.
@@ -76,12 +77,15 @@ public class ServerListener extends SessionAdapter {
     private final byte[] challenge = new byte[4];
     private String username = "";
 
-    private long lastPingTime = 0;
-    private int lastPingId = 0;
+    private boolean keepAlivePending;
+    private long keepAliveChallenge;
+    private long keepAliveTime;
+    @Getter
+    private boolean isTransfer = false;
 
     public ServerListener(NbtMap networkCodec) {
         this.networkCodec = networkCodec;
-        new Random().nextBytes(this.challenge);
+        ThreadLocalRandom.current().nextBytes(this.challenge);
     }
 
     @Override
@@ -92,178 +96,196 @@ public class ServerListener extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
-        if (protocol.getInboundState() == ProtocolState.HANDSHAKE) {
-            if (packet instanceof ClientIntentionPacket intentionPacket) {
-                switch (intentionPacket.getIntent()) {
-                    case STATUS -> protocol.setState(ProtocolState.STATUS);
-                    case TRANSFER -> {
-                        if (!session.getFlag(MinecraftConstants.ACCEPT_TRANSFERS_KEY, false)) {
-                            session.disconnect("Server does not accept transfers.");
+        switch (protocol.getInboundState()) {
+            case HANDSHAKE -> {
+                if (packet instanceof ClientIntentionPacket intentionPacket) {
+                    switch (intentionPacket.getIntent()) {
+                        case STATUS -> {
+                            protocol.setOutboundState(ProtocolState.STATUS);
+                            protocol.setInboundState(ProtocolState.STATUS);
                         }
-                    }
-                    case LOGIN -> {
-                        protocol.setState(ProtocolState.LOGIN);
-                        if (intentionPacket.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
-                            session.disconnect("Outdated server! I'm still on " + protocol.getCodec().getMinecraftVersion() + ".");
-                        } else if (intentionPacket.getProtocolVersion() < protocol.getCodec().getProtocolVersion()) {
-                            session.disconnect("Outdated client! Please use " + protocol.getCodec().getMinecraftVersion() + ".");
+                        case TRANSFER -> {
+                            if (session.getFlag(MinecraftConstants.ACCEPT_TRANSFERS_KEY, false)) {
+                                beginLogin(session, protocol, intentionPacket, true);
+                            } else {
+                                protocol.setOutboundState(ProtocolState.LOGIN);
+                                session.disconnect("Server does not accept transfers.");
+                            }
                         }
+                        case LOGIN -> {
+                            beginLogin(session, protocol, intentionPacket, false);
+                        }
+                        default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                     }
-                    default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
-        } else if (protocol.getInboundState() == ProtocolState.LOGIN) {
-            if (packet instanceof ServerboundHelloPacket helloPacket) {
-                this.username = helloPacket.getUsername();
+            case LOGIN -> {
+                if (packet instanceof ServerboundHelloPacket helloPacket) {
+                    this.username = helloPacket.getUsername();
 
-                if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
-                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, true));
-                } else {
-                    new Thread(new UserAuthTask(session, null)).start();
-                }
-            } else if (packet instanceof ServerboundKeyPacket keyPacket) {
-                PrivateKey privateKey = KEY_PAIR.getPrivate();
+                    if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
+                        session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, true));
+                    } else {
+                        new Thread(() -> authenticate(session, null)).start();
+                    }
+                } else if (packet instanceof ServerboundKeyPacket keyPacket) {
+                    PrivateKey privateKey = KEY_PAIR.getPrivate();
 
-                if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
-                    session.disconnect("Invalid challenge!");
-                    return;
-                }
+                    if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
+                        session.disconnect("Invalid challenge!");
+                        return;
+                    }
 
-                SecretKey key = keyPacket.getSecretKey(privateKey);
-                session.enableEncryption(protocol.enableEncryption(key));
-                new Thread(new UserAuthTask(session, key)).start();
-            } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
-                protocol.setState(ProtocolState.CONFIGURATION);
+                    SecretKey key = keyPacket.getSecretKey(privateKey);
+                    session.enableEncryption(protocol.enableEncryption(key));
+                    new Thread(() -> authenticate(session, key)).start();
+                } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
+                    protocol.setOutboundState(ProtocolState.CONFIGURATION);
+                    protocol.setInboundState(ProtocolState.CONFIGURATION);
 
-                // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
-                for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
-                    @SuppressWarnings("PatternValidation")
-                    NbtMap entryTag = (NbtMap) entry.getValue();
-                    @SuppressWarnings("PatternValidation")
-                    Key typeTag = Key.key(entryTag.getString("type"));
-                    List<NbtMap> valueTag = entryTag.getList("value", NbtType.COMPOUND);
-                    List<RegistryEntry> entries = new ArrayList<>();
-                    for (NbtMap compoundTag : valueTag) {
+                    // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
+                    for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
                         @SuppressWarnings("PatternValidation")
-                        Key nameTag = Key.key(compoundTag.getString("name"));
-                        int id = compoundTag.getInt("id");
-                        entries.add(id, new RegistryEntry(nameTag, compoundTag.getCompound("element")));
+                        NbtMap entryTag = (NbtMap) entry.getValue();
+                        @SuppressWarnings("PatternValidation")
+                        Key typeTag = Key.key(entryTag.getString("type"));
+                        List<NbtMap> valueTag = entryTag.getList("value", NbtType.COMPOUND);
+                        List<RegistryEntry> entries = new ArrayList<>();
+                        for (NbtMap compoundTag : valueTag) {
+                            @SuppressWarnings("PatternValidation")
+                            Key nameTag = Key.key(compoundTag.getString("name"));
+                            int id = compoundTag.getInt("id");
+                            entries.add(id, new RegistryEntry(nameTag, compoundTag.getCompound("element")));
+                        }
+
+                        session.send(new ClientboundRegistryDataPacket(typeTag, entries));
                     }
 
-                    session.send(new ClientboundRegistryDataPacket(typeTag, entries));
+                    session.send(new ClientboundFinishConfigurationPacket());
                 }
-
-                session.send(new ClientboundFinishConfigurationPacket());
             }
-        } else if (protocol.getInboundState() == ProtocolState.STATUS) {
-            if (packet instanceof ServerboundStatusRequestPacket) {
-                ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
-                if (builder == null) {
-                    builder = $ -> new ServerStatusInfo(
+            case STATUS -> {
+                if (packet instanceof ServerboundStatusRequestPacket) {
+                    ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
+                    if (builder == null) {
+                        builder = $ -> new ServerStatusInfo(
                             new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
                             new PlayerInfo(0, 20, new ArrayList<>()),
                             Component.text("A Minecraft Server"),
                             null,
                             false
-                    );
-                }
+                        );
+                    }
 
-                ServerStatusInfo info = builder.buildInfo(session);
-                session.send(new ClientboundStatusResponsePacket(info));
-            } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
-                session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
-            }
-        } else if (protocol.getInboundState() == ProtocolState.GAME) {
-            if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
-                if (keepAlivePacket.getPingId() == this.lastPingId) {
-                    long time = System.currentTimeMillis() - this.lastPingTime;
-                    session.setFlag(MinecraftConstants.PING_KEY, time);
+                    ServerStatusInfo info = builder.buildInfo(session);
+                    session.send(new ClientboundStatusResponsePacket(info));
+                } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
+                    session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
                 }
-            } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
-                protocol.setState(ProtocolState.CONFIGURATION);
-            } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
-                session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
             }
-        } else if (protocol.getInboundState() == ProtocolState.CONFIGURATION) {
-            if (packet instanceof ServerboundFinishConfigurationPacket) {
-                protocol.setState(ProtocolState.GAME);
-                ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
-                if (handler != null) {
-                    handler.loggedIn(session);
+            case GAME -> {
+                if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
+                    if (keepAlivePending && keepAlivePacket.getPingId() == this.keepAliveChallenge) {
+                        keepAlivePending = false;
+                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - this.keepAliveTime);
+                    } else {
+                        session.disconnect(Component.translatable("disconnect.timeout"));
+                    }
+                } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
+                    // The developer who sends ClientboundStartConfigurationPacket needs to setOutboundState to CONFIGURATION
+                    // after sending the packet. We can't do it in this class because it needs to be a method call right after it was sent.
+                    // Using nettys event loop to change outgoing state may cause differences to vanilla.
+                    protocol.setInboundState(ProtocolState.CONFIGURATION);
+                } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
+                    session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
                 }
+            }
+            case CONFIGURATION -> {
+                if (packet instanceof ServerboundFinishConfigurationPacket) {
+                    protocol.setOutboundState(ProtocolState.GAME);
+                    ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
+                    if (handler != null) {
+                        handler.loggedIn(session);
+                    }
 
-                if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
-                    new Thread(new KeepAliveTask(session)).start();
+                    if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+                        new Thread(() -> keepAlive(session)).start();
+                    }
                 }
             }
         }
     }
 
-    @Override
-    public void packetSent(Session session, Packet packet) {
-        if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
-            session.setCompressionThreshold(loginCompressionPacket.getThreshold(), true);
-            session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY), true));
+    private void beginLogin(Session session, MinecraftProtocol protocol, ClientIntentionPacket packet, boolean transferred) {
+        isTransfer = transferred;
+        protocol.setOutboundState(ProtocolState.LOGIN);
+        if (packet.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
+            session.disconnect(Component.translatable("multiplayer.disconnect.incompatible", protocol.getCodec().getMinecraftVersion()));
+        } else if (packet.getProtocolVersion() < protocol.getCodec().getProtocolVersion()) {
+            session.disconnect(Component.translatable("multiplayer.disconnect.outdated_client", protocol.getCodec().getMinecraftVersion()));
+        } else {
+            protocol.setInboundState(ProtocolState.LOGIN);
         }
     }
 
     @Override
     public void disconnecting(DisconnectingEvent event) {
-        MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
+        Session session = event.getSession();
+        MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
         if (protocol.getOutboundState() == ProtocolState.LOGIN) {
-            event.getSession().send(new ClientboundLoginDisconnectPacket(event.getReason()));
+            session.send(new ClientboundLoginDisconnectPacket(event.getReason()));
         } else if (protocol.getOutboundState() == ProtocolState.GAME) {
-            event.getSession().send(new ClientboundDisconnectPacket(event.getReason()));
+            session.send(new ClientboundDisconnectPacket(event.getReason()));
         }
     }
 
-    @RequiredArgsConstructor
-    private class UserAuthTask implements Runnable {
-        private final Session session;
-        private final SecretKey key;
-
-        @Override
-        public void run() {
-            GameProfile profile;
-            if (this.key != null) {
-                SessionService sessionService = this.session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
-                try {
-                    profile = sessionService.getProfileByServer(username, sessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
-                } catch (RequestException e) {
-                    this.session.disconnect("Failed to make session service request.", e);
-                    return;
-                }
-
-                if (profile == null) {
-                    this.session.disconnect("Failed to verify username.");
-                }
-            } else {
-                profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes()), username);
+    private void authenticate(Session session, SecretKey key) {
+        GameProfile profile;
+        if (key != null) {
+            SessionService sessionService = session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
+            try {
+                profile = sessionService.getProfileByServer(username, sessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), key));
+            } catch (RequestException e) {
+                session.disconnect("Failed to make session service request.", e);
+                return;
             }
 
-            this.session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
-
-            int threshold = session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, DEFAULT_COMPRESSION_THRESHOLD);
-            this.session.send(new ClientboundLoginCompressionPacket(threshold));
+            if (profile == null) {
+                session.disconnect("Failed to verify username.");
+            }
+        } else {
+            profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)), username);
         }
+
+        session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
+
+        int threshold = session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, DEFAULT_COMPRESSION_THRESHOLD);
+        if (threshold >= 0) {
+            session.send(new ClientboundLoginCompressionPacket(threshold), () ->
+                session.setCompressionThreshold(threshold, true));
+        }
+
+        session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY), true));
     }
 
-    @RequiredArgsConstructor
-    private class KeepAliveTask implements Runnable {
-        private final Session session;
+    private void keepAlive(Session session) {
+        while (session.isConnected()) {
+            if (keepAlivePending) {
+                session.disconnect(Component.translatable("disconnect.timeout"));
+                break;
+            }
 
-        @Override
-        public void run() {
-            while (this.session.isConnected()) {
-                lastPingTime = System.currentTimeMillis();
-                lastPingId = (int) lastPingTime;
-                this.session.send(new ClientboundKeepAlivePacket(lastPingId));
+            long time = System.currentTimeMillis();
 
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    break;
-                }
+            keepAlivePending = true;
+            keepAliveChallenge = time;
+            keepAliveTime = time;
+            session.send(new ClientboundKeepAlivePacket(keepAliveChallenge));
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                break;
             }
         }
     }
