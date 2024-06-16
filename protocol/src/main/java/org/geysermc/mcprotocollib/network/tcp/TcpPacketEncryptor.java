@@ -16,27 +16,35 @@ public class TcpPacketEncryptor extends MessageToMessageCodec<ByteBuf, ByteBuf> 
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), in);
+    public void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+        ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), msg);
 
         int inBytes = heapBuf.readableBytes();
         int baseOffset = heapBuf.arrayOffset() + heapBuf.readerIndex();
 
-        encryption.encrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
-
-        out.add(heapBuf);
+        try {
+            encryption.encrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
+            out.add(heapBuf);
+        } catch (Exception e) {
+            heapBuf.release();
+            throw new Exception("Error encrypting packet", e);
+        }
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-        ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), msg).slice();
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), in).slice();
 
         int inBytes = heapBuf.readableBytes();
         int baseOffset = heapBuf.arrayOffset() + heapBuf.readerIndex();
 
-        encryption.decrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
-
-        out.add(heapBuf);
+        try {
+            encryption.decrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
+            out.add(heapBuf);
+        } catch (Exception e) {
+            heapBuf.release();
+            throw new Exception("Error decrypting packet", e);
+        }
     }
 
     private ByteBuf ensureHeapBuffer(ByteBufAllocator alloc, ByteBuf buf) {
