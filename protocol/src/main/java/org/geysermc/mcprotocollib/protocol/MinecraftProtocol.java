@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -10,17 +9,14 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
-import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
-import org.geysermc.mcprotocollib.protocol.codec.PacketStateCodec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 
 import java.io.InputStream;
@@ -49,9 +45,9 @@ public class MinecraftProtocol extends PacketProtocol {
     private final PacketCodec codec;
 
     private ProtocolState inboundState;
-    private PacketStateCodec inboundStateCodec;
+    private PacketRegistry inboundStateCodec;
     private ProtocolState outboundState;
-    private PacketStateCodec outboundStateCodec;
+    private PacketRegistry outboundStateCodec;
 
     private final ProtocolState targetState;
 
@@ -218,54 +214,12 @@ public class MinecraftProtocol extends PacketProtocol {
         this.outboundStateCodec = this.codec.getCodec(state);
     }
 
-    @Override
-    public Packet createClientboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
-        return this.inboundStateCodec.createClientboundPacket(id, buf, codecHelper);
+    public PacketRegistry getIncomingPacketRegistry() {
+        return this.inboundStateCodec;
     }
 
-    @Override
-    public int getClientboundId(Class<? extends Packet> packetClass) {
-        return this.outboundStateCodec.getClientboundId(packetClass);
-    }
-
-    @Override
-    public int getClientboundId(Packet packet) {
-        return this.outboundStateCodec.getClientboundId(packet);
-    }
-
-    @Override
-    public Class<? extends Packet> getClientboundClass(int id) {
-        return this.inboundStateCodec.getClientboundClass(id);
-    }
-
-    @Override
-    public Packet createServerboundPacket(int id, ByteBuf buf, PacketCodecHelper codecHelper) {
-        return this.inboundStateCodec.createServerboundPacket(id, buf, codecHelper);
-    }
-
-    @Override
-    public int getServerboundId(Class<? extends Packet> packetClass) {
-        return this.outboundStateCodec.getServerboundId(packetClass);
-    }
-
-    @Override
-    public int getServerboundId(Packet packet) {
-        return this.outboundStateCodec.getServerboundId(packet);
-    }
-
-    @Override
-    public Class<? extends Packet> getServerboundClass(int id) {
-        return this.inboundStateCodec.getServerboundClass(id);
-    }
-
-    @Override
-    public PacketDefinition<?, ?> getServerboundDefinition(int id) {
-        return this.inboundStateCodec.getServerboundDefinition(id);
-    }
-
-    @Override
-    public PacketDefinition<?, ?> getClientboundDefinition(int id) {
-        return this.inboundStateCodec.getClientboundDefinition(id);
+    public PacketRegistry getOutgoingPacketRegistry() {
+        return this.outboundStateCodec;
     }
 
     public static NbtMap loadNetworkCodec() {

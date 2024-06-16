@@ -12,6 +12,7 @@ import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.packet.DefaultPacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ import java.security.GeneralSecurityException;
 public class TestProtocol extends PacketProtocol {
     private static final Logger log = LoggerFactory.getLogger(TestProtocol.class);
     private final PacketHeader header = new DefaultPacketHeader();
+    private final PacketRegistry registry = new PacketRegistry();
     private AESEncryption encrypt;
 
     @SuppressWarnings("unused")
@@ -36,7 +38,7 @@ public class TestProtocol extends PacketProtocol {
     }
 
     public void setSecretKey(SecretKey key) {
-        this.register(0, PingPacket.class, new PacketSerializer<>() {
+        registry.register(0, PingPacket.class, new PacketSerializer<>() {
             @Override
             public void serialize(ByteBuf buf, PacketCodecHelper helper, PingPacket packet) {
                 helper.writeString(buf, packet.getPingId());
@@ -77,5 +79,15 @@ public class TestProtocol extends PacketProtocol {
     @Override
     public void newServerSession(Server server, Session session) {
         session.addListener(new ServerSessionListener());
+    }
+
+    @Override
+    public PacketRegistry getIncomingPacketRegistry() {
+        return registry;
+    }
+
+    @Override
+    public PacketRegistry getOutgoingPacketRegistry() {
+        return registry;
     }
 }

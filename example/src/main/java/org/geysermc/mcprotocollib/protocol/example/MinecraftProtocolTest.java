@@ -132,7 +132,7 @@ public class MinecraftProtocolTest {
                 @Override
                 public void sessionRemoved(SessionRemovedEvent event) {
                     MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-                    if (protocol.getState() == ProtocolState.GAME) {
+                    if (protocol.getOutboundState() == ProtocolState.GAME) {
                         log.info("Closing server.");
                         event.getServer().close(false);
                     }

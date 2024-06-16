@@ -94,9 +94,9 @@ public class ClientListener extends SessionAdapter {
                     session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()),
                         () -> session.enableEncryption(protocol.enableEncryption(key)));
                 } else if (packet instanceof ClientboundGameProfilePacket) {
-                    protocol.setInboundState(ProtocolState.CONFIGURATION);
+                    session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
                     session.send(new ServerboundLoginAcknowledgedPacket());
-                    protocol.setOutboundState(ProtocolState.CONFIGURATION);
+                    session.switchOutboundProtocol(() -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
 
                     // Send client brand here
                     // Send client information here
@@ -131,9 +131,9 @@ public class ClientListener extends SessionAdapter {
                 } else if (packet instanceof ClientboundDisconnectPacket disconnectPacket) {
                     session.disconnect(disconnectPacket.getReason());
                 } else if (packet instanceof ClientboundStartConfigurationPacket) {
-                    protocol.setInboundState(ProtocolState.CONFIGURATION);
+                    session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
                     session.send(new ServerboundConfigurationAcknowledgedPacket());
-                    protocol.setOutboundState(ProtocolState.CONFIGURATION);
+                    session.switchOutboundProtocol(() -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
                 } else if (packet instanceof ClientboundTransferPacket transferPacket) {
                     if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                         TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
@@ -145,9 +145,9 @@ public class ClientListener extends SessionAdapter {
             }
             case CONFIGURATION -> {
                 if (packet instanceof ClientboundFinishConfigurationPacket) {
-                    protocol.setInboundState(ProtocolState.GAME);
+                    session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.GAME));
                     session.send(new ServerboundFinishConfigurationPacket());
-                    protocol.setOutboundState(ProtocolState.GAME);
+                    session.switchOutboundProtocol(() -> protocol.setOutboundState(ProtocolState.GAME));
                 } else if (packet instanceof ClientboundSelectKnownPacks) {
                     if (session.getFlag(MinecraftConstants.SEND_BLANK_KNOWN_PACKS_RESPONSE, true)) {
                         session.send(new ServerboundSelectKnownPacks(Collections.emptyList()));
@@ -176,16 +176,16 @@ public class ClientListener extends SessionAdapter {
 
         switch (this.targetState) {
             case LOGIN -> {
-                protocol.setInboundState(ProtocolState.LOGIN);
+                session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.LOGIN));
                 session.send(intention);
-                protocol.setOutboundState(ProtocolState.LOGIN);
+                session.switchOutboundProtocol(() -> protocol.setOutboundState(ProtocolState.LOGIN));
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
                 session.send(new ServerboundHelloPacket(profile.getName(), profile.getId()));
             }
             case STATUS -> {
-                protocol.setInboundState(ProtocolState.STATUS);
+                session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.STATUS));
                 session.send(intention);
-                protocol.setOutboundState(ProtocolState.STATUS);
+                session.switchOutboundProtocol(() -> protocol.setOutboundState(ProtocolState.STATUS));
                 session.send(new ServerboundStatusRequestPacket());
             }
         }

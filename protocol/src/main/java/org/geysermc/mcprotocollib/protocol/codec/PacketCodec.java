@@ -17,12 +17,12 @@ public class PacketCodec {
     @Getter
     private final String minecraftVersion;
 
-    private final EnumMap<ProtocolState, PacketStateCodec> stateProtocols;
+    private final EnumMap<ProtocolState, PacketRegistryBuilder> stateProtocols;
 
     @Getter
     private final Supplier<MinecraftCodecHelper> helperFactory;
 
-    public PacketStateCodec getCodec(ProtocolState protocolState) {
+    public PacketRegistryBuilder getCodec(ProtocolState protocolState) {
         return this.stateProtocols.get(protocolState);
     }
 
@@ -44,7 +44,7 @@ public class PacketCodec {
     public static class Builder {
         private int protocolVersion = -1;
         private String minecraftVersion = null;
-        private EnumMap<ProtocolState, PacketStateCodec> stateProtocols = new EnumMap<>(ProtocolState.class);
+        private EnumMap<ProtocolState, PacketRegistryBuilder> stateProtocols = new EnumMap<>(ProtocolState.class);
         private Supplier<MinecraftCodecHelper> helperFactory;
 
         public Builder protocolVersion(int protocolVersion) {
@@ -57,7 +57,7 @@ public class PacketCodec {
             return this;
         }
 
-        public Builder state(ProtocolState state, PacketStateCodec.Builder protocol) {
+        public Builder state(ProtocolState state, PacketRegistryBuilder.Builder protocol) {
             this.stateProtocols.put(state, protocol.build());
             return this;
         }

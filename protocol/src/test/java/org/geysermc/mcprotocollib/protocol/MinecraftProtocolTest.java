@@ -100,7 +100,7 @@ public class MinecraftProtocolTest {
             session.addListener(new DisconnectListener());
             session.connect();
 
-            listener.login.await(4, SECONDS);
+            assertTrue(listener.login.await(4, SECONDS), "Did not get login packet in time.");
             assertNotNull(listener.packet, "Failed to log in.");
             assertEquals(JOIN_GAME_PACKET, listener.packet, "Received incorrect join packet.");
         } finally {
@@ -125,8 +125,8 @@ public class MinecraftProtocolTest {
 
         @Override
         public void packetReceived(Session session, Packet packet) {
-            if (packet instanceof ClientboundLoginPacket) {
-                this.packet = (ClientboundLoginPacket) packet;
+            if (packet instanceof ClientboundLoginPacket loginPacket) {
+                this.packet = loginPacket;
                 this.login.countDown();
             }
         }

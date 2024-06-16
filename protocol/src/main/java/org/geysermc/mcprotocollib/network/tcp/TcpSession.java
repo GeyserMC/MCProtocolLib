@@ -23,6 +23,7 @@ import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
+import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
@@ -318,6 +319,13 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     public void setAutoRead(boolean autoRead) {
         if (this.channel != null) {
             this.channel.config().setAutoRead(autoRead);
+        }
+    }
+
+    @Override
+    public void flushSync() {
+        if (this.channel != null) {
+            this.channel.writeAndFlush(FakeFlushPacket.INSTANCE).syncUninterruptibly();
         }
     }
 

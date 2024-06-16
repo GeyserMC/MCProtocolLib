@@ -308,4 +308,20 @@ public interface Session {
      *                 Default is true.
      */
     void setAutoRead(boolean autoRead);
+
+    /**
+     * Blocking, wait till all packets have been sent.
+     */
+    void flushSync();
+
+    default void switchInboundProtocol(Runnable switcher) {
+        setAutoRead(false);
+        switcher.run();
+        setAutoRead(true);
+    }
+
+    default void switchOutboundProtocol(Runnable switcher) {
+        flushSync();
+        switcher.run();
+    }
 }
