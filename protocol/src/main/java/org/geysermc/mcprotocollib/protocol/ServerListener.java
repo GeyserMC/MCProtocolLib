@@ -276,6 +276,7 @@ public class ServerListener extends SessionAdapter {
             keepAliveTime = time;
             session.send(new ClientboundKeepAlivePacket(keepAliveChallenge));
 
+            // TODO: Implement proper tick loop rather than sleeping
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
