@@ -3,6 +3,8 @@ package org.geysermc.mcprotocollib.network.tcp;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToMessageCodec;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 
@@ -16,7 +18,7 @@ public class TcpPacketEncryptor extends MessageToMessageCodec<ByteBuf, ByteBuf> 
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+    public void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
         ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), msg);
 
         int inBytes = heapBuf.readableBytes();
@@ -27,12 +29,12 @@ public class TcpPacketEncryptor extends MessageToMessageCodec<ByteBuf, ByteBuf> 
             out.add(heapBuf);
         } catch (Exception e) {
             heapBuf.release();
-            throw new Exception("Error encrypting packet", e);
+            throw new EncoderException("Error encrypting packet", e);
         }
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         ByteBuf heapBuf = this.ensureHeapBuffer(ctx.alloc(), in).slice();
 
         int inBytes = heapBuf.readableBytes();
@@ -43,7 +45,7 @@ public class TcpPacketEncryptor extends MessageToMessageCodec<ByteBuf, ByteBuf> 
             out.add(heapBuf);
         } catch (Exception e) {
             heapBuf.release();
-            throw new Exception("Error decrypting packet", e);
+            throw new DecoderException("Error decrypting packet", e);
         }
     }
 
