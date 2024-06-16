@@ -214,9 +214,9 @@ public class ServerListener extends SessionAdapter {
         isTransfer = transferred;
         session.switchOutboundProtocol(() -> protocol.setOutboundState(ProtocolState.LOGIN));
         if (packet.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
-            session.disconnect(Component.translatable("multiplayer.disconnect.incompatible", protocol.getCodec().getMinecraftVersion()));
+            session.disconnect(Component.translatable("multiplayer.disconnect.incompatible", Component.text(protocol.getCodec().getMinecraftVersion())));
         } else if (packet.getProtocolVersion() < protocol.getCodec().getProtocolVersion()) {
-            session.disconnect(Component.translatable("multiplayer.disconnect.outdated_client", protocol.getCodec().getMinecraftVersion()));
+            session.disconnect(Component.translatable("multiplayer.disconnect.outdated_client", Component.text(protocol.getCodec().getMinecraftVersion())));
         } else {
             session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.LOGIN));
         }
