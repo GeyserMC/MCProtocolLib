@@ -58,7 +58,7 @@ public class PacketCodec {
             return this;
         }
 
-        public Builder state(ProtocolState state, PacketRegistryBuilder protocol) {
+        public Builder state(ProtocolState state, PacketRegistry.Builder protocol) {
             this.stateProtocols.put(state, protocol.build());
             return this;
         }
