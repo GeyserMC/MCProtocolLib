@@ -17,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.compression.ZLIBCompression;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
@@ -204,7 +205,8 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         if (this.channel != null) {
             if (this.compressionThreshold >= 0) {
                 if (this.channel.pipeline().get("compression") == null) {
-                    this.channel.pipeline().addBefore("codec", "compression", new TcpPacketCompression(this, validateDecompression));
+                    this.channel.pipeline().addBefore("codec", "compression",
+                        new TcpPacketCompression(this, new ZLIBCompression(), validateDecompression));
                 }
             } else if (this.channel.pipeline().get("compression") != null) {
                 this.channel.pipeline().remove("compression");
