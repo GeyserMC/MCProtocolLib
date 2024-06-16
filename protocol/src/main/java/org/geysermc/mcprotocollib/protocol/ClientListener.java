@@ -166,7 +166,7 @@ public class ClientListener extends SessionAdapter {
     public void connected(ConnectedEvent event) {
         Session session = event.getSession();
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
-        ClientIntentionPacket intention = new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), switch (this.targetState) {
+        ClientIntentionPacket intention = new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), session.getHost(), session.getPort(), switch (this.targetState) {
             case LOGIN -> transferring ? HandshakeIntent.TRANSFER : HandshakeIntent.LOGIN;
             case STATUS -> HandshakeIntent.STATUS;
             default -> throw new IllegalStateException("Unexpected value: " + this.targetState);
