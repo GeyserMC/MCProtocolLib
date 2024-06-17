@@ -13,6 +13,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
@@ -174,11 +175,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         List<ItemAttributeModifiers.Entry> modifiers = this.readList(buf, (input) -> {
             int attribute = this.readVarInt(input);
 
-            UUID id = this.readUUID(input);
-            String name = this.readString(input);
+            Key id = this.readResourceLocation(input);
             double amount = input.readDouble();
             ModifierOperation operation = ModifierOperation.from(this.readVarInt(input));
-            ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, name, amount, operation);
+            ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, amount, operation);
 
             ItemAttributeModifiers.EquipmentSlotGroup slot = ItemAttributeModifiers.EquipmentSlotGroup.from(this.readVarInt(input));
             return new ItemAttributeModifiers.Entry(attribute, modifier, slot);
@@ -190,8 +190,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     public void writeItemAttributeModifiers(ByteBuf buf, ItemAttributeModifiers modifiers) {
         this.writeList(buf, modifiers.getModifiers(), (output, entry) -> {
             this.writeVarInt(output, entry.getAttribute());
-            this.writeUUID(output, entry.getModifier().getId());
-            this.writeString(output, entry.getModifier().getName());
+            this.writeResourceLocation(output, entry.getModifier().getId());
             output.writeDouble(entry.getModifier().getAmount());
             this.writeVarInt(output, entry.getModifier().getOperation().ordinal());
             this.writeVarInt(output, entry.getSlot().ordinal());
@@ -240,6 +239,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         float saturationModifier = buf.readFloat();
         boolean canAlwaysEat = buf.readBoolean();
         float eatSeconds = buf.readFloat();
+        ItemStack usingConvertsTo = this.readOptionalItemStack(buf);
 
         List<FoodProperties.PossibleEffect> effects = this.readList(buf, (input) -> {
             MobEffectInstance effect = this.readEffectInstance(input);
@@ -247,7 +247,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
             return new FoodProperties.PossibleEffect(effect, probability);
         });
 
-        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, effects);
+        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, usingConvertsTo, effects);
     }
 
     public void writeFoodProperties(ByteBuf buf, FoodProperties properties) {
@@ -255,6 +255,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeFloat(properties.getSaturationModifier());
         buf.writeBoolean(properties.isCanAlwaysEat());
         buf.writeFloat(properties.getEatSeconds());
+        this.writeOptionalItemStack(buf, properties.getUsingConvertsTo());
 
         this.writeList(buf, properties.getEffects(), (output, effect) -> {
             this.writeEffectInstance(output, effect.getEffect());
