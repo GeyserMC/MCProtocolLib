@@ -4,12 +4,13 @@ metadata.format.version = "1.1"
 
 adventure = "4.15.0"
 cloudburstnbt = "3.0.0.Final"
-mcauthlib = "e5b0bcc"
 slf4j = "2.0.9"
 math = "2.0"
 fastutil-maps = "8.5.3"
 netty = "4.1.103.Final"
 netty-io_uring = "0.0.24.Final"
+gson = "2.11.0"
+minecraftauth = "4.0.2"
 checkerframework = "3.42.0"
 junit = "5.8.2"
 
@@ -24,7 +25,6 @@ adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer
 adventure-text-serializer-json-legacy-impl = { module = "net.kyori:adventure-text-serializer-json-legacy-impl", version.ref = "adventure" }
 
 cloudburstnbt = { module = "org.cloudburstmc:nbt", version.ref = "cloudburstnbt" }
-mcauthlib = { module = "com.github.GeyserMC:mcauthlib", version.ref = "mcauthlib" }
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
@@ -38,6 +38,10 @@ fastutil-int2int-maps = { module = "com.nukkitx.fastutil:fastutil-int-int-maps",
 
 netty-all = { module = "io.netty:netty-all", version.ref = "netty" }
 netty-incubator-transport-native-io_uring = { module = "io.netty.incubator:netty-incubator-transport-native-io_uring", version.ref = "netty-io_uring" }
+
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+minecraftauth = { module = "net.raphimc:MinecraftAuth", version.ref = "minecraftauth" }
 
 checkerframework-qual = { module = "org.checkerframework:checker-qual", version.ref = "checkerframework" }
 

@@ -9,7 +9,12 @@ description = "MCProtocolLib is a simple library for communicating with Minecraf
 dependencies {
     // Minecraft related libraries
     api(libs.cloudburstnbt)
-    api(libs.mcauthlib)
+
+    // Gson
+    api(libs.gson)
+
+    // MinecraftAuth for authentication
+    api(libs.minecraftauth)
 
     // Slf4j
     api(libs.slf4j.api)

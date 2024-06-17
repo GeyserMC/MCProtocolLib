@@ -1,7 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.packet.status.clientbound;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.util.Base64;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -12,6 +10,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
@@ -21,6 +20,7 @@ import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Data
@@ -117,10 +117,10 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
             str = str.substring("data:image/png;base64,".length());
         }
 
-        return Base64.decode(str.getBytes(StandardCharsets.UTF_8));
+        return Base64.getDecoder().decode(str.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String iconToString(byte[] icon) {
-        return "data:image/png;base64," + new String(Base64.encode(icon), StandardCharsets.UTF_8);
+        return "data:image/png;base64," + new String(Base64.getEncoder().encode(icon), StandardCharsets.UTF_8);
     }
 }

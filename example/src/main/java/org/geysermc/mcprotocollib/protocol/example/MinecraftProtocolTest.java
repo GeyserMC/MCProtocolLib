@@ -1,14 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.example;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.exception.request.RequestException;
-import com.github.steveice10.mc.auth.service.AuthenticationService;
-import com.github.steveice10.mc.auth.service.MojangAuthenticationService;
-import com.github.steveice10.mc.auth.service.SessionService;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.raphimc.minecraftauth.MinecraftAuth;
+import net.raphimc.minecraftauth.step.java.StepMCProfile;
+import net.raphimc.minecraftauth.step.java.StepMCToken;
+import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
+import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
+import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
@@ -36,7 +38,6 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.Serverbound
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class MinecraftProtocolTest {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 25565;
     private static final ProxyInfo PROXY = null;
-    private static final Proxy AUTH_PROXY = Proxy.NO_PROXY;
+    private static final ProxyInfo AUTH_PROXY = null;
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
 
@@ -177,19 +178,21 @@ public class MinecraftProtocolTest {
     private static void login() {
         MinecraftProtocol protocol;
         if (VERIFY_USERS) {
+            StepFullJavaSession.FullJavaSession fullJavaSession;
             try {
-                AuthenticationService authService = new MojangAuthenticationService();
-                authService.setUsername(USERNAME);
-                authService.setPassword(PASSWORD);
-                authService.setProxy(AUTH_PROXY);
-                authService.login();
-
-                protocol = new MinecraftProtocol(authService.getSelectedProfile(), authService.getAccessToken());
-                log.info("Successfully authenticated user.");
-            } catch (RequestException e) {
-                log.error("Failed to authenticate user.", e);
-                return;
+                fullJavaSession = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
+                        MinecraftAuth.createHttpClient(),
+                        new StepCredentialsMsaCode.MsaCredentials(USERNAME, PASSWORD));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+
+            StepMCProfile.MCProfile mcProfile = fullJavaSession.getMcProfile();
+            StepMCToken.MCToken mcToken = mcProfile.getMcToken();
+            protocol = new MinecraftProtocol(
+                    new GameProfile(mcProfile.getId(), mcProfile.getName()),
+                    mcToken.getAccessToken());
+            log.info("Successfully authenticated user.");
         } else {
             protocol = new MinecraftProtocol(USERNAME);
         }

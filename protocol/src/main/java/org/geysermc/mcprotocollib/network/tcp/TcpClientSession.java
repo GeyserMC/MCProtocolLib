@@ -28,8 +28,8 @@ import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
+import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
@@ -207,29 +207,29 @@ public class TcpClientSession extends TcpSession {
 
     private void addProxy(ChannelPipeline pipeline) {
         if (proxy != null) {
-            switch (proxy.getType()) {
+            switch (proxy.type()) {
                 case HTTP -> {
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                    if (proxy.username() != null && proxy.password() != null) {
+                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address(), proxy.username(), proxy.password()));
                     } else {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.getAddress()));
+                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address()));
                     }
                 }
                 case SOCKS4 -> {
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress(), proxy.getUsername()));
+                    if (proxy.username() != null) {
+                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address(), proxy.username()));
                     } else {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.getAddress()));
+                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address()));
                     }
                 }
                 case SOCKS5 -> {
-                    if (proxy.isAuthenticated()) {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress(), proxy.getUsername(), proxy.getPassword()));
+                    if (proxy.username() != null && proxy.password() != null) {
+                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address(), proxy.username(), proxy.password()));
                     } else {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.getAddress()));
+                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address()));
                     }
                 }
-                default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.getType());
+                default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.type());
             }
         }
     }
