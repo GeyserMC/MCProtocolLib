@@ -408,10 +408,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
-        if (!packet.isPriority() && eventLoop != null) {
-            eventLoop.execute(() -> this.callPacketReceived(packet));
-        } else {
-            this.callPacketReceived(packet);
+        if (packet.isTerminal()) {
+            // Next packets are in a different protocol state, so we must
+            // disable auto-read to prevent reading wrong packets.
+            setAutoRead(false);
         }
+
+        this.callPacketReceived(packet);
     }
 }

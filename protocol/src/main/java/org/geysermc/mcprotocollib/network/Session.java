@@ -300,8 +300,10 @@ public interface Session {
     void flushSync();
 
     default void switchInboundProtocol(Runnable switcher) {
-        setAutoRead(false);
         switcher.run();
+
+        // We switched to the new inbound state
+        // we can start reading again
         setAutoRead(true);
     }
 
