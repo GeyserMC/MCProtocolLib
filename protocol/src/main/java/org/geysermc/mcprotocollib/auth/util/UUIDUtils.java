@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.auth.util;
 
+import java.util.HexFormat;
 import java.util.UUID;
 
 public class UUIDUtils {
@@ -8,12 +9,10 @@ public class UUIDUtils {
             return null;
         }
 
-        StringBuilder idBuff = new StringBuilder(noDashes);
-        idBuff.insert(20, '-');
-        idBuff.insert(16, '-');
-        idBuff.insert(12, '-');
-        idBuff.insert(8, '-');
-        return UUID.fromString(idBuff.toString());
+        return new UUID(
+            HexFormat.fromHexDigitsToLong(noDashes, 0, 16),
+            HexFormat.fromHexDigitsToLong(noDashes, 16, 32)
+        );
     }
 
     public static String convertToNoDashes(UUID uuid) {
