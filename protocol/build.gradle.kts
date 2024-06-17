@@ -1,5 +1,6 @@
 plugins {
     id("mcprotocollib.publish-conventions")
+    jacoco
 }
 
 version = "1.21-SNAPSHOT"
@@ -30,4 +31,17 @@ dependencies {
 
     // Test dependencies
     testImplementation(libs.junit.jupiter)
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
 }
