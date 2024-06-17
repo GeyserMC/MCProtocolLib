@@ -5,6 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.raphimc.minecraftauth.MinecraftAuth;
+import net.raphimc.minecraftauth.step.java.StepMCProfile;
+import net.raphimc.minecraftauth.step.java.StepMCToken;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
 import org.geysermc.mcprotocollib.auth.GameProfile;
@@ -185,8 +187,8 @@ public class MinecraftProtocolTest {
                 throw new RuntimeException(e);
             }
 
-            var mcProfile = fullJavaSession.getMcProfile();
-            var mcToken = mcProfile.getMcToken();
+            StepMCProfile.MCProfile mcProfile = fullJavaSession.getMcProfile();
+            StepMCToken.MCToken mcToken = mcProfile.getMcToken();
             protocol = new MinecraftProtocol(
                     new GameProfile(mcProfile.getId(), mcProfile.getName()),
                     mcToken.getAccessToken());
