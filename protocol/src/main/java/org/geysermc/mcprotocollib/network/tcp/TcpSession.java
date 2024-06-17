@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.DefaultEventLoopGroup;
@@ -24,6 +23,7 @@ import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
+import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
@@ -258,7 +258,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void send(Packet packet) {
+    public void send(Packet packet, Runnable onSent) {
         if (this.channel == null) {
             return;
         }
@@ -268,8 +268,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
         if (!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
-            this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
+            this.channel.writeAndFlush(toSend).addListener(future -> {
                 if (future.isSuccess()) {
+                    if (onSent != null) {
+                        onSent.run();
+                    }
+
                     callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
@@ -303,11 +307,25 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
         if (this.channel != null && this.channel.isOpen()) {
             this.callEvent(new DisconnectingEvent(this, reason, cause));
-            this.channel.flush().close().addListener((ChannelFutureListener) future ->
+            this.channel.flush().close().addListener(future ->
                     callEvent(new DisconnectedEvent(TcpSession.this,
                             reason != null ? reason : Component.text("Connection closed."), cause)));
         } else {
             this.callEvent(new DisconnectedEvent(this, reason != null ? reason : Component.text("Connection closed."), cause));
+        }
+    }
+
+    @Override
+    public void setAutoRead(boolean autoRead) {
+        if (this.channel != null) {
+            this.channel.config().setAutoRead(autoRead);
+        }
+    }
+
+    @Override
+    public void flushSync() {
+        if (this.channel != null) {
+            this.channel.writeAndFlush(FakeFlushPacket.INSTANCE).syncUninterruptibly();
         }
     }
 
@@ -407,10 +425,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
-        if (!packet.isPriority() && eventLoop != null) {
-            eventLoop.execute(() -> this.callPacketReceived(packet));
-        } else {
-            this.callPacketReceived(packet);
+        if (packet.isTerminal()) {
+            // Next packets are in a different protocol state, so we must
+            // disable auto-read to prevent reading wrong packets.
+            setAutoRead(false);
         }
+
+        this.callPacketReceived(packet);
     }
 }

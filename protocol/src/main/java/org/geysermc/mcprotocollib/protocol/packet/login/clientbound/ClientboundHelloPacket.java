@@ -43,9 +43,4 @@ public class ClientboundHelloPacket implements MinecraftPacket {
         helper.writeByteArray(out, this.challenge);
         out.writeBoolean(this.shouldAuthenticate);
     }
-
-    @Override
-    public boolean isPriority() {
-        return true;
-    }
 }

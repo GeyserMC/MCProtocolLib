@@ -257,7 +257,16 @@ public interface Session {
      *
      * @param packet Packet to send.
      */
-    void send(Packet packet);
+    default void send(Packet packet) {
+        send(packet, null);
+    }
+
+    /**
+     * Sends a packet.
+     *
+     * @param packet Packet to send.
+     */
+    void send(Packet packet, Runnable onSent);
 
     /**
      * Disconnects the session.
@@ -288,4 +297,33 @@ public interface Session {
      * @param cause Throwable responsible for disconnecting.
      */
     void disconnect(@Nullable Component reason, Throwable cause);
+
+    /**
+     * Auto read in netty means that the server is automatically reading from the channel.
+     * Turning it off means that we won't get more packets being decoded unless we call read() on the channel.
+     * We use this to hold off on reading packets until we are ready to process them.
+     * Which is for example when we change the protocol state to
+     *
+     * @param autoRead Whether to enable auto read or not.
+     *                 Default is true.
+     */
+    void setAutoRead(boolean autoRead);
+
+    /**
+     * Blocking, wait till all packets have been sent.
+     */
+    void flushSync();
+
+    default void switchInboundProtocol(Runnable switcher) {
+        switcher.run();
+
+        // We switched to the new inbound state
+        // we can start reading again
+        setAutoRead(true);
+    }
+
+    default void switchOutboundProtocol(Runnable switcher) {
+        flushSync();
+        switcher.run();
+    }
 }

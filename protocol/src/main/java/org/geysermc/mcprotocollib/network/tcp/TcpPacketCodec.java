@@ -7,8 +7,10 @@ import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
+import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 
 import java.util.List;
 
@@ -24,13 +26,18 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) {
+        if (packet == FakeFlushPacket.INSTANCE) {
+            return;
+        }
+
         int initial = buf.writerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        PacketRegistry packetRegistry = packetProtocol.getOutgoingPacketRegistry();
         PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
-            int packetId = this.client ? packetProtocol.getServerboundId(packet) : packetProtocol.getClientboundId(packet);
-            PacketDefinition definition = this.client ? packetProtocol.getServerboundDefinition(packetId) : packetProtocol.getClientboundDefinition(packetId);
+            int packetId = this.client ? packetRegistry.getServerboundId(packet) : packetRegistry.getClientboundId(packet);
+            PacketDefinition definition = this.client ? packetRegistry.getServerboundDefinition(packetId) : packetRegistry.getClientboundDefinition(packetId);
 
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
@@ -51,6 +58,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         int initial = buf.readerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        PacketRegistry packetRegistry = packetProtocol.getIncomingPacketRegistry();
         PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
             int id = packetProtocol.getPacketHeader().readPacketId(buf, codecHelper);
@@ -59,7 +67,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 return;
             }
 
-            Packet packet = this.client ? packetProtocol.createClientboundPacket(id, buf, codecHelper) : packetProtocol.createServerboundPacket(id, buf, codecHelper);
+            Packet packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");

@@ -15,4 +15,9 @@ public class ServerboundFinishConfigurationPacket implements MinecraftPacket {
 
     public void serialize(ByteBuf buf, MinecraftCodecHelper helper) {
     }
+
+    @Override
+    public boolean isTerminal() {
+        return true;
+    }
 }

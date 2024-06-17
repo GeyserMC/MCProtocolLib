@@ -32,9 +32,4 @@ public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeString(out, DefaultComponentSerializer.get().serialize(reason));
     }
-
-    @Override
-    public boolean isPriority() {
-        return true;
-    }
 }

@@ -27,9 +27,4 @@ public class ServerboundHelloPacket implements MinecraftPacket {
         helper.writeString(out, this.username);
         helper.writeUUID(out, this.profileId);
     }
-
-    @Override
-    public boolean isPriority() {
-        return true;
-    }
 }

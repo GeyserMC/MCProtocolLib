@@ -8,13 +8,12 @@ import io.netty.buffer.ByteBuf;
 public interface Packet {
 
     /**
-     * Gets whether the packet has handling priority.
-     * If the result is true, the packet will be handled immediately after being
-     * decoded.
+     * Gets whether the packet terminates the current protocol state.
+     * If yes, we disable auto-read if inbound and wait for the code to switch the state.
      *
-     * @return Whether the packet has priority.
+     * @return Whether the packet terminates the current protocol state
      */
-    default boolean isPriority() {
+    default boolean isTerminal() {
         return false;
     }
 }

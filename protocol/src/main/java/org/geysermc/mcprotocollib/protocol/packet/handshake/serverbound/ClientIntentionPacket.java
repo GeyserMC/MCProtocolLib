@@ -34,7 +34,7 @@ public class ClientIntentionPacket implements MinecraftPacket {
     }
 
     @Override
-    public boolean isPriority() {
+    public boolean isTerminal() {
         return true;
     }
 }
