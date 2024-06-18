@@ -36,6 +36,7 @@ dependencies {
 
     // Test dependencies
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.slf4j.simple)
 }
 
 tasks.test {
