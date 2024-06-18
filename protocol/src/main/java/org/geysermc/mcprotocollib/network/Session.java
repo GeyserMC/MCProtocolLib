@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network;
 
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
