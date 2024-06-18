@@ -124,17 +124,15 @@ public class TcpClientSession extends TcpSession {
             bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
         }
 
-        ChannelFuture future = bootstrap.connect();
-
-        if (wait) {
-            future.syncUninterruptibly();
-        }
-
-        future.addListener((futureListener) -> {
+        ChannelFuture future = bootstrap.connect().addListener((futureListener) -> {
             if (!futureListener.isSuccess()) {
                 exceptionCaught(null, futureListener.cause());
             }
         });
+
+        if (wait) {
+            future.syncUninterruptibly();
+        }
     }
 
     @Override

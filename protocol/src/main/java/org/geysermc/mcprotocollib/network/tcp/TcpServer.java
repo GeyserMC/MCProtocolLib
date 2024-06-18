@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class TcpServer extends AbstractServer {
@@ -76,13 +77,8 @@ public class TcpServer extends AbstractServer {
             bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
         }
 
-        ChannelFuture future = bootstrap.bind();
-
-        if (wait) {
-            future.syncUninterruptibly();
-        }
-
-        future.addListener((ChannelFutureListener) future1 -> {
+        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        bootstrap.bind().addListener((ChannelFutureListener) future1 -> {
             if (future1.isSuccess()) {
                 channel = future1.channel();
                 if (callback != null) {
@@ -91,7 +87,13 @@ public class TcpServer extends AbstractServer {
             } else {
                 log.error("Failed to bind connection listener.", future1.cause());
             }
+
+            handleFuture.complete(null);
         });
+
+        if (wait) {
+            handleFuture.join();
+        }
     }
 
     @Override
