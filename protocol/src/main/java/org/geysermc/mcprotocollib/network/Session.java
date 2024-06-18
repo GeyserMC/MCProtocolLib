@@ -13,7 +13,6 @@ import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * A network session.
@@ -269,7 +268,7 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @see #disconnect(String, Throwable)
      */
-    default void disconnect(@Nullable String reason) {
+    default void disconnect(@NonNull String reason) {
         this.disconnect(reason, null);
     }
 
@@ -282,8 +281,8 @@ public interface Session {
      * @param cause Throwable responsible for disconnecting.
      * @see #disconnect(Component, Throwable)
      */
-    default void disconnect(@Nullable String reason, @Nullable Throwable cause) {
-        this.disconnect(Component.text(Objects.requireNonNullElse(reason, "Connection closed.")), cause);
+    default void disconnect(@NonNull String reason, @Nullable Throwable cause) {
+        this.disconnect(Component.text(reason), cause);
     }
 
     /**

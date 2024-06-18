@@ -277,11 +277,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void disconnect(@NonNull Component reason) {
-        this.disconnect(reason, null);
-    }
-
-    @Override
     public void disconnect(@NonNull Component reason, @Nullable Throwable cause) {
         if (this.disconnected) {
             return;
