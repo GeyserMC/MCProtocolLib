@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -10,7 +9,6 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
-import io.netty.util.concurrent.Future;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
@@ -100,7 +98,8 @@ public class TcpServer extends AbstractServer {
     public void closeImpl(boolean wait, final Runnable callback) {
         if (this.channel != null) {
             if (this.channel.isOpen()) {
-                ChannelFuture future = this.channel.close().addListener((ChannelFutureListener) future1 -> {
+                CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+                this.channel.close().addListener((ChannelFutureListener) future1 -> {
                     if (future1.isSuccess()) {
                         if (callback != null) {
                             callback.run();
@@ -108,14 +107,12 @@ public class TcpServer extends AbstractServer {
                     } else {
                         log.error("Failed to close connection listener.", future1.cause());
                     }
+
+                    handleFuture.complete(null);
                 });
 
                 if (wait) {
-                    future.syncUninterruptibly();
-
-                    if (callback != null) {
-                        callback.run();
-                    }
+                    handleFuture.join();
                 }
             }
 
@@ -123,14 +120,17 @@ public class TcpServer extends AbstractServer {
         }
 
         if (this.group != null) {
-            Future<?> future = this.group.shutdownGracefully().addListener(future1 -> {
+            CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+            this.group.shutdownGracefully().addListener(future1 -> {
                 if (!future1.isSuccess()) {
                     log.debug("Failed to close connection listener.", future1.cause());
                 }
+
+                handleFuture.complete(null);
             });
 
             if (wait) {
-                future.syncUninterruptibly();
+                handleFuture.join();
             }
 
             this.group = null;
