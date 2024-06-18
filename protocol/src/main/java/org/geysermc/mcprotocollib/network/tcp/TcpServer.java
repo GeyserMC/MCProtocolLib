@@ -39,6 +39,10 @@ public class TcpServer extends AbstractServer {
 
     @Override
     public void bindImpl(boolean wait, final Runnable callback) {
+        if (this.group != null || this.channel != null) {
+            return;
+        }
+
         this.group = TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
 
         ServerBootstrap bootstrap = new ServerBootstrap()
@@ -72,7 +76,13 @@ public class TcpServer extends AbstractServer {
             bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
         }
 
-        ChannelFuture future = bootstrap.bind().addListener((ChannelFutureListener) future1 -> {
+        ChannelFuture future = bootstrap.bind();
+
+        if (wait) {
+            future.syncUninterruptibly();
+        }
+
+        future.addListener((ChannelFutureListener) future1 -> {
             if (future1.isSuccess()) {
                 channel = future1.channel();
                 if (callback != null) {
@@ -81,11 +91,7 @@ public class TcpServer extends AbstractServer {
             } else {
                 log.error("Failed to bind connection listener.", future1.cause());
             }
-        });;
-
-        if (wait) {
-            future.syncUninterruptibly();
-        }
+        });
     }
 
     @Override
