@@ -4,7 +4,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -40,6 +39,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -124,14 +124,17 @@ public class TcpClientSession extends TcpSession {
             bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
         }
 
-        ChannelFuture future = bootstrap.connect().addListener((futureListener) -> {
+        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        bootstrap.connect().addListener((futureListener) -> {
             if (!futureListener.isSuccess()) {
                 exceptionCaught(null, futureListener.cause());
             }
+
+            handleFuture.complete(null);
         });
 
         if (wait) {
-            future.syncUninterruptibly();
+            handleFuture.join();
         }
     }
 
