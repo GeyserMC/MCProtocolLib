@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -30,7 +29,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.StyledFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.BitStorage;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.ChunkSection;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.DataPalette;
-import org.geysermc.mcprotocollib.protocol.data.game.chunk.NibbleArray3d;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.GlobalPalette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.ListPalette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.MapPalette;
@@ -53,7 +51,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.type.PaintingType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
@@ -79,13 +76,11 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsour
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.EntityPositionSource;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSource;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSourceType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.StatisticCategory;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -96,7 +91,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -111,11 +106,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     private static final int POSITION_Z_SIZE = 38;
     private static final int POSITION_Y_SHIFT = 0xFFF;
     private static final int POSITION_WRITE_SHIFT = 0x3FFFFFF;
-
-    private final Int2ObjectMap<LevelEventType> levelEvents;
-    private final Map<String, BuiltinSound> soundNames;
-
-    protected NbtMap registry;
 
     @Nullable
     public <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
@@ -916,11 +906,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public LevelEvent readLevelEvent(ByteBuf buf) {
         int id = buf.readInt();
-        LevelEventType type = this.levelEvents.get(id);
-        if (type != null) {
-            return type;
-        }
-        return new UnknownLevelEvent(id);
+        return Objects.requireNonNullElseGet(LevelEventType.from(id), () -> new UnknownLevelEvent(id));
     }
 
     public void writeLevelEvent(ByteBuf buf, LevelEvent event) {
@@ -941,11 +927,6 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeSoundCategory(ByteBuf buf, SoundCategory category) {
         this.writeEnum(buf, category);
-    }
-
-    @Nullable
-    public BuiltinSound getBuiltinSound(String name) {
-        return this.soundNames.get(name);
     }
 
     public EntityEvent readEntityEvent(ByteBuf buf) {
@@ -1126,28 +1107,5 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         if (soundEvent.isNewSystem()) {
             buf.writeFloat(soundEvent.getRange());
         }
-    }
-
-    public NibbleArray3d readNibbleArray(ByteBuf buf, int size) {
-        return new NibbleArray3d(this.readByteArray(buf, ignored -> size));
-    }
-
-    public void writeNibbleArray(ByteBuf buf, NibbleArray3d nibbleArray) {
-        buf.writeBytes(nibbleArray.getData());
-    }
-
-    /**
-     * The game registry sent to clients from the {@link ClientboundLoginPacket}.
-     * Implementations are required to set this value if they intend to use it.
-     *
-     * @return the game registry
-     */
-    @Nullable
-    public NbtMap getRegistry() {
-        return this.registry;
-    }
-
-    public void setRegistry(NbtMap registry) {
-        this.registry = registry;
     }
 }

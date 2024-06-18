@@ -1,10 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
-import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCookieRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomReportDetailsPacket;
@@ -207,26 +203,10 @@ import org.geysermc.mcprotocollib.protocol.packet.status.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MinecraftCodec {
-    private static final Int2ObjectMap<LevelEventType> LEVEL_EVENTS = new Int2ObjectOpenHashMap<>();
-    private static final Map<String, BuiltinSound> SOUND_NAMES = new HashMap<>();
-
-    static {
-        for (LevelEventType levelEvent : LevelEventType.values()) {
-            LEVEL_EVENTS.put(levelEvent.getId(), levelEvent);
-        }
-
-        for (BuiltinSound sound : BuiltinSound.values()) {
-            SOUND_NAMES.put(sound.getName(), sound);
-        }
-    }
-
     public static final PacketCodec CODEC = PacketCodec.builder()
             .protocolVersion(767)
-            .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
+            .helper(MinecraftCodecHelper::new)
             .minecraftVersion("1.21")
             .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
