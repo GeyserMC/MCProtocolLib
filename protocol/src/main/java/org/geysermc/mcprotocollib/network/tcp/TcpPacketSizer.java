@@ -3,8 +3,8 @@ package org.geysermc.mcprotocollib.network.tcp;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.CorruptedFrameException;
-import io.netty.handler.codec.MessageToMessageCodec;
 import lombok.RequiredArgsConstructor;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
@@ -12,26 +12,22 @@ import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class TcpPacketSizer extends MessageToMessageCodec<ByteBuf, ByteBuf> {
+public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
     private final PacketHeader header;
     private final PacketCodecHelper codecHelper;
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+    public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
         int size = header.getLengthSize();
         if (size == 0) {
-            out.add(in.retain());
+            out.writeBytes(in);
             return;
         }
 
         int length = in.readableBytes();
-        int targetLength = header.getLengthSize(length) + length;
-        ByteBuf resultBuf = ctx.alloc().buffer(targetLength);
-
-        header.writeLength(resultBuf, codecHelper, length);
-        resultBuf.writeBytes(in);
-
-        out.add(resultBuf);
+        out.ensureWritable(header.getLengthSize(length) + length);
+        header.writeLength(out, codecHelper, length);
+        out.writeBytes(in);
     }
 
     @Override
