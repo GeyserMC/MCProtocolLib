@@ -18,11 +18,11 @@ public class ClientboundStatusResponsePacketTest extends PacketTest {
     public void setup() {
         this.setPackets(new ClientboundStatusResponsePacket(
                 new ServerStatusInfo(
-                        new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
-                        new PlayerInfo(100, 10, new ArrayList<>(
-                                Collections.singleton(new GameProfile(UUID.randomUUID(), "Username"))
-                        )),
                         Component.text("Description"),
+                        new PlayerInfo(100, 10, new ArrayList<>(
+                            Collections.singleton(new GameProfile(UUID.randomUUID(), "Username"))
+                        )),
+                        new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
                         null,
                         false
                 )

@@ -160,9 +160,9 @@ public class ServerListener extends SessionAdapter {
                 ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if (builder == null) {
                     builder = $ -> new ServerStatusInfo(
-                            new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
-                            new PlayerInfo(0, 20, new ArrayList<>()),
                             Component.text("A Minecraft Server"),
+                            new PlayerInfo(0, 20, new ArrayList<>()),
+                            new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
                             null,
                             false
                     );

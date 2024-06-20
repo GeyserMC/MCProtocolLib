@@ -48,22 +48,31 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     public ServerStatusInfo parseInfo() {
         JsonElement desc = data.get("description");
-        Component description = DefaultComponentSerializer.get().serializer().fromJson(desc, Component.class);
-        JsonObject plrs = data.get("players").getAsJsonObject();
-        List<GameProfile> profiles = new ArrayList<>();
-        if (plrs.has("sample")) {
-            JsonArray prof = plrs.get("sample").getAsJsonArray();
-            if (prof.size() > 0) {
-                for (int index = 0; index < prof.size(); index++) {
-                    JsonObject o = prof.get(index).getAsJsonObject();
-                    profiles.add(new GameProfile(o.get("id").getAsString(), o.get("name").getAsString()));
+        Component description = DefaultComponentSerializer.get().deserializeFromTree(desc);
+
+        PlayerInfo players = null;
+        if (data.has("players")) {
+            JsonObject plrs = data.get("players").getAsJsonObject();
+            List<GameProfile> profiles = new ArrayList<>();
+            if (plrs.has("sample")) {
+                JsonArray prof = plrs.get("sample").getAsJsonArray();
+                if (prof.size() > 0) {
+                    for (int index = 0; index < prof.size(); index++) {
+                        JsonObject o = prof.get(index).getAsJsonObject();
+                        profiles.add(new GameProfile(o.get("id").getAsString(), o.get("name").getAsString()));
+                    }
                 }
             }
+
+            players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
         }
 
-        PlayerInfo players = new PlayerInfo(plrs.get("max").getAsInt(), plrs.get("online").getAsInt(), profiles);
-        JsonObject ver = data.get("version").getAsJsonObject();
-        VersionInfo version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
+        VersionInfo version = null;
+        if (data.has("version")) {
+            JsonObject ver = data.get("version").getAsJsonObject();
+            version = new VersionInfo(ver.get("name").getAsString(), ver.get("protocol").getAsInt());
+        }
+
         byte[] icon = null;
         if (data.has("favicon")) {
             icon = stringToIcon(data.get("favicon").getAsString());
@@ -74,7 +83,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
             enforcesSecureChat = data.get("enforcesSecureChat").getAsBoolean();
         }
 
-        return new ServerStatusInfo(version, players, description, icon, enforcesSecureChat);
+        return new ServerStatusInfo(description, players, version, icon, enforcesSecureChat);
     }
 
     public ClientboundStatusResponsePacket withInfo(@NonNull ServerStatusInfo info) {
@@ -83,30 +92,38 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
 
     private static JsonObject toJson(ServerStatusInfo info) {
         JsonObject obj = new JsonObject();
-        JsonObject ver = new JsonObject();
-        ver.addProperty("name", info.getVersionInfo().getVersionName());
-        ver.addProperty("protocol", info.getVersionInfo().getProtocolVersion());
-        JsonObject plrs = new JsonObject();
-        plrs.addProperty("max", info.getPlayerInfo().getMaxPlayers());
-        plrs.addProperty("online", info.getPlayerInfo().getOnlinePlayers());
-        if (!info.getPlayerInfo().getPlayers().isEmpty()) {
-            JsonArray array = new JsonArray();
-            for (GameProfile profile : info.getPlayerInfo().getPlayers()) {
-                JsonObject o = new JsonObject();
-                o.addProperty("name", profile.getName());
-                o.addProperty("id", profile.getIdAsString());
-                array.add(o);
-            }
 
-            plrs.add("sample", array);
+        obj.add("description", DefaultComponentSerializer.get().serializeToTree(info.getDescription()));
+
+        if (info.getPlayerInfo() != null) {
+            JsonObject plrs = new JsonObject();
+            plrs.addProperty("max", info.getPlayerInfo().getMaxPlayers());
+            plrs.addProperty("online", info.getPlayerInfo().getOnlinePlayers());
+            if (!info.getPlayerInfo().getPlayers().isEmpty()) {
+                JsonArray array = new JsonArray();
+                for (GameProfile profile : info.getPlayerInfo().getPlayers()) {
+                    JsonObject o = new JsonObject();
+                    o.addProperty("name", profile.getName());
+                    o.addProperty("id", profile.getIdAsString());
+                    array.add(o);
+                }
+
+                plrs.add("sample", array);
+            }
+            obj.add("players", plrs);
         }
 
-        obj.add("description", new Gson().fromJson(DefaultComponentSerializer.get().serialize(info.getDescription()), JsonElement.class));
-        obj.add("players", plrs);
-        obj.add("version", ver);
+        if (info.getVersionInfo() != null) {
+            JsonObject ver = new JsonObject();
+            ver.addProperty("name", info.getVersionInfo().getVersionName());
+            ver.addProperty("protocol", info.getVersionInfo().getProtocolVersion());
+            obj.add("version", ver);
+        }
+
         if (info.getIconPng() != null) {
             obj.addProperty("favicon", iconToString(info.getIconPng()));
         }
+
         obj.addProperty("enforcesSecureChat", info.isEnforcesSecureChat());
 
         return obj;
