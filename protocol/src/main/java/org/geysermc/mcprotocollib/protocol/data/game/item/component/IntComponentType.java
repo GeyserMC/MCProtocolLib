@@ -21,6 +21,7 @@ public class IntComponentType extends DataComponentType<Integer> {
         return this.primitiveFactory.createPrimitive(this, this.primitiveReader.readPrimitive(helper, input));
     }
 
+    @Override
     public DataComponent<Integer, IntComponentType> readNullDataComponent() {
         return this.primitiveFactory.createPrimitive(this, null);
     }

@@ -21,6 +21,7 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
         return this.primitiveFactory.createPrimitive(this, this.primitiveReader.readPrimitive(input));
     }
 
+    @Override
     public DataComponent<Boolean, BooleanComponentType> readNullDataComponent() {
         return this.primitiveFactory.createPrimitive(this, null);
     }
