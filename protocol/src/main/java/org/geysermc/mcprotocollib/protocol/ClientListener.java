@@ -3,6 +3,7 @@ package org.geysermc.mcprotocollib.protocol;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.Session;
@@ -77,10 +78,12 @@ public class ClientListener extends SessionAdapter {
 
                 SessionService sessionService = session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
                 String serverId = SessionService.getServerId(helloPacket.getServerId(), helloPacket.getPublicKey(), key);
+
+                // TODO: Add generic error, disabled multiplayer and banned from playing online errors
                 try {
                     sessionService.joinServer(profile, accessToken, serverId);
                 } catch (IOException e) {
-                    session.disconnect("Login failed: Authentication error: " + e.getMessage(), e);
+                    session.disconnect(Component.translatable("disconnect.loginFailedInfo", Component.text(e.getMessage())), e);
                     return;
                 }
 
@@ -109,7 +112,7 @@ public class ClientListener extends SessionAdapter {
                     handler.handle(session, time);
                 }
 
-                session.disconnect("Finished");
+                session.disconnect(Component.translatable("multiplayer.status.finished"));
             }
         } else if (protocol.getState() == ProtocolState.GAME) {
             if (packet instanceof ClientboundKeepAlivePacket keepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
@@ -122,7 +125,7 @@ public class ClientListener extends SessionAdapter {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
-                    session.disconnect("Transferring");
+                    session.disconnect(Component.translatable("disconnect.transfer"));
                     newSession.connect(true, true);
                 }
             }
@@ -137,7 +140,7 @@ public class ClientListener extends SessionAdapter {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
-                    session.disconnect("Transferring");
+                    session.disconnect(Component.translatable("disconnect.transfer"));
                     newSession.connect(true, true);
                 }
             }

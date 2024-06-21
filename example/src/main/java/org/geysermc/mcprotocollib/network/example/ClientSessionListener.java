@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.network.example;
 
+import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
@@ -14,23 +15,23 @@ public class ClientSessionListener extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (packet instanceof PingPacket) {
-            String id = ((PingPacket) packet).getPingId();
+        if (packet instanceof PingPacket pingPacket) {
+            String id = pingPacket.getPingId();
 
             log.info("CLIENT Received: {}", id);
 
             if (id.equals("hello")) {
                 session.send(new PingPacket("exit"));
             } else if (id.equals("exit")) {
-                session.disconnect("Finished");
+                session.disconnect(Component.text("Finished"));
             }
         }
     }
 
     @Override
     public void packetSent(Session session, Packet packet) {
-        if (packet instanceof PingPacket) {
-            log.info("CLIENT Sent: {}", ((PingPacket) packet).getPingId());
+        if (packet instanceof PingPacket pingPacket) {
+            log.info("CLIENT Sent: {}", pingPacket.getPingId());
         }
     }
 

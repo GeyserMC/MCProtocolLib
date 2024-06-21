@@ -14,16 +14,16 @@ public class ServerSessionListener extends SessionAdapter {
 
     @Override
     public void packetReceived(Session session, Packet packet) {
-        if (packet instanceof PingPacket) {
-            log.info("SERVER Received: {}", ((PingPacket) packet).getPingId());
+        if (packet instanceof PingPacket pingPacket) {
+            log.info("SERVER Received: {}", pingPacket.getPingId());
             session.send(packet);
         }
     }
 
     @Override
     public void packetSent(Session session, Packet packet) {
-        if (packet instanceof PingPacket) {
-            log.info("SERVER Sent: {}", ((PingPacket) packet).getPingId());
+        if (packet instanceof PingPacket pingPacket) {
+            log.info("SERVER Sent: {}", pingPacket.getPingId());
         }
     }
 

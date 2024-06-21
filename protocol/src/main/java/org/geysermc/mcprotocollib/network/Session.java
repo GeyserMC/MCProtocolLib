@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.network;
 
 import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
@@ -261,10 +262,37 @@ public interface Session {
 
     /**
      * Disconnects the session.
+     * This method just wraps the reason into a {@link Component}.
+     * It is recommended to use Components instead as they provide more flexibility.
+     *
+     * @param reason Reason for disconnecting.
+     * @see #disconnect(String, Throwable)
+     */
+    default void disconnect(@NonNull String reason) {
+        this.disconnect(reason, null);
+    }
+
+    /**
+     * Disconnects the session.
+     * This method just wraps the reason into a {@link Component}.
+     * It is recommended to use Components instead as they provide more flexibility.
+     *
+     * @param reason Reason for disconnecting.
+     * @param cause Throwable responsible for disconnecting.
+     * @see #disconnect(Component, Throwable)
+     */
+    default void disconnect(@NonNull String reason, @Nullable Throwable cause) {
+        this.disconnect(Component.text(reason), cause);
+    }
+
+    /**
+     * Disconnects the session.
      *
      * @param reason Reason for disconnecting.
      */
-    void disconnect(@Nullable String reason);
+    default void disconnect(@NonNull Component reason) {
+        this.disconnect(reason, null);
+    }
 
     /**
      * Disconnects the session.
@@ -272,20 +300,5 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @param cause Throwable responsible for disconnecting.
      */
-    void disconnect(@Nullable String reason, Throwable cause);
-
-    /**
-     * Disconnects the session.
-     *
-     * @param reason Reason for disconnecting.
-     */
-    void disconnect(@Nullable Component reason);
-
-    /**
-     * Disconnects the session.
-     *
-     * @param reason Reason for disconnecting.
-     * @param cause Throwable responsible for disconnecting.
-     */
-    void disconnect(@Nullable Component reason, Throwable cause);
+    void disconnect(@NonNull Component reason, @Nullable Throwable cause);
 }
