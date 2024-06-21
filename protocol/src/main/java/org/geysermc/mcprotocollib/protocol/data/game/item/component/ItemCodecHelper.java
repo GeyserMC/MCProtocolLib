@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -19,7 +18,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +27,7 @@ import java.util.function.Function;
 
 
 public class ItemCodecHelper extends MinecraftCodecHelper {
-    public static ItemCodecHelper INSTANCE = new ItemCodecHelper();
-
-    public ItemCodecHelper() {
-        super(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
-    }
+    public static final ItemCodecHelper INSTANCE = new ItemCodecHelper();
 
     public <T> Filterable<T> readFilterable(ByteBuf buf, Function<ByteBuf, T> reader) {
         T raw = reader.apply(buf);

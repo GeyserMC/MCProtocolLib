@@ -1,10 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
-import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventType;
-import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCookieRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomReportDetailsPacket;
@@ -207,31 +203,15 @@ import org.geysermc.mcprotocollib.protocol.packet.status.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundPingRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.ServerboundStatusRequestPacket;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MinecraftCodec {
-    private static final Int2ObjectMap<LevelEventType> LEVEL_EVENTS = new Int2ObjectOpenHashMap<>();
-    private static final Map<String, BuiltinSound> SOUND_NAMES = new HashMap<>();
-
-    static {
-        for (LevelEventType levelEvent : LevelEventType.values()) {
-            LEVEL_EVENTS.put(levelEvent.getId(), levelEvent);
-        }
-
-        for (BuiltinSound sound : BuiltinSound.values()) {
-            SOUND_NAMES.put(sound.getName(), sound);
-        }
-    }
-
     public static final PacketCodec CODEC = PacketCodec.builder()
             .protocolVersion(767)
-            .helper(() -> new MinecraftCodecHelper(LEVEL_EVENTS, SOUND_NAMES))
+            .helper(MinecraftCodecHelper::new)
             .minecraftVersion("1.21")
-            .state(ProtocolState.HANDSHAKE, PacketStateCodec.builder()
+            .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
-            .state(ProtocolState.LOGIN, PacketStateCodec.builder()
+            .state(ProtocolState.LOGIN, MinecraftPacketRegistry.builder()
                     .registerClientboundPacket(ClientboundLoginDisconnectPacket.class, ClientboundLoginDisconnectPacket::new)
                     .registerClientboundPacket(ClientboundHelloPacket.class, ClientboundHelloPacket::new)
                     .registerClientboundPacket(ClientboundGameProfilePacket.class, ClientboundGameProfilePacket::new)
@@ -243,12 +223,12 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundCustomQueryAnswerPacket.class, ServerboundCustomQueryAnswerPacket::new)
                     .registerServerboundPacket(ServerboundLoginAcknowledgedPacket.class, ServerboundLoginAcknowledgedPacket::new)
                     .registerServerboundPacket(ServerboundCookieResponsePacket.class, ServerboundCookieResponsePacket::new)
-            ).state(ProtocolState.STATUS, PacketStateCodec.builder()
+            ).state(ProtocolState.STATUS, MinecraftPacketRegistry.builder()
                     .registerClientboundPacket(ClientboundStatusResponsePacket.class, ClientboundStatusResponsePacket::new)
                     .registerClientboundPacket(ClientboundPongResponsePacket.class, ClientboundPongResponsePacket::new)
                     .registerServerboundPacket(ServerboundStatusRequestPacket.class, ServerboundStatusRequestPacket::new)
                     .registerServerboundPacket(ServerboundPingRequestPacket.class, ServerboundPingRequestPacket::new)
-            ).state(ProtocolState.CONFIGURATION, PacketStateCodec.builder()
+            ).state(ProtocolState.CONFIGURATION, MinecraftPacketRegistry.builder()
                     .registerClientboundPacket(ClientboundCookieRequestPacket.class, ClientboundCookieRequestPacket::new)
                     .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
                     .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
@@ -274,7 +254,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
                     .registerServerboundPacket(ServerboundResourcePackPacket.class, ServerboundResourcePackPacket::new)
                     .registerServerboundPacket(ServerboundSelectKnownPacks.class, ServerboundSelectKnownPacks::new)
-            ).state(ProtocolState.GAME, PacketStateCodec.builder()
+            ).state(ProtocolState.GAME, MinecraftPacketRegistry.builder()
                     .registerClientboundPacket(ClientboundDelimiterPacket.class, ClientboundDelimiterPacket::new)
                     .registerClientboundPacket(ClientboundAddEntityPacket.class, ClientboundAddEntityPacket::new)
                     .registerClientboundPacket(ClientboundAddExperienceOrbPacket.class, ClientboundAddExperienceOrbPacket::new)

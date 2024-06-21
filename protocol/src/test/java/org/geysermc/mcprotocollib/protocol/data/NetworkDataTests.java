@@ -2,12 +2,9 @@ package org.geysermc.mcprotocollib.protocol.data;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +15,7 @@ public class NetworkDataTests {
 
     @Test
     public void testEffects() {
-        MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
+        MinecraftCodecHelper helper = new MinecraftCodecHelper();
         for (Effect effect : Effect.VALUES) {
             ByteBuf buf = Unpooled.buffer();
             helper.writeEffect(buf, effect);

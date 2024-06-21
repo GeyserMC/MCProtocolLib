@@ -2,14 +2,12 @@ package org.geysermc.mcprotocollib.protocol.packet;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,8 +19,8 @@ public abstract class PacketTest {
     }
 
     @Test
-    public void testPackets() throws Exception {
-        MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
+    public void testPackets() {
+        MinecraftCodecHelper helper = new MinecraftCodecHelper();
         for (MinecraftPacket packet : this.packets) {
             ByteBuf buf = Unpooled.buffer();
             packet.serialize(buf, helper);
