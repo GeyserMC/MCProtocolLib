@@ -21,6 +21,11 @@ public class IntComponentType extends DataComponentType<Integer> {
         return this.primitiveFactory.createPrimitive(this, this.primitiveReader.readPrimitive(helper, input));
     }
 
+    @Override
+    public DataComponent<Integer, IntComponentType> readNullDataComponent() {
+        return this.primitiveFactory.createPrimitive(this, null);
+    }
+
     public void writeDataComponentPrimitive(ItemCodecHelper helper, ByteBuf output, int value) {
         this.primitiveWriter.writePrimitive(helper, output, value);
     }
@@ -49,7 +54,7 @@ public class IntComponentType extends DataComponentType<Integer> {
 
     @FunctionalInterface
     public interface IntDataComponentFactory extends DataComponentFactory<Integer> {
-        IntDataComponent createPrimitive(IntComponentType type, int value);
+        IntDataComponent createPrimitive(IntComponentType type, Integer value);
 
         @Deprecated
         @Override

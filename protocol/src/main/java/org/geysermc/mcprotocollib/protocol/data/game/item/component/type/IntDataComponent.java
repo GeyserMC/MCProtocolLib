@@ -15,12 +15,7 @@ public class IntDataComponent extends DataComponent<Integer, IntComponentType> {
         this.value = value;
     }
 
-    public int getPrimitiveValue() {
-        return this.value;
-    }
-
     @Override
-    @Deprecated
     public Integer getValue() {
         return this.value;
     }

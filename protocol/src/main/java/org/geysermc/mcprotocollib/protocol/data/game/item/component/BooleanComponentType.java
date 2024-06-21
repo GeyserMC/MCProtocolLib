@@ -21,6 +21,11 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
         return this.primitiveFactory.createPrimitive(this, this.primitiveReader.readPrimitive(input));
     }
 
+    @Override
+    public DataComponent<Boolean, BooleanComponentType> readNullDataComponent() {
+        return this.primitiveFactory.createPrimitive(this, null);
+    }
+
     public void writeDataComponentPrimitive(ByteBuf output, boolean value) {
         this.primitiveWriter.writePrimitive(output, value);
     }
@@ -49,7 +54,7 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
 
     @FunctionalInterface
     public interface BooleanDataComponentFactory extends DataComponentFactory<Boolean> {
-        BooleanDataComponent createPrimitive(BooleanComponentType type, boolean value);
+        BooleanDataComponent createPrimitive(BooleanComponentType type, Boolean value);
 
         @Deprecated
         @Override
