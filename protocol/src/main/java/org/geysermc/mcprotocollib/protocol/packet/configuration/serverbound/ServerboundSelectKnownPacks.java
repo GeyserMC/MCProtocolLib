@@ -22,7 +22,7 @@ public class ServerboundSelectKnownPacks implements MinecraftPacket {
 
         int entryCount = Math.min(helper.readVarInt(in), 64);
         for (int i = 0; i < entryCount; i++) {
-            this.knownPacks.add(new KnownPack(helper.readString(in), helper.readString(in), helper.readString(in)));
+            this.knownPacks.add(KnownPack.NETWORK_CODEC.read(in, helper));
         }
     }
 
@@ -34,9 +34,7 @@ public class ServerboundSelectKnownPacks implements MinecraftPacket {
 
         helper.writeVarInt(out, this.knownPacks.size());
         for (KnownPack entry : this.knownPacks) {
-            helper.writeString(out, entry.getNamespace());
-            helper.writeString(out, entry.getId());
-            helper.writeString(out, entry.getVersion());
+            KnownPack.NETWORK_CODEC.write(entry, out, helper);
         }
     }
 }
