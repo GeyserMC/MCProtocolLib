@@ -21,27 +21,18 @@ public class AESEncryption implements PacketEncryption {
     public AESEncryption(Key key) throws GeneralSecurityException {
         this.inCipher = Cipher.getInstance("AES/CFB8/NoPadding");
         this.inCipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
+
         this.outCipher = Cipher.getInstance("AES/CFB8/NoPadding");
         this.outCipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
     }
 
     @Override
-    public int getDecryptOutputSize(int length) {
-        return this.inCipher.getOutputSize(length);
+    public void decrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception {
+        this.inCipher.update(input, inputOffset, inputLength, output, outputOffset);
     }
 
     @Override
-    public int getEncryptOutputSize(int length) {
-        return this.outCipher.getOutputSize(length);
-    }
-
-    @Override
-    public int decrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception {
-        return this.inCipher.update(input, inputOffset, inputLength, output, outputOffset);
-    }
-
-    @Override
-    public int encrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception {
-        return this.outCipher.update(input, inputOffset, inputLength, output, outputOffset);
+    public void encrypt(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset) throws Exception {
+        this.outCipher.update(input, inputOffset, inputLength, output, outputOffset);
     }
 }

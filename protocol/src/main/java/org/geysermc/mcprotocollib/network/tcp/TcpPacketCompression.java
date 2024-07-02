@@ -1,88 +1,73 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
+import io.netty.handler.codec.MessageToMessageCodec;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.compression.PacketCompression;
 
 import java.util.List;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
-public class TcpPacketCompression extends ByteToMessageCodec<ByteBuf> {
-    private static final int MAX_UNCOMPRESSED_SIZE = 8388608;
+public class TcpPacketCompression extends MessageToMessageCodec<ByteBuf, ByteBuf> {
+    private static final int MAX_UNCOMPRESSED_SIZE = 8 * 1024 * 1024; // 8MiB
 
     private final Session session;
-    private final Deflater deflater = new Deflater();
-    private final Inflater inflater = new Inflater();
-    private final byte[] buf = new byte[8192];
+    private final PacketCompression compression;
     private final boolean validateDecompression;
 
-    public TcpPacketCompression(Session session, boolean validateDecompression) {
+    public TcpPacketCompression(Session session, PacketCompression compression, boolean validateDecompression) {
         this.session = session;
+        this.compression = compression;
         this.validateDecompression = validateDecompression;
     }
 
     @Override
-    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        super.handlerRemoved(ctx);
-
-        this.deflater.end();
-        this.inflater.end();
+    public void handlerRemoved(ChannelHandlerContext ctx) {
+        this.compression.close();
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
-        int readable = in.readableBytes();
-        if (readable > MAX_UNCOMPRESSED_SIZE) {
-            throw new EncoderException("Packet too big: size of " + readable + " is larger than the protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
-        }
-        if (readable < this.session.getCompressionThreshold()) {
-            this.session.getCodecHelper().writeVarInt(out, 0);
-            out.writeBytes(in);
+    public void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
+        int uncompressed = msg.readableBytes();
+        ByteBuf outBuf = ctx.alloc().directBuffer(uncompressed);
+        if (uncompressed < this.session.getCompressionThreshold()) {
+            // Under the threshold, there is nothing to do.
+            this.session.getCodecHelper().writeVarInt(outBuf, 0);
+            outBuf.writeBytes(msg);
         } else {
-            byte[] bytes = new byte[readable];
-            in.readBytes(bytes);
-            this.session.getCodecHelper().writeVarInt(out, bytes.length);
-            this.deflater.setInput(bytes, 0, readable);
-            this.deflater.finish();
-            while (!this.deflater.finished()) {
-                int length = this.deflater.deflate(this.buf);
-                out.writeBytes(this.buf, 0, length);
-            }
-
-            this.deflater.reset();
+            this.session.getCodecHelper().writeVarInt(outBuf, uncompressed);
+            compression.deflate(msg, outBuf);
         }
+
+        out.add(outBuf);
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
-        if (buf.readableBytes() != 0) {
-            int size = this.session.getCodecHelper().readVarInt(buf);
-            if (size == 0) {
-                out.add(buf.readBytes(buf.readableBytes()));
-            } else {
-                if (validateDecompression) { // This is sectioned off as of at least Java Edition 1.18
-                    if (size < this.session.getCompressionThreshold()) {
-                        throw new DecoderException("Badly compressed packet: size of " + size + " is below threshold of " + this.session.getCompressionThreshold() + ".");
-                    }
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+        int claimedUncompressedSize = this.session.getCodecHelper().readVarInt(in);
+        if (claimedUncompressedSize == 0) {
+            out.add(in.retain());
+            return;
+        }
 
-                    if (size > MAX_UNCOMPRESSED_SIZE) {
-                        throw new DecoderException("Badly compressed packet: size of " + size + " is larger than protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
-                    }
-                }
-
-                byte[] bytes = new byte[buf.readableBytes()];
-                buf.readBytes(bytes);
-                this.inflater.setInput(bytes);
-                byte[] inflated = new byte[size];
-                this.inflater.inflate(inflated);
-                out.add(Unpooled.wrappedBuffer(inflated));
-                this.inflater.reset();
+        if (validateDecompression) {
+            if (claimedUncompressedSize < this.session.getCompressionThreshold()) {
+                throw new DecoderException("Badly compressed packet: size of " + claimedUncompressedSize + " is below threshold of " + this.session.getCompressionThreshold() + ".");
             }
+
+            if (claimedUncompressedSize > MAX_UNCOMPRESSED_SIZE) {
+                throw new DecoderException("Badly compressed packet: size of " + claimedUncompressedSize + " is larger than protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
+            }
+        }
+
+        ByteBuf uncompressed = ctx.alloc().directBuffer(claimedUncompressedSize);
+        try {
+            compression.inflate(in, uncompressed, claimedUncompressedSize);
+            out.add(uncompressed);
+        } catch (Exception e) {
+            uncompressed.release();
+            throw new DecoderException("Failed to decompress packet", e);
         }
     }
 }
