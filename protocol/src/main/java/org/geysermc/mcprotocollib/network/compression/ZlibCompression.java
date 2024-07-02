@@ -7,16 +7,16 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-public class ZLIBCompression implements PacketCompression {
+public class ZlibCompression implements PacketCompression {
     private static final int ZLIB_BUFFER_SIZE = 8192;
     private final Deflater deflater;
     private final Inflater inflater;
 
-    public ZLIBCompression() {
+    public ZlibCompression() {
         this(Deflater.DEFAULT_COMPRESSION);
     }
 
-    public ZLIBCompression(int level) {
+    public ZlibCompression(int level) {
         this.deflater = new Deflater(level);
         this.inflater = new Inflater();
     }
