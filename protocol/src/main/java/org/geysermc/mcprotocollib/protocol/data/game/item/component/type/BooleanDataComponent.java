@@ -14,12 +14,7 @@ public class BooleanDataComponent extends DataComponent<Boolean, BooleanComponen
         this.value = value;
     }
 
-    public boolean getPrimitiveValue() {
-        return this.value;
-    }
-
     @Override
-    @Deprecated
     public Boolean getValue() {
         return this.value;
     }
