@@ -66,9 +66,9 @@ public class MinecraftProtocolTest {
             server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, session ->
                     new ServerStatusInfo(
-                            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
-                            new PlayerInfo(100, 0, new ArrayList<>()),
                             Component.text("Hello world!"),
+                            new PlayerInfo(100, 0, new ArrayList<>()),
+                            new VersionInfo(MinecraftCodec.CODEC.getMinecraftVersion(), MinecraftCodec.CODEC.getProtocolVersion()),
                             null,
                             false
                     )
@@ -112,9 +112,9 @@ public class MinecraftProtocolTest {
                     event.getSession().addListener(new SessionAdapter() {
                         @Override
                         public void packetReceived(Session session, Packet packet) {
-                            if (packet instanceof ServerboundChatPacket) {
+                            if (packet instanceof ServerboundChatPacket chatPacket) {
                                 GameProfile profile = event.getSession().getFlag(MinecraftConstants.PROFILE_KEY);
-                                log.info("{}: {}", profile.getName(), ((ServerboundChatPacket) packet).getMessage());
+                                log.info("{}: {}", profile.getName(), chatPacket.getMessage());
 
                                 Component msg = Component.text("Hello, ")
                                         .color(NamedTextColor.GREEN)
@@ -207,10 +207,10 @@ public class MinecraftProtocolTest {
             public void packetReceived(Session session, Packet packet) {
                 if (packet instanceof ClientboundLoginPacket) {
                     session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0L, null, 0, new BitSet()));
-                } else if (packet instanceof ClientboundSystemChatPacket) {
-                    Component message = ((ClientboundSystemChatPacket) packet).getContent();
+                } else if (packet instanceof ClientboundSystemChatPacket systemChatPacket) {
+                    Component message = systemChatPacket.getContent();
                     log.info("Received Message: {}", message);
-                    session.disconnect("Finished");
+                    session.disconnect(Component.text("Finished"));
                 }
             }
 

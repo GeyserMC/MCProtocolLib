@@ -98,15 +98,15 @@ public class ServerListener extends SessionAdapter {
                     case STATUS -> protocol.setState(ProtocolState.STATUS);
                     case TRANSFER -> {
                         if (!session.getFlag(MinecraftConstants.ACCEPT_TRANSFERS_KEY, false)) {
-                            session.disconnect("Server does not accept transfers.");
+                            session.disconnect(Component.translatable("multiplayer.disconnect.transfers_disabled"));
                         }
                     }
                     case LOGIN -> {
                         protocol.setState(ProtocolState.LOGIN);
                         if (intentionPacket.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
-                            session.disconnect("Outdated server! I'm still on " + protocol.getCodec().getMinecraftVersion() + ".");
+                            session.disconnect(Component.translatable("multiplayer.disconnect.incompatible", Component.text(protocol.getCodec().getMinecraftVersion())));
                         } else if (intentionPacket.getProtocolVersion() < protocol.getCodec().getProtocolVersion()) {
-                            session.disconnect("Outdated client! Please use " + protocol.getCodec().getMinecraftVersion() + ".");
+                            session.disconnect(Component.translatable("multiplayer.disconnect.outdated_client", Component.text(protocol.getCodec().getMinecraftVersion())));
                         }
                     }
                     default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
@@ -125,8 +125,7 @@ public class ServerListener extends SessionAdapter {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
 
                 if (!Arrays.equals(this.challenge, keyPacket.getEncryptedChallenge(privateKey))) {
-                    session.disconnect("Invalid challenge!");
-                    return;
+                    throw new IllegalStateException("Protocol error");
                 }
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);
@@ -160,9 +159,9 @@ public class ServerListener extends SessionAdapter {
                 ServerInfoBuilder builder = session.getFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY);
                 if (builder == null) {
                     builder = $ -> new ServerStatusInfo(
-                            new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
-                            new PlayerInfo(0, 20, new ArrayList<>()),
                             Component.text("A Minecraft Server"),
+                            new PlayerInfo(0, 20, new ArrayList<>()),
+                            new VersionInfo(protocol.getCodec().getMinecraftVersion(), protocol.getCodec().getProtocolVersion()),
                             null,
                             false
                     );
@@ -183,6 +182,7 @@ public class ServerListener extends SessionAdapter {
                 protocol.setState(ProtocolState.CONFIGURATION);
             } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
                 session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
+                session.disconnect(Component.translatable("multiplayer.status.request_handled"));
             }
         } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundFinishConfigurationPacket) {
@@ -230,12 +230,13 @@ public class ServerListener extends SessionAdapter {
                 try {
                     profile = sessionService.getProfileByServer(username, SessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
                 } catch (IOException e) {
-                    this.session.disconnect("Failed to make session service request.", e);
+                    session.disconnect(Component.translatable("multiplayer.disconnect.authservers_down"), e);
                     return;
                 }
 
                 if (profile == null) {
-                    this.session.disconnect("Failed to verify username.");
+                    session.disconnect(Component.translatable("multiplayer.disconnect.unverified_username"));
+                    return;
                 }
             } else {
                 profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes()), username);

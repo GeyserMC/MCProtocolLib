@@ -32,9 +32,7 @@ public class HTTPUtils {
     }
 
     public static <T> T makeRequest(@Nullable ProxyInfo proxy, URI uri, Object input, Class<T> responseType) throws IOException {
-        if (proxy == null) {
-            throw new IllegalArgumentException("Proxy cannot be null.");
-        } else if (uri == null) {
+        if (uri == null) {
             throw new IllegalArgumentException("URI cannot be null.");
         }
 
