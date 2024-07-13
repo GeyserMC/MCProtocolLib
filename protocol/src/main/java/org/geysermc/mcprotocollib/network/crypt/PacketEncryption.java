@@ -3,10 +3,12 @@ package org.geysermc.mcprotocollib.network.crypt;
 /**
  * An interface for encrypting packets.
  * The outputLength should always be the same as the inputLength.
+ * This is because that's what the Minecraft vanilla protocol does.
  */
 public interface PacketEncryption {
     /**
      * Decrypts the given data.
+     * Input and output arrays can be the same.
      *
      * @param input Input data to decrypt.
      * @param inputOffset Offset of the data to start decrypting at.
@@ -19,6 +21,7 @@ public interface PacketEncryption {
 
     /**
      * Encrypts the given data.
+     * Input and output arrays can be the same.
      *
      * @param input Input data to encrypt.
      * @param inputOffset Offset of the data to start encrypting at.

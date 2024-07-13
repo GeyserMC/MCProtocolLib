@@ -23,7 +23,7 @@ public class ZlibCompression implements PacketCompression {
 
     @Override
     public void inflate(ByteBuf source, ByteBuf destination, int uncompressedSize) throws DataFormatException {
-        final int origIdx = source.readerIndex();
+        final int originalIndex = source.readerIndex();
         inflater.setInput(source.nioBuffer());
 
         try {
@@ -42,7 +42,7 @@ public class ZlibCompression implements PacketCompression {
                 throw new DataFormatException("Received a deflate stream that was too large, wanted " + uncompressedSize);
             }
 
-            source.readerIndex(origIdx + inflater.getTotalIn());
+            source.readerIndex(originalIndex + inflater.getTotalIn());
         } finally {
             inflater.reset();
         }

@@ -30,6 +30,10 @@ public class TcpPacketCompression extends MessageToMessageCodec<ByteBuf, ByteBuf
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
         int uncompressed = msg.readableBytes();
+        if (uncompressed > MAX_UNCOMPRESSED_SIZE) {
+            throw new IllegalArgumentException("Packet too big (is " + uncompressed + ", should be less than " + MAX_UNCOMPRESSED_SIZE + ")");
+        }
+
         ByteBuf outBuf = ctx.alloc().directBuffer(uncompressed);
         if (uncompressed < this.session.getCompressionThreshold()) {
             // Under the threshold, there is nothing to do.
@@ -53,11 +57,11 @@ public class TcpPacketCompression extends MessageToMessageCodec<ByteBuf, ByteBuf
 
         if (validateDecompression) {
             if (claimedUncompressedSize < this.session.getCompressionThreshold()) {
-                throw new DecoderException("Badly compressed packet: size of " + claimedUncompressedSize + " is below threshold of " + this.session.getCompressionThreshold() + ".");
+                throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is below server threshold of " + this.session.getCompressionThreshold());
             }
 
             if (claimedUncompressedSize > MAX_UNCOMPRESSED_SIZE) {
-                throw new DecoderException("Badly compressed packet: size of " + claimedUncompressedSize + " is larger than protocol maximum of " + MAX_UNCOMPRESSED_SIZE + ".");
+                throw new DecoderException("Badly compressed packet - size of " + claimedUncompressedSize + " is larger than protocol maximum of " + MAX_UNCOMPRESSED_SIZE);
             }
         }
 
