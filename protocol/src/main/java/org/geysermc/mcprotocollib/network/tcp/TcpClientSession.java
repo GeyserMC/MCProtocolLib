@@ -108,7 +108,7 @@ public class TcpClientSession extends TcpSession {
 
                     addProxy(pipeline);
 
-                    addHAProxySupport(channel);
+                    initializeHAProxySupport(channel);
 
                     pipeline.addLast("read-timeout", new ReadTimeoutHandler(getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
                     pipeline.addLast("write-timeout", new WriteTimeoutHandler(getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
@@ -231,7 +231,7 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    private void addHAProxySupport(Channel channel) {
+    private void initializeHAProxySupport(Channel channel) {
         InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
         if (clientAddress == null) {
             return;
