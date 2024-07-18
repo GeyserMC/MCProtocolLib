@@ -36,8 +36,11 @@ public class HTTPUtils {
             throw new IllegalArgumentException("URI cannot be null.");
         }
 
-        HttpResponse response = createHttpClient(proxy).execute(input == null ? new HttpRequest("GET", uri.toURL()) :
-                new HttpContentRequest("POST", uri.toURL()).setContent(HttpContent.string(GSON.toJson(input))));
+        HttpResponse response = createHttpClient(proxy)
+            .execute(input == null ? new HttpRequest("GET", uri.toURL()) :
+                new HttpContentRequest("POST", uri.toURL())
+                    .setContent(HttpContent.string(GSON.toJson(input)))
+                    .setHeader(Headers.CONTENT_TYPE, ContentTypes.APPLICATION_JSON.toString()));
 
         if (responseType == null) {
             return null;

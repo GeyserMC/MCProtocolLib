@@ -14,7 +14,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -371,7 +370,7 @@ public class GameProfile {
      * The model used for a profile texture.
      */
     public enum TextureModel {
-        NORMAL,
+        WIDE,
         SLIM;
     }
 
@@ -390,7 +389,7 @@ public class GameProfile {
          */
         public Texture(String url, Map<String, String> metadata) {
             this.url = url;
-            this.metadata = new HashMap<>(metadata);
+            this.metadata = metadata;
         }
 
         /**
@@ -408,6 +407,10 @@ public class GameProfile {
          * @return The metadata value corresponding to the given key.
          */
         public String getMetadata(String key) {
+            if (this.metadata == null) {
+                return null;
+            }
+
             return this.metadata.get(key);
         }
 
@@ -418,7 +421,7 @@ public class GameProfile {
          */
         public TextureModel getModel() {
             String model = this.getMetadata("model");
-            return model != null && model.equals("slim") ? TextureModel.SLIM : TextureModel.NORMAL;
+            return model != null && model.equals("slim") ? TextureModel.SLIM : TextureModel.WIDE;
         }
 
         /**
