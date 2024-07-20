@@ -9,6 +9,7 @@ import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 
 import java.util.List;
 
@@ -27,10 +28,11 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         int initial = buf.writerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        PacketRegistry packetRegistry = packetProtocol.getOutgoingPacketRegistry();
         PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
-            int packetId = this.client ? packetProtocol.getPacketRegistry().getServerboundId(packet) : packetProtocol.getPacketRegistry().getClientboundId(packet);
-            PacketDefinition definition = this.client ? packetProtocol.getPacketRegistry().getServerboundDefinition(packetId) : packetProtocol.getPacketRegistry().getClientboundDefinition(packetId);
+            int packetId = this.client ? packetProtocol.getOutgoingPacketRegistry().getServerboundId(packet) : packetProtocol.getOutgoingPacketRegistry().getClientboundId(packet);
+            PacketDefinition definition = this.client ? packetProtocol.getOutgoingPacketRegistry().getServerboundDefinition(packetId) : packetProtocol.getOutgoingPacketRegistry().getClientboundDefinition(packetId);
 
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
@@ -59,7 +61,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 return;
             }
 
-            Packet packet = this.client ? packetProtocol.getPacketRegistry().createClientboundPacket(id, buf, codecHelper) : packetProtocol.getPacketRegistry().createServerboundPacket(id, buf, codecHelper);
+            Packet packet = this.client ? packetProtocol.getIncomingPacketRegistry().createClientboundPacket(id, buf, codecHelper) : packetProtocol.getIncomingPacketRegistry().createServerboundPacket(id, buf, codecHelper);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");

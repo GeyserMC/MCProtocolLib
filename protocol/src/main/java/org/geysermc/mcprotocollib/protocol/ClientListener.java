@@ -58,7 +58,7 @@ public class ClientListener extends SessionAdapter {
     @Override
     public void packetReceived(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
-        if (protocol.getState() == ProtocolState.LOGIN) {
+        if (protocol.getIncomingState() == ProtocolState.LOGIN) {
             if (packet instanceof ClientboundHelloPacket helloPacket) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
                 String accessToken = session.getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
@@ -96,7 +96,7 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
                 session.setCompressionThreshold(loginCompressionPacket.getThreshold(), false);
             }
-        } else if (protocol.getState() == ProtocolState.STATUS) {
+        } else if (protocol.getIncomingState() == ProtocolState.STATUS) {
             if (packet instanceof ClientboundStatusResponsePacket statusResponsePacket) {
                 ServerStatusInfo info = statusResponsePacket.parseInfo();
                 ServerInfoHandler handler = session.getFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY);
@@ -114,7 +114,7 @@ public class ClientListener extends SessionAdapter {
 
                 session.disconnect(Component.translatable("multiplayer.status.finished"));
             }
-        } else if (protocol.getState() == ProtocolState.GAME) {
+        } else if (protocol.getIncomingState() == ProtocolState.GAME) {
             if (packet instanceof ClientboundKeepAlivePacket keepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
                 session.send(new ServerboundKeepAlivePacket(keepAlivePacket.getPingId()));
             } else if (packet instanceof ClientboundDisconnectPacket disconnectPacket) {
@@ -129,7 +129,7 @@ public class ClientListener extends SessionAdapter {
                     newSession.connect(true, true);
                 }
             }
-        } else if (protocol.getState() == ProtocolState.CONFIGURATION) {
+        } else if (protocol.getIncomingState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ClientboundFinishConfigurationPacket) {
                 session.send(new ServerboundFinishConfigurationPacket());
             } else if (packet instanceof ClientboundSelectKnownPacks) {
@@ -150,36 +150,37 @@ public class ClientListener extends SessionAdapter {
     @Override
     public void packetSent(Session session, Packet packet) {
         MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
-        if (packet instanceof ClientIntentionPacket) {
+        if (packet instanceof ClientIntentionPacket intentionPacket) {
+            ProtocolState nextState = switch (intentionPacket.getIntent()) {
+                case LOGIN, TRANSFER -> ProtocolState.LOGIN;
+                case STATUS -> ProtocolState.STATUS;
+            };
             // Once the HandshakePacket has been sent, switch to the next protocol mode.
-            protocol.setState(this.targetState);
+            protocol.setIncomingState(nextState);
 
-            if (this.targetState == ProtocolState.LOGIN) {
+            if (nextState == ProtocolState.LOGIN) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
                 session.send(new ServerboundHelloPacket(profile.getName(), profile.getId()));
             } else {
                 session.send(new ServerboundStatusRequestPacket());
             }
         } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
-            protocol.setState(ProtocolState.CONFIGURATION); // LOGIN -> CONFIGURATION
+            protocol.setIncomingState(ProtocolState.CONFIGURATION); // LOGIN -> CONFIGURATION
         } else if (packet instanceof ServerboundFinishConfigurationPacket) {
-            protocol.setState(ProtocolState.GAME); // CONFIGURATION -> GAME
+            protocol.setIncomingState(ProtocolState.GAME); // CONFIGURATION -> GAME
         } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
-            protocol.setState(ProtocolState.CONFIGURATION); // GAME -> CONFIGURATION
+            protocol.setIncomingState(ProtocolState.CONFIGURATION); // GAME -> CONFIGURATION
         }
     }
 
     @Override
     public void connected(ConnectedEvent event) {
-        MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-        if (this.targetState == ProtocolState.LOGIN) {
-            if (this.transferring) {
-                event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.TRANSFER));
-            } else {
-                event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.LOGIN));
-            }
-        } else if (this.targetState == ProtocolState.STATUS) {
-            event.getSession().send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), event.getSession().getHost(), event.getSession().getPort(), HandshakeIntent.STATUS));
-        }
+        Session session = event.getSession();
+        MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
+        session.send(new ClientIntentionPacket(protocol.getCodec().getProtocolVersion(), session.getHost(), session.getPort(), switch (targetState) {
+            case LOGIN -> transferring ? HandshakeIntent.TRANSFER : HandshakeIntent.LOGIN;
+            case STATUS -> HandshakeIntent.STATUS;
+            default -> throw new IllegalStateException("Unexpected value: " + targetState);
+        }));
     }
 }
