@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.data;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.ChunkSection;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.DataPalette;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +39,7 @@ public class ChunkTest {
 
     @Test
     public void testChunkSectionEncoding() {
-        MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
+        MinecraftCodecHelper helper = new MinecraftCodecHelper();
         for (ChunkSection section : chunkSectionsToTest) {
             ByteBuf buf = Unpooled.buffer();
             helper.writeChunkSection(buf, section);
