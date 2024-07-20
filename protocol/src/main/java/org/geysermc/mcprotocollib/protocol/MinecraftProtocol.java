@@ -44,11 +44,11 @@ public class MinecraftProtocol extends PacketProtocol {
     @Getter
     private final PacketCodec codec;
 
-    private ProtocolState incomingState;
-    private PacketRegistry incomingStateRegistry;
+    private ProtocolState inboundState;
+    private PacketRegistry inboundStateRegistry;
 
-    private ProtocolState outgoingState;
-    private PacketRegistry outgoingStateRegistry;
+    private ProtocolState outboundState;
+    private PacketRegistry outboundStateRegistry;
 
     private final ProtocolState targetState;
 
@@ -87,8 +87,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.codec = codec;
         this.targetState = ProtocolState.STATUS;
 
-        this.setIncomingState(ProtocolState.HANDSHAKE);
-        this.setOutgoingState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
     }
 
     /**
@@ -133,8 +133,8 @@ public class MinecraftProtocol extends PacketProtocol {
         this.profile = profile;
         this.accessToken = accessToken;
 
-        this.setIncomingState(ProtocolState.HANDSHAKE);
-        this.setOutgoingState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
     }
 
     @Override
@@ -157,8 +157,8 @@ public class MinecraftProtocol extends PacketProtocol {
         session.setFlag(MinecraftConstants.PROFILE_KEY, this.profile);
         session.setFlag(MinecraftConstants.ACCESS_TOKEN_KEY, this.accessToken);
 
-        this.setIncomingState(ProtocolState.HANDSHAKE);
-        this.setOutgoingState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
 
         if (this.useDefaultListeners) {
             session.addListener(new ClientListener(this.targetState, transferring));
@@ -167,8 +167,8 @@ public class MinecraftProtocol extends PacketProtocol {
 
     @Override
     public void newServerSession(Server server, Session session) {
-        this.setIncomingState(ProtocolState.HANDSHAKE);
-        this.setOutgoingState(ProtocolState.HANDSHAKE);
+        this.setInboundState(ProtocolState.HANDSHAKE);
+        this.setOutboundState(ProtocolState.HANDSHAKE);
 
         if (this.useDefaultListeners) {
             if (DEFAULT_NETWORK_CODEC == null) {
@@ -180,13 +180,13 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     @Override
-    public PacketRegistry getIncomingPacketRegistry() {
-        return this.incomingStateRegistry;
+    public PacketRegistry getInboundPacketRegistry() {
+        return this.inboundStateRegistry;
     }
 
     @Override
-    public PacketRegistry getOutgoingPacketRegistry() {
-        return this.outgoingStateRegistry;
+    public PacketRegistry getOutboundPacketRegistry() {
+        return this.outboundStateRegistry;
     }
 
     protected PacketEncryption enableEncryption(Key key) {
@@ -198,31 +198,31 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     /**
-     * Gets the current incoming {@link ProtocolState} we're in.
+     * Gets the current inbound {@link ProtocolState} we're in.
      *
-     * @return The current incoming {@link ProtocolState}.
+     * @return The current inbound {@link ProtocolState}.
      */
-    public ProtocolState getIncomingState() {
-        return this.incomingState;
+    public ProtocolState getInboundState() {
+        return this.inboundState;
     }
 
     /**
-     * Gets the current outgoing {@link ProtocolState} we're in.
+     * Gets the current outbound {@link ProtocolState} we're in.
      *
-     * @return The current outgoing {@link ProtocolState}.
+     * @return The current outbound {@link ProtocolState}.
      */
-    public ProtocolState getOutgoingState() {
-        return this.outgoingState;
+    public ProtocolState getOutboundState() {
+        return this.outboundState;
     }
 
-    public void setIncomingState(ProtocolState state) {
-        this.incomingState = state;
-        this.incomingStateRegistry = this.codec.getCodec(state);
+    public void setInboundState(ProtocolState state) {
+        this.inboundState = state;
+        this.inboundStateRegistry = this.codec.getCodec(state);
     }
 
-    public void setOutgoingState(ProtocolState state) {
-        this.outgoingState = state;
-        this.outgoingStateRegistry = this.codec.getCodec(state);
+    public void setOutboundState(ProtocolState state) {
+        this.outboundState = state;
+        this.outboundStateRegistry = this.codec.getCodec(state);
     }
 
     public static NbtMap loadNetworkCodec() {

@@ -258,7 +258,17 @@ public interface Session {
      *
      * @param packet Packet to send.
      */
-    void send(Packet packet);
+    default void send(Packet packet) {
+        this.send(packet, null);
+    }
+
+    /**
+     * Sends a packet and runs the specified callback when the packet has been sent.
+     *
+     * @param packet Packet to send.
+     * @param onSent Callback to run when the packet has been sent.
+     */
+    void send(Packet packet, Runnable onSent);
 
     /**
      * Disconnects the session.
@@ -301,4 +311,23 @@ public interface Session {
      * @param cause Throwable responsible for disconnecting.
      */
     void disconnect(@NonNull Component reason, @Nullable Throwable cause);
+
+    /**
+     * Auto read in netty means that the server is automatically reading from the channel.
+     * Turning it off means that we won't get more packets being decoded unless we call read() on the channel.
+     * We use this to hold off on reading packets until we are ready to process them.
+     * Which is for example when we change the protocol state to
+     *
+     * @param autoRead Whether to enable auto read or not.
+     *                 Default is true.
+     */
+    void setAutoRead(boolean autoRead);
+
+    default void switchInboundProtocol(Runnable switcher) {
+        switcher.run();
+
+        // We switched to the new inbound state
+        // we can start reading again
+        setAutoRead(true);
+    }
 }

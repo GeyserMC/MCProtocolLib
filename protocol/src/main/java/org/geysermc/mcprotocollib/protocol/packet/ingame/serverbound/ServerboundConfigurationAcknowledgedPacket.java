@@ -15,4 +15,9 @@ public class ServerboundConfigurationAcknowledgedPacket implements MinecraftPack
 
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
     }
+
+    @Override
+    public boolean isTerminal() {
+        return true;
+    }
 }

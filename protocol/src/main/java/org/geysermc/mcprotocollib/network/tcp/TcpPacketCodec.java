@@ -28,11 +28,11 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         int initial = buf.writerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
-        PacketRegistry packetRegistry = packetProtocol.getOutgoingPacketRegistry();
+        PacketRegistry packetRegistry = packetProtocol.getOutboundPacketRegistry();
         PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
-            int packetId = this.client ? packetProtocol.getOutgoingPacketRegistry().getServerboundId(packet) : packetProtocol.getOutgoingPacketRegistry().getClientboundId(packet);
-            PacketDefinition definition = this.client ? packetProtocol.getOutgoingPacketRegistry().getServerboundDefinition(packetId) : packetProtocol.getOutgoingPacketRegistry().getClientboundDefinition(packetId);
+            int packetId = this.client ? packetRegistry.getServerboundId(packet) : packetRegistry.getClientboundId(packet);
+            PacketDefinition definition = this.client ? packetRegistry.getServerboundDefinition(packetId) : packetRegistry.getClientboundDefinition(packetId);
 
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
@@ -53,6 +53,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         int initial = buf.readerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        PacketRegistry packetRegistry = packetProtocol.getInboundPacketRegistry();
         PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
             int id = packetProtocol.getPacketHeader().readPacketId(buf, codecHelper);
@@ -61,7 +62,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 return;
             }
 
-            Packet packet = this.client ? packetProtocol.getIncomingPacketRegistry().createClientboundPacket(id, buf, codecHelper) : packetProtocol.getIncomingPacketRegistry().createServerboundPacket(id, buf, codecHelper);
+            Packet packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");

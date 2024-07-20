@@ -17,4 +17,14 @@ public interface Packet {
     default boolean isPriority() {
         return false;
     }
+
+    /**
+     * Whether the packet is terminal. That means this should be the last packet sent inside a protocol state.
+     * Subsequently, we should disable auto-read when we receive a terminal packet and let the code re-enable auto-read when it's ready to receive more packets.
+     *
+     * @return Whether the packet is terminal.
+     */
+    default boolean isTerminal() {
+        return false;
+    }
 }

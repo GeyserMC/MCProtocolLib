@@ -256,7 +256,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void send(Packet packet) {
+    public void send(Packet packet, Runnable onSent) {
         if (this.channel == null) {
             return;
         }
@@ -268,6 +268,10 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             final Packet toSend = sendingEvent.getPacket();
             this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
+                    if (onSent != null) {
+                        onSent.run();
+                    }
+
                     callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
@@ -289,6 +293,13 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             this.channel.flush().close().addListener((ChannelFutureListener) future -> callEvent(new DisconnectedEvent(TcpSession.this, reason, cause)));
         } else {
             this.callEvent(new DisconnectedEvent(this, reason, cause));
+        }
+    }
+
+    @Override
+    public void setAutoRead(boolean autoRead) {
+        if (this.channel != null) {
+            this.channel.config().setAutoRead(autoRead);
         }
     }
 
@@ -384,6 +395,12 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+        if (packet.isTerminal()) {
+            // Next packets are in a different protocol state, so we must
+            // disable auto-read to prevent reading wrong packets.
+            setAutoRead(false);
+        }
+
         if (!packet.isPriority() && eventLoop != null) {
             eventLoop.execute(() -> this.callPacketReceived(packet));
         } else {
