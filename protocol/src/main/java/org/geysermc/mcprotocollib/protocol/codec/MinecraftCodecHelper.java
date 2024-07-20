@@ -91,7 +91,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -906,7 +905,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public LevelEvent readLevelEvent(ByteBuf buf) {
         int id = buf.readInt();
-        return Objects.requireNonNullElseGet(LevelEventType.from(id), () -> new UnknownLevelEvent(id));
+        LevelEventType type = LevelEventType.from(id);
+        if (type != null) {
+            return type;
+        }
+        return new UnknownLevelEvent(id);
     }
 
     public void writeLevelEvent(ByteBuf buf, LevelEvent event) {
