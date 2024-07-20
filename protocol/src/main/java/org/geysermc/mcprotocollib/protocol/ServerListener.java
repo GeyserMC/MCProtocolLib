@@ -186,6 +186,7 @@ public class ServerListener extends SessionAdapter {
                 session.disconnect(Component.translatable("multiplayer.status.request_handled"));
             }
         } else if (protocol.getInboundState() == ProtocolState.CONFIGURATION) {
+            // TODO: Also manage keepalive during configuration, not just game
             if (packet instanceof ServerboundFinishConfigurationPacket) {
                 protocol.setOutboundState(ProtocolState.GAME);
                 ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);

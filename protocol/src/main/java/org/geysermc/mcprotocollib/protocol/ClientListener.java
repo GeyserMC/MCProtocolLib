@@ -19,8 +19,10 @@ import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoHandler
 import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerPingTimeHandler;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundPingPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundTransferPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
+import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundPongPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundSelectKnownPacks;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
@@ -118,6 +120,8 @@ public class ClientListener extends SessionAdapter {
         } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ClientboundKeepAlivePacket keepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
                 session.send(new ServerboundKeepAlivePacket(keepAlivePacket.getPingId()));
+            } else if (packet instanceof ClientboundPingPacket pingPacket) {
+                session.send(new ServerboundPongPacket(pingPacket.getId()));
             } else if (packet instanceof ClientboundDisconnectPacket disconnectPacket) {
                 session.disconnect(disconnectPacket.getReason());
             } else if (packet instanceof ClientboundStartConfigurationPacket) {
@@ -132,7 +136,11 @@ public class ClientListener extends SessionAdapter {
                 }
             }
         } else if (protocol.getInboundState() == ProtocolState.CONFIGURATION) {
-            if (packet instanceof ClientboundFinishConfigurationPacket) {
+            if (packet instanceof ClientboundKeepAlivePacket keepAlivePacket && session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+                session.send(new ServerboundKeepAlivePacket(keepAlivePacket.getPingId()));
+            } else if (packet instanceof ClientboundPingPacket pingPacket) {
+                session.send(new ServerboundPongPacket(pingPacket.getId()));
+            } else if (packet instanceof ClientboundFinishConfigurationPacket) {
                 session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.GAME));
                 session.send(new ServerboundFinishConfigurationPacket(), () -> protocol.setOutboundState(ProtocolState.GAME));
             } else if (packet instanceof ClientboundSelectKnownPacks) {
