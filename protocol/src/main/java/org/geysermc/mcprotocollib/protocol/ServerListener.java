@@ -102,12 +102,8 @@ public class ServerListener extends SessionAdapter {
                         protocol.setOutboundState(ProtocolState.STATUS);
                         session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.STATUS));
                     }
-                    case TRANSFER -> {
-                        beginLogin(session, protocol, intentionPacket, true);
-                    }
-                    case LOGIN -> {
-                        beginLogin(session, protocol, intentionPacket, false);
-                    }
+                    case TRANSFER -> beginLogin(session, protocol, intentionPacket, true);
+                    case LOGIN -> beginLogin(session, protocol, intentionPacket, false);
                     default -> throw new UnsupportedOperationException("Invalid client intent: " + intentionPacket.getIntent());
                 }
             }
