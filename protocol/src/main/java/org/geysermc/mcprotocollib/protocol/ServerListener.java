@@ -78,7 +78,7 @@ public class ServerListener extends SessionAdapter {
 
     private boolean keepAlivePending;
     private long keepAliveChallenge;
-    private long keepAliveTime;
+    private long keepAliveTime = System.currentTimeMillis();
     @Getter
     private boolean isTransfer = false;
 
@@ -258,21 +258,23 @@ public class ServerListener extends SessionAdapter {
 
     private void keepAlive(Session session) {
         while (session.isConnected()) {
-            if (keepAlivePending) {
-                session.disconnect(Component.translatable("disconnect.timeout"));
-                break;
+            if (System.currentTimeMillis() - this.keepAliveTime >= 15000L) {
+                if (keepAlivePending) {
+                    session.disconnect(Component.translatable("disconnect.timeout"));
+                    break;
+                }
+
+                long time = System.currentTimeMillis();
+
+                keepAlivePending = true;
+                keepAliveChallenge = time;
+                keepAliveTime = time;
+                session.send(new ClientboundKeepAlivePacket(keepAliveChallenge));
             }
-
-            long time = System.currentTimeMillis();
-
-            keepAlivePending = true;
-            keepAliveChallenge = time;
-            keepAliveTime = time;
-            session.send(new ClientboundKeepAlivePacket(keepAliveChallenge));
 
             // TODO: Implement proper tick loop rather than sleeping
             try {
-                Thread.sleep(2000);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 break;
             }
