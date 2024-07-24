@@ -233,7 +233,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         float saturationModifier = buf.readFloat();
         boolean canAlwaysEat = buf.readBoolean();
         float eatSeconds = buf.readFloat();
-        ItemStack usingConvertsTo = this.readOptionalItemStack(buf);
+        ItemStack usingConvertsTo = this.readNullable(buf, this::readOptionalItemStack);
 
         List<FoodProperties.PossibleEffect> effects = this.readList(buf, (input) -> {
             MobEffectInstance effect = this.readEffectInstance(input);
