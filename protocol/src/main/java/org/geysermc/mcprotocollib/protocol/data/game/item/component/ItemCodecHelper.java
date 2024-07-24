@@ -249,7 +249,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeFloat(properties.getSaturationModifier());
         buf.writeBoolean(properties.isCanAlwaysEat());
         buf.writeFloat(properties.getEatSeconds());
-        this.writeOptionalItemStack(buf, properties.getUsingConvertsTo());
+        this.writeNullable(buf, properties.getUsingConvertsTo(), this::writeOptionalItemStack);
 
         this.writeList(buf, properties.getEffects(), (output, effect) -> {
             this.writeEffectInstance(output, effect.getEffect());
