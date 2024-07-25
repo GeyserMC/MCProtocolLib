@@ -8,7 +8,7 @@ See the [example](https://github.com/GeyserMC/MCProtocolLib/tree/master/example/
 
 ## Adding as a Dependency
 
-MCProtocolLib builds are published to the [Open Collaboration repository](https://repo.opencollab.dev/#/maven-snapshots/org/geysermc/mcprotocollib/protocol).
+MCProtocolLib builds are published to the [Open Collaboration 'snapshot' repository](https://repo.opencollab.dev/#/maven-snapshots/org/geysermc/mcprotocollib/protocol).
 Follow the below steps to add MCProtocolLib as a dependency to your project.
 
 ### Maven
@@ -19,7 +19,7 @@ Follow the below steps to add MCProtocolLib as a dependency to your project.
 <repositories>
     <repository>
         <id>opencollab</id>
-        <url>https://repo.opencollab.dev/maven-releases/</url>
+        <url>https://repo.opencollab.dev/maven-snapshots/</url>
     </repository>
 </repositories>
 ```
@@ -42,7 +42,7 @@ Follow the below steps to add MCProtocolLib as a dependency to your project.
 repositories {
     maven { 
         name 'opencollab'
-        url 'https://repo.opencollab.dev/maven-releases/'
+        url 'https://repo.opencollab.dev/maven-snapshots/'
     }
 }
 ```
@@ -61,7 +61,7 @@ dependencies {
 
 ```kotlin
 repositories {
-    maven("https://repo.opencollab.dev/maven-releases/") {
+    maven("https://repo.opencollab.dev/maven-snapshots/") {
         name = "opencollab"
     }
 }
