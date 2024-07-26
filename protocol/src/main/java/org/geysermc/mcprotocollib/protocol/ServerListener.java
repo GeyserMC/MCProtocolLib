@@ -189,6 +189,7 @@ public class ServerListener extends SessionAdapter {
             // TODO: Also manage keepalive during configuration, not just game
             if (packet instanceof ServerboundFinishConfigurationPacket) {
                 protocol.setOutboundState(ProtocolState.GAME);
+                session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.GAME));
                 ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
                 if (handler != null) {
                     handler.loggedIn(session);
