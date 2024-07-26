@@ -170,11 +170,13 @@ public class ServerListener extends SessionAdapter {
             }
         } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
-                if (keepAlivePending && keepAlivePacket.getPingId() == this.keepAliveChallenge) {
-                    keepAlivePending = false;
-                    session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - this.keepAliveTime);
-                } else {
-                    session.disconnect(Component.translatable("disconnect.timeout"));
+                if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+                    if (keepAlivePending && keepAlivePacket.getPingId() == this.keepAliveChallenge) {
+                        keepAlivePending = false;
+                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - this.keepAliveTime);
+                    } else {
+                        session.disconnect(Component.translatable("disconnect.timeout"));
+                    }
                 }
             } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
                 // The developer who sends ClientboundStartConfigurationPacket needs to setOutboundState to CONFIGURATION
