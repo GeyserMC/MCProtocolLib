@@ -50,7 +50,7 @@ public class ZlibCompression implements PacketCompression {
 
     @Override
     public void deflate(ByteBuf source, ByteBuf destination) {
-        final int origIdx = source.readerIndex();
+        final int originalIndex = source.readerIndex();
         deflater.setInput(source.nioBuffer());
         deflater.finish();
 
@@ -65,7 +65,7 @@ public class ZlibCompression implements PacketCompression {
             destination.writerIndex(destination.writerIndex() + produced);
         }
 
-        source.readerIndex(origIdx + deflater.getTotalIn());
+        source.readerIndex(originalIndex + deflater.getTotalIn());
         deflater.reset();
     }
 
