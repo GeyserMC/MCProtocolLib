@@ -75,10 +75,8 @@ public class ServerListener extends SessionAdapter {
 
     private final byte[] challenge = new byte[4];
     private String username = "";
+    private KeepAliveState keepAliveState;
 
-    private boolean keepAlivePending;
-    private long keepAliveChallenge;
-    private long keepAliveTime = System.currentTimeMillis();
     @Getter
     private boolean isTransfer = false;
 
@@ -89,7 +87,11 @@ public class ServerListener extends SessionAdapter {
 
     @Override
     public void connected(ConnectedEvent event) {
-        event.getSession().setFlag(MinecraftConstants.PING_KEY, 0L);
+        Session session = event.getSession();
+        session.setFlag(MinecraftConstants.PING_KEY, 0L);
+        if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+            new Thread(() -> keepAlive(session)).start();
+        }
     }
 
     @Override
@@ -129,6 +131,7 @@ public class ServerListener extends SessionAdapter {
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 protocol.setOutboundState(ProtocolState.CONFIGURATION);
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
+                keepAliveState = new KeepAliveState();
 
                 // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
                 for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
@@ -170,10 +173,10 @@ public class ServerListener extends SessionAdapter {
             }
         } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
-                if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
-                    if (keepAlivePending && keepAlivePacket.getPingId() == this.keepAliveChallenge) {
-                        keepAlivePending = false;
-                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - this.keepAliveTime);
+                if (keepAliveState != null) {
+                    if (keepAliveState.keepAlivePending && keepAlivePacket.getPingId() == keepAliveState.keepAliveChallenge) {
+                        keepAliveState.keepAlivePending = false;
+                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - keepAliveState.keepAliveTime);
                     } else {
                         session.disconnect(Component.translatable("disconnect.timeout"));
                     }
@@ -183,22 +186,28 @@ public class ServerListener extends SessionAdapter {
                 // after sending the packet. We can't do it in this class because it needs to be a method call right after it was sent.
                 // Using nettys event loop to change outgoing state may cause differences to vanilla.
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
+                keepAliveState = new KeepAliveState();
             } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
                 session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
                 session.disconnect(Component.translatable("multiplayer.status.request_handled"));
             }
         } else if (protocol.getInboundState() == ProtocolState.CONFIGURATION) {
-            // TODO: Also manage keepalive during configuration, not just game
-            if (packet instanceof ServerboundFinishConfigurationPacket) {
+            if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
+                if (keepAliveState != null) {
+                    if (keepAliveState.keepAlivePending && keepAlivePacket.getPingId() == keepAliveState.keepAliveChallenge) {
+                        keepAliveState.keepAlivePending = false;
+                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - keepAliveState.keepAliveTime);
+                    } else {
+                        session.disconnect(Component.translatable("disconnect.timeout"));
+                    }
+                }
+            } else if (packet instanceof ServerboundFinishConfigurationPacket) {
                 protocol.setOutboundState(ProtocolState.GAME);
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.GAME));
+                keepAliveState = new KeepAliveState();
                 ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
                 if (handler != null) {
                     handler.loggedIn(session);
-                }
-
-                if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
-                    new Thread(() -> keepAlive(session)).start();
                 }
             }
         }
@@ -261,18 +270,20 @@ public class ServerListener extends SessionAdapter {
 
     private void keepAlive(Session session) {
         while (session.isConnected()) {
-            if (System.currentTimeMillis() - this.keepAliveTime >= 15000L) {
-                if (keepAlivePending) {
-                    session.disconnect(Component.translatable("disconnect.timeout"));
-                    break;
+            if (keepAliveState != null) {
+                if (System.currentTimeMillis() - keepAliveState.keepAliveTime >= 15000L) {
+                    if (keepAliveState.keepAlivePending) {
+                        session.disconnect(Component.translatable("disconnect.timeout"));
+                        break;
+                    }
+
+                    long time = System.currentTimeMillis();
+
+                    keepAliveState.keepAlivePending = true;
+                    keepAliveState.keepAliveChallenge = time;
+                    keepAliveState.keepAliveTime = time;
+                    session.send(new ClientboundKeepAlivePacket(keepAliveState.keepAliveChallenge));
                 }
-
-                long time = System.currentTimeMillis();
-
-                keepAlivePending = true;
-                keepAliveChallenge = time;
-                keepAliveTime = time;
-                session.send(new ClientboundKeepAlivePacket(keepAliveChallenge));
             }
 
             // TODO: Implement proper tick loop rather than sleeping
@@ -282,5 +293,11 @@ public class ServerListener extends SessionAdapter {
                 break;
             }
         }
+    }
+
+    private static class KeepAliveState {
+        private boolean keepAlivePending;
+        private long keepAliveChallenge;
+        private long keepAliveTime = System.currentTimeMillis();
     }
 }
