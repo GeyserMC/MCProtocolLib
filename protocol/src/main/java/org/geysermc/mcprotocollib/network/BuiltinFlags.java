@@ -28,11 +28,13 @@ public class BuiltinFlags {
      * Only used by the client.
      */
     public static final Flag<Integer> CLIENT_CONNECT_TIMEOUT = new Flag<>("client-connect-timeout", Integer.class);
+    
     /**
      * Read timeout in seconds.
      * Used by both server and client.
      */
     public static final Flag<Integer> READ_TIMEOUT = new Flag<>("read-timeout", Integer.class);
+    
     /**
      * Write timeout in seconds.
      * Used by both server and client.
