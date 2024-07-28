@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
  * Built-in PacketLib session flags.
  */
 public class BuiltinFlags {
+
     /**
      * Enables HAProxy protocol support.
      * When this value is not null it means the ip and port the client claims the connection is from.
