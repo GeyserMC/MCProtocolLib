@@ -100,7 +100,7 @@ public class ServerListener extends SessionAdapter {
                 switch (intentionPacket.getIntent()) {
                     case STATUS -> {
                         protocol.setOutboundState(ProtocolState.STATUS);
-                        session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.STATUS));
+                        session.switchInboundState(() -> protocol.setInboundState(ProtocolState.STATUS));
                     }
                     case TRANSFER -> beginLogin(session, protocol, intentionPacket, true);
                     case LOGIN -> beginLogin(session, protocol, intentionPacket, false);
@@ -128,7 +128,7 @@ public class ServerListener extends SessionAdapter {
                 new Thread(() -> authenticate(session, key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 protocol.setOutboundState(ProtocolState.CONFIGURATION);
-                session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
+                session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
 
                 // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
                 for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
@@ -182,7 +182,7 @@ public class ServerListener extends SessionAdapter {
                 // The developer who sends ClientboundStartConfigurationPacket needs to setOutboundState to CONFIGURATION
                 // after sending the packet. We can't do it in this class because it needs to be a method call right after it was sent.
                 // Using nettys event loop to change outgoing state may cause differences to vanilla.
-                session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
+                session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
             } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
                 session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
                 session.disconnect(Component.translatable("multiplayer.status.request_handled"));
@@ -191,7 +191,7 @@ public class ServerListener extends SessionAdapter {
             // TODO: Also manage keepalive during configuration, not just game
             if (packet instanceof ServerboundFinishConfigurationPacket) {
                 protocol.setOutboundState(ProtocolState.GAME);
-                session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.GAME));
+                session.switchInboundState(() -> protocol.setInboundState(ProtocolState.GAME));
                 ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
                 if (handler != null) {
                     handler.loggedIn(session);
@@ -214,7 +214,7 @@ public class ServerListener extends SessionAdapter {
         } else if (packet.getProtocolVersion() < protocol.getCodec().getProtocolVersion()) {
             session.disconnect(Component.translatable("multiplayer.disconnect.outdated_client", Component.text(protocol.getCodec().getMinecraftVersion())));
         } else {
-            session.switchInboundProtocol(() -> protocol.setInboundState(ProtocolState.LOGIN));
+            session.switchInboundState(() -> protocol.setInboundState(ProtocolState.LOGIN));
         }
     }
 

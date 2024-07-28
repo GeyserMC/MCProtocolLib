@@ -268,7 +268,7 @@ public interface Session {
      * @param packet Packet to send.
      * @param onSent Callback to run when the packet has been sent.
      */
-    void send(Packet packet, Runnable onSent);
+    void send(Packet packet, @Nullable Runnable onSent);
 
     /**
      * Disconnects the session.
@@ -314,16 +314,22 @@ public interface Session {
 
     /**
      * Auto read in netty means that the server is automatically reading from the channel.
-     * Turning it off means that we won't get more packets being decoded unless we call read() on the channel.
+     * Turning it off means that we won't get more packets being decoded until we turn it back on.
      * We use this to hold off on reading packets until we are ready to process them.
-     * Which is for example when we change the protocol state to
+     * For example this is used for switching inbound states with {@link #switchInboundState(Runnable)}.
      *
      * @param autoRead Whether to enable auto read or not.
      *                 Default is true.
      */
     void setAutoRead(boolean autoRead);
 
-    default void switchInboundProtocol(Runnable switcher) {
+    /**
+     * Changes the inbound state of the session and then re-enables auto read.
+     * This is used after a terminal packet was handled and the session is ready to receive more packets in the new state.
+     *
+     * @param switcher The runnable that switches the inbound state.
+     */
+    default void switchInboundState(Runnable switcher) {
         switcher.run();
 
         // We switched to the new inbound state
