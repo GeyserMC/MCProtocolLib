@@ -174,10 +174,11 @@ public class ServerListener extends SessionAdapter {
             }
         } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
-                if (keepAliveState != null) {
-                    if (keepAliveState.keepAlivePending && keepAlivePacket.getPingId() == keepAliveState.keepAliveChallenge) {
-                        keepAliveState.keepAlivePending = false;
-                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - keepAliveState.keepAliveTime);
+                KeepAliveState currentKeepAliveState = this.keepAliveState;
+                if (currentKeepAliveState != null) {
+                    if (currentKeepAliveState.keepAlivePending && keepAlivePacket.getPingId() == currentKeepAliveState.keepAliveChallenge) {
+                        currentKeepAliveState.keepAlivePending = false;
+                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - currentKeepAliveState.keepAliveTime);
                     } else {
                         session.disconnect(Component.translatable("disconnect.timeout"));
                     }
@@ -194,10 +195,11 @@ public class ServerListener extends SessionAdapter {
             }
         } else if (protocol.getInboundState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
-                if (keepAliveState != null) {
-                    if (keepAliveState.keepAlivePending && keepAlivePacket.getPingId() == keepAliveState.keepAliveChallenge) {
-                        keepAliveState.keepAlivePending = false;
-                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - keepAliveState.keepAliveTime);
+                KeepAliveState currentKeepAliveState = this.keepAliveState;
+                if (currentKeepAliveState != null) {
+                    if (currentKeepAliveState.keepAlivePending && keepAlivePacket.getPingId() == currentKeepAliveState.keepAliveChallenge) {
+                        currentKeepAliveState.keepAlivePending = false;
+                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - currentKeepAliveState.keepAliveTime);
                     } else {
                         session.disconnect(Component.translatable("disconnect.timeout"));
                     }
@@ -271,19 +273,20 @@ public class ServerListener extends SessionAdapter {
 
     private void keepAlive(Session session) {
         while (session.isConnected()) {
-            if (keepAliveState != null) {
-                if (System.currentTimeMillis() - keepAliveState.keepAliveTime >= 15000L) {
-                    if (keepAliveState.keepAlivePending) {
+            KeepAliveState currentKeepAliveState = this.keepAliveState;
+            if (currentKeepAliveState != null) {
+                if (System.currentTimeMillis() - currentKeepAliveState.keepAliveTime >= 15000L) {
+                    if (currentKeepAliveState.keepAlivePending) {
                         session.disconnect(Component.translatable("disconnect.timeout"));
                         break;
                     }
 
                     long time = System.currentTimeMillis();
 
-                    keepAliveState.keepAlivePending = true;
-                    keepAliveState.keepAliveChallenge = time;
-                    keepAliveState.keepAliveTime = time;
-                    session.send(new ClientboundKeepAlivePacket(keepAliveState.keepAliveChallenge));
+                    currentKeepAliveState.keepAlivePending = true;
+                    currentKeepAliveState.keepAliveChallenge = time;
+                    currentKeepAliveState.keepAliveTime = time;
+                    session.send(new ClientboundKeepAlivePacket(currentKeepAliveState.keepAliveChallenge));
                 }
             }
 
