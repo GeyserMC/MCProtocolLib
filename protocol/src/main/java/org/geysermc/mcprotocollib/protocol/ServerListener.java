@@ -89,9 +89,6 @@ public class ServerListener extends SessionAdapter {
     public void connected(ConnectedEvent event) {
         Session session = event.getSession();
         session.setFlag(MinecraftConstants.PING_KEY, 0L);
-        if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
-            new Thread(() -> keepAlive(session)).start();
-        }
     }
 
     @Override
@@ -132,6 +129,10 @@ public class ServerListener extends SessionAdapter {
                 protocol.setOutboundState(ProtocolState.CONFIGURATION);
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
                 keepAliveState = new KeepAliveState();
+                if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
+                    // If keepalive state is null, lets assume there is no keepalive thread yet
+                    new Thread(() -> keepAlive(session)).start();
+                }
 
                 // Credit ViaVersion: https://github.com/ViaVersion/ViaVersion/blob/dev/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_5to1_20_3/rewriter/EntityPacketRewriter1_20_5.java
                 for (Map.Entry<String, Object> entry : networkCodec.entrySet()) {
