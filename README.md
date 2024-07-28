@@ -61,7 +61,7 @@ dependencies {
 
 ```kotlin
 repositories {
-    maven("https://repo.opencollab.dev/maven-snapshots/") {
+    maven("https://repo.opencollab.dev/main/") {
         name = "opencollab"
     }
 }
