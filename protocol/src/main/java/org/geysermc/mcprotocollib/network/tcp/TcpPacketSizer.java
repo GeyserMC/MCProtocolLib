@@ -5,29 +5,39 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.CorruptedFrameException;
-import org.geysermc.mcprotocollib.network.Session;
+import lombok.RequiredArgsConstructor;
+import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
-    private final Session session;
-    private final int size;
-
-    public TcpPacketSizer(Session session, int size) {
-        this.session = session;
-        this.size = size;
-    }
+    private final PacketHeader header;
+    private final PacketCodecHelper codecHelper;
 
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
+        int size = header.getLengthSize();
+        if (size == 0) {
+            out.writeBytes(in);
+            return;
+        }
+
         int length = in.readableBytes();
-        out.ensureWritable(this.session.getPacketProtocol().getPacketHeader().getLengthSize(length) + length);
-        this.session.getPacketProtocol().getPacketHeader().writeLength(out, this.session.getCodecHelper(), length);
+        out.ensureWritable(header.getLengthSize(length) + length);
+        header.writeLength(out, codecHelper, length);
         out.writeBytes(in);
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
+        int size = header.getLengthSize();
+        if (size == 0) {
+            out.add(buf.retain());
+            return;
+        }
+
         buf.markReaderIndex();
         byte[] lengthBytes = new byte[size];
         for (int index = 0; index < lengthBytes.length; index++) {
@@ -37,8 +47,8 @@ public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
             }
 
             lengthBytes[index] = buf.readByte();
-            if ((this.session.getPacketProtocol().getPacketHeader().isLengthVariable() && lengthBytes[index] >= 0) || index == size - 1) {
-                int length = this.session.getPacketProtocol().getPacketHeader().readLength(Unpooled.wrappedBuffer(lengthBytes), this.session.getCodecHelper(), buf.readableBytes());
+            if ((header.isLengthVariable() && lengthBytes[index] >= 0) || index == size - 1) {
+                int length = header.readLength(Unpooled.wrappedBuffer(lengthBytes), codecHelper, buf.readableBytes());
                 if (buf.readableBytes() < length) {
                     buf.resetReaderIndex();
                     return;
