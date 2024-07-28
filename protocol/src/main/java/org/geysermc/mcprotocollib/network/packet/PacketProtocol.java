@@ -49,9 +49,16 @@ public abstract class PacketProtocol {
     public abstract void newServerSession(Server server, Session session);
 
     /**
-     * Gets the packet registry for this protocol.
+     * Gets the inbound packet registry for this protocol.
      *
-     * @return The protocol's packet registry.
+     * @return The protocol's inbound packet registry.
      */
-    public abstract PacketRegistry getPacketRegistry();
+    public abstract PacketRegistry getInboundPacketRegistry();
+
+    /**
+     * Gets the outbound packet registry for this protocol.
+     *
+     * @return The protocol's outbound packet registry.
+     */
+    public abstract PacketRegistry getOutboundPacketRegistry();
 }

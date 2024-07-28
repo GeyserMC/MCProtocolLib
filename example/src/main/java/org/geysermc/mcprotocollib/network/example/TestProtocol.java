@@ -82,7 +82,12 @@ public class TestProtocol extends PacketProtocol {
     }
 
     @Override
-    public PacketRegistry getPacketRegistry() {
+    public PacketRegistry getInboundPacketRegistry() {
+        return registry;
+    }
+
+    @Override
+    public PacketRegistry getOutboundPacketRegistry() {
         return registry;
     }
 }

@@ -35,4 +35,9 @@ public class ClientboundGameProfilePacket implements MinecraftPacket {
     public boolean isPriority() {
         return true;
     }
+
+    @Override
+    public boolean isTerminal() {
+        return true;
+    }
 }
