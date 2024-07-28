@@ -19,7 +19,7 @@ Follow the below steps to add MCProtocolLib as a dependency to your project.
 <repositories>
     <repository>
         <id>opencollab</id>
-        <url>https://repo.opencollab.dev/maven-snapshots/</url>
+        <url>https://repo.opencollab.dev/main/</url>
     </repository>
 </repositories>
 ```
