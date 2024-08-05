@@ -152,7 +152,7 @@ public class TcpClientSession extends TcpSession {
         String name = this.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + this.getHost();
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
-        if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost") && !this.host.matches("\\*\\.\\*\\.\\*\\.\\*"))) {
+        if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost") && !this.host.matches("\\b(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\b"))) {
             AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
                     .channelFactory(TRANSPORT_TYPE.datagramChannelFactory())
