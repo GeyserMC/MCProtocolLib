@@ -27,12 +27,15 @@ import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
+import io.netty.resolver.dns.DnsServerAddressStreamProvider;
+import io.netty.resolver.dns.NoopDnsCache;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,25 +62,41 @@ public class TcpClientSession extends TcpSession {
     private final int bindPort;
     private final ProxyInfo proxy;
     private final PacketCodecHelper codecHelper;
+    private final DnsNameResolver dnsNameResolver;
 
-    public TcpClientSession(String host, int port, PacketProtocol protocol) {
-        this(host, port, protocol, null);
-    }
-
-    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxy) {
-        this(host, port, "0.0.0.0", 0, protocol, proxy);
-    }
-
-    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol) {
-        this(host, port, bindAddress, bindPort, protocol, null);
-    }
-
-    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
-        super(host, port, protocol);
+    // Constructor with all possible parameters
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy, DnsNameResolver dnsNameResolver) {
+        super(host, port, protocol); // Assuming 'super' constructor is correctly defined in the parent class
         this.bindAddress = bindAddress;
         this.bindPort = bindPort;
         this.proxy = proxy;
         this.codecHelper = protocol.createHelper();
+        this.dnsNameResolver = dnsNameResolver;
+    }
+
+    // Constructor without ProxyInfo and DnsNameResolver
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol) {
+        this(host, port, bindAddress, bindPort, protocol, null, null);
+    }
+
+    // Constructor without DnsNameResolver
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
+        this(host, port, bindAddress, bindPort, protocol, proxy, null);
+    }
+
+    // Constructor without ProxyInfo and bind parameters
+    public TcpClientSession(String host, int port, PacketProtocol protocol) {
+        this(host, port, "0.0.0.0", 0, protocol, null, null);
+    }
+
+    // Constructor with ProxyInfo but without bind parameters
+    public TcpClientSession(String host, int port, PacketProtocol protocol, ProxyInfo proxy) {
+        this(host, port, "0.0.0.0", 0, protocol, proxy, null);
+    }
+
+    // Constructor with DnsNameResolver but without bind parameters
+    public TcpClientSession(String host, int port, PacketProtocol protocol, DnsNameResolver dnsNameResolver) {
+        this(host, port, "0.0.0.0", 0, protocol, null, dnsNameResolver);
     }
 
     @Override
@@ -153,48 +172,56 @@ public class TcpClientSession extends TcpSession {
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
         if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
-            AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
-            try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
+            try {
+                // Configure DNS servers directly
+                DnsNameResolverBuilder builder = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
                     .channelFactory(TRANSPORT_TYPE.datagramChannelFactory())
-                    .build()) {
-                envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                    .resolveCache(NoopDnsCache.INSTANCE)
+                    .queryTimeoutMillis(5000)
+                    .nameServerProvider((DnsServerAddressStreamProvider) dnsNameResolver);
 
-                DnsResponse response = envelope.content();
-                if (response.count(DnsSection.ANSWER) > 0) {
-                    DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                    if (record.type() == DnsRecordType.SRV) {
-                        ByteBuf buf = record.content();
-                        buf.skipBytes(4); // Skip priority and weight.
+                try (DnsNameResolver resolver = builder.build()) {
+                    AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                    DnsResponse response = envelope.content();
 
-                        int port = buf.readUnsignedShort();
-                        String host = DefaultDnsRecordDecoder.decodeName(buf);
-                        if (host.endsWith(".")) {
-                            host = host.substring(0, host.length() - 1);
+                    if (response.count(DnsSection.ANSWER) > 0) {
+                        DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
+                        if (record.type() == DnsRecordType.SRV) {
+                            ByteBuf buf = record.content();
+                            buf.skipBytes(4); // Skip priority and weight.
+
+                            int port = buf.readUnsignedShort();
+                            String host = DefaultDnsRecordDecoder.decodeName(buf);
+                            if (host.endsWith(".")) {
+                                host = host.substring(0, host.length() - 1);
+                            }
+
+                            log.debug("Found SRV record containing \"{}:{}\".", host, port);
+
+                            this.host = host;
+                            this.port = port;
+                        } else {
+                            log.debug("Received non-SRV record in response.");
                         }
-
-                        log.debug("Found SRV record containing \"{}:{}\".", host, port);
-
-                        this.host = host;
-                        this.port = port;
                     } else {
-                        log.debug("Received non-SRV record in response.");
+                        log.debug("No SRV record found.");
                     }
-                } else {
-                    log.debug("No SRV record found.");
+                } catch (Exception e) {
+                    log.debug("Failed to resolve SRV record.", e);
                 }
             } catch (Exception e) {
-                log.debug("Failed to resolve SRV record.", e);
-            } finally {
-                if (envelope != null) {
-                    envelope.release();
-                }
-
+                throw new RuntimeException(e);
             }
+
+            // Resolve host here
         } else {
             log.debug("Not resolving SRV record for {}", this.host);
         }
+        return getInetSocketAddress();
+    }
 
-        // Resolve host here
+    @NotNull
+    private InetSocketAddress getInetSocketAddress() {
         try {
             InetAddress resolved = InetAddress.getByName(getHost());
             log.debug("Resolved {} -> {}", getHost(), resolved.getHostAddress());
@@ -204,6 +231,7 @@ public class TcpClientSession extends TcpSession {
             return InetSocketAddress.createUnresolved(getHost(), getPort());
         }
     }
+
 
     private void addProxy(ChannelPipeline pipeline) {
         if (proxy != null) {
