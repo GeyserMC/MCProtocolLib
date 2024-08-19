@@ -44,6 +44,8 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
+
+            log.debug("Encoded packet with id: {}", packetId);
         } catch (Throwable t) {
             // Reset writer index to make sure incomplete data is not written out.
             buf.writerIndex(initial);
