@@ -10,10 +10,14 @@ import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
+    private static final Logger log = LoggerFactory.getLogger(TcpPacketCodec.class);
+
     private final Session session;
     private final boolean client;
 
@@ -25,6 +29,10 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) {
+        if (log.isDebugEnabled()) {
+            log.debug("Encoding packet: {}", packet.getClass().getSimpleName());
+        }
+
         int initial = buf.writerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
@@ -62,6 +70,8 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 return;
             }
 
+            log.debug("Decoding packet with id: {}", id);
+
             Packet packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
 
             if (buf.readableBytes() > 0) {
@@ -69,6 +79,10 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             }
 
             out.add(packet);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Decoded packet: {}", packet.getClass().getSimpleName());
+            }
         } catch (Throwable t) {
             // Advance buffer to end to make sure remaining data in this packet is skipped.
             buf.readerIndex(buf.readerIndex() + buf.readableBytes());

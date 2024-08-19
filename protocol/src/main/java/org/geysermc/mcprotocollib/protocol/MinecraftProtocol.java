@@ -18,6 +18,8 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -29,6 +31,7 @@ import java.util.UUID;
  * Implements the Minecraft protocol.
  */
 public class MinecraftProtocol extends PacketProtocol {
+    private static final Logger log = LoggerFactory.getLogger(MinecraftProtocol.class);
 
     /**
      * The network codec sent from the server to the client during {@link ProtocolState#CONFIGURATION}.
@@ -216,11 +219,15 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public void setInboundState(ProtocolState state) {
+        log.debug("Setting inbound state to: {}", state);
+
         this.inboundState = state;
         this.inboundStateRegistry = this.codec.getCodec(state);
     }
 
     public void setOutboundState(ProtocolState state) {
+        log.debug("Setting outbound state to: {}", state);
+
         this.outboundState = state;
         this.outboundStateRegistry = this.codec.getCodec(state);
     }
