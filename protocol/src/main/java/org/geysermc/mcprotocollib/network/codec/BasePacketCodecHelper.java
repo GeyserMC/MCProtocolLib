@@ -18,13 +18,14 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
         int size = 0;
         int b;
         while (((b = buf.readByte()) & 0x80) == 0x80) {
-            value |= (b & 0x7F) << (size++ * 7);
-            if (size > 5) {
-                throw new IllegalArgumentException("VarInt too long (length must be <= 5)");
+            value |= (b & 0x7F) << size;
+            size += 7;
+            if (size > 35) {
+                throw new IllegalArgumentException("VarInt wider than 35-bit");
             }
         }
 
-        return value | ((b & 0x7F) << (size * 7));
+        return value | ((b & 0x7F) << size);
     }
 
     // Based off of Andrew Steinborn's blog post:
@@ -127,17 +128,18 @@ public class BasePacketCodecHelper implements PacketCodecHelper {
 
     @Override
     public long readVarLong(ByteBuf buf) {
-        int value = 0;
+        long value = 0;
         int size = 0;
         int b;
         while (((b = buf.readByte()) & 0x80) == 0x80) {
-            value |= (b & 0x7F) << (size++ * 7);
-            if (size > 10) {
-                throw new IllegalArgumentException("VarLong too long (length must be <= 10)");
+            value |= (b & 0x7FL) << size;
+            size += 7;
+            if (size > 70) {
+                throw new IllegalArgumentException("VarLong wider than 70-bit");
             }
         }
 
-        return value | ((b & 0x7FL) << (size * 7));
+        return value | ((b & 0x7FL) << size);
     }
 
     @Override
