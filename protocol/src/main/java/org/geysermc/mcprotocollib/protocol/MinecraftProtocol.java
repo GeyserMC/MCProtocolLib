@@ -226,7 +226,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public void setOutboundState(ProtocolState state) {
-        log.debug("Setting outbound state to: {}", state);
+        log.debug("Setting outbound protocol state to: {}", state);
 
         this.outboundState = state;
         this.outboundStateRegistry = this.codec.getCodec(state);
