@@ -318,7 +318,7 @@ public interface Session {
      * We use this to hold off on reading packets until we are ready to process them.
      * For example this is used for switching inbound states with {@link #switchInboundState(Runnable)}.
      *
-     * @param autoRead Whether to enable auto read or not.
+     * @param autoRead Whether to enable auto read.
      *                 Default is true.
      */
     void setAutoRead(boolean autoRead);
