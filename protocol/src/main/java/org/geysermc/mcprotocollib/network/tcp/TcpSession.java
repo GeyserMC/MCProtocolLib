@@ -256,7 +256,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void send(Packet packet, @Nullable Runnable onSent) {
+    public void send(@NonNull Packet packet, @Nullable Runnable onSent) {
         if (this.channel == null) {
             return;
         }

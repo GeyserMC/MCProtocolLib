@@ -258,7 +258,7 @@ public interface Session {
      *
      * @param packet Packet to send.
      */
-    default void send(Packet packet) {
+    default void send(@NonNull Packet packet) {
         this.send(packet, null);
     }
 
@@ -268,7 +268,7 @@ public interface Session {
      * @param packet Packet to send.
      * @param onSent Callback to run when the packet has been sent.
      */
-    void send(Packet packet, @Nullable Runnable onSent);
+    void send(@NonNull Packet packet, @Nullable Runnable onSent);
 
     /**
      * Disconnects the session.
