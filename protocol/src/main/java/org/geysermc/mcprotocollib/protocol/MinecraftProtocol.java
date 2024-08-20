@@ -219,7 +219,7 @@ public class MinecraftProtocol extends PacketProtocol {
     }
 
     public void setInboundState(ProtocolState state) {
-        log.debug("Setting inbound state to: {}", state);
+        log.debug("Setting inbound protocol state to: {}", state);
 
         this.inboundState = state;
         this.inboundStateRegistry = this.codec.getCodec(state);
