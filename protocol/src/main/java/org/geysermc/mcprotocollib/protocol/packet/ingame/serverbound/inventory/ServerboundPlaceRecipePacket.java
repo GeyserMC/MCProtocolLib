@@ -14,18 +14,18 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundPlaceRecipePacket implements MinecraftPacket {
     private final int containerId;
     private final @NonNull String recipeId;
-    private final boolean makeAll;
+    private final boolean useMaxItems;
 
     public ServerboundPlaceRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
+        this.containerId = helper.readVarInt(in);
         this.recipeId = helper.readString(in);
-        this.makeAll = in.readBoolean();
+        this.useMaxItems = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
         helper.writeString(out, this.recipeId);
-        out.writeBoolean(this.makeAll);
+        out.writeBoolean(this.useMaxItems);
     }
 }

@@ -10,15 +10,18 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundContainerClosePacket implements MinecraftPacket {
-    private final int containerId;
+public class ServerboundSelectBundleItemPacket implements MinecraftPacket {
+    private final int slotId;
+    private final int selectedItemIndex;
 
-    public ServerboundContainerClosePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
+    public ServerboundSelectBundleItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.slotId = helper.readVarInt(in);
+        this.selectedItemIndex = helper.readVarInt(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
+        helper.writeVarInt(out, this.slotId);
+        helper.writeVarInt(out, this.selectedItemIndex);
     }
 }

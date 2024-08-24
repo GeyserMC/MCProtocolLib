@@ -12,6 +12,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @AllArgsConstructor
 public class ServerboundMovePlayerPosPacket implements MinecraftPacket {
     private final boolean onGround;
+    private final boolean horizontalCollision;
     private final double x;
     private final double y;
     private final double z;
@@ -20,7 +21,9 @@ public class ServerboundMovePlayerPosPacket implements MinecraftPacket {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
-        this.onGround = in.readBoolean();
+        int flags = in.readUnsignedByte();
+        this.onGround = (flags & 0x1) != 0;
+        this.horizontalCollision = (flags & 0x2) != 0;
     }
 
     @Override
@@ -28,6 +31,15 @@ public class ServerboundMovePlayerPosPacket implements MinecraftPacket {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
-        out.writeBoolean(this.onGround);
+        int flags = 0;
+        if (this.onGround) {
+            flags |= 0x1;
+        }
+
+        if (this.horizontalCollision) {
+            flags |= 0x2;
+        }
+
+        out.writeByte(flags);
     }
 }

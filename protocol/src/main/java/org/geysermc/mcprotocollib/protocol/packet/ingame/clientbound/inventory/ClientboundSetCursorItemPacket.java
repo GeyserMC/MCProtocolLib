@@ -6,19 +6,20 @@ import lombok.Data;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundContainerClosePacket implements MinecraftPacket {
-    private final int containerId;
+public class ClientboundSetCursorItemPacket implements MinecraftPacket {
+    private final ItemStack contents;
 
-    public ClientboundContainerClosePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
+    public ClientboundSetCursorItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
+        this.contents = helper.readOptionalItemStack(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
+        helper.writeOptionalItemStack(out, this.contents);
     }
 }

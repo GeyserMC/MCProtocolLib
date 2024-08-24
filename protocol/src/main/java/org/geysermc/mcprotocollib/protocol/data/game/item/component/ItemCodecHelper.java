@@ -384,9 +384,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     public Holder<Instrument> readInstrument(ByteBuf buf) {
         return this.readHolder(buf, (input) -> {
             Sound soundEvent = this.readById(input, BuiltinSound::from, this::readSoundEvent);
-            int useDuration = this.readVarInt(input);
+            float useDuration = input.readFloat();
             float range = input.readFloat();
-            return new Instrument(soundEvent, useDuration, range);
+            Component description = this.readComponent(input);
+            return new Instrument(soundEvent, useDuration, range, description);
         });
     }
 
@@ -399,8 +400,9 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
                 this.writeVarInt(buf, ((BuiltinSound) instrument.getSoundEvent()).ordinal() + 1);
             }
 
-            this.writeVarInt(buf, instrument.getUseDuration());
+            buf.writeFloat(instrument.getUseDuration());
             buf.writeFloat(instrument.getRange());
+            this.writeComponent(buf, instrument.getDescription());
         });
     }
 

@@ -16,14 +16,14 @@ public class ClientboundHorseScreenOpenPacket implements MinecraftPacket {
     private final int entityId;
 
     public ClientboundHorseScreenOpenPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
+        this.containerId = helper.readVarInt(in);
         this.inventoryColumns = helper.readVarInt(in);
         this.entityId = in.readInt();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
         helper.writeVarInt(out, this.inventoryColumns);
         out.writeInt(this.entityId);
     }

@@ -60,7 +60,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     }
 
     public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
+        this.containerId = helper.readVarInt(in);
         this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
         byte param = in.readByte();
@@ -96,7 +96,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
         helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
 

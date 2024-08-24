@@ -12,19 +12,31 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @AllArgsConstructor
 public class ServerboundMovePlayerRotPacket implements MinecraftPacket {
     private final boolean onGround;
+    private final boolean horizontalCollision;
     private final float yaw;
     private final float pitch;
 
     public ServerboundMovePlayerRotPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.yaw = in.readFloat();
         this.pitch = in.readFloat();
-        this.onGround = in.readBoolean();
+        int flags = in.readUnsignedByte();
+        this.onGround = (flags & 0x1) != 0;
+        this.horizontalCollision = (flags & 0x2) != 0;
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeFloat(this.yaw);
         out.writeFloat(this.pitch);
-        out.writeBoolean(this.onGround);
+        int flags = 0;
+        if (this.onGround) {
+            flags |= 0x1;
+        }
+
+        if (this.horizontalCollision) {
+            flags |= 0x2;
+        }
+
+        out.writeByte(flags);
     }
 }

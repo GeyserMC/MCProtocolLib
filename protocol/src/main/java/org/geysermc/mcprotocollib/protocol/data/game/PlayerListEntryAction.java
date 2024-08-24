@@ -6,7 +6,8 @@ public enum PlayerListEntryAction {
     UPDATE_GAME_MODE,
     UPDATE_LISTED,
     UPDATE_LATENCY,
-    UPDATE_DISPLAY_NAME;
+    UPDATE_DISPLAY_NAME,
+    UPDATE_LIST_ORDER;
 
     public static final PlayerListEntryAction[] VALUES = values();
 

@@ -19,4 +19,5 @@ public class PlayerSpawnInfo {
     private final boolean flat;
     private final @Nullable GlobalPos lastDeathPos;
     private final int portalCooldown;
+    private final int seaLevel;
 }

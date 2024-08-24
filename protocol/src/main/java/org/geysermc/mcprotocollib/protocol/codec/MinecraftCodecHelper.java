@@ -511,7 +511,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public Holder<PaintingVariant> readPaintingVariant(ByteBuf buf) {
         return this.readHolder(buf, input -> {
-            return new PaintingVariant(this.readVarInt(input), this.readVarInt(input), this.readResourceLocation(input));
+            return new PaintingVariant(this.readVarInt(input), this.readVarInt(input), this.readResourceLocation(input),
+                    this.readNullable(input, this::readComponent), this.readNullable(input, this::readComponent));
         });
     }
 
@@ -520,6 +521,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             this.writeVarInt(buf, variant.width());
             this.writeVarInt(buf, variant.height());
             this.writeResourceLocation(buf, variant.assetId());
+            this.writeNullable(buf, variant.title(), this::writeComponent);
+            this.writeNullable(buf, variant.author(), this::writeComponent);
         });
     }
 
@@ -622,7 +625,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         boolean flat = buf.readBoolean();
         GlobalPos lastDeathPos = this.readNullable(buf, this::readGlobalPos);
         int portalCooldown = this.readVarInt(buf);
-        return new PlayerSpawnInfo(dimension, worldName, hashedSeed, gameMode, previousGamemode, debug, flat, lastDeathPos, portalCooldown);
+        int seaLevel = this.readVarInt(buf);
+        return new PlayerSpawnInfo(dimension, worldName, hashedSeed, gameMode, previousGamemode, debug, flat, lastDeathPos, portalCooldown, seaLevel);
     }
 
     public void writePlayerSpawnInfo(ByteBuf buf, PlayerSpawnInfo info) {
@@ -635,6 +639,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         buf.writeBoolean(info.isFlat());
         this.writeNullable(buf, info.getLastDeathPos(), this::writeGlobalPos);
         this.writeVarInt(buf, info.getPortalCooldown());
+        this.writeVarInt(buf, info.getSeaLevel());
     }
 
     public ParticleType readParticleType(ByteBuf buf) {

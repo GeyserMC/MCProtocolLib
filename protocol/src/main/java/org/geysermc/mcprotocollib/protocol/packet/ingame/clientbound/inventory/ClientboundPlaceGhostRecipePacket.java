@@ -16,13 +16,13 @@ public class ClientboundPlaceGhostRecipePacket implements MinecraftPacket {
     private final @NonNull String recipeId;
 
     public ClientboundPlaceGhostRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
+        this.containerId = helper.readVarInt(in);
         this.recipeId = helper.readString(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
         helper.writeString(out, this.recipeId);
     }
 }
