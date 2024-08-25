@@ -91,7 +91,8 @@ public class ClientListener extends SessionAdapter {
                     () -> session.enableEncryption(protocol.enableEncryption(key)));
             } else if (packet instanceof ClientboundGameProfilePacket) {
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
-                session.send(new ServerboundLoginAcknowledgedPacket(), () -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
+                session.send(new ServerboundLoginAcknowledgedPacket());
+                session.switchOutboundState(() -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
             } else if (packet instanceof ClientboundLoginDisconnectPacket loginDisconnectPacket) {
                 session.disconnect(loginDisconnectPacket.getReason());
             } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
@@ -122,7 +123,8 @@ public class ClientListener extends SessionAdapter {
                 session.disconnect(disconnectPacket.getReason());
             } else if (packet instanceof ClientboundStartConfigurationPacket) {
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
-                session.send(new ServerboundConfigurationAcknowledgedPacket(), () -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
+                session.send(new ServerboundConfigurationAcknowledgedPacket());
+                session.switchOutboundState(() -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
             } else if (packet instanceof ClientboundTransferPacket transferPacket) {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
@@ -136,7 +138,8 @@ public class ClientListener extends SessionAdapter {
                 session.send(new ServerboundKeepAlivePacket(keepAlivePacket.getPingId()));
             } else if (packet instanceof ClientboundFinishConfigurationPacket) {
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.GAME));
-                session.send(new ServerboundFinishConfigurationPacket(), () -> protocol.setOutboundState(ProtocolState.GAME));
+                session.send(new ServerboundFinishConfigurationPacket());
+                session.switchOutboundState(() -> protocol.setOutboundState(ProtocolState.GAME));
             } else if (packet instanceof ClientboundSelectKnownPacks) {
                 if (session.getFlag(MinecraftConstants.SEND_BLANK_KNOWN_PACKS_RESPONSE, true)) {
                     session.send(new ServerboundSelectKnownPacks(Collections.emptyList()));
@@ -163,7 +166,8 @@ public class ClientListener extends SessionAdapter {
         });
 
         session.switchInboundState(() -> protocol.setInboundState(this.targetState));
-        session.send(intention, () -> protocol.setOutboundState(this.targetState));
+        session.send(intention);
+        session.switchOutboundState(() -> protocol.setOutboundState(this.targetState));
         switch (this.targetState) {
             case LOGIN -> {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);

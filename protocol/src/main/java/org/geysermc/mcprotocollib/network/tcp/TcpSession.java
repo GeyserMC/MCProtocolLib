@@ -318,6 +318,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         return PACKET_EVENT_LOOP.next();
     }
 
+    @Override
     public Channel getChannel() {
         return this.channel;
     }

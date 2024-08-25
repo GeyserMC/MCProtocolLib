@@ -7,6 +7,7 @@ import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
+import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
@@ -29,6 +30,11 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) {
+        if (packet == FakeFlushPacket.INSTANCE) {
+            log.debug("Fake flush packet reached");
+            return;
+        }
+
         if (log.isDebugEnabled()) {
             log.debug("Encoding packet: {}", packet.getClass().getSimpleName());
         }

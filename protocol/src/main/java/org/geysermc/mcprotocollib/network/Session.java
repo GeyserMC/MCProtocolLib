@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.network;
 
+import io.netty.channel.Channel;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -7,6 +8,7 @@ import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
+import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
@@ -324,6 +326,13 @@ public interface Session {
     void setAutoRead(boolean autoRead);
 
     /**
+     * Returns the underlying netty channel of this session.
+     *
+     * @return The netty channel
+     */
+    Channel getChannel();
+
+    /**
      * Changes the inbound state of the session and then re-enables auto read.
      * This is used after a terminal packet was handled and the session is ready to receive more packets in the new state.
      *
@@ -335,5 +344,17 @@ public interface Session {
         // We switched to the new inbound state
         // we can start reading again
         setAutoRead(true);
+    }
+
+    /**
+     * Flushes all packets due to be sent and changes the outbound state of the session.
+     * This makes sure no other threads scheduled packets to be sent.
+     *
+     * @param switcher The runnable that switches the outbound state.
+     */
+    default void switchOutboundState(Runnable switcher) {
+        getChannel().writeAndFlush(FakeFlushPacket.INSTANCE).syncUninterruptibly();
+
+        switcher.run();
     }
 }
