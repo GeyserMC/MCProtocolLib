@@ -257,6 +257,73 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         });
     }
 
+    public Consumable readConsumable(ByteBuf buf) {
+        float consumeSeconds = buf.readFloat();
+        Consumable.ItemUseAnimation animation = Consumable.ItemUseAnimation.from(this.readVarInt(buf));
+        Sound sound = this.readById(buf, BuiltinSound::from, this::readSoundEvent);
+        boolean hasConsumeParticles = buf.readBoolean();
+        List<ConsumeEffect> onConsumeEffects = this.readList(buf, this::readConsumeEffect);
+        return new Consumable(consumeSeconds, animation, sound, hasConsumeParticles, onConsumeEffects);
+    }
+
+    public void writeConsumable(ByteBuf buf, Consumable consumable) {
+        buf.writeFloat(consumable.consumeSeconds());
+        this.writeVarInt(buf, consumable.animation().ordinal());
+        if (consumable.sound() instanceof CustomSound) {
+            this.writeVarInt(buf, 0);
+            this.writeSoundEvent(buf, consumable.sound());
+        } else {
+            this.writeVarInt(buf, ((BuiltinSound) consumable.sound()).ordinal() + 1);
+        }
+
+        buf.writeBoolean(consumable.hasConsumeParticles());
+        this.writeList(buf, consumable.onConsumeEffects(), this::writeConsumeEffect);
+    }
+
+    public ConsumeEffect readConsumeEffect(ByteBuf buf) {
+        return switch (this.readVarInt(buf)) {
+            case 0 -> new ConsumeEffect.ApplyEffects(this.readList(buf, this::readEffectInstance), buf.readFloat());
+            case 1 -> new ConsumeEffect.RemoveEffects(this.readHolderSet(buf));
+            case 2 -> new ConsumeEffect.ClearAllEffects();
+            case 3 -> new ConsumeEffect.TeleportRandomly(buf.readFloat());
+            case 4 -> new ConsumeEffect.PlaySound(this.readById(buf, BuiltinSound::from, this::readSoundEvent));
+            default -> throw new IllegalStateException("Unexpected value: " + this.readVarInt(buf));
+        };
+    }
+
+    public void writeConsumeEffect(ByteBuf buf, ConsumeEffect consumeEffect) {
+        if (consumeEffect instanceof ConsumeEffect.ApplyEffects applyEffects) {
+            this.writeVarInt(buf, 0);
+            this.writeList(buf, applyEffects.effects(), this::writeEffectInstance);
+            buf.writeFloat(applyEffects.probability());
+        } else if (consumeEffect instanceof ConsumeEffect.RemoveEffects removeEffects) {
+            this.writeVarInt(buf, 1);
+            this.writeHolderSet(buf, removeEffects.effects());
+        } else if (consumeEffect instanceof ConsumeEffect.ClearAllEffects) {
+            this.writeVarInt(buf, 2);
+        } else if (consumeEffect instanceof ConsumeEffect.TeleportRandomly teleportRandomly) {
+            this.writeVarInt(buf, 3);
+            buf.writeFloat(teleportRandomly.diameter());
+        } else if (consumeEffect instanceof ConsumeEffect.PlaySound playSound) {
+            this.writeVarInt(buf, 4);
+            if (playSound.sound() instanceof CustomSound) {
+                this.writeVarInt(buf, 0);
+                this.writeSoundEvent(buf, playSound.sound());
+            } else {
+                this.writeVarInt(buf, ((BuiltinSound) playSound.sound()).ordinal() + 1);
+            }
+        }
+    }
+
+    public UseCooldown readUseCooldown(ByteBuf buf) {
+        return new UseCooldown(buf.readFloat(), this.readNullable(buf, this::readResourceLocation));
+    }
+
+    public void writeUseCooldown(ByteBuf buf, UseCooldown useCooldown) {
+        buf.writeFloat(useCooldown.seconds());
+        this.writeNullable(buf, useCooldown.cooldownGroup(), this::writeResourceLocation);
+    }
+
     public MobEffectInstance readEffectInstance(ByteBuf buf) {
         Effect effect = this.readEffect(buf);
         return new MobEffectInstance(effect, this.readEffectDetails(buf));

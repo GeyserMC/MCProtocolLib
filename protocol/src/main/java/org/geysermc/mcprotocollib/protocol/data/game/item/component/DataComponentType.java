@@ -42,6 +42,9 @@ public class DataComponentType<T> {
     public static final BooleanComponentType ENCHANTMENT_GLINT_OVERRIDE = new BooleanComponentType(ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanDataComponent::new);
     public static final DataComponentType<NbtMap> INTANGIBLE_PROJECTILE = new DataComponentType<>(ItemCodecHelper::readCompoundTag, ItemCodecHelper::writeAnyTag, ObjectDataComponent::new);
     public static final DataComponentType<FoodProperties> FOOD = new DataComponentType<>(ItemCodecHelper::readFoodProperties, ItemCodecHelper::writeFoodProperties, ObjectDataComponent::new);
+    public static final DataComponentType<Consumable> CONSUMABLE = new DataComponentType<>(ItemCodecHelper::readConsumable, ItemCodecHelper::writeConsumable, ObjectDataComponent::new);
+    public static final DataComponentType<ItemStack> USE_REMAINDER = new DataComponentType<>(ItemCodecHelper::readItemStack, ItemCodecHelper::writeItemStack, ObjectDataComponent::new);
+    public static final DataComponentType<UseCooldown> USE_COOLDOWN = new DataComponentType<>(ItemCodecHelper::readUseCooldown, ItemCodecHelper::writeUseCooldown, ObjectDataComponent::new);
     public static final DataComponentType<Unit> FIRE_RESISTANT = new DataComponentType<>(unitReader(), unitWriter(), ObjectDataComponent::new);
     public static final DataComponentType<ToolData> TOOL = new DataComponentType<>(ItemCodecHelper::readToolData, ItemCodecHelper::writeToolData, ObjectDataComponent::new);
     public static final IntComponentType ENCHANTABLE = new IntComponentType(ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
