@@ -45,6 +45,7 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * Handles making initial login and status requests for clients.
@@ -63,7 +64,7 @@ public class ClientListener extends SessionAdapter {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
                 String accessToken = session.getFlag(MinecraftConstants.ACCESS_TOKEN_KEY);
 
-                if (profile == null || accessToken == null) {
+                if ((profile == null || accessToken == null) && helloPacket.isShouldAuthenticate()) {
                     throw new UnexpectedEncryptionException();
                 }
 
@@ -81,7 +82,9 @@ public class ClientListener extends SessionAdapter {
 
                 // TODO: Add generic error, disabled multiplayer and banned from playing online errors
                 try {
-                    sessionService.joinServer(profile, accessToken, serverId);
+                    if (helloPacket.isShouldAuthenticate()) {
+                        sessionService.joinServer(Objects.requireNonNull(profile, "final shouldAuthenticate changed value?"), accessToken, serverId);
+                    }
                 } catch (IOException e) {
                     session.disconnect(Component.translatable("disconnect.loginFailedInfo", Component.text(e.getMessage())), e);
                     return;
