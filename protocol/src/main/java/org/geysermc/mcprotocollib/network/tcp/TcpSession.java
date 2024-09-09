@@ -261,6 +261,11 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             return;
         }
 
+        if (!this.channel.eventLoop().inEventLoop()) {
+            this.channel.eventLoop().execute(() -> this.send(packet, onSent));
+            return;
+        }
+
         PacketSendingEvent sendingEvent = new PacketSendingEvent(this, packet);
         this.callEvent(sendingEvent);
 
