@@ -37,7 +37,7 @@ public class BuiltinFlags {
     
     /**
      * Write timeout in seconds.
-     * Used by both server and client.
+     * Used by both the server and client.
      */
     public static final Flag<Integer> WRITE_TIMEOUT = new Flag<>("write-timeout", Integer.class);
 
