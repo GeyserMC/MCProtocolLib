@@ -99,8 +99,8 @@ public class TcpServer extends AbstractServer {
         if (this.channel != null) {
             if (this.channel.isOpen()) {
                 CompletableFuture<Void> handleFuture = new CompletableFuture<>();
-                this.channel.close().addListener((ChannelFutureListener) future1 -> {
-                    if (future1.isSuccess()) {
+                this.channel.close().addListener((ChannelFutureListener) future -> {
+                    if (future.isSuccess()) {
                         if (callback != null) {
                             callback.run();
                         }
