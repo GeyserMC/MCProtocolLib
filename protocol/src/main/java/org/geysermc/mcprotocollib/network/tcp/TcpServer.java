@@ -2,13 +2,13 @@ package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.util.concurrent.Future;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class TcpServer extends AbstractServer {
@@ -60,13 +61,10 @@ public class TcpServer extends AbstractServer {
 
                 ChannelPipeline pipeline = channel.pipeline();
 
-                session.refreshReadTimeoutHandler(channel);
-                session.refreshWriteTimeoutHandler(channel);
+                pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
+                pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
 
-                int size = protocol.getPacketHeader().getLengthSize();
-                if (size > 0) {
-                    pipeline.addLast("sizer", new TcpPacketSizer(session, size));
-                }
+                pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
 
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));
                 pipeline.addLast("manager", session);
@@ -77,29 +75,22 @@ public class TcpServer extends AbstractServer {
             bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
         }
 
-        ChannelFuture future = bootstrap.bind();
+        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        bootstrap.bind().addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                channel = future.channel();
+                if (callback != null) {
+                    callback.run();
+                }
+            } else {
+                log.error("Failed to bind connection listener.", future.cause());
+            }
+
+            handleFuture.complete(null);
+        });
 
         if (wait) {
-            try {
-                future.sync();
-            } catch (InterruptedException e) {
-            }
-
-            channel = future.channel();
-            if (callback != null) {
-                callback.run();
-            }
-        } else {
-            future.addListener((ChannelFutureListener) future1 -> {
-                if (future1.isSuccess()) {
-                    channel = future1.channel();
-                    if (callback != null) {
-                        callback.run();
-                    }
-                } else {
-                    log.error("Failed to asynchronously bind connection listener.", future1.cause());
-                }
-            });
+            handleFuture.join();
         }
     }
 
@@ -107,26 +98,21 @@ public class TcpServer extends AbstractServer {
     public void closeImpl(boolean wait, final Runnable callback) {
         if (this.channel != null) {
             if (this.channel.isOpen()) {
-                ChannelFuture future = this.channel.close();
-                if (wait) {
-                    try {
-                        future.sync();
-                    } catch (InterruptedException e) {
+                CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+                this.channel.close().addListener((ChannelFutureListener) future -> {
+                    if (future.isSuccess()) {
+                        if (callback != null) {
+                            callback.run();
+                        }
+                    } else {
+                        log.error("Failed to close connection listener.", future.cause());
                     }
 
-                    if (callback != null) {
-                        callback.run();
-                    }
-                } else {
-                    future.addListener((ChannelFutureListener) future1 -> {
-                        if (future1.isSuccess()) {
-                            if (callback != null) {
-                                callback.run();
-                            }
-                        } else {
-                            log.error("Failed to asynchronously close connection listener.", future1.cause());
-                        }
-                    });
+                    handleFuture.complete(null);
+                });
+
+                if (wait) {
+                    handleFuture.join();
                 }
             }
 
@@ -134,18 +120,17 @@ public class TcpServer extends AbstractServer {
         }
 
         if (this.group != null) {
-            Future<?> future = this.group.shutdownGracefully();
-            if (wait) {
-                try {
-                    future.sync();
-                } catch (InterruptedException e) {
+            CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+            this.group.shutdownGracefully().addListener(future -> {
+                if (!future.isSuccess()) {
+                    log.debug("Failed to close connection listener.", future.cause());
                 }
-            } else {
-                future.addListener(future1 -> {
-                    if (!future1.isSuccess()) {
-                        log.debug("Failed to asynchronously close connection listener.", future1.cause());
-                    }
-                });
+
+                handleFuture.complete(null);
+            });
+
+            if (wait) {
+                handleFuture.join();
             }
 
             this.group = null;

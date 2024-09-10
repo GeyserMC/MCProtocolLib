@@ -37,7 +37,7 @@ public interface Session {
      * @param wait Whether to wait for the connection to be established before returning.
      * @param transferring Whether the session is a client being transferred.
      */
-    public void connect(boolean wait, boolean transferring);
+    void connect(boolean wait, boolean transferring);
 
     /**
      * Gets the host the session is connected to.
@@ -138,7 +138,7 @@ public interface Session {
      *
      * @param flags Collection of flags
      */
-    public void setFlags(Map<String, Object> flags);
+    void setFlags(Map<String, Object> flags);
 
     /**
      * Gets the listeners listening on this session.
@@ -203,48 +203,6 @@ public interface Session {
      * @param encryption the encryption to encrypt with
      */
     void enableEncryption(PacketEncryption encryption);
-
-    /**
-     * Gets the connect timeout for this session in seconds.
-     *
-     * @return The session's connect timeout.
-     */
-    int getConnectTimeout();
-
-    /**
-     * Sets the connect timeout for this session in seconds.
-     *
-     * @param timeout Connect timeout to set.
-     */
-    void setConnectTimeout(int timeout);
-
-    /**
-     * Gets the read timeout for this session in seconds.
-     *
-     * @return The session's read timeout.
-     */
-    int getReadTimeout();
-
-    /**
-     * Sets the read timeout for this session in seconds.
-     *
-     * @param timeout Read timeout to set.
-     */
-    void setReadTimeout(int timeout);
-
-    /**
-     * Gets the write timeout for this session in seconds.
-     *
-     * @return The session's write timeout.
-     */
-    int getWriteTimeout();
-
-    /**
-     * Sets the write timeout for this session in seconds.
-     *
-     * @param timeout Write timeout to set.
-     */
-    void setWriteTimeout(int timeout);
 
     /**
      * Returns true if the session is connected.
