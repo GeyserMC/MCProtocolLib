@@ -7,14 +7,13 @@ import io.netty.channel.DefaultEventLoopGroup;
 import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
@@ -49,9 +48,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     private final EventLoop eventLoop = createEventLoop();
 
     private int compressionThreshold = -1;
-    private int connectTimeout = 30;
-    private int readTimeout = 30;
-    private int writeTimeout = 0;
 
     private final Map<String, Object> flags = new HashMap<>();
     private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
@@ -202,7 +198,8 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         if (this.channel != null) {
             if (this.compressionThreshold >= 0) {
                 if (this.channel.pipeline().get("compression") == null) {
-                    this.channel.pipeline().addBefore("codec", "compression", new TcpPacketCompression(this, validateDecompression));
+                    this.channel.pipeline().addBefore("codec", "compression",
+                        new TcpPacketCompression(this, new ZlibCompression(), validateDecompression));
                 }
             } else if (this.channel.pipeline().get("compression") != null) {
                 this.channel.pipeline().remove("compression");
@@ -216,38 +213,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             throw new IllegalStateException("Connect the client before initializing encryption!");
         }
         channel.pipeline().addBefore("sizer", "encryption", new TcpPacketEncryptor(encryption));
-    }
-
-    @Override
-    public int getConnectTimeout() {
-        return this.connectTimeout;
-    }
-
-    @Override
-    public void setConnectTimeout(int timeout) {
-        this.connectTimeout = timeout;
-    }
-
-    @Override
-    public int getReadTimeout() {
-        return this.readTimeout;
-    }
-
-    @Override
-    public void setReadTimeout(int timeout) {
-        this.readTimeout = timeout;
-        this.refreshReadTimeoutHandler();
-    }
-
-    @Override
-    public int getWriteTimeout() {
-        return this.writeTimeout;
-    }
-
-    @Override
-    public void setWriteTimeout(int timeout) {
-        this.writeTimeout = timeout;
-        this.refreshWriteTimeoutHandler();
     }
 
     @Override
@@ -326,46 +291,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @Override
     public Channel getChannel() {
         return this.channel;
-    }
-
-    protected void refreshReadTimeoutHandler() {
-        this.refreshReadTimeoutHandler(this.channel);
-    }
-
-    protected void refreshReadTimeoutHandler(Channel channel) {
-        if (channel != null) {
-            if (this.readTimeout <= 0) {
-                if (channel.pipeline().get("readTimeout") != null) {
-                    channel.pipeline().remove("readTimeout");
-                }
-            } else {
-                if (channel.pipeline().get("readTimeout") == null) {
-                    channel.pipeline().addFirst("readTimeout", new ReadTimeoutHandler(this.readTimeout));
-                } else {
-                    channel.pipeline().replace("readTimeout", "readTimeout", new ReadTimeoutHandler(this.readTimeout));
-                }
-            }
-        }
-    }
-
-    protected void refreshWriteTimeoutHandler() {
-        this.refreshWriteTimeoutHandler(this.channel);
-    }
-
-    protected void refreshWriteTimeoutHandler(Channel channel) {
-        if (channel != null) {
-            if (this.writeTimeout <= 0) {
-                if (channel.pipeline().get("writeTimeout") != null) {
-                    channel.pipeline().remove("writeTimeout");
-                }
-            } else {
-                if (channel.pipeline().get("writeTimeout") == null) {
-                    channel.pipeline().addFirst("writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
-                } else {
-                    channel.pipeline().replace("writeTimeout", "writeTimeout", new WriteTimeoutHandler(this.writeTimeout));
-                }
-            }
-        }
     }
 
     @Override
