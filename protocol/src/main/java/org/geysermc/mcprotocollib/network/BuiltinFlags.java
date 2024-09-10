@@ -9,7 +9,7 @@ public class BuiltinFlags {
 
     /**
      * Enables HAProxy protocol support.
-     * When this value is not null it means the ip and port the client claims the connection is from.
+     * When this value is not null it represents the ip and port the client claims the connection is from.
      */
     public static final Flag<InetSocketAddress> CLIENT_PROXIED_ADDRESS = new Flag<>("client-proxied-address", InetSocketAddress.class);
 
