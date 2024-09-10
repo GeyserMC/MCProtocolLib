@@ -121,9 +121,9 @@ public class TcpServer extends AbstractServer {
 
         if (this.group != null) {
             CompletableFuture<Void> handleFuture = new CompletableFuture<>();
-            this.group.shutdownGracefully().addListener(future1 -> {
-                if (!future1.isSuccess()) {
-                    log.debug("Failed to close connection listener.", future1.cause());
+            this.group.shutdownGracefully().addListener(future -> {
+                if (!future.isSuccess()) {
+                    log.debug("Failed to close connection listener.", future.cause());
                 }
 
                 handleFuture.complete(null);
