@@ -76,14 +76,14 @@ public class TcpServer extends AbstractServer {
         }
 
         CompletableFuture<Void> handleFuture = new CompletableFuture<>();
-        bootstrap.bind().addListener((ChannelFutureListener) future1 -> {
-            if (future1.isSuccess()) {
-                channel = future1.channel();
+        bootstrap.bind().addListener((ChannelFutureListener) future -> {
+            if (future.isSuccess()) {
+                channel = future.channel();
                 if (callback != null) {
                     callback.run();
                 }
             } else {
-                log.error("Failed to bind connection listener.", future1.cause());
+                log.error("Failed to bind connection listener.", future.cause());
             }
 
             handleFuture.complete(null);
