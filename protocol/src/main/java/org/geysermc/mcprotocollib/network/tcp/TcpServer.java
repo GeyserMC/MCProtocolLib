@@ -105,7 +105,7 @@ public class TcpServer extends AbstractServer {
                             callback.run();
                         }
                     } else {
-                        log.error("Failed to close connection listener.", future1.cause());
+                        log.error("Failed to close connection listener.", future.cause());
                     }
 
                     handleFuture.complete(null);
