@@ -55,6 +55,8 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 log.debug("Encoded packet {} ({})", packet.getClass().getSimpleName(), packetId);
             }
         } catch (Throwable t) {
+            log.debug("Error encoding packet", t);
+
             // Reset writer index to make sure incomplete data is not written out.
             buf.writerIndex(initial);
 
@@ -94,6 +96,8 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 log.debug("Decoded packet {} ({})", packet.getClass().getSimpleName(), id);
             }
         } catch (Throwable t) {
+            log.debug("Error decoding packet", t);
+
             // Advance buffer to end to make sure remaining data in this packet is skipped.
             buf.readerIndex(buf.readerIndex() + buf.readableBytes());
 
