@@ -39,7 +39,7 @@ public class ClientSessionListener extends SessionAdapter {
     public void connected(ConnectedEvent event) {
         log.info("CLIENT Connected");
 
-        event.getSession().enableEncryption(((TestProtocol) event.getSession().getPacketProtocol()).getEncryption());
+        event.getSession().setEncryption(((TestProtocol) event.getSession().getPacketProtocol()).getEncryption());
         event.getSession().send(new PingPacket("hello"));
     }
 

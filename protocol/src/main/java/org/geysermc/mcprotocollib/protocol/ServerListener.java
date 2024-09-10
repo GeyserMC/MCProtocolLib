@@ -8,6 +8,8 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
+import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
@@ -129,7 +131,7 @@ public class ServerListener extends SessionAdapter {
                 }
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);
-                session.enableEncryption(protocol.enableEncryption(key));
+                session.setEncryption(protocol.enableEncryption(key));
                 new Thread(new UserAuthTask(session, key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 protocol.setState(ProtocolState.CONFIGURATION);
@@ -202,7 +204,7 @@ public class ServerListener extends SessionAdapter {
     @Override
     public void packetSent(Session session, Packet packet) {
         if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
-            session.setCompressionThreshold(loginCompressionPacket.getThreshold(), true);
+            session.setCompression(new CompressionConfig(loginCompressionPacket.getThreshold(), new ZlibCompression(), true));
             session.send(new ClientboundGameProfilePacket(session.getFlag(MinecraftConstants.PROFILE_KEY), true));
         }
     }
