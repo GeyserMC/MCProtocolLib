@@ -35,8 +35,8 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Encoding packet: {}", packet.getClass().getSimpleName());
+        if (log.isTraceEnabled()) {
+            log.trace("Encoding packet: {}", packet.getClass().getSimpleName());
         }
 
         int initial = buf.writerIndex();
@@ -51,7 +51,9 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
 
-            log.debug("Encoded packet with id: {}", packetId);
+            if (log.isDebugEnabled()) {
+                log.debug("Encoded packet {} ({})", packet.getClass().getSimpleName(), packetId);
+            }
         } catch (Throwable t) {
             // Reset writer index to make sure incomplete data is not written out.
             buf.writerIndex(initial);
@@ -78,7 +80,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
                 return;
             }
 
-            log.debug("Decoding packet with id: {}", id);
+            log.trace("Decoding packet with id: {}", id);
 
             Packet packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
 
@@ -89,7 +91,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             out.add(packet);
 
             if (log.isDebugEnabled()) {
-                log.debug("Decoded packet: {}", packet.getClass().getSimpleName());
+                log.debug("Decoded packet {} ({})", packet.getClass().getSimpleName(), id);
             }
         } catch (Throwable t) {
             // Advance buffer to end to make sure remaining data in this packet is skipped.
