@@ -226,6 +226,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             return;
         }
 
+        // Same behaviour as vanilla, always offload packet sending to the event loop
         if (!this.channel.eventLoop().inEventLoop()) {
             this.channel.eventLoop().execute(() -> this.send(packet, onSent));
             return;
