@@ -200,7 +200,7 @@ public interface Session {
      */
     void setEncryption(EncryptionConfig encryptionConfig);
 
-                       /**
+    /**
      * Returns true if the session is connected.
      *
      * @return True if the session is connected.
