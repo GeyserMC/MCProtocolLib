@@ -186,7 +186,7 @@ public interface Session {
     /**
      * Sets the compression config for this session.
      *
-     * @param compressionConfig the compression to compress with
+     * @param compressionConfig the compression to compress with,
      *                          or null to disable compression
      */
     void setCompression(CompressionConfig compressionConfig);
