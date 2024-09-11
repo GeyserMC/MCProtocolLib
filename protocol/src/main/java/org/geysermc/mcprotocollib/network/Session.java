@@ -194,7 +194,7 @@ public interface Session {
     /**
      * Sets encryption for this session.
      *
-     * @param encryptionConfig the encryption to encrypt with
+     * @param encryptionConfig the encryption to encrypt with,
      *                         or null to disable encryption
      *
      */
