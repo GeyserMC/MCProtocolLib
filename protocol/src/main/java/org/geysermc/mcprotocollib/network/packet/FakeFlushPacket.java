@@ -8,4 +8,9 @@ public class FakeFlushPacket implements Packet {
 
     private FakeFlushPacket() {
     }
+
+    @Override
+    public boolean isPriority() {
+        return true;
+    }
 }
