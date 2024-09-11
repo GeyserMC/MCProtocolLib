@@ -184,7 +184,7 @@ public interface Session {
     void callPacketSent(Packet packet);
 
     /**
-     * Sets compression for this session.
+     * Sets the compression config for this session.
      *
      * @param compressionConfig the compression to compress with
      *                          or null to disable compression
