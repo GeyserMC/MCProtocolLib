@@ -311,7 +311,7 @@ public interface Session {
      * @param switcher The runnable that switches the outbound state.
      */
     default void switchOutboundState(Runnable switcher) {
-        getChannel().writeAndFlush(FakeFlushPacket.INSTANCE).syncUninterruptibly();
+        getChannel().writeAndFlush(new FakeFlushPacket()).syncUninterruptibly();
 
         switcher.run();
     }

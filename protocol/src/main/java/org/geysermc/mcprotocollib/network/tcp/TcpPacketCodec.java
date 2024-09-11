@@ -30,7 +30,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) {
-        if (packet == FakeFlushPacket.INSTANCE) {
+        if (packet instanceof FakeFlushPacket) {
             log.debug("Fake flush packet reached");
             return;
         }
