@@ -75,6 +75,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getInboundPacketRegistry();
         PacketCodecHelper codecHelper = this.session.getCodecHelper();
+        Packet packet = null;
         try {
             int id = packetProtocol.getPacketHeader().readPacketId(buf, codecHelper);
             if (id == -1) {
@@ -84,7 +85,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
             log.trace("Decoding packet with id: {}", id);
 
-            Packet packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
+            packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");
@@ -105,6 +106,12 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             this.session.callEvent(e);
             if (!e.shouldSuppress()) {
                 throw t;
+            }
+        } finally {
+            if (packet != null && packet.isTerminal()) {
+                // Next packets are in a different protocol state, so we must
+                // disable auto-read to prevent reading wrong packets.
+                session.setAutoRead(false);
             }
         }
     }
