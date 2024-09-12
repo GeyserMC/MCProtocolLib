@@ -11,7 +11,6 @@ import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
 import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.packet.PacketCancelException;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
     public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) {
         if (packet == FakeFlushPacket.INSTANCE) {
             log.debug("Fake flush packet reached");
-            throw new PacketCancelException();
+            return;
         }
 
         if (log.isTraceEnabled()) {
