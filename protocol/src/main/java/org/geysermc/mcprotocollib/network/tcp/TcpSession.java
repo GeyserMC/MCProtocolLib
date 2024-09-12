@@ -22,6 +22,7 @@ import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.network.packet.PacketCancelException;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.net.SocketAddress;
@@ -315,6 +316,10 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        if (cause instanceof PacketCancelException) {
+            return;
+        }
+
         Component message;
         if (cause instanceof TimeoutException) {
             message = Component.translatable("disconnect.timeout");
