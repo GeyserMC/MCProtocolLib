@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
-    private static final ByteBuf FAKE_FLUSH = Unpooled.buffer(0);
     private static final Logger log = LoggerFactory.getLogger(TcpPacketCodec.class);
 
     private final Session session;
@@ -36,7 +35,8 @@ public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
     public void encode(ChannelHandlerContext ctx, Packet packet, List<Object> out) {
         if (packet == FakeFlushPacket.INSTANCE) {
             log.debug("Fake flush packet reached");
-            out.add(FAKE_FLUSH);
+            // Use this buffer to avoid allocating new buffers for each flush packet
+            out.add(Unpooled.EMPTY_BUFFER);
             return;
         }
 
@@ -73,6 +73,11 @@ public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
+        // Vanilla also checks for 0 length
+        if (buf.readableBytes() == 0) {
+            return;
+        }
+
         int initial = buf.readerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
