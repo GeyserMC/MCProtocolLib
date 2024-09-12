@@ -67,6 +67,8 @@ public class TcpServer extends AbstractServer {
                 pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
 
                 pipeline.addLast("flow-control", new TcpFlowControlHandler());
+
+                pipeline.addLast("length-filter", new ZeroLengthByteBufFilter());
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));
                 pipeline.addLast("manager", session);
             }
