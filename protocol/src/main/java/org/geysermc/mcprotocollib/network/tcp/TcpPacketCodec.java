@@ -1,10 +1,11 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
+import io.netty.handler.codec.MessageToMessageCodec;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
@@ -18,7 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
+public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
+    private static final ByteBuf FAKE_FLUSH = Unpooled.buffer(0);
     private static final Logger log = LoggerFactory.getLogger(TcpPacketCodec.class);
 
     private final Session session;
@@ -31,17 +33,16 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf buf) {
+    public void encode(ChannelHandlerContext ctx, Packet packet, List<Object> out) {
         if (packet == FakeFlushPacket.INSTANCE) {
             log.debug("Fake flush packet reached");
+            out.add(FAKE_FLUSH);
             return;
         }
 
         if (log.isTraceEnabled()) {
             log.trace("Encoding packet: {}", packet.getClass().getSimpleName());
         }
-
-        int initial = buf.writerIndex();
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getOutboundPacketRegistry();
@@ -50,17 +51,17 @@ public class TcpPacketCodec extends ByteToMessageCodec<Packet> {
             int packetId = this.client ? packetRegistry.getServerboundId(packet) : packetRegistry.getClientboundId(packet);
             PacketDefinition definition = this.client ? packetRegistry.getServerboundDefinition(packetId) : packetRegistry.getClientboundDefinition(packetId);
 
+            ByteBuf buf = ctx.alloc().buffer();
             packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
             definition.getSerializer().serialize(buf, codecHelper, packet);
+
+            out.add(buf);
 
             if (log.isDebugEnabled()) {
                 log.debug("Encoded packet {} ({})", packet.getClass().getSimpleName(), packetId);
             }
         } catch (Throwable t) {
             log.debug("Error encoding packet", t);
-
-            // Reset writer index to make sure incomplete data is not written out.
-            buf.writerIndex(initial);
 
             PacketErrorEvent e = new PacketErrorEvent(this.session, t);
             this.session.callEvent(e);
