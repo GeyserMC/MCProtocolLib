@@ -21,6 +21,7 @@ import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
+import org.geysermc.mcprotocollib.network.helper.PipelineHelper;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketCancelException;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
@@ -316,7 +317,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (cause instanceof PacketCancelException) {
+        if (PipelineHelper.containsCause(cause, PacketCancelException.class)) {
             return;
         }
 
