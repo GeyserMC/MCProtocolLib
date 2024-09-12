@@ -116,11 +116,10 @@ public class TcpClientSession extends TcpSession {
                     pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), getCodecHelper()));
 
                     pipeline.addLast("flow-control", new TcpFlowControlHandler());
-
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
                     pipeline.addLast("packet-filter", new DropPacketFilter());
                     pipeline.addLast("manager", TcpClientSession.this);
-}
+                }
             });
 
         if (getFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenClient()) {
