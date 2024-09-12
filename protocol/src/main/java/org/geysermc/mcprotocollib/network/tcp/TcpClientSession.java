@@ -117,7 +117,7 @@ public class TcpClientSession extends TcpSession {
 
                     pipeline.addLast("flow-control", new TcpFlowControlHandler());
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
-                    pipeline.addLast("packet-filter", new DropPacketFilter());
+                    pipeline.addLast("flush-handler", new FlushHandler());
                     pipeline.addLast("manager", TcpClientSession.this);
                 }
             });
