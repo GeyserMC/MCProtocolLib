@@ -189,7 +189,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     @Override
     public void setCompression(CompressionConfig compressionConfig) {
         if (this.channel == null) {
-            throw new IllegalStateException("You need to be connected to set the compression!");
+            throw new IllegalStateException("You need to connect to set the compression!");
         }
 
         channel.attr(NetworkConstants.COMPRESSION_ATTRIBUTE_KEY).set(compressionConfig);
