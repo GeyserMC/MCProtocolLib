@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.network.tcp;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
@@ -10,7 +9,6 @@ import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
-import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
@@ -33,13 +31,6 @@ public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, List<Object> out) {
-        if (packet == FakeFlushPacket.INSTANCE) {
-            log.debug("Fake flush packet reached");
-            // Use this buffer to avoid allocating new buffers for each flush packet
-            out.add(Unpooled.EMPTY_BUFFER);
-            return;
-        }
-
         if (log.isTraceEnabled()) {
             log.trace("Encoding packet: {}", packet.getClass().getSimpleName());
         }

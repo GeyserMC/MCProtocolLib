@@ -8,9 +8,9 @@ import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
-import org.geysermc.mcprotocollib.network.packet.FakeFlushPacket;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.network.tcp.DropPacketFilter;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -311,7 +311,7 @@ public interface Session {
      * @param switcher The runnable that switches the outbound state.
      */
     default void switchOutboundState(Runnable switcher) {
-        getChannel().writeAndFlush(FakeFlushPacket.INSTANCE).syncUninterruptibly();
+        getChannel().writeAndFlush(DropPacketFilter.DROP_PACKET).syncUninterruptibly();
 
         switcher.run();
     }

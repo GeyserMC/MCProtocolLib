@@ -68,8 +68,8 @@ public class TcpServer extends AbstractServer {
 
                 pipeline.addLast("flow-control", new TcpFlowControlHandler());
 
-                pipeline.addLast("length-filter", new ZeroLengthByteBufFilter());
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));
+                pipeline.addLast("packet-filter", new DropPacketFilter());
                 pipeline.addLast("manager", session);
             }
         });
