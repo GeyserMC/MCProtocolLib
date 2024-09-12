@@ -7,6 +7,7 @@ import io.netty.channel.ChannelPromise;
 /**
  * Sending a {@link FlushPacket} will ensure all before were sent.
  * This handler makes sure it's dropped before it reaches the encoder.
+ * This logic is similar to the Minecraft UnconfiguredPipelineHandler.OutboundConfigurationTask.
  */
 public class FlushHandler extends ChannelOutboundHandlerAdapter {
     public static final FlushPacket FLUSH_PACKET = new FlushPacket();
