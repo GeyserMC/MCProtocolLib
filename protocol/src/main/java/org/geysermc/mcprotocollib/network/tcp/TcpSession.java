@@ -187,7 +187,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void setCompression(CompressionConfig compressionConfig) {
+    public void setCompression(@Nullable CompressionConfig compressionConfig) {
         if (this.channel == null) {
             throw new IllegalStateException("You need to connect to set the compression!");
         }
@@ -196,9 +196,9 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void setEncryption(EncryptionConfig encryptionConfig) {
+    public void setEncryption(@Nullable EncryptionConfig encryptionConfig) {
         if (channel == null) {
-            throw new IllegalStateException("You need to connect to enable encryption!");
+            throw new IllegalStateException("You need to connect to set the encryption!");
         }
 
         channel.attr(NetworkConstants.ENCRYPTION_ATTRIBUTE_KEY).set(encryptionConfig);

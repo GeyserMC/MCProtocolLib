@@ -189,7 +189,7 @@ public interface Session {
      * @param compressionConfig the compression to compress with,
      *                          or null to disable compression
      */
-    void setCompression(CompressionConfig compressionConfig);
+    void setCompression(@Nullable CompressionConfig compressionConfig);
 
     /**
      * Sets encryption for this session.
@@ -198,7 +198,7 @@ public interface Session {
      *                         or null to disable encryption
      *
      */
-    void setEncryption(EncryptionConfig encryptionConfig);
+    void setEncryption(@Nullable EncryptionConfig encryptionConfig);
 
     /**
      * Returns true if the session is connected.
