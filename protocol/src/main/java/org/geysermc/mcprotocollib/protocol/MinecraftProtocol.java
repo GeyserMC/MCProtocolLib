@@ -181,7 +181,7 @@ public class MinecraftProtocol extends PacketProtocol {
         try {
             return new EncryptionConfig(new AESEncryption(key));
         } catch (GeneralSecurityException e) {
-            throw new IllegalStateException("Failed to enable protocol encryption.", e);
+            throw new IllegalStateException("Failed to create protocol encryption.", e);
         }
     }
 
