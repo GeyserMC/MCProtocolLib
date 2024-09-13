@@ -174,15 +174,7 @@ public class ServerListener extends SessionAdapter {
             }
         } else if (protocol.getInboundState() == ProtocolState.GAME) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
-                KeepAliveState currentKeepAliveState = this.keepAliveState;
-                if (currentKeepAliveState != null) {
-                    if (currentKeepAliveState.keepAlivePending && keepAlivePacket.getPingId() == currentKeepAliveState.keepAliveChallenge) {
-                        currentKeepAliveState.keepAlivePending = false;
-                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - currentKeepAliveState.keepAliveTime);
-                    } else {
-                        session.disconnect(Component.translatable("disconnect.timeout"));
-                    }
-                }
+                handleKeepAlive(session, keepAlivePacket);
             } else if (packet instanceof ServerboundConfigurationAcknowledgedPacket) {
                 // The developer who sends ClientboundStartConfigurationPacket needs to setOutboundState to CONFIGURATION
                 // after sending the packet. We can't do it in this class because it needs to be a method call right after it was sent.
@@ -195,15 +187,7 @@ public class ServerListener extends SessionAdapter {
             }
         } else if (protocol.getInboundState() == ProtocolState.CONFIGURATION) {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
-                KeepAliveState currentKeepAliveState = this.keepAliveState;
-                if (currentKeepAliveState != null) {
-                    if (currentKeepAliveState.keepAlivePending && keepAlivePacket.getPingId() == currentKeepAliveState.keepAliveChallenge) {
-                        currentKeepAliveState.keepAlivePending = false;
-                        session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - currentKeepAliveState.keepAliveTime);
-                    } else {
-                        session.disconnect(Component.translatable("disconnect.timeout"));
-                    }
-                }
+                handleKeepAlive(session, keepAlivePacket);
             } else if (packet instanceof ServerboundFinishConfigurationPacket) {
                 protocol.setOutboundState(ProtocolState.GAME);
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.GAME));
@@ -212,6 +196,18 @@ public class ServerListener extends SessionAdapter {
                 if (handler != null) {
                     handler.loggedIn(session);
                 }
+            }
+        }
+    }
+
+    private void handleKeepAlive(Session session, ServerboundKeepAlivePacket keepAlivePacket) {
+        KeepAliveState currentKeepAliveState = this.keepAliveState;
+        if (currentKeepAliveState != null) {
+            if (currentKeepAliveState.keepAlivePending && keepAlivePacket.getPingId() == currentKeepAliveState.keepAliveChallenge) {
+                currentKeepAliveState.keepAlivePending = false;
+                session.setFlag(MinecraftConstants.PING_KEY, System.currentTimeMillis() - currentKeepAliveState.keepAliveTime);
+            } else {
+                session.disconnect(Component.translatable("disconnect.timeout"));
             }
         }
     }
