@@ -99,8 +99,9 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundLoginDisconnectPacket loginDisconnectPacket) {
                 session.disconnect(loginDisconnectPacket.getReason());
             } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
-                session.setCompression(loginCompressionPacket.getThreshold() >= 0 ?
-                    new CompressionConfig(loginCompressionPacket.getThreshold(), new ZlibCompression(), false) : null);
+                int threshold = loginCompressionPacket.getThreshold();
+                session.setCompression(threshold >= 0 ?
+                    new CompressionConfig(threshold, new ZlibCompression(), false) : null);
             }
         } else if (protocol.getState() == ProtocolState.STATUS) {
             if (packet instanceof ClientboundStatusResponsePacket statusResponsePacket) {
