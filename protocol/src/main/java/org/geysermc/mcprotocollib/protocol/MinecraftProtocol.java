@@ -177,7 +177,7 @@ public class MinecraftProtocol extends PacketProtocol {
         return this.stateRegistry;
     }
 
-    protected EncryptionConfig enableEncryption(Key key) {
+    protected EncryptionConfig createEncryption(Key key) {
         try {
             return new EncryptionConfig(new AESEncryption(key));
         } catch (GeneralSecurityException e) {

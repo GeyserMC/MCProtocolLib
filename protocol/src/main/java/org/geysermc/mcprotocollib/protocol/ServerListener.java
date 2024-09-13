@@ -131,7 +131,7 @@ public class ServerListener extends SessionAdapter {
                 }
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);
-                session.setEncryption(protocol.enableEncryption(key));
+                session.setEncryption(protocol.createEncryption(key));
                 new Thread(new UserAuthTask(session, key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 protocol.setState(ProtocolState.CONFIGURATION);
