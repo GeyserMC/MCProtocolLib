@@ -24,6 +24,8 @@ import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
 import java.util.Collections;
@@ -35,6 +37,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
+    private static final Logger log = LoggerFactory.getLogger(TcpSession.class);
+
     /**
      * Controls whether non-priority packets are handled in a separate event loop
      */
@@ -192,6 +196,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             throw new IllegalStateException("You need to connect to set the compression!");
         }
 
+        log.debug("Setting compression for session {}", this);
         channel.attr(NetworkConstants.COMPRESSION_ATTRIBUTE_KEY).set(compressionConfig);
     }
 
@@ -201,6 +206,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             throw new IllegalStateException("You need to connect to set the encryption!");
         }
 
+        log.debug("Setting encryption for session {}", this);
         channel.attr(NetworkConstants.ENCRYPTION_ATTRIBUTE_KEY).set(encryptionConfig);
     }
 

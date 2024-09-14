@@ -118,10 +118,10 @@ public class ServerListener extends SessionAdapter {
             if (packet instanceof ServerboundHelloPacket helloPacket) {
                 this.username = helloPacket.getUsername();
 
-                if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
-                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, true));
+                if (session.getFlag(MinecraftConstants.ENCRYPT_CONNECTION, true)) {
+                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, session.getFlag(MinecraftConstants.SHOULD_AUTHENTICATE, true)));
                 } else {
-                    new Thread(new UserAuthTask(session, null)).start();
+                    new Thread(new UserAuthTask(session, false, null)).start();
                 }
             } else if (packet instanceof ServerboundKeyPacket keyPacket) {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
@@ -132,7 +132,7 @@ public class ServerListener extends SessionAdapter {
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);
                 session.setEncryption(protocol.createEncryption(key));
-                new Thread(new UserAuthTask(session, key)).start();
+                new Thread(new UserAuthTask(session, session.getFlag(MinecraftConstants.SHOULD_AUTHENTICATE, true), key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 protocol.setState(ProtocolState.CONFIGURATION);
 
@@ -224,12 +224,13 @@ public class ServerListener extends SessionAdapter {
     @RequiredArgsConstructor
     private class UserAuthTask implements Runnable {
         private final Session session;
+        private final boolean shouldAuthenticate;
         private final SecretKey key;
 
         @Override
         public void run() {
             GameProfile profile;
-            if (this.key != null) {
+            if (this.shouldAuthenticate && this.key != null) {
                 SessionService sessionService = this.session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
                 try {
                     profile = sessionService.getProfileByServer(username, SessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), this.key));
