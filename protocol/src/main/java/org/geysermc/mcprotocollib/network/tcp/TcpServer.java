@@ -13,6 +13,7 @@ import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,7 @@ public class TcpServer extends AbstractServer {
                 .localAddress(this.getHost(), this.getPort())
                 .childHandler(new ChannelInitializer<>() {
             @Override
-            public void initChannel(Channel channel) {
+            public void initChannel(@NotNull Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
                 PacketProtocol protocol = createPacketProtocol();
 
