@@ -10,7 +10,7 @@ import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
+import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
@@ -177,11 +177,11 @@ public class MinecraftProtocol extends PacketProtocol {
         return this.stateRegistry;
     }
 
-    protected PacketEncryption enableEncryption(Key key) {
+    protected EncryptionConfig createEncryption(Key key) {
         try {
-            return new AESEncryption(key);
+            return new EncryptionConfig(new AESEncryption(key));
         } catch (GeneralSecurityException e) {
-            throw new Error("Failed to enable protocol encryption.", e);
+            throw new IllegalStateException("Failed to create protocol encryption.", e);
         }
     }
 

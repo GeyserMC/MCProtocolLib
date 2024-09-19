@@ -63,9 +63,14 @@ public final class MinecraftConstants {
     // Server Key Constants
 
     /**
-     * Session flag for determining whether to verify users. Server only.
+     * Session flag for determining whether to encrypt the connection. Server only.
      */
-    public static final Flag<Boolean> VERIFY_USERS_KEY = new Flag<>("verify-users", Boolean.class);
+    public static final Flag<Boolean> ENCRYPT_CONNECTION = new Flag<>("encrypt-connection", Boolean.class);
+
+    /**
+     * Session flag for determining whether to authenticate users with the session service. Server only.
+     */
+    public static final Flag<Boolean> SHOULD_AUTHENTICATE = new Flag<>("should-authenticate", Boolean.class);
 
     /**
      * Session flag for determining whether to accept transferred connections. Server only.

@@ -12,9 +12,10 @@ import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
+import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
+import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
+import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
@@ -23,6 +24,8 @@ import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
 import java.util.Collections;
@@ -34,6 +37,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
+    private static final Logger log = LoggerFactory.getLogger(TcpSession.class);
+
     /**
      * Controls whether non-priority packets are handled in a separate event loop
      */
@@ -46,8 +51,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     protected int port;
     private final PacketProtocol protocol;
     private final EventLoop eventLoop = createEventLoop();
-
-    private int compressionThreshold = -1;
 
     private final Map<String, Object> flags = new HashMap<>();
     private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
@@ -188,31 +191,23 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public int getCompressionThreshold() {
-        return this.compressionThreshold;
-    }
-
-    @Override
-    public void setCompressionThreshold(int threshold, boolean validateDecompression) {
-        this.compressionThreshold = threshold;
-        if (this.channel != null) {
-            if (this.compressionThreshold >= 0) {
-                if (this.channel.pipeline().get("compression") == null) {
-                    this.channel.pipeline().addBefore("codec", "compression",
-                        new TcpPacketCompression(this, new ZlibCompression(), validateDecompression));
-                }
-            } else if (this.channel.pipeline().get("compression") != null) {
-                this.channel.pipeline().remove("compression");
-            }
+    public void setCompression(@Nullable CompressionConfig compressionConfig) {
+        if (this.channel == null) {
+            throw new IllegalStateException("You need to connect to set the compression!");
         }
+
+        log.debug("Setting compression for session {}", this);
+        channel.attr(NetworkConstants.COMPRESSION_ATTRIBUTE_KEY).set(compressionConfig);
     }
 
     @Override
-    public void enableEncryption(PacketEncryption encryption) {
+    public void setEncryption(@Nullable EncryptionConfig encryptionConfig) {
         if (channel == null) {
-            throw new IllegalStateException("Connect the client before initializing encryption!");
+            throw new IllegalStateException("You need to connect to set the encryption!");
         }
-        channel.pipeline().addBefore("sizer", "encryption", new TcpPacketEncryptor(encryption));
+
+        log.debug("Setting encryption for session {}", this);
+        channel.attr(NetworkConstants.ENCRYPTION_ATTRIBUTE_KEY).set(encryptionConfig);
     }
 
     @Override
@@ -267,7 +262,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             // daemon threads and their interaction with the runtime.
             PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
             Runtime.getRuntime().addShutdownHook(new Thread(
-                    () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+                () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
         }
         return PACKET_EVENT_LOOP.next();
     }
