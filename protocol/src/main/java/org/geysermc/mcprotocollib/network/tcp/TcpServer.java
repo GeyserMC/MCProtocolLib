@@ -64,7 +64,9 @@ public class TcpServer extends AbstractServer {
                 pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
                 pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
 
+                pipeline.addLast("encryption", new TcpPacketEncryptor());
                 pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
+                pipeline.addLast("compression", new TcpPacketCompression(session.getCodecHelper()));
 
                 pipeline.addLast("flow-control", new TcpFlowControlHandler());
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));

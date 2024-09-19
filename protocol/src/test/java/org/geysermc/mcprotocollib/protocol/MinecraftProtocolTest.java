@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.geysermc.mcprotocollib.protocol.MinecraftConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MinecraftProtocolTest {
@@ -49,10 +48,11 @@ public class MinecraftProtocolTest {
     @BeforeAll
     public static void setupServer() {
         server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
-        server.setGlobalFlag(VERIFY_USERS_KEY, false);
-        server.setGlobalFlag(SERVER_COMPRESSION_THRESHOLD, 100);
-        server.setGlobalFlag(SERVER_INFO_BUILDER_KEY, session -> SERVER_INFO);
-        server.setGlobalFlag(SERVER_LOGIN_HANDLER_KEY, session -> {
+        server.setGlobalFlag(MinecraftConstants.ENCRYPT_CONNECTION, true);
+        server.setGlobalFlag(MinecraftConstants.SHOULD_AUTHENTICATE, false);
+        server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 256);
+        server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, session -> SERVER_INFO);
+        server.setGlobalFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY, session -> {
             // Seems like in this setup the server can reply too quickly to ServerboundFinishConfigurationPacket
             // before the client can transition CONFIGURATION -> GAME. There is probably something wrong here and this is just a band-aid.
             try {
@@ -79,7 +79,7 @@ public class MinecraftProtocolTest {
         Session session = new TcpClientSession(HOST, PORT, new MinecraftProtocol());
         try {
             ServerInfoHandlerTest handler = new ServerInfoHandlerTest();
-            session.setFlag(SERVER_INFO_HANDLER_KEY, handler);
+            session.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, handler);
             session.addListener(new DisconnectListener());
             session.connect();
 

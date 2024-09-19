@@ -8,6 +8,8 @@ import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
+import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
@@ -110,10 +112,10 @@ public class ServerListener extends SessionAdapter {
             if (packet instanceof ServerboundHelloPacket helloPacket) {
                 this.username = helloPacket.getUsername();
 
-                if (session.getFlag(MinecraftConstants.VERIFY_USERS_KEY, true)) {
-                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, true));
+                if (session.getFlag(MinecraftConstants.ENCRYPT_CONNECTION, true)) {
+                    session.send(new ClientboundHelloPacket(SERVER_ID, KEY_PAIR.getPublic(), this.challenge, session.getFlag(MinecraftConstants.SHOULD_AUTHENTICATE, true)));
                 } else {
-                    new Thread(() -> authenticate(session, null)).start();
+                    new Thread(() -> authenticate(session, false, null)).start();
                 }
             } else if (packet instanceof ServerboundKeyPacket keyPacket) {
                 PrivateKey privateKey = KEY_PAIR.getPrivate();
@@ -123,8 +125,8 @@ public class ServerListener extends SessionAdapter {
                 }
 
                 SecretKey key = keyPacket.getSecretKey(privateKey);
-                session.enableEncryption(protocol.enableEncryption(key));
-                new Thread(() -> authenticate(session, key)).start();
+                session.setEncryption(protocol.createEncryption(key));
+                new Thread(() -> authenticate(session, session.getFlag(MinecraftConstants.SHOULD_AUTHENTICATE, true), key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
                 protocol.setOutboundState(ProtocolState.CONFIGURATION);
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
@@ -237,9 +239,9 @@ public class ServerListener extends SessionAdapter {
         }
     }
 
-    private void authenticate(Session session, SecretKey key) {
+    private void authenticate(Session session, boolean shouldAuthenticate, SecretKey key) {
         GameProfile profile;
-        if (key != null) {
+        if (shouldAuthenticate && key != null) {
             SessionService sessionService = session.getFlag(MinecraftConstants.SESSION_SERVICE_KEY, new SessionService());
             try {
                 profile = sessionService.getProfileByServer(username, SessionService.getServerId(SERVER_ID, KEY_PAIR.getPublic(), key));
@@ -259,10 +261,9 @@ public class ServerListener extends SessionAdapter {
         session.setFlag(MinecraftConstants.PROFILE_KEY, profile);
 
         int threshold = session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, DEFAULT_COMPRESSION_THRESHOLD);
-        if (threshold >= 0) {
-            session.send(new ClientboundLoginCompressionPacket(threshold), () ->
-                session.setCompressionThreshold(threshold, true));
-        }
+        session.send(new ClientboundLoginCompressionPacket(threshold), () ->
+            session.setCompressionThreshold(threshold >= 0 ?
+                new CompressionConfig(threshold, new ZlibCompression(), true) : null));
 
         session.send(new ClientboundGameProfilePacket(profile, true));
     }

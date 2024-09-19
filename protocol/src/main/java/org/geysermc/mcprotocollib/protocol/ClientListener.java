@@ -7,6 +7,8 @@ import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.Session;
+import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
+import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
 import org.geysermc.mcprotocollib.network.packet.Packet;
@@ -91,7 +93,7 @@ public class ClientListener extends SessionAdapter {
                 }
 
                 session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()),
-                    () -> session.enableEncryption(protocol.enableEncryption(key)));
+                    () -> session.setEncryption(protocol.createEncryption(key)));
             } else if (packet instanceof ClientboundGameProfilePacket) {
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
                 session.send(new ServerboundLoginAcknowledgedPacket());
@@ -99,7 +101,9 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundLoginDisconnectPacket loginDisconnectPacket) {
                 session.disconnect(loginDisconnectPacket.getReason());
             } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
-                session.setCompressionThreshold(loginCompressionPacket.getThreshold(), false);
+                int threshold = loginCompressionPacket.getThreshold();
+                session.setCompression(threshold >= 0 ?
+                    new CompressionConfig(threshold, new ZlibCompression(), false) : null);
             }
         } else if (protocol.getInboundState() == ProtocolState.STATUS) {
             if (packet instanceof ClientboundStatusResponsePacket statusResponsePacket) {

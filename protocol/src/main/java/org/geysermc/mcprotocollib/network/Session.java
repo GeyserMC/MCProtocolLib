@@ -5,7 +5,8 @@ import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
+import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
+import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
@@ -185,26 +186,21 @@ public interface Session {
     void callPacketSent(Packet packet);
 
     /**
-     * Gets the compression packet length threshold for this session (-1 = disabled).
+     * Sets the compression config for this session.
      *
-     * @return This session's compression threshold.
+     * @param compressionConfig the compression to compress with,
+     *                          or null to disable compression
      */
-    int getCompressionThreshold();
+    void setCompression(@Nullable CompressionConfig compressionConfig);
 
     /**
-     * Sets the compression packet length threshold for this session (-1 = disabled).
+     * Sets encryption for this session.
      *
-     * @param threshold The new compression threshold.
-     * @param validateDecompression whether to validate that the decompression fits within size checks.
-     */
-    void setCompressionThreshold(int threshold, boolean validateDecompression);
-
-    /**
-     * Enables encryption for this session.
+     * @param encryptionConfig the encryption to encrypt with,
+     *                         or null to disable encryption
      *
-     * @param encryption the encryption to encrypt with
      */
-    void enableEncryption(PacketEncryption encryption);
+    void setEncryption(@Nullable EncryptionConfig encryptionConfig);
 
     /**
      * Returns true if the session is connected.

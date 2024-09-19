@@ -113,7 +113,9 @@ public class TcpClientSession extends TcpSession {
                     pipeline.addLast("read-timeout", new ReadTimeoutHandler(getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
                     pipeline.addLast("write-timeout", new WriteTimeoutHandler(getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
 
+                    pipeline.addLast("encryption", new TcpPacketEncryptor());
                     pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), getCodecHelper()));
+                    pipeline.addLast("compression", new TcpPacketCompression(getCodecHelper()));
 
                     pipeline.addLast("flow-control", new TcpFlowControlHandler());
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
