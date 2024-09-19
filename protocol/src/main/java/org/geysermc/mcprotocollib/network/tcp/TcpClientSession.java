@@ -32,6 +32,7 @@ import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,7 @@ public class TcpClientSession extends TcpSession {
             .localAddress(bindAddress, bindPort)
             .handler(new ChannelInitializer<>() {
                 @Override
-                public void initChannel(Channel channel) {
+                public void initChannel(@NotNull Channel channel) {
                     PacketProtocol protocol = getPacketProtocol();
                     protocol.newClientSession(TcpClientSession.this, transferring);
 
