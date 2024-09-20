@@ -9,11 +9,11 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class TcpServer extends AbstractServer {
                 .localAddress(this.getHost(), this.getPort())
                 .childHandler(new ChannelInitializer<>() {
             @Override
-            public void initChannel(@NotNull Channel channel) {
+            public void initChannel(@NonNull Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
                 PacketProtocol protocol = createPacketProtocol();
 
