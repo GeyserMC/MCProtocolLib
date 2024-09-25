@@ -11,35 +11,62 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @With
 @AllArgsConstructor
 public class ServerboundPlayerInputPacket implements MinecraftPacket {
-    private static final int FLAG_JUMP = 0x01;
-    private static final int FLAG_DISMOUNT = 0x02;
+    private static final byte FLAG_FORWARD = 0x01;
+    private static final byte FLAG_BACKWARD = 0x02;
+    private static final byte FLAG_LEFT = 0x04;
+    private static final byte FLAG_RIGHT = 0x08;
+    private static final byte FLAG_JUMP = 0x10;
+    private static final byte FLAG_SHIFT = 0x20;
+    private static final byte FLAG_SPRINT = 0x40;
 
-    private final float sideways;
-    private final float forward;
+    private final boolean forward;
+    private final boolean backward;
+    private final boolean left;
+    private final boolean right;
     private final boolean jump;
-    private final boolean dismount;
+    private final boolean shift;
+    private final boolean sprint;
 
     public ServerboundPlayerInputPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sideways = in.readFloat();
-        this.forward = in.readFloat();
-
-        int flags = in.readUnsignedByte();
+        byte flags = in.readByte();
+        this.forward = (flags & FLAG_FORWARD) != 0;
+        this.backward = (flags & FLAG_BACKWARD) != 0;
+        this.left = (flags & FLAG_LEFT) != 0;
+        this.right = (flags & FLAG_RIGHT) != 0;
         this.jump = (flags & FLAG_JUMP) != 0;
-        this.dismount = (flags & FLAG_DISMOUNT) != 0;
+        this.shift = (flags & FLAG_SHIFT) != 0;
+        this.sprint = (flags & FLAG_SPRINT) != 0;
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeFloat(this.sideways);
-        out.writeFloat(this.forward);
+        byte flags = 0;
+        if (this.forward) {
+            flags |= FLAG_FORWARD;
+        }
 
-        int flags = 0;
+        if (this.backward) {
+            flags |= FLAG_BACKWARD;
+        }
+
+        if (this.left) {
+            flags |= FLAG_LEFT;
+        }
+
+        if (this.right) {
+            flags |= FLAG_RIGHT;
+        }
+
         if (this.jump) {
             flags |= FLAG_JUMP;
         }
 
-        if (this.dismount) {
-            flags |= FLAG_DISMOUNT;
+        if (this.shift) {
+            flags |= FLAG_SHIFT;
+        }
+
+        if (this.sprint) {
+            flags |= FLAG_SPRINT;
         }
 
         out.writeByte(flags);

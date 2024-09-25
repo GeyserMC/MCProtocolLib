@@ -11,6 +11,7 @@ import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
@@ -163,6 +164,29 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
         buf.writeFloat(data.getDefaultMiningSpeed());
         this.writeVarInt(buf, data.getDamagePerBlock());
+    }
+
+    public Equippable readEquippable(ByteBuf buf) {
+        EquipmentSlot slot = EquipmentSlot.from(this.readVarInt(buf));
+        Sound equipSound = this.readById(buf, BuiltinSound::from, this::readSoundEvent);
+        Key model = this.readNullable(buf, this::readResourceLocation);
+        HolderSet allowedEntities = this.readNullable(buf, this::readHolderSet);
+        boolean dispensable = buf.readBoolean();
+        return new Equippable(slot, equipSound, model, allowedEntities, dispensable);
+    }
+
+    public void writeEquippable(ByteBuf buf, Equippable equippable) {
+        this.writeVarInt(buf, equippable.slot().ordinal());
+        if (equippable.equipSound() instanceof CustomSound) {
+            this.writeVarInt(buf, 0);
+            this.writeSoundEvent(buf, equippable.equipSound());
+        } else {
+            this.writeVarInt(buf, ((BuiltinSound) equippable.equipSound()).ordinal() + 1);
+        }
+
+        this.writeNullable(buf, equippable.model(), this::writeResourceLocation);
+        this.writeNullable(buf, equippable.allowedEntities(), this::writeHolderSet);
+        buf.writeBoolean(equippable.dispensable());
     }
 
     public ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
@@ -409,10 +433,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int ingredientId = this.readVarInt(buf);
         float itemModelIndex = buf.readFloat();
 
-        Int2ObjectMap<String> overrideArmorMaterials = new Int2ObjectOpenHashMap<>();
+        Map<Key, String> overrideArmorMaterials = new HashMap<>();
         int overrideCount = this.readVarInt(buf);
         for (int i = 0; i < overrideCount; i++) {
-            overrideArmorMaterials.put(this.readVarInt(buf), this.readString(buf));
+            overrideArmorMaterials.put(this.readResourceLocation(buf), this.readString(buf));
         }
 
         Component description = this.readComponent(buf);
@@ -425,8 +449,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeFloat(material.itemModelIndex());
 
         this.writeVarInt(buf, material.overrideArmorMaterials().size());
-        for (Int2ObjectMap.Entry<String> entry : material.overrideArmorMaterials().int2ObjectEntrySet()) {
-            this.writeVarInt(buf, entry.getIntKey());
+        for (Map.Entry<Key, String> entry : material.overrideArmorMaterials().entrySet()) {
+            this.writeResourceLocation(buf, entry.getKey());
             this.writeString(buf, entry.getValue());
         }
 

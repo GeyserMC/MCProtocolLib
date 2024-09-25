@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PositionElement;
@@ -17,52 +18,55 @@ import java.util.List;
 @With
 @AllArgsConstructor
 public class ClientboundPlayerPositionPacket implements MinecraftPacket {
-    private final double x;
-    private final double y;
-    private final double z;
-    private final float yaw;
-    private final float pitch;
-    private final int teleportId;
-    private final @NonNull List<PositionElement> relative;
+    private final int id;
+    private final Vector3d position;
+    private final Vector3d deltaMovement;
+    private final float yRot;
+    private final float xRot;
+    private final @NonNull List<PositionElement> relativeArguments;
 
-    public ClientboundPlayerPositionPacket(double x, double y, double z, float yaw, float pitch, int teleportId, PositionElement... relative) {
-        this(x, y, z, yaw, pitch, teleportId, Arrays.asList(relative != null ? relative : new PositionElement[0]));
+    public ClientboundPlayerPositionPacket(int id, double x, double y, double z, double dX, double dY, double dZ, float yRot, float xRot, PositionElement... relative) {
+        this(id, Vector3d.from(x, y, z), Vector3d.from(dX, dY, dZ), yRot, xRot, Arrays.asList(relative != null ? relative : new PositionElement[0]));
     }
 
     public ClientboundPlayerPositionPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.x = in.readDouble();
-        this.y = in.readDouble();
-        this.z = in.readDouble();
-        this.yaw = in.readFloat();
-        this.pitch = in.readFloat();
+        this.id = helper.readVarInt(in);
+        this.position = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
+        this.deltaMovement = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
+        this.yRot = in.readByte() * 360 / 256F;
+        this.xRot = in.readByte() * 360 / 256F;
 
-        this.relative = new ArrayList<>();
-        int flags = in.readUnsignedByte();
+        this.relativeArguments = new ArrayList<>();
+        int flags = in.readInt();
         for (PositionElement element : PositionElement.values()) {
             int bit = 1 << element.ordinal();
             if ((flags & bit) == bit) {
-                this.relative.add(element);
+                this.relativeArguments.add(element);
             }
         }
 
-        this.teleportId = helper.readVarInt(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeDouble(this.x);
-        out.writeDouble(this.y);
-        out.writeDouble(this.z);
-        out.writeFloat(this.yaw);
-        out.writeFloat(this.pitch);
+        helper.writeVarInt(out, this.id);
+        out.writeDouble(this.position.getX());
+        out.writeDouble(this.position.getY());
+        out.writeDouble(this.position.getZ());
+        out.writeDouble(this.deltaMovement.getX());
+        out.writeDouble(this.deltaMovement.getY());
+        out.writeDouble(this.deltaMovement.getZ());
+
+        float yRot = this.yRot * 256F / 360F;
+        out.writeByte(yRot < (int)yRot ? (int)yRot - 1 : (int)yRot);
+        float xRot = this.xRot * 256F / 360F;
+        out.writeByte(xRot < (int)xRot ? (int)xRot - 1 : (int)xRot);
 
         int flags = 0;
-        for (PositionElement element : this.relative) {
+        for (PositionElement element : this.relativeArguments) {
             flags |= 1 << element.ordinal();
         }
 
-        out.writeByte(flags);
-
-        helper.writeVarInt(out, this.teleportId);
+        out.writeInt(flags);
     }
 }

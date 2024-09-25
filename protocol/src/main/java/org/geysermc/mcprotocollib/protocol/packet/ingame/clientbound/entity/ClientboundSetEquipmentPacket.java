@@ -26,8 +26,8 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
         boolean hasNextEntry = true;
         List<Equipment> list = new ArrayList<>();
         while (hasNextEntry) {
-            int rawSlot = in.readByte();
-            EquipmentSlot slot = EquipmentSlot.from(((byte) rawSlot) & 127);
+            byte rawSlot = in.readByte();
+            EquipmentSlot slot = EquipmentSlot.from(rawSlot & 127);
             ItemStack item = helper.readOptionalItemStack(in);
             list.add(new Equipment(slot, item));
             hasNextEntry = (rawSlot & 128) == 128;
