@@ -301,8 +301,8 @@ public interface Session {
     }
 
     /**
-     * Flushes all packets due to be sent and changes the outbound state of the session.
-     * This makes sure no other threads scheduled packets to be sent.
+     * Flushes all packets that are due to be sent and changes the outbound state of the session.
+     * This makes sure no other threads have scheduled packets to be sent.
      *
      * @param switcher The runnable that switches the outbound state.
      */
