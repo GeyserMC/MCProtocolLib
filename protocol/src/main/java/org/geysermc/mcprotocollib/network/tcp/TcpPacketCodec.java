@@ -14,10 +14,13 @@ import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.util.List;
 
 public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
+    private static final Marker marker = MarkerFactory.getMarker("packet_logging");
     private static final Logger log = LoggerFactory.getLogger(TcpPacketCodec.class);
 
     private final Session session;
@@ -32,7 +35,7 @@ public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
     @Override
     public void encode(ChannelHandlerContext ctx, Packet packet, List<Object> out) {
         if (log.isTraceEnabled()) {
-            log.trace("Encoding packet: {}", packet.getClass().getSimpleName());
+            log.trace(marker, "Encoding packet: {}", packet.getClass().getSimpleName());
         }
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
@@ -49,10 +52,10 @@ public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
             out.add(buf);
 
             if (log.isDebugEnabled()) {
-                log.debug("Encoded packet {} ({})", packet.getClass().getSimpleName(), packetId);
+                log.debug(marker, "Encoded packet {} ({})", packet.getClass().getSimpleName(), packetId);
             }
         } catch (Throwable t) {
-            log.debug("Error encoding packet", t);
+            log.debug(marker, "Error encoding packet", t);
 
             PacketErrorEvent e = new PacketErrorEvent(this.session, t);
             this.session.callEvent(e);
@@ -82,7 +85,7 @@ public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
                 return;
             }
 
-            log.trace("Decoding packet with id: {}", id);
+            log.trace(marker, "Decoding packet with id: {}", id);
 
             packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
 
@@ -93,10 +96,10 @@ public class TcpPacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
             out.add(packet);
 
             if (log.isDebugEnabled()) {
-                log.debug("Decoded packet {} ({})", packet.getClass().getSimpleName(), id);
+                log.debug(marker, "Decoded packet {} ({})", packet.getClass().getSimpleName(), id);
             }
         } catch (Throwable t) {
-            log.debug("Error decoding packet", t);
+            log.debug(marker, "Error decoding packet", t);
 
             // Advance buffer to end to make sure remaining data in this packet is skipped.
             buf.readerIndex(buf.readerIndex() + buf.readableBytes());
