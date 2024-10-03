@@ -11,17 +11,20 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @With
 @AllArgsConstructor
 public class ClientboundSetTimePacket implements MinecraftPacket {
-    private final long worldAge;
-    private final long time;
+    private final long gameTime;
+    private final long dayTime;
+    private final boolean tickDayTime;
 
     public ClientboundSetTimePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.worldAge = in.readLong();
-        this.time = in.readLong();
+        this.gameTime = in.readLong();
+        this.dayTime = in.readLong();
+        this.tickDayTime = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeLong(this.worldAge);
-        out.writeLong(this.time);
+        out.writeLong(this.gameTime);
+        out.writeLong(this.dayTime);
+        out.writeBoolean(this.tickDayTime);
     }
 }
