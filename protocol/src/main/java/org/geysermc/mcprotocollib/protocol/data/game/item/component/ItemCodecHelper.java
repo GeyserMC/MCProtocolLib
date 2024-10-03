@@ -172,7 +172,9 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         Key model = this.readNullable(buf, this::readResourceLocation);
         HolderSet allowedEntities = this.readNullable(buf, this::readHolderSet);
         boolean dispensable = buf.readBoolean();
-        return new Equippable(slot, equipSound, model, allowedEntities, dispensable);
+        boolean swappable = buf.readBoolean();
+        boolean damageOnHurt = buf.readBoolean();
+        return new Equippable(slot, equipSound, model, allowedEntities, dispensable, swappable, damageOnHurt);
     }
 
     public void writeEquippable(ByteBuf buf, Equippable equippable) {
@@ -187,6 +189,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeNullable(buf, equippable.model(), this::writeResourceLocation);
         this.writeNullable(buf, equippable.allowedEntities(), this::writeHolderSet);
         buf.writeBoolean(equippable.dispensable());
+        buf.writeBoolean(equippable.swappable());
+        buf.writeBoolean(equippable.damageOnHurt());
     }
 
     public ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
@@ -231,7 +235,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int customColor = buf.readBoolean() ? buf.readInt() : -1;
 
         List<MobEffectInstance> customEffects = this.readList(buf, this::readEffectInstance);
-        return new PotionContents(potionId, customColor, customEffects);
+        String customName = this.readNullable(buf, this::readString);
+        return new PotionContents(potionId, customColor, customEffects, customName);
     }
 
     public void writePotionContents(ByteBuf buf, PotionContents contents) {
@@ -250,6 +255,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
 
         this.writeList(buf, contents.getCustomEffects(), this::writeEffectInstance);
+        this.writeNullable(buf, contents.getCustomName(), this::writeString);
     }
 
     public FoodProperties readFoodProperties(ByteBuf buf) {

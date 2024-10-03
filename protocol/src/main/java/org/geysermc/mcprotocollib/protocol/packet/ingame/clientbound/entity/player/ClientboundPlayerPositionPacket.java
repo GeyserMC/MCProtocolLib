@@ -33,8 +33,8 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
         this.id = helper.readVarInt(in);
         this.position = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
         this.deltaMovement = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
-        this.yRot = in.readByte() * 360 / 256F;
-        this.xRot = in.readByte() * 360 / 256F;
+        this.yRot = in.readFloat();
+        this.xRot = in.readFloat();
 
         this.relativeArguments = new ArrayList<>();
         int flags = in.readInt();
@@ -56,11 +56,8 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
         out.writeDouble(this.deltaMovement.getX());
         out.writeDouble(this.deltaMovement.getY());
         out.writeDouble(this.deltaMovement.getZ());
-
-        float yRot = this.yRot * 256F / 360F;
-        out.writeByte(yRot < (int)yRot ? (int)yRot - 1 : (int)yRot);
-        float xRot = this.xRot * 256F / 360F;
-        out.writeByte(xRot < (int)xRot ? (int)xRot - 1 : (int)xRot);
+        out.writeFloat(this.yRot);
+        out.writeFloat(this.xRot);
 
         int flags = 0;
         for (PositionElement element : this.relativeArguments) {
