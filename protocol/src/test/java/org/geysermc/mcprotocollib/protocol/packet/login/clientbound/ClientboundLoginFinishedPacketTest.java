@@ -6,9 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.util.UUID;
 
-public class ClientboundGameProfilePacketTest extends PacketTest {
+public class ClientboundLoginFinishedPacketTest extends PacketTest {
     @BeforeEach
     public void setup() {
-        this.setPackets(new ClientboundGameProfilePacket(new GameProfile(UUID.randomUUID(), "Username"), true));
+        this.setPackets(new ClientboundLoginFinishedPacket(new GameProfile(UUID.randomUUID(), "Username")));
     }
 }

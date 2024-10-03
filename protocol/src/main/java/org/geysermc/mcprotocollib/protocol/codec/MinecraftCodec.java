@@ -195,7 +195,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.Serv
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemOnPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundCustomQueryPacket;
-import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
+import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundLoginFinishedPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundHelloPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
@@ -210,16 +210,16 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 209)
+            .protocolVersion((1 << 30) | 210)
             .helper(MinecraftCodecHelper::new)
-            .minecraftVersion("24w37a")
+            .minecraftVersion("24w38a")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
             .state(ProtocolState.LOGIN, MinecraftPacketRegistry.builder()
                     .registerClientboundPacket(ClientboundLoginDisconnectPacket.class, ClientboundLoginDisconnectPacket::new)
                     .registerClientboundPacket(ClientboundHelloPacket.class, ClientboundHelloPacket::new)
-                    .registerClientboundPacket(ClientboundGameProfilePacket.class, ClientboundGameProfilePacket::new)
+                    .registerClientboundPacket(ClientboundLoginFinishedPacket.class, ClientboundLoginFinishedPacket::new)
                     .registerClientboundPacket(ClientboundLoginCompressionPacket.class, ClientboundLoginCompressionPacket::new)
                     .registerClientboundPacket(ClientboundCustomQueryPacket.class, ClientboundCustomQueryPacket::new)
                     .registerClientboundPacket(ClientboundCookieRequestPacket.class, ClientboundCookieRequestPacket::new)

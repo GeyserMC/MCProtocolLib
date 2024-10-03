@@ -21,6 +21,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.SimpleCraftingR
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.SmithingTransformRecipeData;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.SmithingTrimRecipeData;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.StoneCuttingRecipeData;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.TransmuteRecipeData;
 
 @Data
 @With
@@ -63,6 +64,15 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
                     boolean showNotification = in.readBoolean();
 
                     data = new ShapedRecipeData(width, height, group, category, ingredients, result, showNotification);
+                }
+                case CRAFTING_TRANSMUTE -> {
+                    String group = helper.readString(in);
+                    CraftingBookCategory category = CraftingBookCategory.from(helper.readVarInt(in));
+                    Ingredient input = helper.readRecipeIngredient(in);
+                    Ingredient material = helper.readRecipeIngredient(in);
+                    int result = helper.readVarInt(in);
+
+                    data = new TransmuteRecipeData(group, category, input, material, result);
                 }
                 case SMELTING, BLASTING, SMOKING, CAMPFIRE_COOKING -> {
                     String group = helper.readString(in);
@@ -144,6 +154,15 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
 
                     helper.writeOptionalItemStack(out, data.getResult());
                     out.writeBoolean(data.isShowNotification());
+                }
+                case CRAFTING_TRANSMUTE -> {
+                    TransmuteRecipeData data = (TransmuteRecipeData) recipe.getData();
+
+                    helper.writeString(out, data.group());
+                    helper.writeVarInt(out, data.category().ordinal());
+                    helper.writeRecipeIngredient(out, data.input());
+                    helper.writeRecipeIngredient(out, data.material());
+                    helper.writeVarInt(out, data.result());
                 }
                 case SMELTING, BLASTING, SMOKING, CAMPFIRE_COOKING -> {
                     CookedRecipeData data = (CookedRecipeData) recipe.getData();
