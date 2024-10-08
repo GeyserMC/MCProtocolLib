@@ -216,8 +216,14 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     }
 
     @Override
-    public void send(Packet packet) {
+    public void send(@NonNull Packet packet, @Nullable Runnable onSent) {
         if (this.channel == null) {
+            return;
+        }
+
+        // Same behaviour as vanilla, always offload packet sending to the event loop
+        if (!this.channel.eventLoop().inEventLoop()) {
+            this.channel.eventLoop().execute(() -> this.send(packet, onSent));
             return;
         }
 
@@ -228,6 +234,10 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
             final Packet toSend = sendingEvent.getPacket();
             this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
+                    if (onSent != null) {
+                        onSent.run();
+                    }
+
                     callPacketSent(toSend);
                 } else {
                     exceptionCaught(null, future.cause());
@@ -252,6 +262,13 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         }
     }
 
+    @Override
+    public void setAutoRead(boolean autoRead) {
+        if (this.channel != null) {
+            this.channel.config().setAutoRead(autoRead);
+        }
+    }
+
     private @Nullable EventLoop createEventLoop() {
         if (!USE_EVENT_LOOP_FOR_PACKETS) {
             return null;
@@ -267,6 +284,7 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         return PACKET_EVENT_LOOP.next();
     }
 
+    @Override
     public Channel getChannel() {
         return this.channel;
     }

@@ -9,6 +9,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
@@ -52,7 +53,7 @@ public class TcpServer extends AbstractServer {
                 .localAddress(this.getHost(), this.getPort())
                 .childHandler(new ChannelInitializer<>() {
             @Override
-            public void initChannel(Channel channel) {
+            public void initChannel(@NonNull Channel channel) {
                 InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
                 PacketProtocol protocol = createPacketProtocol();
 
@@ -68,7 +69,9 @@ public class TcpServer extends AbstractServer {
                 pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
                 pipeline.addLast("compression", new TcpPacketCompression(session.getCodecHelper()));
 
+                pipeline.addLast("flow-control", new TcpFlowControlHandler());
                 pipeline.addLast("codec", new TcpPacketCodec(session, false));
+                pipeline.addLast("flush-handler", new FlushHandler());
                 pipeline.addLast("manager", session);
             }
         });

@@ -27,6 +27,7 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
@@ -100,7 +101,7 @@ public class TcpClientSession extends TcpSession {
             .localAddress(bindAddress, bindPort)
             .handler(new ChannelInitializer<>() {
                 @Override
-                public void initChannel(Channel channel) {
+                public void initChannel(@NonNull Channel channel) {
                     PacketProtocol protocol = getPacketProtocol();
                     protocol.newClientSession(TcpClientSession.this, transferring);
 
@@ -117,7 +118,9 @@ public class TcpClientSession extends TcpSession {
                     pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), getCodecHelper()));
                     pipeline.addLast("compression", new TcpPacketCompression(getCodecHelper()));
 
+                    pipeline.addLast("flow-control", new TcpFlowControlHandler());
                     pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
+                    pipeline.addLast("flush-handler", new FlushHandler());
                     pipeline.addLast("manager", TcpClientSession.this);
                 }
             });
@@ -246,9 +249,7 @@ public class TcpClientSession extends TcpSession {
             HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
             clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
             clientAddress.getPort(), remoteAddress.getPort()
-        )).addListener(future -> {
-            channel.pipeline().remove("proxy-protocol-encoder");
-        });
+        )).addListener(future -> channel.pipeline().remove("proxy-protocol-encoder"));
     }
 
     private static void createTcpEventLoopGroup() {
