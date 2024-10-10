@@ -4,6 +4,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -153,42 +155,39 @@ public class TcpClientSession extends TcpSession {
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
         if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
-            AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
                 .channelFactory(TRANSPORT_TYPE.datagramChannelFactory())
                 .build()) {
-                envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                try {
+                    DnsResponse response = envelope.content();
+                    if (response.count(DnsSection.ANSWER) > 0) {
+                        DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
+                        if (record.type() == DnsRecordType.SRV) {
+                            ByteBuf buf = record.content();
+                            buf.skipBytes(4); // Skip priority and weight.
 
-                DnsResponse response = envelope.content();
-                if (response.count(DnsSection.ANSWER) > 0) {
-                    DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                    if (record.type() == DnsRecordType.SRV) {
-                        ByteBuf buf = record.content();
-                        buf.skipBytes(4); // Skip priority and weight.
+                            int port = buf.readUnsignedShort();
+                            String host = DefaultDnsRecordDecoder.decodeName(buf);
+                            if (host.endsWith(".")) {
+                                host = host.substring(0, host.length() - 1);
+                            }
 
-                        int port = buf.readUnsignedShort();
-                        String host = DefaultDnsRecordDecoder.decodeName(buf);
-                        if (host.endsWith(".")) {
-                            host = host.substring(0, host.length() - 1);
+                            log.debug("Found SRV record containing \"{}:{}\".", host, port);
+
+                            this.host = host;
+                            this.port = port;
+                        } else {
+                            log.debug("Received non-SRV record in response.");
                         }
-
-                        log.debug("Found SRV record containing \"{}:{}\".", host, port);
-
-                        this.host = host;
-                        this.port = port;
                     } else {
-                        log.debug("Received non-SRV record in response.");
+                        log.debug("No SRV record found.");
                     }
-                } else {
-                    log.debug("No SRV record found.");
+                } finally {
+                    envelope.release();
                 }
             } catch (Exception e) {
                 log.debug("Failed to resolve SRV record.", e);
-            } finally {
-                if (envelope != null) {
-                    envelope.release();
-                }
-
             }
         } else {
             log.debug("Not resolving SRV record for {}", this.host);
@@ -243,13 +242,21 @@ public class TcpClientSession extends TcpSession {
         }
 
         channel.pipeline().addLast("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
-        HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
-        InetSocketAddress remoteAddress = (InetSocketAddress) channel.remoteAddress();
-        channel.writeAndFlush(new HAProxyMessage(
-            HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
-            clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
-            clientAddress.getPort(), remoteAddress.getPort()
-        )).addListener(future -> channel.pipeline().remove("proxy-protocol-encoder"));
+        channel.pipeline().addLast("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
+            @Override
+            public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+                HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
+                ctx.channel().writeAndFlush(new HAProxyMessage(
+                    HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
+                    clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
+                    clientAddress.getPort(), remoteAddress.getPort()
+                )).addListener(future -> channel.pipeline().remove("proxy-protocol-encoder"));
+                ctx.pipeline().remove(this);
+
+                super.channelActive(ctx);
+            }
+        });
     }
 
     private static void createTcpEventLoopGroup() {
