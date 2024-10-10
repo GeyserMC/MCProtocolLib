@@ -199,7 +199,8 @@ public class TcpClientSession extends TcpSession {
             log.debug("Resolved {} -> {}", getHost(), resolved.getHostAddress());
             return new InetSocketAddress(resolved, getPort());
         } catch (UnknownHostException e) {
-            throw new IllegalStateException("Failed to resolve host.", e);
+            log.debug("Failed to resolve host, letting Netty do it instead.", e);
+            return InetSocketAddress.createUnresolved(getHost(), getPort());
         }
     }
 
