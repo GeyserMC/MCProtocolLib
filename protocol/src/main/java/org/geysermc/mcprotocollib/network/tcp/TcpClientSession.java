@@ -154,42 +154,39 @@ public class TcpClientSession extends TcpSession {
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
         if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
-            AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
                 .channelFactory(TRANSPORT_TYPE.datagramChannelFactory())
                 .build()) {
-                envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                try {
+                    DnsResponse response = envelope.content();
+                    if (response.count(DnsSection.ANSWER) > 0) {
+                        DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
+                        if (record.type() == DnsRecordType.SRV) {
+                            ByteBuf buf = record.content();
+                            buf.skipBytes(4); // Skip priority and weight.
 
-                DnsResponse response = envelope.content();
-                if (response.count(DnsSection.ANSWER) > 0) {
-                    DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                    if (record.type() == DnsRecordType.SRV) {
-                        ByteBuf buf = record.content();
-                        buf.skipBytes(4); // Skip priority and weight.
+                            int port = buf.readUnsignedShort();
+                            String host = DefaultDnsRecordDecoder.decodeName(buf);
+                            if (host.endsWith(".")) {
+                                host = host.substring(0, host.length() - 1);
+                            }
 
-                        int port = buf.readUnsignedShort();
-                        String host = DefaultDnsRecordDecoder.decodeName(buf);
-                        if (host.endsWith(".")) {
-                            host = host.substring(0, host.length() - 1);
+                            log.debug("Found SRV record containing \"{}:{}\".", host, port);
+
+                            this.host = host;
+                            this.port = port;
+                        } else {
+                            log.debug("Received non-SRV record in response.");
                         }
-
-                        log.debug("Found SRV record containing \"{}:{}\".", host, port);
-
-                        this.host = host;
-                        this.port = port;
                     } else {
-                        log.debug("Received non-SRV record in response.");
+                        log.debug("No SRV record found.");
                     }
-                } else {
-                    log.debug("No SRV record found.");
+                } finally {
+                    envelope.release();
                 }
             } catch (Exception e) {
                 log.debug("Failed to resolve SRV record.", e);
-            } finally {
-                if (envelope != null) {
-                    envelope.release();
-                }
-
             }
         } else {
             log.debug("Not resolving SRV record for {}", this.host);
