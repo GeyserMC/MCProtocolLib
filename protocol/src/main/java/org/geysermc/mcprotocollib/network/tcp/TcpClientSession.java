@@ -4,6 +4,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -91,14 +93,13 @@ public class TcpClientSession extends TcpSession {
             createTcpEventLoopGroup();
         }
 
-        final InetSocketAddress remoteAddress = resolveAddress();
         final Bootstrap bootstrap = new Bootstrap()
             .channelFactory(TRANSPORT_TYPE.socketChannelFactory())
             .option(ChannelOption.TCP_NODELAY, true)
             .option(ChannelOption.IP_TOS, 0x18)
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getFlag(BuiltinFlags.CLIENT_CONNECT_TIMEOUT, 30) * 1000)
             .group(EVENT_LOOP_GROUP)
-            .remoteAddress(remoteAddress)
+            .remoteAddress(resolveAddress())
             .localAddress(bindAddress, bindPort)
             .handler(new ChannelInitializer<>() {
                 @Override
@@ -110,7 +111,7 @@ public class TcpClientSession extends TcpSession {
 
                     addProxy(pipeline);
 
-                    initializeHAProxySupport(remoteAddress, channel);
+                    initializeHAProxySupport(channel);
 
                     pipeline.addLast("read-timeout", new ReadTimeoutHandler(getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
                     pipeline.addLast("write-timeout", new WriteTimeoutHandler(getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
@@ -233,19 +234,28 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    private void initializeHAProxySupport(InetSocketAddress remoteAddress, Channel channel) {
+    private void initializeHAProxySupport(Channel channel) {
         InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
         if (clientAddress == null) {
             return;
         }
 
         channel.pipeline().addLast("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
-        HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
-        channel.writeAndFlush(new HAProxyMessage(
-            HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
-            clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
-            clientAddress.getPort(), remoteAddress.getPort()
-        )).addListener(future -> channel.pipeline().remove("proxy-protocol-encoder"));
+        channel.pipeline().addLast("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
+            @Override
+            public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+                HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
+                ctx.channel().writeAndFlush(new HAProxyMessage(
+                    HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
+                    clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
+                    clientAddress.getPort(), remoteAddress.getPort()
+                )).addListener(future -> channel.pipeline().remove("proxy-protocol-encoder"));
+                ctx.pipeline().remove(this);
+
+                super.channelActive(ctx);
+            }
+        });
     }
 
     private static void createTcpEventLoopGroup() {
