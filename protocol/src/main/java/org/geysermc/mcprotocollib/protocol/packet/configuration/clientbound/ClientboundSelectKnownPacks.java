@@ -17,15 +17,11 @@ public class ClientboundSelectKnownPacks implements MinecraftPacket {
     private final List<KnownPack> knownPacks;
 
     public ClientboundSelectKnownPacks(ByteBuf in, MinecraftCodecHelper helper) {
-        this.knownPacks = helper.readList(in, buf -> new KnownPack(helper.readString(buf), helper.readString(buf), helper.readString(buf)));
+        this.knownPacks = helper.readList(in, buf -> KnownPack.NETWORK_CODEC.read(buf, helper));
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeList(out, this.knownPacks, (buf, entry) -> {
-            helper.writeString(buf, entry.getNamespace());
-            helper.writeString(buf, entry.getId());
-            helper.writeString(buf, entry.getVersion());
-        });
+        helper.writeList(out, this.knownPacks, (buf, entry) -> KnownPack.NETWORK_CODEC.write(entry, buf, helper));
     }
 }
