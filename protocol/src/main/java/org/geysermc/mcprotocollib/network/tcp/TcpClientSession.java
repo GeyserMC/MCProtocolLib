@@ -91,13 +91,14 @@ public class TcpClientSession extends TcpSession {
             createTcpEventLoopGroup();
         }
 
+        final InetSocketAddress remoteAddress = resolveAddress();
         final Bootstrap bootstrap = new Bootstrap()
             .channelFactory(TRANSPORT_TYPE.socketChannelFactory())
             .option(ChannelOption.TCP_NODELAY, true)
             .option(ChannelOption.IP_TOS, 0x18)
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getFlag(BuiltinFlags.CLIENT_CONNECT_TIMEOUT, 30) * 1000)
             .group(EVENT_LOOP_GROUP)
-            .remoteAddress(resolveAddress())
+            .remoteAddress(remoteAddress)
             .localAddress(bindAddress, bindPort)
             .handler(new ChannelInitializer<>() {
                 @Override
@@ -109,7 +110,7 @@ public class TcpClientSession extends TcpSession {
 
                     addProxy(pipeline);
 
-                    initializeHAProxySupport(channel);
+                    initializeHAProxySupport(remoteAddress, channel);
 
                     pipeline.addLast("read-timeout", new ReadTimeoutHandler(getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
                     pipeline.addLast("write-timeout", new WriteTimeoutHandler(getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
@@ -200,8 +201,7 @@ public class TcpClientSession extends TcpSession {
             log.debug("Resolved {} -> {}", getHost(), resolved.getHostAddress());
             return new InetSocketAddress(resolved, getPort());
         } catch (UnknownHostException e) {
-            log.debug("Failed to resolve host, letting Netty do it instead.", e);
-            return InetSocketAddress.createUnresolved(getHost(), getPort());
+            throw new IllegalStateException("Failed to resolve host.", e);
         }
     }
 
@@ -236,7 +236,7 @@ public class TcpClientSession extends TcpSession {
         }
     }
 
-    private void initializeHAProxySupport(Channel channel) {
+    private void initializeHAProxySupport(InetSocketAddress remoteAddress, Channel channel) {
         InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
         if (clientAddress == null) {
             return;
@@ -244,7 +244,6 @@ public class TcpClientSession extends TcpSession {
 
         channel.pipeline().addLast("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
         HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
-        InetSocketAddress remoteAddress = (InetSocketAddress) channel.remoteAddress();
         channel.writeAndFlush(new HAProxyMessage(
             HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
             clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
