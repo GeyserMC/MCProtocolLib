@@ -16,15 +16,12 @@ import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.NettyHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class TcpClientSession extends TcpSession {
-    private static final Logger log = LoggerFactory.getLogger(TcpClientSession.class);
     private static EventLoopGroup EVENT_LOOP_GROUP;
 
     /**
