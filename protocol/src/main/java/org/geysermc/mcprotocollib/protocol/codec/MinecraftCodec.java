@@ -42,7 +42,9 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerInfoUpdatePacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundRecipePacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundRecipeBookAddPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundRecipeBookRemovePacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundRecipeBookSettingsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSelectAdvancementsTabPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundServerDataPacket;
@@ -59,6 +61,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundAnimatePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundDamageEventPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundEntityEventPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundEntityPositionSyncPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundHurtAnimationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityPosPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityPosRotPacket;
@@ -85,6 +88,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.play
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerCombatKillPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerLookAtPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerRotationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundSetExperiencePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundSetHealthPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.player.ClientboundSetHeldSlotPacket;
@@ -210,9 +214,9 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 211)
+            .protocolVersion((1 << 30) | 212)
             .helper(MinecraftCodecHelper::new)
-            .minecraftVersion("24w39a")
+            .minecraftVersion("24w40a")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -326,7 +330,10 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundPlayerInfoUpdatePacket.class, ClientboundPlayerInfoUpdatePacket::new)
                     .registerClientboundPacket(ClientboundPlayerLookAtPacket.class, ClientboundPlayerLookAtPacket::new)
                     .registerClientboundPacket(ClientboundPlayerPositionPacket.class, ClientboundPlayerPositionPacket::new)
-                    .registerClientboundPacket(ClientboundRecipePacket.class, ClientboundRecipePacket::new)
+                    .registerClientboundPacket(ClientboundPlayerRotationPacket.class, ClientboundPlayerRotationPacket::new)
+                    .registerClientboundPacket(ClientboundRecipeBookAddPacket.class, ClientboundRecipeBookAddPacket::new)
+                    .registerClientboundPacket(ClientboundRecipeBookRemovePacket.class, ClientboundRecipeBookRemovePacket::new)
+                    .registerClientboundPacket(ClientboundRecipeBookSettingsPacket.class, ClientboundRecipeBookSettingsPacket::new)
                     .registerClientboundPacket(ClientboundRemoveEntitiesPacket.class, ClientboundRemoveEntitiesPacket::new)
                     .registerClientboundPacket(ClientboundRemoveMobEffectPacket.class, ClientboundRemoveMobEffectPacket::new)
                     .registerClientboundPacket(ClientboundResetScorePacket.class, ClientboundResetScorePacket::new)
@@ -376,6 +383,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
                     .registerClientboundPacket(ClientboundTakeItemEntityPacket.class, ClientboundTakeItemEntityPacket::new)
                     .registerClientboundPacket(ClientboundTeleportEntityPacket.class, ClientboundTeleportEntityPacket::new)
+                    .registerClientboundPacket(ClientboundEntityPositionSyncPacket.class, ClientboundEntityPositionSyncPacket::new)
                     .registerClientboundPacket(ClientboundTickingStatePacket.class, ClientboundTickingStatePacket::new)
                     .registerClientboundPacket(ClientboundTickingStepPacket.class, ClientboundTickingStepPacket::new)
                     .registerClientboundPacket(ClientboundTransferPacket.class, ClientboundTransferPacket::new)

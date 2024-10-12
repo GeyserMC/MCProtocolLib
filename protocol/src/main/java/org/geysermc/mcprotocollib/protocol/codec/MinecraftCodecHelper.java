@@ -9,6 +9,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.math.vector.Vector3d;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
@@ -55,6 +56,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
@@ -71,6 +73,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleData
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.SculkChargeParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ShriekParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.TargetColorParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.VibrationParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.BlockPositionSource;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.EntityPositionSource;
@@ -80,6 +83,22 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.RecipeDisplayType;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.FurnaceRecipeDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.RecipeDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.ShapedCraftingRecipeDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.ShapelessCraftingRecipeDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.SmithingRecipeDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.StonecutterRecipeDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.AnyFuelSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.CompositeSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.EmptySlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.ItemSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.ItemStackSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.RecipeSlotType;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.SlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.SmithingTrimDemoSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.TagSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.StatisticCategory;
 import org.jetbrains.annotations.NotNull;
 
@@ -152,6 +171,33 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             writeCustom.accept(buf, holder.custom());
         } else {
             this.writeVarInt(buf, holder.id() + 1);
+        }
+    }
+
+    public HolderSet readHolderSet(ByteBuf buf) {
+        int length = this.readVarInt(buf) - 1;
+        if (length == -1) {
+            return new HolderSet(this.readResourceLocation(buf));
+        } else {
+            int[] holders = new int[length];
+            for (int i = 0; i < length; i++) {
+                holders[i] = this.readVarInt(buf);
+            }
+
+            return new HolderSet(holders);
+        }
+    }
+
+    public void writeHolderSet(ByteBuf buf, HolderSet holderSet) {
+        if (holderSet.getLocation() != null) {
+            this.writeVarInt(buf, 0);
+            this.writeResourceLocation(buf, holderSet.getLocation());
+        } else {
+            assert holderSet.getHolders() != null;
+            this.writeVarInt(buf, holderSet.getHolders().length + 1);
+            for (int holder : holderSet.getHolders()) {
+                this.writeVarInt(buf, holder);
+            }
         }
     }
 
@@ -662,7 +708,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public ParticleData readParticleData(ByteBuf buf, ParticleType type) {
         return switch (type) {
-            case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR -> new BlockParticleData(this.readVarInt(buf));
+            case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR, BLOCK_CRUMBLE -> new BlockParticleData(this.readVarInt(buf));
             case DUST -> {
                 float red = buf.readFloat();
                 float green = buf.readFloat();
@@ -684,6 +730,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             case ITEM -> new ItemParticleData(this.readOptionalItemStack(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(this.readVarInt(buf));
+            case TRAIL -> new TargetColorParticleData(Vector3d.from(buf.readDouble(), buf.readDouble(), buf.readDouble()), buf.readInt());
             case VIBRATION -> new VibrationParticleData(this.readPositionSource(buf), this.readVarInt(buf));
             default -> null;
         };
@@ -691,7 +738,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeParticleData(ByteBuf buf, ParticleType type, ParticleData data) {
         switch (type) {
-            case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR -> {
+            case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR, BLOCK_CRUMBLE -> {
                 BlockParticleData blockData = (BlockParticleData) data;
                 this.writeVarInt(buf, blockData.getBlockState());
             }
@@ -727,6 +774,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             case SHRIEK -> {
                 ShriekParticleData shriekData = (ShriekParticleData) data;
                 this.writeVarInt(buf, shriekData.getDelay());
+            }
+            case TRAIL -> {
+                TargetColorParticleData targetColorData = (TargetColorParticleData) data;
+                buf.writeDouble(targetColorData.target().getX());
+                buf.writeDouble(targetColorData.target().getY());
+                buf.writeDouble(targetColorData.target().getZ());
+                buf.writeInt(targetColorData.color());
             }
             case VIBRATION -> {
                 VibrationParticleData vibrationData = (VibrationParticleData) data;
@@ -958,6 +1012,119 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, ingredient.getOptions().length);
         for (ItemStack option : ingredient.getOptions()) {
             this.writeOptionalItemStack(buf, option);
+        }
+    }
+
+    public RecipeDisplay readRecipeDisplay(ByteBuf buf) {
+        RecipeDisplayType type = RecipeDisplayType.from(this.readVarInt(buf));
+        RecipeDisplay display;
+        switch (type) {
+            case CRAFTING_SHAPELESS -> {
+                List<SlotDisplay> ingredients = this.readList(buf, this::readSlotDisplay);
+                SlotDisplay result = this.readSlotDisplay(buf);
+                SlotDisplay craftingStation = this.readSlotDisplay(buf);
+
+                display = new ShapelessCraftingRecipeDisplay(ingredients, result, craftingStation);
+            }
+            case CRAFTING_SHAPED -> {
+                int width = this.readVarInt(buf);
+                int height = this.readVarInt(buf);
+                List<SlotDisplay> ingredients = this.readList(buf, this::readSlotDisplay);
+                SlotDisplay result = this.readSlotDisplay(buf);
+                SlotDisplay craftingStation = this.readSlotDisplay(buf);
+
+                display = new ShapedCraftingRecipeDisplay(width, height, ingredients, result, craftingStation);
+            }
+            case FURNACE -> {
+                SlotDisplay ingredient = this.readSlotDisplay(buf);
+                SlotDisplay fuel = this.readSlotDisplay(buf);
+                SlotDisplay result = this.readSlotDisplay(buf);
+                SlotDisplay craftingStation = this.readSlotDisplay(buf);
+
+                display = new FurnaceRecipeDisplay(ingredient, fuel, result, craftingStation);
+            }
+            case STONECUTTER -> {
+                SlotDisplay result = this.readSlotDisplay(buf);
+                SlotDisplay craftingStation = this.readSlotDisplay(buf);
+
+                display = new StonecutterRecipeDisplay(result, craftingStation);
+            }
+            case SMITHING -> {
+                SlotDisplay result = this.readSlotDisplay(buf);
+                SlotDisplay craftingStation = this.readSlotDisplay(buf);
+
+                display = new SmithingRecipeDisplay(result, craftingStation);
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        }
+        return display;
+    }
+
+    public void writeRecipeDisplay(ByteBuf buf, RecipeDisplay display) {
+        this.writeVarInt(buf, display.getType().ordinal());
+        switch (display.getType()) {
+            case CRAFTING_SHAPELESS -> {
+                ShapelessCraftingRecipeDisplay shapelessDisplay = (ShapelessCraftingRecipeDisplay) display;
+
+                this.writeList(buf, shapelessDisplay.ingredients(), this::writeSlotDisplay);
+                this.writeSlotDisplay(buf, shapelessDisplay.result());
+                this.writeSlotDisplay(buf, shapelessDisplay.craftingStation());
+            }
+            case CRAFTING_SHAPED -> {
+                ShapedCraftingRecipeDisplay shapedDisplay = (ShapedCraftingRecipeDisplay) display;
+
+                this.writeVarInt(buf, shapedDisplay.width());
+                this.writeVarInt(buf, shapedDisplay.height());
+                this.writeList(buf, shapedDisplay.ingredients(), this::writeSlotDisplay);
+                this.writeSlotDisplay(buf, shapedDisplay.result());
+                this.writeSlotDisplay(buf, shapedDisplay.craftingStation());
+            }
+            case FURNACE -> {
+                FurnaceRecipeDisplay furnaceDisplay = (FurnaceRecipeDisplay) display;
+
+                this.writeSlotDisplay(buf, furnaceDisplay.ingredient());
+                this.writeSlotDisplay(buf, furnaceDisplay.fuel());
+                this.writeSlotDisplay(buf, furnaceDisplay.result());
+                this.writeSlotDisplay(buf, furnaceDisplay.craftingStation());
+            }
+            case STONECUTTER -> {
+                StonecutterRecipeDisplay stonecutterDisplay = (StonecutterRecipeDisplay) display;
+
+                this.writeSlotDisplay(buf, stonecutterDisplay.result());
+                this.writeSlotDisplay(buf, stonecutterDisplay.craftingStation());
+            }
+            case SMITHING -> {
+                SmithingRecipeDisplay smithingDisplay = (SmithingRecipeDisplay) display;
+
+                this.writeSlotDisplay(buf, smithingDisplay.result());
+                this.writeSlotDisplay(buf, smithingDisplay.craftingStation());
+            }
+        }
+    }
+
+    public SlotDisplay readSlotDisplay(ByteBuf buf) {
+        RecipeSlotType type = RecipeSlotType.from(this.readVarInt(buf));
+        SlotDisplay display;
+        switch (type) {
+            case EMPTY -> display = new EmptySlotDisplay();
+            case ANY_FUEL -> display = new AnyFuelSlotDisplay();
+            case ITEM -> display = new ItemSlotDisplay(this.readVarInt(buf));
+            case ITEM_STACK -> display = new ItemStackSlotDisplay(this.readItemStack(buf));
+            case TAG -> display = new TagSlotDisplay(this.readResourceLocation(buf));
+            case SMITHING_TRIM -> display = new SmithingTrimDemoSlotDisplay();
+            case COMPOSITE -> display = new CompositeSlotDisplay(this.readList(buf, this::readSlotDisplay));
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        }
+        return display;
+    }
+
+    public void writeSlotDisplay(ByteBuf buf, SlotDisplay display) {
+        this.writeVarInt(buf, display.getType().ordinal());
+        switch (display.getType()) {
+            case ITEM -> this.writeVarInt(buf, ((ItemSlotDisplay)display).item());
+            case ITEM_STACK -> this.writeItemStack(buf, ((ItemStackSlotDisplay)display).itemStack());
+            case TAG -> this.writeResourceLocation(buf, ((TagSlotDisplay)display).tag());
+            case COMPOSITE -> this.writeList(buf, ((CompositeSlotDisplay)display).contents(), this::writeSlotDisplay);
         }
     }
 

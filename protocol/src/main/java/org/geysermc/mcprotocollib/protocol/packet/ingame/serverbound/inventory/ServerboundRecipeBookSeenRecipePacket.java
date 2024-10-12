@@ -12,14 +12,14 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @With
 @AllArgsConstructor
 public class ServerboundRecipeBookSeenRecipePacket implements MinecraftPacket {
-    private final @NonNull String recipeId;
+    private final int recipe;
 
     public ServerboundRecipeBookSeenRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.recipeId = helper.readString(in);
+        this.recipe = helper.readVarInt(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.recipeId);
+        helper.writeVarInt(out, this.recipe);
     }
 }

@@ -34,18 +34,18 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PistonVal
 @AllArgsConstructor
 public class ClientboundBlockEventPacket implements MinecraftPacket {
     // Do we really want these hardcoded values?
-    private static final int NOTE_BLOCK = 102;
-    private static final int STICKY_PISTON = 121;
-    private static final int PISTON = 128;
-    private static final int MOB_SPAWNER = 175;
-    private static final int CHEST = 177;
-    private static final int ENDER_CHEST = 344;
-    private static final int TRAPPED_CHEST = 411;
-    private static final int END_GATEWAY = 603;
-    private static final int SHULKER_BOX_LOWER = 613;
-    private static final int SHULKER_BOX_HIGHER = 629;
-    private static final int BELL = 783;
-    private static final int DECORATED_POT = 1055;
+    private static final int NOTE_BLOCK = 109;
+    private static final int STICKY_PISTON = 128;
+    private static final int PISTON = 135;
+    private static final int MOB_SPAWNER = 182;
+    private static final int CHEST = 185;
+    private static final int ENDER_CHEST = 358;
+    private static final int TRAPPED_CHEST = 427;
+    private static final int END_GATEWAY = 624;
+    private static final int SHULKER_BOX_LOWER = 634;
+    private static final int SHULKER_BOX_HIGHER = 650;
+    private static final int BELL = 804;
+    private static final int DECORATED_POT = 1076;
 
     private final @NonNull Vector3i position;
     private final @NonNull BlockValueType type;
