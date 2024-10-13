@@ -58,6 +58,6 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
         });
     }
 
-    private record SelectableRecipe(Ingredient input, SlotDisplay recipe) {
+    public record SelectableRecipe(Ingredient input, SlotDisplay recipe) {
     }
 }

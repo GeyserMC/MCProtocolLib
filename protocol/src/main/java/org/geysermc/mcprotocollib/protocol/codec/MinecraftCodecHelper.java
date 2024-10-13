@@ -1000,19 +1000,11 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
     }
 
     public Ingredient readRecipeIngredient(ByteBuf buf) {
-        ItemStack[] options = new ItemStack[this.readVarInt(buf)];
-        for (int i = 0; i < options.length; i++) {
-            options[i] = this.readOptionalItemStack(buf);
-        }
-
-        return new Ingredient(options);
+        return new Ingredient(this.readHolderSet(buf));
     }
 
     public void writeRecipeIngredient(ByteBuf buf, Ingredient ingredient) {
-        this.writeVarInt(buf, ingredient.getOptions().length);
-        for (ItemStack option : ingredient.getOptions()) {
-            this.writeOptionalItemStack(buf, option);
-        }
+        this.writeHolderSet(buf, ingredient.getValues());
     }
 
     public RecipeDisplay readRecipeDisplay(ByteBuf buf) {
