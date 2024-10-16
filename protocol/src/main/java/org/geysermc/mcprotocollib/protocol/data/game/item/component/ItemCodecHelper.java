@@ -143,11 +143,12 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         EquipmentSlot slot = EquipmentSlot.from(this.readVarInt(buf));
         Sound equipSound = this.readById(buf, BuiltinSound::from, this::readSoundEvent);
         Key model = this.readNullable(buf, this::readResourceLocation);
+        Key cameraOverlay = this.readNullable(buf, this::readResourceLocation);
         HolderSet allowedEntities = this.readNullable(buf, this::readHolderSet);
         boolean dispensable = buf.readBoolean();
         boolean swappable = buf.readBoolean();
         boolean damageOnHurt = buf.readBoolean();
-        return new Equippable(slot, equipSound, model, allowedEntities, dispensable, swappable, damageOnHurt);
+        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt);
     }
 
     public void writeEquippable(ByteBuf buf, Equippable equippable) {

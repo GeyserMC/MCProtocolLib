@@ -217,6 +217,7 @@ public enum BuiltinSound implements Sound {
     BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE("block.bubble_column.upwards_inside"),
     BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT("block.bubble_column.whirlpool_ambient"),
     BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE("block.bubble_column.whirlpool_inside"),
+    UI_HUD_BUBBLE_POP("ui.hud.bubble_pop"),
     ITEM_BUCKET_EMPTY("item.bucket.empty"),
     ITEM_BUCKET_EMPTY_AXOLOTL("item.bucket.empty_axolotl"),
     ITEM_BUCKET_EMPTY_FISH("item.bucket.empty_fish"),

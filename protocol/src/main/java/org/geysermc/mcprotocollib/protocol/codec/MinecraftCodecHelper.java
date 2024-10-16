@@ -99,6 +99,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.RecipeS
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.SlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.SmithingTrimDemoSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.TagSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.WithRemainderSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.StatisticCategory;
 import org.jetbrains.annotations.NotNull;
 
@@ -710,21 +711,15 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         return switch (type) {
             case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR, BLOCK_CRUMBLE -> new BlockParticleData(this.readVarInt(buf));
             case DUST -> {
-                float red = buf.readFloat();
-                float green = buf.readFloat();
-                float blue = buf.readFloat();
+                int color = buf.readInt();
                 float scale = buf.readFloat();
-                yield new DustParticleData(red, green, blue, scale);
+                yield new DustParticleData(color, scale);
             }
             case DUST_COLOR_TRANSITION -> {
-                float red = buf.readFloat();
-                float green = buf.readFloat();
-                float blue = buf.readFloat();
-                float newRed = buf.readFloat();
-                float newGreen = buf.readFloat();
-                float newBlue = buf.readFloat();
+                int color = buf.readInt();
+                int newColor = buf.readInt();
                 float scale = buf.readFloat();
-                yield new DustColorTransitionParticleData(red, green, blue, scale, newRed, newGreen, newBlue);
+                yield new DustColorTransitionParticleData(color, scale, newColor);
             }
             case ENTITY_EFFECT -> new EntityEffectParticleData(buf.readInt());
             case ITEM -> new ItemParticleData(this.readOptionalItemStack(buf));
@@ -744,19 +739,13 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             }
             case DUST -> {
                 DustParticleData dustData = (DustParticleData) data;
-                buf.writeFloat(dustData.getRed());
-                buf.writeFloat(dustData.getGreen());
-                buf.writeFloat(dustData.getBlue());
+                buf.writeInt(dustData.getColor());
                 buf.writeFloat(dustData.getScale());
             }
             case DUST_COLOR_TRANSITION -> {
                 DustColorTransitionParticleData dustData = (DustColorTransitionParticleData) data;
-                buf.writeFloat(dustData.getRed());
-                buf.writeFloat(dustData.getGreen());
-                buf.writeFloat(dustData.getBlue());
-                buf.writeFloat(dustData.getNewRed());
-                buf.writeFloat(dustData.getNewGreen());
-                buf.writeFloat(dustData.getNewBlue());
+                buf.writeInt(dustData.getColor());
+                buf.writeInt(dustData.getNewColor());
                 buf.writeFloat(dustData.getScale());
             }
             case ENTITY_EFFECT -> {
@@ -1032,20 +1021,26 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 SlotDisplay fuel = this.readSlotDisplay(buf);
                 SlotDisplay result = this.readSlotDisplay(buf);
                 SlotDisplay craftingStation = this.readSlotDisplay(buf);
+                int duration = this.readVarInt(buf);
+                float experience = buf.readFloat();
 
-                display = new FurnaceRecipeDisplay(ingredient, fuel, result, craftingStation);
+                display = new FurnaceRecipeDisplay(ingredient, fuel, result, craftingStation, duration, experience);
             }
             case STONECUTTER -> {
+                SlotDisplay input = this.readSlotDisplay(buf);
                 SlotDisplay result = this.readSlotDisplay(buf);
                 SlotDisplay craftingStation = this.readSlotDisplay(buf);
 
-                display = new StonecutterRecipeDisplay(result, craftingStation);
+                display = new StonecutterRecipeDisplay(input, result, craftingStation);
             }
             case SMITHING -> {
+                SlotDisplay template = this.readSlotDisplay(buf);
+                SlotDisplay base = this.readSlotDisplay(buf);
+                SlotDisplay addition = this.readSlotDisplay(buf);
                 SlotDisplay result = this.readSlotDisplay(buf);
                 SlotDisplay craftingStation = this.readSlotDisplay(buf);
 
-                display = new SmithingRecipeDisplay(result, craftingStation);
+                display = new SmithingRecipeDisplay(template, base, addition, result, craftingStation);
             }
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
@@ -1078,16 +1073,22 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
                 this.writeSlotDisplay(buf, furnaceDisplay.fuel());
                 this.writeSlotDisplay(buf, furnaceDisplay.result());
                 this.writeSlotDisplay(buf, furnaceDisplay.craftingStation());
+                this.writeVarInt(buf, furnaceDisplay.duration());
+                buf.writeFloat(furnaceDisplay.experience());
             }
             case STONECUTTER -> {
                 StonecutterRecipeDisplay stonecutterDisplay = (StonecutterRecipeDisplay) display;
 
+                this.writeSlotDisplay(buf, stonecutterDisplay.input());
                 this.writeSlotDisplay(buf, stonecutterDisplay.result());
                 this.writeSlotDisplay(buf, stonecutterDisplay.craftingStation());
             }
             case SMITHING -> {
                 SmithingRecipeDisplay smithingDisplay = (SmithingRecipeDisplay) display;
 
+                this.writeSlotDisplay(buf, smithingDisplay.template());
+                this.writeSlotDisplay(buf, smithingDisplay.base());
+                this.writeSlotDisplay(buf, smithingDisplay.addition());
                 this.writeSlotDisplay(buf, smithingDisplay.result());
                 this.writeSlotDisplay(buf, smithingDisplay.craftingStation());
             }
@@ -1103,7 +1104,8 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             case ITEM -> display = new ItemSlotDisplay(this.readVarInt(buf));
             case ITEM_STACK -> display = new ItemStackSlotDisplay(this.readItemStack(buf));
             case TAG -> display = new TagSlotDisplay(this.readResourceLocation(buf));
-            case SMITHING_TRIM -> display = new SmithingTrimDemoSlotDisplay();
+            case SMITHING_TRIM -> display = new SmithingTrimDemoSlotDisplay(this.readSlotDisplay(buf), this.readSlotDisplay(buf), this.readSlotDisplay(buf));
+            case WITH_REMAINDER -> display = new WithRemainderSlotDisplay(this.readSlotDisplay(buf), this.readSlotDisplay(buf));
             case COMPOSITE -> display = new CompositeSlotDisplay(this.readList(buf, this::readSlotDisplay));
             default -> throw new IllegalStateException("Unexpected value: " + type);
         }
@@ -1116,6 +1118,19 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
             case ITEM -> this.writeVarInt(buf, ((ItemSlotDisplay)display).item());
             case ITEM_STACK -> this.writeItemStack(buf, ((ItemStackSlotDisplay)display).itemStack());
             case TAG -> this.writeResourceLocation(buf, ((TagSlotDisplay)display).tag());
+            case SMITHING_TRIM -> {
+                SmithingTrimDemoSlotDisplay smithingSlotDisplay = (SmithingTrimDemoSlotDisplay) display;
+
+                this.writeSlotDisplay(buf, smithingSlotDisplay.base());
+                this.writeSlotDisplay(buf, smithingSlotDisplay.material());
+                this.writeSlotDisplay(buf, smithingSlotDisplay.pattern());
+            }
+            case WITH_REMAINDER -> {
+                WithRemainderSlotDisplay remainderSlotDisplay = (WithRemainderSlotDisplay) display;
+
+                this.writeSlotDisplay(buf, remainderSlotDisplay.input());
+                this.writeSlotDisplay(buf, remainderSlotDisplay.remainder());
+            }
             case COMPOSITE -> this.writeList(buf, ((CompositeSlotDisplay)display).contents(), this::writeSlotDisplay);
         }
     }

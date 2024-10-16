@@ -1,7 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot;
 
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.RecipeDisplayType;
-
 public enum RecipeSlotType {
     EMPTY,
     ANY_FUEL,
@@ -9,6 +7,7 @@ public enum RecipeSlotType {
     ITEM_STACK,
     TAG,
     SMITHING_TRIM,
+    WITH_REMAINDER,
     COMPOSITE;
 
     private static final RecipeSlotType[] VALUES = values();
