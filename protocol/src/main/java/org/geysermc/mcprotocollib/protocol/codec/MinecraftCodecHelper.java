@@ -336,7 +336,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     @Nullable
     public ItemStack readOptionalItemStack(ByteBuf buf) {
-        byte count = buf.readByte();
+        int count = this.readVarInt(buf);
         if (count <= 0) {
             return null;
         }
@@ -347,7 +347,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
 
     public void writeOptionalItemStack(ByteBuf buf, ItemStack item) {
         boolean empty = item == null || item.getAmount() <= 0;
-        buf.writeByte(!empty ? item.getAmount() : 0);
+        this.writeVarInt(buf, !empty ? item.getAmount() : 0);
         if (!empty) {
             this.writeVarInt(buf, item.getId());
             this.writeDataComponentPatch(buf, item.getDataComponents());
