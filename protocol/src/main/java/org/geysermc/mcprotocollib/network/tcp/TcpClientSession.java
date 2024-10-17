@@ -4,7 +4,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -25,9 +24,12 @@ import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.resolver.dns.DnsNameResolver;
 import io.netty.resolver.dns.DnsNameResolverBuilder;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
@@ -40,6 +42,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -90,56 +93,55 @@ public class TcpClientSession extends TcpSession {
             createTcpEventLoopGroup();
         }
 
-        try {
-            final Bootstrap bootstrap = new Bootstrap()
-                    .channelFactory(TRANSPORT_TYPE.socketChannelFactory())
-                    .option(ChannelOption.TCP_NODELAY, true)
-                    .option(ChannelOption.IP_TOS, 0x18)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getConnectTimeout() * 1000)
-                    .group(EVENT_LOOP_GROUP)
-                    .remoteAddress(resolveAddress())
-                    .localAddress(bindAddress, bindPort)
-                    .handler(new ChannelInitializer<>() {
-                        @Override
-                        public void initChannel(Channel channel) {
-                            PacketProtocol protocol = getPacketProtocol();
-                            protocol.newClientSession(TcpClientSession.this, transferring);
+        final Bootstrap bootstrap = new Bootstrap()
+            .channelFactory(TRANSPORT_TYPE.socketChannelFactory())
+            .option(ChannelOption.TCP_NODELAY, true)
+            .option(ChannelOption.IP_TOS, 0x18)
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getFlag(BuiltinFlags.CLIENT_CONNECT_TIMEOUT, 30) * 1000)
+            .group(EVENT_LOOP_GROUP)
+            .remoteAddress(resolveAddress())
+            .localAddress(bindAddress, bindPort)
+            .handler(new ChannelInitializer<>() {
+                @Override
+                public void initChannel(@NonNull Channel channel) {
+                    PacketProtocol protocol = getPacketProtocol();
+                    protocol.newClientSession(TcpClientSession.this, transferring);
 
-                            ChannelPipeline pipeline = channel.pipeline();
+                    ChannelPipeline pipeline = channel.pipeline();
 
-                            refreshReadTimeoutHandler(channel);
-                            refreshWriteTimeoutHandler(channel);
+                    addProxy(pipeline);
 
-                            addProxy(pipeline);
+                    initializeHAProxySupport(channel);
 
-                            int size = protocol.getPacketHeader().getLengthSize();
-                            if (size > 0) {
-                                pipeline.addLast("sizer", new TcpPacketSizer(TcpClientSession.this, size));
-                            }
+                    pipeline.addLast("read-timeout", new ReadTimeoutHandler(getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
+                    pipeline.addLast("write-timeout", new WriteTimeoutHandler(getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
 
-                            pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
-                            pipeline.addLast("manager", TcpClientSession.this);
+                    pipeline.addLast("encryption", new TcpPacketEncryptor());
+                    pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), getCodecHelper()));
+                    pipeline.addLast("compression", new TcpPacketCompression(getCodecHelper()));
 
-                            addHAProxySupport(pipeline);
-                        }
-                    });
-
-            if (getFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenClient()) {
-                bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
-            }
-
-            ChannelFuture future = bootstrap.connect();
-            if (wait) {
-                future.sync();
-            }
-
-            future.addListener((futureListener) -> {
-                if (!futureListener.isSuccess()) {
-                    exceptionCaught(null, futureListener.cause());
+                    pipeline.addLast("flow-control", new TcpFlowControlHandler());
+                    pipeline.addLast("codec", new TcpPacketCodec(TcpClientSession.this, true));
+                    pipeline.addLast("flush-handler", new FlushHandler());
+                    pipeline.addLast("manager", TcpClientSession.this);
                 }
             });
-        } catch (Throwable t) {
-            exceptionCaught(null, t);
+
+        if (getFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenClient()) {
+            bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
+        }
+
+        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        bootstrap.connect().addListener((futureListener) -> {
+            if (!futureListener.isSuccess()) {
+                exceptionCaught(null, futureListener.cause());
+            }
+
+            handleFuture.complete(null);
+        });
+
+        if (wait) {
+            handleFuture.join();
         }
     }
 
@@ -153,42 +155,39 @@ public class TcpClientSession extends TcpSession {
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
         if (getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!this.host.matches(IP_REGEX) && !this.host.equalsIgnoreCase("localhost"))) {
-            AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = null;
             try (DnsNameResolver resolver = new DnsNameResolverBuilder(EVENT_LOOP_GROUP.next())
-                    .channelFactory(TRANSPORT_TYPE.datagramChannelFactory())
-                    .build()) {
-                envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                .channelFactory(TRANSPORT_TYPE.datagramChannelFactory())
+                .build()) {
+                AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
+                try {
+                    DnsResponse response = envelope.content();
+                    if (response.count(DnsSection.ANSWER) > 0) {
+                        DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
+                        if (record.type() == DnsRecordType.SRV) {
+                            ByteBuf buf = record.content();
+                            buf.skipBytes(4); // Skip priority and weight.
 
-                DnsResponse response = envelope.content();
-                if (response.count(DnsSection.ANSWER) > 0) {
-                    DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                    if (record.type() == DnsRecordType.SRV) {
-                        ByteBuf buf = record.content();
-                        buf.skipBytes(4); // Skip priority and weight.
+                            int port = buf.readUnsignedShort();
+                            String host = DefaultDnsRecordDecoder.decodeName(buf);
+                            if (host.endsWith(".")) {
+                                host = host.substring(0, host.length() - 1);
+                            }
 
-                        int port = buf.readUnsignedShort();
-                        String host = DefaultDnsRecordDecoder.decodeName(buf);
-                        if (host.endsWith(".")) {
-                            host = host.substring(0, host.length() - 1);
+                            log.debug("Found SRV record containing \"{}:{}\".", host, port);
+
+                            this.host = host;
+                            this.port = port;
+                        } else {
+                            log.debug("Received non-SRV record in response.");
                         }
-
-                        log.debug("Found SRV record containing \"{}:{}\".", host, port);
-
-                        this.host = host;
-                        this.port = port;
                     } else {
-                        log.debug("Received non-SRV record in response.");
+                        log.debug("No SRV record found.");
                     }
-                } else {
-                    log.debug("No SRV record found.");
+                } finally {
+                    envelope.release();
                 }
             } catch (Exception e) {
                 log.debug("Failed to resolve SRV record.", e);
-            } finally {
-                if (envelope != null) {
-                    envelope.release();
-                }
-
             }
         } else {
             log.debug("Not resolving SRV record for {}", this.host);
@@ -206,54 +205,58 @@ public class TcpClientSession extends TcpSession {
     }
 
     private void addProxy(ChannelPipeline pipeline) {
-        if (proxy != null) {
-            switch (proxy.type()) {
-                case HTTP -> {
-                    if (proxy.username() != null && proxy.password() != null) {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address(), proxy.username(), proxy.password()));
-                    } else {
-                        pipeline.addFirst("proxy", new HttpProxyHandler(proxy.address()));
-                    }
+        if (proxy == null) {
+            return;
+        }
+
+        switch (proxy.type()) {
+            case HTTP -> {
+                if (proxy.username() != null && proxy.password() != null) {
+                    pipeline.addLast("proxy", new HttpProxyHandler(proxy.address(), proxy.username(), proxy.password()));
+                } else {
+                    pipeline.addLast("proxy", new HttpProxyHandler(proxy.address()));
                 }
-                case SOCKS4 -> {
-                    if (proxy.username() != null) {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address(), proxy.username()));
-                    } else {
-                        pipeline.addFirst("proxy", new Socks4ProxyHandler(proxy.address()));
-                    }
-                }
-                case SOCKS5 -> {
-                    if (proxy.username() != null && proxy.password() != null) {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address(), proxy.username(), proxy.password()));
-                    } else {
-                        pipeline.addFirst("proxy", new Socks5ProxyHandler(proxy.address()));
-                    }
-                }
-                default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.type());
             }
+            case SOCKS4 -> {
+                if (proxy.username() != null) {
+                    pipeline.addLast("proxy", new Socks4ProxyHandler(proxy.address(), proxy.username()));
+                } else {
+                    pipeline.addLast("proxy", new Socks4ProxyHandler(proxy.address()));
+                }
+            }
+            case SOCKS5 -> {
+                if (proxy.username() != null && proxy.password() != null) {
+                    pipeline.addLast("proxy", new Socks5ProxyHandler(proxy.address(), proxy.username(), proxy.password()));
+                } else {
+                    pipeline.addLast("proxy", new Socks5ProxyHandler(proxy.address()));
+                }
+            }
+            default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.type());
         }
     }
 
-    private void addHAProxySupport(ChannelPipeline pipeline) {
+    private void initializeHAProxySupport(Channel channel) {
         InetSocketAddress clientAddress = getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
-        if (getFlag(BuiltinFlags.ENABLE_CLIENT_PROXY_PROTOCOL, false) && clientAddress != null) {
-            pipeline.addFirst("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
-                @Override
-                public void channelActive(ChannelHandlerContext ctx) throws Exception {
-                    HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
-                    InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-                    ctx.channel().writeAndFlush(new HAProxyMessage(
-                            HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
-                            clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
-                            clientAddress.getPort(), remoteAddress.getPort()
-                    ));
-                    ctx.pipeline().remove(this);
-                    ctx.pipeline().remove("proxy-protocol-encoder");
-                    super.channelActive(ctx);
-                }
-            });
-            pipeline.addFirst("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
+        if (clientAddress == null) {
+            return;
         }
+
+        channel.pipeline().addLast("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
+        channel.pipeline().addLast("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
+            @Override
+            public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+                HAProxyProxiedProtocol proxiedProtocol = clientAddress.getAddress() instanceof Inet4Address ? HAProxyProxiedProtocol.TCP4 : HAProxyProxiedProtocol.TCP6;
+                ctx.channel().writeAndFlush(new HAProxyMessage(
+                    HAProxyProtocolVersion.V2, HAProxyCommand.PROXY, proxiedProtocol,
+                    clientAddress.getAddress().getHostAddress(), remoteAddress.getAddress().getHostAddress(),
+                    clientAddress.getPort(), remoteAddress.getPort()
+                )).addListener(future -> channel.pipeline().remove("proxy-protocol-encoder"));
+                ctx.pipeline().remove(this);
+
+                super.channelActive(ctx);
+            }
+        });
     }
 
     private static void createTcpEventLoopGroup() {
@@ -264,7 +267,7 @@ public class TcpClientSession extends TcpSession {
         EVENT_LOOP_GROUP = TRANSPORT_TYPE.eventLoopGroupFactory().apply(newThreadFactory());
 
         Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+            () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
     }
 
     protected static ThreadFactory newThreadFactory() {

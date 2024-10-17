@@ -1,14 +1,17 @@
 package org.geysermc.mcprotocollib.network;
 
+import io.netty.channel.Channel;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
+import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
+import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.network.tcp.FlushHandler;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -37,7 +40,7 @@ public interface Session {
      * @param wait Whether to wait for the connection to be established before returning.
      * @param transferring Whether the session is a client being transferred.
      */
-    public void connect(boolean wait, boolean transferring);
+    void connect(boolean wait, boolean transferring);
 
     /**
      * Gets the host the session is connected to.
@@ -138,7 +141,7 @@ public interface Session {
      *
      * @param flags Collection of flags
      */
-    public void setFlags(Map<String, Object> flags);
+    void setFlags(Map<String, Object> flags);
 
     /**
      * Gets the listeners listening on this session.
@@ -183,68 +186,21 @@ public interface Session {
     void callPacketSent(Packet packet);
 
     /**
-     * Gets the compression packet length threshold for this session (-1 = disabled).
+     * Sets the compression config for this session.
      *
-     * @return This session's compression threshold.
+     * @param compressionConfig the compression to compress with,
+     *                          or null to disable compression
      */
-    int getCompressionThreshold();
+    void setCompression(@Nullable CompressionConfig compressionConfig);
 
     /**
-     * Sets the compression packet length threshold for this session (-1 = disabled).
+     * Sets encryption for this session.
      *
-     * @param threshold The new compression threshold.
-     * @param validateDecompression whether to validate that the decompression fits within size checks.
-     */
-    void setCompressionThreshold(int threshold, boolean validateDecompression);
-
-    /**
-     * Enables encryption for this session.
+     * @param encryptionConfig the encryption to encrypt with,
+     *                         or null to disable encryption
      *
-     * @param encryption the encryption to encrypt with
      */
-    void enableEncryption(PacketEncryption encryption);
-
-    /**
-     * Gets the connect timeout for this session in seconds.
-     *
-     * @return The session's connect timeout.
-     */
-    int getConnectTimeout();
-
-    /**
-     * Sets the connect timeout for this session in seconds.
-     *
-     * @param timeout Connect timeout to set.
-     */
-    void setConnectTimeout(int timeout);
-
-    /**
-     * Gets the read timeout for this session in seconds.
-     *
-     * @return The session's read timeout.
-     */
-    int getReadTimeout();
-
-    /**
-     * Sets the read timeout for this session in seconds.
-     *
-     * @param timeout Read timeout to set.
-     */
-    void setReadTimeout(int timeout);
-
-    /**
-     * Gets the write timeout for this session in seconds.
-     *
-     * @return The session's write timeout.
-     */
-    int getWriteTimeout();
-
-    /**
-     * Sets the write timeout for this session in seconds.
-     *
-     * @param timeout Write timeout to set.
-     */
-    void setWriteTimeout(int timeout);
+    void setEncryption(@Nullable EncryptionConfig encryptionConfig);
 
     /**
      * Returns true if the session is connected.
@@ -258,7 +214,17 @@ public interface Session {
      *
      * @param packet Packet to send.
      */
-    void send(Packet packet);
+    default void send(@NonNull Packet packet) {
+        this.send(packet, null);
+    }
+
+    /**
+     * Sends a packet and runs the specified callback when the packet has been sent.
+     *
+     * @param packet Packet to send.
+     * @param onSent Callback to run when the packet has been sent.
+     */
+    void send(@NonNull Packet packet, @Nullable Runnable onSent);
 
     /**
      * Disconnects the session.
@@ -301,4 +267,48 @@ public interface Session {
      * @param cause Throwable responsible for disconnecting.
      */
     void disconnect(@NonNull Component reason, @Nullable Throwable cause);
+
+    /**
+     * Auto read in netty means that the server is automatically reading from the channel.
+     * Turning it off means that we won't get more packets being decoded until we turn it back on.
+     * We use this to hold off on reading packets until we are ready to process them.
+     * For example this is used for switching inbound states with {@link #switchInboundState(Runnable)}.
+     *
+     * @param autoRead Whether to enable auto read.
+     *                 Default is true.
+     */
+    void setAutoRead(boolean autoRead);
+
+    /**
+     * Returns the underlying netty channel of this session.
+     *
+     * @return The netty channel
+     */
+    Channel getChannel();
+
+    /**
+     * Changes the inbound state of the session and then re-enables auto read.
+     * This is used after a terminal packet was handled and the session is ready to receive more packets in the new state.
+     *
+     * @param switcher The runnable that switches the inbound state.
+     */
+    default void switchInboundState(Runnable switcher) {
+        switcher.run();
+
+        // We switched to the new inbound state
+        // we can start reading again
+        setAutoRead(true);
+    }
+
+    /**
+     * Flushes all packets that are due to be sent and changes the outbound state of the session.
+     * This makes sure no other threads have scheduled packets to be sent.
+     *
+     * @param switcher The runnable that switches the outbound state.
+     */
+    default void switchOutboundState(Runnable switcher) {
+        getChannel().writeAndFlush(FlushHandler.FLUSH_PACKET).syncUninterruptibly();
+
+        switcher.run();
+    }
 }

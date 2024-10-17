@@ -8,7 +8,7 @@ import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
-import org.geysermc.mcprotocollib.network.crypt.PacketEncryption;
+import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 import org.geysermc.mcprotocollib.network.packet.DefaultPacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
@@ -23,7 +23,7 @@ public class TestProtocol extends PacketProtocol {
     private static final Logger log = LoggerFactory.getLogger(TestProtocol.class);
     private final PacketHeader header = new DefaultPacketHeader();
     private final PacketRegistry registry = new PacketRegistry();
-    private AESEncryption encrypt;
+    private EncryptionConfig encrypt;
 
     @SuppressWarnings("unused")
     public TestProtocol() {
@@ -51,7 +51,7 @@ public class TestProtocol extends PacketProtocol {
         });
 
         try {
-            this.encrypt = new AESEncryption(key);
+            this.encrypt = new EncryptionConfig(new AESEncryption(key));
         } catch (GeneralSecurityException e) {
             log.error("Failed to create encryption", e);
         }
@@ -67,7 +67,7 @@ public class TestProtocol extends PacketProtocol {
         return this.header;
     }
 
-    public PacketEncryption getEncryption() {
+    public EncryptionConfig getEncryption() {
         return this.encrypt;
     }
 
@@ -82,7 +82,12 @@ public class TestProtocol extends PacketProtocol {
     }
 
     @Override
-    public PacketRegistry getPacketRegistry() {
+    public PacketRegistry getInboundPacketRegistry() {
+        return registry;
+    }
+
+    @Override
+    public PacketRegistry getOutboundPacketRegistry() {
         return registry;
     }
 }

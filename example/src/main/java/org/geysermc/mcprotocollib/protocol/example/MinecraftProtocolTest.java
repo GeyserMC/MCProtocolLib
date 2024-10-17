@@ -48,7 +48,8 @@ import java.util.BitSet;
 public class MinecraftProtocolTest {
     private static final Logger log = LoggerFactory.getLogger(MinecraftProtocolTest.class);
     private static final boolean SPAWN_SERVER = true;
-    private static final boolean VERIFY_USERS = false;
+    private static final boolean ENCRYPT_CONNECTION = true;
+    private static final boolean SHOULD_AUTHENTICATE = false;
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 25565;
     private static final ProxyInfo PROXY = null;
@@ -63,7 +64,8 @@ public class MinecraftProtocolTest {
 
             Server server = new TcpServer(HOST, PORT, MinecraftProtocol::new);
             server.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
-            server.setGlobalFlag(MinecraftConstants.VERIFY_USERS_KEY, VERIFY_USERS);
+            server.setGlobalFlag(MinecraftConstants.ENCRYPT_CONNECTION, ENCRYPT_CONNECTION);
+            server.setGlobalFlag(MinecraftConstants.SHOULD_AUTHENTICATE, SHOULD_AUTHENTICATE);
             server.setGlobalFlag(MinecraftConstants.SERVER_INFO_BUILDER_KEY, session ->
                     new ServerStatusInfo(
                             Component.text("Hello world!"),
@@ -101,7 +103,7 @@ public class MinecraftProtocolTest {
                     ))
             );
 
-            server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 100);
+            server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 256);
             server.addListener(new ServerAdapter() {
                 @Override
                 public void serverClosed(ServerClosedEvent event) {
@@ -134,7 +136,7 @@ public class MinecraftProtocolTest {
                 @Override
                 public void sessionRemoved(SessionRemovedEvent event) {
                     MinecraftProtocol protocol = (MinecraftProtocol) event.getSession().getPacketProtocol();
-                    if (protocol.getState() == ProtocolState.GAME) {
+                    if (protocol.getOutboundState() == ProtocolState.GAME) {
                         log.info("Closing server.");
                         event.getServer().close(false);
                     }
@@ -178,7 +180,7 @@ public class MinecraftProtocolTest {
 
     private static void login() {
         MinecraftProtocol protocol;
-        if (VERIFY_USERS) {
+        if (SHOULD_AUTHENTICATE) {
             StepFullJavaSession.FullJavaSession fullJavaSession;
             try {
                 fullJavaSession = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
