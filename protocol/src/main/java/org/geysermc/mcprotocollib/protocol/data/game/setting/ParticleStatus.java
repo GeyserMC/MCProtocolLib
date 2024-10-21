@@ -5,7 +5,7 @@ public enum ParticleStatus {
     DECREASED,
     MINIMAL;
 
-    public static final ParticleStatus[] VALUES = values();
+    private static final ParticleStatus[] VALUES = values();
 
     public static ParticleStatus from(int id) {
         return VALUES[id];
