@@ -9,6 +9,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.HandPreference;
 import org.geysermc.mcprotocollib.protocol.data.game.setting.ChatVisibility;
+import org.geysermc.mcprotocollib.protocol.data.game.setting.ParticleStatus;
 import org.geysermc.mcprotocollib.protocol.data.game.setting.SkinPart;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
      * Whether the client permits being shown in server ping responses.
      */
     private final boolean allowsListing;
+    private final @NonNull ParticleStatus particleStatus;
 
     public ServerboundClientInformationPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.locale = helper.readString(in);
@@ -48,6 +50,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
         this.mainHand = HandPreference.from(helper.readVarInt(in));
         this.textFilteringEnabled = in.readBoolean();
         this.allowsListing = in.readBoolean();
+        this.particleStatus = ParticleStatus.from(helper.readVarInt(in));
     }
 
     @Override
@@ -67,5 +70,6 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.mainHand.ordinal());
         out.writeBoolean(this.textFilteringEnabled);
         out.writeBoolean(allowsListing);
+        helper.writeVarInt(out, this.particleStatus.ordinal());
     }
 }
