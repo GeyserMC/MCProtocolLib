@@ -32,4 +32,9 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
         out.writeShort(this.slot);
         helper.writeOptionalItemStack(out, this.item);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

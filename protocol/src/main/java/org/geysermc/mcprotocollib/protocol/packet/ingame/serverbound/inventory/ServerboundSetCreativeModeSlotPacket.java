@@ -26,4 +26,9 @@ public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
         out.writeShort(this.slot);
         helper.writeOptionalItemStack(out, this.clickedItem);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

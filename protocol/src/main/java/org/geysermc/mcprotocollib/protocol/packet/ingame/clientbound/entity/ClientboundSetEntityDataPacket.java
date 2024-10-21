@@ -26,4 +26,9 @@ public class ClientboundSetEntityDataPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.entityId);
         helper.writeEntityMetadata(out, this.metadata);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

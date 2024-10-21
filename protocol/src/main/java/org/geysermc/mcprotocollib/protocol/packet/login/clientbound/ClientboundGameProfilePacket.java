@@ -32,11 +32,6 @@ public class ClientboundGameProfilePacket implements MinecraftPacket {
     }
 
     @Override
-    public boolean isPriority() {
-        return true;
-    }
-
-    @Override
     public boolean isTerminal() {
         return true;
     }

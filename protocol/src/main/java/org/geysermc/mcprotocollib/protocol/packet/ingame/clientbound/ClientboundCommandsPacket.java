@@ -300,4 +300,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.firstNodeIndex);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

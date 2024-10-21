@@ -24,4 +24,9 @@ public class ClientboundBlockUpdatePacket implements MinecraftPacket {
         helper.writePosition(out, this.entry.getPosition());
         helper.writeVarInt(out, this.entry.getBlock());
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

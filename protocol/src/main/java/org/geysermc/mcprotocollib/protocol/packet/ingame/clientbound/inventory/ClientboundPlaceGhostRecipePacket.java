@@ -25,4 +25,9 @@ public class ClientboundPlaceGhostRecipePacket implements MinecraftPacket {
         out.writeByte(this.containerId);
         helper.writeString(out, this.recipeId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

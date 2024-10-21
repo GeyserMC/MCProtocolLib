@@ -76,7 +76,7 @@ public class TcpClientSession extends TcpSession {
     }
 
     public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
-        super(host, port, protocol);
+        super(host, port, protocol, DefaultPacketHandlerExecutor.createExecutor());
         this.bindAddress = bindAddress;
         this.bindPort = bindPort;
         this.proxy = proxy;

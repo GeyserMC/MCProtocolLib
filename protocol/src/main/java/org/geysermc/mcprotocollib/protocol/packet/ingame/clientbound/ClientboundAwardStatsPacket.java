@@ -91,4 +91,9 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
             helper.writeVarInt(out, entry.getIntValue());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -26,4 +26,9 @@ public class ClientboundEntityEventPacket implements MinecraftPacket {
         out.writeInt(this.entityId);
         helper.writeEntityEvent(out, this.event);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

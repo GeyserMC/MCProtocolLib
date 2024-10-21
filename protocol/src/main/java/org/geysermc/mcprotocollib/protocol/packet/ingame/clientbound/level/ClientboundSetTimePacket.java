@@ -24,4 +24,9 @@ public class ClientboundSetTimePacket implements MinecraftPacket {
         out.writeLong(this.worldAge);
         out.writeLong(this.time);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

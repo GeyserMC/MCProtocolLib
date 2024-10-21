@@ -26,4 +26,9 @@ public class ClientboundTabListPacket implements MinecraftPacket {
         helper.writeComponent(out, this.header);
         helper.writeComponent(out, this.footer);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -28,9 +28,4 @@ public class ClientboundDisconnectPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.reason);
     }
-
-    @Override
-    public boolean isPriority() {
-        return true;
-    }
 }

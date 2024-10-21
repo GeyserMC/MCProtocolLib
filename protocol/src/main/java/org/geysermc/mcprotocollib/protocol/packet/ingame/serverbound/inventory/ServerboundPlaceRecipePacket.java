@@ -28,4 +28,9 @@ public class ServerboundPlaceRecipePacket implements MinecraftPacket {
         helper.writeString(out, this.recipeId);
         out.writeBoolean(this.makeAll);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

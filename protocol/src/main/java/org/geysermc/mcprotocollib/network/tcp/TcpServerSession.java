@@ -13,7 +13,7 @@ public class TcpServerSession extends TcpSession {
     private final PacketCodecHelper codecHelper;
 
     public TcpServerSession(String host, int port, PacketProtocol protocol, TcpServer server) {
-        super(host, port, protocol);
+        super(host, port, protocol, DefaultPacketHandlerExecutor.createExecutor());
         this.server = server;
         this.codecHelper = protocol.createHelper();
     }

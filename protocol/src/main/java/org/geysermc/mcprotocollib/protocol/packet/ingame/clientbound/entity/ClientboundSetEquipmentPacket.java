@@ -47,4 +47,9 @@ public class ClientboundSetEquipmentPacket implements MinecraftPacket {
             helper.writeOptionalItemStack(out, this.equipment[i].getItem());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

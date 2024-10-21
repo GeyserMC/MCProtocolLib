@@ -116,4 +116,9 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
 
         helper.writeOptionalItemStack(out, this.carriedItem);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

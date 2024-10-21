@@ -63,4 +63,9 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
 
         out.writeByte(flags);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

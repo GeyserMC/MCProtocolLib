@@ -96,4 +96,9 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
         out.writeInt(value);
         out.writeBoolean(this.broadcast);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

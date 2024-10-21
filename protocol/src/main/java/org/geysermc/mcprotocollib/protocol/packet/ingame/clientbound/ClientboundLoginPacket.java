@@ -61,4 +61,9 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         helper.writePlayerSpawnInfo(out, this.commonPlayerSpawnInfo);
         out.writeBoolean(this.enforcesSecureChat);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

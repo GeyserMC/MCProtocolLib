@@ -45,4 +45,9 @@ public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.selectionPriority);
         helper.writeVarInt(out, this.placementPriority);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -30,4 +30,9 @@ public class ServerboundMovePlayerPosPacket implements MinecraftPacket {
         out.writeDouble(this.z);
         out.writeBoolean(this.onGround);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

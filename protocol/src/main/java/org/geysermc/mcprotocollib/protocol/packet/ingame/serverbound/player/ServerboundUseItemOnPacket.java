@@ -46,4 +46,9 @@ public class ServerboundUseItemOnPacket implements MinecraftPacket {
         out.writeBoolean(this.insideBlock);
         helper.writeVarInt(out, this.sequence);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

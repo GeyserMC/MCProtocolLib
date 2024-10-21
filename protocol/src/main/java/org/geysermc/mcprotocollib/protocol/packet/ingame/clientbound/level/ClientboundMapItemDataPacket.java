@@ -89,4 +89,9 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
             out.writeByte(0);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

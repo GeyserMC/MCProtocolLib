@@ -21,4 +21,9 @@ public class ClientboundSetBorderWarningDistancePacket implements MinecraftPacke
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.warningBlocks);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

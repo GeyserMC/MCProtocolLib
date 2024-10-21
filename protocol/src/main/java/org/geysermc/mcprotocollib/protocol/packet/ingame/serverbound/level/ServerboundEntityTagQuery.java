@@ -24,4 +24,9 @@ public class ServerboundEntityTagQuery implements MinecraftPacket {
         helper.writeVarInt(out, this.transactionId);
         helper.writeVarInt(out, this.entityId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

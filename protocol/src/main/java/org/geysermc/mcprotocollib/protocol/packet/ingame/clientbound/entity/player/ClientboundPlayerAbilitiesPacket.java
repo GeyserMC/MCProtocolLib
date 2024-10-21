@@ -58,4 +58,9 @@ public class ClientboundPlayerAbilitiesPacket implements MinecraftPacket {
         out.writeFloat(this.flySpeed);
         out.writeFloat(this.walkSpeed);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -67,4 +67,9 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         }
         out.writeBoolean(this.isSneaking);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

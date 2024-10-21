@@ -24,4 +24,9 @@ public class ClientboundCooldownPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.itemId);
         helper.writeVarInt(out, this.cooldownTicks);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

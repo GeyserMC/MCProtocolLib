@@ -115,4 +115,9 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         out.writeByte(val);
         helper.writeVarInt(out, this.blockId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

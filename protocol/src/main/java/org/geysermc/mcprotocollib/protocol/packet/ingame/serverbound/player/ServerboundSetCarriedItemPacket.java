@@ -21,4 +21,9 @@ public class ServerboundSetCarriedItemPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeShort(this.slot);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

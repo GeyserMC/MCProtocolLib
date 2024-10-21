@@ -28,4 +28,9 @@ public class ServerboundContainerSlotStateChangedPacket implements MinecraftPack
         helper.writeVarInt(out, this.containerId);
         out.writeBoolean(this.newState);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

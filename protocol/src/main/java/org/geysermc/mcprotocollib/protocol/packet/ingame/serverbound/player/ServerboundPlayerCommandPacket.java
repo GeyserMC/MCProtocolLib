@@ -33,4 +33,9 @@ public class ServerboundPlayerCommandPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.state.ordinal());
         helper.writeVarInt(out, this.jumpBoost);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

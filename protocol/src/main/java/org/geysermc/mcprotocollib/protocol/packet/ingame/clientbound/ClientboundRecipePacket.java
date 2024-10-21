@@ -126,4 +126,9 @@ public class ClientboundRecipePacket implements MinecraftPacket {
             helper.writeString(out, recipeId);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

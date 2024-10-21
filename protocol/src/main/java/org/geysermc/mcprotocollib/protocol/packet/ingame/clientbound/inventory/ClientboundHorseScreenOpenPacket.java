@@ -27,4 +27,9 @@ public class ClientboundHorseScreenOpenPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.inventoryColumns);
         out.writeInt(this.entityId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

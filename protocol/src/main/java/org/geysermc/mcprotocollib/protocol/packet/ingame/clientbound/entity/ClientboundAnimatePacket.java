@@ -30,4 +30,9 @@ public class ClientboundAnimatePacket implements MinecraftPacket {
             out.writeByte(this.animation.getId());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

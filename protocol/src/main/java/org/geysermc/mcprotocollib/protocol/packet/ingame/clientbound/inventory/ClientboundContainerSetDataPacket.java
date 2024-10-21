@@ -32,4 +32,9 @@ public class ClientboundContainerSetDataPacket implements MinecraftPacket {
         out.writeShort(this.rawProperty);
         out.writeShort(this.value);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

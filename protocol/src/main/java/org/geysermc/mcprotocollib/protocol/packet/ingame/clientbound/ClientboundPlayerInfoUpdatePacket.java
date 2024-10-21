@@ -115,4 +115,9 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
             }
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

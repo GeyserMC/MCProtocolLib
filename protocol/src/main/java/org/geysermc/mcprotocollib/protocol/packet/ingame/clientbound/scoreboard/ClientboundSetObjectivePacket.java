@@ -83,4 +83,9 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
             helper.writeNullable(out, this.numberFormat, helper::writeNumberFormat);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -74,4 +74,9 @@ public class ClientboundExplodePacket implements MinecraftPacket {
             helper.writeVarInt(out, ((BuiltinSound) this.explosionSound).ordinal() + 1);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

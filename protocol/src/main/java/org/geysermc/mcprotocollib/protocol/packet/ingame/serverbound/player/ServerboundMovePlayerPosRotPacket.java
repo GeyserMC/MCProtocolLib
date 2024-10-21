@@ -36,4 +36,9 @@ public class ServerboundMovePlayerPosRotPacket implements MinecraftPacket {
         out.writeFloat(this.pitch);
         out.writeBoolean(this.onGround);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

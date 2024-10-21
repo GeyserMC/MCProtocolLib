@@ -58,4 +58,9 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         };
         tabIdWriter.accept(this.tabId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

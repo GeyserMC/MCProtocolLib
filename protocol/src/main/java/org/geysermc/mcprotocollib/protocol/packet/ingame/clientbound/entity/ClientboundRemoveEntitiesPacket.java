@@ -28,4 +28,9 @@ public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
             helper.writeVarInt(out, entityId);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

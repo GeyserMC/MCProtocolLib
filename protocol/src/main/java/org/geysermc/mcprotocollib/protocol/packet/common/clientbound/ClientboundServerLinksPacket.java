@@ -52,4 +52,9 @@ public class ClientboundServerLinksPacket implements MinecraftPacket {
             helper.writeString(out, link.link());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -65,4 +65,9 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
 
         helper.writeVarInt(out, this.teleportId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }
