@@ -1,19 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
-import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.CraftingBookCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.Recipe;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.RecipeType;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.CookedRecipeData;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.ShapedRecipeData;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.ShapelessRecipeData;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.SmithingTransformRecipeData;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.data.StoneCuttingRecipeData;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.ItemStackSlotDisplay;
-import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.SlotDisplay;
 import org.geysermc.mcprotocollib.protocol.packet.PacketTest;
 import org.junit.jupiter.api.BeforeEach;
 
