@@ -1,8 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
@@ -13,7 +11,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
@@ -236,29 +233,14 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int nutrition = this.readVarInt(buf);
         float saturationModifier = buf.readFloat();
         boolean canAlwaysEat = buf.readBoolean();
-        float eatSeconds = buf.readFloat();
-        ItemStack usingConvertsTo = this.readNullable(buf, this::readOptionalItemStack);
 
-        List<FoodProperties.PossibleEffect> effects = this.readList(buf, (input) -> {
-            MobEffectInstance effect = this.readEffectInstance(input);
-            float probability = input.readFloat();
-            return new FoodProperties.PossibleEffect(effect, probability);
-        });
-
-        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, usingConvertsTo, effects);
+        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat);
     }
 
     public void writeFoodProperties(ByteBuf buf, FoodProperties properties) {
         this.writeVarInt(buf, properties.getNutrition());
         buf.writeFloat(properties.getSaturationModifier());
         buf.writeBoolean(properties.isCanAlwaysEat());
-        buf.writeFloat(properties.getEatSeconds());
-        this.writeNullable(buf, properties.getUsingConvertsTo(), this::writeOptionalItemStack);
-
-        this.writeList(buf, properties.getEffects(), (output, effect) -> {
-            this.writeEffectInstance(output, effect.getEffect());
-            output.writeFloat(effect.getProbability());
-        });
     }
 
     public Consumable readConsumable(ByteBuf buf) {
