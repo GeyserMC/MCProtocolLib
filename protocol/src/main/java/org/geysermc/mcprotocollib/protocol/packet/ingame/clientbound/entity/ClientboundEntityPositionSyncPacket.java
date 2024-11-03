@@ -41,4 +41,9 @@ public class ClientboundEntityPositionSyncPacket implements MinecraftPacket {
         out.writeFloat(this.xRot);
         out.writeBoolean(this.onGround);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }
