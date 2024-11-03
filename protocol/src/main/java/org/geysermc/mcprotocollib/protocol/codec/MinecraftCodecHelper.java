@@ -1099,7 +1099,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         RecipeSlotType type = RecipeSlotType.from(this.readVarInt(buf));
         SlotDisplay display;
         switch (type) {
-            case EMPTY -> display = new EmptySlotDisplay();
+            case EMPTY -> display = EmptySlotDisplay.INSTANCE;
             case ANY_FUEL -> display = new AnyFuelSlotDisplay();
             case ITEM -> display = new ItemSlotDisplay(this.readVarInt(buf));
             case ITEM_STACK -> display = new ItemStackSlotDisplay(this.readItemStack(buf));
