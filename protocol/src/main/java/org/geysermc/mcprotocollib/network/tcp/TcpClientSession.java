@@ -43,6 +43,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -76,7 +77,11 @@ public class TcpClientSession extends TcpSession {
     }
 
     public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy) {
-        super(host, port, protocol, DefaultPacketHandlerExecutor.createExecutor());
+        this(host, port, bindAddress, bindPort, protocol, proxy, DefaultPacketHandlerExecutor.createExecutor());
+    }
+
+    public TcpClientSession(String host, int port, String bindAddress, int bindPort, PacketProtocol protocol, ProxyInfo proxy, Executor packetHandlerExecutor) {
+        super(host, port, protocol, packetHandlerExecutor);
         this.bindAddress = bindAddress;
         this.bindPort = bindPort;
         this.proxy = proxy;
