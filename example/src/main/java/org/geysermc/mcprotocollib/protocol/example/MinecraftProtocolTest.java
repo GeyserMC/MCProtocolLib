@@ -96,7 +96,8 @@ public class MinecraftProtocolTest {
                                     false,
                                     false,
                                     null,
-                                    100
+                                    100,
+                                    5
                             ),
                             true
                     ))

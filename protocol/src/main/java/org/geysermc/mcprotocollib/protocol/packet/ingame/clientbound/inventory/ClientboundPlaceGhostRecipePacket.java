@@ -7,23 +7,24 @@ import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.RecipeDisplay;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundPlaceGhostRecipePacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull String recipeId;
+    private final RecipeDisplay recipeDisplay;
 
     public ClientboundPlaceGhostRecipePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
-        this.recipeId = helper.readString(in);
+        this.containerId = helper.readVarInt(in);
+        this.recipeDisplay = helper.readRecipeDisplay(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
-        helper.writeString(out, this.recipeId);
+        helper.writeVarInt(out, this.containerId);
+        helper.writeRecipeDisplay(out, this.recipeDisplay);
     }
 
     @Override

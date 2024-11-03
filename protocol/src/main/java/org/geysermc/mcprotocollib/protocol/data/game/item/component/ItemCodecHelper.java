@@ -1,8 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
@@ -11,8 +9,8 @@ import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
@@ -113,33 +111,6 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeNullable(buf, blockPredicate.getNbt(), this::writeAnyTag);
     }
 
-    public HolderSet readHolderSet(ByteBuf buf) {
-        int length = this.readVarInt(buf) - 1;
-        if (length == -1) {
-            return new HolderSet(this.readResourceLocation(buf));
-        } else {
-            int[] holders = new int[length];
-            for (int i = 0; i < length; i++) {
-                holders[i] = this.readVarInt(buf);
-            }
-
-            return new HolderSet(holders);
-        }
-    }
-
-    public void writeHolderSet(ByteBuf buf, HolderSet holderSet) {
-        if (holderSet.getLocation() != null) {
-            this.writeVarInt(buf, 0);
-            this.writeResourceLocation(buf, holderSet.getLocation());
-        } else {
-            assert holderSet.getHolders() != null;
-            this.writeVarInt(buf, holderSet.getHolders().length + 1);
-            for (int holder : holderSet.getHolders()) {
-                this.writeVarInt(buf, holder);
-            }
-        }
-    }
-
     public ToolData readToolData(ByteBuf buf) {
         List<ToolData.Rule> rules = this.readList(buf, (input) -> {
             HolderSet holderSet = this.readHolderSet(input);
@@ -163,6 +134,34 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
 
         buf.writeFloat(data.getDefaultMiningSpeed());
         this.writeVarInt(buf, data.getDamagePerBlock());
+    }
+
+    public Equippable readEquippable(ByteBuf buf) {
+        EquipmentSlot slot = EquipmentSlot.from(this.readVarInt(buf));
+        Sound equipSound = this.readById(buf, BuiltinSound::from, this::readSoundEvent);
+        Key model = this.readNullable(buf, this::readResourceLocation);
+        Key cameraOverlay = this.readNullable(buf, this::readResourceLocation);
+        HolderSet allowedEntities = this.readNullable(buf, this::readHolderSet);
+        boolean dispensable = buf.readBoolean();
+        boolean swappable = buf.readBoolean();
+        boolean damageOnHurt = buf.readBoolean();
+        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt);
+    }
+
+    public void writeEquippable(ByteBuf buf, Equippable equippable) {
+        this.writeVarInt(buf, equippable.slot().ordinal());
+        if (equippable.equipSound() instanceof CustomSound) {
+            this.writeVarInt(buf, 0);
+            this.writeSoundEvent(buf, equippable.equipSound());
+        } else {
+            this.writeVarInt(buf, ((BuiltinSound) equippable.equipSound()).ordinal() + 1);
+        }
+
+        this.writeNullable(buf, equippable.model(), this::writeResourceLocation);
+        this.writeNullable(buf, equippable.allowedEntities(), this::writeHolderSet);
+        buf.writeBoolean(equippable.dispensable());
+        buf.writeBoolean(equippable.swappable());
+        buf.writeBoolean(equippable.damageOnHurt());
     }
 
     public ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
@@ -207,7 +206,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int customColor = buf.readBoolean() ? buf.readInt() : -1;
 
         List<MobEffectInstance> customEffects = this.readList(buf, this::readEffectInstance);
-        return new PotionContents(potionId, customColor, customEffects);
+        String customName = this.readNullable(buf, this::readString);
+        return new PotionContents(potionId, customColor, customEffects, customName);
     }
 
     public void writePotionContents(ByteBuf buf, PotionContents contents) {
@@ -226,35 +226,88 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
 
         this.writeList(buf, contents.getCustomEffects(), this::writeEffectInstance);
+        this.writeNullable(buf, contents.getCustomName(), this::writeString);
     }
 
     public FoodProperties readFoodProperties(ByteBuf buf) {
         int nutrition = this.readVarInt(buf);
         float saturationModifier = buf.readFloat();
         boolean canAlwaysEat = buf.readBoolean();
-        float eatSeconds = buf.readFloat();
-        ItemStack usingConvertsTo = this.readNullable(buf, this::readOptionalItemStack);
 
-        List<FoodProperties.PossibleEffect> effects = this.readList(buf, (input) -> {
-            MobEffectInstance effect = this.readEffectInstance(input);
-            float probability = input.readFloat();
-            return new FoodProperties.PossibleEffect(effect, probability);
-        });
-
-        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat, eatSeconds, usingConvertsTo, effects);
+        return new FoodProperties(nutrition, saturationModifier, canAlwaysEat);
     }
 
     public void writeFoodProperties(ByteBuf buf, FoodProperties properties) {
         this.writeVarInt(buf, properties.getNutrition());
         buf.writeFloat(properties.getSaturationModifier());
         buf.writeBoolean(properties.isCanAlwaysEat());
-        buf.writeFloat(properties.getEatSeconds());
-        this.writeNullable(buf, properties.getUsingConvertsTo(), this::writeOptionalItemStack);
+    }
 
-        this.writeList(buf, properties.getEffects(), (output, effect) -> {
-            this.writeEffectInstance(output, effect.getEffect());
-            output.writeFloat(effect.getProbability());
-        });
+    public Consumable readConsumable(ByteBuf buf) {
+        float consumeSeconds = buf.readFloat();
+        Consumable.ItemUseAnimation animation = Consumable.ItemUseAnimation.from(this.readVarInt(buf));
+        Sound sound = this.readById(buf, BuiltinSound::from, this::readSoundEvent);
+        boolean hasConsumeParticles = buf.readBoolean();
+        List<ConsumeEffect> onConsumeEffects = this.readList(buf, this::readConsumeEffect);
+        return new Consumable(consumeSeconds, animation, sound, hasConsumeParticles, onConsumeEffects);
+    }
+
+    public void writeConsumable(ByteBuf buf, Consumable consumable) {
+        buf.writeFloat(consumable.consumeSeconds());
+        this.writeVarInt(buf, consumable.animation().ordinal());
+        if (consumable.sound() instanceof CustomSound) {
+            this.writeVarInt(buf, 0);
+            this.writeSoundEvent(buf, consumable.sound());
+        } else {
+            this.writeVarInt(buf, ((BuiltinSound) consumable.sound()).ordinal() + 1);
+        }
+
+        buf.writeBoolean(consumable.hasConsumeParticles());
+        this.writeList(buf, consumable.onConsumeEffects(), this::writeConsumeEffect);
+    }
+
+    public ConsumeEffect readConsumeEffect(ByteBuf buf) {
+        return switch (this.readVarInt(buf)) {
+            case 0 -> new ConsumeEffect.ApplyEffects(this.readList(buf, this::readEffectInstance), buf.readFloat());
+            case 1 -> new ConsumeEffect.RemoveEffects(this.readHolderSet(buf));
+            case 2 -> new ConsumeEffect.ClearAllEffects();
+            case 3 -> new ConsumeEffect.TeleportRandomly(buf.readFloat());
+            case 4 -> new ConsumeEffect.PlaySound(this.readById(buf, BuiltinSound::from, this::readSoundEvent));
+            default -> throw new IllegalStateException("Unexpected value: " + this.readVarInt(buf));
+        };
+    }
+
+    public void writeConsumeEffect(ByteBuf buf, ConsumeEffect consumeEffect) {
+        if (consumeEffect instanceof ConsumeEffect.ApplyEffects applyEffects) {
+            this.writeVarInt(buf, 0);
+            this.writeList(buf, applyEffects.effects(), this::writeEffectInstance);
+            buf.writeFloat(applyEffects.probability());
+        } else if (consumeEffect instanceof ConsumeEffect.RemoveEffects removeEffects) {
+            this.writeVarInt(buf, 1);
+            this.writeHolderSet(buf, removeEffects.effects());
+        } else if (consumeEffect instanceof ConsumeEffect.ClearAllEffects) {
+            this.writeVarInt(buf, 2);
+        } else if (consumeEffect instanceof ConsumeEffect.TeleportRandomly teleportRandomly) {
+            this.writeVarInt(buf, 3);
+            buf.writeFloat(teleportRandomly.diameter());
+        } else if (consumeEffect instanceof ConsumeEffect.PlaySound playSound) {
+            this.writeVarInt(buf, 4);
+            if (playSound.sound() instanceof CustomSound) {
+                this.writeVarInt(buf, 0);
+                this.writeSoundEvent(buf, playSound.sound());
+            } else {
+                this.writeVarInt(buf, ((BuiltinSound) playSound.sound()).ordinal() + 1);
+            }
+        }
+    }
+
+    public UseCooldown readUseCooldown(ByteBuf buf) {
+        return new UseCooldown(buf.readFloat(), this.readNullable(buf, this::readResourceLocation));
+    }
+
+    public void writeUseCooldown(ByteBuf buf, UseCooldown useCooldown) {
+        buf.writeFloat(useCooldown.seconds());
+        this.writeNullable(buf, useCooldown.cooldownGroup(), this::writeResourceLocation);
     }
 
     public MobEffectInstance readEffectInstance(ByteBuf buf) {
@@ -342,10 +395,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         int ingredientId = this.readVarInt(buf);
         float itemModelIndex = buf.readFloat();
 
-        Int2ObjectMap<String> overrideArmorMaterials = new Int2ObjectOpenHashMap<>();
+        Map<Key, String> overrideArmorMaterials = new HashMap<>();
         int overrideCount = this.readVarInt(buf);
         for (int i = 0; i < overrideCount; i++) {
-            overrideArmorMaterials.put(this.readVarInt(buf), this.readString(buf));
+            overrideArmorMaterials.put(this.readResourceLocation(buf), this.readString(buf));
         }
 
         Component description = this.readComponent(buf);
@@ -358,8 +411,8 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         buf.writeFloat(material.itemModelIndex());
 
         this.writeVarInt(buf, material.overrideArmorMaterials().size());
-        for (Int2ObjectMap.Entry<String> entry : material.overrideArmorMaterials().int2ObjectEntrySet()) {
-            this.writeVarInt(buf, entry.getIntKey());
+        for (Map.Entry<Key, String> entry : material.overrideArmorMaterials().entrySet()) {
+            this.writeResourceLocation(buf, entry.getKey());
             this.writeString(buf, entry.getValue());
         }
 
@@ -384,9 +437,10 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
     public Holder<Instrument> readInstrument(ByteBuf buf) {
         return this.readHolder(buf, (input) -> {
             Sound soundEvent = this.readById(input, BuiltinSound::from, this::readSoundEvent);
-            int useDuration = this.readVarInt(input);
+            float useDuration = input.readFloat();
             float range = input.readFloat();
-            return new Instrument(soundEvent, useDuration, range);
+            Component description = this.readComponent(input);
+            return new Instrument(soundEvent, useDuration, range, description);
         });
     }
 
@@ -399,8 +453,9 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
                 this.writeVarInt(buf, ((BuiltinSound) instrument.getSoundEvent()).ordinal() + 1);
             }
 
-            this.writeVarInt(buf, instrument.getUseDuration());
+            buf.writeFloat(instrument.getUseDuration());
             buf.writeFloat(instrument.getRange());
+            this.writeComponent(buf, instrument.getDescription());
         });
     }
 

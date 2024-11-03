@@ -14,12 +14,12 @@ public class ServerboundContainerClosePacket implements MinecraftPacket {
     private final int containerId;
 
     public ServerboundContainerClosePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
+        this.containerId = helper.readVarInt(in);
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
     }
 
     @Override

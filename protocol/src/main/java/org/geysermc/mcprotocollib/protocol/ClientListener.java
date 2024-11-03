@@ -30,7 +30,7 @@ import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.Serv
 import org.geysermc.mcprotocollib.protocol.packet.handshake.serverbound.ClientIntentionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundStartConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
-import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
+import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundLoginFinishedPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundHelloPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundLoginCompressionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundLoginDisconnectPacket;
@@ -94,7 +94,7 @@ public class ClientListener extends SessionAdapter {
 
                 session.send(new ServerboundKeyPacket(helloPacket.getPublicKey(), key, helloPacket.getChallenge()),
                     () -> session.setEncryption(protocol.createEncryption(key)));
-            } else if (packet instanceof ClientboundGameProfilePacket) {
+            } else if (packet instanceof ClientboundLoginFinishedPacket) {
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.CONFIGURATION));
                 session.send(new ServerboundLoginAcknowledgedPacket());
                 session.switchOutboundState(() -> protocol.setOutboundState(ProtocolState.CONFIGURATION));

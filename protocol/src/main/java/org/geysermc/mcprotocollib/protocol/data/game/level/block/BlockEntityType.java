@@ -13,6 +13,7 @@ public enum BlockEntityType {
     SIGN,
     HANGING_SIGN,
     MOB_SPAWNER,
+    CREAKING_HEART,
     PISTON,
     BREWING_STAND,
     ENCHANTING_TABLE,

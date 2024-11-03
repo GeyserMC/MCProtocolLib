@@ -20,7 +20,7 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
     private final @Nullable ItemStack carriedItem;
 
     public ClientboundContainerSetContentPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readUnsignedByte();
+        this.containerId = helper.readVarInt(in);
         this.stateId = helper.readVarInt(in);
         this.items = new ItemStack[helper.readVarInt(in)];
         for (int index = 0; index < this.items.length; index++) {
@@ -31,7 +31,7 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
         helper.writeVarInt(out, this.stateId);
         helper.writeVarInt(out, this.items.length);
         for (ItemStack item : this.items) {

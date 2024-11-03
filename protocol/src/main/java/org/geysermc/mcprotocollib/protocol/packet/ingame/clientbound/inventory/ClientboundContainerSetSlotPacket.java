@@ -19,7 +19,7 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
     private final @Nullable ItemStack item;
 
     public ClientboundContainerSetSlotPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readUnsignedByte();
+        this.containerId = helper.readVarInt(in);
         this.stateId = helper.readVarInt(in);
         this.slot = in.readShort();
         this.item = helper.readOptionalItemStack(in);
@@ -27,7 +27,7 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
         helper.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
         helper.writeOptionalItemStack(out, this.item);

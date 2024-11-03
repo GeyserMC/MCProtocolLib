@@ -40,7 +40,7 @@ public class MinecraftProtocolTest {
             null,
             false
     );
-    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, new Key[]{Key.key("minecraft:world")}, 0, 16, 16, false, false, false, new PlayerSpawnInfo(0, Key.key("minecraft:world"), 100, GameMode.SURVIVAL, GameMode.SURVIVAL, false, false, null, 100), true);
+    private static final ClientboundLoginPacket JOIN_GAME_PACKET = new ClientboundLoginPacket(0, false, new Key[]{Key.key("minecraft:world")}, 0, 16, 16, false, false, false, new PlayerSpawnInfo(0, Key.key("minecraft:world"), 100, GameMode.SURVIVAL, GameMode.SURVIVAL, false, false, null, 100, 20), true);
     private static final Logger log = LoggerFactory.getLogger(MinecraftProtocolTest.class);
 
     private static Server server;

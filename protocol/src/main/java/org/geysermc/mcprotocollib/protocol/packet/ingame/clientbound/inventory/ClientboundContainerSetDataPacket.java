@@ -21,14 +21,14 @@ public class ClientboundContainerSetDataPacket implements MinecraftPacket {
     }
 
     public ClientboundContainerSetDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readUnsignedByte();
+        this.containerId = helper.readVarInt(in);
         this.rawProperty = in.readShort();
         this.value = in.readShort();
     }
 
     @Override
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+        helper.writeVarInt(out, this.containerId);
         out.writeShort(this.rawProperty);
         out.writeShort(this.value);
     }

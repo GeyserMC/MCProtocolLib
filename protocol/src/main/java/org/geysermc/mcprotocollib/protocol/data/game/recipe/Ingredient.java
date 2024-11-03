@@ -2,12 +2,10 @@ package org.geysermc.mcprotocollib.protocol.data.game.recipe;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 
 @Data
 @AllArgsConstructor
 public class Ingredient {
-    private final @Nullable ItemStack @NonNull [] options;
+    private final HolderSet values;
 }

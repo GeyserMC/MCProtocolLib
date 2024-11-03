@@ -12,15 +12,13 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundGameProfilePacket implements MinecraftPacket {
+public class ClientboundLoginFinishedPacket implements MinecraftPacket {
     private final @NonNull GameProfile profile;
-    private final boolean strictErrorHandling;
 
-    public ClientboundGameProfilePacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundLoginFinishedPacket(ByteBuf in, MinecraftCodecHelper helper) {
         GameProfile profile = new GameProfile(helper.readUUID(in), helper.readString(in));
         profile.setProperties(helper.readList(in, helper::readProperty));
         this.profile = profile;
-        this.strictErrorHandling = in.readBoolean();
     }
 
     @Override
@@ -28,7 +26,6 @@ public class ClientboundGameProfilePacket implements MinecraftPacket {
         helper.writeUUID(out, this.profile.getId());
         helper.writeString(out, this.profile.getName());
         helper.writeList(out, this.profile.getProperties(), helper::writeProperty);
-        out.writeBoolean(this.strictErrorHandling);
     }
 
     @Override

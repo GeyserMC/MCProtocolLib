@@ -13,14 +13,4 @@ public class FoodProperties {
     private final int nutrition;
     private final float saturationModifier;
     private final boolean canAlwaysEat;
-    private final float eatSeconds;
-    private final @Nullable ItemStack usingConvertsTo;
-    private final List<PossibleEffect> effects;
-
-    @Data
-    @AllArgsConstructor
-    public static class PossibleEffect {
-        private final MobEffectInstance effect;
-        private final float probability;
-    }
 }

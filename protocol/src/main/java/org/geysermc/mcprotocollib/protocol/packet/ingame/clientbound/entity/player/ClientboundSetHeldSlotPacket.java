@@ -10,10 +10,10 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundSetCarriedItemPacket implements MinecraftPacket {
+public class ClientboundSetHeldSlotPacket implements MinecraftPacket {
     private final int slot;
 
-    public ClientboundSetCarriedItemPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundSetHeldSlotPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.slot = in.readByte();
     }
 
