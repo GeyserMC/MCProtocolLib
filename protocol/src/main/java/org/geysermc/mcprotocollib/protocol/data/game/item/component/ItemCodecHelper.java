@@ -637,12 +637,4 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeVarInt(buf, occupant.getTicksInHive());
         this.writeVarInt(buf, occupant.getMinTicksInHive());
     }
-
-    public String readLock(ByteBuf buf) {
-        return this.readAnyTag(buf, NbtType.STRING);
-    }
-
-    public void writeLock(ByteBuf buf, String key) {
-        this.writeAnyTag(buf, key);
-    }
 }
