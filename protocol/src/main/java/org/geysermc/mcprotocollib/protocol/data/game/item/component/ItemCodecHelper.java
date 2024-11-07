@@ -158,6 +158,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
 
         this.writeNullable(buf, equippable.model(), this::writeResourceLocation);
+        this.writeNullable(buf, equippable.cameraOverlay(), this::writeResourceLocation);
         this.writeNullable(buf, equippable.allowedEntities(), this::writeHolderSet);
         buf.writeBoolean(equippable.dispensable());
         buf.writeBoolean(equippable.swappable());
