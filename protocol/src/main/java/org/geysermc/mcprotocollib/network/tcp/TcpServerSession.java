@@ -7,13 +7,14 @@ import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 public class TcpServerSession extends TcpSession {
     private final TcpServer server;
     private final PacketCodecHelper codecHelper;
 
-    public TcpServerSession(String host, int port, PacketProtocol protocol, TcpServer server) {
-        super(host, port, protocol, DefaultPacketHandlerExecutor.createExecutor());
+    public TcpServerSession(String host, int port, PacketProtocol protocol, TcpServer server, Executor packetHandlerExecutor) {
+        super(host, port, protocol, packetHandlerExecutor);
         this.server = server;
         this.codecHelper = protocol.createHelper();
     }
