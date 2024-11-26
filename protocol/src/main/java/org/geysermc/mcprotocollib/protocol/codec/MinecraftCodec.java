@@ -162,7 +162,8 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.S
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClosePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundContainerSlotStateChangedPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundEditBookPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundPickItemPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundPickItemFromBlockPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundPickItemFromEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundPlaceRecipePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundRecipeBookChangeSettingsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundRecipeBookSeenRecipePacket;
@@ -214,9 +215,9 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion(768)
+            .protocolVersion((1 << 30) | 220)
             .helper(MinecraftCodecHelper::new)
-            .minecraftVersion("1.21.3")
+            .minecraftVersion("24w44a")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -429,7 +430,8 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundMovePlayerStatusOnlyPacket.class, ServerboundMovePlayerStatusOnlyPacket::new)
                     .registerServerboundPacket(ServerboundMoveVehiclePacket.class, ServerboundMoveVehiclePacket::new)
                     .registerServerboundPacket(ServerboundPaddleBoatPacket.class, ServerboundPaddleBoatPacket::new)
-                    .registerServerboundPacket(ServerboundPickItemPacket.class, ServerboundPickItemPacket::new)
+                    .registerServerboundPacket(ServerboundPickItemFromBlockPacket.class, ServerboundPickItemFromBlockPacket::new)
+                    .registerServerboundPacket(ServerboundPickItemFromEntityPacket.class, ServerboundPickItemFromEntityPacket::new)
                     .registerServerboundPacket(ServerboundPingRequestPacket.class, ServerboundPingRequestPacket::new)
                     .registerServerboundPacket(ServerboundPlaceRecipePacket.class, ServerboundPlaceRecipePacket::new)
                     .registerServerboundPacket(ServerboundPlayerAbilitiesPacket.class, ServerboundPlayerAbilitiesPacket::new)
