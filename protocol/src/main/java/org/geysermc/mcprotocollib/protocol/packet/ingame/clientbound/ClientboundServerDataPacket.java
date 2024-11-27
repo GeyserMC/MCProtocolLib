@@ -26,4 +26,9 @@ public class ClientboundServerDataPacket implements MinecraftPacket {
         helper.writeComponent(out, this.motd);
         helper.writeNullable(out, this.iconBytes, helper::writeByteArray);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

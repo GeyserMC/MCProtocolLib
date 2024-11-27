@@ -66,4 +66,9 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
 
         out.writeInt(flags);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

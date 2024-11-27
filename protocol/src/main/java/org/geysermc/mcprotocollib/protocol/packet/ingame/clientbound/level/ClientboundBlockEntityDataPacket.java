@@ -32,4 +32,9 @@ public class ClientboundBlockEntityDataPacket implements MinecraftPacket {
         helper.writeBlockEntityType(out, this.type);
         helper.writeAnyTag(out, this.nbt);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

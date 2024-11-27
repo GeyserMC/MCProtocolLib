@@ -25,4 +25,9 @@ public class ClientboundDeleteChatPacket implements MinecraftPacket {
             out.writeBytes(messageSignature.getMessageSignature());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

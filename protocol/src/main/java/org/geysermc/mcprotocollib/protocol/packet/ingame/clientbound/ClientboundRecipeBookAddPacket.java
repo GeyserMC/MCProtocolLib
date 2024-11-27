@@ -60,6 +60,11 @@ public class ClientboundRecipeBookAddPacket implements MinecraftPacket {
         out.writeBoolean(this.replace);
     }
 
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
+
     public record Entry(RecipeDisplayEntry contents, boolean notification, boolean highlight) {
     }
 }

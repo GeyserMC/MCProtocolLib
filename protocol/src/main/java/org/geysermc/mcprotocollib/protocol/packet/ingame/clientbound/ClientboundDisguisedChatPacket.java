@@ -35,4 +35,9 @@ public class ClientboundDisguisedChatPacket implements MinecraftPacket {
         helper.writeComponent(out, this.name);
         helper.writeNullable(out, this.targetName, helper::writeComponent);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

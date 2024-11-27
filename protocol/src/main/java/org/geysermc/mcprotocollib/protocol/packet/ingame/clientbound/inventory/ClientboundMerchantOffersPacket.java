@@ -72,4 +72,9 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
         out.writeBoolean(this.regularVillager);
         out.writeBoolean(this.canRestock);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

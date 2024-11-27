@@ -46,4 +46,9 @@ public class ClientboundSoundEntityPacket implements MinecraftPacket {
         out.writeFloat(this.pitch);
         out.writeLong(this.seed);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

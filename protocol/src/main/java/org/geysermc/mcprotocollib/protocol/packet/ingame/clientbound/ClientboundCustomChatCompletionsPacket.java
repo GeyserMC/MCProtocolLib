@@ -31,4 +31,9 @@ public class ClientboundCustomChatCompletionsPacket implements MinecraftPacket {
             helper.writeString(out, entry);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

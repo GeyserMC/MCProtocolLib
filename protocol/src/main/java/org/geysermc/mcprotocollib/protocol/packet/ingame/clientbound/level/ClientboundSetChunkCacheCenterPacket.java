@@ -24,4 +24,9 @@ public class ClientboundSetChunkCacheCenterPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.chunkX);
         helper.writeVarInt(out, this.chunkZ);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

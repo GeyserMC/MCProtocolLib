@@ -42,4 +42,9 @@ public class ClientboundInitializeBorderPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.warningBlocks);
         helper.writeVarInt(out, this.warningTime);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

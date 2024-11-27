@@ -20,4 +20,9 @@ public class ServerboundChunkBatchReceivedPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeFloat(this.desiredChunksPerTick);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

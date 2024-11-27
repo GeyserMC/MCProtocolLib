@@ -26,4 +26,9 @@ public class ClientboundSetDisplayObjectivePacket implements MinecraftPacket {
         helper.writeVarInt(out, this.position.ordinal());
         helper.writeString(out, this.name);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

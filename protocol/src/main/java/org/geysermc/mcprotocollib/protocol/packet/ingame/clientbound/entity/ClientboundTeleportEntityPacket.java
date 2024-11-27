@@ -64,4 +64,9 @@ public class ClientboundTeleportEntityPacket implements MinecraftPacket {
 
         out.writeBoolean(this.onGround);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

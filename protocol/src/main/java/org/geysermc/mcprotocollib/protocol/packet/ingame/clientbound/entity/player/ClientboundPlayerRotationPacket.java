@@ -24,4 +24,9 @@ public class ClientboundPlayerRotationPacket implements MinecraftPacket {
         out.writeFloat(this.yRot);
         out.writeFloat(this.xRot);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

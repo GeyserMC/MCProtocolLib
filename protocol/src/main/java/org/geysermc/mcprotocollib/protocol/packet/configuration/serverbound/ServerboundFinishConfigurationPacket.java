@@ -17,6 +17,11 @@ public class ServerboundFinishConfigurationPacket implements MinecraftPacket {
     }
 
     @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
+
+    @Override
     public boolean isTerminal() {
         return true;
     }

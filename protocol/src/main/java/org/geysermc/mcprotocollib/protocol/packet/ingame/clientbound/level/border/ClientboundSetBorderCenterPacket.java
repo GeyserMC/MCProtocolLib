@@ -24,4 +24,9 @@ public class ClientboundSetBorderCenterPacket implements MinecraftPacket {
         out.writeDouble(this.newCenterX);
         out.writeDouble(this.newCenterZ);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

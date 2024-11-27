@@ -33,4 +33,9 @@ public class ClientboundMoveEntityPosPacket implements MinecraftPacket {
         out.writeShort((int) (this.moveZ * 4096));
         out.writeBoolean(this.onGround);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

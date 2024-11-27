@@ -26,4 +26,9 @@ public class ClientboundChangeDifficultyPacket implements MinecraftPacket {
         out.writeByte(this.difficulty.ordinal());
         out.writeBoolean(this.difficultyLocked);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

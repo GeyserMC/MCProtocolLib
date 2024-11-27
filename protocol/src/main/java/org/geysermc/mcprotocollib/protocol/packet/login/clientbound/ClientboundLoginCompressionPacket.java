@@ -21,9 +21,4 @@ public class ClientboundLoginCompressionPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeVarInt(out, this.threshold);
     }
-
-    @Override
-    public boolean isPriority() {
-        return true;
-    }
 }

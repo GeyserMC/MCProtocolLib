@@ -25,4 +25,9 @@ public class ClientboundStoreCookiePacket implements MinecraftPacket {
         helper.writeResourceLocation(out, this.key);
         helper.writeByteArray(out, this.payload);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

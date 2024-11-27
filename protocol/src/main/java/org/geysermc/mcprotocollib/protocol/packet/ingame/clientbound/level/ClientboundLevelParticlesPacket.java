@@ -53,4 +53,9 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         helper.writeParticleType(out, this.particle.getType());
         helper.writeParticleData(out, this.particle.getType(), this.particle.getData());
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

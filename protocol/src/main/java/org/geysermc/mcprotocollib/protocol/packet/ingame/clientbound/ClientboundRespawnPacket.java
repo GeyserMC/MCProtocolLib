@@ -39,4 +39,9 @@ public class ClientboundRespawnPacket implements MinecraftPacket {
         }
         out.writeByte(dataToKeep);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

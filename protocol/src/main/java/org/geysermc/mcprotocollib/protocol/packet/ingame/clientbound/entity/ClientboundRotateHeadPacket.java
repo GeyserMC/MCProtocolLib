@@ -24,4 +24,9 @@ public class ClientboundRotateHeadPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.entityId);
         out.writeByte((byte) (this.headYaw * 256 / 360));
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

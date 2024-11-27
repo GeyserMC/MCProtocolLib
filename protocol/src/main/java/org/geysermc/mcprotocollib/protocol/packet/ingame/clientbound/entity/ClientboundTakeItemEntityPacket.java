@@ -27,4 +27,9 @@ public class ClientboundTakeItemEntityPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.collectorEntityId);
         helper.writeVarInt(out, this.itemCount);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

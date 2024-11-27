@@ -57,4 +57,9 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
 
         out.writeByte(flags);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

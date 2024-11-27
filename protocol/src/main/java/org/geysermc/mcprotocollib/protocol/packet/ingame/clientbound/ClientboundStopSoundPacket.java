@@ -55,4 +55,9 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
             helper.writeResourceLocation(out, this.sound);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

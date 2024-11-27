@@ -33,4 +33,9 @@ public class ClientboundCustomReportDetailsPacket implements MinecraftPacket {
             helper.writeString(out, entry.getValue());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

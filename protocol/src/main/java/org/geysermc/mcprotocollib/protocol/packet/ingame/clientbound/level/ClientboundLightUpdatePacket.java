@@ -50,4 +50,9 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
         helper.writeVarInt(out, this.z);
         helper.writeLightUpdateData(out, this.lightData);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

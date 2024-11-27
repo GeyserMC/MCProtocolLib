@@ -67,4 +67,9 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
 
         out.writeFloat(value);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }
