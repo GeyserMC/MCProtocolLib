@@ -11,7 +11,7 @@ public interface Packet {
     /**
      * Gets whether the packet should run on an async game thread rather than blocking the network (Netty) thread.
      * Packets that qualify for this are usually packets with an ensureRunningOnSameThread call at the top of their packet listener method in the Minecraft code.
-     * Packets which need extra attention because they aren't "fully" handled async are marked using.
+     * Packets which need extra attention because they aren't "fully" handled async are marked using
      * // GAME THREAD DETAIL comments in the MCProtocolLib code.
      *
      * @return Whether the packet be handled async from the Netty thread.
