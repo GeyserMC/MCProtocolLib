@@ -158,6 +158,7 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         }
 
         this.writeNullable(buf, equippable.model(), this::writeResourceLocation);
+        this.writeNullable(buf, equippable.cameraOverlay(), this::writeResourceLocation);
         this.writeNullable(buf, equippable.allowedEntities(), this::writeHolderSet);
         buf.writeBoolean(equippable.dispensable());
         buf.writeBoolean(equippable.swappable());
@@ -636,13 +637,5 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeAnyTag(buf, occupant.getEntityData());
         this.writeVarInt(buf, occupant.getTicksInHive());
         this.writeVarInt(buf, occupant.getMinTicksInHive());
-    }
-
-    public String readLock(ByteBuf buf) {
-        return this.readAnyTag(buf, NbtType.STRING);
-    }
-
-    public void writeLock(ByteBuf buf, String key) {
-        this.writeAnyTag(buf, key);
     }
 }

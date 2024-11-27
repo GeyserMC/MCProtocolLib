@@ -23,7 +23,6 @@ import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 public class TcpServer extends AbstractServer {
-    private static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
     private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
 
     private final Supplier<Executor> packetHandlerExecutorFactory;
@@ -50,10 +49,10 @@ public class TcpServer extends AbstractServer {
             return;
         }
 
-        this.group = TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+        this.group = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
 
         ServerBootstrap bootstrap = new ServerBootstrap()
-                .channelFactory(TRANSPORT_TYPE.serverSocketChannelFactory())
+                .channelFactory(TransportHelper.TRANSPORT_TYPE.serverSocketChannelFactory())
                 .group(this.group)
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.IP_TOS, 0x18)
@@ -83,7 +82,7 @@ public class TcpServer extends AbstractServer {
             }
         });
 
-        if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
+        if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TransportHelper.TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
             bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
         }
 
