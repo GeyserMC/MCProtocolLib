@@ -1337,7 +1337,6 @@ public enum BuiltinSound implements Sound {
     BLOCK_SPAWNER_STEP("block.spawner.step"),
     BLOCK_RESIN_BREAK("block.resin.break"),
     BLOCK_RESIN_FALL("block.resin.fall"),
-    BLOCK_RESIN_HIT("block.resin.hit"),
     BLOCK_RESIN_PLACE("block.resin.place"),
     BLOCK_RESIN_STEP("block.resin.step"),
     BLOCK_RESIN_BRICKS_BREAK("block.resin_bricks.break"),
