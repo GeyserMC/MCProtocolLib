@@ -20,9 +20,17 @@ public class MinecraftChannelInitializer<S extends Session & ChannelHandler> ext
 
     @Override
     protected void initChannel(Channel ch) throws Exception {
-        S session = sessionFactory.apply(ch);
-        PacketProtocol protocol = session.getPacketProtocol();
+        S session = createSession(ch);
 
+        addHandlers(session, ch);
+    }
+
+    protected S createSession(Channel ch) {
+        return sessionFactory.apply(ch);
+    }
+
+    protected void addHandlers(S session, Channel ch) {
+        PacketProtocol protocol = session.getPacketProtocol();
         ChannelPipeline pipeline = ch.pipeline();
 
         pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
