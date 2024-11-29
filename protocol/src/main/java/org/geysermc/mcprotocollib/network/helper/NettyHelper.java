@@ -120,7 +120,7 @@ public class NettyHelper {
                             destinationPort = 0;
                         }
                         case TCP6 -> {
-                            destinationAddress = "::";
+                            destinationAddress = "0:0:0:0:0:0:0:0";
                             destinationPort = 0;
                         }
                         default -> throw new UnsupportedOperationException("Unsupported proxied protocol: " + proxiedProtocol);
