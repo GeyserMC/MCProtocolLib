@@ -1,12 +1,15 @@
-package org.geysermc.mcprotocollib.network.tcp;
+package org.geysermc.mcprotocollib.network.net;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,24 +20,24 @@ import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public class TcpServer extends AbstractServer {
-    private static final Logger log = LoggerFactory.getLogger(TcpServer.class);
+public class NetServer extends AbstractServer {
+    private static final Logger log = LoggerFactory.getLogger(NetServer.class);
 
     private final Supplier<Executor> packetHandlerExecutorFactory;
     private EventLoopGroup group;
     private Channel channel;
 
-    public TcpServer(String host, int port, Supplier<? extends PacketProtocol> protocol) {
-        this(host, port, protocol, DefaultPacketHandlerExecutor::createExecutor);
+    public NetServer(SocketAddress bindAddress, Supplier<? extends PacketProtocol> protocol) {
+        this(bindAddress, protocol, DefaultPacketHandlerExecutor::createExecutor);
     }
 
-    public TcpServer(String host, int port, Supplier<? extends PacketProtocol> protocol, Supplier<Executor> packetHandlerExecutorFactory) {
-        super(host, port, protocol);
+    public NetServer(SocketAddress bindAddress, Supplier<? extends PacketProtocol> protocol, Supplier<Executor> packetHandlerExecutorFactory) {
+        super(bindAddress, protocol);
         this.packetHandlerExecutorFactory = packetHandlerExecutorFactory;
     }
 
@@ -52,39 +55,12 @@ public class TcpServer extends AbstractServer {
         this.group = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
 
         ServerBootstrap bootstrap = new ServerBootstrap()
-                .channelFactory(TransportHelper.TRANSPORT_TYPE.serverSocketChannelFactory())
+                .channelFactory(getChannelFactory())
                 .group(this.group)
-                .childOption(ChannelOption.TCP_NODELAY, true)
-                .childOption(ChannelOption.IP_TOS, 0x18)
-                .localAddress(this.getHost(), this.getPort())
-                .childHandler(new ChannelInitializer<>() {
-            @Override
-            public void initChannel(@NonNull Channel channel) {
-                InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-                PacketProtocol protocol = createPacketProtocol();
+                .localAddress(this.getBindAddress())
+                .childHandler(getChannelHandler());
 
-                TcpSession session = new TcpServerSession(address.getHostName(), address.getPort(), protocol, TcpServer.this, packetHandlerExecutorFactory.get());
-                session.getPacketProtocol().newServerSession(TcpServer.this, session);
-
-                ChannelPipeline pipeline = channel.pipeline();
-
-                pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
-                pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
-
-                pipeline.addLast("encryption", new TcpPacketEncryptor());
-                pipeline.addLast("sizer", new TcpPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
-                pipeline.addLast("compression", new TcpPacketCompression(session.getCodecHelper()));
-
-                pipeline.addLast("flow-control", new TcpFlowControlHandler());
-                pipeline.addLast("codec", new TcpPacketCodec(session, false));
-                pipeline.addLast("flush-handler", new FlushHandler());
-                pipeline.addLast("manager", session);
-            }
-        });
-
-        if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TransportHelper.TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
-            bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
-        }
+        setOptions(bootstrap);
 
         CompletableFuture<Void> handleFuture = new CompletableFuture<>();
         bootstrap.bind().addListener((ChannelFutureListener) future -> {
@@ -103,6 +79,45 @@ public class TcpServer extends AbstractServer {
         if (wait) {
             handleFuture.join();
         }
+    }
+
+    protected ChannelFactory<? extends ServerSocketChannel> getChannelFactory() {
+        return TransportHelper.TRANSPORT_TYPE.serverSocketChannelFactory();
+    }
+
+    protected void setOptions(ServerBootstrap bootstrap) {
+        bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
+        bootstrap.childOption(ChannelOption.IP_TOS, 0x18);
+
+        if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TransportHelper.TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
+            bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
+        }
+    }
+
+    protected ChannelHandler getChannelHandler() {
+        return new ChannelInitializer<>() {
+            @Override
+            public void initChannel(@NonNull Channel channel) {
+                PacketProtocol protocol = createPacketProtocol();
+
+                NetSession session = new NetServerSession(channel.remoteAddress(), protocol, NetServer.this, packetHandlerExecutorFactory.get());
+                session.getPacketProtocol().newServerSession(NetServer.this, session);
+
+                ChannelPipeline pipeline = channel.pipeline();
+
+                pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
+                pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
+
+                pipeline.addLast("encryption", new NetPacketEncryptor());
+                pipeline.addLast("sizer", new NetPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
+                pipeline.addLast("compression", new NetPacketCompression(session.getCodecHelper()));
+
+                pipeline.addLast("flow-control", new NetFlowControlHandler());
+                pipeline.addLast("codec", new NetPacketCodec(session, false));
+                pipeline.addLast("flush-handler", new FlushHandler());
+                pipeline.addLast("manager", session);
+            }
+        };
     }
 
     @Override
