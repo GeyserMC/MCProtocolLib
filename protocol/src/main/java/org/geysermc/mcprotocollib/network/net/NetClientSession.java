@@ -4,13 +4,9 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
@@ -41,7 +37,7 @@ public class NetClientSession extends NetSession implements ClientSession {
     protected final PacketCodecHelper codecHelper;
 
     public NetClientSession(SocketAddress remoteAddress, PacketProtocol protocol) {
-        this(remoteAddress, protocol, null);
+        this(remoteAddress, null, protocol);
     }
 
     public NetClientSession(SocketAddress remoteAddress, PacketProtocol protocol, ProxyInfo proxy) {
@@ -118,29 +114,19 @@ public class NetClientSession extends NetSession implements ClientSession {
     }
 
     protected ChannelHandler getChannelHandler() {
-        return new ChannelInitializer<>() {
+        return new MinecraftChannelInitializer<>(channel -> {
+            PacketProtocol protocol = getPacketProtocol();
+            protocol.newClientSession(NetClientSession.this);
+
+            return NetClientSession.this;
+        }, true) {
             @Override
-            public void initChannel(@NonNull Channel channel) {
-                PacketProtocol protocol = getPacketProtocol();
-                protocol.newClientSession(NetClientSession.this);
-
-                ChannelPipeline pipeline = channel.pipeline();
-
-                NettyHelper.addProxy(proxy, pipeline);
+            public void initChannel(@NonNull Channel channel) throws Exception {
+                NettyHelper.addProxy(proxy, channel.pipeline());
 
                 NettyHelper.initializeHAProxySupport(NetClientSession.this, channel);
 
-                pipeline.addLast("read-timeout", new ReadTimeoutHandler(getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
-                pipeline.addLast("write-timeout", new WriteTimeoutHandler(getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
-
-                pipeline.addLast("encryption", new NetPacketEncryptor());
-                pipeline.addLast("sizer", new NetPacketSizer(protocol.getPacketHeader(), getCodecHelper()));
-                pipeline.addLast("compression", new NetPacketCompression(getCodecHelper()));
-
-                pipeline.addLast("flow-control", new NetFlowControlHandler());
-                pipeline.addLast("codec", new NetPacketCodec(NetClientSession.this, true));
-                pipeline.addLast("flush-handler", new FlushHandler());
-                pipeline.addLast("manager", NetClientSession.this);
+                super.initChannel(channel);
             }
         };
     }

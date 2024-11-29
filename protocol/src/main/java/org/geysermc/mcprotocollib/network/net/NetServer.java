@@ -5,14 +5,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
@@ -29,7 +24,8 @@ public class NetServer extends AbstractServer {
     private static final Logger log = LoggerFactory.getLogger(NetServer.class);
 
     private final Supplier<Executor> packetHandlerExecutorFactory;
-    private EventLoopGroup group;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
     private Channel channel;
 
     public NetServer(SocketAddress bindAddress, Supplier<? extends PacketProtocol> protocol) {
@@ -48,15 +44,16 @@ public class NetServer extends AbstractServer {
 
     @Override
     public void bindImpl(boolean wait, final Runnable callback) {
-        if (this.group != null || this.channel != null) {
+        if (this.bossGroup != null || this.workerGroup != null || this.channel != null) {
             return;
         }
 
-        this.group = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+        this.bossGroup = createBossEventLoopGroup();
+        this.workerGroup = createWorkerEventLoopGroup();
 
         ServerBootstrap bootstrap = new ServerBootstrap()
                 .channelFactory(getChannelFactory())
-                .group(this.group)
+                .group(this.bossGroup, this.workerGroup)
                 .localAddress(this.getBindAddress())
                 .childHandler(getChannelHandler());
 
@@ -65,7 +62,7 @@ public class NetServer extends AbstractServer {
         CompletableFuture<Void> handleFuture = new CompletableFuture<>();
         bootstrap.bind().addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
-                channel = future.channel();
+                this.channel = future.channel();
                 if (callback != null) {
                     callback.run();
                 }
@@ -85,6 +82,14 @@ public class NetServer extends AbstractServer {
         return TransportHelper.TRANSPORT_TYPE.serverSocketChannelFactory();
     }
 
+    protected EventLoopGroup createBossEventLoopGroup() {
+        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+    }
+
+    protected EventLoopGroup createWorkerEventLoopGroup() {
+        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+    }
+
     protected void setOptions(ServerBootstrap bootstrap) {
         bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
         bootstrap.childOption(ChannelOption.IP_TOS, 0x18);
@@ -95,61 +100,37 @@ public class NetServer extends AbstractServer {
     }
 
     protected ChannelHandler getChannelHandler() {
-        return new ChannelInitializer<>() {
-            @Override
-            public void initChannel(@NonNull Channel channel) {
-                PacketProtocol protocol = createPacketProtocol();
+        return new MinecraftChannelInitializer<>(channel -> {
+            PacketProtocol protocol = createPacketProtocol();
 
-                NetSession session = new NetServerSession(channel.remoteAddress(), protocol, NetServer.this, packetHandlerExecutorFactory.get());
-                session.getPacketProtocol().newServerSession(NetServer.this, session);
+            NetSession session = new NetServerSession(channel.remoteAddress(), protocol, NetServer.this, packetHandlerExecutorFactory.get());
+            session.getPacketProtocol().newServerSession(NetServer.this, session);
 
-                ChannelPipeline pipeline = channel.pipeline();
-
-                pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
-                pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
-
-                pipeline.addLast("encryption", new NetPacketEncryptor());
-                pipeline.addLast("sizer", new NetPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
-                pipeline.addLast("compression", new NetPacketCompression(session.getCodecHelper()));
-
-                pipeline.addLast("flow-control", new NetFlowControlHandler());
-                pipeline.addLast("codec", new NetPacketCodec(session, false));
-                pipeline.addLast("flush-handler", new FlushHandler());
-                pipeline.addLast("manager", session);
-            }
-        };
+            return session;
+        }, false);
     }
 
     @Override
     public void closeImpl(boolean wait, final Runnable callback) {
-        if (this.channel != null) {
-            if (this.channel.isOpen()) {
-                CompletableFuture<Void> handleFuture = new CompletableFuture<>();
-                this.channel.close().addListener((ChannelFutureListener) future -> {
-                    if (future.isSuccess()) {
-                        if (callback != null) {
-                            callback.run();
-                        }
-                    } else {
-                        log.error("Failed to close connection listener.", future.cause());
-                    }
+        closeChannel(callback, wait);
+        closeWorkerGroup(wait);
+        closeBossGroup(wait);
+    }
 
-                    handleFuture.complete(null);
-                });
-
-                if (wait) {
-                    handleFuture.join();
-                }
-            }
-
-            this.channel = null;
+    private void closeChannel(Runnable callback, boolean wait) {
+        if (this.channel == null) {
+            return;
         }
 
-        if (this.group != null) {
+        if (this.channel.isOpen()) {
             CompletableFuture<Void> handleFuture = new CompletableFuture<>();
-            this.group.shutdownGracefully().addListener(future -> {
-                if (!future.isSuccess()) {
-                    log.debug("Failed to close connection listener.", future.cause());
+            this.channel.close().addListener((ChannelFutureListener) future -> {
+                if (future.isSuccess()) {
+                    if (callback != null) {
+                        callback.run();
+                    }
+                } else {
+                    log.error("Failed to close connection listener.", future.cause());
                 }
 
                 handleFuture.complete(null);
@@ -158,8 +139,50 @@ public class NetServer extends AbstractServer {
             if (wait) {
                 handleFuture.join();
             }
-
-            this.group = null;
         }
+
+        this.channel = null;
+    }
+
+    private void closeWorkerGroup(boolean wait) {
+        if (this.workerGroup == null) {
+            return;
+        }
+
+        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        this.workerGroup.shutdownGracefully().addListener(future -> {
+            if (!future.isSuccess()) {
+                log.debug("Failed to close connection listener.", future.cause());
+            }
+
+            handleFuture.complete(null);
+        });
+
+        if (wait) {
+            handleFuture.join();
+        }
+
+        this.workerGroup = null;
+    }
+
+    private void closeBossGroup(boolean wait) {
+        if (this.bossGroup == null) {
+            return;
+        }
+
+        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        this.bossGroup.shutdownGracefully().addListener(future -> {
+            if (!future.isSuccess()) {
+                log.debug("Failed to close connection listener.", future.cause());
+            }
+
+            handleFuture.complete(null);
+        });
+
+        if (wait) {
+            handleFuture.join();
+        }
+
+        this.bossGroup = null;
     }
 }
