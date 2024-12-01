@@ -216,9 +216,9 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 222)
+            .protocolVersion((1 << 30) | 228)
             .helper(MinecraftCodecHelper::new)
-            .minecraftVersion("24w46a")
+            .minecraftVersion("1.21.4-rc3")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
