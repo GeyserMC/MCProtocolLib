@@ -26,4 +26,9 @@ public class ClientboundOpenSignEditorPacket implements MinecraftPacket {
         helper.writePosition(out, this.position);
         out.writeBoolean(this.isFrontText);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

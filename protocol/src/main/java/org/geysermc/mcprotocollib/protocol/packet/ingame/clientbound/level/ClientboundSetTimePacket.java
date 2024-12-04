@@ -27,4 +27,9 @@ public class ClientboundSetTimePacket implements MinecraftPacket {
         out.writeLong(this.dayTime);
         out.writeBoolean(this.tickDayTime);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

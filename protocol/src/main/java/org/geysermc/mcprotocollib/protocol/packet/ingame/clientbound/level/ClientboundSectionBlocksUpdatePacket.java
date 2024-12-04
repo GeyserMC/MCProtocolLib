@@ -59,4 +59,9 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
             helper.writeVarLong(out, (long) entry.getBlock() << 12 | (long) position);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -24,4 +24,9 @@ public class ClientboundSetEntityLinkPacket implements MinecraftPacket {
         out.writeInt(this.entityId);
         out.writeInt(this.attachedToId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

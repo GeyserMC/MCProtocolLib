@@ -23,4 +23,9 @@ public class ServerboundChangeDifficultyPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeByte(this.difficulty.ordinal());
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

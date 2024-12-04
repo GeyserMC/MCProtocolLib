@@ -25,4 +25,9 @@ public class ServerboundCommandSuggestionPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.transactionId);
         helper.writeString(out, this.text);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

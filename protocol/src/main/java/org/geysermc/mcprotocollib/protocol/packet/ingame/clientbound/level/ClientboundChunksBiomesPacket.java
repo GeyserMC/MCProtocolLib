@@ -29,4 +29,9 @@ public class ClientboundChunksBiomesPacket implements MinecraftPacket {
             helper.writeByteArray(buf, entry.getBuffer());
         });
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -31,4 +31,9 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
             helper.writeNullable(buf, entry.getData(), helper::writeAnyTag);
         });
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

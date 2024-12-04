@@ -29,4 +29,9 @@ public class ServerboundRecipeBookChangeSettingsPacket implements MinecraftPacke
         out.writeBoolean(this.bookOpen);
         out.writeBoolean(this.filterActive);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -27,4 +27,9 @@ public class ClientboundSetBorderLerpSizePacket implements MinecraftPacket {
         out.writeDouble(this.newSize);
         helper.writeVarLong(out, this.lerpTime);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

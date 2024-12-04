@@ -33,4 +33,9 @@ public class ServerboundMoveVehiclePacket implements MinecraftPacket {
         out.writeFloat(this.yaw);
         out.writeFloat(this.pitch);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

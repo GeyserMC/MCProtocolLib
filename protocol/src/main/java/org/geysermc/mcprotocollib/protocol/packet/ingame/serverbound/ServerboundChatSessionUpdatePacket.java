@@ -45,4 +45,9 @@ public class ServerboundChatSessionUpdatePacket implements MinecraftPacket {
         helper.writeByteArray(out, this.publicKey.getEncoded());
         helper.writeByteArray(out, this.keySignature);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

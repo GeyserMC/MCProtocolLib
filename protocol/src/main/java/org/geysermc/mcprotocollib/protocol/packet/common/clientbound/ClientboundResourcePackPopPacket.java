@@ -28,4 +28,9 @@ public class ClientboundResourcePackPopPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeNullable(out, this.id, helper::writeUUID);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

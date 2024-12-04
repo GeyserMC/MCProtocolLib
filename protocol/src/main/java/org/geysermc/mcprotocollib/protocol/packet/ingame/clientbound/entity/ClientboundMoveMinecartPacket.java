@@ -50,4 +50,9 @@ public class ClientboundMoveMinecartPacket implements MinecraftPacket {
             output.writeFloat(lerpStep.weight());
         });
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

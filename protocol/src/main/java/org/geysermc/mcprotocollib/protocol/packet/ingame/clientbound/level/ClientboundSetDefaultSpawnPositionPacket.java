@@ -26,4 +26,9 @@ public class ClientboundSetDefaultSpawnPositionPacket implements MinecraftPacket
         helper.writePosition(out, this.position);
         out.writeFloat(this.angle);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

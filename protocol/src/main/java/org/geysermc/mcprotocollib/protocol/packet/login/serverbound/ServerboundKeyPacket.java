@@ -45,11 +45,6 @@ public class ServerboundKeyPacket implements MinecraftPacket {
         helper.writeByteArray(out, this.encryptedChallenge);
     }
 
-    @Override
-    public boolean isPriority() {
-        return true;
-    }
-
     private static byte[] runEncryption(int mode, Key key, byte[] data) {
         try {
             Cipher cipher = Cipher.getInstance(key.getAlgorithm().equals("RSA") ? "RSA/ECB/PKCS1Padding" : "AES/CFB8/NoPadding");

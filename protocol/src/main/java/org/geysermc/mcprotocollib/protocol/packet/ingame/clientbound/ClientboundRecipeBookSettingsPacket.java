@@ -38,6 +38,11 @@ public class ClientboundRecipeBookSettingsPacket implements MinecraftPacket {
         }
     }
 
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
+
     private record TypeSettings(boolean open, boolean filtering) {
     }
 }
