@@ -48,4 +48,9 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     public ClientboundOpenScreenPacket withName(String name) {
         return new ClientboundOpenScreenPacket(this.containerId, this.type, DefaultComponentSerializer.get().deserialize(name));
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

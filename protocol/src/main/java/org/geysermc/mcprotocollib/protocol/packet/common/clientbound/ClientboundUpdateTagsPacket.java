@@ -53,4 +53,9 @@ public class ClientboundUpdateTagsPacket implements MinecraftPacket {
             }
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

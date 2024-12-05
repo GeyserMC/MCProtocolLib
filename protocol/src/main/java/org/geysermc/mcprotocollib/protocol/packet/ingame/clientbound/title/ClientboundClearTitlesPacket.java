@@ -21,4 +21,9 @@ public class ClientboundClearTitlesPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeBoolean(this.resetTimes);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

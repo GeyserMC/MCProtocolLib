@@ -22,4 +22,9 @@ public class ClientboundSetCursorItemPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeOptionalItemStack(out, this.contents);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -22,4 +22,9 @@ public class ClientboundSetActionBarTextPacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeComponent(out, this.text);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -21,4 +21,9 @@ public class ClientboundSetBorderSizePacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         out.writeDouble(this.size);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

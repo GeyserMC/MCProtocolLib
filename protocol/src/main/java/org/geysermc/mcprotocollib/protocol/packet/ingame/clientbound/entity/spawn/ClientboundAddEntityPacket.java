@@ -120,4 +120,9 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         out.writeShort((int) (this.motionY * 8000));
         out.writeShort((int) (this.motionZ * 8000));
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

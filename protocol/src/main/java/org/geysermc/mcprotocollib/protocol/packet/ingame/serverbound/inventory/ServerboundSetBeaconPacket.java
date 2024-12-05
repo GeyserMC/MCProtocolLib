@@ -42,4 +42,9 @@ public class ServerboundSetBeaconPacket implements MinecraftPacket {
             helper.writeVarInt(out, this.secondaryEffect.getAsInt());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

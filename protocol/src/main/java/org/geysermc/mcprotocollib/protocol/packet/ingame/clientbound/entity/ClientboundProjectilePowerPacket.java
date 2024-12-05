@@ -24,4 +24,9 @@ public class ClientboundProjectilePowerPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.id);
         out.writeDouble(this.accelerationPower);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

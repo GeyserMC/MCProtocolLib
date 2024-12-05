@@ -25,4 +25,9 @@ public class ClientboundSetPlayerInventoryPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.slot);
         helper.writeOptionalItemStack(out, this.contents);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

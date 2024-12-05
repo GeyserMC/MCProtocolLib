@@ -34,4 +34,9 @@ public class ServerboundPlayerActionPacket implements MinecraftPacket {
         out.writeByte(this.face.ordinal());
         helper.writeVarInt(out, this.sequence);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

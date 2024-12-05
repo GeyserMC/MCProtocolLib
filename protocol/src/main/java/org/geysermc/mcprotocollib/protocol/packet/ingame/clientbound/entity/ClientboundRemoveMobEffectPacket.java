@@ -26,4 +26,9 @@ public class ClientboundRemoveMobEffectPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.entityId);
         helper.writeEffect(out, this.effect);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

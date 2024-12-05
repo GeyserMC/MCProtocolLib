@@ -26,4 +26,10 @@ public class ClientboundCustomPayloadPacket implements MinecraftPacket {
         helper.writeResourceLocation(out, this.channel);
         out.writeBytes(this.data);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        // GAME THREAD DETAIL: Only non-discarded payloads are handled async.
+        return false; // False, you need to handle making it async yourself
+    }
 }

@@ -28,4 +28,9 @@ public class ServerboundSetCommandMinecartPacket implements MinecraftPacket {
         helper.writeString(out, this.command);
         out.writeBoolean(this.doesTrackOutput);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

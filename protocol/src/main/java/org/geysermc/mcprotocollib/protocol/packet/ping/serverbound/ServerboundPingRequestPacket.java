@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.protocol.packet.status.clientbound;
+package org.geysermc.mcprotocollib.protocol.packet.ping.serverbound;
 
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,10 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundPongResponsePacket implements MinecraftPacket {
+public class ServerboundPingRequestPacket implements MinecraftPacket {
     private final long pingTime;
 
-    public ClientboundPongResponsePacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundPingRequestPacket(ByteBuf in, MinecraftCodecHelper helper) {
         this.pingTime = in.readLong();
     }
 

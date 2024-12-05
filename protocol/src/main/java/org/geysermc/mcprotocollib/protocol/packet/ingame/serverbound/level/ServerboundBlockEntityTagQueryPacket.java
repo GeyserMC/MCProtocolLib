@@ -26,4 +26,9 @@ public class ServerboundBlockEntityTagQueryPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.transactionId);
         helper.writePosition(out, this.position);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

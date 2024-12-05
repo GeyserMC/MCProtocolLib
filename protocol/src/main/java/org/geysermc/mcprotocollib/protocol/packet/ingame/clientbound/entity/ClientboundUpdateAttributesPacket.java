@@ -54,4 +54,9 @@ public class ClientboundUpdateAttributesPacket implements MinecraftPacket {
             }
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

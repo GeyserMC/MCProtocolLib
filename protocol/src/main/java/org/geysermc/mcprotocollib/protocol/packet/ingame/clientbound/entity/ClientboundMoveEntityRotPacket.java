@@ -30,4 +30,9 @@ public class ClientboundMoveEntityRotPacket implements MinecraftPacket {
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeBoolean(this.onGround);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -49,4 +49,9 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
         helper.writeNullable(out, this.display, helper::writeComponent);
         helper.writeNullable(out, this.numberFormat, helper::writeNumberFormat);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

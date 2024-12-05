@@ -72,4 +72,10 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
         out.writeBoolean(allowsListing);
         helper.writeVarInt(out, this.particleStatus.ordinal());
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        // GAME THREAD DETAIL: Code is only async during GAME state.
+        return false; // False, you need to handle making it async yourself
+    }
 }
