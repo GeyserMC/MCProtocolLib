@@ -29,4 +29,9 @@ public class ClientboundRecipeBookRemovePacket implements MinecraftPacket {
             helper.writeVarInt(out, recipe);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

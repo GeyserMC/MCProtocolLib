@@ -27,4 +27,9 @@ public class ClientboundSetExperiencePacket implements MinecraftPacket {
         helper.writeVarInt(out, this.level);
         helper.writeVarInt(out, this.totalExperience);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

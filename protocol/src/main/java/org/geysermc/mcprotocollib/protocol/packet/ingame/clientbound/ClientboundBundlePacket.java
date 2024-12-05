@@ -16,4 +16,9 @@ public class ClientboundBundlePacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf buf, MinecraftCodecHelper helper) {
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

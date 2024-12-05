@@ -24,4 +24,9 @@ public class ServerboundPaddleBoatPacket implements MinecraftPacket {
         out.writeBoolean(this.rightPaddleTurning);
         out.writeBoolean(this.leftPaddleTurning);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

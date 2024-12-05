@@ -60,4 +60,9 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
 
     public record SelectableRecipe(Ingredient input, SlotDisplay recipe) {
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

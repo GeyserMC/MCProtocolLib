@@ -38,4 +38,9 @@ public class ClientboundResourcePackPushPacket implements MinecraftPacket {
         out.writeBoolean(this.required);
         helper.writeNullable(out, this.prompt, helper::writeComponent);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

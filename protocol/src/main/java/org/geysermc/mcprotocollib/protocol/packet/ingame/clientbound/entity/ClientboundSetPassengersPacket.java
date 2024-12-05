@@ -31,4 +31,9 @@ public class ClientboundSetPassengersPacket implements MinecraftPacket {
             helper.writeVarInt(out, entityId);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

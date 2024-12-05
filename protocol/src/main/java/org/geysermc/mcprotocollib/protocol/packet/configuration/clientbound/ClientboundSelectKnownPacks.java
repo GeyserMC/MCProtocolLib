@@ -28,4 +28,9 @@ public class ClientboundSelectKnownPacks implements MinecraftPacket {
             helper.writeString(buf, entry.getVersion());
         });
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

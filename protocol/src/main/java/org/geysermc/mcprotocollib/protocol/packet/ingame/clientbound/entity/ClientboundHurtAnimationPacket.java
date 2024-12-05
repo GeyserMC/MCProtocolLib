@@ -24,4 +24,9 @@ public class ClientboundHurtAnimationPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.id);
         out.writeFloat(this.yaw);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

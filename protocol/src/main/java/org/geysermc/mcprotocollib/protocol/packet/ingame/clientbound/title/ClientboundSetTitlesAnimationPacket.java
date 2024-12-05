@@ -27,4 +27,9 @@ public class ClientboundSetTitlesAnimationPacket implements MinecraftPacket {
         out.writeInt(this.stay);
         out.writeInt(this.fadeOut);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

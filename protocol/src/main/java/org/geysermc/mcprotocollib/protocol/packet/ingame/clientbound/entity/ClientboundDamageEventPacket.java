@@ -41,4 +41,9 @@ public class ClientboundDamageEventPacket implements MinecraftPacket {
             out.writeBoolean(false);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

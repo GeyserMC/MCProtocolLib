@@ -24,4 +24,9 @@ public class ServerboundContainerButtonClickPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.containerId);
         helper.writeVarInt(out, this.buttonId);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

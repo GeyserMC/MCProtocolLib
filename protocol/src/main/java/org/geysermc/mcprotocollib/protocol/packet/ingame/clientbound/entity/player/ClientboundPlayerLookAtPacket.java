@@ -55,4 +55,9 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
             out.writeBoolean(false);
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

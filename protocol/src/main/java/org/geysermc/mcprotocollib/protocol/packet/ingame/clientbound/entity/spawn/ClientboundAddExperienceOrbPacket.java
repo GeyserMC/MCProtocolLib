@@ -33,4 +33,9 @@ public class ClientboundAddExperienceOrbPacket implements MinecraftPacket {
         out.writeDouble(this.z);
         out.writeShort(this.exp);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

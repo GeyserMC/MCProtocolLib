@@ -27,4 +27,9 @@ public class ClientboundSetHealthPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.food);
         out.writeFloat(this.saturation);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

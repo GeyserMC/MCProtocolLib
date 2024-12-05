@@ -28,4 +28,9 @@ public class ServerboundPlaceRecipePacket implements MinecraftPacket {
         helper.writeVarInt(out, this.recipe);
         out.writeBoolean(this.useMaxItems);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -29,6 +29,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.function.Function;
 
 public class TransportHelper {
+    public static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
+
     public enum TransportMethod {
         NIO, EPOLL, KQUEUE, IO_URING
     }
@@ -45,7 +47,7 @@ public class TransportHelper {
                                 boolean supportsTcpFastOpenClient) {
     }
 
-    public static TransportType determineTransportMethod() {
+    private static TransportType determineTransportMethod() {
         if (isClassAvailable("io.netty.incubator.channel.uring.IOUring") && IOUring.isAvailable()) {
             return new TransportType(
                     TransportMethod.IO_URING,

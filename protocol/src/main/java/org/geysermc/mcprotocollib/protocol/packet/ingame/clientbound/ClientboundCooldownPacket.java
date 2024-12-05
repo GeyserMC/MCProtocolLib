@@ -25,4 +25,9 @@ public class ClientboundCooldownPacket implements MinecraftPacket {
         helper.writeResourceLocation(out, this.cooldownGroup);
         helper.writeVarInt(out, this.cooldownTicks);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

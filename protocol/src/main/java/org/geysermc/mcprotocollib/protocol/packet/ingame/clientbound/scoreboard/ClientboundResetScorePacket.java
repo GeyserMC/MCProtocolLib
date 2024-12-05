@@ -27,4 +27,9 @@ public class ClientboundResetScorePacket implements MinecraftPacket {
         helper.writeString(out, this.owner);
         helper.writeNullable(out, this.objective, helper::writeString);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

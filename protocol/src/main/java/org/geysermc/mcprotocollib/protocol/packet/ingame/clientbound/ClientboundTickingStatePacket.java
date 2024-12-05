@@ -25,4 +25,9 @@ public class ClientboundTickingStatePacket implements MinecraftPacket {
         out.writeFloat(tickRate);
         out.writeBoolean(isFrozen);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

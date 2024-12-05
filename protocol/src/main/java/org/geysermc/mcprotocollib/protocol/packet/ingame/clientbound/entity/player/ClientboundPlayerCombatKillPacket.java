@@ -25,4 +25,9 @@ public class ClientboundPlayerCombatKillPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.playerId);
         helper.writeComponent(out, this.message);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

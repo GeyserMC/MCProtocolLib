@@ -29,4 +29,9 @@ public class ServerboundResourcePackPacket implements MinecraftPacket {
         helper.writeUUID(out, id);
         helper.writeVarInt(out, this.status.ordinal());
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

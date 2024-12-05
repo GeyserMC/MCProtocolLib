@@ -62,4 +62,9 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
             }
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

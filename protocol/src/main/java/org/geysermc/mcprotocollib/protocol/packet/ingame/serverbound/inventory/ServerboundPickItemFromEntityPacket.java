@@ -24,4 +24,9 @@ public class ServerboundPickItemFromEntityPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.id);
         out.writeBoolean(this.includeData);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

@@ -39,4 +39,9 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
         }
         helper.writeOptionalItemStack(out, this.carriedItem);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

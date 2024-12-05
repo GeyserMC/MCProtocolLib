@@ -39,4 +39,9 @@ public class ServerboundSelectKnownPacks implements MinecraftPacket {
             helper.writeString(out, entry.getVersion());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

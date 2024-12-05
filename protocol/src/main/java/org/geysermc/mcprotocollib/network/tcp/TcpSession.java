@@ -3,11 +3,7 @@ package org.geysermc.mcprotocollib.network.tcp;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.DefaultEventLoopGroup;
-import io.netty.channel.EventLoop;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.concurrent.DefaultThreadFactory;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -33,24 +29,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
 public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> implements Session {
     private static final Logger log = LoggerFactory.getLogger(TcpSession.class);
 
-    /**
-     * Controls whether non-priority packets are handled in a separate event loop
-     */
-    public static boolean USE_EVENT_LOOP_FOR_PACKETS = true;
-    private static EventLoopGroup PACKET_EVENT_LOOP;
-    private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
-    private static final int SHUTDOWN_TIMEOUT_MS = 500;
-
     protected String host;
     protected int port;
     private final PacketProtocol protocol;
-    private final EventLoop eventLoop = createEventLoop();
+    private final Executor packetHandlerExecutor;
 
     private final Map<String, Object> flags = new HashMap<>();
     private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
@@ -58,10 +46,11 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
     private Channel channel;
     protected boolean disconnected = false;
 
-    public TcpSession(String host, int port, PacketProtocol protocol) {
+    public TcpSession(String host, int port, PacketProtocol protocol, Executor packetHandlerExecutor) {
         this.host = host;
         this.port = port;
         this.protocol = protocol;
+        this.packetHandlerExecutor = packetHandlerExecutor;
     }
 
     @Override
@@ -269,21 +258,6 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
         }
     }
 
-    private @Nullable EventLoop createEventLoop() {
-        if (!USE_EVENT_LOOP_FOR_PACKETS) {
-            return null;
-        }
-
-        if (PACKET_EVENT_LOOP == null) {
-            // See TcpClientSession.newThreadFactory() for details on
-            // daemon threads and their interaction with the runtime.
-            PACKET_EVENT_LOOP = new DefaultEventLoopGroup(new DefaultThreadFactory(this.getClass(), true));
-            Runtime.getRuntime().addShutdownHook(new Thread(
-                () -> PACKET_EVENT_LOOP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
-        }
-        return PACKET_EVENT_LOOP.next();
-    }
-
     @Override
     public Channel getChannel() {
         return this.channel;
@@ -322,8 +296,8 @@ public abstract class TcpSession extends SimpleChannelInboundHandler<Packet> imp
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
-        if (!packet.isPriority() && eventLoop != null) {
-            eventLoop.execute(() -> this.callPacketReceived(packet));
+        if (packet.shouldRunOnGameThread()) {
+            packetHandlerExecutor.execute(() -> this.callPacketReceived(packet));
         } else {
             this.callPacketReceived(packet);
         }

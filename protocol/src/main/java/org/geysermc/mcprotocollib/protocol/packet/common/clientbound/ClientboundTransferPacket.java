@@ -24,4 +24,10 @@ public class ClientboundTransferPacket implements MinecraftPacket {
         helper.writeString(out, this.host);
         helper.writeVarInt(out, this.port);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        // GAME THREAD DETAIL: Code runs before packet is made async.
+        return false; // False, you need to handle making it async yourself
+    }
 }

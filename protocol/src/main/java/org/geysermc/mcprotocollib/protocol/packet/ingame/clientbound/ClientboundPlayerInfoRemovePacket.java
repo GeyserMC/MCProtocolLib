@@ -23,4 +23,9 @@ public class ClientboundPlayerInfoRemovePacket implements MinecraftPacket {
     public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
         helper.writeList(out, this.profileIds, helper::writeUUID);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

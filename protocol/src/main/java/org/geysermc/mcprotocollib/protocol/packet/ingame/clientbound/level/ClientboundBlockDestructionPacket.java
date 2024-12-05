@@ -30,4 +30,9 @@ public class ClientboundBlockDestructionPacket implements MinecraftPacket {
         helper.writePosition(out, this.position);
         helper.writeBlockBreakStage(out, this.stage);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

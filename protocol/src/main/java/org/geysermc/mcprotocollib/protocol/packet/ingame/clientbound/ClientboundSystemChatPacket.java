@@ -25,4 +25,9 @@ public class ClientboundSystemChatPacket implements MinecraftPacket {
         helper.writeComponent(out, this.content);
         out.writeBoolean(this.overlay);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

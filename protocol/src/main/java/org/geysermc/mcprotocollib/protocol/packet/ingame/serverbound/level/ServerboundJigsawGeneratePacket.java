@@ -29,4 +29,9 @@ public class ServerboundJigsawGeneratePacket implements MinecraftPacket {
         helper.writeVarInt(out, this.levels);
         out.writeBoolean(this.keepJigsaws);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }

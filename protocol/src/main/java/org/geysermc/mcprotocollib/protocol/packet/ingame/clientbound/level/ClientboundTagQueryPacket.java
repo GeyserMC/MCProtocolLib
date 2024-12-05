@@ -26,4 +26,9 @@ public class ClientboundTagQueryPacket implements MinecraftPacket {
         helper.writeVarInt(out, this.transactionId);
         helper.writeAnyTag(out, this.nbt);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }
