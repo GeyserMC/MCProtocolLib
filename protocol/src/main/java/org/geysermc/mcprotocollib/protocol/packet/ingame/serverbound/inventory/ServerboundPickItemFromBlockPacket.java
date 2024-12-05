@@ -25,4 +25,9 @@ public class ServerboundPickItemFromBlockPacket implements MinecraftPacket {
         helper.writePosition(out, this.pos);
         out.writeBoolean(this.includeData);
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }
