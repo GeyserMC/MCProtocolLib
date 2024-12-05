@@ -1,20 +1,23 @@
-package org.geysermc.mcprotocollib.network.tcp;
+package org.geysermc.mcprotocollib.network.net;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.geysermc.mcprotocollib.network.Flag;
+import org.geysermc.mcprotocollib.network.ServerSession;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 
-public class TcpServerSession extends TcpSession {
-    private final TcpServer server;
+public class NetServerSession extends NetSession implements ServerSession {
+    private final NetServer server;
     private final PacketCodecHelper codecHelper;
 
-    public TcpServerSession(String host, int port, PacketProtocol protocol, TcpServer server, Executor packetHandlerExecutor) {
-        super(host, port, protocol, packetHandlerExecutor);
+    public NetServerSession(SocketAddress remoteAddress, PacketProtocol protocol, NetServer server, Executor packetHandlerExecutor) {
+        super(remoteAddress, protocol, packetHandlerExecutor);
         this.server = server;
         this.codecHelper = protocol.createHelper();
     }
@@ -42,13 +45,13 @@ public class TcpServerSession extends TcpSession {
     }
 
     @Override
-    public <T> T getFlag(Flag<T> flag, T def) {
-        T ret = super.getFlag(flag, null);
+    public <T> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
+        T ret = super.getFlagSupplied(flag, () -> null);
         if (ret != null) {
             return ret;
         }
 
-        return this.server.getGlobalFlag(flag, def);
+        return this.server.getGlobalFlagSupplied(flag, defSupplier);
     }
 
     @Override

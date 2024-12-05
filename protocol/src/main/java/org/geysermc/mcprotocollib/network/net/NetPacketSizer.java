@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.tcp;
+package org.geysermc.mcprotocollib.network.net;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -12,7 +12,7 @@ import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class TcpPacketSizer extends ByteToMessageCodec<ByteBuf> {
+public class NetPacketSizer extends ByteToMessageCodec<ByteBuf> {
     private final PacketHeader header;
     private final PacketCodecHelper codecHelper;
 
