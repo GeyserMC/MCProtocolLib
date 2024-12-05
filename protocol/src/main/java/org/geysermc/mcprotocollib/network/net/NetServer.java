@@ -7,7 +7,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.ServerChannel;
 import org.geysermc.mcprotocollib.network.AbstractServer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
@@ -78,7 +78,7 @@ public class NetServer extends AbstractServer {
         }
     }
 
-    protected ChannelFactory<? extends ServerSocketChannel> getChannelFactory() {
+    protected ChannelFactory<? extends ServerChannel> getChannelFactory() {
         return TransportHelper.TRANSPORT_TYPE.serverSocketChannelFactory();
     }
 

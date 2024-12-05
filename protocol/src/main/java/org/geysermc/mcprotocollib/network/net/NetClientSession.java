@@ -6,7 +6,6 @@ import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
@@ -100,7 +99,7 @@ public class NetClientSession extends NetSession implements ClientSession {
         return EVENT_LOOP_GROUP;
     }
 
-    protected ChannelFactory<? extends SocketChannel> getChannelFactory() {
+    protected ChannelFactory<? extends Channel> getChannelFactory() {
         return TransportHelper.TRANSPORT_TYPE.socketChannelFactory();
     }
 
