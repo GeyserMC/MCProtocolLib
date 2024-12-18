@@ -122,7 +122,6 @@ public class NetClientSession extends NetSession implements ClientSession {
             @Override
             public void initChannel(@NonNull Channel channel) throws Exception {
                 NettyHelper.addProxy(proxy, channel.pipeline());
-
                 NettyHelper.initializeHAProxySupport(NetClientSession.this, channel);
 
                 super.initChannel(channel);
