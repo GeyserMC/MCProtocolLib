@@ -173,7 +173,7 @@ public class ClientListener extends SessionAdapter {
         ClientIntentionPacket intention = new ClientIntentionPacket(
             protocol.getCodec().getProtocolVersion(),
             session.getFlagSupplied(MinecraftConstants.CLIENT_HOST, () -> ((InetSocketAddress)session.getRemoteAddress()).getHostString()),
-            session.getFlagSupplied(MinecraftConstants.CLIENT_PORT, () -> ((InetSocketAddress)session.getRemoteAddress()).getPort()),
+            session.getFlagSupplied(MinecraftConstants.CLIENT_PORT, () -> ((InetSocketAddress) session.getRemoteAddress()).getPort()),
             handshakeIntent
         );
 
