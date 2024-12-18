@@ -13,8 +13,8 @@ import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import org.geysermc.mcprotocollib.network.session.NetServerSession;
-import org.geysermc.mcprotocollib.network.session.NetSession;
+import org.geysermc.mcprotocollib.network.session.ServerNetworkSession;
+import org.geysermc.mcprotocollib.network.session.NetworkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,19 +23,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public class NetServer extends AbstractServer {
-    private static final Logger log = LoggerFactory.getLogger(NetServer.class);
+public class NetworkServer extends AbstractServer {
+    private static final Logger log = LoggerFactory.getLogger(NetworkServer.class);
 
     private final Supplier<Executor> packetHandlerExecutorFactory;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private Channel channel;
 
-    public NetServer(SocketAddress bindAddress, Supplier<? extends PacketProtocol> protocol) {
+    public NetworkServer(SocketAddress bindAddress, Supplier<? extends PacketProtocol> protocol) {
         this(bindAddress, protocol, DefaultPacketHandlerExecutor::createExecutor);
     }
 
-    public NetServer(SocketAddress bindAddress, Supplier<? extends PacketProtocol> protocol, Supplier<Executor> packetHandlerExecutorFactory) {
+    public NetworkServer(SocketAddress bindAddress, Supplier<? extends PacketProtocol> protocol, Supplier<Executor> packetHandlerExecutorFactory) {
         super(bindAddress, protocol);
         this.packetHandlerExecutorFactory = packetHandlerExecutorFactory;
     }
@@ -106,8 +106,8 @@ public class NetServer extends AbstractServer {
         return new MinecraftChannelInitializer<>(channel -> {
             PacketProtocol protocol = createPacketProtocol();
 
-            NetSession session = new NetServerSession(channel.remoteAddress(), protocol, NetServer.this, packetHandlerExecutorFactory.get());
-            session.getPacketProtocol().newServerSession(NetServer.this, session);
+            NetworkSession session = new ServerNetworkSession(channel.remoteAddress(), protocol, NetworkServer.this, packetHandlerExecutorFactory.get());
+            session.getPacketProtocol().newServerSession(NetworkServer.this, session);
 
             return session;
         }, false);

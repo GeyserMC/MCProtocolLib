@@ -21,8 +21,8 @@ import org.geysermc.mcprotocollib.network.event.server.SessionAddedEvent;
 import org.geysermc.mcprotocollib.network.event.server.SessionRemovedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.session.NetClientSession;
-import org.geysermc.mcprotocollib.network.server.NetServer;
+import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
+import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
@@ -64,7 +64,7 @@ public class MinecraftProtocolTest {
             SessionService sessionService = new SessionService();
             sessionService.setProxy(AUTH_PROXY);
 
-            Server server = new NetServer(ADDRESS, MinecraftProtocol::new);
+            Server server = new NetworkServer(ADDRESS, MinecraftProtocol::new);
             server.setGlobalFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
             server.setGlobalFlag(MinecraftConstants.ENCRYPT_CONNECTION, ENCRYPT_CONNECTION);
             server.setGlobalFlag(MinecraftConstants.SHOULD_AUTHENTICATE, SHOULD_AUTHENTICATE);
@@ -157,7 +157,7 @@ public class MinecraftProtocolTest {
         sessionService.setProxy(AUTH_PROXY);
 
         MinecraftProtocol protocol = new MinecraftProtocol();
-        ClientSession client = new NetClientSession(ADDRESS, protocol, PROXY);
+        ClientSession client = new ClientNetworkSession(ADDRESS, protocol, PROXY);
         client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, (session, info) -> {
             log.info("Version: {}, {}", info.getVersionInfo().getVersionName(), info.getVersionInfo().getProtocolVersion());
@@ -205,7 +205,7 @@ public class MinecraftProtocolTest {
         SessionService sessionService = new SessionService();
         sessionService.setProxy(AUTH_PROXY);
 
-        ClientSession client = new NetClientSession(ADDRESS, protocol, PROXY);
+        ClientSession client = new ClientNetworkSession(ADDRESS, protocol, PROXY);
         client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.addListener(new SessionAdapter() {
             @Override

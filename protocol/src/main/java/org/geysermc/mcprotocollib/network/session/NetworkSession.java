@@ -33,8 +33,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
-public abstract class NetSession extends SimpleChannelInboundHandler<Packet> implements Session {
-    private static final Logger log = LoggerFactory.getLogger(NetSession.class);
+public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet> implements Session {
+    private static final Logger log = LoggerFactory.getLogger(NetworkSession.class);
 
     protected final SocketAddress remoteAddress;
     protected final PacketProtocol protocol;
@@ -46,7 +46,7 @@ public abstract class NetSession extends SimpleChannelInboundHandler<Packet> imp
     private Channel channel;
     protected boolean disconnected = false;
 
-    public NetSession(SocketAddress remoteAddress, PacketProtocol protocol, Executor packetHandlerExecutor) {
+    public NetworkSession(SocketAddress remoteAddress, PacketProtocol protocol, Executor packetHandlerExecutor) {
         this.remoteAddress = remoteAddress;
         this.protocol = protocol;
         this.packetHandlerExecutor = packetHandlerExecutor;
@@ -215,7 +215,7 @@ public abstract class NetSession extends SimpleChannelInboundHandler<Packet> imp
 
         if (this.channel != null && this.channel.isOpen()) {
             this.callEvent(new DisconnectingEvent(this, reason, cause));
-            this.channel.flush().close().addListener((ChannelFutureListener) future -> callEvent(new DisconnectedEvent(NetSession.this, reason, cause)));
+            this.channel.flush().close().addListener((ChannelFutureListener) future -> callEvent(new DisconnectedEvent(NetworkSession.this, reason, cause)));
         } else {
             this.callEvent(new DisconnectedEvent(this, reason, cause));
         }

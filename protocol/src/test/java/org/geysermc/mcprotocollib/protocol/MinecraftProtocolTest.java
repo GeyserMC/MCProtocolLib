@@ -7,8 +7,8 @@ import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.session.NetClientSession;
-import org.geysermc.mcprotocollib.network.server.NetServer;
+import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
+import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
@@ -49,7 +49,7 @@ public class MinecraftProtocolTest {
 
     @BeforeAll
     public static void setupServer() {
-        server = new NetServer(ADDRESS, MinecraftProtocol::new);
+        server = new NetworkServer(ADDRESS, MinecraftProtocol::new);
         server.setGlobalFlag(MinecraftConstants.ENCRYPT_CONNECTION, true);
         server.setGlobalFlag(MinecraftConstants.SHOULD_AUTHENTICATE, false);
         server.setGlobalFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, 256);
@@ -78,7 +78,7 @@ public class MinecraftProtocolTest {
 
     @Test
     public void testStatus() throws InterruptedException {
-        ClientSession session = new NetClientSession(ADDRESS, new MinecraftProtocol());
+        ClientSession session = new ClientNetworkSession(ADDRESS, new MinecraftProtocol());
         try {
             ServerInfoHandlerTest handler = new ServerInfoHandlerTest();
             session.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, handler);
@@ -95,7 +95,7 @@ public class MinecraftProtocolTest {
 
     @Test
     public void testLogin() throws InterruptedException {
-        ClientSession session = new NetClientSession(ADDRESS, new MinecraftProtocol("Username"));
+        ClientSession session = new ClientNetworkSession(ADDRESS, new MinecraftProtocol("Username"));
         try {
             LoginListenerTest listener = new LoginListenerTest();
             session.addListener(listener);

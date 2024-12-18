@@ -24,7 +24,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-public class NetClientSession extends NetSession implements ClientSession {
+public class ClientNetworkSession extends NetworkSession implements ClientSession {
     private static EventLoopGroup EVENT_LOOP_GROUP;
 
     /**
@@ -37,23 +37,23 @@ public class NetClientSession extends NetSession implements ClientSession {
     protected final ProxyInfo proxy;
     protected final PacketCodecHelper codecHelper;
 
-    public NetClientSession(SocketAddress remoteAddress, PacketProtocol protocol) {
+    public ClientNetworkSession(SocketAddress remoteAddress, PacketProtocol protocol) {
         this(remoteAddress, null, protocol);
     }
 
-    public NetClientSession(SocketAddress remoteAddress, PacketProtocol protocol, ProxyInfo proxy) {
+    public ClientNetworkSession(SocketAddress remoteAddress, PacketProtocol protocol, ProxyInfo proxy) {
         this(remoteAddress, null, protocol, proxy);
     }
 
-    public NetClientSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol) {
+    public ClientNetworkSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol) {
         this(remoteAddress, bindAddress, protocol, null);
     }
 
-    public NetClientSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol, ProxyInfo proxy) {
+    public ClientNetworkSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol, ProxyInfo proxy) {
         this(remoteAddress, bindAddress, protocol, proxy, DefaultPacketHandlerExecutor.createExecutor());
     }
 
-    public NetClientSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol, ProxyInfo proxy, Executor packetHandlerExecutor) {
+    public ClientNetworkSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol, ProxyInfo proxy, Executor packetHandlerExecutor) {
         super(remoteAddress, protocol, packetHandlerExecutor);
         this.bindAddress = bindAddress;
         this.proxy = proxy;
@@ -118,14 +118,14 @@ public class NetClientSession extends NetSession implements ClientSession {
     protected ChannelHandler getChannelHandler() {
         return new MinecraftChannelInitializer<>(channel -> {
             PacketProtocol protocol = getPacketProtocol();
-            protocol.newClientSession(NetClientSession.this);
+            protocol.newClientSession(ClientNetworkSession.this);
 
-            return NetClientSession.this;
+            return ClientNetworkSession.this;
         }, true) {
             @Override
             public void initChannel(@NonNull Channel channel) throws Exception {
                 NettyHelper.addProxy(proxy, channel.pipeline());
-                NettyHelper.initializeHAProxySupport(NetClientSession.this, channel);
+                NettyHelper.initializeHAProxySupport(ClientNetworkSession.this, channel);
 
                 super.initChannel(channel);
             }
@@ -150,6 +150,6 @@ public class NetClientSession extends NetSession implements ClientSession {
         // normally lead to the thread exiting. If not, it will be forcibly
         // killed after SHUTDOWN_TIMEOUT_MS along with the other
         // daemon threads as the runtime exits.
-        return new DefaultThreadFactory(NetClientSession.class, true);
+        return new DefaultThreadFactory(ClientNetworkSession.class, true);
     }
 }

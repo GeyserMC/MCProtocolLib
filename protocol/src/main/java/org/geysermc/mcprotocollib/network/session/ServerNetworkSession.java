@@ -4,7 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.ServerSession;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
-import org.geysermc.mcprotocollib.network.server.NetServer;
+import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.net.SocketAddress;
@@ -13,11 +13,11 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
-public class NetServerSession extends NetSession implements ServerSession {
-    private final NetServer server;
+public class ServerNetworkSession extends NetworkSession implements ServerSession {
+    private final NetworkServer server;
     private final PacketCodecHelper codecHelper;
 
-    public NetServerSession(SocketAddress remoteAddress, PacketProtocol protocol, NetServer server, Executor packetHandlerExecutor) {
+    public ServerNetworkSession(SocketAddress remoteAddress, PacketProtocol protocol, NetworkServer server, Executor packetHandlerExecutor) {
         super(remoteAddress, protocol, packetHandlerExecutor);
         this.server = server;
         this.codecHelper = protocol.createHelper();

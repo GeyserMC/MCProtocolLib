@@ -12,7 +12,7 @@ import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
 import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.session.NetClientSession;
+import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.UnexpectedEncryptionException;
@@ -136,7 +136,7 @@ public class ClientListener extends SessionAdapter {
                 session.switchOutboundState(() -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
             } else if (packet instanceof ClientboundTransferPacket transferPacket) {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
-                    NetClientSession newSession = new NetClientSession(new InetSocketAddress(transferPacket.getHost(), transferPacket.getPort()), session.getPacketProtocol());
+                    ClientNetworkSession newSession = new ClientNetworkSession(new InetSocketAddress(transferPacket.getHost(), transferPacket.getPort()), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
                     newSession.setFlag(BuiltinFlags.CLIENT_TRANSFERRING, true);
                     session.disconnect(Component.translatable("disconnect.transfer"));
@@ -156,7 +156,7 @@ public class ClientListener extends SessionAdapter {
                 }
             } else if (packet instanceof ClientboundTransferPacket transferPacket) {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
-                    NetClientSession newSession = new NetClientSession(new InetSocketAddress(transferPacket.getHost(), transferPacket.getPort()), session.getPacketProtocol());
+                    ClientNetworkSession newSession = new ClientNetworkSession(new InetSocketAddress(transferPacket.getHost(), transferPacket.getPort()), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
                     newSession.setFlag(BuiltinFlags.CLIENT_TRANSFERRING, true);
                     session.disconnect(Component.translatable("disconnect.transfer"));
