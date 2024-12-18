@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.net;
+package org.geysermc.mcprotocollib.network.netty;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.geysermc.mcprotocollib.network.Flag;

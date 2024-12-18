@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.net;
+package org.geysermc.mcprotocollib.network.netty;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -36,12 +36,12 @@ public class MinecraftChannelInitializer<S extends Session & ChannelHandler> ext
         pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
         pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
 
-        pipeline.addLast("encryption", new NetPacketEncryptor());
-        pipeline.addLast("sizer", new NetPacketSizer(protocol.getPacketHeader(), session.getCodecHelper()));
-        pipeline.addLast("compression", new NetPacketCompression(session.getCodecHelper()));
+        pipeline.addLast("encryption", new PacketEncryptorCodec());
+        pipeline.addLast("sizer", new PacketSizerCodec(protocol.getPacketHeader(), session.getCodecHelper()));
+        pipeline.addLast("compression", new PacketCompressionCodec(session.getCodecHelper()));
 
-        pipeline.addLast("flow-control", new NetFlowControlHandler());
-        pipeline.addLast("codec", new NetPacketCodec(session, client));
+        pipeline.addLast("flow-control", new AutoReadFlowControlHandler());
+        pipeline.addLast("codec", new PacketCodec(session, client));
         pipeline.addLast("flush-handler", new FlushHandler());
         pipeline.addLast("manager", session);
     }

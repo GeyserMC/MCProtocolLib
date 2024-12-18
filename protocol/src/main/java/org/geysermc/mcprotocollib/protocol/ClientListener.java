@@ -12,7 +12,7 @@ import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
 import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.net.NetClientSession;
+import org.geysermc.mcprotocollib.network.netty.NetClientSession;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.UnexpectedEncryptionException;

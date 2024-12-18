@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.net;
+package org.geysermc.mcprotocollib.network.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
