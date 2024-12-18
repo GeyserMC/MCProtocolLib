@@ -39,7 +39,7 @@ import java.net.UnknownHostException;
 public class NettyHelper {
     private static final Logger log = LoggerFactory.getLogger(NettyHelper.class);
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
-    
+
     public static InetSocketAddress resolveAddress(Session session, EventLoop eventLoop, String host, int port) {
         String name = session.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host;
         log.debug("Attempting SRV lookup for \"{}\".", name);
@@ -124,7 +124,9 @@ public class NettyHelper {
                             destinationPort = 0;
                         }
                         default -> throw new UnsupportedOperationException("Unsupported proxied protocol: " + proxiedProtocol);
-                    };
+                    }
+
+                    log.debug("Remote address {} is not of the same type as the client address {} - using arbitrary values for destination address and port", remoteAddress, clientAddress);
                 }
 
                 ctx.channel().writeAndFlush(new HAProxyMessage(
