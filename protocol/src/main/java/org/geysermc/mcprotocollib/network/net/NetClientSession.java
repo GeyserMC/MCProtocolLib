@@ -64,11 +64,12 @@ public class NetClientSession extends NetSession implements ClientSession {
             throw new IllegalStateException("Session has already been disconnected.");
         }
 
+        final EventLoopGroup eventLoopGroup = getEventLoopGroup();
         final Bootstrap bootstrap = new Bootstrap()
             .channelFactory(getChannelFactory())
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getFlag(BuiltinFlags.CLIENT_CONNECT_TIMEOUT, 30) * 1000)
-            .group(getEventLoopGroup())
-            .remoteAddress(remoteAddress)
+            .group(eventLoopGroup)
+            .remoteAddress(NettyHelper.resolveAddress(this, eventLoopGroup::next, remoteAddress))
             .localAddress(bindAddress)
             .handler(getChannelHandler());
 

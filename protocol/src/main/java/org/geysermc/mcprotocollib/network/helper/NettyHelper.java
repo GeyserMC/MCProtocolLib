@@ -35,12 +35,21 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
+import java.util.function.Supplier;
 
 public class NettyHelper {
     private static final Logger log = LoggerFactory.getLogger(NettyHelper.class);
     private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
 
-    public static InetSocketAddress resolveAddress(Session session, EventLoop eventLoop, String host, int port) {
+    public static SocketAddress resolveAddress(Session session, Supplier<EventLoop> eventLoop, SocketAddress address) {
+        if (address instanceof InetSocketAddress inetAddress && inetAddress.isUnresolved()) {
+            return resolveAddress(session, eventLoop.get(), inetAddress.getHostString(), inetAddress.getPort());
+        }
+
+        return address;
+    }
+
+    public static SocketAddress resolveAddress(Session session, EventLoop eventLoop, String host, int port) {
         String name = session.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host;
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
