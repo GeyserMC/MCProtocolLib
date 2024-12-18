@@ -2,6 +2,7 @@ package org.geysermc.mcprotocollib.network;
 
 import org.geysermc.mcprotocollib.network.event.server.ServerListener;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.network.server.AbstractServer;
 
 import java.net.SocketAddress;
 import java.util.List;

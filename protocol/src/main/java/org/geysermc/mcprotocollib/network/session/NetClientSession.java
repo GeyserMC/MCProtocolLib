@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.netty;
+package org.geysermc.mcprotocollib.network.session;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -14,6 +14,8 @@ import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.NettyHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
+import org.geysermc.mcprotocollib.network.netty.DefaultPacketHandlerExecutor;
+import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.net.SocketAddress;

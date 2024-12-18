@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.network.netty;
+package org.geysermc.mcprotocollib.network.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;

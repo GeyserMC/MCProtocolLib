@@ -2,8 +2,8 @@ package org.geysermc.mcprotocollib.network.example;
 
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.Server;
-import org.geysermc.mcprotocollib.network.netty.NetClientSession;
-import org.geysermc.mcprotocollib.network.netty.NetServer;
+import org.geysermc.mcprotocollib.network.session.NetClientSession;
+import org.geysermc.mcprotocollib.network.server.NetServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,9 @@
-package org.geysermc.mcprotocollib.network;
+package org.geysermc.mcprotocollib.network.server;
 
 import net.kyori.adventure.text.Component;
+import org.geysermc.mcprotocollib.network.Flag;
+import org.geysermc.mcprotocollib.network.Server;
+import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.server.ServerBoundEvent;
 import org.geysermc.mcprotocollib.network.event.server.ServerClosedEvent;
 import org.geysermc.mcprotocollib.network.event.server.ServerClosingEvent;

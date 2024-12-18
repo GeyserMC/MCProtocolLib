@@ -1,9 +1,10 @@
-package org.geysermc.mcprotocollib.network.netty;
+package org.geysermc.mcprotocollib.network.session;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.ServerSession;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.network.server.NetServer;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
 import java.net.SocketAddress;
