@@ -18,10 +18,10 @@ public class PacketErrorEvent implements SessionEvent {
      * @param session Session that the error came from.
      * @param cause Cause of the error.
      */
-    public PacketErrorEvent(Session session, Throwable cause, @Nullable Class<? extends Packet> packetClass) {
+    public PacketErrorEvent(Session session, Throwable cause, @Nullable Packet packetClass) {
         this.session = session;
         this.cause = cause;
-        this.packetClass = packetClass;
+        this.packetClass = packetClass == null ? null : packetClass.getClass();
     }
 
     /**
