@@ -81,7 +81,7 @@ To use snapshot builds, switch the URL to `https://repo.opencollab.dev/maven-sna
 
 ### Javadocs
 
-You can find the Javadocs for MCProtocolLib [on opencollab](https://ci.opencollab.dev/job/GeyserMC/job/MCProtocolLib/job/master/javadoc/overview-summary.html).
+You can find the Javadocs for MCProtocolLib [on opencollab](https://repo.opencollab.dev/javadoc/maven-snapshots/org/geysermc/mcprotocollib/protocol/latest).
 
 ## Building the Source
 
