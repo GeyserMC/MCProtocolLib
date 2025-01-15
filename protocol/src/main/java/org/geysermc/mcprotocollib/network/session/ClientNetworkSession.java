@@ -8,13 +8,13 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.NettyHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
-import org.geysermc.mcprotocollib.network.netty.DefaultPacketHandlerExecutor;
 import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
@@ -37,23 +37,13 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
     protected final ProxyInfo proxy;
     protected final PacketCodecHelper codecHelper;
 
-    public ClientNetworkSession(SocketAddress remoteAddress, PacketProtocol protocol) {
-        this(remoteAddress, null, protocol);
-    }
-
-    public ClientNetworkSession(SocketAddress remoteAddress, PacketProtocol protocol, ProxyInfo proxy) {
-        this(remoteAddress, null, protocol, proxy);
-    }
-
-    public ClientNetworkSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol) {
-        this(remoteAddress, bindAddress, protocol, null);
-    }
-
-    public ClientNetworkSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol, ProxyInfo proxy) {
-        this(remoteAddress, bindAddress, protocol, proxy, DefaultPacketHandlerExecutor.createExecutor());
-    }
-
-    public ClientNetworkSession(SocketAddress remoteAddress, SocketAddress bindAddress, PacketProtocol protocol, ProxyInfo proxy, Executor packetHandlerExecutor) {
+    public ClientNetworkSession(
+        @NonNull SocketAddress remoteAddress,
+        @NonNull PacketProtocol protocol,
+        @NonNull Executor packetHandlerExecutor,
+        @Nullable SocketAddress bindAddress,
+        @Nullable ProxyInfo proxy
+    ) {
         super(remoteAddress, protocol, packetHandlerExecutor);
         this.bindAddress = bindAddress;
         this.proxy = proxy;
@@ -89,6 +79,11 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
         if (wait) {
             handleFuture.join();
         }
+    }
+
+    @Override
+    public @Nullable ProxyInfo getProxy() {
+        return this.proxy;
     }
 
     @Override

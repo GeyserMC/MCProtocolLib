@@ -7,9 +7,9 @@ import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
-import org.geysermc.mcprotocollib.network.server.NetworkServer;
+import org.geysermc.mcprotocollib.network.factory.ClientNetworkSessionFactory;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
@@ -78,7 +78,10 @@ public class MinecraftProtocolTest {
 
     @Test
     public void testStatus() throws InterruptedException {
-        ClientSession session = new ClientNetworkSession(ADDRESS, new MinecraftProtocol());
+        ClientSession session = ClientNetworkSessionFactory.factory()
+            .setRemoteSocketAddress(ADDRESS)
+            .setProtocol(new MinecraftProtocol())
+            .create();
         try {
             ServerInfoHandlerTest handler = new ServerInfoHandlerTest();
             session.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, handler);
@@ -95,7 +98,10 @@ public class MinecraftProtocolTest {
 
     @Test
     public void testLogin() throws InterruptedException {
-        ClientSession session = new ClientNetworkSession(ADDRESS, new MinecraftProtocol("Username"));
+        ClientSession session = ClientNetworkSessionFactory.factory()
+            .setRemoteSocketAddress(ADDRESS)
+            .setProtocol(new MinecraftProtocol("Username"))
+            .create();
         try {
             LoginListenerTest listener = new LoginListenerTest();
             session.addListener(listener);

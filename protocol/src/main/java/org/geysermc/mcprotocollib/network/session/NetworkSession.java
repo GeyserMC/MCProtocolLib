@@ -234,6 +234,11 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
+    public Executor getPacketHandlerExecutor() {
+        return this.packetHandlerExecutor;
+    }
+
+    @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         if (this.disconnected || this.channel != null) {
             ctx.channel().close();

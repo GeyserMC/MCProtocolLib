@@ -16,6 +16,7 @@ import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 /**
@@ -261,6 +262,13 @@ public interface Session {
      * @return The netty channel
      */
     Channel getChannel();
+
+    /**
+     * Returns the executor that handles packet handling.
+     *
+     * @return The packet handler executor
+     */
+    Executor getPacketHandlerExecutor();
 
     /**
      * Changes the inbound state of the session and then re-enables auto read.

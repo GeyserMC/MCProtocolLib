@@ -7,13 +7,14 @@ import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
+import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
 import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
 import org.geysermc.mcprotocollib.network.event.session.ConnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.UnexpectedEncryptionException;
 import org.geysermc.mcprotocollib.protocol.data.handshake.HandshakeIntent;
@@ -136,7 +137,13 @@ public class ClientListener extends SessionAdapter {
                 session.switchOutboundState(() -> protocol.setOutboundState(ProtocolState.CONFIGURATION));
             } else if (packet instanceof ClientboundTransferPacket transferPacket) {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
-                    ClientNetworkSession newSession = new ClientNetworkSession(new InetSocketAddress(transferPacket.getHost(), transferPacket.getPort()), session.getPacketProtocol());
+                    ClientNetworkSession newSession = new ClientNetworkSession(
+                        InetSocketAddress.createUnresolved(transferPacket.getHost(), transferPacket.getPort()),
+                        session.getPacketProtocol(),
+                        session.getPacketHandlerExecutor(),
+                        session.getLocalAddress(),
+                        ((ClientSession) session).getProxy()
+                    );
                     newSession.setFlags(session.getFlags());
                     newSession.setFlag(BuiltinFlags.CLIENT_TRANSFERRING, true);
                     session.disconnect(Component.translatable("disconnect.transfer"));
@@ -156,7 +163,13 @@ public class ClientListener extends SessionAdapter {
                 }
             } else if (packet instanceof ClientboundTransferPacket transferPacket) {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
-                    ClientNetworkSession newSession = new ClientNetworkSession(new InetSocketAddress(transferPacket.getHost(), transferPacket.getPort()), session.getPacketProtocol());
+                    ClientNetworkSession newSession = new ClientNetworkSession(
+                        InetSocketAddress.createUnresolved(transferPacket.getHost(), transferPacket.getPort()),
+                        session.getPacketProtocol(),
+                        session.getPacketHandlerExecutor(),
+                        session.getLocalAddress(),
+                        ((ClientSession) session).getProxy()
+                    );
                     newSession.setFlags(session.getFlags());
                     newSession.setFlag(BuiltinFlags.CLIENT_TRANSFERRING, true);
                     session.disconnect(Component.translatable("disconnect.transfer"));

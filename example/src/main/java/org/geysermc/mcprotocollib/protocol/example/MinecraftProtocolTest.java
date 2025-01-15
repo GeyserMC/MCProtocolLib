@@ -21,9 +21,9 @@ import org.geysermc.mcprotocollib.network.event.server.SessionAddedEvent;
 import org.geysermc.mcprotocollib.network.event.server.SessionRemovedEvent;
 import org.geysermc.mcprotocollib.network.event.session.DisconnectedEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionAdapter;
-import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
-import org.geysermc.mcprotocollib.network.server.NetworkServer;
+import org.geysermc.mcprotocollib.network.factory.ClientNetworkSessionFactory;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.geysermc.mcprotocollib.protocol.MinecraftConstants;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
@@ -157,7 +157,11 @@ public class MinecraftProtocolTest {
         sessionService.setProxy(AUTH_PROXY);
 
         MinecraftProtocol protocol = new MinecraftProtocol();
-        ClientSession client = new ClientNetworkSession(ADDRESS, protocol, PROXY);
+        ClientSession client = ClientNetworkSessionFactory.factory()
+            .setRemoteSocketAddress(ADDRESS)
+            .setProtocol(protocol)
+            .setProxy(PROXY)
+            .create();
         client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.setFlag(MinecraftConstants.SERVER_INFO_HANDLER_KEY, (session, info) -> {
             log.info("Version: {}, {}", info.getVersionInfo().getVersionName(), info.getVersionInfo().getProtocolVersion());
@@ -205,7 +209,12 @@ public class MinecraftProtocolTest {
         SessionService sessionService = new SessionService();
         sessionService.setProxy(AUTH_PROXY);
 
-        ClientSession client = new ClientNetworkSession(ADDRESS, protocol, PROXY);
+
+        ClientSession client = ClientNetworkSessionFactory.factory()
+            .setRemoteSocketAddress(ADDRESS)
+            .setProtocol(protocol)
+            .setProxy(PROXY)
+            .create();
         client.setFlag(MinecraftConstants.SESSION_SERVICE_KEY, sessionService);
         client.addListener(new SessionAdapter() {
             @Override

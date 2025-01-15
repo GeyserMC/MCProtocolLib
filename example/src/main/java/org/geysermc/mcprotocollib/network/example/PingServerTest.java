@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.network.example;
 
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.Server;
-import org.geysermc.mcprotocollib.network.session.ClientNetworkSession;
+import org.geysermc.mcprotocollib.network.factory.ClientNetworkSessionFactory;
 import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,10 @@ public class PingServerTest {
         server.addListener(new ServerListener(key));
         server.bind();
 
-        ClientSession client = new ClientNetworkSession(new InetSocketAddress("127.0.0.1", 25565), new TestProtocol(key));
+        ClientSession client = ClientNetworkSessionFactory.factory()
+            .setAddress("127.0.0.1", 25565)
+            .setProtocol(new TestProtocol(key))
+            .create();
         client.connect();
     }
 }
