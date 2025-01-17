@@ -8,8 +8,8 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
     protected final BooleanWriter primitiveWriter;
     protected final BooleanDataComponentFactory primitiveFactory;
 
-    protected BooleanComponentType(BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
-        super(reader, writer, metadataFactory);
+    protected BooleanComponentType(String key, BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
+        super(key, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
@@ -61,5 +61,10 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
         default DataComponent<Boolean, BooleanComponentType> create(DataComponentType<Boolean> type, Boolean value) {
             throw new UnsupportedOperationException("Unsupported read method! Use primitive createPrimitive!");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "BooleanComponentType(id=" + id + " , key=" + key.asString() + ")";
     }
 }
