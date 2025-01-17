@@ -8,8 +8,8 @@ public class IntComponentType extends DataComponentType<Integer> {
     protected final IntWriter primitiveWriter;
     protected final IntDataComponentFactory primitiveFactory;
 
-    protected IntComponentType(IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
-        super(reader, writer, metadataFactory);
+    protected IntComponentType(String key, IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
+        super(key, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
@@ -61,5 +61,10 @@ public class IntComponentType extends DataComponentType<Integer> {
         default DataComponent<Integer, IntComponentType> create(DataComponentType<Integer> type, Integer value) {
             throw new UnsupportedOperationException("Unsupported read method! Use primitive createPrimitive!");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "IntComponentType(id=" + id + " , key=" + key.asString() + ")";
     }
 }
