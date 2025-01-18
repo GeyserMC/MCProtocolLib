@@ -12,6 +12,8 @@ import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Session;
@@ -29,7 +31,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Hashtable;
-import java.util.Optional;
 
 public class NettyHelper {
     private static final Logger log = LoggerFactory.getLogger(NettyHelper.class);
@@ -50,22 +51,24 @@ public class NettyHelper {
         }
     }
 
-    public static SocketAddress resolveAddress(Session session, SocketAddress address) {
+    public static @NonNull SocketAddress resolveAddress(Session session, SocketAddress address) {
         if (address instanceof InetSocketAddress inetAddress && inetAddress.isUnresolved()) {
-            return resolveAddress(session, inetAddress.getHostString(), inetAddress.getPort())
-                .orElse(address);
+            SocketAddress resolved = resolveAddress(session, inetAddress.getHostString(), inetAddress.getPort());
+            if (resolved != null) {
+                return resolved;
+            }
         }
 
         return address;
     }
 
-    public static Optional<SocketAddress> resolveAddress(Session session, String host, int port) {
+    public static @Nullable SocketAddress resolveAddress(Session session, String host, int port) {
         ServerAddress serverAddress = ServerAddress.fromStringAndPort(host, port);
 
         if (session.getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && serverAddress.port() == MC_JAVA_DEFAULT_PORT) {
             // SRVs can override address on Java, but not Bedrock.
-            Optional<SocketAddress> resolved = resolveSrv(session, serverAddress);
-            if (resolved.isPresent()) {
+            SocketAddress resolved = resolveSrv(session, serverAddress);
+            if (resolved != null) {
                 return resolved;
             }
         } else {
@@ -75,7 +78,7 @@ public class NettyHelper {
         return resolveByHost(serverAddress);
     }
 
-    private static Optional<SocketAddress> resolveSrv(Session session, ServerAddress serverAddress) {
+    private static @Nullable SocketAddress resolveSrv(Session session, ServerAddress serverAddress) {
         String name = session.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + serverAddress.host();
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
@@ -94,18 +97,18 @@ public class NettyHelper {
             log.debug("Failed to resolve SRV record.", e);
         }
 
-        return Optional.empty();
+        return null;
     }
 
-    private static Optional<SocketAddress> resolveByHost(ServerAddress serverAddress) {
+    private static @Nullable SocketAddress resolveByHost(ServerAddress serverAddress) {
         try {
             String host = serverAddress.host();
             InetAddress resolved = InetAddress.getByName(host);
             log.debug("Resolved {} -> {}", host, resolved.getHostAddress());
-            return Optional.of(new InetSocketAddress(resolved, serverAddress.port()));
+            return new InetSocketAddress(resolved, serverAddress.port());
         } catch (UnknownHostException e) {
             log.debug("Failed to resolve host.", e);
-            return Optional.empty();
+            return null;
         }
     }
 
