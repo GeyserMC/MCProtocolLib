@@ -39,7 +39,9 @@ public class NettyHelper {
 
     static {
         try {
+            // This code is taken from Minecraft Java Editions ServerRedirectHandler
             String contextFactory = "com.sun.jndi.dns.DnsContextFactory";
+            // Ensure the DNS context factory is available
             Class.forName(contextFactory);
             Hashtable<String, String> environment = new Hashtable<>();
             environment.put("java.naming.factory.initial", contextFactory);
