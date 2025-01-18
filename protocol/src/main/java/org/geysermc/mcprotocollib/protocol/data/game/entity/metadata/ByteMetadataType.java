@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
 import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
 
 public class ByteMetadataType extends MetadataType<Byte> {
@@ -18,7 +17,7 @@ public class ByteMetadataType extends MetadataType<Byte> {
     }
 
     @Override
-    public EntityMetadata<Byte, ByteMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
+    public EntityMetadata<Byte, ByteMetadataType> readMetadata(ByteBuf input, int id) {
         return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 

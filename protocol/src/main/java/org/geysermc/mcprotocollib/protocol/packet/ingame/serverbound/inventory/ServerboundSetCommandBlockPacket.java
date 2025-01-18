@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.CommandBlockMode;
 
 @Data
@@ -25,10 +25,10 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     private final boolean conditional;
     private final boolean automatic;
 
-    public ServerboundSetCommandBlockPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
-        this.command = helper.readString(in);
-        this.mode = CommandBlockMode.from(helper.readVarInt(in));
+    public ServerboundSetCommandBlockPacket(ByteBuf in) {
+        this.position = MinecraftTypes.readPosition(in);
+        this.command = MinecraftTypes.readString(in);
+        this.mode = CommandBlockMode.from(MinecraftTypes.readVarInt(in));
 
         int flags = in.readUnsignedByte();
         this.doesTrackOutput = (flags & FLAG_TRACK_OUTPUT) != 0;
@@ -37,10 +37,10 @@ public class ServerboundSetCommandBlockPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.position);
-        helper.writeString(out, this.command);
-        helper.writeVarInt(out, this.mode.ordinal());
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writePosition(out, this.position);
+        MinecraftTypes.writeString(out, this.command);
+        MinecraftTypes.writeVarInt(out, this.mode.ordinal());
 
         int flags = 0;
         if (this.doesTrackOutput) {

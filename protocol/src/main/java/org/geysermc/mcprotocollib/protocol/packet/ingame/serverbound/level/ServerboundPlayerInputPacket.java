@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -27,7 +26,7 @@ public class ServerboundPlayerInputPacket implements MinecraftPacket {
     private final boolean shift;
     private final boolean sprint;
 
-    public ServerboundPlayerInputPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundPlayerInputPacket(ByteBuf in) {
         byte flags = in.readByte();
         this.forward = (flags & FLAG_FORWARD) != 0;
         this.backward = (flags & FLAG_BACKWARD) != 0;
@@ -39,7 +38,7 @@ public class ServerboundPlayerInputPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         byte flags = 0;
         if (this.forward) {
             flags |= FLAG_FORWARD;

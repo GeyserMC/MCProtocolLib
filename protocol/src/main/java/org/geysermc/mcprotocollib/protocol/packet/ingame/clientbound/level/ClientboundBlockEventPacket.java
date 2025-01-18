@@ -7,8 +7,8 @@ import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.WobbleStyle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.BellValue;
@@ -58,11 +58,11 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private @Nullable BlockValue value;
     private final int blockId;
 
-    public ClientboundBlockEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
+    public ClientboundBlockEventPacket(ByteBuf in) {
+        this.position = MinecraftTypes.readPosition(in);
         this.rawType = in.readUnsignedByte();
         this.rawValue = in.readUnsignedByte();
-        this.blockId = helper.readVarInt(in);
+        this.blockId = MinecraftTypes.readVarInt(in);
 
         // TODO: Handle this in MinecraftCodecHelper
         try {
@@ -100,11 +100,11 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.position);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writePosition(out, this.position);
         out.writeByte(rawType);
         out.writeByte(rawValue);
-        helper.writeVarInt(out, this.blockId);
+        MinecraftTypes.writeVarInt(out, this.blockId);
     }
 
     @Override

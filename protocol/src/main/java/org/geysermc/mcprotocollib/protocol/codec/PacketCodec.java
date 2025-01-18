@@ -7,7 +7,6 @@ import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 
 import java.util.EnumMap;
-import java.util.function.Supplier;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PacketCodec {
@@ -19,9 +18,6 @@ public class PacketCodec {
     private final String minecraftVersion;
 
     private final EnumMap<ProtocolState, PacketRegistry> stateProtocols;
-
-    @Getter
-    private final Supplier<MinecraftCodecHelper> helperFactory;
 
     public PacketRegistry getCodec(ProtocolState protocolState) {
         return this.stateProtocols.get(protocolState);
@@ -37,7 +33,6 @@ public class PacketCodec {
         builder.protocolVersion = this.protocolVersion;
         builder.stateProtocols = this.stateProtocols;
         builder.minecraftVersion = this.minecraftVersion;
-        builder.helperFactory = this.helperFactory;
 
         return builder;
     }
@@ -46,7 +41,6 @@ public class PacketCodec {
         private int protocolVersion = -1;
         private String minecraftVersion = null;
         private EnumMap<ProtocolState, PacketRegistry> stateProtocols = new EnumMap<>(ProtocolState.class);
-        private Supplier<MinecraftCodecHelper> helperFactory;
 
         public Builder protocolVersion(int protocolVersion) {
             this.protocolVersion = protocolVersion;
@@ -63,13 +57,8 @@ public class PacketCodec {
             return this;
         }
 
-        public Builder helper(Supplier<MinecraftCodecHelper> helperFactory) {
-            this.helperFactory = helperFactory;
-            return this;
-        }
-
         public PacketCodec build() {
-            return new PacketCodec(this.protocolVersion, this.minecraftVersion, this.stateProtocols, this.helperFactory);
+            return new PacketCodec(this.protocolVersion, this.minecraftVersion, this.stateProtocols);
         }
     }
 }

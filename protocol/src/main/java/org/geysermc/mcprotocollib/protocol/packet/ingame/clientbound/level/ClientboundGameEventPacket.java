@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.DemoMessageValue;
@@ -25,7 +24,7 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     private final @NonNull GameEvent notification;
     private final GameEventValue value;
 
-    public ClientboundGameEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundGameEventPacket(ByteBuf in) {
         this.notification = GameEvent.from(in.readUnsignedByte());
         float value = in.readFloat();
         // TODO: Handle this in MinecraftCodecHelper
@@ -51,7 +50,7 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeByte(this.notification.ordinal());
         float value = 0;
         // TODO: Handle this in MinecraftCodecHelper

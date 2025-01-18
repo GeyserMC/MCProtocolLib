@@ -6,7 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.Arrays;
 
@@ -30,12 +30,12 @@ public class MapPalette implements Palette {
         this.stateToId.defaultReturnValue(MISSING_ID);
     }
 
-    public MapPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) {
+    public MapPalette(int bitsPerEntry, ByteBuf in) {
         this(bitsPerEntry);
 
-        int paletteLength = helper.readVarInt(in);
+        int paletteLength = MinecraftTypes.readVarInt(in);
         for (int i = 0; i < paletteLength; i++) {
-            int state = helper.readVarInt(in);
+            int state = MinecraftTypes.readVarInt(in);
             this.idToState[i] = state;
             this.stateToId.putIfAbsent(state, i);
         }

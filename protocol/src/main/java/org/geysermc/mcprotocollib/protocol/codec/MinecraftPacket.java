@@ -5,5 +5,5 @@ import org.geysermc.mcprotocollib.network.packet.Packet;
 
 public interface MinecraftPacket extends Packet {
 
-    void serialize(ByteBuf buf, MinecraftCodecHelper helper);
+    void serialize(ByteBuf buf);
 }

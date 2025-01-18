@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockChangeEntry;
 
 @Data
@@ -15,14 +15,14 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockChangeEntr
 public class ClientboundBlockUpdatePacket implements MinecraftPacket {
     private final @NonNull BlockChangeEntry entry;
 
-    public ClientboundBlockUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entry = new BlockChangeEntry(helper.readPosition(in), helper.readVarInt(in));
+    public ClientboundBlockUpdatePacket(ByteBuf in) {
+        this.entry = new BlockChangeEntry(MinecraftTypes.readPosition(in), MinecraftTypes.readVarInt(in));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.entry.getPosition());
-        helper.writeVarInt(out, this.entry.getBlock());
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writePosition(out, this.entry.getPosition());
+        MinecraftTypes.writeVarInt(out, this.entry.getBlock());
     }
 
     @Override

@@ -37,8 +37,8 @@ public class MinecraftChannelInitializer<S extends Session & ChannelHandler> ext
         pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
 
         pipeline.addLast("encryption", new PacketEncryptorCodec());
-        pipeline.addLast("sizer", new PacketSizerCodec(protocol.getPacketHeader(), session.getCodecHelper()));
-        pipeline.addLast("compression", new PacketCompressionCodec(session.getCodecHelper()));
+        pipeline.addLast("sizer", new PacketSizerCodec(protocol.getPacketHeader()));
+        pipeline.addLast("compression", new PacketCompressionCodec());
 
         pipeline.addLast("flow-control", new AutoReadFlowControlHandler());
         pipeline.addLast("codec", new PacketCodec(session, client));

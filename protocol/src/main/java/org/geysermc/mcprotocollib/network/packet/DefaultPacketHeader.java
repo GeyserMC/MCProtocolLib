@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.network.packet;
 
 import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 /**
  * The default packet header, using a varint packet length and id.
@@ -33,22 +33,22 @@ public class DefaultPacketHeader implements PacketHeader {
     }
 
     @Override
-    public int readLength(ByteBuf buf, PacketCodecHelper codecHelper, int available) {
-        return codecHelper.readVarInt(buf);
+    public int readLength(ByteBuf buf, int available) {
+        return MinecraftTypes.readVarInt(buf);
     }
 
     @Override
-    public void writeLength(ByteBuf buf, PacketCodecHelper codecHelper, int length) {
-        codecHelper.writeVarInt(buf, length);
+    public void writeLength(ByteBuf buf, int length) {
+        MinecraftTypes.writeVarInt(buf, length);
     }
 
     @Override
-    public int readPacketId(ByteBuf buf, PacketCodecHelper codecHelper) {
-        return codecHelper.readVarInt(buf);
+    public int readPacketId(ByteBuf buf) {
+        return MinecraftTypes.readVarInt(buf);
     }
 
     @Override
-    public void writePacketId(ByteBuf buf, PacketCodecHelper codecHelper, int packetId) {
-        codecHelper.writeVarInt(buf, packetId);
+    public void writePacketId(ByteBuf buf, int packetId) {
+        MinecraftTypes.writeVarInt(buf, packetId);
     }
 }

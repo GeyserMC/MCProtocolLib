@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.BonemealGrowEventData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.BreakBlockEventData;
@@ -38,9 +38,9 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
         this(event, position, data, false);
     }
 
-    public ClientboundLevelEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.event = helper.readLevelEvent(in);
-        this.position = helper.readPosition(in);
+    public ClientboundLevelEventPacket(ByteBuf in) {
+        this.event = MinecraftTypes.readLevelEvent(in);
+        this.position = MinecraftTypes.readPosition(in);
         int value = in.readInt();
         if (this.event instanceof LevelEventType levelEventType) {
             switch (levelEventType) {
@@ -65,9 +65,9 @@ public class ClientboundLevelEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeLevelEvent(out, this.event);
-        helper.writePosition(out, this.position);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeLevelEvent(out, this.event);
+        MinecraftTypes.writePosition(out, this.position);
         int value;
         if (this.data instanceof FireExtinguishData) {
             value = ((FireExtinguishData) this.data).ordinal();

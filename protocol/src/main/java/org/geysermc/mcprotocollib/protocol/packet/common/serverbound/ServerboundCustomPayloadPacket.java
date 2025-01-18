@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.key.Key;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -16,14 +16,14 @@ public class ServerboundCustomPayloadPacket implements MinecraftPacket {
     private final @NonNull Key channel;
     private final byte @NonNull [] data;
 
-    public ServerboundCustomPayloadPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.channel = helper.readResourceLocation(in);
-        this.data = helper.readByteArray(in, ByteBuf::readableBytes);
+    public ServerboundCustomPayloadPacket(ByteBuf in) {
+        this.channel = MinecraftTypes.readResourceLocation(in);
+        this.data = MinecraftTypes.readByteArray(in, ByteBuf::readableBytes);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeResourceLocation(out, this.channel);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeResourceLocation(out, this.channel);
         out.writeBytes(this.data);
     }
 }

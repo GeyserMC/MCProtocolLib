@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -16,15 +16,15 @@ public class ClientboundTabListPacket implements MinecraftPacket {
     private final @NonNull Component header;
     private final @NonNull Component footer;
 
-    public ClientboundTabListPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.header = helper.readComponent(in);
-        this.footer = helper.readComponent(in);
+    public ClientboundTabListPacket(ByteBuf in) {
+        this.header = MinecraftTypes.readComponent(in);
+        this.footer = MinecraftTypes.readComponent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeComponent(out, this.header);
-        helper.writeComponent(out, this.footer);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeComponent(out, this.header);
+        MinecraftTypes.writeComponent(out, this.footer);
     }
 
     @Override

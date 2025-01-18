@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,11 +12,11 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundChunkBatchReceivedPacket implements MinecraftPacket {
     private final float desiredChunksPerTick;
 
-    public ServerboundChunkBatchReceivedPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundChunkBatchReceivedPacket(ByteBuf in) {
         this.desiredChunksPerTick = in.readFloat();
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeFloat(this.desiredChunksPerTick);
     }
 

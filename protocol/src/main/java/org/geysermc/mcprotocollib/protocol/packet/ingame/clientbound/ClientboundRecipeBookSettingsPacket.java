@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.CraftingBookStateType;
 
@@ -17,7 +16,7 @@ import java.util.Map;
 public class ClientboundRecipeBookSettingsPacket implements MinecraftPacket {
     private final Map<CraftingBookStateType, TypeSettings> states;
 
-    public ClientboundRecipeBookSettingsPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundRecipeBookSettingsPacket(ByteBuf in) {
         this.states = new EnumMap<>(CraftingBookStateType.class);
 
         for (CraftingBookStateType type : CraftingBookStateType.values()) {
@@ -30,7 +29,7 @@ public class ClientboundRecipeBookSettingsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf buf, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf buf) {
         for (CraftingBookStateType type : CraftingBookStateType.values()) {
             TypeSettings typeSettings = this.states.get(type);
             buf.writeBoolean(typeSettings == null ? false : typeSettings.open());

@@ -6,7 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.CorruptedFrameException;
 import lombok.RequiredArgsConstructor;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PacketSizerCodec extends ByteToMessageCodec<ByteBuf> {
     private final PacketHeader header;
-    private final PacketCodecHelper codecHelper;
 
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) {
@@ -26,7 +24,7 @@ public class PacketSizerCodec extends ByteToMessageCodec<ByteBuf> {
 
         int length = in.readableBytes();
         out.ensureWritable(header.getLengthSize(length) + length);
-        header.writeLength(out, codecHelper, length);
+        header.writeLength(out, length);
         out.writeBytes(in);
     }
 
@@ -48,7 +46,7 @@ public class PacketSizerCodec extends ByteToMessageCodec<ByteBuf> {
 
             lengthBytes[index] = buf.readByte();
             if ((header.isLengthVariable() && lengthBytes[index] >= 0) || index == size - 1) {
-                int length = header.readLength(Unpooled.wrappedBuffer(lengthBytes), codecHelper, buf.readableBytes());
+                int length = header.readLength(Unpooled.wrappedBuffer(lengthBytes), buf.readableBytes());
                 if (buf.readableBytes() < length) {
                     buf.resetReaderIndex();
                     return;

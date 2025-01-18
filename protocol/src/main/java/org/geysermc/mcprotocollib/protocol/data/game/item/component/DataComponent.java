@@ -22,8 +22,8 @@ public abstract class DataComponent<V, T extends DataComponentType<V>> {
      * Overridden for primitive classes. This write method still checks for these primitives in the event
      * they are manually created using {@link ObjectDataComponent}.
      */
-    public void write(ItemCodecHelper helper, ByteBuf out) {
-        this.type.writeDataComponent(helper, out, this.getValue());
+    public void write(ByteBuf out) {
+        this.type.writeDataComponent(out, this.getValue());
     }
 
     @Override

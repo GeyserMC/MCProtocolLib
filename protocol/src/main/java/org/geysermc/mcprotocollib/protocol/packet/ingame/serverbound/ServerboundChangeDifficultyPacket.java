@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.setting.Difficulty;
 
@@ -15,12 +14,12 @@ import org.geysermc.mcprotocollib.protocol.data.game.setting.Difficulty;
 public class ServerboundChangeDifficultyPacket implements MinecraftPacket {
     private final @NonNull Difficulty difficulty;
 
-    public ServerboundChangeDifficultyPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundChangeDifficultyPacket(ByteBuf in) {
         this.difficulty = Difficulty.from(in.readByte());
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeByte(this.difficulty.ordinal());
     }
 

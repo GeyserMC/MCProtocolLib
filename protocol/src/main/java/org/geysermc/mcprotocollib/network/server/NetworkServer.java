@@ -8,13 +8,13 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
-import org.geysermc.mcprotocollib.network.netty.DefaultPacketHandlerExecutor;
-import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
+import org.geysermc.mcprotocollib.network.netty.DefaultPacketHandlerExecutor;
+import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
-import org.geysermc.mcprotocollib.network.session.ServerNetworkSession;
 import org.geysermc.mcprotocollib.network.session.NetworkSession;
+import org.geysermc.mcprotocollib.network.session.ServerNetworkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

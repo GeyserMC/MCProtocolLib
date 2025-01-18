@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -17,8 +17,8 @@ public class ClientboundAddExperienceOrbPacket implements MinecraftPacket {
     private final double z;
     private final int exp;
 
-    public ClientboundAddExperienceOrbPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
+    public ClientboundAddExperienceOrbPacket(ByteBuf in) {
+        this.entityId = MinecraftTypes.readVarInt(in);
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -26,8 +26,8 @@ public class ClientboundAddExperienceOrbPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.entityId);
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

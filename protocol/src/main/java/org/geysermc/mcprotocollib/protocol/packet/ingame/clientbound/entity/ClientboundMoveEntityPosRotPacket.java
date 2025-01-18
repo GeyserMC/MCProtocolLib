@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -19,8 +19,8 @@ public class ClientboundMoveEntityPosRotPacket implements MinecraftPacket {
     private final float pitch;
     private final boolean onGround;
 
-    public ClientboundMoveEntityPosRotPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
+    public ClientboundMoveEntityPosRotPacket(ByteBuf in) {
+        this.entityId = MinecraftTypes.readVarInt(in);
         this.moveX = in.readShort() / 4096D;
         this.moveY = in.readShort() / 4096D;
         this.moveZ = in.readShort() / 4096D;
@@ -30,8 +30,8 @@ public class ClientboundMoveEntityPosRotPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.entityId);
         out.writeShort((int) (this.moveX * 4096));
         out.writeShort((int) (this.moveY * 4096));
         out.writeShort((int) (this.moveZ * 4096));

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundPongPacket implements MinecraftPacket {
     private final int id;
 
-    public ServerboundPongPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundPongPacket(ByteBuf in) {
         this.id = in.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeInt(this.id);
     }
 }

@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleType;
 
@@ -26,7 +26,7 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
     private final float velocityOffset;
     private final int amount;
 
-    public ClientboundLevelParticlesPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundLevelParticlesPacket(ByteBuf in) {
         this.longDistance = in.readBoolean();
         this.alwaysShow = in.readBoolean();
         this.x = in.readDouble();
@@ -37,12 +37,12 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         this.offsetZ = in.readFloat();
         this.velocityOffset = in.readFloat();
         this.amount = in.readInt();
-        ParticleType type = helper.readParticleType(in);
-        this.particle = new Particle(type, helper.readParticleData(in, type));
+        ParticleType type = MinecraftTypes.readParticleType(in);
+        this.particle = new Particle(type, MinecraftTypes.readParticleData(in, type));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeBoolean(this.longDistance);
         out.writeBoolean(this.alwaysShow);
         out.writeDouble(this.x);
@@ -53,8 +53,8 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         out.writeFloat(this.offsetZ);
         out.writeFloat(this.velocityOffset);
         out.writeInt(this.amount);
-        helper.writeParticleType(out, this.particle.getType());
-        helper.writeParticleData(out, this.particle.getType(), this.particle.getData());
+        MinecraftTypes.writeParticleType(out, this.particle.getType());
+        MinecraftTypes.writeParticleData(out, this.particle.getType(), this.particle.getData());
     }
 
     @Override
