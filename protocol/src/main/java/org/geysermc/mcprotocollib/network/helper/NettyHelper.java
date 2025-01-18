@@ -18,6 +18,7 @@ import org.geysermc.mcprotocollib.network.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.directory.Attribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import java.net.IDN;
@@ -37,9 +38,9 @@ public class NettyHelper {
 
     static {
         try {
-            var contextFactory = "com.sun.jndi.dns.DnsContextFactory";
+            String contextFactory = "com.sun.jndi.dns.DnsContextFactory";
             Class.forName(contextFactory);
-            var environment = new Hashtable<String, String>();
+            Hashtable<String, String> environment = new Hashtable<String, String>();
             environment.put("java.naming.factory.initial", contextFactory);
             environment.put("java.naming.provider.url", "dns:");
             environment.put("com.sun.jndi.dns.timeout.retries", "1");
@@ -63,7 +64,7 @@ public class NettyHelper {
 
         if (session.getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && serverAddress.port() == MC_JAVA_DEFAULT_PORT) {
             // SRVs can override address on Java, but not Bedrock.
-            var resolved = resolveSrv(session, serverAddress);
+            Optional<SocketAddress> resolved = resolveSrv(session, serverAddress);
             if (resolved.isPresent()) {
                 return resolved;
             }
@@ -79,9 +80,9 @@ public class NettyHelper {
         log.debug("Attempting SRV lookup for \"{}\".", name);
 
         try {
-            var srvAttribute = DIR_CONTEXT.getAttributes(name, new String[]{"SRV"}).get("srv");
+            Attribute srvAttribute = DIR_CONTEXT.getAttributes(name, new String[]{"SRV"}).get("srv");
             if (srvAttribute != null) {
-                var attributeSplit = srvAttribute.get().toString().split(" ", 4);
+                String[] attributeSplit = srvAttribute.get().toString().split(" ", 4);
                 log.debug("SRV lookup resolved \"{}\" to \"{}\".", name, srvAttribute.get().toString());
 
                 return resolveByHost(
@@ -98,8 +99,8 @@ public class NettyHelper {
 
     private static Optional<SocketAddress> resolveByHost(ServerAddress serverAddress) {
         try {
-            var host = serverAddress.host();
-            var resolved = InetAddress.getByName(host);
+            String host = serverAddress.host();
+            InetAddress resolved = InetAddress.getByName(host);
             log.debug("Resolved {} -> {}", host, resolved.getHostAddress());
             return Optional.of(new InetSocketAddress(resolved, serverAddress.port()));
         } catch (UnknownHostException e) {
