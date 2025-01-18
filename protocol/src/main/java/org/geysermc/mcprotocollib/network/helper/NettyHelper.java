@@ -40,7 +40,7 @@ public class NettyHelper {
         try {
             String contextFactory = "com.sun.jndi.dns.DnsContextFactory";
             Class.forName(contextFactory);
-            Hashtable<String, String> environment = new Hashtable<String, String>();
+            Hashtable<String, String> environment = new Hashtable<>();
             environment.put("java.naming.factory.initial", contextFactory);
             environment.put("java.naming.provider.url", "dns:");
             environment.put("com.sun.jndi.dns.timeout.retries", "1");
