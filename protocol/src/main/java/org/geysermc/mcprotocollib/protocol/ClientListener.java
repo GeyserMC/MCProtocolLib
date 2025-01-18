@@ -152,7 +152,9 @@ public class ClientListener extends SessionAdapter {
                 if (session.getFlag(MinecraftConstants.SEND_BLANK_KNOWN_PACKS_RESPONSE, true)) {
                     session.send(new ServerboundSelectKnownPacks(Collections.emptyList()));
                 }
-            } else if (packet instanceof ClientboundTransferPacket transferPacket) {
+            } else if (packet instanceof ClientboundDisconnectPacket disconnectPacket) {
+                session.disconnect(disconnectPacket.getReason());
+            }else if (packet instanceof ClientboundTransferPacket transferPacket) {
                 if (session.getFlag(MinecraftConstants.FOLLOW_TRANSFERS, true)) {
                     TcpClientSession newSession = new TcpClientSession(transferPacket.getHost(), transferPacket.getPort(), session.getPacketProtocol());
                     newSession.setFlags(session.getFlags());
