@@ -38,6 +38,14 @@ public class ItemCodecHelper extends MinecraftCodecHelper {
         this.writeNullable(buf, filterable.getOptional(), writer);
     }
 
+    public Unbreakable readUnbreakable(ByteBuf buf) {
+        return new Unbreakable(buf.readBoolean());
+    }
+
+    public void writeUnbreakable(ByteBuf buf, Unbreakable unbreakable) {
+        buf.writeBoolean(unbreakable.isInTooltip());
+    }
+
     public ItemEnchantments readItemEnchantments(ByteBuf buf) {
         Map<Integer, Integer> enchantments = new HashMap<>();
         int enchantmentCount = this.readVarInt(buf);
