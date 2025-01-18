@@ -25,7 +25,7 @@ public class DataComponentType<T> {
     public static final IntComponentType MAX_STACK_SIZE = new IntComponentType("max_stack_size", ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
     public static final IntComponentType MAX_DAMAGE = new IntComponentType("max_damage", ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
     public static final IntComponentType DAMAGE = new IntComponentType("damage", ItemCodecHelper::readVarInt, ItemCodecHelper::writeVarInt, IntDataComponent::new);
-    public static final BooleanComponentType UNBREAKABLE = new BooleanComponentType("unbreakable", ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanDataComponent::new);
+    public static final DataComponentType<Unbreakable> UNBREAKABLE = new DataComponentType<>("unbreakable", ItemCodecHelper::readUnbreakable, ItemCodecHelper::writeUnbreakable, ObjectDataComponent::new);
     public static final DataComponentType<Component> CUSTOM_NAME = new DataComponentType<>("custom_name", ItemCodecHelper::readComponent, ItemCodecHelper::writeComponent, ObjectDataComponent::new);
     public static final DataComponentType<Component> ITEM_NAME = new DataComponentType<>("item_name", ItemCodecHelper::readComponent, ItemCodecHelper::writeComponent, ObjectDataComponent::new);
     public static final DataComponentType<Key> ITEM_MODEL = new DataComponentType<>("item_model", ItemCodecHelper::readResourceLocation, ItemCodecHelper::writeResourceLocation, ObjectDataComponent::new);
