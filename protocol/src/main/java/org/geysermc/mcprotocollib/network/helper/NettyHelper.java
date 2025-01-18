@@ -1,18 +1,9 @@
 package org.geysermc.mcprotocollib.network.helper;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoop;
-import io.netty.handler.codec.dns.DefaultDnsQuestion;
-import io.netty.handler.codec.dns.DefaultDnsRawRecord;
-import io.netty.handler.codec.dns.DefaultDnsRecordDecoder;
-import io.netty.handler.codec.dns.DnsRecordType;
-import io.netty.handler.codec.dns.DnsResponse;
-import io.netty.handler.codec.dns.DnsSection;
 import io.netty.handler.codec.haproxy.HAProxyCommand;
 import io.netty.handler.codec.haproxy.HAProxyMessage;
 import io.netty.handler.codec.haproxy.HAProxyMessageEncoder;
@@ -21,88 +12,116 @@ import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import io.netty.resolver.dns.DnsNameResolver;
-import io.netty.resolver.dns.DnsNameResolverBuilder;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.directory.Attribute;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.net.IDN;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
-import java.util.function.Supplier;
+import java.util.Hashtable;
 
 public class NettyHelper {
     private static final Logger log = LoggerFactory.getLogger(NettyHelper.class);
-    private static final String IP_REGEX = "\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b";
+    public static final int MC_JAVA_DEFAULT_PORT = 25565;
+    private static final DirContext DIR_CONTEXT;
 
-    public static SocketAddress resolveAddress(Session session, Supplier<EventLoop> eventLoop, SocketAddress address) {
+    static {
+        try {
+            // This code is taken from Minecraft Java Editions ServerRedirectHandler
+            String contextFactory = "com.sun.jndi.dns.DnsContextFactory";
+            // Ensure the DNS context factory is available
+            Class.forName(contextFactory);
+            Hashtable<String, String> environment = new Hashtable<>();
+            environment.put("java.naming.factory.initial", contextFactory);
+            environment.put("java.naming.provider.url", "dns:");
+            environment.put("com.sun.jndi.dns.timeout.retries", "1");
+            DIR_CONTEXT = new InitialDirContext(environment);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static @NonNull SocketAddress resolveAddress(Session session, SocketAddress address) {
         if (address instanceof InetSocketAddress inetAddress && inetAddress.isUnresolved()) {
-            return resolveAddress(session, eventLoop.get(), inetAddress.getHostString(), inetAddress.getPort());
+            SocketAddress resolved = resolveAddress(session, inetAddress.getHostString(), inetAddress.getPort());
+            if (resolved != null) {
+                return resolved;
+            }
         }
 
         return address;
     }
 
-    public static SocketAddress resolveAddress(Session session, EventLoop eventLoop, String host, int port) {
-        String name = session.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + host;
-        log.debug("Attempting SRV lookup for \"{}\".", name);
+    public static @Nullable SocketAddress resolveAddress(Session session, String host, int port) {
+        ServerAddress serverAddress = ServerAddress.fromStringAndPort(host, port);
 
-        if (session.getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && (!host.matches(IP_REGEX) && !host.equalsIgnoreCase("localhost"))) {
-            try (DnsNameResolver resolver = new DnsNameResolverBuilder(eventLoop)
-                .channelFactory(TransportHelper.TRANSPORT_TYPE.datagramChannelFactory())
-                .build()) {
-                AddressedEnvelope<DnsResponse, InetSocketAddress> envelope = resolver.query(new DefaultDnsQuestion(name, DnsRecordType.SRV)).get();
-                try {
-                    DnsResponse response = envelope.content();
-                    if (response.count(DnsSection.ANSWER) > 0) {
-                        DefaultDnsRawRecord record = response.recordAt(DnsSection.ANSWER, 0);
-                        if (record.type() == DnsRecordType.SRV) {
-                            ByteBuf buf = record.content();
-                            buf.skipBytes(4); // Skip priority and weight.
-
-                            int tempPort = buf.readUnsignedShort();
-                            String tempHost = DefaultDnsRecordDecoder.decodeName(buf);
-                            if (tempHost.endsWith(".")) {
-                                tempHost = tempHost.substring(0, tempHost.length() - 1);
-                            }
-
-                            log.debug("Found SRV record containing \"{}:{}\".", tempHost, tempPort);
-
-                            host = tempHost;
-                            port = tempPort;
-                        } else {
-                            log.debug("Received non-SRV record in response.");
-                        }
-                    } else {
-                        log.debug("No SRV record found.");
-                    }
-                } finally {
-                    envelope.release();
-                }
-            } catch (Exception e) {
-                log.debug("Failed to resolve SRV record.", e);
+        if (session.getFlag(BuiltinFlags.ATTEMPT_SRV_RESOLVE, true) && serverAddress.port() == MC_JAVA_DEFAULT_PORT) {
+            // SRVs can override address on Java, but not Bedrock.
+            SocketAddress resolved = resolveSrv(session, serverAddress);
+            if (resolved != null) {
+                return resolved;
             }
         } else {
-            log.debug("Not resolving SRV record for {}", host);
+            log.debug("Not resolving SRV record for {}", serverAddress.host());
         }
 
-        // Resolve host here
+        return resolveByHost(serverAddress);
+    }
+
+    private static @Nullable SocketAddress resolveSrv(Session session, ServerAddress serverAddress) {
+        String name = session.getPacketProtocol().getSRVRecordPrefix() + "._tcp." + serverAddress.host();
+        log.debug("Attempting SRV lookup for \"{}\".", name);
+
         try {
+            Attribute srvAttribute = DIR_CONTEXT.getAttributes(name, new String[]{"SRV"}).get("srv");
+            if (srvAttribute != null) {
+                String[] attributeSplit = srvAttribute.get().toString().split(" ", 4);
+                log.debug("SRV lookup resolved \"{}\" to \"{}\".", name, srvAttribute.get().toString());
+
+                return resolveByHost(
+                    ServerAddress.fromStringAndPort(attributeSplit[3], parseJavaPort(attributeSplit[2])));
+            } else {
+                log.debug("SRV lookup for \"{}\" returned no records.", name);
+            }
+        } catch (Exception e) {
+            log.debug("Failed to resolve SRV record.", e);
+        }
+
+        return null;
+    }
+
+    private static @Nullable SocketAddress resolveByHost(ServerAddress serverAddress) {
+        try {
+            String host = serverAddress.host();
             InetAddress resolved = InetAddress.getByName(host);
             log.debug("Resolved {} -> {}", host, resolved.getHostAddress());
-            return new InetSocketAddress(resolved, port);
+            return new InetSocketAddress(resolved, serverAddress.port());
         } catch (UnknownHostException e) {
-            log.debug("Failed to resolve host, letting Netty do it instead.", e);
-            return InetSocketAddress.createUnresolved(host, port);
+            log.debug("Failed to resolve host.", e);
+            return null;
         }
     }
-    
+
+    private static int parseJavaPort(String port) {
+        try {
+            return Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            return MC_JAVA_DEFAULT_PORT;
+        }
+    }
+
     public static void initializeHAProxySupport(Session session, Channel channel) {
         InetSocketAddress clientAddress = session.getFlag(BuiltinFlags.CLIENT_PROXIED_ADDRESS);
         if (clientAddress == null) {
@@ -188,6 +207,24 @@ public class NettyHelper {
                 }
             }
             default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.type());
+        }
+    }
+
+    private record ServerAddress(String internalHost, int internalPort) {
+        public static ServerAddress fromStringAndPort(String host, int port) {
+            return new ServerAddress(host, port);
+        }
+
+        public String host() {
+            try {
+                return IDN.toASCII(internalHost);
+            } catch (IllegalArgumentException e) {
+                return "";
+            }
+        }
+
+        public int port() {
+            return internalPort;
         }
     }
 }
