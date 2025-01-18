@@ -3,7 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.ObjectDataComponent;
 
 import java.util.Objects;
@@ -36,10 +36,9 @@ public abstract class DataComponent<V, T extends DataComponentType<V>> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DataComponent<?, ?>)) {
+        if (!(o instanceof DataComponent<?, ?> that)) {
             return false;
         }
-        DataComponent<?, ?> that = (DataComponent<?, ?>) o;
         return this.type == that.type && Objects.equals(this.getValue(), that.getValue());
     }
 
