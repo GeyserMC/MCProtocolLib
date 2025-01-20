@@ -27,7 +27,7 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     public ClientboundGameEventPacket(ByteBuf in) {
         this.notification = GameEvent.from(in.readUnsignedByte());
         float value = in.readFloat();
-        // TODO: Handle this in MinecraftCodecHelper
+        // TODO: Handle this in MinecraftTypes
         if (this.notification == GameEvent.AFFECTED_BY_ELDER_GUARDIAN) {
             this.value = new ElderGuardianEffectValue(value);
         } else if (this.notification == GameEvent.CHANGE_GAMEMODE) {
@@ -53,7 +53,7 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
     public void serialize(ByteBuf out) {
         out.writeByte(this.notification.ordinal());
         float value = 0;
-        // TODO: Handle this in MinecraftCodecHelper
+        // TODO: Handle this in MinecraftTypes
         if (this.value instanceof DemoMessageValue) {
             value = ((DemoMessageValue) this.value).getId();
         } else if (this.value instanceof Enum<?>) {

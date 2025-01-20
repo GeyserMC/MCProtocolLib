@@ -64,7 +64,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
         this.rawValue = in.readUnsignedByte();
         this.blockId = MinecraftTypes.readVarInt(in);
 
-        // TODO: Handle this in MinecraftCodecHelper
+        // TODO: Handle this in MinecraftTypes
         try {
             if (this.blockId == NOTE_BLOCK) {
                 this.type = NoteBlockValueType.from(rawType);
