@@ -6,15 +6,14 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.MessageToMessageCodec;
 import lombok.RequiredArgsConstructor;
 import org.geysermc.mcprotocollib.network.NetworkConstants;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 public class PacketCompressionCodec extends MessageToMessageCodec<ByteBuf, ByteBuf> {
     private static final int MAX_UNCOMPRESSED_SIZE = 8 * 1024 * 1024; // 8MiB
-    private final PacketCodecHelper helper;
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) {
@@ -42,10 +41,10 @@ public class PacketCompressionCodec extends MessageToMessageCodec<ByteBuf, ByteB
         ByteBuf outBuf = ctx.alloc().directBuffer(uncompressed);
         if (uncompressed < config.threshold()) {
             // Under the threshold, there is nothing to do.
-            this.helper.writeVarInt(outBuf, 0);
+            MinecraftTypes.writeVarInt(outBuf, 0);
             outBuf.writeBytes(msg);
         } else {
-            this.helper.writeVarInt(outBuf, uncompressed);
+            MinecraftTypes.writeVarInt(outBuf, uncompressed);
             config.compression().deflate(msg, outBuf);
         }
 
@@ -60,7 +59,7 @@ public class PacketCompressionCodec extends MessageToMessageCodec<ByteBuf, ByteB
             return;
         }
 
-        int claimedUncompressedSize = this.helper.readVarInt(in);
+        int claimedUncompressedSize = MinecraftTypes.readVarInt(in);
         if (claimedUncompressedSize == 0) {
             out.add(in.retain());
             return;

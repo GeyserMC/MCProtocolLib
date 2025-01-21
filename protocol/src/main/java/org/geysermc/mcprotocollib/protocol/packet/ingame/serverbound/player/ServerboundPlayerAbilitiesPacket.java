@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -15,13 +14,13 @@ public class ServerboundPlayerAbilitiesPacket implements MinecraftPacket {
 
     private final boolean flying;
 
-    public ServerboundPlayerAbilitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundPlayerAbilitiesPacket(ByteBuf in) {
         byte flags = in.readByte();
         this.flying = (flags & FLAG_FLYING) > 0;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         int flags = 0;
 
         if (this.flying) {

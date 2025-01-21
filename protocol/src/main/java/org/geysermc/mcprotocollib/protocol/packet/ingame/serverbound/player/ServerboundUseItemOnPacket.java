@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 
@@ -25,29 +25,29 @@ public class ServerboundUseItemOnPacket implements MinecraftPacket {
     private final boolean hitWorldBorder;
     private final int sequence;
 
-    public ServerboundUseItemOnPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.hand = Hand.from(helper.readVarInt(in));
-        this.position = helper.readPosition(in);
-        this.face = helper.readDirection(in);
+    public ServerboundUseItemOnPacket(ByteBuf in) {
+        this.hand = Hand.from(MinecraftTypes.readVarInt(in));
+        this.position = MinecraftTypes.readPosition(in);
+        this.face = MinecraftTypes.readDirection(in);
         this.cursorX = in.readFloat();
         this.cursorY = in.readFloat();
         this.cursorZ = in.readFloat();
         this.insideBlock = in.readBoolean();
         this.hitWorldBorder = in.readBoolean();
-        this.sequence = helper.readVarInt(in);
+        this.sequence = MinecraftTypes.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.hand.ordinal());
-        helper.writePosition(out, this.position);
-        helper.writeDirection(out, this.face);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.hand.ordinal());
+        MinecraftTypes.writePosition(out, this.position);
+        MinecraftTypes.writeDirection(out, this.face);
         out.writeFloat(this.cursorX);
         out.writeFloat(this.cursorY);
         out.writeFloat(this.cursorZ);
         out.writeBoolean(this.insideBlock);
         out.writeBoolean(this.hitWorldBorder);
-        helper.writeVarInt(out, this.sequence);
+        MinecraftTypes.writeVarInt(out, this.sequence);
     }
 
     @Override

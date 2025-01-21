@@ -6,8 +6,8 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ObjectiveAction;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ScoreType;
@@ -59,13 +59,13 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
         this.numberFormat = numberFormat;
     }
 
-    public ClientboundSetObjectivePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.name = helper.readString(in);
+    public ClientboundSetObjectivePacket(ByteBuf in) {
+        this.name = MinecraftTypes.readString(in);
         this.action = ObjectiveAction.from(in.readByte());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            this.displayName = helper.readComponent(in);
-            this.type = ScoreType.from(helper.readVarInt(in));
-            this.numberFormat = helper.readNullable(in, helper::readNumberFormat);
+            this.displayName = MinecraftTypes.readComponent(in);
+            this.type = ScoreType.from(MinecraftTypes.readVarInt(in));
+            this.numberFormat = MinecraftTypes.readNullable(in, MinecraftTypes::readNumberFormat);
         } else {
             this.displayName = null;
             this.type = ScoreType.INTEGER;
@@ -74,13 +74,13 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.name);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeString(out, this.name);
         out.writeByte(this.action.ordinal());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            helper.writeComponent(out, this.displayName);
-            helper.writeVarInt(out, this.type.ordinal());
-            helper.writeNullable(out, this.numberFormat, helper::writeNumberFormat);
+            MinecraftTypes.writeComponent(out, this.displayName);
+            MinecraftTypes.writeVarInt(out, this.type.ordinal());
+            MinecraftTypes.writeNullable(out, this.numberFormat, MinecraftTypes::writeNumberFormat);
         }
     }
 

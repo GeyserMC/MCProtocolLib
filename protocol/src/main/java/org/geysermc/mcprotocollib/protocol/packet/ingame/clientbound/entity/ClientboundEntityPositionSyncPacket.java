@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3d;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -19,8 +19,8 @@ public class ClientboundEntityPositionSyncPacket implements MinecraftPacket {
     private final float xRot;
     private final boolean onGround;
 
-    public ClientboundEntityPositionSyncPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = helper.readVarInt(in);
+    public ClientboundEntityPositionSyncPacket(ByteBuf in) {
+        this.id = MinecraftTypes.readVarInt(in);
         this.position = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
         this.deltaMovement = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
         this.yRot = in.readFloat();
@@ -29,8 +29,8 @@ public class ClientboundEntityPositionSyncPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.id);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.id);
         out.writeDouble(this.position.getX());
         out.writeDouble(this.position.getY());
         out.writeDouble(this.position.getZ());

@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.FallingBlockData;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.GenericObjectData;
@@ -54,10 +54,10 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, motionX, motionY, motionZ);
     }
 
-    public ClientboundAddEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.uuid = helper.readUUID(in);
-        this.type = EntityType.from(helper.readVarInt(in));
+    public ClientboundAddEntityPacket(ByteBuf in) {
+        this.entityId = MinecraftTypes.readVarInt(in);
+        this.uuid = MinecraftTypes.readUUID(in);
+        this.type = EntityType.from(MinecraftTypes.readVarInt(in));
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -65,7 +65,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         this.yaw = in.readByte() * 360 / 256f;
         this.headYaw = in.readByte() * 360 / 256f;
 
-        int data = helper.readVarInt(in);
+        int data = MinecraftTypes.readVarInt(in);
         if (this.type == EntityType.MINECART) {
             this.data = MinecartType.from(data);
         } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME || this.type == EntityType.PAINTING) {
@@ -90,10 +90,10 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeUUID(out, this.uuid);
-        helper.writeVarInt(out, this.type.ordinal());
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.entityId);
+        MinecraftTypes.writeUUID(out, this.uuid);
+        MinecraftTypes.writeVarInt(out, this.type.ordinal());
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
@@ -114,7 +114,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
             data = ((GenericObjectData) this.data).getValue();
         }
 
-        helper.writeVarInt(out, data);
+        MinecraftTypes.writeVarInt(out, data);
 
         out.writeShort((int) (this.motionX * 8000));
         out.writeShort((int) (this.motionY * 8000));

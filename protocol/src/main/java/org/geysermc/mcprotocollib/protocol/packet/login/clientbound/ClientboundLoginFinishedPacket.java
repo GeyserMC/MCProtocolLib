@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.auth.GameProfile;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -15,17 +15,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundLoginFinishedPacket implements MinecraftPacket {
     private final @NonNull GameProfile profile;
 
-    public ClientboundLoginFinishedPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        GameProfile profile = new GameProfile(helper.readUUID(in), helper.readString(in));
-        profile.setProperties(helper.readList(in, helper::readProperty));
+    public ClientboundLoginFinishedPacket(ByteBuf in) {
+        GameProfile profile = new GameProfile(MinecraftTypes.readUUID(in), MinecraftTypes.readString(in));
+        profile.setProperties(MinecraftTypes.readList(in, MinecraftTypes::readProperty));
         this.profile = profile;
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.profile.getId());
-        helper.writeString(out, this.profile.getName());
-        helper.writeList(out, this.profile.getProperties(), helper::writeProperty);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeUUID(out, this.profile.getId());
+        MinecraftTypes.writeString(out, this.profile.getName());
+        MinecraftTypes.writeList(out, this.profile.getProperties(), MinecraftTypes::writeProperty);
     }
 
     @Override

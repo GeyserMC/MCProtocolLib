@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
@@ -21,15 +21,15 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     private final boolean regularVillager;
     private final boolean canRestock;
 
-    public ClientboundMerchantOffersPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
+    public ClientboundMerchantOffersPacket(ByteBuf in) {
+        this.containerId = MinecraftTypes.readVarInt(in);
 
-        int size = helper.readVarInt(in);
+        int size = MinecraftTypes.readVarInt(in);
         this.trades = new VillagerTrade[size];
         for (int i = 0; i < trades.length; i++) {
-            ItemStack firstInput = helper.readTradeItemStack(in);
-            ItemStack output = helper.readOptionalItemStack(in);
-            ItemStack secondInput = helper.readNullable(in, helper::readTradeItemStack);
+            ItemStack firstInput = MinecraftTypes.readTradeItemStack(in);
+            ItemStack output = MinecraftTypes.readOptionalItemStack(in);
+            ItemStack secondInput = MinecraftTypes.readNullable(in, MinecraftTypes::readTradeItemStack);
 
             boolean tradeDisabled = in.readBoolean();
             int numUses = in.readInt();
@@ -42,21 +42,21 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
             this.trades[i] = new VillagerTrade(firstInput, secondInput, output, tradeDisabled, numUses, maxUses, xp, specialPrice, priceMultiplier, demand);
         }
 
-        this.villagerLevel = helper.readVarInt(in);
-        this.experience = helper.readVarInt(in);
+        this.villagerLevel = MinecraftTypes.readVarInt(in);
+        this.experience = MinecraftTypes.readVarInt(in);
         this.regularVillager = in.readBoolean();
         this.canRestock = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.containerId);
 
-        helper.writeVarInt(out, this.trades.length);
+        MinecraftTypes.writeVarInt(out, this.trades.length);
         for (VillagerTrade trade : this.trades) {
-            helper.writeTradeItemStack(out, trade.getFirstInput());
-            helper.writeOptionalItemStack(out, trade.getOutput());
-            helper.writeNullable(out, trade.getSecondInput(), helper::writeTradeItemStack);
+            MinecraftTypes.writeTradeItemStack(out, trade.getFirstInput());
+            MinecraftTypes.writeOptionalItemStack(out, trade.getOutput());
+            MinecraftTypes.writeNullable(out, trade.getSecondInput(), MinecraftTypes::writeTradeItemStack);
 
             out.writeBoolean(trade.isTradeDisabled());
             out.writeInt(trade.getNumUses());
@@ -67,8 +67,8 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
             out.writeInt(trade.getDemand());
         }
 
-        helper.writeVarInt(out, this.villagerLevel);
-        helper.writeVarInt(out, this.experience);
+        MinecraftTypes.writeVarInt(out, this.villagerLevel);
+        MinecraftTypes.writeVarInt(out, this.experience);
         out.writeBoolean(this.regularVillager);
         out.writeBoolean(this.canRestock);
     }

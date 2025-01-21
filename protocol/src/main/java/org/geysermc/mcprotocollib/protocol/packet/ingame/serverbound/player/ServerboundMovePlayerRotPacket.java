@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -16,7 +15,7 @@ public class ServerboundMovePlayerRotPacket implements MinecraftPacket {
     private final float yaw;
     private final float pitch;
 
-    public ServerboundMovePlayerRotPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundMovePlayerRotPacket(ByteBuf in) {
         this.yaw = in.readFloat();
         this.pitch = in.readFloat();
         int flags = in.readUnsignedByte();
@@ -25,7 +24,7 @@ public class ServerboundMovePlayerRotPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeFloat(this.yaw);
         out.writeFloat(this.pitch);
         int flags = 0;

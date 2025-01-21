@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
 import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.OptionalInt;
 
@@ -14,8 +14,8 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         protected static final OptionalIntReader INSTANCE = new OptionalIntReader();
 
         @Override
-        public OptionalInt read(MinecraftCodecHelper helper, ByteBuf input) {
-            int value = helper.readVarInt(input);
+        public OptionalInt read(ByteBuf input) {
+            int value = MinecraftTypes.readVarInt(input);
             if (value == 0) {
                 return OptionalInt.empty();
             }
@@ -28,11 +28,11 @@ public class OptionalIntMetadataType extends MetadataType<OptionalInt> {
         protected static final OptionalIntWriter INSTANCE = new OptionalIntWriter();
 
         @Override
-        public void write(MinecraftCodecHelper helper, ByteBuf output, OptionalInt value) {
+        public void write(ByteBuf output, OptionalInt value) {
             if (value.isPresent()) {
-                helper.writeVarInt(output, value.getAsInt() + 1);
+                MinecraftTypes.writeVarInt(output, value.getAsInt() + 1);
             } else {
-                helper.writeVarInt(output, 0);
+                MinecraftTypes.writeVarInt(output, 0);
             }
         }
     }

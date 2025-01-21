@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockChangeEntry;
 
 @Data
@@ -31,14 +31,14 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
         this.entries = entries;
     }
 
-    public ClientboundSectionBlocksUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundSectionBlocksUpdatePacket(ByteBuf in) {
         long chunkPosition = in.readLong();
         this.chunkX = (int) (chunkPosition >> 42);
         this.chunkY = (int) (chunkPosition << 44 >> 44);
         this.chunkZ = (int) (chunkPosition << 22 >> 42);
-        this.entries = new BlockChangeEntry[helper.readVarInt(in)];
+        this.entries = new BlockChangeEntry[MinecraftTypes.readVarInt(in)];
         for (int index = 0; index < this.entries.length; index++) {
-            long blockData = helper.readVarLong(in);
+            long blockData = MinecraftTypes.readVarLong(in);
             short position = (short) (blockData & 0xFFFL);
             int x = (this.chunkX << 4) + (position >>> 8 & 0xF);
             int y = (this.chunkY << 4) + (position & 0xF);
@@ -48,15 +48,15 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         long chunkPosition = 0;
         chunkPosition |= (this.chunkX & 0x3FFFFFL) << 42;
         chunkPosition |= (this.chunkZ & 0x3FFFFFL) << 20;
         out.writeLong(chunkPosition | (this.chunkY & 0xFFFFFL));
-        helper.writeVarInt(out, this.entries.length);
+        MinecraftTypes.writeVarInt(out, this.entries.length);
         for (BlockChangeEntry entry : this.entries) {
             short position = (short) ((entry.getPosition().getX() - (this.chunkX << 4)) << 8 | (entry.getPosition().getZ() - (this.chunkZ << 4)) << 4 | (entry.getPosition().getY() - (this.chunkY << 4)));
-            helper.writeVarLong(out, (long) entry.getBlock() << 12 | (long) position);
+            MinecraftTypes.writeVarLong(out, (long) entry.getBlock() << 12 | (long) position);
         }
     }
 

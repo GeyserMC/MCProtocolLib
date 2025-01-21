@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -17,7 +16,7 @@ public class ServerboundMovePlayerPosPacket implements MinecraftPacket {
     private final double y;
     private final double z;
 
-    public ServerboundMovePlayerPosPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ServerboundMovePlayerPosPacket(ByteBuf in) {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
@@ -27,7 +26,7 @@ public class ServerboundMovePlayerPosPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

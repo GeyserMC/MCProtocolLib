@@ -17,7 +17,7 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
     }
 
     @Override
-    public DataComponent<Boolean, BooleanComponentType> readDataComponent(ItemCodecHelper helper, ByteBuf input) {
+    public DataComponent<Boolean, BooleanComponentType> readDataComponent(ByteBuf input) {
         return this.primitiveFactory.createPrimitive(this, this.primitiveReader.readPrimitive(input));
     }
 

@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
 
 @Data
@@ -20,23 +20,23 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
     private final @Nullable SoundCategory category;
     private final @Nullable Key sound;
 
-    public ClientboundStopSoundPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundStopSoundPacket(ByteBuf in) {
         int flags = in.readByte();
         if ((flags & FLAG_CATEGORY) != 0) {
-            this.category = helper.readSoundCategory(in);
+            this.category = MinecraftTypes.readSoundCategory(in);
         } else {
             this.category = null;
         }
 
         if ((flags & FLAG_SOUND) != 0) {
-            this.sound = helper.readResourceLocation(in);
+            this.sound = MinecraftTypes.readResourceLocation(in);
         } else {
             this.sound = null;
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         int flags = 0;
         if (this.category != null) {
             flags |= FLAG_CATEGORY;
@@ -52,7 +52,7 @@ public class ClientboundStopSoundPacket implements MinecraftPacket {
         }
 
         if (this.sound != null) {
-            helper.writeResourceLocation(out, this.sound);
+            MinecraftTypes.writeResourceLocation(out, this.sound);
         }
     }
 

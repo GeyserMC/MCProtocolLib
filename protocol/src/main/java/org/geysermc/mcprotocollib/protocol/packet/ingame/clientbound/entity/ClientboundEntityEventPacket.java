@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EntityEvent;
 
 @Data
@@ -16,15 +16,15 @@ public class ClientboundEntityEventPacket implements MinecraftPacket {
     private final int entityId;
     private final @NonNull EntityEvent event;
 
-    public ClientboundEntityEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundEntityEventPacket(ByteBuf in) {
         this.entityId = in.readInt();
-        this.event = helper.readEntityEvent(in);
+        this.event = MinecraftTypes.readEntityEvent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeInt(this.entityId);
-        helper.writeEntityEvent(out, this.event);
+        MinecraftTypes.writeEntityEvent(out, this.event);
     }
 
     @Override

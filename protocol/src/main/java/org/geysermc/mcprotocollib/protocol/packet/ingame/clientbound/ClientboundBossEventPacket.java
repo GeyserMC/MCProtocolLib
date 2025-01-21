@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarAction;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarColor;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarDivision;
@@ -67,12 +67,12 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         this.showFog = showFog;
     }
 
-    public ClientboundBossEventPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.uuid = helper.readUUID(in);
-        this.action = BossBarAction.from(helper.readVarInt(in));
+    public ClientboundBossEventPacket(ByteBuf in) {
+        this.uuid = MinecraftTypes.readUUID(in);
+        this.action = BossBarAction.from(MinecraftTypes.readVarInt(in));
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            this.title = helper.readComponent(in);
+            this.title = MinecraftTypes.readComponent(in);
         } else {
             this.title = null;
         }
@@ -84,8 +84,8 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            this.color = BossBarColor.from(helper.readVarInt(in));
-            this.division = BossBarDivision.from(helper.readVarInt(in));
+            this.color = BossBarColor.from(MinecraftTypes.readVarInt(in));
+            this.division = BossBarDivision.from(MinecraftTypes.readVarInt(in));
         } else {
             this.color = null;
             this.division = null;
@@ -104,12 +104,12 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.uuid);
-        helper.writeVarInt(out, this.action.ordinal());
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeUUID(out, this.uuid);
+        MinecraftTypes.writeVarInt(out, this.action.ordinal());
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            helper.writeComponent(out, this.title);
+            MinecraftTypes.writeComponent(out, this.title);
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -117,8 +117,8 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            helper.writeVarInt(out, this.color.ordinal());
-            helper.writeVarInt(out, this.division.ordinal());
+            MinecraftTypes.writeVarInt(out, this.color.ordinal());
+            MinecraftTypes.writeVarInt(out, this.division.ordinal());
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {

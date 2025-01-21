@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 @Data
@@ -15,15 +15,15 @@ public class ClientboundSetPlayerInventoryPacket implements MinecraftPacket {
     private final int slot;
     private final ItemStack contents;
 
-    public ClientboundSetPlayerInventoryPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.slot = helper.readVarInt(in);
-        this.contents = helper.readOptionalItemStack(in);
+    public ClientboundSetPlayerInventoryPacket(ByteBuf in) {
+        this.slot = MinecraftTypes.readVarInt(in);
+        this.contents = MinecraftTypes.readOptionalItemStack(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.slot);
-        helper.writeOptionalItemStack(out, this.contents);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.slot);
+        MinecraftTypes.writeOptionalItemStack(out, this.contents);
     }
 
     @Override
