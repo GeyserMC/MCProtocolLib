@@ -15,6 +15,7 @@ import io.netty.handler.proxy.Socks5ProxyHandler;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
+import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Session;
 import org.slf4j.Logger;
@@ -128,8 +129,8 @@ public class NettyHelper {
             return;
         }
 
-        channel.pipeline().addLast("proxy-protocol-encoder", HAProxyMessageEncoder.INSTANCE);
-        channel.pipeline().addLast("proxy-protocol-packet-sender", new ChannelInboundHandlerAdapter() {
+        channel.pipeline().addLast(NetworkConstants.PROXY_PROTOCOL_ENCODER_NAME, HAProxyMessageEncoder.INSTANCE);
+        channel.pipeline().addLast(NetworkConstants.PROXY_PROTOCOL_PACKET_SENDER_NAME, new ChannelInboundHandlerAdapter() {
             @Override
             public void channelActive(ChannelHandlerContext ctx) throws Exception {
                 HAProxyProxiedProtocol proxiedProtocol = getProxiedProtocol(clientAddress);
@@ -187,23 +188,23 @@ public class NettyHelper {
         switch (proxy.type()) {
             case HTTP -> {
                 if (proxy.username() != null && proxy.password() != null) {
-                    pipeline.addLast("proxy", new HttpProxyHandler(proxy.address(), proxy.username(), proxy.password()));
+                    pipeline.addLast(NetworkConstants.PROXY_NAME, new HttpProxyHandler(proxy.address(), proxy.username(), proxy.password()));
                 } else {
-                    pipeline.addLast("proxy", new HttpProxyHandler(proxy.address()));
+                    pipeline.addLast(NetworkConstants.PROXY_NAME, new HttpProxyHandler(proxy.address()));
                 }
             }
             case SOCKS4 -> {
                 if (proxy.username() != null) {
-                    pipeline.addLast("proxy", new Socks4ProxyHandler(proxy.address(), proxy.username()));
+                    pipeline.addLast(NetworkConstants.PROXY_NAME, new Socks4ProxyHandler(proxy.address(), proxy.username()));
                 } else {
-                    pipeline.addLast("proxy", new Socks4ProxyHandler(proxy.address()));
+                    pipeline.addLast(NetworkConstants.PROXY_NAME, new Socks4ProxyHandler(proxy.address()));
                 }
             }
             case SOCKS5 -> {
                 if (proxy.username() != null && proxy.password() != null) {
-                    pipeline.addLast("proxy", new Socks5ProxyHandler(proxy.address(), proxy.username(), proxy.password()));
+                    pipeline.addLast(NetworkConstants.PROXY_NAME, new Socks5ProxyHandler(proxy.address(), proxy.username(), proxy.password()));
                 } else {
-                    pipeline.addLast("proxy", new Socks5ProxyHandler(proxy.address()));
+                    pipeline.addLast(NetworkConstants.PROXY_NAME, new Socks5ProxyHandler(proxy.address()));
                 }
             }
             default -> throw new UnsupportedOperationException("Unsupported proxy type: " + proxy.type());
