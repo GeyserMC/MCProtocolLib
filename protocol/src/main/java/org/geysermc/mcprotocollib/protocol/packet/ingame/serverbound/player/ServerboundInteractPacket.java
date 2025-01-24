@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.Hand;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.InteractAction;
 
@@ -31,9 +31,9 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         this(entityId, action, 0, 0, 0, hand, isSneaking);
     }
 
-    public ServerboundInteractPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.action = InteractAction.from(helper.readVarInt(in));
+    public ServerboundInteractPacket(ByteBuf in) {
+        this.entityId = MinecraftTypes.readVarInt(in);
+        this.action = InteractAction.from(MinecraftTypes.readVarInt(in));
         if (this.action == InteractAction.INTERACT_AT) {
             this.targetX = in.readFloat();
             this.targetY = in.readFloat();
@@ -45,7 +45,7 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         }
 
         if (this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
-            this.hand = Hand.from(helper.readVarInt(in));
+            this.hand = Hand.from(MinecraftTypes.readVarInt(in));
         } else {
             this.hand = null;
         }
@@ -53,9 +53,9 @@ public class ServerboundInteractPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeVarInt(out, this.action.ordinal());
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.entityId);
+        MinecraftTypes.writeVarInt(out, this.action.ordinal());
         if (this.action == InteractAction.INTERACT_AT) {
             out.writeFloat(this.targetX);
             out.writeFloat(this.targetY);
@@ -63,8 +63,13 @@ public class ServerboundInteractPacket implements MinecraftPacket {
         }
 
         if (this.action == InteractAction.INTERACT || this.action == InteractAction.INTERACT_AT) {
-            helper.writeVarInt(out, this.hand.ordinal());
+            MinecraftTypes.writeVarInt(out, this.hand.ordinal());
         }
         out.writeBoolean(this.isSneaking);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

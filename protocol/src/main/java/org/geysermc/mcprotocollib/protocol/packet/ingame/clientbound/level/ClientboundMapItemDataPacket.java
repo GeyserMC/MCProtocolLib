@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapIcon;
 import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapIconType;
@@ -27,19 +27,19 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
         this(mapId, scale, locked, icons, null);
     }
 
-    public ClientboundMapItemDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.mapId = helper.readVarInt(in);
+    public ClientboundMapItemDataPacket(ByteBuf in) {
+        this.mapId = MinecraftTypes.readVarInt(in);
         this.scale = in.readByte();
         this.locked = in.readBoolean();
         boolean hasIcons = in.readBoolean();
-        this.icons = new MapIcon[hasIcons ? helper.readVarInt(in) : 0];
+        this.icons = new MapIcon[hasIcons ? MinecraftTypes.readVarInt(in) : 0];
         if (hasIcons) {
             for (int index = 0; index < this.icons.length; index++) {
-                int type = helper.readVarInt(in);
+                int type = MinecraftTypes.readVarInt(in);
                 int x = in.readByte();
                 int z = in.readByte();
                 int rotation = in.readByte();
-                Component displayName = helper.readNullable(in, helper::readComponent);
+                Component displayName = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
 
                 this.icons[index] = new MapIcon(x, z, MapIconType.from(type), rotation, displayName);
             }
@@ -50,7 +50,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
             int rows = in.readUnsignedByte();
             int x = in.readUnsignedByte();
             int y = in.readUnsignedByte();
-            byte[] data = helper.readByteArray(in);
+            byte[] data = MinecraftTypes.readByteArray(in);
 
             this.data = new MapData(columns, rows, x, y, data);
         } else {
@@ -59,20 +59,20 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.mapId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.mapId);
         out.writeByte(this.scale);
         out.writeBoolean(this.locked);
         if (this.icons.length != 0) {
             out.writeBoolean(true);
-            helper.writeVarInt(out, this.icons.length);
+            MinecraftTypes.writeVarInt(out, this.icons.length);
             for (MapIcon icon : this.icons) {
                 int type = icon.getIconType().ordinal();
-                helper.writeVarInt(out, type);
+                MinecraftTypes.writeVarInt(out, type);
                 out.writeByte(icon.getCenterX());
                 out.writeByte(icon.getCenterZ());
                 out.writeByte(icon.getIconRotation());
-                helper.writeNullable(out, icon.getDisplayName(), helper::writeComponent);
+                MinecraftTypes.writeNullable(out, icon.getDisplayName(), MinecraftTypes::writeComponent);
             }
         } else {
             out.writeBoolean(false);
@@ -83,10 +83,15 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
             out.writeByte(this.data.getRows());
             out.writeByte(this.data.getX());
             out.writeByte(this.data.getY());
-            helper.writeVarInt(out, this.data.getData().length);
+            MinecraftTypes.writeVarInt(out, this.data.getData().length);
             out.writeBytes(this.data.getData());
         } else {
             out.writeByte(0);
         }
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

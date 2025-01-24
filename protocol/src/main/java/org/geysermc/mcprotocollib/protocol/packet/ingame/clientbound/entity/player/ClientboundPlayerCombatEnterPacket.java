@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -12,12 +11,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 @NoArgsConstructor
 public class ClientboundPlayerCombatEnterPacket implements MinecraftPacket {
 
-    public ClientboundPlayerCombatEnterPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundPlayerCombatEnterPacket(ByteBuf in) {
         // no-op
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         // no-op
     }
 }

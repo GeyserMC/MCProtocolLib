@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -15,12 +15,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetTitleTextPacket implements MinecraftPacket {
     private final @NonNull Component text;
 
-    public ClientboundSetTitleTextPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.text = helper.readComponent(in);
+    public ClientboundSetTitleTextPacket(ByteBuf in) {
+        this.text = MinecraftTypes.readComponent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeComponent(out, this.text);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeComponent(out, this.text);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

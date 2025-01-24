@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -13,12 +13,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetChunkCacheRadiusPacket implements MinecraftPacket {
     private final int viewDistance;
 
-    public ClientboundSetChunkCacheRadiusPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.viewDistance = helper.readVarInt(in);
+    public ClientboundSetChunkCacheRadiusPacket(ByteBuf in) {
+        this.viewDistance = MinecraftTypes.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.viewDistance);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.viewDistance);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

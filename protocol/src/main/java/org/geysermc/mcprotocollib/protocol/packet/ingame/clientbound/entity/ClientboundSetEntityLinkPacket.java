@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -14,14 +13,19 @@ public class ClientboundSetEntityLinkPacket implements MinecraftPacket {
     private final int entityId;
     private final int attachedToId;
 
-    public ClientboundSetEntityLinkPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundSetEntityLinkPacket(ByteBuf in) {
         this.entityId = in.readInt();
         this.attachedToId = in.readInt();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeInt(this.entityId);
         out.writeInt(this.attachedToId);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

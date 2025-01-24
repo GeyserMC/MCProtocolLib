@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -34,20 +34,15 @@ public class ServerboundKeyPacket implements MinecraftPacket {
         return runEncryption(Cipher.DECRYPT_MODE, privateKey, this.encryptedChallenge);
     }
 
-    public ServerboundKeyPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sharedKey = helper.readByteArray(in);
-        this.encryptedChallenge = helper.readByteArray(in);
+    public ServerboundKeyPacket(ByteBuf in) {
+        this.sharedKey = MinecraftTypes.readByteArray(in);
+        this.encryptedChallenge = MinecraftTypes.readByteArray(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeByteArray(out, this.sharedKey);
-        helper.writeByteArray(out, this.encryptedChallenge);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return true;
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeByteArray(out, this.sharedKey);
+        MinecraftTypes.writeByteArray(out, this.encryptedChallenge);
     }
 
     private static byte[] runEncryption(int mode, Key key, byte[] data) {

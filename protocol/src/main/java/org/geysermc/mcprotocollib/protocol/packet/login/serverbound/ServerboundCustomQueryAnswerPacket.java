@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -19,14 +19,14 @@ public class ServerboundCustomQueryAnswerPacket implements MinecraftPacket {
         this(transactionId, new byte[0]);
     }
 
-    public ServerboundCustomQueryAnswerPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.transactionId = helper.readVarInt(in);
-        this.data = helper.readNullable(in, buf -> helper.readByteArray(buf, ByteBuf::readableBytes));
+    public ServerboundCustomQueryAnswerPacket(ByteBuf in) {
+        this.transactionId = MinecraftTypes.readVarInt(in);
+        this.data = MinecraftTypes.readNullable(in, buf -> MinecraftTypes.readByteArray(buf, ByteBuf::readableBytes));
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.transactionId);
-        helper.writeNullable(out, this.data, ByteBuf::writeBytes);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.transactionId);
+        MinecraftTypes.writeNullable(out, this.data, ByteBuf::writeBytes);
     }
 }

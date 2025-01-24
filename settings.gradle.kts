@@ -17,4 +17,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "mcprotocollib"
 
-include("protocol", "example")
+include(
+    "protocol",
+    "example"
+)

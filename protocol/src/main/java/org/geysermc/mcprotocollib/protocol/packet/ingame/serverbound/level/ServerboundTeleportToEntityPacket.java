@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.UUID;
 
@@ -16,12 +16,17 @@ import java.util.UUID;
 public class ServerboundTeleportToEntityPacket implements MinecraftPacket {
     private final @NonNull UUID target;
 
-    public ServerboundTeleportToEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.target = helper.readUUID(in);
+    public ServerboundTeleportToEntityPacket(ByteBuf in) {
+        this.target = MinecraftTypes.readUUID(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.target);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeUUID(out, this.target);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

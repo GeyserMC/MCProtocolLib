@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -13,12 +13,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ServerboundSelectTradePacket implements MinecraftPacket {
     private final int slot;
 
-    public ServerboundSelectTradePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.slot = helper.readVarInt(in);
+    public ServerboundSelectTradePacket(ByteBuf in) {
+        this.slot = MinecraftTypes.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.slot);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.slot);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

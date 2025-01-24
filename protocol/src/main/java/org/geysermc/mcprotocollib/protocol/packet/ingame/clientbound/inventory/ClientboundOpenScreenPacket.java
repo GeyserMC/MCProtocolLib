@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerType;
 
@@ -19,10 +19,10 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     private final @NonNull ContainerType type;
     private final @NonNull Component title;
 
-    public ClientboundOpenScreenPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
-        this.type = ContainerType.from(helper.readVarInt(in));
-        this.title = helper.readComponent(in);
+    public ClientboundOpenScreenPacket(ByteBuf in) {
+        this.containerId = MinecraftTypes.readVarInt(in);
+        this.type = ContainerType.from(MinecraftTypes.readVarInt(in));
+        this.title = MinecraftTypes.readComponent(in);
     }
 
     @Deprecated
@@ -33,10 +33,10 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
-        helper.writeVarInt(out, this.type.ordinal());
-        helper.writeComponent(out, this.title);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.containerId);
+        MinecraftTypes.writeVarInt(out, this.type.ordinal());
+        MinecraftTypes.writeComponent(out, this.title);
     }
 
     @Deprecated
@@ -47,5 +47,10 @@ public class ClientboundOpenScreenPacket implements MinecraftPacket {
     @Deprecated
     public ClientboundOpenScreenPacket withName(String name) {
         return new ClientboundOpenScreenPacket(this.containerId, this.type, DefaultComponentSerializer.get().deserialize(name));
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

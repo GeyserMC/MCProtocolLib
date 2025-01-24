@@ -3,7 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.ObjectDataComponent;
 
 import java.util.Objects;
@@ -22,8 +22,8 @@ public abstract class DataComponent<V, T extends DataComponentType<V>> {
      * Overridden for primitive classes. This write method still checks for these primitives in the event
      * they are manually created using {@link ObjectDataComponent}.
      */
-    public void write(ItemCodecHelper helper, ByteBuf out) {
-        this.type.writeDataComponent(helper, out, this.getValue());
+    public void write(ByteBuf out) {
+        this.type.writeDataComponent(out, this.getValue());
     }
 
     @Override
@@ -36,10 +36,9 @@ public abstract class DataComponent<V, T extends DataComponentType<V>> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DataComponent<?, ?>)) {
+        if (!(o instanceof DataComponent<?, ?> that)) {
             return false;
         }
-        DataComponent<?, ?> that = (DataComponent<?, ?>) o;
         return this.type == that.type && Objects.equals(this.getValue(), that.getValue());
     }
 

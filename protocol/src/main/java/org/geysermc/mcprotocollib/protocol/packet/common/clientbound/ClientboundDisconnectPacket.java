@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 
 @Data
@@ -20,17 +20,12 @@ public class ClientboundDisconnectPacket implements MinecraftPacket {
         this(DefaultComponentSerializer.get().deserialize(reason));
     }
 
-    public ClientboundDisconnectPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.reason = helper.readComponent(in);
+    public ClientboundDisconnectPacket(ByteBuf in) {
+        this.reason = MinecraftTypes.readComponent(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeComponent(out, this.reason);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return true;
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeComponent(out, this.reason);
     }
 }

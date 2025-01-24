@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -13,12 +13,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundSetSimulationDistancePacket implements MinecraftPacket {
     private final int simulationDistance;
 
-    public ClientboundSetSimulationDistancePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.simulationDistance = helper.readVarInt(in);
+    public ClientboundSetSimulationDistancePacket(ByteBuf in) {
+        this.simulationDistance = MinecraftTypes.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.simulationDistance);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.simulationDistance);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

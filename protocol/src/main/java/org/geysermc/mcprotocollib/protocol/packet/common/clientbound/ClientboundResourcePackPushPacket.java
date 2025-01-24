@@ -7,8 +7,8 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.UUID;
 
@@ -22,20 +22,25 @@ public class ClientboundResourcePackPushPacket implements MinecraftPacket {
     private final boolean required;
     private final @Nullable Component prompt;
 
-    public ClientboundResourcePackPushPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = helper.readUUID(in);
-        this.url = helper.readString(in);
-        this.hash = helper.readString(in);
+    public ClientboundResourcePackPushPacket(ByteBuf in) {
+        this.id = MinecraftTypes.readUUID(in);
+        this.url = MinecraftTypes.readString(in);
+        this.hash = MinecraftTypes.readString(in);
         this.required = in.readBoolean();
-        this.prompt = helper.readNullable(in, helper::readComponent);
+        this.prompt = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.id);
-        helper.writeString(out, this.url);
-        helper.writeString(out, this.hash);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeUUID(out, this.id);
+        MinecraftTypes.writeString(out, this.url);
+        MinecraftTypes.writeString(out, this.hash);
         out.writeBoolean(this.required);
-        helper.writeNullable(out, this.prompt, helper::writeComponent);
+        MinecraftTypes.writeNullable(out, this.prompt, MinecraftTypes::writeComponent);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -17,16 +17,21 @@ public class ServerboundJigsawGeneratePacket implements MinecraftPacket {
     private final int levels;
     private final boolean keepJigsaws;
 
-    public ServerboundJigsawGeneratePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.position = helper.readPosition(in);
-        this.levels = helper.readVarInt(in);
+    public ServerboundJigsawGeneratePacket(ByteBuf in) {
+        this.position = MinecraftTypes.readPosition(in);
+        this.levels = MinecraftTypes.readVarInt(in);
         this.keepJigsaws = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writePosition(out, this.position);
-        helper.writeVarInt(out, this.levels);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writePosition(out, this.position);
+        MinecraftTypes.writeVarInt(out, this.levels);
         out.writeBoolean(this.keepJigsaws);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

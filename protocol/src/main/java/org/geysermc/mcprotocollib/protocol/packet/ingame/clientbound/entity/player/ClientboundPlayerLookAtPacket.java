@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.RotationOrigin;
 
 @Data
@@ -25,15 +25,15 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
         this(origin, x, y, z, 0, null);
     }
 
-    public ClientboundPlayerLookAtPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.origin = RotationOrigin.from(helper.readVarInt(in));
+    public ClientboundPlayerLookAtPacket(ByteBuf in) {
+        this.origin = RotationOrigin.from(MinecraftTypes.readVarInt(in));
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
 
         if (in.readBoolean()) {
-            this.targetEntityId = helper.readVarInt(in);
-            this.targetEntityOrigin = RotationOrigin.from(helper.readVarInt(in));
+            this.targetEntityId = MinecraftTypes.readVarInt(in);
+            this.targetEntityOrigin = RotationOrigin.from(MinecraftTypes.readVarInt(in));
         } else {
             this.targetEntityId = 0;
             this.targetEntityOrigin = null;
@@ -41,18 +41,23 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.origin.ordinal());
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.origin.ordinal());
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
 
         if (this.targetEntityOrigin != null) {
             out.writeBoolean(true);
-            helper.writeVarInt(out, this.targetEntityId);
-            helper.writeVarInt(out, this.origin.ordinal());
+            MinecraftTypes.writeVarInt(out, this.targetEntityId);
+            MinecraftTypes.writeVarInt(out, this.origin.ordinal());
         } else {
             out.writeBoolean(false);
         }
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

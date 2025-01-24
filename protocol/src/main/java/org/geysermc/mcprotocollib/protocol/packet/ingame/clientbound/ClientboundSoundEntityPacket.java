@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
@@ -23,27 +23,32 @@ public class ClientboundSoundEntityPacket implements MinecraftPacket {
     private final float pitch;
     private final long seed;
 
-    public ClientboundSoundEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sound = helper.readById(in, BuiltinSound::from, helper::readSoundEvent);
-        this.category = helper.readSoundCategory(in);
-        this.entityId = helper.readVarInt(in);
+    public ClientboundSoundEntityPacket(ByteBuf in) {
+        this.sound = MinecraftTypes.readById(in, BuiltinSound::from, MinecraftTypes::readSoundEvent);
+        this.category = MinecraftTypes.readSoundCategory(in);
+        this.entityId = MinecraftTypes.readVarInt(in);
         this.volume = in.readFloat();
         this.pitch = in.readFloat();
         this.seed = in.readLong();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         if (this.sound instanceof CustomSound) {
-            helper.writeVarInt(out, 0);
-            helper.writeSoundEvent(out, this.sound);
+            MinecraftTypes.writeVarInt(out, 0);
+            MinecraftTypes.writeSoundEvent(out, this.sound);
         } else {
-            helper.writeVarInt(out, ((BuiltinSound) this.sound).ordinal() + 1);
+            MinecraftTypes.writeVarInt(out, ((BuiltinSound) this.sound).ordinal() + 1);
         }
-        helper.writeSoundCategory(out, this.category);
-        helper.writeVarInt(out, this.entityId);
+        MinecraftTypes.writeSoundCategory(out, this.category);
+        MinecraftTypes.writeVarInt(out, this.entityId);
         out.writeFloat(this.volume);
         out.writeFloat(this.pitch);
         out.writeLong(this.seed);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

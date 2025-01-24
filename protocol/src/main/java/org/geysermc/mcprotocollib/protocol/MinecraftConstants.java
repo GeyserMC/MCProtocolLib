@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol;
 
-import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.service.SessionService;
+import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.packet.DefaultPacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
@@ -60,12 +60,27 @@ public final class MinecraftConstants {
      */
     public static final Flag<Boolean> FOLLOW_TRANSFERS = new Flag<>("follow-transfers", Boolean.class);
 
+    /**
+     * Session flag where the host address is stored. Client only.
+     */
+    public static final Flag<String> CLIENT_HOST = new Flag<>("client-host", String.class);
+
+    /**
+     * Session flag where the port is stored. Client only.
+     */
+    public static final Flag<Integer> CLIENT_PORT = new Flag<>("client-port", Integer.class);
+
     // Server Key Constants
 
     /**
-     * Session flag for determining whether to verify users. Server only.
+     * Session flag for determining whether to encrypt the connection. Server only.
      */
-    public static final Flag<Boolean> VERIFY_USERS_KEY = new Flag<>("verify-users", Boolean.class);
+    public static final Flag<Boolean> ENCRYPT_CONNECTION = new Flag<>("encrypt-connection", Boolean.class);
+
+    /**
+     * Session flag for determining whether to authenticate users with the session service. Server only.
+     */
+    public static final Flag<Boolean> SHOULD_AUTHENTICATE = new Flag<>("should-authenticate", Boolean.class);
 
     /**
      * Session flag for determining whether to accept transferred connections. Server only.

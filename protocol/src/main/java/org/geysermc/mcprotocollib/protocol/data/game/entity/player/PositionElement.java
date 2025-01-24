@@ -4,8 +4,12 @@ public enum PositionElement {
     X,
     Y,
     Z,
-    PITCH,
-    YAW;
+    Y_ROT,
+    X_ROT,
+    DELTA_X,
+    DELTA_Y,
+    DELTA_Z,
+    ROTATE_DELTA;
 
     private static final PositionElement[] VALUES = values();
 

@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 
 import java.util.BitSet;
@@ -38,16 +38,21 @@ public class ClientboundLightUpdatePacket implements MinecraftPacket {
         this.lightData = new LightUpdateData(skyYMask, blockYMask, emptySkyYMask, emptyBlockYMask, skyUpdates, blockUpdates);
     }
 
-    public ClientboundLightUpdatePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.x = helper.readVarInt(in);
-        this.z = helper.readVarInt(in);
-        this.lightData = helper.readLightUpdateData(in);
+    public ClientboundLightUpdatePacket(ByteBuf in) {
+        this.x = MinecraftTypes.readVarInt(in);
+        this.z = MinecraftTypes.readVarInt(in);
+        this.lightData = MinecraftTypes.readLightUpdateData(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.x);
-        helper.writeVarInt(out, this.z);
-        helper.writeLightUpdateData(out, this.lightData);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.x);
+        MinecraftTypes.writeVarInt(out, this.z);
+        MinecraftTypes.writeLightUpdateData(out, this.lightData);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

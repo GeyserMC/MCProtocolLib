@@ -8,8 +8,8 @@ import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
 
 @Data
@@ -33,20 +33,25 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
         this.numberFormat = null;
     }
 
-    public ClientboundSetScorePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.owner = helper.readString(in);
-        this.objective = helper.readString(in);
-        this.value = helper.readVarInt(in);
-        this.display = helper.readNullable(in, helper::readComponent);
-        this.numberFormat = helper.readNullable(in, helper::readNumberFormat);
+    public ClientboundSetScorePacket(ByteBuf in) {
+        this.owner = MinecraftTypes.readString(in);
+        this.objective = MinecraftTypes.readString(in);
+        this.value = MinecraftTypes.readVarInt(in);
+        this.display = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
+        this.numberFormat = MinecraftTypes.readNullable(in, MinecraftTypes::readNumberFormat);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.owner);
-        helper.writeString(out, this.objective);
-        helper.writeVarInt(out, this.value);
-        helper.writeNullable(out, this.display, helper::writeComponent);
-        helper.writeNullable(out, this.numberFormat, helper::writeNumberFormat);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeString(out, this.owner);
+        MinecraftTypes.writeString(out, this.objective);
+        MinecraftTypes.writeVarInt(out, this.value);
+        MinecraftTypes.writeNullable(out, this.display, MinecraftTypes::writeComponent);
+        MinecraftTypes.writeNullable(out, this.numberFormat, MinecraftTypes::writeNumberFormat);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

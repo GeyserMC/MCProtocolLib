@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -22,10 +22,10 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     private final byte @NonNull [] challenge;
     private final boolean shouldAuthenticate;
 
-    public ClientboundHelloPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.serverId = helper.readString(in);
-        byte[] publicKey = helper.readByteArray(in);
-        this.challenge = helper.readByteArray(in);
+    public ClientboundHelloPacket(ByteBuf in) {
+        this.serverId = MinecraftTypes.readString(in);
+        byte[] publicKey = MinecraftTypes.readByteArray(in);
+        this.challenge = MinecraftTypes.readByteArray(in);
         this.shouldAuthenticate = in.readBoolean();
 
         try {
@@ -36,16 +36,11 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeString(out, this.serverId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeString(out, this.serverId);
         byte[] encoded = this.publicKey.getEncoded();
-        helper.writeByteArray(out, encoded);
-        helper.writeByteArray(out, this.challenge);
+        MinecraftTypes.writeByteArray(out, encoded);
+        MinecraftTypes.writeByteArray(out, this.challenge);
         out.writeBoolean(this.shouldAuthenticate);
-    }
-
-    @Override
-    public boolean isPriority() {
-        return true;
     }
 }

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -23,7 +22,7 @@ public class ClientboundPlayerAbilitiesPacket implements MinecraftPacket {
     private final float flySpeed;
     private final float walkSpeed;
 
-    public ClientboundPlayerAbilitiesPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundPlayerAbilitiesPacket(ByteBuf in) {
         byte flags = in.readByte();
         this.invincible = (flags & FLAG_INVINCIBLE) > 0;
         this.canFly = (flags & FLAG_CAN_FLY) > 0;
@@ -35,7 +34,7 @@ public class ClientboundPlayerAbilitiesPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         int flags = 0;
         if (this.invincible) {
             flags |= FLAG_INVINCIBLE;
@@ -57,5 +56,10 @@ public class ClientboundPlayerAbilitiesPacket implements MinecraftPacket {
 
         out.writeFloat(this.flySpeed);
         out.writeFloat(this.walkSpeed);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

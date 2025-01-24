@@ -2,14 +2,11 @@ package org.geysermc.mcprotocollib.protocol.packet;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,23 +18,22 @@ public abstract class PacketTest {
     }
 
     @Test
-    public void testPackets() throws Exception {
-        MinecraftCodecHelper helper = new MinecraftCodecHelper(Int2ObjectMaps.emptyMap(), Collections.emptyMap());
+    public void testPackets() {
         for (MinecraftPacket packet : this.packets) {
             ByteBuf buf = Unpooled.buffer();
-            packet.serialize(buf, helper);
+            packet.serialize(buf);
 
-            Packet decoded = this.createPacket(packet.getClass(), helper, buf);
+            Packet decoded = this.createPacket(packet.getClass(), buf);
 
             assertEquals(packet, decoded, "Decoded packet does not match original: " + packet + " vs " + decoded);
         }
     }
 
-    private Packet createPacket(Class<? extends Packet> clazz, MinecraftCodecHelper helper, ByteBuf in) {
+    private Packet createPacket(Class<? extends Packet> clazz, ByteBuf in) {
         try {
-            Constructor<? extends Packet> constructor = clazz.getConstructor(ByteBuf.class, MinecraftCodecHelper.class);
+            Constructor<? extends Packet> constructor = clazz.getConstructor(ByteBuf.class);
 
-            return constructor.newInstance(in, helper);
+            return constructor.newInstance(in);
         } catch (NoSuchMethodError e) {
             throw new IllegalStateException("Packet \"" + clazz.getName() + "\" does not have a NetInput constructor for instantiation.");
         } catch (Exception e) {

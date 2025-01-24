@@ -6,10 +6,11 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
-import org.geysermc.mcprotocollib.protocol.data.game.chat.BuiltinChatType;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
+import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatFilterType;
+import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.MessageSignature;
 
 import java.util.ArrayList;
@@ -29,61 +30,63 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final List<MessageSignature> lastSeenMessages;
     private final @Nullable Component unsignedContent;
     private final ChatFilterType filterMask;
-    /**
-     * Is {@link BuiltinChatType} defined in the order sent by the server in the login packet.
-     */
-    private final int chatType;
+    private final Holder<ChatType> chatType;
     private final Component name;
     private final @Nullable Component targetName;
 
-    public ClientboundPlayerChatPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.sender = helper.readUUID(in);
-        this.index = helper.readVarInt(in);
-        this.messageSignature = helper.readNullable(in, buf -> {
+    public ClientboundPlayerChatPacket(ByteBuf in) {
+        this.sender = MinecraftTypes.readUUID(in);
+        this.index = MinecraftTypes.readVarInt(in);
+        this.messageSignature = MinecraftTypes.readNullable(in, buf -> {
             byte[] signature = new byte[256];
             buf.readBytes(signature);
             return signature;
         });
 
-        this.content = helper.readString(in, 256);
+        this.content = MinecraftTypes.readString(in, 256);
         this.timeStamp = in.readLong();
         this.salt = in.readLong();
 
         this.lastSeenMessages = new ArrayList<>();
-        int seenMessageCount = Math.min(helper.readVarInt(in), 20);
+        int seenMessageCount = Math.min(MinecraftTypes.readVarInt(in), 20);
         for (int i = 0; i < seenMessageCount; i++) {
-            this.lastSeenMessages.add(MessageSignature.read(in, helper));
+            this.lastSeenMessages.add(MessageSignature.read(in));
         }
 
-        this.unsignedContent = helper.readNullable(in, helper::readComponent);
-        this.filterMask = ChatFilterType.from(helper.readVarInt(in));
-        this.chatType = helper.readVarInt(in);
-        this.name = helper.readComponent(in);
-        this.targetName = helper.readNullable(in, helper::readComponent);
+        this.unsignedContent = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
+        this.filterMask = ChatFilterType.from(MinecraftTypes.readVarInt(in));
+        this.chatType = MinecraftTypes.readHolder(in, MinecraftTypes::readChatType);
+        this.name = MinecraftTypes.readComponent(in);
+        this.targetName = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeUUID(out, this.sender);
-        helper.writeVarInt(out, this.index);
-        helper.writeNullable(out, this.messageSignature, ByteBuf::writeBytes);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeUUID(out, this.sender);
+        MinecraftTypes.writeVarInt(out, this.index);
+        MinecraftTypes.writeNullable(out, this.messageSignature, ByteBuf::writeBytes);
 
-        helper.writeString(out, this.content);
+        MinecraftTypes.writeString(out, this.content);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);
 
-        helper.writeVarInt(out, this.lastSeenMessages.size());
+        MinecraftTypes.writeVarInt(out, this.lastSeenMessages.size());
         for (MessageSignature messageSignature : this.lastSeenMessages) {
-            helper.writeVarInt(out, messageSignature.getId() + 1);
+            MinecraftTypes.writeVarInt(out, messageSignature.getId() + 1);
             if (messageSignature.getMessageSignature() != null) {
                 out.writeBytes(messageSignature.getMessageSignature());
             }
         }
 
-        helper.writeNullable(out, this.unsignedContent, helper::writeComponent);
-        helper.writeVarInt(out, this.filterMask.ordinal());
-        helper.writeVarInt(out, this.chatType);
-        helper.writeComponent(out, this.name);
-        helper.writeNullable(out, this.targetName, helper::writeComponent);
+        MinecraftTypes.writeNullable(out, this.unsignedContent, MinecraftTypes::writeComponent);
+        MinecraftTypes.writeVarInt(out, this.filterMask.ordinal());
+        MinecraftTypes.writeHolder(out, this.chatType, MinecraftTypes::writeChatType);
+        MinecraftTypes.writeComponent(out, this.name);
+        MinecraftTypes.writeNullable(out, this.targetName, MinecraftTypes::writeComponent);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

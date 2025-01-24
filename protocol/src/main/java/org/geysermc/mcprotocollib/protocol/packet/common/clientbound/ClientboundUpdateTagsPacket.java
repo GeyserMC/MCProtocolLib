@@ -5,8 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,20 +16,20 @@ import java.util.Map;
 @With
 @AllArgsConstructor
 public class ClientboundUpdateTagsPacket implements MinecraftPacket {
-    private final @NonNull Map<String, Map<String, int[]>> tags = new HashMap<>();
+    private final @NonNull Map<Key, Map<Key, int[]>> tags = new HashMap<>();
 
-    public ClientboundUpdateTagsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        int totalTagCount = helper.readVarInt(in);
+    public ClientboundUpdateTagsPacket(ByteBuf in) {
+        int totalTagCount = MinecraftTypes.readVarInt(in);
         for (int i = 0; i < totalTagCount; i++) {
-            Map<String, int[]> tag = new HashMap<>();
-            String tagName = helper.readResourceLocation(in);
-            int tagsCount = helper.readVarInt(in);
+            Map<Key, int[]> tag = new HashMap<>();
+            Key tagName = MinecraftTypes.readResourceLocation(in);
+            int tagsCount = MinecraftTypes.readVarInt(in);
             for (int j = 0; j < tagsCount; j++) {
-                String name = helper.readResourceLocation(in);
-                int entriesCount = helper.readVarInt(in);
+                Key name = MinecraftTypes.readResourceLocation(in);
+                int entriesCount = MinecraftTypes.readVarInt(in);
                 int[] entries = new int[entriesCount];
                 for (int index = 0; index < entriesCount; index++) {
-                    entries[index] = helper.readVarInt(in);
+                    entries[index] = MinecraftTypes.readVarInt(in);
                 }
 
                 tag.put(name, entries);
@@ -38,18 +39,23 @@ public class ClientboundUpdateTagsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, tags.size());
-        for (Map.Entry<String, Map<String, int[]>> tagSet : tags.entrySet()) {
-            helper.writeResourceLocation(out, tagSet.getKey());
-            helper.writeVarInt(out, tagSet.getValue().size());
-            for (Map.Entry<String, int[]> tag : tagSet.getValue().entrySet()) {
-                helper.writeResourceLocation(out, tag.getKey());
-                helper.writeVarInt(out, tag.getValue().length);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, tags.size());
+        for (Map.Entry<Key, Map<Key, int[]>> tagSet : tags.entrySet()) {
+            MinecraftTypes.writeResourceLocation(out, tagSet.getKey());
+            MinecraftTypes.writeVarInt(out, tagSet.getValue().size());
+            for (Map.Entry<Key, int[]> tag : tagSet.getValue().entrySet()) {
+                MinecraftTypes.writeResourceLocation(out, tag.getKey());
+                MinecraftTypes.writeVarInt(out, tag.getValue().length);
                 for (int id : tag.getValue()) {
-                    helper.writeVarInt(out, id);
+                    MinecraftTypes.writeVarInt(out, id);
                 }
             }
         }
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

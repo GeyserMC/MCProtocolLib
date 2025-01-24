@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.List;
 
@@ -18,16 +18,16 @@ public class ServerboundEditBookPacket implements MinecraftPacket {
     private final List<String> pages;
     private final @Nullable String title;
 
-    public ServerboundEditBookPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.slot = helper.readVarInt(in);
-        this.pages = helper.readList(in, helper::readString);
-        this.title = helper.readNullable(in, helper::readString);
+    public ServerboundEditBookPacket(ByteBuf in) {
+        this.slot = MinecraftTypes.readVarInt(in);
+        this.pages = MinecraftTypes.readList(in, MinecraftTypes::readString);
+        this.title = MinecraftTypes.readNullable(in, MinecraftTypes::readString);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, slot);
-        helper.writeList(out, pages, helper::writeString);
-        helper.writeNullable(out, title, helper::writeString);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, slot);
+        MinecraftTypes.writeList(out, pages, MinecraftTypes::writeString);
+        MinecraftTypes.writeNullable(out, title, MinecraftTypes::writeString);
     }
 }

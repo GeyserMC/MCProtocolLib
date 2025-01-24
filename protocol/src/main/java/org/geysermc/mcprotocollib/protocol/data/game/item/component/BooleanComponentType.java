@@ -8,8 +8,8 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
     protected final BooleanWriter primitiveWriter;
     protected final BooleanDataComponentFactory primitiveFactory;
 
-    protected BooleanComponentType(BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
-        super(reader, writer, metadataFactory);
+    protected BooleanComponentType(String key, BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
+        super(key, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
@@ -17,8 +17,13 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
     }
 
     @Override
-    public DataComponent<Boolean, BooleanComponentType> readDataComponent(ItemCodecHelper helper, ByteBuf input) {
+    public DataComponent<Boolean, BooleanComponentType> readDataComponent(ByteBuf input) {
         return this.primitiveFactory.createPrimitive(this, this.primitiveReader.readPrimitive(input));
+    }
+
+    @Override
+    public DataComponent<Boolean, BooleanComponentType> readNullDataComponent() {
+        return this.primitiveFactory.createPrimitive(this, null);
     }
 
     public void writeDataComponentPrimitive(ByteBuf output, boolean value) {
@@ -49,12 +54,17 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
 
     @FunctionalInterface
     public interface BooleanDataComponentFactory extends DataComponentFactory<Boolean> {
-        BooleanDataComponent createPrimitive(BooleanComponentType type, boolean value);
+        BooleanDataComponent createPrimitive(BooleanComponentType type, Boolean value);
 
         @Deprecated
         @Override
         default DataComponent<Boolean, BooleanComponentType> create(DataComponentType<Boolean> type, Boolean value) {
             throw new UnsupportedOperationException("Unsupported read method! Use primitive createPrimitive!");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "BooleanComponentType(id=" + id + " , key=" + key.asString() + ")";
     }
 }

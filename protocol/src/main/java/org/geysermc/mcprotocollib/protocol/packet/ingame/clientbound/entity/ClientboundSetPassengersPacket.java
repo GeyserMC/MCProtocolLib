@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -15,20 +15,25 @@ public class ClientboundSetPassengersPacket implements MinecraftPacket {
     private final int entityId;
     private final int @NonNull [] passengerIds;
 
-    public ClientboundSetPassengersPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.entityId = helper.readVarInt(in);
-        this.passengerIds = new int[helper.readVarInt(in)];
+    public ClientboundSetPassengersPacket(ByteBuf in) {
+        this.entityId = MinecraftTypes.readVarInt(in);
+        this.passengerIds = new int[MinecraftTypes.readVarInt(in)];
         for (int index = 0; index < this.passengerIds.length; index++) {
-            this.passengerIds[index] = helper.readVarInt(in);
+            this.passengerIds[index] = MinecraftTypes.readVarInt(in);
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.entityId);
-        helper.writeVarInt(out, this.passengerIds.length);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.entityId);
+        MinecraftTypes.writeVarInt(out, this.passengerIds.length);
         for (int entityId : this.passengerIds) {
-            helper.writeVarInt(out, entityId);
+            MinecraftTypes.writeVarInt(out, entityId);
         }
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

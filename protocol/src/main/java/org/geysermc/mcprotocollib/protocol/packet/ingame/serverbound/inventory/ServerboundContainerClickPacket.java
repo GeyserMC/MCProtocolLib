@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ClickItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerActionType;
@@ -59,9 +59,9 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.changedSlots = changedSlots;
     }
 
-    public ServerboundContainerClickPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readByte();
-        this.stateId = helper.readVarInt(in);
+    public ServerboundContainerClickPacket(ByteBuf in) {
+        this.containerId = MinecraftTypes.readVarInt(in);
+        this.stateId = MinecraftTypes.readVarInt(in);
         this.slot = in.readShort();
         byte param = in.readByte();
         this.action = ContainerActionType.from(in.readByte());
@@ -83,21 +83,21 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
             throw new IllegalStateException();
         }
 
-        int changedItemsSize = helper.readVarInt(in);
+        int changedItemsSize = MinecraftTypes.readVarInt(in);
         this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
             int key = in.readShort();
-            ItemStack value = helper.readOptionalItemStack(in);
+            ItemStack value = MinecraftTypes.readOptionalItemStack(in);
             this.changedSlots.put(key, value);
         }
 
-        this.carriedItem = helper.readOptionalItemStack(in);
+        this.carriedItem = MinecraftTypes.readOptionalItemStack(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
-        helper.writeVarInt(out, this.stateId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.containerId);
+        MinecraftTypes.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
 
         int param = this.param.getId();
@@ -108,12 +108,17 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         out.writeByte(param);
         out.writeByte(this.action.ordinal());
 
-        helper.writeVarInt(out, this.changedSlots.size());
+        MinecraftTypes.writeVarInt(out, this.changedSlots.size());
         for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {
             out.writeShort(pair.getIntKey());
-            helper.writeOptionalItemStack(out, pair.getValue());
+            MinecraftTypes.writeOptionalItemStack(out, pair.getValue());
         }
 
-        helper.writeOptionalItemStack(out, this.carriedItem);
+        MinecraftTypes.writeOptionalItemStack(out, this.carriedItem);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

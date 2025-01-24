@@ -5,8 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.AdvancementTabAction;
 
 import java.util.function.Consumer;
@@ -40,22 +40,27 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         return this.tabId;
     }
 
-    public ServerboundSeenAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.action = AdvancementTabAction.from(helper.readVarInt(in));
+    public ServerboundSeenAdvancementsPacket(ByteBuf in) {
+        this.action = AdvancementTabAction.from(MinecraftTypes.readVarInt(in));
         this.tabId = switch (this.action) {
             case CLOSED_SCREEN -> null;
-            case OPENED_TAB -> helper.readString(in);
+            case OPENED_TAB -> MinecraftTypes.readString(in);
         };
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.action.ordinal());
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.action.ordinal());
         Consumer<String> tabIdWriter = switch (this.action) {
             case CLOSED_SCREEN -> tabId -> {
             };
-            case OPENED_TAB -> tabId -> helper.writeString(out, tabId);
+            case OPENED_TAB -> tabId -> MinecraftTypes.writeString(out, tabId);
         };
         tabIdWriter.accept(this.tabId);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.Arrays;
 
@@ -31,35 +31,40 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
         this.tooltips = Arrays.copyOf(tooltips, tooltips.length);
     }
 
-    public ClientboundCommandSuggestionsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.transactionId = helper.readVarInt(in);
-        this.start = helper.readVarInt(in);
-        this.length = helper.readVarInt(in);
-        this.matches = new String[helper.readVarInt(in)];
+    public ClientboundCommandSuggestionsPacket(ByteBuf in) {
+        this.transactionId = MinecraftTypes.readVarInt(in);
+        this.start = MinecraftTypes.readVarInt(in);
+        this.length = MinecraftTypes.readVarInt(in);
+        this.matches = new String[MinecraftTypes.readVarInt(in)];
         this.tooltips = new Component[this.matches.length];
         for (int index = 0; index < this.matches.length; index++) {
-            this.matches[index] = helper.readString(in);
+            this.matches[index] = MinecraftTypes.readString(in);
             if (in.readBoolean()) {
-                this.tooltips[index] = helper.readComponent(in);
+                this.tooltips[index] = MinecraftTypes.readComponent(in);
             }
         }
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.transactionId);
-        helper.writeVarInt(out, this.start);
-        helper.writeVarInt(out, this.length);
-        helper.writeVarInt(out, this.matches.length);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.transactionId);
+        MinecraftTypes.writeVarInt(out, this.start);
+        MinecraftTypes.writeVarInt(out, this.length);
+        MinecraftTypes.writeVarInt(out, this.matches.length);
         for (int index = 0; index < this.matches.length; index++) {
-            helper.writeString(out, this.matches[index]);
+            MinecraftTypes.writeString(out, this.matches[index]);
             Component tooltip = this.tooltips[index];
             if (tooltip != null) {
                 out.writeBoolean(true);
-                helper.writeComponent(out, tooltip);
+                MinecraftTypes.writeComponent(out, tooltip);
             } else {
                 out.writeBoolean(false);
             }
         }
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

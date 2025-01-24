@@ -5,8 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandNode;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandParser;
 import org.geysermc.mcprotocollib.protocol.data.game.command.CommandType;
@@ -41,35 +42,35 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     private final @NonNull CommandNode[] nodes;
     private final int firstNodeIndex;
 
-    public ClientboundCommandsPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.nodes = new CommandNode[helper.readVarInt(in)];
+    public ClientboundCommandsPacket(ByteBuf in) {
+        this.nodes = new CommandNode[MinecraftTypes.readVarInt(in)];
         for (int i = 0; i < this.nodes.length; i++) {
             byte flags = in.readByte();
             CommandType type = CommandType.from(flags & FLAG_TYPE_MASK);
             boolean executable = (flags & FLAG_EXECUTABLE) != 0;
 
-            int[] children = new int[helper.readVarInt(in)];
+            int[] children = new int[MinecraftTypes.readVarInt(in)];
             for (int j = 0; j < children.length; j++) {
-                children[j] = helper.readVarInt(in);
+                children[j] = MinecraftTypes.readVarInt(in);
             }
 
             OptionalInt redirectIndex;
             if ((flags & FLAG_REDIRECT) != 0) {
-                redirectIndex = OptionalInt.of(helper.readVarInt(in));
+                redirectIndex = OptionalInt.of(MinecraftTypes.readVarInt(in));
             } else {
                 redirectIndex = OptionalInt.empty();
             }
 
             String name = null;
             if (type == CommandType.LITERAL || type == CommandType.ARGUMENT) {
-                name = helper.readString(in);
+                name = MinecraftTypes.readString(in);
             }
 
             CommandParser parser = null;
             CommandProperties properties = null;
-            String suggestionType = null;
+            Key suggestionType = null;
             if (type == CommandType.ARGUMENT) {
-                parser = CommandParser.from(helper.readVarInt(in));
+                parser = CommandParser.from(MinecraftTypes.readVarInt(in));
                 switch (parser) {
                     case DOUBLE -> {
                         byte numberFlags = in.readByte();
@@ -127,7 +128,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
                         properties = new LongProperties(min, max);
                     }
-                    case STRING -> properties = StringProperties.from(helper.readVarInt(in));
+                    case STRING -> properties = StringProperties.from(MinecraftTypes.readVarInt(in));
                     case ENTITY -> {
                         byte entityFlags = in.readByte();
                         properties = new EntityProperties((entityFlags & ENTITY_FLAG_SINGLE_TARGET) != 0,
@@ -135,25 +136,25 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     }
                     case SCORE_HOLDER -> properties = new ScoreHolderProperties(in.readBoolean());
                     case TIME -> properties = new TimeProperties(in.readInt());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> properties = new ResourceProperties(helper.readString(in));
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> properties = new ResourceProperties(MinecraftTypes.readResourceLocation(in));
                     default -> {
                     }
                 }
 
                 if ((flags & FLAG_SUGGESTION_TYPE) != 0) {
-                    suggestionType = helper.readResourceLocation(in);
+                    suggestionType = MinecraftTypes.readResourceLocation(in);
                 }
             }
 
             this.nodes[i] = new CommandNode(type, executable, children, redirectIndex, name, parser, properties, suggestionType);
         }
 
-        this.firstNodeIndex = helper.readVarInt(in);
+        this.firstNodeIndex = MinecraftTypes.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.nodes.length);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.nodes.length);
         for (CommandNode node : this.nodes) {
             int flags = node.getType().ordinal() & FLAG_TYPE_MASK;
             if (node.isExecutable()) {
@@ -170,21 +171,21 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
             out.writeByte(flags);
 
-            helper.writeVarInt(out, node.getChildIndices().length);
+            MinecraftTypes.writeVarInt(out, node.getChildIndices().length);
             for (int childIndex : node.getChildIndices()) {
-                helper.writeVarInt(out, childIndex);
+                MinecraftTypes.writeVarInt(out, childIndex);
             }
 
             if (node.getRedirectIndex().isPresent()) {
-                helper.writeVarInt(out, node.getRedirectIndex().getAsInt());
+                MinecraftTypes.writeVarInt(out, node.getRedirectIndex().getAsInt());
             }
 
             if (node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
-                helper.writeString(out, node.getName());
+                MinecraftTypes.writeString(out, node.getName());
             }
 
             if (node.getType() == CommandType.ARGUMENT) {
-                helper.writeVarInt(out, node.getParser().ordinal());
+                MinecraftTypes.writeVarInt(out, node.getParser().ordinal());
                 switch (node.getParser()) {
                     case DOUBLE -> {
                         DoubleProperties properties = (DoubleProperties) node.getProperties();
@@ -270,7 +271,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                             out.writeLong(properties.getMax());
                         }
                     }
-                    case STRING -> helper.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
+                    case STRING -> MinecraftTypes.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
                     case ENTITY -> {
                         EntityProperties properties = (EntityProperties) node.getProperties();
                         int entityFlags = 0;
@@ -286,17 +287,22 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     }
                     case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
                     case TIME -> out.writeInt(((TimeProperties) node.getProperties()).getMin());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> helper.writeString(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> MinecraftTypes.writeResourceLocation(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
                     default -> {
                     }
                 }
 
                 if (node.getSuggestionType() != null) {
-                    helper.writeResourceLocation(out, node.getSuggestionType());
+                    MinecraftTypes.writeResourceLocation(out, node.getSuggestionType());
                 }
             }
         }
 
-        helper.writeVarInt(out, this.firstNodeIndex);
+        MinecraftTypes.writeVarInt(out, this.firstNodeIndex);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }

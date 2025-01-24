@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -13,12 +13,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundContainerClosePacket implements MinecraftPacket {
     private final int containerId;
 
-    public ClientboundContainerClosePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = in.readUnsignedByte();
+    public ClientboundContainerClosePacket(ByteBuf in) {
+        this.containerId = MinecraftTypes.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        out.writeByte(this.containerId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.containerId);
+    }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
     }
 }
