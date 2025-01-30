@@ -227,22 +227,22 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
             this.delayedDisconnect = disconnectionDetails;
         }
 
+        boolean wasDisconnectionHandled = this.disconnectionHandled;
+        if (!wasDisconnectionHandled) {
+            this.disconnectionHandled = true;
+        }
+
+        if (!wasDisconnectionHandled) {
+            this.callEvent(new DisconnectingEvent(this, disconnectionDetails));
+        }
+
         if (this.isConnected()) {
-            boolean wasDisconnectionHandled = this.disconnectionHandled;
-            if (!wasDisconnectionHandled) {
-                this.disconnectionHandled = true;
-            }
-
-            if (!wasDisconnectionHandled) {
-                this.callEvent(new DisconnectingEvent(this, disconnectionDetails));
-            }
-
             this.channel.close().awaitUninterruptibly();
             this.disconnectionDetails = disconnectionDetails;
+        }
 
-            if (!wasDisconnectionHandled) {
-                this.callEvent(new DisconnectedEvent(this, disconnectionDetails));
-            }
+        if (!wasDisconnectionHandled) {
+            this.callEvent(new DisconnectedEvent(this, disconnectionDetails));
         }
     }
 
