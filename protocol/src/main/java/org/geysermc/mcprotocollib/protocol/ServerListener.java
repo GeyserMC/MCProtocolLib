@@ -97,7 +97,7 @@ public class ServerListener extends SessionAdapter {
             if (packet instanceof ClientIntentionPacket intentionPacket) {
                 switch (intentionPacket.getIntent()) {
                     case STATUS -> {
-                        protocol.setOutboundState(ProtocolState.STATUS);
+                        session.switchOutboundState(ProtocolState.STATUS);
                         session.switchInboundState(ProtocolState.STATUS);
                     }
                     case TRANSFER -> beginLogin(session, protocol, intentionPacket, true);
@@ -125,7 +125,7 @@ public class ServerListener extends SessionAdapter {
                 session.setEncryption(protocol.createEncryption(key));
                 new Thread(() -> authenticate(session, session.getFlag(MinecraftConstants.SHOULD_AUTHENTICATE, true), key)).start();
             } else if (packet instanceof ServerboundLoginAcknowledgedPacket) {
-                protocol.setOutboundState(ProtocolState.CONFIGURATION);
+                session.switchOutboundState(ProtocolState.CONFIGURATION);
                 session.switchInboundState(ProtocolState.CONFIGURATION);
                 keepAliveState = new KeepAliveState();
                 if (session.getFlag(MinecraftConstants.AUTOMATIC_KEEP_ALIVE_MANAGEMENT, true)) {
@@ -188,7 +188,7 @@ public class ServerListener extends SessionAdapter {
             if (packet instanceof ServerboundKeepAlivePacket keepAlivePacket) {
                 handleKeepAlive(session, keepAlivePacket);
             } else if (packet instanceof ServerboundFinishConfigurationPacket) {
-                protocol.setOutboundState(ProtocolState.GAME);
+                session.switchOutboundState(ProtocolState.GAME);
                 session.switchInboundState(ProtocolState.GAME);
                 keepAliveState = new KeepAliveState();
                 ServerLoginHandler handler = session.getFlag(MinecraftConstants.SERVER_LOGIN_HANDLER_KEY);
@@ -213,7 +213,7 @@ public class ServerListener extends SessionAdapter {
 
     private void beginLogin(Session session, MinecraftProtocol protocol, ClientIntentionPacket packet, boolean transferred) {
         isTransfer = transferred;
-        protocol.setOutboundState(ProtocolState.LOGIN);
+        session.switchOutboundState(ProtocolState.LOGIN);
         if (transferred && !session.getFlag(MinecraftConstants.ACCEPT_TRANSFERS_KEY)) {
             session.disconnect(Component.translatable("multiplayer.disconnect.transfers_disabled"));
         } else if (packet.getProtocolVersion() > protocol.getCodec().getProtocolVersion()) {
