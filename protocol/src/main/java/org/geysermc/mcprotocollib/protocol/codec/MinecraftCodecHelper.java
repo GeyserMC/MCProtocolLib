@@ -351,7 +351,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, !empty ? item.getAmount() : 0);
         if (!empty) {
             this.writeVarInt(buf, item.getId());
-            this.writeDataComponentPatch(buf, item.getDataComponents());
+            this.writeDataComponentPatch(buf, item.getDataComponentsPatch());
         }
     }
 
@@ -441,7 +441,7 @@ public class MinecraftCodecHelper extends BasePacketCodecHelper {
         this.writeVarInt(buf, item.getId());
         this.writeVarInt(buf, item.getAmount());
 
-        DataComponents dataComponents = item.getDataComponents();
+        DataComponents dataComponents = item.getDataComponentsPatch();
         if (dataComponents == null) {
             this.writeVarInt(buf, 0);
             return;
