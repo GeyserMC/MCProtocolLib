@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.property.ContainerProperty;
 
 @Data
@@ -20,15 +20,15 @@ public class ClientboundContainerSetDataPacket implements MinecraftPacket {
         this(containerId, rawProperty.ordinal(), value);
     }
 
-    public ClientboundContainerSetDataPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
+    public ClientboundContainerSetDataPacket(ByteBuf in) {
+        this.containerId = MinecraftTypes.readVarInt(in);
         this.rawProperty = in.readShort();
         this.value = in.readShort();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.containerId);
         out.writeShort(this.rawProperty);
         out.writeShort(this.value);
     }

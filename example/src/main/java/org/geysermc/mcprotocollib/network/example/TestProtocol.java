@@ -3,8 +3,6 @@ package org.geysermc.mcprotocollib.network.example;
 import io.netty.buffer.ByteBuf;
 import org.geysermc.mcprotocollib.network.Server;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.BasePacketCodecHelper;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 import org.geysermc.mcprotocollib.network.crypt.AESEncryption;
@@ -13,6 +11,7 @@ import org.geysermc.mcprotocollib.network.packet.DefaultPacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,20 +32,16 @@ public class TestProtocol extends PacketProtocol {
         this.setSecretKey(key);
     }
 
-    public PacketCodecHelper createHelper() {
-        return new BasePacketCodecHelper();
-    }
-
     public void setSecretKey(SecretKey key) {
         registry.register(0, PingPacket.class, new PacketSerializer<>() {
             @Override
-            public void serialize(ByteBuf buf, PacketCodecHelper helper, PingPacket packet) {
-                helper.writeString(buf, packet.getPingId());
+            public void serialize(ByteBuf buf, PingPacket packet) {
+                MinecraftTypes.writeString(buf, packet.getPingId());
             }
 
             @Override
-            public PingPacket deserialize(ByteBuf buf, PacketCodecHelper helper, PacketDefinition<PingPacket, PacketCodecHelper> definition) {
-                return new PingPacket(buf, helper);
+            public PingPacket deserialize(ByteBuf buf, PacketDefinition<PingPacket> definition) {
+                return new PingPacket(buf);
             }
         });
 

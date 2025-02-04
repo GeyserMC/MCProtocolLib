@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.network.packet;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 
@@ -15,8 +14,8 @@ import java.util.Map;
  * All implementations must have a constructor that takes in a {@link ByteBuf}.
  */
 public class PacketRegistry {
-    private final Int2ObjectMap<PacketDefinition<? extends Packet, ?>> serverbound = new Int2ObjectOpenHashMap<>();
-    private final Int2ObjectMap<PacketDefinition<? extends Packet, ?>> clientbound = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<PacketDefinition<? extends Packet>> serverbound = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<PacketDefinition<? extends Packet>> clientbound = new Int2ObjectOpenHashMap<>();
 
     private final Map<Class<? extends Packet>, Integer> clientboundIds = new IdentityHashMap<>();
     private final Map<Class<? extends Packet>, Integer> serverboundIds = new IdentityHashMap<>();
@@ -39,7 +38,7 @@ public class PacketRegistry {
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
      */
-    public final <T extends Packet, H extends PacketCodecHelper> void register(int id, Class<T> packet, PacketSerializer<T, H> serializer) {
+    public final <T extends Packet> void register(int id, Class<T> packet, PacketSerializer<T> serializer) {
         this.registerServerbound(id, packet, serializer);
         this.registerClientbound(id, packet, serializer);
     }
@@ -50,7 +49,7 @@ public class PacketRegistry {
      * @param definition The packet definition.
      * @throws IllegalArgumentException If the packet fails a test creation when being registered as serverbound.
      */
-    public final void register(PacketDefinition<? extends Packet, ?> definition) {
+    public final void register(PacketDefinition<? extends Packet> definition) {
         this.registerServerbound(definition);
         this.registerClientbound(definition);
     }
@@ -63,7 +62,7 @@ public class PacketRegistry {
      * @param serializer The packet serializer.
      * @throws IllegalArgumentException If the packet fails a test creation.
      */
-    public final <T extends Packet, H extends PacketCodecHelper> void registerServerbound(int id, Class<T> packet, PacketSerializer<T, H> serializer) {
+    public final <T extends Packet> void registerServerbound(int id, Class<T> packet, PacketSerializer<T> serializer) {
         this.registerServerbound(new PacketDefinition<>(id, packet, serializer));
     }
 
@@ -72,7 +71,7 @@ public class PacketRegistry {
      *
      * @param definition The packet definition.
      */
-    public final void registerServerbound(PacketDefinition<? extends Packet, ?> definition) {
+    public final void registerServerbound(PacketDefinition<? extends Packet> definition) {
         this.serverbound.put(definition.getId(), definition);
         this.serverboundIds.put(definition.getPacketClass(), definition.getId());
     }
@@ -84,7 +83,7 @@ public class PacketRegistry {
      * @param packet Packet to register.
      * @param serializer The packet serializer.
      */
-    public final <T extends Packet, H extends PacketCodecHelper> void registerClientbound(int id, Class<T> packet, PacketSerializer<T, H> serializer) {
+    public final <T extends Packet> void registerClientbound(int id, Class<T> packet, PacketSerializer<T> serializer) {
         this.registerClientbound(new PacketDefinition<>(id, packet, serializer));
     }
 
@@ -93,7 +92,7 @@ public class PacketRegistry {
      *
      * @param definition The packet definition.
      */
-    public final void registerClientbound(PacketDefinition<? extends Packet, ?> definition) {
+    public final void registerClientbound(PacketDefinition<? extends Packet> definition) {
         this.clientbound.put(definition.getId(), definition);
         this.clientboundIds.put(definition.getPacketClass(), definition.getId());
     }
@@ -103,18 +102,17 @@ public class PacketRegistry {
      *
      * @param id Id of the packet to create.
      * @param buf The buffer to read the packet from.
-     * @param codecHelper The codec helper.
      * @return The created packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")
-    public <H extends PacketCodecHelper> Packet createClientboundPacket(int id, ByteBuf buf, H codecHelper) {
-        PacketDefinition<?, H> definition = (PacketDefinition<?, H>) this.clientbound.get(id);
+    public Packet createClientboundPacket(int id, ByteBuf buf) {
+        PacketDefinition<?> definition = (PacketDefinition<?>) this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
 
-        return definition.newInstance(buf, codecHelper);
+        return definition.newInstance(buf);
     }
 
     /**
@@ -152,7 +150,7 @@ public class PacketRegistry {
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     public Class<? extends Packet> getClientboundClass(int id) {
-        PacketDefinition<?, ?> definition = this.clientbound.get(id);
+        PacketDefinition<?> definition = this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
@@ -165,18 +163,17 @@ public class PacketRegistry {
      *
      * @param id Id of the packet to create.
      * @param buf The buffer to read the packet from.
-     * @param codecHelper The codec helper.
      * @return The created packet.
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     @SuppressWarnings("unchecked")
-    public <H extends PacketCodecHelper> Packet createServerboundPacket(int id, ByteBuf buf, H codecHelper) {
-        PacketDefinition<?, H> definition = (PacketDefinition<?, H>) this.serverbound.get(id);
+    public Packet createServerboundPacket(int id, ByteBuf buf) {
+        PacketDefinition<?> definition = (PacketDefinition<?>) this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
 
-        return definition.newInstance(buf, codecHelper);
+        return definition.newInstance(buf);
     }
 
     /**
@@ -214,7 +211,7 @@ public class PacketRegistry {
      * @throws IllegalArgumentException If the packet ID is not registered.
      */
     public Class<? extends Packet> getServerboundClass(int id) {
-        PacketDefinition<?, ?> definition = this.serverbound.get(id);
+        PacketDefinition<?> definition = this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
@@ -228,8 +225,8 @@ public class PacketRegistry {
      * @param id The packet id.
      * @return The registered packet's class
      */
-    public PacketDefinition<?, ?> getServerboundDefinition(int id) {
-        PacketDefinition<?, ?> definition = this.serverbound.get(id);
+    public PacketDefinition<?> getServerboundDefinition(int id) {
+        PacketDefinition<?> definition = this.serverbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }
@@ -243,8 +240,8 @@ public class PacketRegistry {
      * @param id The packet id.
      * @return The registered packet's class
      */
-    public PacketDefinition<?, ?> getClientboundDefinition(int id) {
-        PacketDefinition<?, ?> definition = this.clientbound.get(id);
+    public PacketDefinition<?> getClientboundDefinition(int id) {
+        PacketDefinition<?> definition = this.clientbound.get(id);
         if (definition == null) {
             throw new IllegalArgumentException("Invalid packet id: " + id);
         }

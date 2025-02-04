@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.Arrays;
 
@@ -27,12 +27,12 @@ public class ListPalette implements Palette {
         this.data = new int[this.capacity];
     }
 
-    public ListPalette(int bitsPerEntry, ByteBuf in, MinecraftCodecHelper helper) {
+    public ListPalette(int bitsPerEntry, ByteBuf in) {
         this(bitsPerEntry);
 
-        int paletteLength = helper.readVarInt(in);
+        int paletteLength = MinecraftTypes.readVarInt(in);
         for (int i = 0; i < paletteLength; i++) {
-            this.data[i] = helper.readVarInt(in);
+            this.data[i] = MinecraftTypes.readVarInt(in);
         }
 
         this.nextId = paletteLength;

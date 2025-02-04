@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
@@ -13,12 +12,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundClearTitlesPacket implements MinecraftPacket {
     private final boolean resetTimes;
 
-    public ClientboundClearTitlesPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundClearTitlesPacket(ByteBuf in) {
         this.resetTimes = in.readBoolean();
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeBoolean(this.resetTimes);
     }
 

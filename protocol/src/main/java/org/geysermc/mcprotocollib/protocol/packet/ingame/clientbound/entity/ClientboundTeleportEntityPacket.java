@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3d;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PositionElement;
 
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ public class ClientboundTeleportEntityPacket implements MinecraftPacket {
     private final @NonNull List<PositionElement> relatives;
     private final boolean onGround;
 
-    public ClientboundTeleportEntityPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.id = helper.readVarInt(in);
+    public ClientboundTeleportEntityPacket(ByteBuf in) {
+        this.id = MinecraftTypes.readVarInt(in);
         this.position = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
         this.deltaMovement = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
         this.yRot = in.readFloat();
@@ -45,8 +45,8 @@ public class ClientboundTeleportEntityPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.id);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.id);
         out.writeDouble(this.position.getX());
         out.writeDouble(this.position.getY());
         out.writeDouble(this.position.getZ());

@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 @Data
 @With
@@ -13,12 +13,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 public class ClientboundPlayerCombatEndPacket implements MinecraftPacket {
     private final int duration;
 
-    public ClientboundPlayerCombatEndPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.duration = helper.readVarInt(in);
+    public ClientboundPlayerCombatEndPacket(ByteBuf in) {
+        this.duration = MinecraftTypes.readVarInt(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.duration);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.duration);
     }
 }

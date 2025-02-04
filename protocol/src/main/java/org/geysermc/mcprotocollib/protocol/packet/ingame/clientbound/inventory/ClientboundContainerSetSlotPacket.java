@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
 @Data
@@ -18,19 +18,19 @@ public class ClientboundContainerSetSlotPacket implements MinecraftPacket {
     private final int slot;
     private final @Nullable ItemStack item;
 
-    public ClientboundContainerSetSlotPacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.containerId = helper.readVarInt(in);
-        this.stateId = helper.readVarInt(in);
+    public ClientboundContainerSetSlotPacket(ByteBuf in) {
+        this.containerId = MinecraftTypes.readVarInt(in);
+        this.stateId = MinecraftTypes.readVarInt(in);
         this.slot = in.readShort();
-        this.item = helper.readOptionalItemStack(in);
+        this.item = MinecraftTypes.readOptionalItemStack(in);
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeVarInt(out, this.containerId);
-        helper.writeVarInt(out, this.stateId);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.containerId);
+        MinecraftTypes.writeVarInt(out, this.stateId);
         out.writeShort(this.slot);
-        helper.writeOptionalItemStack(out, this.item);
+        MinecraftTypes.writeOptionalItemStack(out, this.item);
     }
 
     @Override

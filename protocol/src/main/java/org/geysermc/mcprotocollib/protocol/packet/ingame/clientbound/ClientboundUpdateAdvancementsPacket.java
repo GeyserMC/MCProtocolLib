@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement;
 import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData;
 import org.geysermc.mcprotocollib.protocol.data.game.advancement.Advancement.DisplayData.AdvancementType;
@@ -43,52 +43,52 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
         return progress.get(criterionId);
     }
 
-    public ClientboundUpdateAdvancementsPacket(ByteBuf in, MinecraftCodecHelper helper) {
+    public ClientboundUpdateAdvancementsPacket(ByteBuf in) {
         this.reset = in.readBoolean();
 
-        this.advancements = new Advancement[helper.readVarInt(in)];
+        this.advancements = new Advancement[MinecraftTypes.readVarInt(in)];
         for (int i = 0; i < this.advancements.length; i++) {
-            String id = helper.readString(in);
-            String parentId = helper.readNullable(in, helper::readString);
-            DisplayData displayData = helper.readNullable(in, buf -> {
-                Component title = helper.readComponent(buf);
-                Component description = helper.readComponent(buf);
-                ItemStack icon = helper.readOptionalItemStack(buf);
-                AdvancementType advancementType = AdvancementType.from(helper.readVarInt(buf));
+            String id = MinecraftTypes.readString(in);
+            String parentId = MinecraftTypes.readNullable(in, MinecraftTypes::readString);
+            DisplayData displayData = MinecraftTypes.readNullable(in, buf -> {
+                Component title = MinecraftTypes.readComponent(buf);
+                Component description = MinecraftTypes.readComponent(buf);
+                ItemStack icon = MinecraftTypes.readOptionalItemStack(buf);
+                AdvancementType advancementType = AdvancementType.from(MinecraftTypes.readVarInt(buf));
 
                 int flags = buf.readInt();
                 boolean hasBackgroundTexture = (flags & FLAG_HAS_BACKGROUND_TEXTURE) != 0;
                 boolean showToast = (flags & FLAG_SHOW_TOAST) != 0;
                 boolean hidden = (flags & FLAG_HIDDEN) != 0;
 
-                String backgroundTexture = hasBackgroundTexture ? helper.readString(buf) : null;
+                String backgroundTexture = hasBackgroundTexture ? MinecraftTypes.readString(buf) : null;
                 float posX = buf.readFloat();
                 float posY = buf.readFloat();
 
                 return new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
             });
 
-            List<List<String>> requirements = helper.readList(in, buf -> helper.readList(buf, helper::readString));
+            List<List<String>> requirements = MinecraftTypes.readList(in, buf -> MinecraftTypes.readList(buf, MinecraftTypes::readString));
 
             boolean sendTelemetryEvent = in.readBoolean();
 
             this.advancements[i] = new Advancement(id, requirements, parentId, displayData, sendTelemetryEvent);
         }
 
-        this.removedAdvancements = new String[helper.readVarInt(in)];
+        this.removedAdvancements = new String[MinecraftTypes.readVarInt(in)];
         for (int i = 0; i < this.removedAdvancements.length; i++) {
-            this.removedAdvancements[i] = helper.readString(in);
+            this.removedAdvancements[i] = MinecraftTypes.readString(in);
         }
 
         this.progress = new HashMap<>();
-        int progressCount = helper.readVarInt(in);
+        int progressCount = MinecraftTypes.readVarInt(in);
         for (int i = 0; i < progressCount; i++) {
-            String advancementId = helper.readString(in);
+            String advancementId = MinecraftTypes.readString(in);
 
             Map<String, Long> advancementProgress = new HashMap<>();
-            int criterionCount = helper.readVarInt(in);
+            int criterionCount = MinecraftTypes.readVarInt(in);
             for (int j = 0; j < criterionCount; j++) {
-                String criterionId = helper.readString(in);
+                String criterionId = MinecraftTypes.readString(in);
                 long achievedDate = in.readBoolean() ? in.readLong() : -1;
                 advancementProgress.put(criterionId, achievedDate);
             }
@@ -98,24 +98,24 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
+    public void serialize(ByteBuf out) {
         out.writeBoolean(this.reset);
 
-        helper.writeVarInt(out, this.advancements.length);
+        MinecraftTypes.writeVarInt(out, this.advancements.length);
         for (Advancement advancement : this.advancements) {
-            helper.writeString(out, advancement.getId());
+            MinecraftTypes.writeString(out, advancement.getId());
             if (advancement.getParentId() != null) {
                 out.writeBoolean(true);
-                helper.writeString(out, advancement.getParentId());
+                MinecraftTypes.writeString(out, advancement.getParentId());
             } else {
                 out.writeBoolean(false);
             }
 
-            helper.writeNullable(out, advancement.getDisplayData(), (buf, data) -> {
-                helper.writeComponent(buf, data.getTitle());
-                helper.writeComponent(buf, data.getDescription());
-                helper.writeOptionalItemStack(buf, data.getIcon());
-                helper.writeVarInt(buf, data.getAdvancementType().ordinal());
+            MinecraftTypes.writeNullable(out, advancement.getDisplayData(), (buf, data) -> {
+                MinecraftTypes.writeComponent(buf, data.getTitle());
+                MinecraftTypes.writeComponent(buf, data.getDescription());
+                MinecraftTypes.writeOptionalItemStack(buf, data.getIcon());
+                MinecraftTypes.writeVarInt(buf, data.getAdvancementType().ordinal());
 
                 int flags = 0;
                 if (data.getBackgroundTexture() != null) {
@@ -133,30 +133,30 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 buf.writeInt(flags);
 
                 if (data.getBackgroundTexture() != null) {
-                    helper.writeString(buf, data.getBackgroundTexture());
+                    MinecraftTypes.writeString(buf, data.getBackgroundTexture());
                 }
 
                 buf.writeFloat(data.getPosX());
                 buf.writeFloat(data.getPosY());
             });
 
-            helper.writeList(out, advancement.getRequirements(), (buf, requirement) -> helper.writeList(buf, requirement, helper::writeString));
+            MinecraftTypes.writeList(out, advancement.getRequirements(), (buf, requirement) -> MinecraftTypes.writeList(buf, requirement, MinecraftTypes::writeString));
 
             out.writeBoolean(advancement.isSendsTelemetryEvent());
         }
 
-        helper.writeVarInt(out, this.removedAdvancements.length);
+        MinecraftTypes.writeVarInt(out, this.removedAdvancements.length);
         for (String id : this.removedAdvancements) {
-            helper.writeString(out, id);
+            MinecraftTypes.writeString(out, id);
         }
 
-        helper.writeVarInt(out, this.progress.size());
+        MinecraftTypes.writeVarInt(out, this.progress.size());
         for (Map.Entry<String, Map<String, Long>> advancement : this.progress.entrySet()) {
-            helper.writeString(out, advancement.getKey());
+            MinecraftTypes.writeString(out, advancement.getKey());
             Map<String, Long> advancementProgress = advancement.getValue();
-            helper.writeVarInt(out, advancementProgress.size());
+            MinecraftTypes.writeVarInt(out, advancementProgress.size());
             for (Map.Entry<String, Long> criterion : advancementProgress.entrySet()) {
-                helper.writeString(out, criterion.getKey());
+                MinecraftTypes.writeString(out, criterion.getKey());
                 if (criterion.getValue() != -1) {
                     out.writeBoolean(true);
                     out.writeLong(criterion.getValue());

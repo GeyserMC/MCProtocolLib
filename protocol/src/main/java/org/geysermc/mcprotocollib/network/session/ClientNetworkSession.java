@@ -12,7 +12,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.helper.NettyHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
@@ -35,7 +34,6 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
 
     protected final SocketAddress bindAddress;
     protected final ProxyInfo proxy;
-    protected final PacketCodecHelper codecHelper;
 
     public ClientNetworkSession(
         @NonNull SocketAddress remoteAddress,
@@ -47,7 +45,6 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
         super(remoteAddress, protocol, packetHandlerExecutor);
         this.bindAddress = bindAddress;
         this.proxy = proxy;
-        this.codecHelper = protocol.createHelper();
     }
 
     @Override
@@ -84,11 +81,6 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
     @Override
     public @Nullable ProxyInfo getProxy() {
         return this.proxy;
-    }
-
-    @Override
-    public PacketCodecHelper getCodecHelper() {
-        return this.codecHelper;
     }
 
     protected EventLoopGroup getEventLoopGroup() {

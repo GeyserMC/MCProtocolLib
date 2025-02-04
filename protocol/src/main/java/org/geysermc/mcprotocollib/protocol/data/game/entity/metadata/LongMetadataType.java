@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 
 import io.netty.buffer.ByteBuf;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.LongEntityMetadata;
 
 public class LongMetadataType extends MetadataType<Long> {
@@ -18,33 +17,33 @@ public class LongMetadataType extends MetadataType<Long> {
     }
 
     @Override
-    public EntityMetadata<Long, LongMetadataType> readMetadata(MinecraftCodecHelper helper, ByteBuf input, int id) {
-        return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(helper, input));
+    public EntityMetadata<Long, LongMetadataType> readMetadata(ByteBuf input, int id) {
+        return this.primitiveFactory.createPrimitive(id, this, this.primitiveReader.readPrimitive(input));
     }
 
-    public void writeMetadataPrimitive(MinecraftCodecHelper helper, ByteBuf output, long value) {
-        this.primitiveWriter.writePrimitive(helper, output, value);
+    public void writeMetadataPrimitive(ByteBuf output, long value) {
+        this.primitiveWriter.writePrimitive(output, value);
     }
 
     @FunctionalInterface
     public interface LongReader extends Reader<Long> {
-        long readPrimitive(MinecraftCodecHelper helper, ByteBuf input);
+        long readPrimitive(ByteBuf input);
 
         @Deprecated
         @Override
-        default Long read(MinecraftCodecHelper helper, ByteBuf input) {
-            return this.readPrimitive(helper, input);
+        default Long read(ByteBuf input) {
+            return this.readPrimitive(input);
         }
     }
 
     @FunctionalInterface
     public interface LongWriter extends Writer<Long> {
-        void writePrimitive(MinecraftCodecHelper helper, ByteBuf output, long value);
+        void writePrimitive(ByteBuf output, long value);
 
         @Deprecated
         @Override
-        default void write(MinecraftCodecHelper helper, ByteBuf output, Long value) {
-            this.writePrimitive(helper, output, value);
+        default void write(ByteBuf output, Long value) {
+            this.writePrimitive(output, value);
         }
     }
 

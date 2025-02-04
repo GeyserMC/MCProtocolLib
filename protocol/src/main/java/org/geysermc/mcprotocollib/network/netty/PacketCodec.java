@@ -6,7 +6,6 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToMessageCodec;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.codec.PacketCodecHelper;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
 import org.geysermc.mcprotocollib.network.packet.Packet;
@@ -40,14 +39,13 @@ public class PacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getOutboundPacketRegistry();
-        PacketCodecHelper codecHelper = this.session.getCodecHelper();
         try {
             int packetId = this.client ? packetRegistry.getServerboundId(packet) : packetRegistry.getClientboundId(packet);
             PacketDefinition definition = this.client ? packetRegistry.getServerboundDefinition(packetId) : packetRegistry.getClientboundDefinition(packetId);
 
             ByteBuf buf = ctx.alloc().buffer();
-            packetProtocol.getPacketHeader().writePacketId(buf, codecHelper, packetId);
-            definition.getSerializer().serialize(buf, codecHelper, packet);
+            packetProtocol.getPacketHeader().writePacketId(buf, packetId);
+            definition.getSerializer().serialize(buf, packet);
 
             out.add(buf);
 
@@ -76,10 +74,9 @@ public class PacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
 
         PacketProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getInboundPacketRegistry();
-        PacketCodecHelper codecHelper = this.session.getCodecHelper();
         Packet packet = null;
         try {
-            int id = packetProtocol.getPacketHeader().readPacketId(buf, codecHelper);
+            int id = packetProtocol.getPacketHeader().readPacketId(buf);
             if (id == -1) {
                 buf.readerIndex(initial);
                 return;
@@ -87,7 +84,7 @@ public class PacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
 
             log.trace(marker, "Decoding packet with id: {}", id);
 
-            packet = this.client ? packetRegistry.createClientboundPacket(id, buf, codecHelper) : packetRegistry.createServerboundPacket(id, buf, codecHelper);
+            packet = this.client ? packetRegistry.createClientboundPacket(id, buf) : packetRegistry.createServerboundPacket(id, buf);
 
             if (buf.readableBytes() > 0) {
                 throw new IllegalStateException("Packet \"" + packet.getClass().getSimpleName() + "\" not fully read.");

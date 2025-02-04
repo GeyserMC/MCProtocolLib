@@ -8,6 +8,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.RequiredArgsConstructor;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
+import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 
@@ -33,16 +34,16 @@ public class MinecraftChannelInitializer<S extends Session & ChannelHandler> ext
         PacketProtocol protocol = session.getPacketProtocol();
         ChannelPipeline pipeline = ch.pipeline();
 
-        pipeline.addLast("read-timeout", new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
-        pipeline.addLast("write-timeout", new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
+        pipeline.addLast(NetworkConstants.READ_TIMEOUT_NAME, new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));
+        pipeline.addLast(NetworkConstants.WRITE_TIMEOUT_NAME, new WriteTimeoutHandler(session.getFlag(BuiltinFlags.WRITE_TIMEOUT, 0)));
 
-        pipeline.addLast("encryption", new PacketEncryptorCodec());
-        pipeline.addLast("sizer", new PacketSizerCodec(protocol.getPacketHeader(), session.getCodecHelper()));
-        pipeline.addLast("compression", new PacketCompressionCodec(session.getCodecHelper()));
+        pipeline.addLast(NetworkConstants.ENCRYPTION_NAME, new PacketEncryptorCodec());
+        pipeline.addLast(NetworkConstants.SIZER_NAME, new PacketSizerCodec(protocol.getPacketHeader()));
+        pipeline.addLast(NetworkConstants.COMPRESSION_NAME, new PacketCompressionCodec());
 
-        pipeline.addLast("flow-control", new AutoReadFlowControlHandler());
-        pipeline.addLast("codec", new PacketCodec(session, client));
-        pipeline.addLast("flush-handler", new FlushHandler());
-        pipeline.addLast("manager", session);
+        pipeline.addLast(NetworkConstants.FLOW_CONTROL_NAME, new AutoReadFlowControlHandler());
+        pipeline.addLast(NetworkConstants.CODEC_NAME, new PacketCodec(session, client));
+        pipeline.addLast(NetworkConstants.FLUSH_HANDLER_NAME, new FlushHandler());
+        pipeline.addLast(NetworkConstants.MANAGER_NAME, session);
     }
 }

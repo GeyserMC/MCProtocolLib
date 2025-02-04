@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodecHelper;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
+import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,12 +16,12 @@ import java.util.UUID;
 public class ClientboundPlayerInfoRemovePacket implements MinecraftPacket {
     private final List<UUID> profileIds;
 
-    public ClientboundPlayerInfoRemovePacket(ByteBuf in, MinecraftCodecHelper helper) {
-        this.profileIds = helper.readList(in, helper::readUUID);
+    public ClientboundPlayerInfoRemovePacket(ByteBuf in) {
+        this.profileIds = MinecraftTypes.readList(in, MinecraftTypes::readUUID);
     }
 
-    public void serialize(ByteBuf out, MinecraftCodecHelper helper) {
-        helper.writeList(out, this.profileIds, helper::writeUUID);
+    public void serialize(ByteBuf out) {
+        MinecraftTypes.writeList(out, this.profileIds, MinecraftTypes::writeUUID);
     }
 
     @Override
