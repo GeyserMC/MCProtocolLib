@@ -8,8 +8,8 @@ public class ByteMetadataType extends MetadataType<Byte> {
     private final ByteWriter primitiveWriter;
     private final ByteEntityMetadataFactory primitiveFactory;
 
-    protected ByteMetadataType(ByteReader reader, ByteWriter writer, ByteEntityMetadataFactory metadataFactory) {
-        super(reader, writer, metadataFactory);
+    protected ByteMetadataType(int id, ByteReader reader, ByteWriter writer, ByteEntityMetadataFactory metadataFactory) {
+        super(id, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;

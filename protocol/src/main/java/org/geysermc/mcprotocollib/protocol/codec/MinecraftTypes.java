@@ -43,6 +43,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
@@ -714,11 +715,11 @@ public class MinecraftTypes {
 
     public static MetadataType<?> readMetadataType(ByteBuf buf) {
         int id = MinecraftTypes.readVarInt(buf);
-        if (id >= MetadataType.size()) {
-            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataType.size() + "!");
+        if (id >= MetadataTypes.size()) {
+            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataTypes.size() + "!");
         }
 
-        return MetadataType.from(id);
+        return MetadataTypes.from(id);
     }
 
     public static void writeMetadataType(ByteBuf buf, MetadataType<?> type) {
