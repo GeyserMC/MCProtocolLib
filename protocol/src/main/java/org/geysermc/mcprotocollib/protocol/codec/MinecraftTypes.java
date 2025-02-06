@@ -56,6 +56,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnIn
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
@@ -449,13 +450,13 @@ public class MinecraftTypes {
 
         Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
         for (int k = 0; k < nonNullComponents; k++) {
-            DataComponentType<?> dataComponentType = DataComponentType.from(MinecraftTypes.readVarInt(buf));
+            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
             dataComponents.put(dataComponentType, dataComponent);
         }
 
         for (int k = 0; k < nullComponents; k++) {
-            DataComponentType<?> dataComponentType = DataComponentType.from(MinecraftTypes.readVarInt(buf));
+            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readNullDataComponent();
             dataComponents.put(dataComponentType, dataComponent);
         }
@@ -504,7 +505,7 @@ public class MinecraftTypes {
 
         Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
         for (int i = 0; i < componentsLength; i++) {
-            DataComponentType<?> dataComponentType = DataComponentType.from(MinecraftTypes.readVarInt(buf));
+            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
             dataComponents.put(dataComponentType, dataComponent);
         }

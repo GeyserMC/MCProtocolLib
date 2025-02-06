@@ -9,8 +9,8 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
     protected final BooleanWriter primitiveWriter;
     protected final BooleanDataComponentFactory primitiveFactory;
 
-    protected BooleanComponentType(@KeyPattern String key, BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
-        super(key, reader, writer, metadataFactory);
+    protected BooleanComponentType(int id, @KeyPattern String key, BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
+        super(id, key, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;

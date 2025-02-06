@@ -9,8 +9,8 @@ public class IntComponentType extends DataComponentType<Integer> {
     protected final IntWriter primitiveWriter;
     protected final IntDataComponentFactory primitiveFactory;
 
-    protected IntComponentType(@KeyPattern String key, IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
-        super(key, reader, writer, metadataFactory);
+    protected IntComponentType(int id, @KeyPattern String key, IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
+        super(id, key, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
