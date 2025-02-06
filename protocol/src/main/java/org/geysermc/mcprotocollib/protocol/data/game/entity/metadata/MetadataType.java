@@ -36,12 +36,12 @@ public class MetadataType<T> {
     }
 
     @FunctionalInterface
-    public interface BasicReader<V> extends MetadataType.Reader<V> {
+    public interface BasicReader<V> extends Reader<V> {
         V read(ByteBuf input);
     }
 
     @FunctionalInterface
-    public interface BasicWriter<V> extends MetadataType.Writer<V> {
+    public interface BasicWriter<V> extends Writer<V> {
         void write(ByteBuf output, V value);
     }
 
