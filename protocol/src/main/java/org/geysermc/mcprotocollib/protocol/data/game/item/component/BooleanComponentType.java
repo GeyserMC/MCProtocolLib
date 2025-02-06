@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import io.netty.buffer.ByteBuf;
+import net.kyori.adventure.key.KeyPattern;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
 
 public class BooleanComponentType extends DataComponentType<Boolean> {
@@ -8,7 +9,7 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
     protected final BooleanWriter primitiveWriter;
     protected final BooleanDataComponentFactory primitiveFactory;
 
-    protected BooleanComponentType(String key, BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
+    protected BooleanComponentType(@KeyPattern String key, BooleanReader reader, BooleanWriter writer, BooleanDataComponentFactory metadataFactory) {
         super(key, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;

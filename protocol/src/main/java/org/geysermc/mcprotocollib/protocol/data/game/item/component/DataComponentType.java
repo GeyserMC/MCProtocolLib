@@ -3,6 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.KeyPattern;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
@@ -95,9 +96,8 @@ public class DataComponentType<T> {
     protected final Writer<T> writer;
     protected final DataComponentFactory<T> dataComponentFactory;
 
-    protected DataComponentType(String key, Reader<T> reader, Writer<T> writer, DataComponentFactory<T> dataComponentFactory) {
+    protected DataComponentType(@KeyPattern String key, Reader<T> reader, Writer<T> writer, DataComponentFactory<T> dataComponentFactory) {
         this.id = VALUES.size();
-        //noinspection PatternValidation
         this.key = Key.key(key);
         this.reader = reader;
         this.writer = writer;
