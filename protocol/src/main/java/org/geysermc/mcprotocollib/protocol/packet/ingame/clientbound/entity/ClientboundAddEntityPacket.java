@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.spawn;
+package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;

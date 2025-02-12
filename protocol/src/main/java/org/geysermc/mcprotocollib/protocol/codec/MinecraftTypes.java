@@ -45,6 +45,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PigVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
@@ -629,6 +630,23 @@ public class MinecraftTypes {
                     MinecraftTypes.writeVarInt(output, holder);
                 }
             }
+        });
+    }
+
+    public static Holder<PigVariant> readPigVariant(ByteBuf buf) {
+        return MinecraftTypes.readHolder(buf, input -> {
+            int modelId = MinecraftTypes.readVarInt(input);
+            Key texture = MinecraftTypes.readResourceLocation(input);
+            HolderSet biomes = MinecraftTypes.readNullable(input, MinecraftTypes::readHolderSet);
+            return new PigVariant(modelId, texture, biomes);
+        });
+    }
+
+    public static void writePigVariant(ByteBuf buf, Holder<PigVariant> variantHolder) {
+        MinecraftTypes.writeHolder(buf, variantHolder, (output, variant) -> {
+            MinecraftTypes.writeVarInt(buf, variant.modelId());
+            MinecraftTypes.writeResourceLocation(buf, variant.texture());
+            MinecraftTypes.writeNullable(buf, variant.biomes(), MinecraftTypes::writeHolderSet);
         });
     }
 

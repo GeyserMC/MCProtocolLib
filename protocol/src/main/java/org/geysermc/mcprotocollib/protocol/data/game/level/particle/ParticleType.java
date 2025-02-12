@@ -36,6 +36,7 @@ public enum ParticleType {
     INFESTED,
     CHERRY_LEAVES,
     PALE_OAK_LEAVES,
+    TINTED_LEAVES,
     SCULK_SOUL,
     SCULK_CHARGE,
     SCULK_CHARGE_POP,

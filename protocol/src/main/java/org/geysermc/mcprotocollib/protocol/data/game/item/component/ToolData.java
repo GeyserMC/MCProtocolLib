@@ -14,11 +14,13 @@ public class ToolData {
     private final List<Rule> rules;
     private final float defaultMiningSpeed;
     private final int damagePerBlock;
+    private final boolean canDestroyBlocksInCreative;
 
-    public ToolData(List<Rule> rules, float defaultMiningSpeed, int damagePerBlock) {
+    public ToolData(List<Rule> rules, float defaultMiningSpeed, int damagePerBlock, boolean canDestroyBlocksInCreative) {
         this.rules = List.copyOf(rules);
         this.defaultMiningSpeed = defaultMiningSpeed;
         this.damagePerBlock = damagePerBlock;
+        this.canDestroyBlocksInCreative = canDestroyBlocksInCreative;
     }
 
     @Data

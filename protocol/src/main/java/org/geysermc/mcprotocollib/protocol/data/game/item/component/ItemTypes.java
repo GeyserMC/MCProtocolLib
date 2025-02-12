@@ -129,7 +129,8 @@ public class ItemTypes {
 
         float defaultMiningSpeed = buf.readFloat();
         int damagePerBlock = MinecraftTypes.readVarInt(buf);
-        return new ToolData(rules, defaultMiningSpeed, damagePerBlock);
+        boolean canDestroyBlocksInCreative = buf.readBoolean();
+        return new ToolData(rules, defaultMiningSpeed, damagePerBlock, canDestroyBlocksInCreative);
     }
 
     public static void writeToolData(ByteBuf buf, ToolData data) {
@@ -141,6 +142,18 @@ public class ItemTypes {
 
         buf.writeFloat(data.getDefaultMiningSpeed());
         MinecraftTypes.writeVarInt(buf, data.getDamagePerBlock());
+        buf.writeBoolean(data.isCanDestroyBlocksInCreative());
+    }
+
+    public static Weapon readWeapon(ByteBuf buf) {
+        int damagePerAttack = MinecraftTypes.readVarInt(buf);
+        boolean canDisableBlocking = buf.readBoolean();
+        return new Weapon(damagePerAttack, canDisableBlocking);
+    }
+
+    public static void writeWeapon(ByteBuf buf, Weapon weapon) {
+        MinecraftTypes.writeVarInt(buf, weapon.damagePerAttack());
+        buf.writeBoolean(weapon.canDisableBlocking());
     }
 
     public static Equippable readEquippable(ByteBuf buf) {
