@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
 import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ByteEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.FloatEntityMetadata;
@@ -23,23 +23,23 @@ public class ClientboundSetEntityDataPacketTest extends PacketTest {
         this.setPackets(
                 new ClientboundSetEntityDataPacket(0, new EntityMetadata<?, ?>[0]),
                 new ClientboundSetEntityDataPacket(20, new EntityMetadata<?, ?>[]{
-                        new ObjectEntityMetadata<>(1, MetadataType.STRING, "Hello!")
+                        new ObjectEntityMetadata<>(1, MetadataTypes.STRING, "Hello!")
                 }),
                 new ClientboundSetEntityDataPacket(2, new EntityMetadata<?, ?>[]{
-                        new BooleanEntityMetadata(0, MetadataType.BOOLEAN, true),
-                        new ByteEntityMetadata(4, MetadataType.BYTE, (byte) 45),
-                        new IntEntityMetadata(2, MetadataType.INT, 555),
-                        new FloatEntityMetadata(3, MetadataType.FLOAT, 3.0f),
-                        new LongEntityMetadata(8, MetadataType.LONG, 123456789L),
-                        new ObjectEntityMetadata<>(5, MetadataType.POSITION, Vector3i.from(0, 1, 0)),
-                        new ObjectEntityMetadata<>(2, MetadataType.BLOCK_STATE, 60),
-                        new ObjectEntityMetadata<>(6, MetadataType.DIRECTION, Direction.EAST),
-                        new ObjectEntityMetadata<>(7, MetadataType.OPTIONAL_VARINT, OptionalInt.of(1038))
+                        new BooleanEntityMetadata(0, MetadataTypes.BOOLEAN, true),
+                        new ByteEntityMetadata(4, MetadataTypes.BYTE, (byte) 45),
+                        new IntEntityMetadata(2, MetadataTypes.INT, 555),
+                        new FloatEntityMetadata(3, MetadataTypes.FLOAT, 3.0f),
+                        new LongEntityMetadata(8, MetadataTypes.LONG, 123456789L),
+                        new ObjectEntityMetadata<>(5, MetadataTypes.POSITION, Vector3i.from(0, 1, 0)),
+                        new ObjectEntityMetadata<>(2, MetadataTypes.BLOCK_STATE, 60),
+                        new ObjectEntityMetadata<>(6, MetadataTypes.DIRECTION, Direction.EAST),
+                        new ObjectEntityMetadata<>(7, MetadataTypes.OPTIONAL_VARINT, OptionalInt.of(1038))
                 }),
                 new ClientboundSetEntityDataPacket(700, new EntityMetadata<?, ?>[]{
                         // Boxed variation test
-                        new ObjectEntityMetadata<>(0, MetadataType.INT, 0),
-                        new ObjectEntityMetadata<>(1, MetadataType.FLOAT, 1.0f)
+                        new ObjectEntityMetadata<>(0, MetadataTypes.INT, 0),
+                        new ObjectEntityMetadata<>(1, MetadataTypes.FLOAT, 1.0f)
                 })
         );
     }
