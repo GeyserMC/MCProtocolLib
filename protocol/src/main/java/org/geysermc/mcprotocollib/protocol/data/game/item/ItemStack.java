@@ -10,7 +10,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponen
 public class ItemStack {
     private final int id;
     private final int amount;
-    private final @Nullable DataComponents dataComponents;
+    private final @Nullable DataComponents dataComponentsPatch;
 
     public ItemStack(int id) {
         this(id, 1);
