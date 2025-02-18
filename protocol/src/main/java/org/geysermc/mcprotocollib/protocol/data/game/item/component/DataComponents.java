@@ -14,8 +14,9 @@ public class DataComponents {
     private final Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents;
 
     @Nullable
+    @SuppressWarnings("unchecked")
     public <T> T get(DataComponentType<T> type) {
-        DataComponent component = dataComponents.get(type);
+        DataComponent<?, ?> component = dataComponents.get(type);
         return component == null ? null : (T) component.getValue();
     }
 

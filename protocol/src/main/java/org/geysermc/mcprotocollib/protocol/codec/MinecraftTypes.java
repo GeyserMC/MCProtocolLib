@@ -43,6 +43,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
@@ -55,6 +56,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnIn
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
@@ -448,13 +450,13 @@ public class MinecraftTypes {
 
         Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
         for (int k = 0; k < nonNullComponents; k++) {
-            DataComponentType<?> dataComponentType = DataComponentType.from(MinecraftTypes.readVarInt(buf));
+            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
             dataComponents.put(dataComponentType, dataComponent);
         }
 
         for (int k = 0; k < nullComponents; k++) {
-            DataComponentType<?> dataComponentType = DataComponentType.from(MinecraftTypes.readVarInt(buf));
+            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readNullDataComponent();
             dataComponents.put(dataComponentType, dataComponent);
         }
@@ -503,7 +505,7 @@ public class MinecraftTypes {
 
         Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
         for (int i = 0; i < componentsLength; i++) {
-            DataComponentType<?> dataComponentType = DataComponentType.from(MinecraftTypes.readVarInt(buf));
+            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
             DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
             dataComponents.put(dataComponentType, dataComponent);
         }
@@ -714,11 +716,11 @@ public class MinecraftTypes {
 
     public static MetadataType<?> readMetadataType(ByteBuf buf) {
         int id = MinecraftTypes.readVarInt(buf);
-        if (id >= MetadataType.size()) {
-            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataType.size() + "!");
+        if (id >= MetadataTypes.size()) {
+            throw new IllegalArgumentException("Received id " + id + " for MetadataType when the maximum was " + MetadataTypes.size() + "!");
         }
 
-        return MetadataType.from(id);
+        return MetadataTypes.from(id);
     }
 
     public static void writeMetadataType(ByteBuf buf, MetadataType<?> type) {

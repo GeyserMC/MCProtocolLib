@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import io.netty.buffer.ByteBuf;
+import net.kyori.adventure.key.KeyPattern;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntDataComponent;
 
 public class IntComponentType extends DataComponentType<Integer> {
@@ -8,8 +9,8 @@ public class IntComponentType extends DataComponentType<Integer> {
     protected final IntWriter primitiveWriter;
     protected final IntDataComponentFactory primitiveFactory;
 
-    protected IntComponentType(String key, IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
-        super(key, reader, writer, metadataFactory);
+    protected IntComponentType(int id, @KeyPattern String key, IntReader reader, IntWriter writer, IntDataComponentFactory metadataFactory) {
+        super(id, key, reader, writer, metadataFactory);
 
         this.primitiveReader = reader;
         this.primitiveWriter = writer;
