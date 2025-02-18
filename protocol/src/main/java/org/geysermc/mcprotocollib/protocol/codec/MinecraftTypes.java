@@ -427,7 +427,7 @@ public class MinecraftTypes {
         MinecraftTypes.writeVarInt(buf, !empty ? item.getAmount() : 0);
         if (!empty) {
             MinecraftTypes.writeVarInt(buf, item.getId());
-            MinecraftTypes.writeDataComponentPatch(buf, item.getDataComponents());
+            MinecraftTypes.writeDataComponentPatch(buf, item.getDataComponentsPatch());
         }
     }
 
@@ -517,7 +517,7 @@ public class MinecraftTypes {
         MinecraftTypes.writeVarInt(buf, item.getId());
         MinecraftTypes.writeVarInt(buf, item.getAmount());
 
-        DataComponents dataComponents = item.getDataComponents();
+        DataComponents dataComponents = item.getDataComponentsPatch();
         if (dataComponents == null) {
             MinecraftTypes.writeVarInt(buf, 0);
             return;
