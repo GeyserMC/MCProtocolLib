@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 
 @Data
-@With
 @Builder(toBuilder = true)
 public class ToolData {
     private final List<Rule> rules;

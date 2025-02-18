@@ -3,14 +3,12 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.With;
 import org.cloudburstmc.nbt.NbtMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 @Data
-@With
 @Builder(toBuilder = true)
 public class AdventureModePredicate {
     private final List<BlockPredicate> predicates;
@@ -22,7 +20,6 @@ public class AdventureModePredicate {
     }
 
     @Data
-    @With
     @Builder(toBuilder = true)
     public static class BlockPredicate {
         private final @Nullable HolderSet blocks;
@@ -37,7 +34,6 @@ public class AdventureModePredicate {
     }
 
     @Data
-    @With
     @Builder(toBuilder = true)
     @AllArgsConstructor
     public static class PropertyMatcher {

@@ -1,11 +1,9 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import lombok.Builder;
-import lombok.With;
 
 import java.util.List;
 
-@With
 @Builder(toBuilder = true)
 public record CustomModelData(List<Float> floats, List<Boolean> flags, List<String> strings, List<Integer> colors) {
     public CustomModelData(List<Float> floats, List<Boolean> flags, List<String> strings, List<Integer> colors) {

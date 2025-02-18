@@ -11,7 +11,6 @@ import java.util.List;
 
 @Data
 @With
-@Builder(toBuilder = true)
 public class ItemAttributeModifiers {
     private final List<Entry> modifiers;
     private final boolean showInTooltip;
@@ -22,7 +21,6 @@ public class ItemAttributeModifiers {
     }
 
     @Data
-    @With
     @Builder(toBuilder = true)
     @AllArgsConstructor
     public static class Entry {
@@ -32,7 +30,6 @@ public class ItemAttributeModifiers {
     }
 
     @Data
-    @With
     @Builder(toBuilder = true)
     @AllArgsConstructor
     public static class AttributeModifier {

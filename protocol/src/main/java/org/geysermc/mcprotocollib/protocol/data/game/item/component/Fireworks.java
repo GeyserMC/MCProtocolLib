@@ -9,7 +9,6 @@ import java.util.List;
 
 @Data
 @With
-@Builder(toBuilder = true)
 public class Fireworks {
     private final int flightDuration;
     private final List<FireworkExplosion> explosions;

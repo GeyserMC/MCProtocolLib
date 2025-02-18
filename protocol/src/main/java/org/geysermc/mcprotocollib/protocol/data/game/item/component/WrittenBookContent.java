@@ -2,13 +2,11 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.With;
 import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
 @Data
-@With
 @Builder(toBuilder = true)
 public class WrittenBookContent {
     private final Filterable<String> title;
