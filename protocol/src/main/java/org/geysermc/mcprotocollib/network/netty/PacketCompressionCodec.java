@@ -2,8 +2,8 @@ package org.geysermc.mcprotocollib.network.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.MessageToMessageCodec;
 import lombok.RequiredArgsConstructor;
 import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
@@ -12,7 +12,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class PacketCompressionCodec extends MessageToMessageCodec<ByteBuf, ByteBuf> {
+public class PacketCompressionCodec extends ByteToMessageCodec<ByteBuf> {
     private static final int MAX_UNCOMPRESSED_SIZE = 8 * 1024 * 1024; // 8MiB
 
     @Override
@@ -26,10 +26,10 @@ public class PacketCompressionCodec extends MessageToMessageCodec<ByteBuf, ByteB
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
+    public void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) {
         CompressionConfig config = ctx.channel().attr(NetworkConstants.COMPRESSION_ATTRIBUTE_KEY).get();
         if (config == null) {
-            out.add(msg.retain());
+            out.writeBytes(msg);
             return;
         }
 
@@ -48,7 +48,7 @@ public class PacketCompressionCodec extends MessageToMessageCodec<ByteBuf, ByteB
             config.compression().deflate(msg, outBuf);
         }
 
-        out.add(outBuf);
+        out.writeBytes(outBuf);
     }
 
     @Override
