@@ -273,7 +273,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
         }
     }
 
-    private void flushQueue() {
+    public void flushQueue() {
         if (this.channel != null && this.channel.isOpen()) {
             synchronized (this.pendingActions) {
                 Consumer<NetworkSession> consumer;
