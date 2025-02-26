@@ -29,30 +29,30 @@ public class PacketSizerCodec extends ByteToMessageCodec<ByteBuf> {
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         int size = header.getLengthSize();
         if (size == 0) {
-            out.add(buf.retain());
+            out.add(in.readBytes(in.readableBytes()));
             return;
         }
 
-        buf.markReaderIndex();
+        in.markReaderIndex();
         byte[] lengthBytes = new byte[size];
         for (int index = 0; index < lengthBytes.length; index++) {
-            if (!buf.isReadable()) {
-                buf.resetReaderIndex();
+            if (!in.isReadable()) {
+                in.resetReaderIndex();
                 return;
             }
 
-            lengthBytes[index] = buf.readByte();
+            lengthBytes[index] = in.readByte();
             if ((header.isLengthVariable() && lengthBytes[index] >= 0) || index == size - 1) {
-                int length = header.readLength(Unpooled.wrappedBuffer(lengthBytes), buf.readableBytes());
-                if (buf.readableBytes() < length) {
-                    buf.resetReaderIndex();
+                int length = header.readLength(Unpooled.wrappedBuffer(lengthBytes), in.readableBytes());
+                if (in.readableBytes() < length) {
+                    in.resetReaderIndex();
                     return;
                 }
 
-                out.add(buf.readBytes(length));
+                out.add(in.readBytes(length));
                 return;
             }
         }

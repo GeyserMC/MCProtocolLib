@@ -55,13 +55,13 @@ public class PacketCompressionCodec extends ByteToMessageCodec<ByteBuf> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         CompressionConfig config = ctx.channel().attr(NetworkConstants.COMPRESSION_ATTRIBUTE_KEY).get();
         if (config == null) {
-            out.add(in.retain());
+            out.add(in.readBytes(in.readableBytes()));
             return;
         }
 
         int claimedUncompressedSize = MinecraftTypes.readVarInt(in);
         if (claimedUncompressedSize == 0) {
-            out.add(in.retain());
+            out.add(in.readBytes(in.readableBytes()));
             return;
         }
 

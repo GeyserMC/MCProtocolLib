@@ -38,7 +38,7 @@ public class PacketEncryptorCodec extends ByteToMessageCodec<ByteBuf> {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         EncryptionConfig config = ctx.channel().attr(NetworkConstants.ENCRYPTION_ATTRIBUTE_KEY).get();
         if (config == null) {
-            out.add(in.retain());
+            out.add(in.readBytes(in.readableBytes()));
             return;
         }
 
