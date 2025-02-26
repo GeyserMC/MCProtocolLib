@@ -35,9 +35,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet> implements Session {
@@ -51,6 +54,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     private final Map<String, Object> flags = new HashMap<>();
     private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
+    private final Queue<Consumer<NetworkSession>> pendingActions = new ConcurrentLinkedQueue<>();
 
     private Channel channel;
     @Nullable
@@ -194,16 +198,23 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     public void send(@NonNull Packet packet, @Nullable Runnable onSent) {
-        if (this.channel == null) {
-            return;
+        if (this.isConnected()) {
+            this.flushQueue();
+            this.sendPacket(packet, onSent);
+        } else {
+            this.pendingActions.add(session -> session.sendPacket(packet, onSent));
         }
+    }
 
-        // Same behaviour as vanilla, always offload packet sending to the event loop
-        if (!this.channel.eventLoop().inEventLoop()) {
-            this.channel.eventLoop().execute(() -> this.send(packet, onSent));
-            return;
+    private void sendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
+        if (this.channel.eventLoop().inEventLoop()) {
+            this.doSendPacket(packet, onSent);
+        } else {
+            this.channel.eventLoop().execute(() -> this.doSendPacket(packet, onSent));
         }
+    }
 
+    private void doSendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
         PacketSendingEvent sendingEvent = new PacketSendingEvent(this, packet);
         this.callEvent(sendingEvent);
 
@@ -243,6 +254,33 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
         if (!wasDisconnectionHandled) {
             this.callEvent(new DisconnectedEvent(this, disconnectionDetails));
+        }
+    }
+
+    public void flushChannel() {
+        if (this.isConnected()) {
+            this.flush();
+        } else {
+            this.pendingActions.add(NetworkSession::flush);
+        }
+    }
+
+    private void flush() {
+        if (this.channel.eventLoop().inEventLoop()) {
+            this.channel.flush();
+        } else {
+            this.channel.eventLoop().execute(() -> this.channel.flush());
+        }
+    }
+
+    private void flushQueue() {
+        if (this.channel != null && this.channel.isOpen()) {
+            synchronized (this.pendingActions) {
+                Consumer<NetworkSession> consumer;
+                while ((consumer = this.pendingActions.poll()) != null) {
+                    consumer.accept(this);
+                }
+            }
         }
     }
 
