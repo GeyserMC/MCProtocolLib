@@ -67,7 +67,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
         CompletableFuture<Void> handleFuture = new CompletableFuture<>();
         bootstrap.connect().addListener((futureListener) -> {
             if (!futureListener.isSuccess()) {
-                exceptionCaught(null, futureListener.cause());
+                this.disconnect(this.getGenericDisconnectMessage(futureListener.cause()), futureListener.cause());
             }
 
             handleFuture.complete(null);

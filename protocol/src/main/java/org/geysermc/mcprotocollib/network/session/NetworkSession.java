@@ -127,7 +127,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 event.call(listener);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            this.disconnect(this.getGenericDisconnectMessage(t), t);
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 listener.packetReceived(this, packet);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            this.disconnect(this.getGenericDisconnectMessage(t), t);
         }
     }
 
@@ -149,7 +149,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 listener.packetSent(this, packet);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            this.disconnect(this.getGenericDisconnectMessage(t), t);
         }
     }
 
@@ -175,7 +175,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     public boolean isConnected() {
-        return this.channel != null && this.channel.isOpen() && !this.disconnected;
+        return this.channel != null && this.channel.isOpen();
     }
 
     @Override
@@ -203,7 +203,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
                     callPacketSent(toSend);
                 } else {
-                    exceptionCaught(null, future.cause());
+                    this.disconnect(this.getGenericDisconnectMessage(future.cause()), future.cause());
                 }
             });
         }
@@ -267,10 +267,14 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
         if (cause instanceof TimeoutException) {
             message = Component.translatable("disconnect.timeout");
         } else {
-            message = Component.translatable("disconnect.genericReason", Component.text("Internal Exception: " + cause));
+            message = this.getGenericDisconnectMessage(cause);
         }
 
         this.disconnect(message, cause);
+    }
+
+    protected Component getGenericDisconnectMessage(Throwable cause) {
+        return Component.translatable("disconnect.genericReason", Component.text("Internal Exception: " + cause));
     }
 
     @Override
