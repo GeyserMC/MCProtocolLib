@@ -145,7 +145,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 event.call(listener);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            disconnect(Component.text("Event handler error"), t);
         }
     }
 
@@ -156,7 +156,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 listener.packetReceived(this, packet);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            disconnect(Component.text("Packet received listener error"), t);
         }
     }
 
@@ -167,7 +167,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 listener.packetSent(this, packet);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            disconnect(Component.text("Packet sent listener error"), t);
         }
     }
 
@@ -312,7 +312,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     public void switchOutboundState(ProtocolState state) {
-        getChannel().writeAndFlush(FlushHandler.FLUSH_PACKET).syncUninterruptibly();
+        channel.writeAndFlush(FlushHandler.FLUSH_PACKET).syncUninterruptibly();
 
         protocol.setOutboundState(state);
         sendLoginDisconnect = state == ProtocolState.LOGIN;

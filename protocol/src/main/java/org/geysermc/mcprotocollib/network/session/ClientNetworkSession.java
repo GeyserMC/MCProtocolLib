@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
@@ -69,7 +70,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
         CompletableFuture<Void> handleFuture = new CompletableFuture<>();
         bootstrap.connect().addListener((futureListener) -> {
             if (!futureListener.isSuccess()) {
-                exceptionCaught(null, futureListener.cause());
+                disconnect(Component.text("Failed to connect"), futureListener.cause());
             }
 
             handleFuture.complete(null);
