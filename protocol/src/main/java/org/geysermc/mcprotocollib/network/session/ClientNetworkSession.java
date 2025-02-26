@@ -15,7 +15,7 @@ import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.helper.NettyHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 
 import java.net.SocketAddress;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +37,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
 
     public ClientNetworkSession(
         @NonNull SocketAddress remoteAddress,
-        @NonNull PacketProtocol protocol,
+        @NonNull MinecraftProtocol protocol,
         @NonNull Executor packetHandlerExecutor,
         @Nullable SocketAddress bindAddress,
         @Nullable ProxyInfo proxy
@@ -104,7 +104,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
 
     protected ChannelHandler getChannelHandler() {
         return new MinecraftChannelInitializer<>(channel -> {
-            PacketProtocol protocol = getPacketProtocol();
+            MinecraftProtocol protocol = getPacketProtocol();
             protocol.newClientSession(ClientNetworkSession.this);
 
             return ClientNetworkSession.this;

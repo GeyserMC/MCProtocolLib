@@ -19,7 +19,7 @@ import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     private static final Logger log = LoggerFactory.getLogger(NetworkSession.class);
 
     protected final SocketAddress remoteAddress;
-    protected final PacketProtocol protocol;
+    protected final MinecraftProtocol protocol;
     protected final Executor packetHandlerExecutor;
 
     private final Map<String, Object> flags = new HashMap<>();
@@ -46,7 +46,11 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     private Channel channel;
     protected boolean disconnected = false;
 
-    public NetworkSession(SocketAddress remoteAddress, PacketProtocol protocol, Executor packetHandlerExecutor) {
+    public NetworkSession(
+        @NonNull SocketAddress remoteAddress,
+        @NonNull MinecraftProtocol protocol,
+        @NonNull Executor packetHandlerExecutor
+    ) {
         this.remoteAddress = remoteAddress;
         this.protocol = protocol;
         this.packetHandlerExecutor = packetHandlerExecutor;
@@ -63,7 +67,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public PacketProtocol getPacketProtocol() {
+    public MinecraftProtocol getPacketProtocol() {
         return this.protocol;
     }
 

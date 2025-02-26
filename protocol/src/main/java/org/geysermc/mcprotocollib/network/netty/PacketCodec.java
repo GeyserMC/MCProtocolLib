@@ -7,8 +7,8 @@ import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -36,7 +36,7 @@ public class PacketCodec extends ByteToMessageCodec<Packet> {
         }
 
         int initial = out.writerIndex();
-        PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        MinecraftProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getOutboundPacketRegistry();
         try {
             int packetId = this.client ? packetRegistry.getServerboundId(packet) : packetRegistry.getClientboundId(packet);
@@ -71,7 +71,7 @@ public class PacketCodec extends ByteToMessageCodec<Packet> {
 
         int initial = buf.readerIndex();
 
-        PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        MinecraftProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getInboundPacketRegistry();
         Packet packet = null;
         try {
