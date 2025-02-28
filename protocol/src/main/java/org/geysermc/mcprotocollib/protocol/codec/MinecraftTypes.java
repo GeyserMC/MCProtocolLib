@@ -10,10 +10,10 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.cloudburstmc.math.vector.Vector4f;
 import org.cloudburstmc.nbt.NBTInputStream;
 import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
@@ -562,16 +562,16 @@ public class MinecraftTypes {
         buf.writeFloat(rot.getZ());
     }
 
-    public static Vector4f readQuaternion(ByteBuf buf) {
+    public static Quaternionf readQuaternion(ByteBuf buf) {
         float x = buf.readFloat();
         float y = buf.readFloat();
         float z = buf.readFloat();
         float w = buf.readFloat();
 
-        return Vector4f.from(x, y, z, w);
+        return Quaternionf.from(x, y, z, w);
     }
 
-    public static void writeQuaternion(ByteBuf buf, Vector4f vec4) {
+    public static void writeQuaternion(ByteBuf buf, Quaternionf vec4) {
         buf.writeFloat(vec4.getX());
         buf.writeFloat(vec4.getY());
         buf.writeFloat(vec4.getZ());
