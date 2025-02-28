@@ -39,16 +39,20 @@ public class PacketCompressionCodec extends ByteToMessageCodec<ByteBuf> {
         }
 
         ByteBuf outBuf = ctx.alloc().directBuffer(uncompressed);
-        if (uncompressed < config.threshold()) {
-            // Under the threshold, there is nothing to do.
-            MinecraftTypes.writeVarInt(outBuf, 0);
-            outBuf.writeBytes(msg);
-        } else {
-            MinecraftTypes.writeVarInt(outBuf, uncompressed);
-            config.compression().deflate(msg, outBuf);
-        }
+        try {
+            if (uncompressed < config.threshold()) {
+                // Under the threshold, there is nothing to do.
+                MinecraftTypes.writeVarInt(outBuf, 0);
+                outBuf.writeBytes(msg);
+            } else {
+                MinecraftTypes.writeVarInt(outBuf, uncompressed);
+                config.compression().deflate(msg, outBuf);
+            }
 
-        out.writeBytes(outBuf);
+            out.writeBytes(outBuf);
+        } finally {
+            outBuf.release();
+        }
     }
 
     @Override

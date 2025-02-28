@@ -29,8 +29,9 @@ public class PacketEncryptorCodec extends ByteToMessageCodec<ByteBuf> {
             config.encryption().encrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
             out.writeBytes(heapBuf);
         } catch (Exception e) {
-            heapBuf.release();
             throw new EncoderException("Error encrypting packet", e);
+        } finally {
+            heapBuf.release();
         }
     }
 
