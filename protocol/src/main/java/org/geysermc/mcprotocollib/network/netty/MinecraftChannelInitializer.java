@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.Session;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 
 import java.util.function.Function;
 
@@ -31,7 +31,7 @@ public class MinecraftChannelInitializer<S extends Session & ChannelHandler> ext
     }
 
     protected void addHandlers(S session, Channel ch) {
-        PacketProtocol protocol = session.getPacketProtocol();
+        MinecraftProtocol protocol = session.getPacketProtocol();
         ChannelPipeline pipeline = ch.pipeline();
 
         pipeline.addLast(NetworkConstants.READ_TIMEOUT_NAME, new ReadTimeoutHandler(session.getFlag(BuiltinFlags.READ_TIMEOUT, 30)));

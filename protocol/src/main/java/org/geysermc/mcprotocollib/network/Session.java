@@ -10,7 +10,7 @@ import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.netty.FlushHandler;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -42,7 +42,7 @@ public interface Session {
      *
      * @return The session's packet protocol.
      */
-    PacketProtocol getPacketProtocol();
+    MinecraftProtocol getPacketProtocol();
 
     /**
      * Gets this session's set flags. If this session belongs to a server, the server's

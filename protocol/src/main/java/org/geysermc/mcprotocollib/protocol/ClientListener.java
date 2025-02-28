@@ -62,7 +62,7 @@ public class ClientListener extends SessionAdapter {
     @SneakyThrows
     @Override
     public void packetReceived(Session session, Packet packet) {
-        MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
+        MinecraftProtocol protocol = session.getPacketProtocol();
         if (protocol.getInboundState() == ProtocolState.LOGIN) {
             if (packet instanceof ClientboundHelloPacket helloPacket) {
                 GameProfile profile = session.getFlag(MinecraftConstants.PROFILE_KEY);
@@ -184,7 +184,7 @@ public class ClientListener extends SessionAdapter {
     @Override
     public void connected(ConnectedEvent event) {
         Session session = event.getSession();
-        MinecraftProtocol protocol = (MinecraftProtocol) session.getPacketProtocol();
+        MinecraftProtocol protocol = session.getPacketProtocol();
         ClientIntentionPacket intention = new ClientIntentionPacket(
             protocol.getCodec().getProtocolVersion(),
             session.getFlagSupplied(MinecraftConstants.CLIENT_HOST, () -> ((InetSocketAddress) session.getRemoteAddress()).getHostString()),
