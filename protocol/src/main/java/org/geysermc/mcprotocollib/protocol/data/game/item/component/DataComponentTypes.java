@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class DataComponentTypes<T> {
+public class DataComponentTypes {
     private static final List<DataComponentType<?>> VALUES = new ArrayList<>();
 
     public static final DataComponentType<NbtMap> CUSTOM_DATA = register(id -> new DataComponentType<>(id, "custom_data", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
