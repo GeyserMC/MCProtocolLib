@@ -10,6 +10,9 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PigVariant;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.WolfVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntDataComponent;
@@ -91,6 +94,27 @@ public class DataComponentTypes {
     public static final DataComponentType<List<BeehiveOccupant>> BEES = register(id -> new DataComponentType<>(id, "bees", listReader(ItemTypes::readBeehiveOccupant), listWriter(ItemTypes::writeBeehiveOccupant), ObjectDataComponent::new));
     public static final DataComponentType<NbtMap> LOCK = register(id -> new DataComponentType<>(id, "lock", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final DataComponentType<NbtMap> CONTAINER_LOOT = register(id -> new DataComponentType<>(id, "container_loot", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final IntComponentType VILLAGER_VARIANT = register(id -> new IntComponentType(id, "villager/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final DataComponentType<Holder<WolfVariant>> WOLF_VARIANT = register(id -> new DataComponentType<>(id, "wolf/variant", MinecraftTypes::readWolfVariant, MinecraftTypes::writeWolfVariant, ObjectDataComponent::new));
+    public static final IntComponentType WOLF_COLLAR = register(id -> new IntComponentType(id, "wolf/collar", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType FOX_VARIANT = register(id -> new IntComponentType(id, "fox/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType SALMON_SIZE = register(id -> new IntComponentType(id, "salmon/size", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType PARROT_VARIANT = register(id -> new IntComponentType(id, "parrot/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType TROPICAL_FISH_PATTERN = register(id -> new IntComponentType(id, "tropical_fish/pattern", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType TROPICAL_FISH_BASE_COLOR = register(id -> new IntComponentType(id, "tropical_fish/base_color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType TROPICAL_FISH_PATTERN_COLOR = register(id -> new IntComponentType(id, "tropical_fish/pattern_color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType MOOSHROOM_VARIANT = register(id -> new IntComponentType(id, "mooshroom/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType RABBIT_VARIANT = register(id -> new IntComponentType(id, "rabbit/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final DataComponentType<Holder<PigVariant>> PIG_VARIANT = register(id -> new DataComponentType<>(id, "pig/variant", MinecraftTypes::readPigVariant, MinecraftTypes::writePigVariant, ObjectDataComponent::new));
+    public static final IntComponentType FROG_VARIANT = register(id -> new IntComponentType(id, "frog/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType HORSE_VARIANT = register(id -> new IntComponentType(id, "horse/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final DataComponentType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new DataComponentType<>(id, "painting/variant", MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectDataComponent::new));
+    public static final IntComponentType LLAMA_VARIANT = register(id -> new IntComponentType(id, "llama/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType AXOLOTL_VARIANT = register(id -> new IntComponentType(id, "axolotl/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType CAT_VARIANT = register(id -> new IntComponentType(id, "cat/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType CAT_COLLAR = register(id -> new IntComponentType(id, "cat/collar", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType SHEEP_COLOR = register(id -> new IntComponentType(id, "sheep/color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType SHULKER_COLOR = register(id -> new IntComponentType(id, "shulker/color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
 
     public static <T extends DataComponentType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());

@@ -152,7 +152,7 @@ public class ItemTypes {
     }
 
     public static void writeWeapon(ByteBuf buf, Weapon weapon) {
-        MinecraftTypes.writeVarInt(buf, weapon.damagePerAttack());
+        MinecraftTypes.writeVarInt(buf, weapon.itemDamagePerAttack());
         buf.writeBoolean(weapon.canDisableBlocking());
     }
 
@@ -165,7 +165,8 @@ public class ItemTypes {
         boolean dispensable = buf.readBoolean();
         boolean swappable = buf.readBoolean();
         boolean damageOnHurt = buf.readBoolean();
-        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt);
+        boolean equipOnInteract = buf.readBoolean();
+        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt, equipOnInteract);
     }
 
     public static void writeEquippable(ByteBuf buf, Equippable equippable) {
@@ -183,6 +184,7 @@ public class ItemTypes {
         buf.writeBoolean(equippable.dispensable());
         buf.writeBoolean(equippable.swappable());
         buf.writeBoolean(equippable.damageOnHurt());
+        buf.writeBoolean(equippable.equipOnInteract());
     }
 
     public static ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {

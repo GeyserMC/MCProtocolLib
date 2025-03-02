@@ -62,6 +62,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponen
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.TestInstanceBlockEntity;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.UnknownLevelEvent;
@@ -529,6 +530,38 @@ public class MinecraftTypes {
             MinecraftTypes.writeVarInt(buf, component.getType().getId());
             component.write(buf);
         }
+    }
+
+    public static TestInstanceBlockEntity readTestBlockEntity(ByteBuf buf) {
+        Key test = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        Vector3i size = MinecraftTypes.readVec3i(buf);
+        int rotation = MinecraftTypes.readVarInt(buf);
+        boolean ignoreEntities = buf.readBoolean();
+        int status = MinecraftTypes.readVarInt(buf);
+        Component errorMessage = MinecraftTypes.readNullable(buf, MinecraftTypes::readComponent);
+        return new TestInstanceBlockEntity(test, size, rotation, ignoreEntities, status, errorMessage);
+    }
+
+    public static void writeTestBlockEntity(ByteBuf buf, TestInstanceBlockEntity testBlockEntity) {
+        MinecraftTypes.writeNullable(buf, testBlockEntity.test(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeVec3i(buf, testBlockEntity.size());
+        MinecraftTypes.writeVarInt(buf, testBlockEntity.rotation());
+        buf.writeBoolean(testBlockEntity.ignoreEntities());
+        MinecraftTypes.writeVarInt(buf, testBlockEntity.status());
+        MinecraftTypes.writeNullable(buf, testBlockEntity.errorMessage(), MinecraftTypes::writeComponent);
+    }
+
+    public static Vector3i readVec3i(ByteBuf buf) {
+        int x = MinecraftTypes.readVarInt(buf);
+        int y = MinecraftTypes.readVarInt(buf);
+        int z = MinecraftTypes.readVarInt(buf);
+        return Vector3i.from(x, y, z);
+    }
+
+    public static void writeVec3i(ByteBuf buf, Vector3i vec) {
+        MinecraftTypes.writeVarInt(buf, vec.getX());
+        MinecraftTypes.writeVarInt(buf, vec.getY());
+        MinecraftTypes.writeVarInt(buf, vec.getZ());
     }
 
     public static Vector3i readPosition(ByteBuf buf) {

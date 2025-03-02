@@ -47,7 +47,9 @@ public enum BlockEntityType {
     DECORATED_POT,
     CRAFTER,
     TRIAL_SPAWNER,
-    VAULT;
+    VAULT,
+    TEST_BLOCK,
+    TEST_INSTANCE_BLOCK;
 
     private static final BlockEntityType[] VALUES = values();
 

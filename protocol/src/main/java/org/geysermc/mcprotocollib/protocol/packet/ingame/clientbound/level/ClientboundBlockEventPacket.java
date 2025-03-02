@@ -48,7 +48,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int SHULKER_BOX_LOWER = 641;
     private static final int SHULKER_BOX_HIGHER = 657;
     private static final int BELL = 811;
-    private static final int DECORATED_POT = 1085;
+    private static final int DECORATED_POT = 1087;
     private static final Logger log = LoggerFactory.getLogger(ClientboundBlockEventPacket.class);
 
     private final @NonNull Vector3i position;
