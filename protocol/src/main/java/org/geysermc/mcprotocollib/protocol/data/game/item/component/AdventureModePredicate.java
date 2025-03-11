@@ -14,7 +14,7 @@ public class AdventureModePredicate {
     private final List<BlockPredicate> predicates;
     private final boolean showInTooltip;
 
-    public AdventureModePredicate(List<BlockPredicate>predicates, boolean showInTooltip) {
+    public AdventureModePredicate(List<BlockPredicate> predicates, boolean showInTooltip) {
         this.predicates = List.copyOf(predicates);
         this.showInTooltip = showInTooltip;
     }
@@ -26,9 +26,9 @@ public class AdventureModePredicate {
         private final @Nullable List<PropertyMatcher> properties;
         private final @Nullable NbtMap nbt;
 
-        public BlockPredicate(@Nullable HolderSet blocks, List<PropertyMatcher> properties, @Nullable NbtMap nbt) {
+        public BlockPredicate(@Nullable HolderSet blocks, @Nullable List<PropertyMatcher> properties, @Nullable NbtMap nbt) {
             this.blocks = blocks;
-            this.properties = List.copyOf(properties);
+            this.properties = properties != null ? List.copyOf(properties) : null;
             this.nbt = nbt;
         }
     }
