@@ -1,10 +1,11 @@
 package org.geysermc.mcprotocollib.network.session;
 
 import io.netty.channel.ChannelHandlerContext;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.ServerSession;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.server.NetworkServer;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 
 import java.net.SocketAddress;
 import java.util.HashMap;
@@ -15,7 +16,12 @@ import java.util.function.Supplier;
 public class ServerNetworkSession extends NetworkSession implements ServerSession {
     private final NetworkServer server;
 
-    public ServerNetworkSession(SocketAddress remoteAddress, PacketProtocol protocol, NetworkServer server, Executor packetHandlerExecutor) {
+    public ServerNetworkSession(
+        @NonNull SocketAddress remoteAddress,
+        @NonNull MinecraftProtocol protocol,
+        @NonNull NetworkServer server,
+        @NonNull Executor packetHandlerExecutor
+    ) {
         super(remoteAddress, protocol, packetHandlerExecutor);
         this.server = server;
     }

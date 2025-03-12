@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Getter
-public class MetadataTypes<T> {
+public class MetadataTypes {
     private static final List<MetadataType<?>> VALUES = new ArrayList<>();
 
     public static final ByteMetadataType BYTE = register(id -> new ByteMetadataType(id, ByteBuf::readByte, ByteBuf::writeByte, ByteEntityMetadata::new));
