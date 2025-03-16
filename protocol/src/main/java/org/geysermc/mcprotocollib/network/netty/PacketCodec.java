@@ -3,6 +3,8 @@ package org.geysermc.mcprotocollib.network.netty;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
@@ -57,7 +59,7 @@ public class PacketCodec extends ByteToMessageCodec<Packet> {
             PacketErrorEvent e = new PacketErrorEvent(this.session, t, packet);
             this.session.callEvent(e);
             if (!e.shouldSuppress()) {
-                throw t;
+                throw new EncoderException(t);
             }
         }
     }
@@ -103,7 +105,7 @@ public class PacketCodec extends ByteToMessageCodec<Packet> {
             PacketErrorEvent e = new PacketErrorEvent(this.session, t, packet);
             this.session.callEvent(e);
             if (!e.shouldSuppress()) {
-                throw t;
+                throw new DecoderException(t);
             }
         } finally {
             if (packet != null && packet.isTerminal()) {
