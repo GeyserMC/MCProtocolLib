@@ -3,20 +3,18 @@ package org.geysermc.mcprotocollib.network.netty;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
-import io.netty.handler.codec.MessageToMessageCodec;
+import io.netty.handler.codec.ByteToMessageCodec;
 import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 
 import java.util.List;
 
-public class PacketEncryptorCodec extends MessageToMessageCodec<ByteBuf, ByteBuf> {
+public class PacketEncryptorCodec extends ByteToMessageCodec<ByteBuf> {
     @Override
-    public void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) {
+    public void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
         EncryptionConfig config = ctx.channel().attr(NetworkConstants.ENCRYPTION_ATTRIBUTE_KEY).get();
         if (config == null) {
-            out.add(msg.retain());
+            out.writeBytes(msg);
             return;
         }
 
@@ -27,18 +25,17 @@ public class PacketEncryptorCodec extends MessageToMessageCodec<ByteBuf, ByteBuf
 
         try {
             config.encryption().encrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
-            out.add(heapBuf);
-        } catch (Exception e) {
+            out.writeBytes(heapBuf);
+        } finally {
             heapBuf.release();
-            throw new EncoderException("Error encrypting packet", e);
         }
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         EncryptionConfig config = ctx.channel().attr(NetworkConstants.ENCRYPTION_ATTRIBUTE_KEY).get();
         if (config == null) {
-            out.add(in.retain());
+            out.add(in.readBytes(in.readableBytes()));
             return;
         }
 
@@ -52,7 +49,7 @@ public class PacketEncryptorCodec extends MessageToMessageCodec<ByteBuf, ByteBuf
             out.add(heapBuf);
         } catch (Exception e) {
             heapBuf.release();
-            throw new DecoderException("Error decrypting packet", e);
+            throw e;
         }
     }
 

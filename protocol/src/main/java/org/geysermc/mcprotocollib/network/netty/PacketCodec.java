@@ -2,15 +2,15 @@ package org.geysermc.mcprotocollib.network.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageCodec;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
-import io.netty.handler.codec.MessageToMessageCodec;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.event.session.PacketErrorEvent;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -18,7 +18,7 @@ import org.slf4j.MarkerFactory;
 
 import java.util.List;
 
-public class PacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
+public class PacketCodec extends ByteToMessageCodec<Packet> {
     private static final Marker marker = MarkerFactory.getMarker("packet_logging");
     private static final Logger log = LoggerFactory.getLogger(PacketCodec.class);
 
@@ -32,28 +32,29 @@ public class PacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void encode(ChannelHandlerContext ctx, Packet packet, List<Object> out) {
+    public void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) {
         if (log.isTraceEnabled()) {
             log.trace(marker, "Encoding packet: {}", packet.getClass().getSimpleName());
         }
 
-        PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        int initial = out.writerIndex();
+        MinecraftProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getOutboundPacketRegistry();
         try {
             int packetId = this.client ? packetRegistry.getServerboundId(packet) : packetRegistry.getClientboundId(packet);
             PacketDefinition definition = this.client ? packetRegistry.getServerboundDefinition(packetId) : packetRegistry.getClientboundDefinition(packetId);
 
-            ByteBuf buf = ctx.alloc().buffer();
-            packetProtocol.getPacketHeader().writePacketId(buf, packetId);
-            definition.getSerializer().serialize(buf, packet);
-
-            out.add(buf);
+            packetProtocol.getPacketHeader().writePacketId(out, packetId);
+            definition.getSerializer().serialize(out, packet);
 
             if (log.isDebugEnabled()) {
                 log.debug(marker, "Encoded packet {} ({})", packet.getClass().getSimpleName(), packetId);
             }
         } catch (Throwable t) {
             log.debug(marker, "Error encoding packet", t);
+
+            // Reset writer index to make sure incomplete data is not written out.
+            out.writerIndex(initial);
 
             PacketErrorEvent e = new PacketErrorEvent(this.session, t, packet);
             this.session.callEvent(e);
@@ -72,7 +73,7 @@ public class PacketCodec extends MessageToMessageCodec<ByteBuf, Packet> {
 
         int initial = buf.readerIndex();
 
-        PacketProtocol packetProtocol = this.session.getPacketProtocol();
+        MinecraftProtocol packetProtocol = this.session.getPacketProtocol();
         PacketRegistry packetRegistry = packetProtocol.getInboundPacketRegistry();
         Packet packet = null;
         try {

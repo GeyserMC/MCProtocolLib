@@ -19,7 +19,7 @@ import org.geysermc.mcprotocollib.network.event.session.PacketSendingEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
-import org.geysermc.mcprotocollib.network.packet.PacketProtocol;
+import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,25 +28,35 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet> implements Session {
     private static final Logger log = LoggerFactory.getLogger(NetworkSession.class);
 
     protected final SocketAddress remoteAddress;
-    protected final PacketProtocol protocol;
+    protected final MinecraftProtocol protocol;
     protected final Executor packetHandlerExecutor;
 
+    private final Queue<Consumer<NetworkSession>> pendingActions = new ConcurrentLinkedQueue<>();
     private final Map<String, Object> flags = new HashMap<>();
     private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
 
     private Channel channel;
     protected boolean disconnected = false;
+    @Nullable
+    private volatile Component delayedDisconnect;
 
-    public NetworkSession(SocketAddress remoteAddress, PacketProtocol protocol, Executor packetHandlerExecutor) {
+    public NetworkSession(
+        @NonNull SocketAddress remoteAddress,
+        @NonNull MinecraftProtocol protocol,
+        @NonNull Executor packetHandlerExecutor
+    ) {
         this.remoteAddress = remoteAddress;
         this.protocol = protocol;
         this.packetHandlerExecutor = packetHandlerExecutor;
@@ -63,7 +73,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public PacketProtocol getPacketProtocol() {
+    public MinecraftProtocol getPacketProtocol() {
         return this.protocol;
     }
 
@@ -123,7 +133,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 event.call(listener);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            this.disconnect(this.getGenericDisconnectMessage(t), t);
         }
     }
 
@@ -134,7 +144,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 listener.packetReceived(this, packet);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            this.disconnect(this.getGenericDisconnectMessage(t), t);
         }
     }
 
@@ -145,7 +155,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 listener.packetSent(this, packet);
             }
         } catch (Throwable t) {
-            exceptionCaught(null, t);
+            this.disconnect(this.getGenericDisconnectMessage(t), t);
         }
     }
 
@@ -171,51 +181,63 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     public boolean isConnected() {
-        return this.channel != null && this.channel.isOpen() && !this.disconnected;
+        return this.channel != null && this.channel.isOpen();
     }
 
     @Override
     public void send(@NonNull Packet packet, @Nullable Runnable onSent) {
-        if (this.channel == null) {
-            return;
+        if (this.isConnected()) {
+            this.flushQueue();
+            this.sendPacket(packet, onSent);
+        } else {
+            this.pendingActions.add(session -> session.sendPacket(packet, onSent));
         }
+    }
 
-        // Same behaviour as vanilla, always offload packet sending to the event loop
-        if (!this.channel.eventLoop().inEventLoop()) {
-            this.channel.eventLoop().execute(() -> this.send(packet, onSent));
-            return;
+    private void sendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
+        if (this.channel.eventLoop().inEventLoop()) {
+            this.doSendPacket(packet, onSent);
+        } else {
+            this.channel.eventLoop().execute(() -> this.doSendPacket(packet, onSent));
         }
+    }
 
+    private void doSendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
         PacketSendingEvent sendingEvent = new PacketSendingEvent(this, packet);
         this.callEvent(sendingEvent);
 
         if (!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
             this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
-                if (future.isSuccess()) {
-                    if (onSent != null) {
-                        onSent.run();
-                    }
-
-                    callPacketSent(toSend);
-                } else {
-                    exceptionCaught(null, future.cause());
+                if (!future.isSuccess()) {
+                    return;
                 }
-            });
+
+                if (onSent != null) {
+                    onSent.run();
+                }
+
+                callPacketSent(toSend);
+            }).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     }
 
     @Override
     public void disconnect(@NonNull Component reason, @Nullable Throwable cause) {
+        if (this.channel == null) {
+            this.delayedDisconnect = reason;
+        }
+
         if (this.disconnected) {
             return;
         }
 
         this.disconnected = true;
 
-        if (this.channel != null && this.channel.isOpen()) {
+        if (this.isConnected()) {
             this.callEvent(new DisconnectingEvent(this, reason, cause));
-            this.channel.flush().close().addListener((ChannelFutureListener) future -> callEvent(new DisconnectedEvent(NetworkSession.this, reason, cause)));
+            this.channel.flush().close().awaitUninterruptibly();
+            this.callEvent(new DisconnectedEvent(NetworkSession.this, reason, cause));
         } else {
             this.callEvent(new DisconnectedEvent(this, reason, cause));
         }
@@ -240,37 +262,59 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        if (this.disconnected || this.channel != null) {
-            ctx.channel().close();
-            return;
-        }
+        super.channelActive(ctx);
 
         this.channel = ctx.channel();
 
-        this.callEvent(new ConnectedEvent(this));
+        Component delayedDisconnect = this.delayedDisconnect;
+        if (delayedDisconnect != null) {
+            this.disconnect(delayedDisconnect);
+        } else {
+            this.callEvent(new ConnectedEvent(this));
+            this.flushQueue();
+        }
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        if (ctx.channel() == this.channel) {
-            this.disconnect(Component.translatable("disconnect.endOfStream"));
-        }
+        this.disconnect(Component.translatable("disconnect.endOfStream"));
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        Component message;
-        if (cause instanceof TimeoutException) {
-            message = Component.translatable("disconnect.timeout");
-        } else {
-            message = Component.translatable("disconnect.genericReason", Component.text("Internal Exception: " + cause));
-        }
+        if (this.channel.isOpen()) {
+            Component message;
+            if (cause instanceof TimeoutException) {
+                message = Component.translatable("disconnect.timeout");
+            } else {
+                message = this.getGenericDisconnectMessage(cause);
+            }
 
-        this.disconnect(message, cause);
+            this.disconnect(message, cause);
+        }
+    }
+
+    private void flushQueue() {
+        if (this.channel != null && this.channel.isOpen()) {
+            synchronized (this.pendingActions) {
+                Consumer<NetworkSession> consumer;
+                while ((consumer = this.pendingActions.poll()) != null) {
+                    consumer.accept(this);
+                }
+            }
+        }
+    }
+
+    protected Component getGenericDisconnectMessage(Throwable cause) {
+        return Component.translatable("disconnect.genericReason", Component.text("Internal Exception: " + cause));
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+        if (!this.channel.isOpen()) {
+            return;
+        }
+
         if (packet.shouldRunOnGameThread()) {
             packetHandlerExecutor.execute(() -> this.callPacketReceived(packet));
         } else {
