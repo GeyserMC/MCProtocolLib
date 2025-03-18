@@ -12,11 +12,9 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class AdventureModePredicate {
     private final List<BlockPredicate> predicates;
-    private final boolean showInTooltip;
 
-    public AdventureModePredicate(List<BlockPredicate> predicates, boolean showInTooltip) {
+    public AdventureModePredicate(List<BlockPredicate> predicates) {
         this.predicates = List.copyOf(predicates);
-        this.showInTooltip = showInTooltip;
     }
 
     @Data

@@ -54,12 +54,14 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.TestInstanceBlockEntity;
@@ -69,7 +71,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.event.UnknownLevelEve
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.BlockParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustParticleData;
-import org.geysermc.mcprotocollib.protocol.data.game.level.particle.EntityEffectParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ColorParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ItemParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleData;
@@ -82,6 +84,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsour
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.EntityPositionSource;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSource;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSourceType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
@@ -499,37 +502,17 @@ public class MinecraftTypes {
         }
     }
 
-    @NotNull
-    public static ItemStack readTradeItemStack(ByteBuf buf) {
+    public static VillagerTrade.ItemCost readItemCost(ByteBuf buf) {
         int item = MinecraftTypes.readVarInt(buf);
         int count = MinecraftTypes.readVarInt(buf);
-        int componentsLength = MinecraftTypes.readVarInt(buf);
-
-        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
-        for (int i = 0; i < componentsLength; i++) {
-            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
-            DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
-            dataComponents.put(dataComponentType, dataComponent);
-        }
-
-        return new ItemStack(item, count, new DataComponents(dataComponents));
+        List<DataComponentType<?>> components = MinecraftTypes.readList(buf, input -> DataComponentTypes.from(MinecraftTypes.readVarInt(input)));
+        return new VillagerTrade.ItemCost(item, count, components);
     }
 
-    public static void writeTradeItemStack(ByteBuf buf, @NotNull ItemStack item) {
-        MinecraftTypes.writeVarInt(buf, item.getId());
-        MinecraftTypes.writeVarInt(buf, item.getAmount());
-
-        DataComponents dataComponents = item.getDataComponentsPatch();
-        if (dataComponents == null) {
-            MinecraftTypes.writeVarInt(buf, 0);
-            return;
-        }
-
-        MinecraftTypes.writeVarInt(buf, dataComponents.getDataComponents().size());
-        for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
-            MinecraftTypes.writeVarInt(buf, component.getType().getId());
-            component.write(buf);
-        }
+    public static void writeItemCost(ByteBuf buf, VillagerTrade.ItemCost itemCost) {
+        MinecraftTypes.writeVarInt(buf, itemCost.itemId());
+        MinecraftTypes.writeVarInt(buf, itemCost.count());
+        MinecraftTypes.writeList(buf, itemCost.components(), (output, component) -> MinecraftTypes.writeVarInt(output, component.getId()));
     }
 
     public static TestInstanceBlockEntity readTestBlockEntity(ByteBuf buf) {
@@ -848,7 +831,7 @@ public class MinecraftTypes {
                 float scale = buf.readFloat();
                 yield new DustColorTransitionParticleData(color, scale, newColor);
             }
-            case ENTITY_EFFECT -> new EntityEffectParticleData(buf.readInt());
+            case ENTITY_EFFECT, TINTED_LEAVES -> new ColorParticleData(buf.readInt());
             case ITEM -> new ItemParticleData(MinecraftTypes.readOptionalItemStack(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(MinecraftTypes.readVarInt(buf));
@@ -876,7 +859,7 @@ public class MinecraftTypes {
                 buf.writeFloat(dustData.getScale());
             }
             case ENTITY_EFFECT -> {
-                EntityEffectParticleData entityEffectData = (EntityEffectParticleData) data;
+                ColorParticleData entityEffectData = (ColorParticleData) data;
                 buf.writeInt(entityEffectData.getColor());
             }
             case ITEM -> {
@@ -1232,7 +1215,10 @@ public class MinecraftTypes {
             case ITEM -> display = new ItemSlotDisplay(MinecraftTypes.readVarInt(buf));
             case ITEM_STACK -> display = new ItemStackSlotDisplay(MinecraftTypes.readItemStack(buf));
             case TAG -> display = new TagSlotDisplay(MinecraftTypes.readResourceLocation(buf));
-            case SMITHING_TRIM -> display = new SmithingTrimDemoSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf));
+            case SMITHING_TRIM -> {
+                display = new SmithingTrimDemoSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf),
+                    MinecraftTypes.readHolder(buf, ItemTypes::readTrimPattern));
+            }
             case WITH_REMAINDER -> display = new WithRemainderSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf));
             case COMPOSITE -> display = new CompositeSlotDisplay(MinecraftTypes.readList(buf, MinecraftTypes::readSlotDisplay));
             default -> throw new IllegalStateException("Unexpected value: " + type);
@@ -1251,7 +1237,7 @@ public class MinecraftTypes {
 
                 MinecraftTypes.writeSlotDisplay(buf, smithingSlotDisplay.base());
                 MinecraftTypes.writeSlotDisplay(buf, smithingSlotDisplay.material());
-                MinecraftTypes.writeSlotDisplay(buf, smithingSlotDisplay.pattern());
+                MinecraftTypes.writeHolder(buf, smithingSlotDisplay.pattern(), ItemTypes::writeTrimPattern);
             }
             case WITH_REMAINDER -> {
                 WithRemainderSlotDisplay remainderSlotDisplay = (WithRemainderSlotDisplay) display;
@@ -1395,6 +1381,19 @@ public class MinecraftTypes {
         MinecraftTypes.writeString(buf, property.getName());
         MinecraftTypes.writeString(buf, property.getValue());
         MinecraftTypes.writeNullable(buf, property.getSignature(), MinecraftTypes::writeString);
+    }
+
+    public static Sound readSound(ByteBuf buf) {
+        return MinecraftTypes.readById(buf, BuiltinSound::from, MinecraftTypes::readSoundEvent);
+    }
+
+    public static void writeSound(ByteBuf buf, Sound sound) {
+        if (sound instanceof CustomSound) {
+            MinecraftTypes.writeVarInt(buf, 0);
+            MinecraftTypes.writeSoundEvent(buf, sound);
+        } else {
+            MinecraftTypes.writeVarInt(buf, ((BuiltinSound)sound).ordinal() + 1);
+        }
     }
 
     public static <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {

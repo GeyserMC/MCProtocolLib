@@ -13,11 +13,9 @@ import java.util.List;
 @With
 public class ItemAttributeModifiers {
     private final List<Entry> modifiers;
-    private final boolean showInTooltip;
 
-    public ItemAttributeModifiers(List<Entry> modifiers, boolean showInTooltip) {
+    public ItemAttributeModifiers(List<Entry> modifiers) {
         this.modifiers = List.copyOf(modifiers);
-        this.showInTooltip = showInTooltip;
     }
 
     @Data
