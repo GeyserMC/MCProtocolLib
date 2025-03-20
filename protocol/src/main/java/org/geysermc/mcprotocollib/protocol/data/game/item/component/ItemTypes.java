@@ -176,16 +176,18 @@ public class ItemTypes {
         float disableCooldownScale = buf.readFloat();
 
         List<BlocksAttacks.DamageReduction> damageReductions = MinecraftTypes.readList(buf, (input) -> {
+            float horizontalBlockingAngle = input.readFloat();
             HolderSet type = MinecraftTypes.readNullable(input, MinecraftTypes::readHolderSet);
             float base = input.readFloat();
             float factor = input.readFloat();
-            return new BlocksAttacks.DamageReduction(type, base, factor);
+            return new BlocksAttacks.DamageReduction(horizontalBlockingAngle, type, base, factor);
         });
 
         BlocksAttacks.ItemDamageFunction itemDamage = new BlocksAttacks.ItemDamageFunction(buf.readFloat(), buf.readFloat(), buf.readFloat());
+        Key bypassedBy = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
         Sound blockSound = MinecraftTypes.readNullable(buf, input -> MinecraftTypes.readById(input, BuiltinSound::from, MinecraftTypes::readSoundEvent));
         Sound disableSound = MinecraftTypes.readNullable(buf, input -> MinecraftTypes.readById(input, BuiltinSound::from, MinecraftTypes::readSoundEvent));
-        return new BlocksAttacks(blockDelaySeconds, disableCooldownScale, damageReductions, itemDamage, blockSound, disableSound);
+        return new BlocksAttacks(blockDelaySeconds, disableCooldownScale, damageReductions, itemDamage, bypassedBy, blockSound, disableSound);
     }
 
     public static void writeBlocksAttacks(ByteBuf buf, BlocksAttacks blocksAttacks) {
@@ -193,6 +195,7 @@ public class ItemTypes {
         buf.writeFloat(blocksAttacks.disableCooldownScale());
 
         MinecraftTypes.writeList(buf, blocksAttacks.damageReductions(), (output, entry) -> {
+            output.writeFloat(entry.horizontalBlockingAngle());
             MinecraftTypes.writeNullable(output, entry.type(), MinecraftTypes::writeHolderSet);
             output.writeFloat(entry.base());
             output.writeFloat(entry.factor());
@@ -201,6 +204,7 @@ public class ItemTypes {
         buf.writeFloat(blocksAttacks.itemDamage().threshold());
         buf.writeFloat(blocksAttacks.itemDamage().base());
         buf.writeFloat(blocksAttacks.itemDamage().factor());
+        MinecraftTypes.writeNullable(buf, blocksAttacks.bypassedBy(), MinecraftTypes::writeResourceLocation);
 
         MinecraftTypes.writeNullable(buf, blocksAttacks.blockSound(), (output, sound) -> {
             if (sound instanceof CustomSound) {
