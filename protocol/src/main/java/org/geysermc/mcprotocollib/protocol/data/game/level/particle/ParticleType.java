@@ -113,7 +113,8 @@ public enum ParticleType {
     OMINOUS_SPAWNING,
     RAID_OMEN,
     TRIAL_OMEN,
-    BLOCK_CRUMBLE;
+    BLOCK_CRUMBLE,
+    FIREFLY;
 
     private static final ParticleType[] VALUES = values();
 

@@ -109,6 +109,7 @@ public class DataComponentType<T> {
     public static final IntComponentType MOOSHROOM_VARIANT = new IntComponentType("mooshroom/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new);
     public static final IntComponentType RABBIT_VARIANT = new IntComponentType("rabbit/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new);
     public static final DataComponentType<Holder<PigVariant>> PIG_VARIANT = new DataComponentType<>("pig/variant", MinecraftTypes::readPigVariant, MinecraftTypes::writePigVariant, ObjectDataComponent::new);
+    public static final IntComponentType COW_VARIANT = new IntComponentType("cow/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new);
     public static final IntComponentType FROG_VARIANT = new IntComponentType("frog/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new);
     public static final IntComponentType HORSE_VARIANT = new IntComponentType("horse/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new);
     public static final DataComponentType<Holder<PaintingVariant>> PAINTING_VARIANT = new DataComponentType<>("painting/variant", MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectDataComponent::new);

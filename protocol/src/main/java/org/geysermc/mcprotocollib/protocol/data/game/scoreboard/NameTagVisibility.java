@@ -1,33 +1,14 @@
 package org.geysermc.mcprotocollib.protocol.data.game.scoreboard;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public enum NameTagVisibility {
-    ALWAYS("always"),
-    NEVER("never"),
-    HIDE_FOR_OTHER_TEAMS("hideForOtherTeams"),
-    HIDE_FOR_OWN_TEAM("hideForOwnTeam");
+    ALWAYS,
+    NEVER,
+    HIDE_FOR_OTHER_TEAMS,
+    HIDE_FOR_OWN_TEAM;
 
-    private final String name;
+    private static final NameTagVisibility[] VALUES = values();
 
-    NameTagVisibility(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    private static final Map<String, NameTagVisibility> VALUES = new HashMap<>();
-
-    public static NameTagVisibility from(String name) {
-        return VALUES.get(name);
-    }
-
-    static {
-        for (NameTagVisibility option : values()) {
-            VALUES.put(option.getName(), option);
-        }
+    public static NameTagVisibility from(int id) {
+        return id >= 0 && id < VALUES.length ? VALUES[id] : VALUES[0];
     }
 }
