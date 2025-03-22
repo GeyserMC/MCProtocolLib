@@ -52,6 +52,7 @@ public class MetadataTypes {
     public static final OptionalIntMetadataType OPTIONAL_VARINT = register(id -> new OptionalIntMetadataType(id, ObjectEntityMetadata::new));
     public static final MetadataType<Pose> POSE = register(id -> new MetadataType<>(id, MinecraftTypes::readPose, MinecraftTypes::writePose, ObjectEntityMetadata::new));
     public static final IntMetadataType CAT_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType CHICKEN_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType COW_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final MetadataType<Holder<WolfVariant>> WOLF_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readWolfVariant, MinecraftTypes::writeWolfVariant, ObjectEntityMetadata::new));
     public static final IntMetadataType FROG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));

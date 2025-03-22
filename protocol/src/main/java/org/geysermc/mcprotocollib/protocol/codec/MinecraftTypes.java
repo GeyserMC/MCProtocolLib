@@ -666,6 +666,24 @@ public class MinecraftTypes {
         });
     }
 
+    public static Holder<Key> readChickenVariant(ByteBuf buf) {
+        if (buf.readBoolean()) {
+            return Holder.ofId(MinecraftTypes.readVarInt(buf));
+        } else {
+            return Holder.ofCustom(MinecraftTypes.readResourceLocation(buf));
+        }
+    }
+
+    public static void writeChickenVariant(ByteBuf buf, Holder<Key> variant) {
+        if (variant.isId()) {
+            buf.writeBoolean(true);
+            MinecraftTypes.writeVarInt(buf, variant.id());
+        } else {
+            buf.writeBoolean(false);
+            MinecraftTypes.writeResourceLocation(buf, variant.custom());
+        }
+    }
+
     public static Holder<PaintingVariant> readPaintingVariant(ByteBuf buf) {
         return MinecraftTypes.readHolder(buf, input -> {
             return new PaintingVariant(MinecraftTypes.readVarInt(input), MinecraftTypes.readVarInt(input), MinecraftTypes.readResourceLocation(input),

@@ -39,16 +39,16 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     // Do we really want these hardcoded values?
     private static final int NOTE_BLOCK = 109;
     private static final int STICKY_PISTON = 128;
-    private static final int PISTON = 136;
-    private static final int MOB_SPAWNER = 183;
-    private static final int CHEST = 186;
-    private static final int ENDER_CHEST = 366;
-    private static final int TRAPPED_CHEST = 435;
-    private static final int END_GATEWAY = 632;
-    private static final int SHULKER_BOX_LOWER = 642;
-    private static final int SHULKER_BOX_HIGHER = 658;
-    private static final int BELL = 812;
-    private static final int DECORATED_POT = 1088;
+    private static final int PISTON = 138;
+    private static final int MOB_SPAWNER = 185;
+    private static final int CHEST = 188;
+    private static final int ENDER_CHEST = 369;
+    private static final int TRAPPED_CHEST = 438;
+    private static final int END_GATEWAY = 635;
+    private static final int SHULKER_BOX_LOWER = 645;
+    private static final int SHULKER_BOX_HIGHER = 661;
+    private static final int BELL = 815;
+    private static final int DECORATED_POT = 1091;
     private static final Logger log = LoggerFactory.getLogger(ClientboundBlockEventPacket.class);
 
     private final @NonNull Vector3i position;
