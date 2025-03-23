@@ -21,7 +21,7 @@ public class ServerboundChatPacket implements MinecraftPacket {
     private final byte @Nullable [] signature;
     private final int offset;
     private final BitSet acknowledgedMessages;
-    private final byte checksum;
+    private final int checksum;
 
     public ServerboundChatPacket(ByteBuf in) {
         this.message = MinecraftTypes.readString(in);
