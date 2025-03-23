@@ -29,6 +29,7 @@ import java.util.UUID;
 public class MetadataTypes {
     private static final List<MetadataType<?>> VALUES = new ArrayList<>();
 
+    // TODO: check all types before release
     public static final ByteMetadataType BYTE = register(id -> new ByteMetadataType(id, ByteBuf::readByte, ByteBuf::writeByte, ByteEntityMetadata::new));
     public static final IntMetadataType INT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final LongMetadataType LONG = register(id -> new LongMetadataType(id, MinecraftTypes::readVarLong, MinecraftTypes::writeVarLong, LongEntityMetadata::new));
@@ -54,9 +55,9 @@ public class MetadataTypes {
     public static final IntMetadataType CAT_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType CHICKEN_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType COW_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
-    public static final MetadataType<Holder<WolfVariant>> WOLF_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readWolfVariant, MinecraftTypes::writeWolfVariant, ObjectEntityMetadata::new));
+    public static final IntMetadataType WOLF_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType FROG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
-    public static final MetadataType<Holder<PigVariant>> PIG_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readPigVariant, MinecraftTypes::writePigVariant, ObjectEntityMetadata::new));
+    public static final IntMetadataType PIG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readGlobalPos), optionalWriter(MinecraftTypes::writeGlobalPos), ObjectEntityMetadata::new));
     public static final MetadataType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectEntityMetadata::new));
     public static final MetadataType<SnifferState> SNIFFER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readSnifferState, MinecraftTypes::writeSnifferState, ObjectEntityMetadata::new));

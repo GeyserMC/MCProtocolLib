@@ -45,11 +45,9 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PigVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.WolfVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
@@ -609,61 +607,6 @@ public class MinecraftTypes {
 
     public static void writePose(ByteBuf buf, Pose pose) {
         MinecraftTypes.writeEnum(buf, pose);
-    }
-
-    public static Holder<WolfVariant> readWolfVariant(ByteBuf buf) {
-        return MinecraftTypes.readHolder(buf, input -> {
-            Key wildTexture = MinecraftTypes.readResourceLocation(input);
-            Key tameTexture = MinecraftTypes.readResourceLocation(input);
-            Key angryTexture = MinecraftTypes.readResourceLocation(input);
-            Key biomeLocation = null;
-            int[] biomeHolders = null;
-
-            int length = MinecraftTypes.readVarInt(input) - 1;
-            if (length == -1) {
-                biomeLocation = MinecraftTypes.readResourceLocation(input);
-            } else {
-                biomeHolders = new int[length];
-                for (int j = 0; j < length; j++) {
-                    biomeHolders[j] = MinecraftTypes.readVarInt(input);
-                }
-            }
-            return new WolfVariant(wildTexture, tameTexture, angryTexture, biomeLocation, biomeHolders);
-        });
-    }
-
-    public static void writeWolfVariant(ByteBuf buf, Holder<WolfVariant> variantHolder) {
-        MinecraftTypes.writeHolder(buf, variantHolder, (output, variant) -> {
-            MinecraftTypes.writeResourceLocation(output, variant.wildTexture());
-            MinecraftTypes.writeResourceLocation(output, variant.tameTexture());
-            MinecraftTypes.writeResourceLocation(output, variant.angryTexture());
-            if (variant.biomeLocation() != null) {
-                MinecraftTypes.writeVarInt(output, 0);
-                MinecraftTypes.writeResourceLocation(output, variant.biomeLocation());
-            } else {
-                MinecraftTypes.writeVarInt(output, variant.biomeHolders().length + 1);
-                for (int holder : variant.biomeHolders()) {
-                    MinecraftTypes.writeVarInt(output, holder);
-                }
-            }
-        });
-    }
-
-    public static Holder<PigVariant> readPigVariant(ByteBuf buf) {
-        return MinecraftTypes.readHolder(buf, input -> {
-            int modelId = MinecraftTypes.readVarInt(input);
-            Key texture = MinecraftTypes.readResourceLocation(input);
-            HolderSet biomes = MinecraftTypes.readNullable(input, MinecraftTypes::readHolderSet);
-            return new PigVariant(modelId, texture, biomes);
-        });
-    }
-
-    public static void writePigVariant(ByteBuf buf, Holder<PigVariant> variantHolder) {
-        MinecraftTypes.writeHolder(buf, variantHolder, (output, variant) -> {
-            MinecraftTypes.writeVarInt(buf, variant.modelId());
-            MinecraftTypes.writeResourceLocation(buf, variant.texture());
-            MinecraftTypes.writeNullable(buf, variant.biomes(), MinecraftTypes::writeHolderSet);
-        });
     }
 
     public static Holder<Key> readChickenVariant(ByteBuf buf) {
