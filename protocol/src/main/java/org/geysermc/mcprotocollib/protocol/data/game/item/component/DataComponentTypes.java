@@ -99,6 +99,7 @@ public class DataComponentTypes {
     public static final DataComponentType<Sound> BREAK_SOUND = register(id -> new DataComponentType<>(id, "break_sound", MinecraftTypes::readSound, MinecraftTypes::writeSound, ObjectDataComponent::new));
     public static final IntComponentType VILLAGER_VARIANT = register(id -> new IntComponentType(id, "villager/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType WOLF_VARIANT = register(id -> new IntComponentType(id, "wolf/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType WOLF_SOUND_VARIANT = register(id -> new IntComponentType(id, "wolf/sound_variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType WOLF_COLLAR = register(id -> new IntComponentType(id, "wolf/collar", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType FOX_VARIANT = register(id -> new IntComponentType(id, "fox/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType SALMON_SIZE = register(id -> new IntComponentType(id, "salmon/size", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
