@@ -18,7 +18,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.inventory.FillStackAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.MoveToHotbarAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ShiftClickItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.SpreadItemAction;
-import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 
 import java.util.Map;
 
@@ -32,18 +32,18 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     private final int slot;
     private final @NonNull ContainerActionType action;
     private final @NonNull ContainerAction param;
-    private final @Nullable ItemStack carriedItem;
-    private final @NonNull Int2ObjectMap<@Nullable ItemStack> changedSlots;
+    private final @Nullable HashedStack carriedItem;
+    private final @NonNull Int2ObjectMap<@Nullable HashedStack> changedSlots;
 
     public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
                                            @NonNull ContainerActionType action, @NonNull ContainerAction param,
-                                           @Nullable ItemStack carriedItem, @NonNull Map<Integer, @Nullable ItemStack> changedSlots) {
+                                           @Nullable HashedStack carriedItem, @NonNull Map<Integer, @Nullable HashedStack> changedSlots) {
         this(containerId, stateId, slot, action, param, carriedItem, new Int2ObjectOpenHashMap<>(changedSlots));
     }
 
     public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
                                            @NonNull ContainerActionType action, @NonNull ContainerAction param,
-                                           @Nullable ItemStack carriedItem, @NonNull Int2ObjectMap<@Nullable ItemStack> changedSlots) {
+                                           @Nullable HashedStack carriedItem, @NonNull Int2ObjectMap<@Nullable HashedStack> changedSlots) {
         if ((param == DropItemAction.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemAction.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
@@ -87,11 +87,11 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
             int key = in.readShort();
-            ItemStack value = MinecraftTypes.readOptionalItemStack(in);
+            HashedStack value = MinecraftTypes.readNullable(in, MinecraftTypes::readHashedStack);
             this.changedSlots.put(key, value);
         }
 
-        this.carriedItem = MinecraftTypes.readOptionalItemStack(in);
+        this.carriedItem = MinecraftTypes.readNullable(in, MinecraftTypes::readHashedStack);
     }
 
     @Override
@@ -109,12 +109,12 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         out.writeByte(this.action.ordinal());
 
         MinecraftTypes.writeVarInt(out, this.changedSlots.size());
-        for (Int2ObjectMap.Entry<ItemStack> pair : this.changedSlots.int2ObjectEntrySet()) {
+        for (Int2ObjectMap.Entry<HashedStack> pair : this.changedSlots.int2ObjectEntrySet()) {
             out.writeShort(pair.getIntKey());
-            MinecraftTypes.writeOptionalItemStack(out, pair.getValue());
+            MinecraftTypes.writeNullable(out, pair.getValue(), MinecraftTypes::writeHashedStack);
         }
 
-        MinecraftTypes.writeOptionalItemStack(out, this.carriedItem);
+        MinecraftTypes.writeNullable(out, this.carriedItem, MinecraftTypes::writeHashedStack);
     }
 
     @Override

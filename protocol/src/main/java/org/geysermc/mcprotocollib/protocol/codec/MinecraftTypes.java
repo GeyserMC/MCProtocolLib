@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -53,6 +54,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakSta
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
+import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
@@ -114,8 +116,10 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -415,6 +419,20 @@ public class MinecraftTypes {
     }
 
     @Nullable
+    public static ItemStack readOptionalItemStackUntrusted(ByteBuf buf) {
+        MinecraftTypes.readVarInt(buf);
+        return readOptionalItemStack(buf);
+    }
+
+    public static void writeOptionalItemStackUntrusted(ByteBuf buf, ItemStack item) {
+        ByteBuf buf2 = Unpooled.buffer();
+        MinecraftTypes.writeItemStack(buf2, item);
+
+        MinecraftTypes.writeVarInt(buf, buf2.readableBytes());
+        buf.writeBytes(buf2);
+    }
+
+    @Nullable
     public static ItemStack readOptionalItemStack(ByteBuf buf) {
         int count = MinecraftTypes.readVarInt(buf);
         if (count <= 0) {
@@ -497,6 +515,41 @@ public class MinecraftTypes {
                     MinecraftTypes.writeVarInt(buf, component.getType().getId());
                 }
             }
+        }
+    }
+
+    public static HashedStack readHashedStack(ByteBuf buf) {
+        int id = MinecraftTypes.readVarInt(buf);
+        int count = MinecraftTypes.readVarInt(buf);
+
+        Map<DataComponentType<?>, Integer> addedComponents = new HashMap<>();
+        int length = MinecraftTypes.readVarInt(buf);
+        for (int i = 0; i < length; i++) {
+            addedComponents.put(DataComponentTypes.from(MinecraftTypes.readVarInt(buf)), buf.readInt());
+        }
+
+        Set<DataComponentType<?>> removedComponents = new HashSet<>();
+        length = MinecraftTypes.readVarInt(buf);
+        for (int i = 0; i < length; i++) {
+            removedComponents.add(DataComponentTypes.from(MinecraftTypes.readVarInt(buf)));
+        }
+
+        return new HashedStack(id, count, addedComponents, removedComponents);
+    }
+
+    public static void writeHashedStack(ByteBuf buf, HashedStack hashedStack) {
+        MinecraftTypes.writeVarInt(buf, hashedStack.id());
+        MinecraftTypes.writeVarInt(buf, hashedStack.count());
+
+        MinecraftTypes.writeVarInt(buf, hashedStack.addedComponents().size());
+        for (Map.Entry<DataComponentType<?>, Integer> entry : hashedStack.addedComponents().entrySet()) {
+            MinecraftTypes.writeVarInt(buf, entry.getKey().getId());
+            buf.writeInt(entry.getValue());
+        }
+
+        MinecraftTypes.writeVarInt(buf, hashedStack.removedComponents().size());
+        for (DataComponentType<?> entry : hashedStack.removedComponents()) {
+            MinecraftTypes.writeVarInt(buf, entry.getId());
         }
     }
 
