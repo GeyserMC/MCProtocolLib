@@ -29,42 +29,41 @@ import java.util.UUID;
 public class MetadataTypes {
     private static final List<MetadataType<?>> VALUES = new ArrayList<>();
 
-    // TODO: check all types before release
     public static final ByteMetadataType BYTE = register(id -> new ByteMetadataType(id, ByteBuf::readByte, ByteBuf::writeByte, ByteEntityMetadata::new));
     public static final IntMetadataType INT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final LongMetadataType LONG = register(id -> new LongMetadataType(id, MinecraftTypes::readVarLong, MinecraftTypes::writeVarLong, LongEntityMetadata::new));
     public static final FloatMetadataType FLOAT = register(id -> new FloatMetadataType(id, ByteBuf::readFloat, ByteBuf::writeFloat, FloatEntityMetadata::new));
     public static final MetadataType<String> STRING = register(id -> new MetadataType<>(id, MinecraftTypes::readString, MinecraftTypes::writeString, ObjectEntityMetadata::new));
-    public static final MetadataType<Component> CHAT = register(id -> new MetadataType<>(id, MinecraftTypes::readComponent, MinecraftTypes::writeComponent, ObjectEntityMetadata::new));
-    public static final MetadataType<Optional<Component>> OPTIONAL_CHAT = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readComponent), optionalWriter(MinecraftTypes::writeComponent), ObjectEntityMetadata::new));
-    public static final MetadataType<ItemStack> ITEM = register(id -> new MetadataType<>(id, MinecraftTypes::readOptionalItemStack, MinecraftTypes::writeOptionalItemStack, ObjectEntityMetadata::new));
+    public static final MetadataType<Component> COMPONENT = register(id -> new MetadataType<>(id, MinecraftTypes::readComponent, MinecraftTypes::writeComponent, ObjectEntityMetadata::new));
+    public static final MetadataType<Optional<Component>> OPTIONAL_COMPONENT = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readComponent), optionalWriter(MinecraftTypes::writeComponent), ObjectEntityMetadata::new));
+    public static final MetadataType<ItemStack> ITEM_STACK = register(id -> new MetadataType<>(id, MinecraftTypes::readOptionalItemStack, MinecraftTypes::writeOptionalItemStack, ObjectEntityMetadata::new));
     public static final BooleanMetadataType BOOLEAN = register(id -> new BooleanMetadataType(id, ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanEntityMetadata::new));
-    public static final MetadataType<Vector3f> ROTATION = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
-    public static final MetadataType<Vector3i> POSITION = register(id -> new MetadataType<>(id, MinecraftTypes::readPosition, MinecraftTypes::writePosition, ObjectEntityMetadata::new));
-    public static final MetadataType<Optional<Vector3i>> OPTIONAL_POSITION = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readPosition), optionalWriter(MinecraftTypes::writePosition), ObjectEntityMetadata::new));
+    public static final MetadataType<Vector3f> ROTATIONS = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
+    public static final MetadataType<Vector3i> BLOCK_POS = register(id -> new MetadataType<>(id, MinecraftTypes::readPosition, MinecraftTypes::writePosition, ObjectEntityMetadata::new));
+    public static final MetadataType<Optional<Vector3i>> OPTIONAL_BLOCK_POS = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readPosition), optionalWriter(MinecraftTypes::writePosition), ObjectEntityMetadata::new));
     public static final MetadataType<Direction> DIRECTION = register(id -> new MetadataType<>(id, MinecraftTypes::readDirection, MinecraftTypes::writeDirection, ObjectEntityMetadata::new));
     public static final MetadataType<Optional<UUID>> OPTIONAL_LIVING_ENTITY_REFERENCE = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readUUID), optionalWriter(MinecraftTypes::writeUUID), ObjectEntityMetadata::new));
     public static final IntMetadataType BLOCK_STATE = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType OPTIONAL_BLOCK_STATE = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
-    public static final MetadataType<NbtMap> NBT_TAG = register(id -> new MetadataType<>(id, MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectEntityMetadata::new));
+    public static final MetadataType<NbtMap> COMPOUND_TAG = register(id -> new MetadataType<>(id, MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectEntityMetadata::new));
     public static final MetadataType<Particle> PARTICLE = register(id -> new MetadataType<>(id, MinecraftTypes::readParticle, MinecraftTypes::writeParticle, ObjectEntityMetadata::new));
     public static final MetadataType<List<Particle>> PARTICLES = register(id -> new MetadataType<>(id, listReader(MinecraftTypes::readParticle), listWriter(MinecraftTypes::writeParticle), ObjectEntityMetadata::new));
     public static final MetadataType<VillagerData> VILLAGER_DATA = register(id -> new MetadataType<>(id, MinecraftTypes::readVillagerData, MinecraftTypes::writeVillagerData, ObjectEntityMetadata::new));
-    public static final OptionalIntMetadataType OPTIONAL_VARINT = register(id -> new OptionalIntMetadataType(id, ObjectEntityMetadata::new));
+    public static final OptionalIntMetadataType OPTIONAL_UNSIGNED_INT = register(id -> new OptionalIntMetadataType(id, ObjectEntityMetadata::new));
     public static final MetadataType<Pose> POSE = register(id -> new MetadataType<>(id, MinecraftTypes::readPose, MinecraftTypes::writePose, ObjectEntityMetadata::new));
     public static final IntMetadataType CAT_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
-    public static final IntMetadataType CHICKEN_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType COW_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType WOLF_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType WOLF_SOUND_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType FROG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType PIG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType CHICKEN_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readGlobalPos), optionalWriter(MinecraftTypes::writeGlobalPos), ObjectEntityMetadata::new));
     public static final MetadataType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectEntityMetadata::new));
     public static final MetadataType<SnifferState> SNIFFER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readSnifferState, MinecraftTypes::writeSnifferState, ObjectEntityMetadata::new));
     public static final MetadataType<ArmadilloState> ARMADILLO_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readArmadilloState, MinecraftTypes::writeArmadilloState, ObjectEntityMetadata::new));
     public static final MetadataType<Vector3f> VECTOR3 = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
-    public static final MetadataType<Quaternionf> QUATERNION =register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
+    public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
 
     public static <T extends MetadataType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());

@@ -24,7 +24,6 @@ import java.util.List;
 public class DataComponentTypes {
     private static final List<DataComponentType<?>> VALUES = new ArrayList<>();
 
-    // TODO: check all types before release
     public static final DataComponentType<NbtMap> CUSTOM_DATA = register(id -> new DataComponentType<>(id, "custom_data", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final IntComponentType MAX_STACK_SIZE = register(id -> new IntComponentType(id, "max_stack_size", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType MAX_DAMAGE = register(id -> new IntComponentType(id, "max_damage", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
@@ -44,7 +43,7 @@ public class DataComponentTypes {
     public static final IntComponentType REPAIR_COST = register(id -> new IntComponentType(id, "repair_cost", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<Unit> CREATIVE_SLOT_LOCK = register(id -> new DataComponentType<>(id, "creative_slot_lock", unitReader(), unitWriter(), ObjectDataComponent::new));
     public static final BooleanComponentType ENCHANTMENT_GLINT_OVERRIDE = register(id -> new BooleanComponentType(id, "enchantment_glint_override", ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanDataComponent::new));
-    public static final DataComponentType<NbtMap> INTANGIBLE_PROJECTILE = register(id -> new DataComponentType<>(id, "intangible_projectile", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final DataComponentType<Unit> INTANGIBLE_PROJECTILE = register(id -> new DataComponentType<>(id, "intangible_projectile", unitReader(), unitWriter(), ObjectDataComponent::new));
     public static final DataComponentType<FoodProperties> FOOD = register(id -> new DataComponentType<>(id, "food", ItemTypes::readFoodProperties, ItemTypes::writeFoodProperties, ObjectDataComponent::new));
     public static final DataComponentType<Consumable> CONSUMABLE = register(id -> new DataComponentType<>(id, "consumable", ItemTypes::readConsumable, ItemTypes::writeConsumable, ObjectDataComponent::new));
     public static final DataComponentType<ItemStack> USE_REMAINDER = register(id -> new DataComponentType<>(id, "use_remainder", MinecraftTypes::readItemStack, MinecraftTypes::writeItemStack, ObjectDataComponent::new));
@@ -111,7 +110,7 @@ public class DataComponentTypes {
     public static final IntComponentType RABBIT_VARIANT = register(id -> new IntComponentType(id, "rabbit/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType PIG_VARIANT = register(id -> new IntComponentType(id, "pig/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType COW_VARIANT = register(id -> new IntComponentType(id, "cow/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final DataComponentType<Holder<Key>> CHICKEN_VARIANT = register(id -> new DataComponentType<>(id, "chicken/variant", MinecraftTypes::readChickenVariant, MinecraftTypes::writeChickenVariant, ObjectDataComponent::new));
+    public static final IntComponentType CHICKEN_VARIANT = register(id -> new IntComponentType(id, "chicken/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType FROG_VARIANT = register(id -> new IntComponentType(id, "frog/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType HORSE_VARIANT = register(id -> new IntComponentType(id, "horse/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new DataComponentType<>(id, "painting/variant", MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectDataComponent::new));

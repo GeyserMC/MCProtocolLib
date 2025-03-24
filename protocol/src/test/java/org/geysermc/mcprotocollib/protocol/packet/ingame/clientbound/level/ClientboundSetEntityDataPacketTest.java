@@ -31,10 +31,10 @@ public class ClientboundSetEntityDataPacketTest extends PacketTest {
                         new IntEntityMetadata(2, MetadataTypes.INT, 555),
                         new FloatEntityMetadata(3, MetadataTypes.FLOAT, 3.0f),
                         new LongEntityMetadata(8, MetadataTypes.LONG, 123456789L),
-                        new ObjectEntityMetadata<>(5, MetadataTypes.POSITION, Vector3i.from(0, 1, 0)),
+                        new ObjectEntityMetadata<>(5, MetadataTypes.BLOCK_POS, Vector3i.from(0, 1, 0)),
                         new ObjectEntityMetadata<>(2, MetadataTypes.BLOCK_STATE, 60),
                         new ObjectEntityMetadata<>(6, MetadataTypes.DIRECTION, Direction.EAST),
-                        new ObjectEntityMetadata<>(7, MetadataTypes.OPTIONAL_VARINT, OptionalInt.of(1038))
+                        new ObjectEntityMetadata<>(7, MetadataTypes.OPTIONAL_UNSIGNED_INT, OptionalInt.of(1038))
                 }),
                 new ClientboundSetEntityDataPacket(700, new EntityMetadata<?, ?>[]{
                         // Boxed variation test

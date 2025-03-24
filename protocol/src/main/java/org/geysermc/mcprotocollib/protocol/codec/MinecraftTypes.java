@@ -846,7 +846,7 @@ public class MinecraftTypes {
                 yield new DustColorTransitionParticleData(color, scale, newColor);
             }
             case ENTITY_EFFECT, TINTED_LEAVES -> new ColorParticleData(buf.readInt());
-            case ITEM -> new ItemParticleData(MinecraftTypes.readOptionalItemStack(buf));
+            case ITEM -> new ItemParticleData(MinecraftTypes.readItemStack(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(MinecraftTypes.readVarInt(buf));
             case TRAIL -> new TrailParticleData(Vector3d.from(buf.readDouble(), buf.readDouble(), buf.readDouble()), buf.readInt(), MinecraftTypes.readVarInt(buf));
@@ -878,7 +878,7 @@ public class MinecraftTypes {
             }
             case ITEM -> {
                 ItemParticleData itemData = (ItemParticleData) data;
-                MinecraftTypes.writeOptionalItemStack(buf, itemData.getItemStack());
+                MinecraftTypes.writeItemStack(buf, itemData.getItemStack());
             }
             case SCULK_CHARGE -> {
                 SculkChargeParticleData sculkData = (SculkChargeParticleData) data;

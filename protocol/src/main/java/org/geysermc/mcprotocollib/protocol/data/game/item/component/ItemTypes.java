@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
+import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -44,7 +45,7 @@ public class ItemTypes {
             enchantments.put(MinecraftTypes.readVarInt(buf), MinecraftTypes.readVarInt(buf));
         }
 
-        return new ItemEnchantments(enchantments, buf.readBoolean());
+        return new ItemEnchantments(enchantments);
     }
 
     public static void writeItemEnchantments(ByteBuf buf, ItemEnchantments itemEnchantments) {
@@ -53,39 +54,34 @@ public class ItemTypes {
             MinecraftTypes.writeVarInt(buf, entry.getKey());
             MinecraftTypes.writeVarInt(buf, entry.getValue());
         }
-
-        buf.writeBoolean(itemEnchantments.isShowInTooltip());
     }
 
     public static AdventureModePredicate readAdventureModePredicate(ByteBuf buf) {
-        List<AdventureModePredicate.BlockPredicate> predicates = MinecraftTypes.readList(buf, ItemTypes::readBlockPredicate);
-        return new AdventureModePredicate(predicates);
+        return new AdventureModePredicate(MinecraftTypes.readList(buf, ItemTypes::readBlockPredicate));
     }
 
     public static void writeAdventureModePredicate(ByteBuf buf, AdventureModePredicate adventureModePredicate) {
-        MinecraftTypes.writeVarInt(buf, adventureModePredicate.getPredicates().size());
-        for (AdventureModePredicate.BlockPredicate predicate : adventureModePredicate.getPredicates()) {
-            ItemTypes.writeBlockPredicate(buf, predicate);
-        }
+        MinecraftTypes.writeList(buf, adventureModePredicate.getPredicates(), ItemTypes::writeBlockPredicate);
     }
 
     public static AdventureModePredicate.BlockPredicate readBlockPredicate(ByteBuf buf) {
-        HolderSet holderSet = MinecraftTypes.readNullable(buf, MinecraftTypes::readHolderSet);
+        HolderSet blocks = MinecraftTypes.readNullable(buf, MinecraftTypes::readHolderSet);
         List<AdventureModePredicate.PropertyMatcher> propertyMatchers = MinecraftTypes.readNullable(buf, (input) -> {
-            List<AdventureModePredicate.PropertyMatcher> matchers = new ArrayList<>();
-            int matcherCount = MinecraftTypes.readVarInt(input);
-            for (int i = 0; i < matcherCount; i++) {
-                String name = MinecraftTypes.readString(input);
-                if (input.readBoolean()) {
-                    matchers.add(new AdventureModePredicate.PropertyMatcher(name, MinecraftTypes.readString(input), null, null));
+            return MinecraftTypes.readList(input, input2 -> {
+                String name = MinecraftTypes.readString(input2);
+                if (input2.readBoolean()) {
+                    return new AdventureModePredicate.PropertyMatcher(name, MinecraftTypes.readString(input2), null, null);
                 } else {
-                    matchers.add(new AdventureModePredicate.PropertyMatcher(name, null, MinecraftTypes.readString(input), MinecraftTypes.readString(input)));
+                    return new AdventureModePredicate.PropertyMatcher(name, null, MinecraftTypes.readString(input2), MinecraftTypes.readString(input2));
                 }
-            }
-            return matchers;
+            });
         });
 
-        return new AdventureModePredicate.BlockPredicate(holderSet, propertyMatchers, MinecraftTypes.readNullable(buf, MinecraftTypes::readCompoundTag));
+        NbtMap nbt = MinecraftTypes.readNullable(buf, MinecraftTypes::readCompoundTag);
+
+        DataComponentMatchers components = ItemTypes.readDataComponentMatchers(buf);
+
+        return new AdventureModePredicate.BlockPredicate(blocks, propertyMatchers, nbt, components);
     }
 
     public static void writeBlockPredicate(ByteBuf buf, AdventureModePredicate.BlockPredicate blockPredicate) {
@@ -106,6 +102,37 @@ public class ItemTypes {
         });
 
         MinecraftTypes.writeNullable(buf, blockPredicate.getNbt(), MinecraftTypes::writeAnyTag);
+
+        ItemTypes.writeDataComponentMatchers(buf, blockPredicate.getComponents());
+    }
+
+    public static DataComponentMatchers readDataComponentMatchers(ByteBuf buf) {
+        Map<DataComponentType<?>, DataComponent<?, ?>> exactMatchers = new HashMap<>();
+        int exactCount = MinecraftTypes.readVarInt(buf);
+        for (int i = 0; i < exactCount; i++) {
+            DataComponentType<?> type = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
+            exactMatchers.put(type, type.readDataComponent(buf));
+        }
+
+        int[] partialMatchers = new int[MinecraftTypes.readVarInt(buf)];
+        for (int i = 0; i < partialMatchers.length; i++) {
+            partialMatchers[i] = MinecraftTypes.readVarInt(buf);
+        }
+
+        return new DataComponentMatchers(exactMatchers, partialMatchers);
+    }
+
+    public static void writeDataComponentMatchers(ByteBuf buf, DataComponentMatchers matchers) {
+        MinecraftTypes.writeVarInt(buf, matchers.exactMatchers().size());
+        for (Map.Entry<DataComponentType<?>, DataComponent<?, ?>> entry : matchers.exactMatchers().entrySet()) {
+            MinecraftTypes.writeVarInt(buf, entry.getKey().getId());
+            entry.getValue().write(buf);
+        }
+
+        MinecraftTypes.writeVarInt(buf, matchers.partialMatchers().length);
+        for (int id : matchers.partialMatchers()) {
+            MinecraftTypes.writeVarInt(buf, id);
+        }
     }
 
     public static ToolData readToolData(ByteBuf buf) {
@@ -185,8 +212,8 @@ public class ItemTypes {
 
         BlocksAttacks.ItemDamageFunction itemDamage = new BlocksAttacks.ItemDamageFunction(buf.readFloat(), buf.readFloat(), buf.readFloat());
         Key bypassedBy = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
-        Sound blockSound = MinecraftTypes.readNullable(buf, input -> MinecraftTypes.readById(input, BuiltinSound::from, MinecraftTypes::readSoundEvent));
-        Sound disableSound = MinecraftTypes.readNullable(buf, input -> MinecraftTypes.readById(input, BuiltinSound::from, MinecraftTypes::readSoundEvent));
+        Sound blockSound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
+        Sound disableSound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
         return new BlocksAttacks(blockDelaySeconds, disableCooldownScale, damageReductions, itemDamage, bypassedBy, blockSound, disableSound);
     }
 
@@ -205,24 +232,8 @@ public class ItemTypes {
         buf.writeFloat(blocksAttacks.itemDamage().base());
         buf.writeFloat(blocksAttacks.itemDamage().factor());
         MinecraftTypes.writeNullable(buf, blocksAttacks.bypassedBy(), MinecraftTypes::writeResourceLocation);
-
-        MinecraftTypes.writeNullable(buf, blocksAttacks.blockSound(), (output, sound) -> {
-            if (sound instanceof CustomSound) {
-                MinecraftTypes.writeVarInt(output, 0);
-                MinecraftTypes.writeSoundEvent(output, sound);
-            } else {
-                MinecraftTypes.writeVarInt(output, ((BuiltinSound)sound).ordinal() + 1);
-            }
-        });
-
-        MinecraftTypes.writeNullable(buf, blocksAttacks.disableSound(), (output, sound) -> {
-            if (sound instanceof CustomSound) {
-                MinecraftTypes.writeVarInt(output, 0);
-                MinecraftTypes.writeSoundEvent(output, sound);
-            } else {
-                MinecraftTypes.writeVarInt(output, ((BuiltinSound)sound).ordinal() + 1);
-            }
-        });
+        MinecraftTypes.writeNullable(buf, blocksAttacks.blockSound(), MinecraftTypes::writeSound);
+        MinecraftTypes.writeNullable(buf, blocksAttacks.disableSound(), MinecraftTypes::writeSound);
     }
 
     public static ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
@@ -342,7 +353,7 @@ public class ItemTypes {
             case 1 -> new ConsumeEffect.RemoveEffects(MinecraftTypes.readHolderSet(buf));
             case 2 -> new ConsumeEffect.ClearAllEffects();
             case 3 -> new ConsumeEffect.TeleportRandomly(buf.readFloat());
-            case 4 -> new ConsumeEffect.PlaySound(MinecraftTypes.readById(buf, BuiltinSound::from, MinecraftTypes::readSoundEvent));
+            case 4 -> new ConsumeEffect.PlaySound(MinecraftTypes.readSound(buf));
             default -> throw new IllegalStateException("Unexpected value: " + MinecraftTypes.readVarInt(buf));
         };
     }
@@ -362,12 +373,7 @@ public class ItemTypes {
             buf.writeFloat(teleportRandomly.diameter());
         } else if (consumeEffect instanceof ConsumeEffect.PlaySound playSound) {
             MinecraftTypes.writeVarInt(buf, 4);
-            if (playSound.sound() instanceof CustomSound) {
-                MinecraftTypes.writeVarInt(buf, 0);
-                MinecraftTypes.writeSoundEvent(buf, playSound.sound());
-            } else {
-                MinecraftTypes.writeVarInt(buf, ((BuiltinSound) playSound.sound()).ordinal() + 1);
-            }
+            MinecraftTypes.writeSound(buf, playSound.sound());
         }
     }
 
@@ -567,8 +573,7 @@ public class ItemTypes {
         } else {
             songLocation = MinecraftTypes.readResourceLocation(buf);
         }
-        boolean showInTooltip = buf.readBoolean();
-        return new JukeboxPlayable(songHolder, songLocation, showInTooltip);
+        return new JukeboxPlayable(songHolder, songLocation);
     }
 
     public static void writeJukeboxPlayable(ByteBuf buf, JukeboxPlayable playable) {
@@ -578,7 +583,6 @@ public class ItemTypes {
         } else {
             MinecraftTypes.writeResourceLocation(buf, playable.songLocation());
         }
-        buf.writeBoolean(playable.showInTooltip());
     }
 
     public static JukeboxPlayable.JukeboxSong readJukeboxSong(ByteBuf buf) {
