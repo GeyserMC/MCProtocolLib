@@ -334,7 +334,11 @@ public class MinecraftTypes {
         }
 
         long[] l = new long[length];
-        for (int index = 0; index < length; index++) {
+        return readFixedSizeLongArray(buf, l);
+    }
+
+    public static long[] readFixedSizeLongArray(ByteBuf buf, long[] l) {
+        for (int index = 0; index < l.length; index++) {
             l[index] = buf.readLong();
         }
 
@@ -347,6 +351,10 @@ public class MinecraftTypes {
 
     public static void writeLongArray(ByteBuf buf, long[] l, ObjIntConsumer<ByteBuf> writer) {
         writer.accept(buf, l.length);
+        MinecraftTypes.writeFixedSizeLongArray(buf, l);
+    }
+
+    public static void writeFixedSizeLongArray(ByteBuf buf, long[] l) {
         for (long value : l) {
             buf.writeLong(value);
         }
@@ -1268,7 +1276,8 @@ public class MinecraftTypes {
         Palette palette = MinecraftTypes.readPalette(buf, paletteType, bitsPerEntry);
         BitStorage storage;
         if (!(palette instanceof SingletonPalette)) {
-            storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize(), MinecraftTypes.readLongArray(buf));
+            storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize());
+            MinecraftTypes.readFixedSizeLongArray(buf, storage.getData());
         } else {
             // Eat up - can be seen on Hypixel as of 1.19.0
             int length = MinecraftTypes.readVarInt(buf);
@@ -1308,7 +1317,7 @@ public class MinecraftTypes {
         }
 
         long[] data = palette.getStorage().getData();
-        MinecraftTypes.writeLongArray(buf, data);
+        MinecraftTypes.writeFixedSizeLongArray(buf, data);
     }
 
     private static Palette readPalette(ByteBuf buf, PaletteType paletteType, int bitsPerEntry) {
