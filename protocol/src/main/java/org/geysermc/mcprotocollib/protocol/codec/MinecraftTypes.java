@@ -1275,16 +1275,11 @@ public class MinecraftTypes {
         int bitsPerEntry = buf.readByte() & 0xFF;
         Palette palette = MinecraftTypes.readPalette(buf, paletteType, bitsPerEntry);
         BitStorage storage;
-        if (!(palette instanceof SingletonPalette)) {
+        if (palette instanceof SingletonPalette) {
+            storage = null;
+        } else {
             storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize());
             MinecraftTypes.readFixedSizeLongArray(buf, storage.getData());
-        } else {
-            // Eat up - can be seen on Hypixel as of 1.19.0
-            int length = MinecraftTypes.readVarInt(buf);
-            for (int i = 0; i < length; i++) {
-                buf.readLong();
-            }
-            storage = null;
         }
 
         return new DataPalette(palette, storage, paletteType);
@@ -1302,7 +1297,6 @@ public class MinecraftTypes {
         if (palette.getPalette() instanceof SingletonPalette) {
             buf.writeByte(0); // Bits per entry
             MinecraftTypes.writeVarInt(buf, palette.getPalette().idToState(0));
-            MinecraftTypes.writeVarInt(buf, 0); // Data length
             return;
         }
 
