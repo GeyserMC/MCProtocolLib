@@ -427,36 +427,31 @@ public class MinecraftTypes {
     }
 
     @Nullable
-    public static ItemStack readOptionalItemStackUntrusted(ByteBuf buf) {
-        MinecraftTypes.readVarInt(buf);
-        return readOptionalItemStack(buf);
+    public static ItemStack readOptionalItemStack(ByteBuf buf) {
+        return MinecraftTypes.readOptionalItemStack(buf, false);
     }
 
-    public static void writeOptionalItemStackUntrusted(ByteBuf buf, ItemStack item) {
-        ByteBuf buf2 = Unpooled.buffer();
-        MinecraftTypes.writeItemStack(buf2, item);
-
-        MinecraftTypes.writeVarInt(buf, buf2.readableBytes());
-        buf.writeBytes(buf2);
+    public static void writeOptionalItemStack(ByteBuf buf, ItemStack item) {
+        MinecraftTypes.writeOptionalItemStack(buf, item, false);
     }
 
     @Nullable
-    public static ItemStack readOptionalItemStack(ByteBuf buf) {
+    public static ItemStack readOptionalItemStack(ByteBuf buf, boolean untrusted) {
         int count = MinecraftTypes.readVarInt(buf);
         if (count <= 0) {
             return null;
         }
 
         int item = MinecraftTypes.readVarInt(buf);
-        return new ItemStack(item, count, MinecraftTypes.readDataComponentPatch(buf));
+        return new ItemStack(item, count, MinecraftTypes.readDataComponentPatch(buf, untrusted));
     }
 
-    public static void writeOptionalItemStack(ByteBuf buf, ItemStack item) {
+    public static void writeOptionalItemStack(ByteBuf buf, ItemStack item, boolean untrusted) {
         boolean empty = item == null || item.getAmount() <= 0;
         MinecraftTypes.writeVarInt(buf, !empty ? item.getAmount() : 0);
         if (!empty) {
             MinecraftTypes.writeVarInt(buf, item.getId());
-            MinecraftTypes.writeDataComponentPatch(buf, item.getDataComponentsPatch());
+            MinecraftTypes.writeDataComponentPatch(buf, item.getDataComponentsPatch(), untrusted);
         }
     }
 
@@ -470,7 +465,7 @@ public class MinecraftTypes {
     }
 
     @Nullable
-    public static DataComponents readDataComponentPatch(ByteBuf buf) {
+    public static DataComponents readDataComponentPatch(ByteBuf buf, boolean untrusted) {
         int nonNullComponents = MinecraftTypes.readVarInt(buf);
         int nullComponents = MinecraftTypes.readVarInt(buf);
         if (nonNullComponents == 0 && nullComponents == 0) {
@@ -478,10 +473,19 @@ public class MinecraftTypes {
         }
 
         Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
-        for (int k = 0; k < nonNullComponents; k++) {
-            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
-            DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
-            dataComponents.put(dataComponentType, dataComponent);
+        if (untrusted) {
+            for (int k = 0; k < nonNullComponents; k++) {
+                DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
+                MinecraftTypes.readVarInt(buf);
+                DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
+                dataComponents.put(dataComponentType, dataComponent);
+            }
+        } else {
+            for (int k = 0; k < nonNullComponents; k++) {
+                DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
+                DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
+                dataComponents.put(dataComponentType, dataComponent);
+            }
         }
 
         for (int k = 0; k < nullComponents; k++) {
@@ -493,7 +497,7 @@ public class MinecraftTypes {
         return new DataComponents(dataComponents);
     }
 
-    public static void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents) {
+    public static void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents, boolean untrusted) {
         if (dataComponents == null) {
             MinecraftTypes.writeVarInt(buf, 0);
             MinecraftTypes.writeVarInt(buf, 0);
@@ -511,10 +515,23 @@ public class MinecraftTypes {
             MinecraftTypes.writeVarInt(buf, i);
             MinecraftTypes.writeVarInt(buf, j);
 
-            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
-                if (component.getValue() != null) {
-                    MinecraftTypes.writeVarInt(buf, component.getType().getId());
-                    component.write(buf);
+            if (untrusted) {
+                for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+                    if (component.getValue() != null) {
+                        MinecraftTypes.writeVarInt(buf, component.getType().getId());
+
+                        ByteBuf buf2 = Unpooled.buffer();
+                        component.write(buf2);
+                        MinecraftTypes.writeVarInt(buf, buf2.readableBytes());
+                        buf.writeBytes(buf2);
+                    }
+                }
+            } else {
+                for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+                    if (component.getValue() != null) {
+                        MinecraftTypes.writeVarInt(buf, component.getType().getId());
+                        component.write(buf);
+                    }
                 }
             }
 

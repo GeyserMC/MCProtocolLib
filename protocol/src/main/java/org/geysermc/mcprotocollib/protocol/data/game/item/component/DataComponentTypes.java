@@ -110,7 +110,7 @@ public class DataComponentTypes {
     public static final IntComponentType RABBIT_VARIANT = register(id -> new IntComponentType(id, "rabbit/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType PIG_VARIANT = register(id -> new IntComponentType(id, "pig/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType COW_VARIANT = register(id -> new IntComponentType(id, "cow/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final IntComponentType CHICKEN_VARIANT = register(id -> new IntComponentType(id, "chicken/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final DataComponentType<Holder<Key>> CHICKEN_VARIANT = register(id -> new DataComponentType<>(id, "chicken/variant", MinecraftTypes::readChickenVariant, MinecraftTypes::writeChickenVariant, ObjectDataComponent::new));
     public static final IntComponentType FROG_VARIANT = register(id -> new IntComponentType(id, "frog/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType HORSE_VARIANT = register(id -> new IntComponentType(id, "horse/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new DataComponentType<>(id, "painting/variant", MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectDataComponent::new));
