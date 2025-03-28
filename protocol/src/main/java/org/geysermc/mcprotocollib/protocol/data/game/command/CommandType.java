@@ -8,6 +8,6 @@ public enum CommandType {
     private static final CommandType[] VALUES = values();
 
     public static CommandType from(int id) {
-        return VALUES[id];
+        return id >= 0 && id < VALUES.length ? VALUES[id] : VALUES[0];
     }
 }
