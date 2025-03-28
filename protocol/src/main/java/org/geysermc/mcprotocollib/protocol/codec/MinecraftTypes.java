@@ -564,14 +564,31 @@ public class MinecraftTypes {
     public static VillagerTrade.ItemCost readItemCost(ByteBuf buf) {
         int item = MinecraftTypes.readVarInt(buf);
         int count = MinecraftTypes.readVarInt(buf);
-        List<DataComponentType<?>> components = MinecraftTypes.readList(buf, input -> DataComponentTypes.from(MinecraftTypes.readVarInt(input)));
-        return new VillagerTrade.ItemCost(item, count, components);
+        return new VillagerTrade.ItemCost(item, count, MinecraftTypes.readExactComponentMatcher(buf));
     }
 
     public static void writeItemCost(ByteBuf buf, VillagerTrade.ItemCost itemCost) {
         MinecraftTypes.writeVarInt(buf, itemCost.itemId());
         MinecraftTypes.writeVarInt(buf, itemCost.count());
-        MinecraftTypes.writeList(buf, itemCost.components(), (output, component) -> MinecraftTypes.writeVarInt(output, component.getId()));
+        MinecraftTypes.writeExactComponentMatcher(buf, itemCost.components());
+    }
+
+    public static Map<DataComponentType<?>, DataComponent<?, ?>> readExactComponentMatcher(ByteBuf buf) {
+        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
+        int length = MinecraftTypes.readVarInt(buf);
+        for (int i = 0; i < length; i++) {
+            DataComponentType<?> type = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
+            dataComponents.put(type, type.readDataComponent(buf));
+        }
+        return dataComponents;
+    }
+
+    public static void writeExactComponentMatcher(ByteBuf buf, Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents) {
+        MinecraftTypes.writeVarInt(buf, dataComponents.size());
+        for (Map.Entry<DataComponentType<?>, DataComponent<?, ?>> entry : dataComponents.entrySet()) {
+            MinecraftTypes.writeVarInt(buf, entry.getKey().getId());
+            entry.getValue().write(buf);
+        }
     }
 
     public static TestInstanceBlockEntity readTestBlockEntity(ByteBuf buf) {

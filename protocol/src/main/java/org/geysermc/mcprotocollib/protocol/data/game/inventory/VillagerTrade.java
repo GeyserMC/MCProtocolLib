@@ -5,9 +5,10 @@ import lombok.Data;
 import lombok.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +24,6 @@ public class VillagerTrade {
     private final float priceMultiplier;
     private final int demand;
 
-    public record ItemCost(int itemId, int count, List<DataComponentType<?>> components) {
+    public record ItemCost(int itemId, int count, Map<DataComponentType<?>, DataComponent<?, ?>> components) {
     }
 }
