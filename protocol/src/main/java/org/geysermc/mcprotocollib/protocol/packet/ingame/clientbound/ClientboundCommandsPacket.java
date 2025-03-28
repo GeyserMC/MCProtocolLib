@@ -136,7 +136,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     }
                     case SCORE_HOLDER -> properties = new ScoreHolderProperties(in.readBoolean());
                     case TIME -> properties = new TimeProperties(in.readInt());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> properties = new ResourceProperties(MinecraftTypes.readResourceLocation(in));
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY, RESOURCE_SELECTOR -> properties = new ResourceProperties(MinecraftTypes.readResourceLocation(in));
                     default -> {
                     }
                 }
@@ -287,7 +287,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                     }
                     case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
                     case TIME -> out.writeInt(((TimeProperties) node.getProperties()).getMin());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY -> MinecraftTypes.writeResourceLocation(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY, RESOURCE_SELECTOR -> MinecraftTypes.writeResourceLocation(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
                     default -> {
                     }
                 }
