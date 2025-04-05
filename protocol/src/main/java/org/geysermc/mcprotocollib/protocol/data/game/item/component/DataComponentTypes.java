@@ -43,7 +43,7 @@ public class DataComponentTypes {
     public static final IntComponentType REPAIR_COST = register(id -> new IntComponentType(id, "repair_cost", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<Unit> CREATIVE_SLOT_LOCK = register(id -> new DataComponentType<>(id, "creative_slot_lock", unitReader(), unitWriter(), ObjectDataComponent::new));
     public static final BooleanComponentType ENCHANTMENT_GLINT_OVERRIDE = register(id -> new BooleanComponentType(id, "enchantment_glint_override", ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanDataComponent::new));
-    public static final DataComponentType<Unit> INTANGIBLE_PROJECTILE = register(id -> new DataComponentType<>(id, "intangible_projectile", unitReader(), unitWriter(), ObjectDataComponent::new));
+    public static final DataComponentType<Unit> INTANGIBLE_PROJECTILE = register(id -> new DataComponentType<>(id, "intangible_projectile", emptyNbtReader(), emptyNbtWriter(), ObjectDataComponent::new));
     public static final DataComponentType<FoodProperties> FOOD = register(id -> new DataComponentType<>(id, "food", ItemTypes::readFoodProperties, ItemTypes::writeFoodProperties, ObjectDataComponent::new));
     public static final DataComponentType<Consumable> CONSUMABLE = register(id -> new DataComponentType<>(id, "consumable", ItemTypes::readConsumable, ItemTypes::writeConsumable, ObjectDataComponent::new));
     public static final DataComponentType<ItemStack> USE_REMAINDER = register(id -> new DataComponentType<>(id, "use_remainder", MinecraftTypes::readItemStack, MinecraftTypes::writeItemStack, ObjectDataComponent::new));
@@ -155,6 +155,17 @@ public class DataComponentTypes {
     private static DataComponentType.Writer<Unit> unitWriter() {
         return (output, value) -> {
         };
+    }
+
+    private static DataComponentType.Reader<Unit> emptyNbtReader() {
+        return (input) -> {
+            MinecraftTypes.readAnyTag(input);
+            return Unit.INSTANCE;
+        };
+    }
+
+    private static DataComponentType.Writer<Unit> emptyNbtWriter() {
+        return (output, value) -> MinecraftTypes.writeAnyTag(output, NbtMap.EMPTY);
     }
 
     public static DataComponentType<?> read(ByteBuf in) {
