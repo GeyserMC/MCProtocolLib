@@ -47,6 +47,7 @@ public class PacketEncryptorCodec extends ByteToMessageCodec<ByteBuf> {
         try {
             config.encryption().decrypt(heapBuf.array(), baseOffset, inBytes, heapBuf.array(), baseOffset);
             out.add(heapBuf);
+            if (in.hasArray()) in.readerIndex(inBytes); // This is required as otherwise the ByteBuf doesn't know it has been read
         } catch (Exception e) {
             heapBuf.release();
             throw e;
