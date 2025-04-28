@@ -163,7 +163,7 @@ public class ItemTypes {
     }
 
     public static Equippable readEquippable(ByteBuf buf) {
-        EquipmentSlot slot = EquipmentSlot.from(MinecraftTypes.readVarInt(buf));
+        EquipmentSlot slot = EquipmentSlot.fromId(MinecraftTypes.readVarInt(buf));
         Sound equipSound = MinecraftTypes.readSound(buf);
         Key model = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
         Key cameraOverlay = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
