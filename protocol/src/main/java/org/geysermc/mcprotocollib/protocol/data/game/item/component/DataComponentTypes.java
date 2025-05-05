@@ -181,6 +181,10 @@ public class DataComponentTypes {
         return VALUES.get(id);
     }
 
+    public static DataComponentType<?> fromKey(Key key) {
+        return VALUES.stream().filter(component -> component.getKey().equals(key)).findFirst().orElse(null);
+    }
+
     public static int size() {
         return VALUES.size();
     }
