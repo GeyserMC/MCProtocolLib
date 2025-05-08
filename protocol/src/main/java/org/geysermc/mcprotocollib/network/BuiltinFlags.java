@@ -1,5 +1,7 @@
 package org.geysermc.mcprotocollib.network;
 
+import io.netty.buffer.ByteBufAllocator;
+
 import java.net.InetSocketAddress;
 
 /**
@@ -45,6 +47,12 @@ public class BuiltinFlags {
      * Used by both the server and client.
      */
     public static final Flag<Integer> WRITE_TIMEOUT = new Flag<>("write-timeout", Integer.class);
+
+    /**
+     * The netty allocator to use.
+     * Used by both server and client
+     */
+    public static final Flag<ByteBufAllocator> ALLOCATOR = new Flag<>("allocator", ByteBufAllocator.class);
 
     private BuiltinFlags() {
     }
