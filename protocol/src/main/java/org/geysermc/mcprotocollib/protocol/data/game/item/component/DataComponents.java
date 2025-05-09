@@ -17,8 +17,6 @@ import java.util.Map;
  *     <li>Is a full map, {@code null} means an absence of the component in the map. {@link DataComponents#put(DataComponentType, Object)} should not be used with {@code null} values, rather {@link DataComponents#remove(DataComponentType)} should be used.</li>
  *     <li>Is a patch, {@code null} can mean an absence of the component in the patch, or that the component should be removed from a map the patch is applied to. Use {@link DataComponents#contains(DataComponentType)}, which returns {@code true} for the latter, to check which is the case.</li>
  * </ul>
- *
- * <p>Make sure to initialise this class with a map that accepts null values if representing a patch.</p>
  */
 @Data
 @AllArgsConstructor
@@ -38,11 +36,11 @@ public class DataComponents {
     }
 
     /**
-     * @param value should only be {@code null } if this map is a patch to another map and specifying the removal of the specific component.
+     * @param value should only be {@code null} if this map is a patch to another map and specifying the removal of the specific component.
      */
     public <T> void put(DataComponentType<T> type, @Nullable T value) {
         if (value == null) {
-            dataComponents.put(type, null);
+            dataComponents.put(type, type.readNullDataComponent());
         } else if (type instanceof IntComponentType intType) {
             dataComponents.put(intType, intType.primitiveFactory.createPrimitive(intType, (Integer) value));
         } else if (type instanceof BooleanComponentType boolType) {
