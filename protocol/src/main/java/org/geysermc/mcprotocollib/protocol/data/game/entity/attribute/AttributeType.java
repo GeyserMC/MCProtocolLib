@@ -40,6 +40,7 @@ public interface AttributeType {
         BLOCK_BREAK_SPEED("minecraft:block_break_speed", 1, 0, 1024),
         BLOCK_INTERACTION_RANGE("minecraft:block_interaction_range", 4.5, 0, 64),
         BURNING_TIME("minecraft:burning_time", 1, 0, 1024),
+        CAMERA_DISTANCE("minecraft:camera_distance", 4, 0, 32),
         EXPLOSION_KNOCKBACK_RESISTANCE("minecraft:explosion_knockback_resistance", 0, 0, 1),
         ENTITY_INTERACTION_RANGE("minecraft:entity_interaction_range", 3, 0, 64),
         FALL_DAMAGE_MULTIPLIER("minecraft:fall_damage_multiplier", 1, 0, 100),
@@ -63,7 +64,9 @@ public interface AttributeType {
         SUBMERGED_MINING_SPEED("minecraft:submerged_mining_speed", 0.2, 0, 20),
         SWEEPING_DAMAGE_RATIO("minecraft:sweeping_damage_ratio", 0, 0, 1),
         TEMPT_RANGE("minecraft:tempt_range", 10, 0, 2048),
-        WATER_MOVEMENT_EFFICIENCY("minecraft:water_movement_efficiency", 0, 0, 1);
+        WATER_MOVEMENT_EFFICIENCY("minecraft:water_movement_efficiency", 0, 0, 1),
+        WAYPOINT_TRANSMIT_RANGE("minecraft:waypoint_transmit_range", 0, 0, 6.0E7),
+        WAYPOINT_RECEIVE_RANGE("minecraft:waypoint_receive_range", 0, 0, 6.0E7);
 
         private final Key identifier;
         private final double def;

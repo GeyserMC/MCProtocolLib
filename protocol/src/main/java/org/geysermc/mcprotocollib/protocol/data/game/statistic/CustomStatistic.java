@@ -24,6 +24,7 @@ public enum CustomStatistic implements Statistic {
     MINECART_ONE_CM(StatisticFormat.DISTANCE),
     BOAT_ONE_CM(StatisticFormat.DISTANCE),
     PIG_ONE_CM(StatisticFormat.DISTANCE),
+    HAPPY_GHAST_ONE_CM(StatisticFormat.DISTANCE),
     HORSE_ONE_CM(StatisticFormat.DISTANCE),
     AVIATE_ONE_CM(StatisticFormat.DISTANCE),
     SWIM_ONE_CM(StatisticFormat.DISTANCE),

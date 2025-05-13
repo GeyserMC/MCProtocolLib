@@ -129,6 +129,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.Clien
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundSoundPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundTagQueryPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundTrackedWaypointPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border.ClientboundInitializeBorderPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderCenterPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.border.ClientboundSetBorderLerpSizePacket;
@@ -218,8 +219,8 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion(770)
-            .minecraftVersion("1.21.5")
+            .protocolVersion((1 << 30) | 245)
+            .minecraftVersion("25w15a")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -398,6 +399,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundProjectilePowerPacket.class, ClientboundProjectilePowerPacket::new)
                     .registerClientboundPacket(ClientboundCustomReportDetailsPacket.class, ClientboundCustomReportDetailsPacket::new)
                     .registerClientboundPacket(ClientboundServerLinksPacket.class, ClientboundServerLinksPacket::new)
+                    .registerClientboundPacket(ClientboundTrackedWaypointPacket.class, ClientboundTrackedWaypointPacket::new)
                     .registerServerboundPacket(ServerboundAcceptTeleportationPacket.class, ServerboundAcceptTeleportationPacket::new)
                     .registerServerboundPacket(ServerboundBlockEntityTagQueryPacket.class, ServerboundBlockEntityTagQueryPacket::new)
                     .registerServerboundPacket(ServerboundSelectBundleItemPacket.class, ServerboundSelectBundleItemPacket::new)

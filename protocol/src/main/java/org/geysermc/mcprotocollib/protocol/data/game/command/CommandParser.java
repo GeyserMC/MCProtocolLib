@@ -18,6 +18,7 @@ public enum CommandParser {
     ITEM_STACK,
     ITEM_PREDICATE,
     COLOR,
+    HEX_COLOR,
     COMPONENT,
     STYLE,
     MESSAGE,
