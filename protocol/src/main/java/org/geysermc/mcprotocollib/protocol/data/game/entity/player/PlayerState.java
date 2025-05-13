@@ -1,8 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
 public enum PlayerState {
-    START_SNEAKING,
-    STOP_SNEAKING,
     LEAVE_BED,
     START_SPRINTING,
     STOP_SPRINTING,
