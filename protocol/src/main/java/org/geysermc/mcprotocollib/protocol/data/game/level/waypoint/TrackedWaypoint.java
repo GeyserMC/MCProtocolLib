@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.waypoint;
 
+import net.kyori.adventure.key.Key;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -7,10 +8,7 @@ import java.util.UUID;
 
 public record TrackedWaypoint(@Nullable UUID uuid, @Nullable String id, Icon icon, Type type, @Nullable WaypointData data) {
 
-    public record Fade(int nearDist, int farDist, float nearAlpha, float farAlpha) {
-    }
-
-    public record Icon(Fade alphaFade, Optional<Integer> color) {
+    public record Icon(Key style, Optional<Integer> color) {
     }
 
     public enum Type {

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.waypoint.AzimuthWaypointData;
@@ -34,16 +35,11 @@ public class ClientboundTrackedWaypointPacket implements MinecraftPacket {
             id = MinecraftTypes.readString(in);
         }
 
-        int nearDist = in.readInt();
-        int farDist = in.readInt();
-        float nearAlpha = (in.readByte() & 255) / 255.0F;
-        float farAlpha = (in.readByte() & 255) / 255.0F;
-        TrackedWaypoint.Fade fadeAlpha = new TrackedWaypoint.Fade(nearDist, farDist, nearAlpha, farAlpha);
-
+        Key style = MinecraftTypes.readResourceLocation(in);
         Optional<Integer> rgbColor = Optional.ofNullable(MinecraftTypes.readNullable(in, buf -> {
             return 0xFF << 24 | (buf.readByte() & 0xFF) << 16 | (buf.readByte() & 0xFF) << 8 | buf.readByte();
         }));
-        TrackedWaypoint.Icon icon = new TrackedWaypoint.Icon(fadeAlpha, rgbColor);
+        TrackedWaypoint.Icon icon = new TrackedWaypoint.Icon(style, rgbColor);
 
         TrackedWaypoint.Type type = TrackedWaypoint.Type.from(MinecraftTypes.readVarInt(in));
 
@@ -69,12 +65,7 @@ public class ClientboundTrackedWaypointPacket implements MinecraftPacket {
             MinecraftTypes.writeString(out, this.waypoint.id());
         }
 
-        TrackedWaypoint.Fade alphaFade = this.waypoint.icon().alphaFade();
-        out.writeInt(alphaFade.nearDist());
-        out.writeInt(alphaFade.farDist());
-        out.writeByte((byte)(alphaFade.nearAlpha() * 255.0F));
-        out.writeByte((byte)(alphaFade.farAlpha() * 255.0F));
-
+        MinecraftTypes.writeResourceLocation(out, this.waypoint.icon().style());
         if (this.waypoint.icon().color().isPresent()) {
             out.writeBoolean(true);
             int color = this.waypoint.icon().color().get();
