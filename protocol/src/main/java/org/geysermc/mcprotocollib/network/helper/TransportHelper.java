@@ -19,11 +19,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.incubator.channel.uring.IOUring;
-import io.netty.incubator.channel.uring.IOUringDatagramChannel;
-import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
-import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
-import io.netty.incubator.channel.uring.IOUringSocketChannel;
+import io.netty.channel.uring.IOUring;
+import io.netty.channel.uring.IOUringDatagramChannel;
+import io.netty.channel.uring.IOUringEventLoopGroup;
+import io.netty.channel.uring.IOUringServerSocketChannel;
+import io.netty.channel.uring.IOUringSocketChannel;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Function;
