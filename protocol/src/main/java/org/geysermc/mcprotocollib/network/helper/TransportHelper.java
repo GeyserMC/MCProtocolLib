@@ -48,7 +48,7 @@ public class TransportHelper {
     }
 
     private static TransportType determineTransportMethod() {
-        if (isClassAvailable("io.netty.incubator.channel.uring.IOUring") && IOUring.isAvailable()) {
+        if (isClassAvailable("io.netty.channel.uring.IOUring") && IOUring.isAvailable()) {
             return new TransportType(
                     TransportMethod.IO_URING,
                     IOUringServerSocketChannel.class,
