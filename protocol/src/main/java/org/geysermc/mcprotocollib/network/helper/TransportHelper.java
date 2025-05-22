@@ -56,7 +56,7 @@ public class TransportHelper {
     private static TransportType determineTransportMethod() {
         if (isClassAvailable("io.netty.channel.uring.IoUring")
             && IoUring.isAvailable()
-            && Boolean.parseBoolean(System.getProperty("Mcpl.io_uring"))
+            && Boolean.getBoolean("Mcpl.io_uring")
         ) {
             return new TransportType(
                     TransportMethod.IO_URING,
