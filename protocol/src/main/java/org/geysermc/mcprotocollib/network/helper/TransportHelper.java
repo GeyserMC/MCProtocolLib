@@ -34,7 +34,7 @@ import java.util.function.BiFunction;
 
 public class TransportHelper {
     public static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
-    public static final boolean NEW_NETTY = isClassAvailable("io.netty.channel.local.LocalIoHandle");
+    public static final boolean NEW_NETTY = isClassAvailable("io.netty.channel.MultiThreadIoEventLoopGroup");
 
     public enum TransportMethod {
         NIO, EPOLL, KQUEUE, IO_URING
