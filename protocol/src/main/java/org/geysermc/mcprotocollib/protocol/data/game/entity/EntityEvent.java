@@ -69,7 +69,8 @@ public enum EntityEvent {
     LIVING_EQUIPMENT_BREAK_BODY,
     SHAKE,
     DROWN_PARTICLES,
-    SADDLE_BREAK;
+    SADDLE_BREAK,
+    RAVAGER_ROARED;
 
     private static final EntityEvent[] VALUES = values();
 

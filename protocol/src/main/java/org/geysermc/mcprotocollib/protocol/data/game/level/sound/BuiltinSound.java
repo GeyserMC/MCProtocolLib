@@ -462,7 +462,6 @@ public enum BuiltinSound implements Sound {
     BLOCK_DRIED_GHAST_BREAK("block.dried_ghast.break"),
     BLOCK_DRIED_GHAST_STEP("block.dried_ghast.step"),
     BLOCK_DRIED_GHAST_FALL("block.dried_ghast.fall"),
-    BLOCK_DRIED_GHAST_HIT("block.dried_ghast.hit"),
     BLOCK_DRIED_GHAST_AMBIENT("block.dried_ghast.ambient"),
     BLOCK_DRIED_GHAST_AMBIENT_WATER("block.dried_ghast.ambient_water"),
     BLOCK_DRIED_GHAST_PLACE("block.dried_ghast.place"),
