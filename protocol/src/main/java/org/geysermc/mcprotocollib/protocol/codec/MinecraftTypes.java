@@ -244,6 +244,32 @@ public class MinecraftTypes {
         }
     }
 
+    public static <T> T readLengthPrefixed(ByteBuf buf, int maxLength, Function<ByteBuf, T> reader) {
+        int length = MinecraftTypes.readVarInt(buf);
+        if (length > maxLength) {
+            throw new IllegalArgumentException("Buffer is longer than maximum allowed length");
+        } else {
+            return reader.apply(buf);
+        }
+    }
+
+    public static <T> void writeLengthPrefixed(ByteBuf buf, int maxLength, T value, BiConsumer<ByteBuf, T> writer) {
+        ByteBuf buf2 = Unpooled.buffer();
+
+        try {
+            writer.accept(buf2, value);
+            int length = buf2.readableBytes();
+            if (length > maxLength) {
+                throw new IllegalArgumentException("Buffer is longer than maximum allowed length");
+            }
+
+            MinecraftTypes.writeVarInt(buf, length);
+            buf.writeBytes(buf2);
+        } finally {
+            buf2.release();
+        }
+    }
+
     public static <T> Holder<T> readHolder(ByteBuf buf, Function<ByteBuf, T> readCustom) {
         int registryId = MinecraftTypes.readVarInt(buf);
         return registryId == 0 ? Holder.ofCustom(readCustom.apply(buf)) : Holder.ofId(registryId - 1);
@@ -482,8 +508,7 @@ public class MinecraftTypes {
         if (untrusted) {
             for (int k = 0; k < nonNullComponents; k++) {
                 DataComponentType<?> dataComponentType = DataComponentTypes.read(buf);
-                MinecraftTypes.readVarInt(buf);
-                DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
+                DataComponent<?, ?> dataComponent = MinecraftTypes.readLengthPrefixed(buf, Integer.MAX_VALUE, dataComponentType::readDataComponent);
                 dataComponents.put(dataComponentType, dataComponent);
             }
         } else {
@@ -525,11 +550,7 @@ public class MinecraftTypes {
                 for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
                     if (component.getValue() != null) {
                         MinecraftTypes.writeVarInt(buf, component.getType().getId());
-
-                        ByteBuf buf2 = Unpooled.buffer();
-                        component.write(buf2);
-                        MinecraftTypes.writeVarInt(buf, buf2.readableBytes());
-                        buf.writeBytes(buf2);
+                        MinecraftTypes.writeLengthPrefixed(buf, Integer.MAX_VALUE, component, (buf2, component2) -> component2.write(buf2));
                     }
                 }
             } else {

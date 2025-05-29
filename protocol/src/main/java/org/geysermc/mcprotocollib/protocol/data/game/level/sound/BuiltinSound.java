@@ -773,6 +773,7 @@ public enum BuiltinSound implements Sound {
     ENTITY_HORSE_AMBIENT("entity.horse.ambient"),
     ENTITY_HORSE_ANGRY("entity.horse.angry"),
     ENTITY_HORSE_ARMOR("entity.horse.armor"),
+    ITEM_HORSE_ARMOR_UNEQUIP("item.horse_armor.unequip"),
     ENTITY_HORSE_BREATHE("entity.horse.breathe"),
     ENTITY_HORSE_DEATH("entity.horse.death"),
     ENTITY_HORSE_EAT("entity.horse.eat"),
@@ -844,8 +845,9 @@ public enum BuiltinSound implements Sound {
     BLOCK_LEAF_LITTER_PLACE("block.leaf_litter.place"),
     BLOCK_LEAF_LITTER_HIT("block.leaf_litter.hit"),
     BLOCK_LEAF_LITTER_FALL("block.leaf_litter.fall"),
-    ENTITY_LEASH_KNOT_BREAK("entity.leash_knot.break"),
-    ENTITY_LEASH_KNOT_PLACE("entity.leash_knot.place"),
+    ITEM_LEAD_UNTIED("item.lead.untied"),
+    ITEM_LEAD_TIED("item.lead.tied"),
+    ITEM_LEAD_BREAK("item.lead.break"),
     BLOCK_LEVER_CLICK("block.lever.click"),
     ENTITY_LIGHTNING_BOLT_IMPACT("entity.lightning_bolt.impact"),
     ENTITY_LIGHTNING_BOLT_THUNDER("entity.lightning_bolt.thunder"),
@@ -859,6 +861,7 @@ public enum BuiltinSound implements Sound {
     ENTITY_LLAMA_SPIT("entity.llama.spit"),
     ENTITY_LLAMA_STEP("entity.llama.step"),
     ENTITY_LLAMA_SWAG("entity.llama.swag"),
+    ITEM_LLAMA_CARPET_UNEQUIP("item.llama_carpet.unequip"),
     ENTITY_MAGMA_CUBE_DEATH_SMALL("entity.magma_cube.death_small"),
     BLOCK_LODESTONE_BREAK("block.lodestone.break"),
     BLOCK_LODESTONE_STEP("block.lodestone.step"),
@@ -1729,7 +1732,8 @@ public enum BuiltinSound implements Sound {
     ENTITY_ZOMBIE_VILLAGER_STEP("entity.zombie_villager.step"),
     EVENT_MOB_EFFECT_BAD_OMEN("event.mob_effect.bad_omen"),
     EVENT_MOB_EFFECT_TRIAL_OMEN("event.mob_effect.trial_omen"),
-    EVENT_MOB_EFFECT_RAID_OMEN("event.mob_effect.raid_omen");
+    EVENT_MOB_EFFECT_RAID_OMEN("event.mob_effect.raid_omen"),
+    ITEM_SADDLE_UNEQUIP("item.saddle.unequip");
 
     private final @NonNull String name;
 
