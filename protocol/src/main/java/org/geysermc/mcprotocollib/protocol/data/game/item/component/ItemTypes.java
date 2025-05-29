@@ -172,7 +172,9 @@ public class ItemTypes {
         boolean swappable = buf.readBoolean();
         boolean damageOnHurt = buf.readBoolean();
         boolean equipOnInteract = buf.readBoolean();
-        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt, equipOnInteract);
+        boolean canBeSheared = buf.readBoolean();
+        Sound shearingSound = MinecraftTypes.readSound(buf);
+        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt, equipOnInteract, canBeSheared, shearingSound);
     }
 
     public static void writeEquippable(ByteBuf buf, Equippable equippable) {
@@ -185,6 +187,8 @@ public class ItemTypes {
         buf.writeBoolean(equippable.swappable());
         buf.writeBoolean(equippable.damageOnHurt());
         buf.writeBoolean(equippable.equipOnInteract());
+        buf.writeBoolean(equippable.canBeSheared());
+        MinecraftTypes.writeSound(buf, equippable.shearingSound());
     }
 
     public static BlocksAttacks readBlocksAttacks(ByteBuf buf) {

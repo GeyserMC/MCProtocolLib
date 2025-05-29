@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundClearDialogPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundCustomReportDetailsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
@@ -21,6 +22,7 @@ import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.Clie
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundResetChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundSelectKnownPacks;
+import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundShowDialogConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundUpdateEnabledFeaturesPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundFinishConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound.ServerboundSelectKnownPacks;
@@ -49,6 +51,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSelectAdvancementsTabPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundServerDataPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSetCameraPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundShowDialogGamePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundSoundEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundStartConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundStopSoundPacket;
@@ -156,6 +159,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.Serverbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundClientTickEndPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundCustomClickActionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundDebugSampleSubscriptionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundLockDifficultyPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundPlayerLoadedPacket;
@@ -191,6 +195,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.Serve
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundSignUpdatePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundTeleportToEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level.ServerboundTestInstanceBlockActionPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundChangeGameModePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundInteractPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
@@ -219,8 +224,8 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 249)
-            .minecraftVersion("25w19a")
+            .protocolVersion((1 << 30) | 250)
+            .minecraftVersion("25w20a")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -259,6 +264,8 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundSelectKnownPacks.class, ClientboundSelectKnownPacks::new)
                     .registerClientboundPacket(ClientboundCustomReportDetailsPacket.class, ClientboundCustomReportDetailsPacket::new)
                     .registerClientboundPacket(ClientboundServerLinksPacket.class, ClientboundServerLinksPacket::new)
+                    .registerClientboundPacket(ClientboundClearDialogPacket.class, ClientboundClearDialogPacket::new)
+                    .registerClientboundPacket(ClientboundShowDialogConfigurationPacket.class, ClientboundShowDialogConfigurationPacket::new)
                     .registerServerboundPacket(ServerboundClientInformationPacket.class, ServerboundClientInformationPacket::new)
                     .registerServerboundPacket(ServerboundCookieResponsePacket.class, ServerboundCookieResponsePacket::new)
                     .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
@@ -400,10 +407,13 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundCustomReportDetailsPacket.class, ClientboundCustomReportDetailsPacket::new)
                     .registerClientboundPacket(ClientboundServerLinksPacket.class, ClientboundServerLinksPacket::new)
                     .registerClientboundPacket(ClientboundTrackedWaypointPacket.class, ClientboundTrackedWaypointPacket::new)
+                    .registerClientboundPacket(ClientboundClearDialogPacket.class, ClientboundClearDialogPacket::new)
+                    .registerClientboundPacket(ClientboundShowDialogGamePacket.class, ClientboundShowDialogGamePacket::new)
                     .registerServerboundPacket(ServerboundAcceptTeleportationPacket.class, ServerboundAcceptTeleportationPacket::new)
                     .registerServerboundPacket(ServerboundBlockEntityTagQueryPacket.class, ServerboundBlockEntityTagQueryPacket::new)
                     .registerServerboundPacket(ServerboundSelectBundleItemPacket.class, ServerboundSelectBundleItemPacket::new)
                     .registerServerboundPacket(ServerboundChangeDifficultyPacket.class, ServerboundChangeDifficultyPacket::new)
+                    .registerServerboundPacket(ServerboundChangeGameModePacket.class, ServerboundChangeGameModePacket::new)
                     .registerServerboundPacket(ServerboundChatAckPacket.class, ServerboundChatAckPacket::new)
                     .registerServerboundPacket(ServerboundChatCommandPacket.class, ServerboundChatCommandPacket::new)
                     .registerServerboundPacket(ServerboundChatCommandSignedPacket.class, ServerboundChatCommandSignedPacket::new)
@@ -464,6 +474,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundTestInstanceBlockActionPacket.class, ServerboundTestInstanceBlockActionPacket::new)
                     .registerServerboundPacket(ServerboundUseItemOnPacket.class, ServerboundUseItemOnPacket::new)
                     .registerServerboundPacket(ServerboundUseItemPacket.class, ServerboundUseItemPacket::new)
+                    .registerServerboundPacket(ServerboundCustomClickActionPacket.class, ServerboundCustomClickActionPacket::new)
             )
             .build();
 }

@@ -56,6 +56,7 @@ public enum CommandParser {
     LOOT_TABLE,
     LOOT_PREDICATE,
     LOOT_MODIFIER,
+    DIALOG,
     UUID;
 
     private static final CommandParser[] VALUES = values();

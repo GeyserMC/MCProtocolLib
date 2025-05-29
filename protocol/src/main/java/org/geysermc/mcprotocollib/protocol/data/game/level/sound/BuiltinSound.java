@@ -955,6 +955,7 @@ public enum BuiltinSound implements Sound {
     MUSIC_DISC_CREATOR("music_disc.creator"),
     MUSIC_DISC_CREATOR_MUSIC_BOX("music_disc.creator_music_box"),
     MUSIC_DISC_PRECIPICE("music_disc.precipice"),
+    MUSIC_DISC_TEARS("music_disc.tears"),
     MUSIC_DRAGON("music.dragon"),
     MUSIC_END("music.end"),
     MUSIC_GAME("music.game"),
