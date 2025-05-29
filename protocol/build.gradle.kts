@@ -29,7 +29,7 @@ dependencies {
     api(libs.bundles.fastutil)
 
     // Netty
-    api(libs.bundles.netty)
+    api(libs.netty.all)
 
     // Checker Framework
     api(libs.checkerframework.qual)

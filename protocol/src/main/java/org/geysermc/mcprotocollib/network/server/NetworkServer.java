@@ -87,11 +87,11 @@ public class NetworkServer extends AbstractServer {
     }
 
     protected EventLoopGroup createBossEventLoopGroup() {
-        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(0, null);
     }
 
     protected EventLoopGroup createWorkerEventLoopGroup() {
-        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(0, null);
     }
 
     protected void setOptions(ServerBootstrap bootstrap) {

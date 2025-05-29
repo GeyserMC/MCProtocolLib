@@ -127,7 +127,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
             return;
         }
 
-        EVENT_LOOP_GROUP = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(newThreadFactory());
+        EVENT_LOOP_GROUP = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(0, newThreadFactory());
 
         Runtime.getRuntime().addShutdownHook(new Thread(
             () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
