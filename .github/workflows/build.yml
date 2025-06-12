@@ -1,6 +1,11 @@
 name: Java CI with Gradle
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'master'
+      - 'feature/**'
+  pull_request:
 
 jobs:
   build:
