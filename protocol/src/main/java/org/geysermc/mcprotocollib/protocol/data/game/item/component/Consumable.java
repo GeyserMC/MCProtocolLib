@@ -25,7 +25,8 @@ public record Consumable(float consumeSeconds, ItemUseAnimation animation, Sound
         CROSSBOW,
         SPYGLASS,
         TOOT_HORN,
-        BRUSH;
+        BRUSH,
+        BUNDLE;
 
         private static final ItemUseAnimation[] VALUES = values();
 

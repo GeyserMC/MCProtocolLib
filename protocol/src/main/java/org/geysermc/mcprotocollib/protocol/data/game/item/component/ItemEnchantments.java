@@ -9,10 +9,8 @@ import java.util.Map;
 @With
 public class ItemEnchantments {
     private final Map<Integer, Integer> enchantments;
-    private final boolean showInTooltip;
 
-    public ItemEnchantments(Map<Integer, Integer> enchantments, boolean showInTooltip) {
+    public ItemEnchantments(Map<Integer, Integer> enchantments) {
         this.enchantments = Map.copyOf(enchantments);
-        this.showInTooltip = showInTooltip;
     }
 }

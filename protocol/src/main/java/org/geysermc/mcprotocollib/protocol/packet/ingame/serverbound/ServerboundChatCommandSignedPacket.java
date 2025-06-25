@@ -22,6 +22,7 @@ public class ServerboundChatCommandSignedPacket implements MinecraftPacket {
     private final List<ArgumentSignature> signatures;
     private final int offset;
     private final BitSet acknowledgedMessages;
+    private final byte checksum;
 
     public ServerboundChatCommandSignedPacket(ByteBuf in) {
         this.command = MinecraftTypes.readString(in);
@@ -37,6 +38,7 @@ public class ServerboundChatCommandSignedPacket implements MinecraftPacket {
 
         this.offset = MinecraftTypes.readVarInt(in);
         this.acknowledgedMessages = MinecraftTypes.readFixedBitSet(in, 20);
+        this.checksum = in.readByte();
     }
 
     @Override
@@ -52,5 +54,6 @@ public class ServerboundChatCommandSignedPacket implements MinecraftPacket {
 
         MinecraftTypes.writeVarInt(out, this.offset);
         MinecraftTypes.writeFixedBitSet(out, this.acknowledgedMessages, 20);
+        out.writeByte(this.checksum);
     }
 }

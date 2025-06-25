@@ -18,13 +18,13 @@ public class ServerboundSetCreativeModeSlotPacket implements MinecraftPacket {
 
     public ServerboundSetCreativeModeSlotPacket(ByteBuf in) {
         this.slot = in.readShort();
-        this.clickedItem = MinecraftTypes.readOptionalItemStack(in);
+        this.clickedItem = MinecraftTypes.readOptionalItemStack(in, true);
     }
 
     @Override
     public void serialize(ByteBuf out) {
         out.writeShort(this.slot);
-        MinecraftTypes.writeOptionalItemStack(out, this.clickedItem);
+        MinecraftTypes.writeOptionalItemStack(out, this.clickedItem, true);
     }
 
     @Override

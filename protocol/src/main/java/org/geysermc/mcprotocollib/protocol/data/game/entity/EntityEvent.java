@@ -67,7 +67,9 @@ public enum EntityEvent {
     SNIFFER_MAKE_SOUND,
     ARMADILLO_PEEKING,
     LIVING_EQUIPMENT_BREAK_BODY,
-    SHAKE;
+    SHAKE,
+    DROWN_PARTICLES,
+    SADDLE_BREAK;
 
     private static final EntityEvent[] VALUES = values();
 

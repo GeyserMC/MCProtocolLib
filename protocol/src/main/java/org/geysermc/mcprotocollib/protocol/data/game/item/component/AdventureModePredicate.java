@@ -12,11 +12,9 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class AdventureModePredicate {
     private final List<BlockPredicate> predicates;
-    private final boolean showInTooltip;
 
-    public AdventureModePredicate(List<BlockPredicate> predicates, boolean showInTooltip) {
+    public AdventureModePredicate(List<BlockPredicate> predicates) {
         this.predicates = List.copyOf(predicates);
-        this.showInTooltip = showInTooltip;
     }
 
     @Data
@@ -25,11 +23,13 @@ public class AdventureModePredicate {
         private final @Nullable HolderSet blocks;
         private final @Nullable List<PropertyMatcher> properties;
         private final @Nullable NbtMap nbt;
+        private final DataComponentMatchers components;
 
-        public BlockPredicate(@Nullable HolderSet blocks, @Nullable List<PropertyMatcher> properties, @Nullable NbtMap nbt) {
+        public BlockPredicate(@Nullable HolderSet blocks, @Nullable List<PropertyMatcher> properties, @Nullable NbtMap nbt, DataComponentMatchers components) {
             this.blocks = blocks;
             this.properties = properties != null ? List.copyOf(properties) : null;
             this.nbt = nbt;
+            this.components = components;
         }
     }
 

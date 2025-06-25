@@ -220,7 +220,7 @@ public class MinecraftProtocolTest {
             @Override
             public void packetReceived(Session session, Packet packet) {
                 if (packet instanceof ClientboundLoginPacket) {
-                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0L, null, 0, new BitSet()));
+                    session.send(new ServerboundChatPacket("Hello, this is a test of MCProtocolLib.", Instant.now().toEpochMilli(), 0L, null, 0, new BitSet(), 0));
                 } else if (packet instanceof ClientboundSystemChatPacket systemChatPacket) {
                     Component message = systemChatPacket.getContent();
                     log.info("Received Message: {}", message);

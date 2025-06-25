@@ -115,8 +115,8 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
             byte flags = in.readByte();
             this.friendlyFire = (flags & 0x1) != 0;
             this.seeFriendlyInvisibles = (flags & 0x2) != 0;
-            this.nameTagVisibility = NameTagVisibility.from(MinecraftTypes.readString(in));
-            this.collisionRule = CollisionRule.from(MinecraftTypes.readString(in));
+            this.nameTagVisibility = NameTagVisibility.from(MinecraftTypes.readVarInt(in));
+            this.collisionRule = CollisionRule.from(MinecraftTypes.readVarInt(in));
 
             this.color = TeamColor.VALUES[MinecraftTypes.readVarInt(in)];
 
@@ -150,8 +150,8 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             MinecraftTypes.writeComponent(out, this.displayName);
             out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
-            MinecraftTypes.writeString(out, this.nameTagVisibility == null ? "" : this.nameTagVisibility.getName());
-            MinecraftTypes.writeString(out, this.collisionRule == null ? "" : this.collisionRule.getName());
+            MinecraftTypes.writeVarInt(out, this.nameTagVisibility.ordinal());
+            MinecraftTypes.writeVarInt(out, this.collisionRule.ordinal());
             MinecraftTypes.writeVarInt(out, this.color.ordinal());
             MinecraftTypes.writeComponent(out, this.prefix);
             MinecraftTypes.writeComponent(out, this.suffix);

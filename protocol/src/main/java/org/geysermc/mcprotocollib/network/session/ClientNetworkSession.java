@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.network.session;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelHandler;
@@ -100,6 +101,8 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
         if (getFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TransportHelper.TRANSPORT_TYPE.supportsTcpFastOpenClient()) {
             bootstrap.option(ChannelOption.TCP_FASTOPEN_CONNECT, true);
         }
+
+        bootstrap.option(ChannelOption.ALLOCATOR, getFlag(BuiltinFlags.ALLOCATOR, ByteBufAllocator.DEFAULT));
     }
 
     protected ChannelHandler getChannelHandler() {
@@ -124,7 +127,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
             return;
         }
 
-        EVENT_LOOP_GROUP = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(newThreadFactory());
+        EVENT_LOOP_GROUP = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(0, newThreadFactory());
 
         Runtime.getRuntime().addShutdownHook(new Thread(
             () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));

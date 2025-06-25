@@ -8,9 +8,9 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import org.jetbrains.annotations.Nullable;
 
 @Builder(toBuilder = true)
-public record JukeboxPlayable(@Nullable Holder<JukeboxSong> songHolder, @Nullable Key songLocation) {
+public record InstrumentComponent(@Nullable Holder<Instrument> instrumentHolder, @Nullable Key instrumentLocation) {
 
     @Builder(toBuilder = true)
-    public record JukeboxSong(Sound soundEvent, Component description, float lengthInSeconds, int comparatorOutput) {
+    public record Instrument(Sound soundEvent, float useDuration, float range, Component description) {
     }
 }

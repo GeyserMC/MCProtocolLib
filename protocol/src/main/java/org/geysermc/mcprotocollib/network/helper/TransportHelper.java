@@ -2,34 +2,39 @@ package org.geysermc.mcprotocollib.network.helper;
 
 import io.netty.channel.ChannelFactory;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollIoHandler;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.kqueue.KQueue;
 import io.netty.channel.kqueue.KQueueDatagramChannel;
 import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.kqueue.KQueueIoHandler;
 import io.netty.channel.kqueue.KQueueServerSocketChannel;
 import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.incubator.channel.uring.IOUring;
-import io.netty.incubator.channel.uring.IOUringDatagramChannel;
-import io.netty.incubator.channel.uring.IOUringEventLoopGroup;
-import io.netty.incubator.channel.uring.IOUringServerSocketChannel;
-import io.netty.incubator.channel.uring.IOUringSocketChannel;
+import io.netty.channel.uring.IoUring;
+import io.netty.channel.uring.IoUringDatagramChannel;
+import io.netty.channel.uring.IoUringIoHandler;
+import io.netty.channel.uring.IoUringServerSocketChannel;
+import io.netty.channel.uring.IoUringSocketChannel;
 
 import java.util.concurrent.ThreadFactory;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class TransportHelper {
     public static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
+    public static final boolean NEW_NETTY = isClassAvailable("io.netty.channel.MultiThreadIoEventLoopGroup");
 
     public enum TransportMethod {
         NIO, EPOLL, KQUEUE, IO_URING
@@ -42,24 +47,28 @@ public class TransportHelper {
                                 ChannelFactory<? extends SocketChannel> socketChannelFactory,
                                 Class<? extends DatagramChannel> datagramChannelClass,
                                 ChannelFactory<? extends DatagramChannel> datagramChannelFactory,
-                                Function<ThreadFactory, EventLoopGroup> eventLoopGroupFactory,
+                                BiFunction<Integer, ThreadFactory, EventLoopGroup> eventLoopGroupFactory,
                                 boolean supportsTcpFastOpenServer,
                                 boolean supportsTcpFastOpenClient) {
     }
 
+    @SuppressWarnings("deprecation")
     private static TransportType determineTransportMethod() {
-        if (isClassAvailable("io.netty.incubator.channel.uring.IOUring") && IOUring.isAvailable()) {
+        if (isClassAvailable("io.netty.channel.uring.IoUring")
+            && IoUring.isAvailable()
+            && Boolean.getBoolean("Mcpl.io_uring")
+        ) {
             return new TransportType(
                     TransportMethod.IO_URING,
-                    IOUringServerSocketChannel.class,
-                    IOUringServerSocketChannel::new,
-                    IOUringSocketChannel.class,
-                    IOUringSocketChannel::new,
-                    IOUringDatagramChannel.class,
-                    IOUringDatagramChannel::new,
-                    factory -> new IOUringEventLoopGroup(0, factory),
-                    IOUring.isTcpFastOpenServerSideAvailable(),
-                    IOUring.isTcpFastOpenClientSideAvailable()
+                    IoUringServerSocketChannel.class,
+                    IoUringServerSocketChannel::new,
+                    IoUringSocketChannel.class,
+                    IoUringSocketChannel::new,
+                    IoUringDatagramChannel.class,
+                    IoUringDatagramChannel::new,
+                    (threads, factory) -> new MultiThreadIoEventLoopGroup(threads, factory, IoUringIoHandler.newFactory()),
+                    IoUring.isTcpFastOpenServerSideAvailable(),
+                    IoUring.isTcpFastOpenClientSideAvailable()
             );
         }
 
@@ -72,7 +81,8 @@ public class TransportHelper {
                     EpollSocketChannel::new,
                     EpollDatagramChannel.class,
                     EpollDatagramChannel::new,
-                    factory -> new EpollEventLoopGroup(0, factory),
+                    NEW_NETTY ? (threads, factory) ->
+                        new MultiThreadIoEventLoopGroup(threads, factory, EpollIoHandler.newFactory()) : EpollEventLoopGroup::new,
                     Epoll.isTcpFastOpenServerSideAvailable(),
                     Epoll.isTcpFastOpenClientSideAvailable()
             );
@@ -87,7 +97,8 @@ public class TransportHelper {
                     KQueueSocketChannel::new,
                     KQueueDatagramChannel.class,
                     KQueueDatagramChannel::new,
-                    factory -> new KQueueEventLoopGroup(0, factory),
+                    NEW_NETTY ? (threads, factory) ->
+                        new MultiThreadIoEventLoopGroup(threads, factory, KQueueIoHandler.newFactory()) : KQueueEventLoopGroup::new,
                     KQueue.isTcpFastOpenServerSideAvailable(),
                     KQueue.isTcpFastOpenClientSideAvailable()
             );
@@ -101,7 +112,8 @@ public class TransportHelper {
                 NioSocketChannel::new,
                 NioDatagramChannel.class,
                 NioDatagramChannel::new,
-                factory -> new NioEventLoopGroup(0, factory),
+                NEW_NETTY ? (threads, factory) ->
+                    new MultiThreadIoEventLoopGroup(threads, factory, NioIoHandler.newFactory()) : NioEventLoopGroup::new,
                 false,
                 false
         );

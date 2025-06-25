@@ -12,6 +12,6 @@ public enum ContainerActionType {
     private static final ContainerActionType[] VALUES = values();
 
     public static ContainerActionType from(int id) {
-        return VALUES[id];
+        return id >= 0 && id < VALUES.length ? VALUES[id] : VALUES[0];
     }
 }

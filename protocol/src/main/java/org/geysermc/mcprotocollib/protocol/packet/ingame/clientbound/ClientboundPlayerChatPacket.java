@@ -21,6 +21,7 @@ import java.util.UUID;
 @With
 @AllArgsConstructor
 public class ClientboundPlayerChatPacket implements MinecraftPacket {
+    private final int globalIndex;
     private final UUID sender;
     private final int index;
     private final byte @Nullable [] messageSignature;
@@ -35,6 +36,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final @Nullable Component targetName;
 
     public ClientboundPlayerChatPacket(ByteBuf in) {
+        this.globalIndex = MinecraftTypes.readVarInt(in);
         this.sender = MinecraftTypes.readUUID(in);
         this.index = MinecraftTypes.readVarInt(in);
         this.messageSignature = MinecraftTypes.readNullable(in, buf -> {
@@ -62,6 +64,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 
     @Override
     public void serialize(ByteBuf out) {
+        MinecraftTypes.writeVarInt(out, this.globalIndex);
         MinecraftTypes.writeUUID(out, this.sender);
         MinecraftTypes.writeVarInt(out, this.index);
         MinecraftTypes.writeNullable(out, this.messageSignature, ByteBuf::writeBytes);

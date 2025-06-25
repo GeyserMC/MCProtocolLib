@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.network.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelFutureListener;
@@ -86,11 +87,11 @@ public class NetworkServer extends AbstractServer {
     }
 
     protected EventLoopGroup createBossEventLoopGroup() {
-        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(0, null);
     }
 
     protected EventLoopGroup createWorkerEventLoopGroup() {
-        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(null);
+        return TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(0, null);
     }
 
     protected void setOptions(ServerBootstrap bootstrap) {
@@ -100,6 +101,8 @@ public class NetworkServer extends AbstractServer {
         if (getGlobalFlag(BuiltinFlags.TCP_FAST_OPEN, false) && TransportHelper.TRANSPORT_TYPE.supportsTcpFastOpenServer()) {
             bootstrap.option(ChannelOption.TCP_FASTOPEN, 3);
         }
+
+        bootstrap.option(ChannelOption.ALLOCATOR, getGlobalFlag(BuiltinFlags.ALLOCATOR, ByteBufAllocator.DEFAULT));
     }
 
     protected ChannelHandler getChannelHandler() {

@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -48,26 +49,29 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVar
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.WolfVariant;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
+import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponentTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.TestInstanceBlockEntity;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.UnknownLevelEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.BlockParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustParticleData;
-import org.geysermc.mcprotocollib.protocol.data.game.level.particle.EntityEffectParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ColorParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ItemParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleData;
@@ -80,6 +84,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsour
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.EntityPositionSource;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSource;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.PositionSourceType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
@@ -111,8 +116,10 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -327,7 +334,11 @@ public class MinecraftTypes {
         }
 
         long[] l = new long[length];
-        for (int index = 0; index < length; index++) {
+        return readFixedSizeLongArray(buf, l);
+    }
+
+    public static long[] readFixedSizeLongArray(ByteBuf buf, long[] l) {
+        for (int index = 0; index < l.length; index++) {
             l[index] = buf.readLong();
         }
 
@@ -340,6 +351,10 @@ public class MinecraftTypes {
 
     public static void writeLongArray(ByteBuf buf, long[] l, ObjIntConsumer<ByteBuf> writer) {
         writer.accept(buf, l.length);
+        MinecraftTypes.writeFixedSizeLongArray(buf, l);
+    }
+
+    public static void writeFixedSizeLongArray(ByteBuf buf, long[] l) {
         for (long value : l) {
             buf.writeLong(value);
         }
@@ -413,21 +428,36 @@ public class MinecraftTypes {
 
     @Nullable
     public static ItemStack readOptionalItemStack(ByteBuf buf) {
+        return MinecraftTypes.readOptionalItemStack(buf, false);
+    }
+
+    public static void writeOptionalItemStack(ByteBuf buf, ItemStack item) {
+        MinecraftTypes.writeOptionalItemStack(buf, item, false);
+    }
+
+    @Nullable
+    public static ItemStack readOptionalItemStack(ByteBuf buf, boolean untrusted) {
         int count = MinecraftTypes.readVarInt(buf);
         if (count <= 0) {
             return null;
         }
 
         int item = MinecraftTypes.readVarInt(buf);
-        return new ItemStack(item, count, MinecraftTypes.readDataComponentPatch(buf));
+        DataComponents components;
+        try {
+            components = MinecraftTypes.readDataComponentPatch(buf, untrusted);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Exception while reading components for item " + item, e);
+        }
+        return new ItemStack(item, count, components);
     }
 
-    public static void writeOptionalItemStack(ByteBuf buf, ItemStack item) {
+    public static void writeOptionalItemStack(ByteBuf buf, ItemStack item, boolean untrusted) {
         boolean empty = item == null || item.getAmount() <= 0;
         MinecraftTypes.writeVarInt(buf, !empty ? item.getAmount() : 0);
         if (!empty) {
             MinecraftTypes.writeVarInt(buf, item.getId());
-            MinecraftTypes.writeDataComponentPatch(buf, item.getDataComponentsPatch());
+            MinecraftTypes.writeDataComponentPatch(buf, item.getDataComponentsPatch(), untrusted);
         }
     }
 
@@ -441,7 +471,7 @@ public class MinecraftTypes {
     }
 
     @Nullable
-    public static DataComponents readDataComponentPatch(ByteBuf buf) {
+    public static DataComponents readDataComponentPatch(ByteBuf buf, boolean untrusted) {
         int nonNullComponents = MinecraftTypes.readVarInt(buf);
         int nullComponents = MinecraftTypes.readVarInt(buf);
         if (nonNullComponents == 0 && nullComponents == 0) {
@@ -449,14 +479,23 @@ public class MinecraftTypes {
         }
 
         Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
-        for (int k = 0; k < nonNullComponents; k++) {
-            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
-            DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
-            dataComponents.put(dataComponentType, dataComponent);
+        if (untrusted) {
+            for (int k = 0; k < nonNullComponents; k++) {
+                DataComponentType<?> dataComponentType = DataComponentTypes.read(buf);
+                MinecraftTypes.readVarInt(buf);
+                DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
+                dataComponents.put(dataComponentType, dataComponent);
+            }
+        } else {
+            for (int k = 0; k < nonNullComponents; k++) {
+                DataComponentType<?> dataComponentType = DataComponentTypes.read(buf);
+                DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
+                dataComponents.put(dataComponentType, dataComponent);
+            }
         }
 
         for (int k = 0; k < nullComponents; k++) {
-            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
+            DataComponentType<?> dataComponentType = DataComponentTypes.read(buf);
             DataComponent<?, ?> dataComponent = dataComponentType.readNullDataComponent();
             dataComponents.put(dataComponentType, dataComponent);
         }
@@ -464,7 +503,7 @@ public class MinecraftTypes {
         return new DataComponents(dataComponents);
     }
 
-    public static void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents) {
+    public static void writeDataComponentPatch(ByteBuf buf, DataComponents dataComponents, boolean untrusted) {
         if (dataComponents == null) {
             MinecraftTypes.writeVarInt(buf, 0);
             MinecraftTypes.writeVarInt(buf, 0);
@@ -482,10 +521,23 @@ public class MinecraftTypes {
             MinecraftTypes.writeVarInt(buf, i);
             MinecraftTypes.writeVarInt(buf, j);
 
-            for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
-                if (component.getValue() != null) {
-                    MinecraftTypes.writeVarInt(buf, component.getType().getId());
-                    component.write(buf);
+            if (untrusted) {
+                for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+                    if (component.getValue() != null) {
+                        MinecraftTypes.writeVarInt(buf, component.getType().getId());
+
+                        ByteBuf buf2 = Unpooled.buffer();
+                        component.write(buf2);
+                        MinecraftTypes.writeVarInt(buf, buf2.readableBytes());
+                        buf.writeBytes(buf2);
+                    }
+                }
+            } else {
+                for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
+                    if (component.getValue() != null) {
+                        MinecraftTypes.writeVarInt(buf, component.getType().getId());
+                        component.write(buf);
+                    }
                 }
             }
 
@@ -497,37 +549,101 @@ public class MinecraftTypes {
         }
     }
 
-    @NotNull
-    public static ItemStack readTradeItemStack(ByteBuf buf) {
-        int item = MinecraftTypes.readVarInt(buf);
+    public static HashedStack readHashedStack(ByteBuf buf) {
+        int id = MinecraftTypes.readVarInt(buf);
         int count = MinecraftTypes.readVarInt(buf);
-        int componentsLength = MinecraftTypes.readVarInt(buf);
 
-        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
-        for (int i = 0; i < componentsLength; i++) {
-            DataComponentType<?> dataComponentType = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
-            DataComponent<?, ?> dataComponent = dataComponentType.readDataComponent(buf);
-            dataComponents.put(dataComponentType, dataComponent);
+        Map<DataComponentType<?>, Integer> addedComponents = new HashMap<>();
+        int length = MinecraftTypes.readVarInt(buf);
+        for (int i = 0; i < length; i++) {
+            addedComponents.put(DataComponentTypes.from(MinecraftTypes.readVarInt(buf)), buf.readInt());
         }
 
-        return new ItemStack(item, count, new DataComponents(dataComponents));
+        Set<DataComponentType<?>> removedComponents = new HashSet<>();
+        length = MinecraftTypes.readVarInt(buf);
+        for (int i = 0; i < length; i++) {
+            removedComponents.add(DataComponentTypes.from(MinecraftTypes.readVarInt(buf)));
+        }
+
+        return new HashedStack(id, count, addedComponents, removedComponents);
     }
 
-    public static void writeTradeItemStack(ByteBuf buf, @NotNull ItemStack item) {
-        MinecraftTypes.writeVarInt(buf, item.getId());
-        MinecraftTypes.writeVarInt(buf, item.getAmount());
+    public static void writeHashedStack(ByteBuf buf, HashedStack hashedStack) {
+        MinecraftTypes.writeVarInt(buf, hashedStack.id());
+        MinecraftTypes.writeVarInt(buf, hashedStack.count());
 
-        DataComponents dataComponents = item.getDataComponentsPatch();
-        if (dataComponents == null) {
-            MinecraftTypes.writeVarInt(buf, 0);
-            return;
+        MinecraftTypes.writeVarInt(buf, hashedStack.addedComponents().size());
+        for (Map.Entry<DataComponentType<?>, Integer> entry : hashedStack.addedComponents().entrySet()) {
+            MinecraftTypes.writeVarInt(buf, entry.getKey().getId());
+            buf.writeInt(entry.getValue());
         }
 
-        MinecraftTypes.writeVarInt(buf, dataComponents.getDataComponents().size());
-        for (DataComponent<?, ?> component : dataComponents.getDataComponents().values()) {
-            MinecraftTypes.writeVarInt(buf, component.getType().getId());
-            component.write(buf);
+        MinecraftTypes.writeVarInt(buf, hashedStack.removedComponents().size());
+        for (DataComponentType<?> entry : hashedStack.removedComponents()) {
+            MinecraftTypes.writeVarInt(buf, entry.getId());
         }
+    }
+
+    public static VillagerTrade.ItemCost readItemCost(ByteBuf buf) {
+        int item = MinecraftTypes.readVarInt(buf);
+        int count = MinecraftTypes.readVarInt(buf);
+        return new VillagerTrade.ItemCost(item, count, MinecraftTypes.readExactComponentMatcher(buf));
+    }
+
+    public static void writeItemCost(ByteBuf buf, VillagerTrade.ItemCost itemCost) {
+        MinecraftTypes.writeVarInt(buf, itemCost.itemId());
+        MinecraftTypes.writeVarInt(buf, itemCost.count());
+        MinecraftTypes.writeExactComponentMatcher(buf, itemCost.components());
+    }
+
+    public static Map<DataComponentType<?>, DataComponent<?, ?>> readExactComponentMatcher(ByteBuf buf) {
+        Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents = new HashMap<>();
+        int length = MinecraftTypes.readVarInt(buf);
+        for (int i = 0; i < length; i++) {
+            DataComponentType<?> type = DataComponentTypes.from(MinecraftTypes.readVarInt(buf));
+            dataComponents.put(type, type.readDataComponent(buf));
+        }
+        return dataComponents;
+    }
+
+    public static void writeExactComponentMatcher(ByteBuf buf, Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents) {
+        MinecraftTypes.writeVarInt(buf, dataComponents.size());
+        for (Map.Entry<DataComponentType<?>, DataComponent<?, ?>> entry : dataComponents.entrySet()) {
+            MinecraftTypes.writeVarInt(buf, entry.getKey().getId());
+            entry.getValue().write(buf);
+        }
+    }
+
+    public static TestInstanceBlockEntity readTestBlockEntity(ByteBuf buf) {
+        Key test = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        Vector3i size = MinecraftTypes.readVec3i(buf);
+        int rotation = MinecraftTypes.readVarInt(buf);
+        boolean ignoreEntities = buf.readBoolean();
+        int status = MinecraftTypes.readVarInt(buf);
+        Component errorMessage = MinecraftTypes.readNullable(buf, MinecraftTypes::readComponent);
+        return new TestInstanceBlockEntity(test, size, rotation, ignoreEntities, status, errorMessage);
+    }
+
+    public static void writeTestBlockEntity(ByteBuf buf, TestInstanceBlockEntity testBlockEntity) {
+        MinecraftTypes.writeNullable(buf, testBlockEntity.test(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeVec3i(buf, testBlockEntity.size());
+        MinecraftTypes.writeVarInt(buf, testBlockEntity.rotation());
+        buf.writeBoolean(testBlockEntity.ignoreEntities());
+        MinecraftTypes.writeVarInt(buf, testBlockEntity.status());
+        MinecraftTypes.writeNullable(buf, testBlockEntity.errorMessage(), MinecraftTypes::writeComponent);
+    }
+
+    public static Vector3i readVec3i(ByteBuf buf) {
+        int x = MinecraftTypes.readVarInt(buf);
+        int y = MinecraftTypes.readVarInt(buf);
+        int z = MinecraftTypes.readVarInt(buf);
+        return Vector3i.from(x, y, z);
+    }
+
+    public static void writeVec3i(ByteBuf buf, Vector3i vec) {
+        MinecraftTypes.writeVarInt(buf, vec.getX());
+        MinecraftTypes.writeVarInt(buf, vec.getY());
+        MinecraftTypes.writeVarInt(buf, vec.getZ());
     }
 
     public static Vector3i readPosition(ByteBuf buf) {
@@ -594,42 +710,22 @@ public class MinecraftTypes {
         MinecraftTypes.writeEnum(buf, pose);
     }
 
-    public static Holder<WolfVariant> readWolfVariant(ByteBuf buf) {
-        return MinecraftTypes.readHolder(buf, input -> {
-            Key wildTexture = MinecraftTypes.readResourceLocation(input);
-            Key tameTexture = MinecraftTypes.readResourceLocation(input);
-            Key angryTexture = MinecraftTypes.readResourceLocation(input);
-            Key biomeLocation = null;
-            int[] biomeHolders = null;
-
-            int length = MinecraftTypes.readVarInt(input) - 1;
-            if (length == -1) {
-                biomeLocation = MinecraftTypes.readResourceLocation(input);
-            } else {
-                biomeHolders = new int[length];
-                for (int j = 0; j < length; j++) {
-                    biomeHolders[j] = MinecraftTypes.readVarInt(input);
-                }
-            }
-            return new WolfVariant(wildTexture, tameTexture, angryTexture, biomeLocation, biomeHolders);
-        });
+    public static Holder<Key> readChickenVariant(ByteBuf buf) {
+        if (buf.readBoolean()) {
+            return Holder.ofId(MinecraftTypes.readVarInt(buf));
+        } else {
+            return Holder.ofCustom(MinecraftTypes.readResourceLocation(buf));
+        }
     }
 
-    public static void writeWolfVariant(ByteBuf buf, Holder<WolfVariant> variantHolder) {
-        MinecraftTypes.writeHolder(buf, variantHolder, (output, variant) -> {
-            MinecraftTypes.writeResourceLocation(output, variant.wildTexture());
-            MinecraftTypes.writeResourceLocation(output, variant.tameTexture());
-            MinecraftTypes.writeResourceLocation(output, variant.angryTexture());
-            if (variant.biomeLocation() != null) {
-                MinecraftTypes.writeVarInt(output, 0);
-                MinecraftTypes.writeResourceLocation(output, variant.biomeLocation());
-            } else {
-                MinecraftTypes.writeVarInt(output, variant.biomeHolders().length + 1);
-                for (int holder : variant.biomeHolders()) {
-                    MinecraftTypes.writeVarInt(output, holder);
-                }
-            }
-        });
+    public static void writeChickenVariant(ByteBuf buf, Holder<Key> variant) {
+        if (variant.isId()) {
+            buf.writeBoolean(true);
+            MinecraftTypes.writeVarInt(buf, variant.id());
+        } else {
+            buf.writeBoolean(false);
+            MinecraftTypes.writeResourceLocation(buf, variant.custom());
+        }
     }
 
     public static Holder<PaintingVariant> readPaintingVariant(ByteBuf buf) {
@@ -797,8 +893,8 @@ public class MinecraftTypes {
                 float scale = buf.readFloat();
                 yield new DustColorTransitionParticleData(color, scale, newColor);
             }
-            case ENTITY_EFFECT -> new EntityEffectParticleData(buf.readInt());
-            case ITEM -> new ItemParticleData(MinecraftTypes.readOptionalItemStack(buf));
+            case ENTITY_EFFECT, TINTED_LEAVES -> new ColorParticleData(buf.readInt());
+            case ITEM -> new ItemParticleData(MinecraftTypes.readItemStack(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(MinecraftTypes.readVarInt(buf));
             case TRAIL -> new TrailParticleData(Vector3d.from(buf.readDouble(), buf.readDouble(), buf.readDouble()), buf.readInt(), MinecraftTypes.readVarInt(buf));
@@ -825,12 +921,12 @@ public class MinecraftTypes {
                 buf.writeFloat(dustData.getScale());
             }
             case ENTITY_EFFECT -> {
-                EntityEffectParticleData entityEffectData = (EntityEffectParticleData) data;
+                ColorParticleData entityEffectData = (ColorParticleData) data;
                 buf.writeInt(entityEffectData.getColor());
             }
             case ITEM -> {
                 ItemParticleData itemData = (ItemParticleData) data;
-                MinecraftTypes.writeOptionalItemStack(buf, itemData.getItemStack());
+                MinecraftTypes.writeItemStack(buf, itemData.getItemStack());
             }
             case SCULK_CHARGE -> {
                 SculkChargeParticleData sculkData = (SculkChargeParticleData) data;
@@ -1181,7 +1277,10 @@ public class MinecraftTypes {
             case ITEM -> display = new ItemSlotDisplay(MinecraftTypes.readVarInt(buf));
             case ITEM_STACK -> display = new ItemStackSlotDisplay(MinecraftTypes.readItemStack(buf));
             case TAG -> display = new TagSlotDisplay(MinecraftTypes.readResourceLocation(buf));
-            case SMITHING_TRIM -> display = new SmithingTrimDemoSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf));
+            case SMITHING_TRIM -> {
+                display = new SmithingTrimDemoSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf),
+                    MinecraftTypes.readHolder(buf, ItemTypes::readTrimPattern));
+            }
             case WITH_REMAINDER -> display = new WithRemainderSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf));
             case COMPOSITE -> display = new CompositeSlotDisplay(MinecraftTypes.readList(buf, MinecraftTypes::readSlotDisplay));
             default -> throw new IllegalStateException("Unexpected value: " + type);
@@ -1200,7 +1299,7 @@ public class MinecraftTypes {
 
                 MinecraftTypes.writeSlotDisplay(buf, smithingSlotDisplay.base());
                 MinecraftTypes.writeSlotDisplay(buf, smithingSlotDisplay.material());
-                MinecraftTypes.writeSlotDisplay(buf, smithingSlotDisplay.pattern());
+                MinecraftTypes.writeHolder(buf, smithingSlotDisplay.pattern(), ItemTypes::writeTrimPattern);
             }
             case WITH_REMAINDER -> {
                 WithRemainderSlotDisplay remainderSlotDisplay = (WithRemainderSlotDisplay) display;
@@ -1216,15 +1315,11 @@ public class MinecraftTypes {
         int bitsPerEntry = buf.readByte() & 0xFF;
         Palette palette = MinecraftTypes.readPalette(buf, paletteType, bitsPerEntry);
         BitStorage storage;
-        if (!(palette instanceof SingletonPalette)) {
-            storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize(), MinecraftTypes.readLongArray(buf));
-        } else {
-            // Eat up - can be seen on Hypixel as of 1.19.0
-            int length = MinecraftTypes.readVarInt(buf);
-            for (int i = 0; i < length; i++) {
-                buf.readLong();
-            }
+        if (palette instanceof SingletonPalette) {
             storage = null;
+        } else {
+            storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize());
+            MinecraftTypes.readFixedSizeLongArray(buf, storage.getData());
         }
 
         return new DataPalette(palette, storage, paletteType);
@@ -1242,7 +1337,6 @@ public class MinecraftTypes {
         if (palette.getPalette() instanceof SingletonPalette) {
             buf.writeByte(0); // Bits per entry
             MinecraftTypes.writeVarInt(buf, palette.getPalette().idToState(0));
-            MinecraftTypes.writeVarInt(buf, 0); // Data length
             return;
         }
 
@@ -1257,7 +1351,7 @@ public class MinecraftTypes {
         }
 
         long[] data = palette.getStorage().getData();
-        MinecraftTypes.writeLongArray(buf, data);
+        MinecraftTypes.writeFixedSizeLongArray(buf, data);
     }
 
     private static Palette readPalette(ByteBuf buf, PaletteType paletteType, int bitsPerEntry) {
@@ -1344,6 +1438,19 @@ public class MinecraftTypes {
         MinecraftTypes.writeString(buf, property.getName());
         MinecraftTypes.writeString(buf, property.getValue());
         MinecraftTypes.writeNullable(buf, property.getSignature(), MinecraftTypes::writeString);
+    }
+
+    public static Sound readSound(ByteBuf buf) {
+        return MinecraftTypes.readById(buf, BuiltinSound::from, MinecraftTypes::readSoundEvent);
+    }
+
+    public static void writeSound(ByteBuf buf, Sound sound) {
+        if (sound instanceof CustomSound) {
+            MinecraftTypes.writeVarInt(buf, 0);
+            MinecraftTypes.writeSoundEvent(buf, sound);
+        } else {
+            MinecraftTypes.writeVarInt(buf, ((BuiltinSound)sound).ordinal() + 1);
+        }
     }
 
     public static <T> T readById(ByteBuf buf, IntFunction<T> registry, Function<ByteBuf, T> custom) {

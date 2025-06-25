@@ -10,41 +10,41 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 
+import java.util.List;
+
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull VillagerTrade[] trades;
+    private final @NonNull List<VillagerTrade> offers;
     private final int villagerLevel;
-    private final int experience;
-    private final boolean regularVillager;
+    private final int villagerXp;
+    private final boolean showProgress;
     private final boolean canRestock;
 
     public ClientboundMerchantOffersPacket(ByteBuf in) {
         this.containerId = MinecraftTypes.readVarInt(in);
 
-        int size = MinecraftTypes.readVarInt(in);
-        this.trades = new VillagerTrade[size];
-        for (int i = 0; i < trades.length; i++) {
-            ItemStack firstInput = MinecraftTypes.readTradeItemStack(in);
-            ItemStack output = MinecraftTypes.readOptionalItemStack(in);
-            ItemStack secondInput = MinecraftTypes.readNullable(in, MinecraftTypes::readTradeItemStack);
+        this.offers = MinecraftTypes.readList(in, input -> {
+            VillagerTrade.ItemCost baseCostA = MinecraftTypes.readItemCost(in);
+            ItemStack result = MinecraftTypes.readItemStack(in);
+            VillagerTrade.ItemCost costB = MinecraftTypes.readNullable(in, MinecraftTypes::readItemCost);
 
-            boolean tradeDisabled = in.readBoolean();
-            int numUses = in.readInt();
+            boolean outOfStock = in.readBoolean();
+            int uses = in.readInt();
             int maxUses = in.readInt();
             int xp = in.readInt();
-            int specialPrice = in.readInt();
+            int specialPriceDiff = in.readInt();
             float priceMultiplier = in.readFloat();
             int demand = in.readInt();
 
-            this.trades[i] = new VillagerTrade(firstInput, secondInput, output, tradeDisabled, numUses, maxUses, xp, specialPrice, priceMultiplier, demand);
-        }
+            return new VillagerTrade(baseCostA, result, costB, outOfStock, uses, maxUses, xp, specialPriceDiff, priceMultiplier, demand);
+        });
 
         this.villagerLevel = MinecraftTypes.readVarInt(in);
-        this.experience = MinecraftTypes.readVarInt(in);
-        this.regularVillager = in.readBoolean();
+        this.villagerXp = MinecraftTypes.readVarInt(in);
+        this.showProgress = in.readBoolean();
         this.canRestock = in.readBoolean();
     }
 
@@ -52,24 +52,23 @@ public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeVarInt(out, this.containerId);
 
-        MinecraftTypes.writeVarInt(out, this.trades.length);
-        for (VillagerTrade trade : this.trades) {
-            MinecraftTypes.writeTradeItemStack(out, trade.getFirstInput());
-            MinecraftTypes.writeOptionalItemStack(out, trade.getOutput());
-            MinecraftTypes.writeNullable(out, trade.getSecondInput(), MinecraftTypes::writeTradeItemStack);
+        MinecraftTypes.writeList(out, this.offers, (output, offer) -> {
+            MinecraftTypes.writeItemCost(out, offer.getItemCostA());
+            MinecraftTypes.writeItemStack(out, offer.getResult());
+            MinecraftTypes.writeNullable(out, offer.getItemCostB(), MinecraftTypes::writeItemCost);
 
-            out.writeBoolean(trade.isTradeDisabled());
-            out.writeInt(trade.getNumUses());
-            out.writeInt(trade.getMaxUses());
-            out.writeInt(trade.getXp());
-            out.writeInt(trade.getSpecialPrice());
-            out.writeFloat(trade.getPriceMultiplier());
-            out.writeInt(trade.getDemand());
-        }
+            out.writeBoolean(offer.isOutOfStock());
+            out.writeInt(offer.getUses());
+            out.writeInt(offer.getMaxUses());
+            out.writeInt(offer.getXp());
+            out.writeInt(offer.getSpecialPriceDiff());
+            out.writeFloat(offer.getPriceMultiplier());
+            out.writeInt(offer.getDemand());
+        });
 
         MinecraftTypes.writeVarInt(out, this.villagerLevel);
-        MinecraftTypes.writeVarInt(out, this.experience);
-        out.writeBoolean(this.regularVillager);
+        MinecraftTypes.writeVarInt(out, this.villagerXp);
+        out.writeBoolean(this.showProgress);
         out.writeBoolean(this.canRestock);
     }
 

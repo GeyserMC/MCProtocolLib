@@ -28,21 +28,21 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
         this.notification = GameEvent.from(in.readUnsignedByte());
         float value = in.readFloat();
         // TODO: Handle this in MinecraftTypes
-        if (this.notification == GameEvent.AFFECTED_BY_ELDER_GUARDIAN) {
+        if (this.notification == GameEvent.GUARDIAN_ELDER_EFFECT) {
             this.value = new ElderGuardianEffectValue(value);
-        } else if (this.notification == GameEvent.CHANGE_GAMEMODE) {
+        } else if (this.notification == GameEvent.CHANGE_GAME_MODE) {
             this.value = GameMode.byId((int) value);
-        } else if (this.notification == GameEvent.DEMO_MESSAGE) {
+        } else if (this.notification == GameEvent.DEMO_EVENT) {
             this.value = DemoMessageValue.from((int) value);
-        } else if (this.notification == GameEvent.ENTER_CREDITS) {
+        } else if (this.notification == GameEvent.WIN_GAME) {
             this.value = EnterCreditsValue.from((int) value);
-        } else if (this.notification == GameEvent.ENABLE_RESPAWN_SCREEN) {
+        } else if (this.notification == GameEvent.IMMEDIATE_RESPAWN) {
             this.value = RespawnScreenValue.from((int) value);
         } else if (this.notification == GameEvent.LIMITED_CRAFTING) {
             this.value = LimitedCraftingValue.from((int) value);
-        } else if (this.notification == GameEvent.RAIN_STRENGTH) {
+        } else if (this.notification == GameEvent.RAIN_LEVEL_CHANGE) {
             this.value = new RainStrengthValue(value);
-        } else if (this.notification == GameEvent.THUNDER_STRENGTH) {
+        } else if (this.notification == GameEvent.THUNDER_LEVEL_CHANGE) {
             this.value = new ThunderStrengthValue(value);
         } else {
             this.value = null;

@@ -3,7 +3,7 @@ plugins {
     jacoco
 }
 
-version = "1.21.4-SNAPSHOT"
+version = "1.21.5-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
 dependencies {
@@ -29,7 +29,7 @@ dependencies {
     api(libs.bundles.fastutil)
 
     // Netty
-    api(libs.bundles.netty)
+    api(libs.netty.all)
 
     // Checker Framework
     api(libs.checkerframework.qual)

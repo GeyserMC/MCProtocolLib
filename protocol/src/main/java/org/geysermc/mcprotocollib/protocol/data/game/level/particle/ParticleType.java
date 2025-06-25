@@ -36,6 +36,7 @@ public enum ParticleType {
     INFESTED,
     CHERRY_LEAVES,
     PALE_OAK_LEAVES,
+    TINTED_LEAVES,
     SCULK_SOUL,
     SCULK_CHARGE,
     SCULK_CHARGE_POP,
@@ -112,7 +113,8 @@ public enum ParticleType {
     OMINOUS_SPAWNING,
     RAID_OMEN,
     TRIAL_OMEN,
-    BLOCK_CRUMBLE;
+    BLOCK_CRUMBLE,
+    FIREFLY;
 
     private static final ParticleType[] VALUES = values();
 
