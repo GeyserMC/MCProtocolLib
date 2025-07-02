@@ -946,6 +946,7 @@ public enum BuiltinSound implements Sound {
     MUSIC_DISC_CAT("music_disc.cat"),
     MUSIC_DISC_CHIRP("music_disc.chirp"),
     MUSIC_DISC_FAR("music_disc.far"),
+    MUSIC_DISC_LAVA_CHICKEN("music_disc.lava_chicken"),
     MUSIC_DISC_MALL("music_disc.mall"),
     MUSIC_DISC_MELLOHI("music_disc.mellohi"),
     MUSIC_DISC_PIGSTEP("music_disc.pigstep"),
