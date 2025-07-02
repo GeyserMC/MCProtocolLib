@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     id("mcprotocollib.publish-conventions")
     jacoco
@@ -49,5 +51,22 @@ tasks.jacocoTestReport {
         xml.required = false
         csv.required = false
         html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "geysermc"
+            url = URI.create(
+                when {
+                    version.toString().endsWith("-SNAPSHOT") ->
+                        "https://repo.opencollab.dev/maven-snapshots"
+                    else ->
+                        "https://repo.opencollab.dev/maven-releases"
+                }
+            )
+            credentials(PasswordCredentials::class.java)
+        }
     }
 }

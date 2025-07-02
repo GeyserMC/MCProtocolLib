@@ -1,5 +1,3 @@
-import java.net.URI
-
 plugins {
     id("mcprotocollib.base-conventions")
     id("net.kyori.indra.publishing")
@@ -15,23 +13,6 @@ indra {
                 name = "GeyserMC"
                 url = "https://github.com/GeyserMC"
             }
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "geysermc"
-            url = URI.create(
-                when {
-                    project.version.toString().endsWith("-SNAPSHOT") ->
-                        "https://repo.opencollab.dev/maven-snapshots"
-                    else ->
-                        "https://repo.opencollab.dev/maven-releases"
-                }
-            )
-            credentials(PasswordCredentials::class.java)
         }
     }
 }
