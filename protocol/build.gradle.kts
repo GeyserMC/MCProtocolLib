@@ -5,7 +5,7 @@ plugins {
     jacoco
 }
 
-version = "1.21.7-SNAPSHOT"
+version = "1.21.7-1"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
 dependencies {
