@@ -172,7 +172,9 @@ public class ItemTypes {
         boolean swappable = buf.readBoolean();
         boolean damageOnHurt = buf.readBoolean();
         boolean equipOnInteract = buf.readBoolean();
-        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt, equipOnInteract);
+        boolean canBeSheared = buf.readBoolean();
+        Sound shearingSound = MinecraftTypes.readSound(buf);
+        return new Equippable(slot, equipSound, model, cameraOverlay, allowedEntities, dispensable, swappable, damageOnHurt, equipOnInteract, canBeSheared, shearingSound);
     }
 
     public static void writeEquippable(ByteBuf buf, Equippable equippable) {
@@ -185,6 +187,8 @@ public class ItemTypes {
         buf.writeBoolean(equippable.swappable());
         buf.writeBoolean(equippable.damageOnHurt());
         buf.writeBoolean(equippable.equipOnInteract());
+        buf.writeBoolean(equippable.canBeSheared());
+        MinecraftTypes.writeSound(buf, equippable.shearingSound());
     }
 
     public static BlocksAttacks readBlocksAttacks(ByteBuf buf) {
@@ -235,7 +239,15 @@ public class ItemTypes {
             ItemAttributeModifiers.AttributeModifier modifier = new ItemAttributeModifiers.AttributeModifier(id, amount, operation);
 
             ItemAttributeModifiers.EquipmentSlotGroup slot = ItemAttributeModifiers.EquipmentSlotGroup.from(MinecraftTypes.readVarInt(input));
-            return new ItemAttributeModifiers.Entry(attribute, modifier, slot);
+
+            ItemAttributeModifiers.DisplayType displayType = ItemAttributeModifiers.DisplayType.from(MinecraftTypes.readVarInt(buf));
+            Component overrideText = null;
+            if (displayType == ItemAttributeModifiers.DisplayType.OVERRIDE) {
+                overrideText = MinecraftTypes.readComponent(buf);
+            }
+            ItemAttributeModifiers.Display display = new ItemAttributeModifiers.Display(displayType, overrideText);
+
+            return new ItemAttributeModifiers.Entry(attribute, modifier, slot, display);
         });
 
         return new ItemAttributeModifiers(modifiers);
@@ -248,6 +260,10 @@ public class ItemTypes {
             output.writeDouble(entry.getModifier().getAmount());
             MinecraftTypes.writeVarInt(output, entry.getModifier().getOperation().ordinal());
             MinecraftTypes.writeVarInt(output, entry.getSlot().ordinal());
+            MinecraftTypes.writeVarInt(output, entry.getDisplay().getType().ordinal());
+            if (entry.getDisplay().getType() == ItemAttributeModifiers.DisplayType.OVERRIDE) {
+                MinecraftTypes.writeComponent(output, entry.getDisplay().getComponent());
+            }
         });
     }
 

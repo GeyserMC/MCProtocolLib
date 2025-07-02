@@ -10,7 +10,8 @@ public enum SoundCategory {
     NEUTRAL,
     PLAYER,
     AMBIENT,
-    VOICE;
+    VOICE,
+    UI;
 
     private static final SoundCategory[] VALUES = values();
 

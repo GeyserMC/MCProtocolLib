@@ -18,6 +18,7 @@ public enum CommandParser {
     ITEM_STACK,
     ITEM_PREDICATE,
     COLOR,
+    HEX_COLOR,
     COMPONENT,
     STYLE,
     MESSAGE,
@@ -55,6 +56,7 @@ public enum CommandParser {
     LOOT_TABLE,
     LOOT_PREDICATE,
     LOOT_MODIFIER,
+    DIALOG,
     UUID;
 
     private static final CommandParser[] VALUES = values();

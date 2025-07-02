@@ -10,7 +10,6 @@ import java.util.Map;
 
 public enum SuggestionType {
     ASK_SERVER,
-    ALL_RECIPES,
     AVAILABLE_SOUNDS,
     SUMMONABLE_ENTITIES;
 

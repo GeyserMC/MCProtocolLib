@@ -32,6 +32,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     private static final int FLAG_EXECUTABLE = 0x04;
     private static final int FLAG_REDIRECT = 0x08;
     private static final int FLAG_SUGGESTION_TYPE = 0x10;
+    private static final int FLAG_RESTRICTED = 0x20;
 
     private static final int NUMBER_FLAG_MIN_DEFINED = 0x01;
     private static final int NUMBER_FLAG_MAX_DEFINED = 0x02;
@@ -48,6 +49,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
             byte flags = in.readByte();
             CommandType type = CommandType.from(flags & FLAG_TYPE_MASK);
             boolean executable = (flags & FLAG_EXECUTABLE) != 0;
+            boolean restricted = (flags & FLAG_RESTRICTED) != 0;
 
             int[] children = new int[MinecraftTypes.readVarInt(in)];
             for (int j = 0; j < children.length; j++) {
@@ -146,7 +148,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                 }
             }
 
-            this.nodes[i] = new CommandNode(type, executable, children, redirectIndex, name, parser, properties, suggestionType);
+            this.nodes[i] = new CommandNode(type, executable, restricted, children, redirectIndex, name, parser, properties, suggestionType);
         }
 
         this.firstNodeIndex = MinecraftTypes.readVarInt(in);
@@ -167,6 +169,10 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
             if (node.getSuggestionType() != null) {
                 flags |= FLAG_SUGGESTION_TYPE;
+            }
+
+            if (node.isAllowsRestricted()) {
+                flags |= FLAG_RESTRICTED;
             }
 
             out.writeByte(flags);

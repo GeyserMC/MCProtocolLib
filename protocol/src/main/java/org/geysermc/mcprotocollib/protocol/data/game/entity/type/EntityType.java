@@ -59,6 +59,7 @@ public enum EntityType {
     FROG,
     FURNACE_MINECART,
     GHAST,
+    HAPPY_GHAST,
     GIANT,
     GLOW_ITEM_FRAME,
     GLOW_SQUID,

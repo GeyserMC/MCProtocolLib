@@ -9,6 +9,6 @@ public enum Difficulty {
     private static final Difficulty[] VALUES = values();
 
     public static Difficulty from(int id) {
-        return VALUES[id];
+        return VALUES[Math.floorMod(id, VALUES.length)];
     }
 }

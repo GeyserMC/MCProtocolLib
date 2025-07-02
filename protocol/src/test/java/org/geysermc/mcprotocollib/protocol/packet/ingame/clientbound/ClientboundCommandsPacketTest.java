@@ -19,6 +19,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                         new CommandNode(
                                 CommandType.ROOT,
                                 true,
+                                true,
                                 new int[]{1, 2},
                                 OptionalInt.empty(),
                                 null,
@@ -28,6 +29,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                         ),
                         new CommandNode(
                                 CommandType.LITERAL,
+                                false,
                                 false,
                                 new int[]{3, 4},
                                 OptionalInt.empty(),
@@ -39,6 +41,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                         new CommandNode(
                                 CommandType.ARGUMENT,
                                 false,
+                                true,
                                 new int[0],
                                 OptionalInt.of(3),
                                 "Argument1",
@@ -48,6 +51,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                         ),
                         new CommandNode(
                                 CommandType.ARGUMENT,
+                                false,
                                 false,
                                 new int[0],
                                 OptionalInt.empty(),
@@ -59,6 +63,7 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                         new CommandNode(
                                 CommandType.ARGUMENT,
                                 false,
+                                true,
                                 new int[0],
                                 OptionalInt.empty(),
                                 "Argument3",
@@ -69,12 +74,13 @@ public class ClientboundCommandsPacketTest extends PacketTest {
                         new CommandNode(
                                 CommandType.ARGUMENT,
                                 false,
+                                false,
                                 new int[0],
                                 OptionalInt.empty(),
                                 "Argument4",
                                 CommandParser.STRING,
                                 StringProperties.SINGLE_WORD,
-                                SuggestionType.ALL_RECIPES.getResourceLocation()
+                                SuggestionType.AVAILABLE_SOUNDS.getResourceLocation()
                         )
                 },
                 0
