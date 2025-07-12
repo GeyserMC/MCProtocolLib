@@ -37,7 +37,7 @@ public class ClientboundTrackedWaypointPacket implements MinecraftPacket {
 
         Key style = MinecraftTypes.readResourceLocation(in);
         Optional<Integer> rgbColor = Optional.ofNullable(MinecraftTypes.readNullable(in, buf -> {
-            return 0xFF << 24 | (buf.readByte() & 0xFF) << 16 | (buf.readByte() & 0xFF) << 8 | buf.readByte();
+            return 0xFF << 24 | (buf.readByte() & 0xFF) << 16 | (buf.readByte() & 0xFF) << 8 | (buf.readByte() & 0xFF);
         }));
         TrackedWaypoint.Icon icon = new TrackedWaypoint.Icon(style, rgbColor);
 
