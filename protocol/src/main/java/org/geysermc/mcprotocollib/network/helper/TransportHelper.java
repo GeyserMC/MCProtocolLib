@@ -54,11 +54,12 @@ public class TransportHelper {
 
     @SuppressWarnings("deprecation")
     private static TransportType determineTransportMethod() {
-        if (isClassAvailable("io.netty.channel.uring.IoUring")
-            && IoUring.isAvailable()
-            && Boolean.getBoolean("Mcpl.io_uring")
-        ) {
-            return new TransportType(
+        if (!Boolean.getBoolean("Mcpl.disable-native-transport")) {
+            if (isClassAvailable("io.netty.channel.uring.IoUring")
+                && IoUring.isAvailable()
+                && Boolean.getBoolean("Mcpl.io_uring")
+            ) {
+                return new TransportType(
                     TransportMethod.IO_URING,
                     IoUringServerSocketChannel.class,
                     IoUringServerSocketChannel::new,
@@ -69,11 +70,14 @@ public class TransportHelper {
                     (threads, factory) -> new MultiThreadIoEventLoopGroup(threads, factory, IoUringIoHandler.newFactory()),
                     IoUring.isTcpFastOpenServerSideAvailable(),
                     IoUring.isTcpFastOpenClientSideAvailable()
-            );
-        }
+                );
+            }
 
-        if (isClassAvailable("io.netty.channel.epoll.Epoll") && Epoll.isAvailable()) {
-            return new TransportType(
+            if (isClassAvailable("io.netty.channel.epoll.Epoll")
+                && Epoll.isAvailable()
+                && Boolean.parseBoolean(System.getProperty("Mcpl.epoll", "true"))
+            ) {
+                return new TransportType(
                     TransportMethod.EPOLL,
                     EpollServerSocketChannel.class,
                     EpollServerSocketChannel::new,
@@ -85,11 +89,14 @@ public class TransportHelper {
                         new MultiThreadIoEventLoopGroup(threads, factory, EpollIoHandler.newFactory()) : EpollEventLoopGroup::new,
                     Epoll.isTcpFastOpenServerSideAvailable(),
                     Epoll.isTcpFastOpenClientSideAvailable()
-            );
-        }
+                );
+            }
 
-        if (isClassAvailable("io.netty.channel.kqueue.KQueue") && KQueue.isAvailable()) {
-            return new TransportType(
+            if (isClassAvailable("io.netty.channel.kqueue.KQueue")
+                && KQueue.isAvailable()
+                && Boolean.parseBoolean(System.getProperty("Mcpl.kqueue", "true"))
+            ) {
+                return new TransportType(
                     TransportMethod.KQUEUE,
                     KQueueServerSocketChannel.class,
                     KQueueServerSocketChannel::new,
@@ -101,7 +108,8 @@ public class TransportHelper {
                         new MultiThreadIoEventLoopGroup(threads, factory, KQueueIoHandler.newFactory()) : KQueueEventLoopGroup::new,
                     KQueue.isTcpFastOpenServerSideAvailable(),
                     KQueue.isTcpFastOpenClientSideAvailable()
-            );
+                );
+            }
         }
 
         return new TransportType(
