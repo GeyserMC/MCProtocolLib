@@ -31,6 +31,7 @@ import io.netty.channel.uring.IoUringSocketChannel;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 public class TransportHelper {
     public static final TransportHelper.TransportType TRANSPORT_TYPE = TransportHelper.determineTransportMethod();
@@ -87,8 +88,8 @@ public class TransportHelper {
                     EpollDatagramChannel::new,
                     NEW_NETTY ? (threads, factory) ->
                         new MultiThreadIoEventLoopGroup(threads, factory, EpollIoHandler.newFactory()) : EpollEventLoopGroup::new,
-                    Epoll.isTcpFastOpenServerSideAvailable(),
-                    Epoll.isTcpFastOpenClientSideAvailable()
+                    getSafely(() -> Epoll.isTcpFastOpenServerSideAvailable()),
+                    getSafely(() -> Epoll.isTcpFastOpenClientSideAvailable())
                 );
             }
 
@@ -106,8 +107,8 @@ public class TransportHelper {
                     KQueueDatagramChannel::new,
                     NEW_NETTY ? (threads, factory) ->
                         new MultiThreadIoEventLoopGroup(threads, factory, KQueueIoHandler.newFactory()) : KQueueEventLoopGroup::new,
-                    KQueue.isTcpFastOpenServerSideAvailable(),
-                    KQueue.isTcpFastOpenClientSideAvailable()
+                    getSafely(() -> KQueue.isTcpFastOpenServerSideAvailable()),
+                    getSafely(() -> KQueue.isTcpFastOpenClientSideAvailable())
                 );
             }
         }
@@ -135,6 +136,14 @@ public class TransportHelper {
             Class.forName(className);
             return true;
         } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static boolean getSafely(Supplier<Boolean> supplier) {
+        try {
+            return supplier.get();
+        } catch (Throwable ignored) {
             return false;
         }
     }
