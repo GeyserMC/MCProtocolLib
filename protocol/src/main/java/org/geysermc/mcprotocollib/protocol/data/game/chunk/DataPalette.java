@@ -33,17 +33,16 @@ public class DataPalette {
         this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType, original.globalPaletteBitsPerEntry);
     }
 
-    public static DataPalette createForChunk(int blockStateRegistrySize) {
-        return createEmpty(PaletteType.CHUNK, blockStateRegistrySize);
+    public static DataPalette createForChunk(int initialState, int blockStateRegistrySize) {
+        return createEmpty(PaletteType.CHUNK, initialState, blockStateRegistrySize);
     }
 
-    public static DataPalette createForBiome(int biomeRegistrySize) {
-        return createEmpty(PaletteType.BIOME, biomeRegistrySize);
+    public static DataPalette createForBiome(int initialBiome, int biomeRegistrySize) {
+        return createEmpty(PaletteType.BIOME, initialBiome, biomeRegistrySize);
     }
 
-    public static DataPalette createEmpty(PaletteType paletteType, int registrySize) {
-        return create(new ListPalette(paletteType.getMinBitsPerEntry()),
-                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType, registrySize);
+    public static DataPalette createEmpty(PaletteType paletteType, int initial, int registrySize) {
+        return create(new SingletonPalette(initial), null, paletteType, registrySize);
     }
 
     public static DataPalette create(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int registrySize) {

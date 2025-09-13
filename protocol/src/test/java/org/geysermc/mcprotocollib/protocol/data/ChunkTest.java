@@ -28,9 +28,9 @@ public class ChunkTest {
 
     @BeforeEach
     public void setup() {
-        chunkSectionsToTest.add(new ChunkSection(BLOCK_STATE_REGISTRY_SIZE, BIOME_REGISTRY_SIZE));
+        chunkSectionsToTest.add(new ChunkSection(420, BLOCK_STATE_REGISTRY_SIZE, 42, BIOME_REGISTRY_SIZE));
 
-        ChunkSection section = new ChunkSection(BLOCK_STATE_REGISTRY_SIZE, BIOME_REGISTRY_SIZE);
+        ChunkSection section = new ChunkSection(20, BLOCK_STATE_REGISTRY_SIZE, 35, BIOME_REGISTRY_SIZE);
         section.setBlock(0, 0, 0, 10);
         chunkSectionsToTest.add(section);
 
