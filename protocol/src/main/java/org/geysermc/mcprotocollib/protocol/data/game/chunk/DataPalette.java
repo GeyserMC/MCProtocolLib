@@ -33,8 +33,8 @@ public class DataPalette {
         this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType, original.globalPaletteBitsPerEntry);
     }
 
-    public static DataPalette createForChunk(int initialState, int blockStateRegistrySize) {
-        return createEmpty(PaletteType.CHUNK, initialState, blockStateRegistrySize);
+    public static DataPalette createForBlockState(int initialState, int blockStateRegistrySize) {
+        return createEmpty(PaletteType.BLOCK_STATE, initialState, blockStateRegistrySize);
     }
 
     public static DataPalette createForBiome(int initialBiome, int biomeRegistrySize) {
