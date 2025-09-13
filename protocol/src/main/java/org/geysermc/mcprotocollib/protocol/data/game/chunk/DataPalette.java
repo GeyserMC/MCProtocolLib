@@ -1,10 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.chunk;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.ToString;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.GlobalPalette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.ListPalette;
@@ -14,71 +12,43 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPalette;
 
 @Getter
-@Setter
-@AllArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class DataPalette {
-
-    /*
-     * @deprecated globalPaletteBits is no longer in use.
-     */
-    @Deprecated(forRemoval = true)
-    public static final int GLOBAL_PALETTE_BITS_PER_ENTRY = 14;
+    private static final double LOG_2 = Math.log(2.0);
 
     private @NonNull Palette palette;
     private BitStorage storage;
     private final PaletteType paletteType;
+    private final int globalPaletteBitsPerEntry;
 
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #DataPalette(Palette, BitStorage, PaletteType)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public DataPalette(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int globalPaletteBits) {
-        this(palette, storage, paletteType);
+    private DataPalette(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int globalPaletteBitsPerEntry) {
+        this.palette = palette;
+        this.storage = storage;
+        this.paletteType = paletteType;
+        this.globalPaletteBitsPerEntry = globalPaletteBitsPerEntry;
     }
 
     public DataPalette(DataPalette original) {
-        this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType);
+        this(original.palette.copy(), original.storage == null ? null : new BitStorage(original.storage), original.paletteType, original.globalPaletteBitsPerEntry);
     }
 
-    public static DataPalette createForChunk() {
-        return createEmpty(PaletteType.CHUNK);
+    public static DataPalette createForChunk(int blockStateRegistrySize) {
+        return createEmpty(PaletteType.CHUNK, blockStateRegistrySize);
     }
 
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #createForChunk()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static DataPalette createForChunk(int globalPaletteBits) {
-        return createForChunk();
+    public static DataPalette createForBiome(int biomeRegistrySize) {
+        return createEmpty(PaletteType.BIOME, biomeRegistrySize);
     }
 
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #createForBiome()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static DataPalette createForBiome(int globalPaletteBits) {
-        return createForBiome();
+    public static DataPalette createEmpty(PaletteType paletteType, int registrySize) {
+        return create(new ListPalette(paletteType.getMinBitsPerEntry()),
+                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType, registrySize);
     }
 
-    public static DataPalette createForBiome() {
-        return createEmpty(PaletteType.BIOME);
+    public static DataPalette create(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int registrySize) {
+        return new DataPalette(palette, storage, paletteType, calculateBitsPerEntry(registrySize));
     }
-
-    public static DataPalette createEmpty(PaletteType paletteType) {
-        return new DataPalette(new ListPalette(paletteType.getMinBitsPerEntry()),
-                new BitStorage(paletteType.getMinBitsPerEntry(), paletteType.getStorageSize()), paletteType);
-    }
-
-    /*
-     * @deprecated globalPaletteBits is no longer in use, use {@link #createEmpty(PaletteType)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static DataPalette createEmpty(PaletteType paletteType, int globalPaletteBits) {
-        return createEmpty(paletteType);
-    }
-
 
     public int get(int x, int y, int z) {
         if (storage != null) {
@@ -115,7 +85,7 @@ public class DataPalette {
         if (bitsPerEntry <= this.paletteType.getMaxBitsPerEntry()) {
             return Math.max(this.paletteType.getMinBitsPerEntry(), bitsPerEntry);
         } else {
-            return GLOBAL_PALETTE_BITS_PER_ENTRY;
+            return globalPaletteBitsPerEntry;
         }
     }
 
@@ -148,5 +118,10 @@ public class DataPalette {
 
     private int index(int x, int y, int z) {
         return y << paletteType.getMaxBitsPerEntry() | z << paletteType.getMinBitsPerEntry() | x;
+    }
+
+    private static int calculateBitsPerEntry(int registrySize) {
+        // Mojmap uses Mth.ceillog2
+        return (int) Math.ceil(Math.log(registrySize) / LOG_2);
     }
 }

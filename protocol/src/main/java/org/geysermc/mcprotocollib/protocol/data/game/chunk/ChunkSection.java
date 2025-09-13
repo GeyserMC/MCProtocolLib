@@ -21,8 +21,8 @@ public class ChunkSection {
     @Getter
     private @NonNull DataPalette biomeData;
 
-    public ChunkSection() {
-        this(0, DataPalette.createForChunk(), DataPalette.createForBiome());
+    public ChunkSection(int blockStateRegistrySize, int biomeRegistrySize) {
+        this(0, DataPalette.createForChunk(blockStateRegistrySize), DataPalette.createForBiome(biomeRegistrySize));
     }
 
     public ChunkSection(ChunkSection original) {

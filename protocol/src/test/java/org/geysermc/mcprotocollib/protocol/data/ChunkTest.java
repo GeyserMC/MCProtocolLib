@@ -19,20 +19,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ChunkTest {
+    // Arbitrary registry size values
+    private static final int BLOCK_STATE_REGISTRY_SIZE = 1000;
+    private static final int BIOME_REGISTRY_SIZE = 100;
+
     private static final Logger log = LoggerFactory.getLogger(ChunkTest.class);
     private final List<ChunkSection> chunkSectionsToTest = new ArrayList<>();
 
     @BeforeEach
     public void setup() {
-        chunkSectionsToTest.add(new ChunkSection());
+        chunkSectionsToTest.add(new ChunkSection(BLOCK_STATE_REGISTRY_SIZE, BIOME_REGISTRY_SIZE));
 
-        ChunkSection section = new ChunkSection();
+        ChunkSection section = new ChunkSection(BLOCK_STATE_REGISTRY_SIZE, BIOME_REGISTRY_SIZE);
         section.setBlock(0, 0, 0, 10);
         chunkSectionsToTest.add(section);
 
         SingletonPalette singletonPalette = new SingletonPalette(20);
-        DataPalette dataPalette = new DataPalette(singletonPalette, null, PaletteType.CHUNK);
-        DataPalette biomePalette = new DataPalette(singletonPalette, null, PaletteType.BIOME);
+        DataPalette dataPalette = DataPalette.create(singletonPalette, null, PaletteType.CHUNK, BLOCK_STATE_REGISTRY_SIZE);
+        DataPalette biomePalette = DataPalette.create(singletonPalette, null, PaletteType.BIOME, BIOME_REGISTRY_SIZE);
         section = new ChunkSection(4096, dataPalette, biomePalette);
         chunkSectionsToTest.add(section);
     }
@@ -44,7 +48,7 @@ public class ChunkTest {
             MinecraftTypes.writeChunkSection(buf, section);
             ChunkSection decoded;
             try {
-                decoded = MinecraftTypes.readChunkSection(buf);
+                decoded = MinecraftTypes.readChunkSection(buf, BLOCK_STATE_REGISTRY_SIZE, BIOME_REGISTRY_SIZE);
             } catch (Exception e) {
                 log.error(section.toString(), e);
                 throw e;
