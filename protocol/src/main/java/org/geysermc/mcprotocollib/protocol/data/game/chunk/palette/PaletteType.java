@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum PaletteType {
     BIOME(1, 3, 64),
-    CHUNK(4, 8, 4096);
+    BLOCK_STATE(4, 8, 4096);
 
     private final int minBitsPerEntry;
     private final int maxBitsPerEntry;

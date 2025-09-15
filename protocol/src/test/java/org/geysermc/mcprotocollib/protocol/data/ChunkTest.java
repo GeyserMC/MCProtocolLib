@@ -19,21 +19,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ChunkTest {
+    // Arbitrary registry size values
+    private static final int BLOCK_STATE_REGISTRY_SIZE = 1000;
+    private static final int BIOME_REGISTRY_SIZE = 100;
+
     private static final Logger log = LoggerFactory.getLogger(ChunkTest.class);
     private final List<ChunkSection> chunkSectionsToTest = new ArrayList<>();
 
     @BeforeEach
     public void setup() {
-        chunkSectionsToTest.add(new ChunkSection());
+        chunkSectionsToTest.add(new ChunkSection(420, BLOCK_STATE_REGISTRY_SIZE, 42, BIOME_REGISTRY_SIZE));
 
-        ChunkSection section = new ChunkSection();
+        ChunkSection section = new ChunkSection(20, BLOCK_STATE_REGISTRY_SIZE, 35, BIOME_REGISTRY_SIZE);
         section.setBlock(0, 0, 0, 10);
         chunkSectionsToTest.add(section);
 
         SingletonPalette singletonPalette = new SingletonPalette(20);
-        DataPalette dataPalette = new DataPalette(singletonPalette, null, PaletteType.CHUNK);
-        DataPalette biomePalette = new DataPalette(singletonPalette, null, PaletteType.BIOME);
-        section = new ChunkSection(4096, dataPalette, biomePalette);
+        DataPalette blockPalette = DataPalette.create(singletonPalette, null, PaletteType.BLOCK_STATE, BLOCK_STATE_REGISTRY_SIZE);
+        DataPalette biomePalette = DataPalette.create(singletonPalette, null, PaletteType.BIOME, BIOME_REGISTRY_SIZE);
+        section = new ChunkSection(4096, blockPalette, biomePalette);
         chunkSectionsToTest.add(section);
     }
 
@@ -44,7 +48,7 @@ public class ChunkTest {
             MinecraftTypes.writeChunkSection(buf, section);
             ChunkSection decoded;
             try {
-                decoded = MinecraftTypes.readChunkSection(buf);
+                decoded = MinecraftTypes.readChunkSection(buf, BLOCK_STATE_REGISTRY_SIZE, BIOME_REGISTRY_SIZE);
             } catch (Exception e) {
                 log.error(section.toString(), e);
                 throw e;

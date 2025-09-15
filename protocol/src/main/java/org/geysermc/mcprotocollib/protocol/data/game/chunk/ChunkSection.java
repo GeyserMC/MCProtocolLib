@@ -17,24 +17,24 @@ public class ChunkSection {
     private static final int AIR = 0;
 
     private int blockCount;
-    private @NonNull DataPalette chunkData;
+    private @NonNull DataPalette blockData;
     @Getter
     private @NonNull DataPalette biomeData;
 
-    public ChunkSection() {
-        this(0, DataPalette.createForChunk(), DataPalette.createForBiome());
+    public ChunkSection(int initialBlockState, int blockStateRegistrySize, int initialBiome, int biomeRegistrySize) {
+        this(0, DataPalette.createForBlockState(initialBlockState, blockStateRegistrySize), DataPalette.createForBiome(initialBiome, biomeRegistrySize));
     }
 
     public ChunkSection(ChunkSection original) {
-        this(original.blockCount, new DataPalette(original.chunkData), new DataPalette(original.biomeData));
+        this(original.blockCount, new DataPalette(original.blockData), new DataPalette(original.biomeData));
     }
 
     public int getBlock(int x, int y, int z) {
-        return this.chunkData.get(x, y, z);
+        return this.blockData.get(x, y, z);
     }
 
     public void setBlock(int x, int y, int z, int state) {
-        int curr = this.chunkData.set(x, y, z, state);
+        int curr = this.blockData.set(x, y, z, state);
         if (state != AIR && curr == AIR) {
             this.blockCount++;
         } else if (state == AIR && curr != AIR) {

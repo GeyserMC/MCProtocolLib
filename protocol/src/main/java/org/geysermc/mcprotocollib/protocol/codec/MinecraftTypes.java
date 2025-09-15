@@ -1332,7 +1332,7 @@ public class MinecraftTypes {
         }
     }
 
-    public static DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType) {
+    public static DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int registrySize) {
         int bitsPerEntry = buf.readByte() & 0xFF;
         Palette palette = MinecraftTypes.readPalette(buf, paletteType, bitsPerEntry);
         BitStorage storage;
@@ -1343,15 +1343,7 @@ public class MinecraftTypes {
             MinecraftTypes.readFixedSizeLongArray(buf, storage.getData());
         }
 
-        return new DataPalette(palette, storage, paletteType);
-    }
-
-    /**
-     * @deprecated globalPaletteBits is no longer in use, use {@link #readDataPalette(ByteBuf, PaletteType)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int globalPaletteBits) {
-        return MinecraftTypes.readDataPalette(buf, paletteType);
+        return DataPalette.create(palette, storage, paletteType, registrySize);
     }
 
     public static void writeDataPalette(ByteBuf buf, DataPalette palette) {
@@ -1388,25 +1380,17 @@ public class MinecraftTypes {
         }
     }
 
-    public static ChunkSection readChunkSection(ByteBuf buf) {
+    public static ChunkSection readChunkSection(ByteBuf buf, int blockStateRegistrySize, int biomeRegistrySize) {
         int blockCount = buf.readShort();
 
-        DataPalette chunkPalette = MinecraftTypes.readDataPalette(buf, PaletteType.CHUNK);
-        DataPalette biomePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BIOME);
-        return new ChunkSection(blockCount, chunkPalette, biomePalette);
-    }
-
-    /**
-     * @deprecated globalBiomePaletteBits is no longer in use, use {@link #readChunkSection(ByteBuf)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static ChunkSection readChunkSection(ByteBuf buf, int globalBiomePaletteBits) {
-        return MinecraftTypes.readChunkSection(buf);
+        DataPalette blockStatePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BLOCK_STATE, blockStateRegistrySize);
+        DataPalette biomePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BIOME, biomeRegistrySize);
+        return new ChunkSection(blockCount, blockStatePalette, biomePalette);
     }
 
     public static void writeChunkSection(ByteBuf buf, ChunkSection section) {
         buf.writeShort(section.getBlockCount());
-        MinecraftTypes.writeDataPalette(buf, section.getChunkData());
+        MinecraftTypes.writeDataPalette(buf, section.getBlockData());
         MinecraftTypes.writeDataPalette(buf, section.getBiomeData());
     }
 
