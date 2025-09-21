@@ -62,6 +62,8 @@ public class MetadataTypes {
     public static final MetadataType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectEntityMetadata::new));
     public static final MetadataType<SnifferState> SNIFFER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readSnifferState, MinecraftTypes::writeSnifferState, ObjectEntityMetadata::new));
     public static final MetadataType<ArmadilloState> ARMADILLO_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readArmadilloState, MinecraftTypes::writeArmadilloState, ObjectEntityMetadata::new));
+    public static final MetadataType<CopperGolemState> COPPER_GOLEM_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readCopperGolemState, MinecraftTypes::writeCopperGolemState, ObjectEntityMetadata::new));
+    public static final MetadataType<WeatheringCopperState> WEATHERING_COPPER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readWeatheringCopperState, MinecraftTypes::writeWeatheringCopperState, ObjectEntityMetadata::new));
     public static final MetadataType<Vector3f> VECTOR3 = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
     public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
 

@@ -41,6 +41,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EntityEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloState;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.CopperGolemState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
@@ -49,6 +50,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVar
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.WeatheringCopperState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
@@ -779,6 +781,22 @@ public class MinecraftTypes {
     }
 
     public static void writeArmadilloState(ByteBuf buf, ArmadilloState state) {
+        MinecraftTypes.writeEnum(buf, state);
+    }
+
+    public static CopperGolemState readCopperGolemState(ByteBuf buf) {
+        return CopperGolemState.from(MinecraftTypes.readVarInt(buf));
+    }
+
+    public static void writeCopperGolemState(ByteBuf buf, CopperGolemState state) {
+        MinecraftTypes.writeEnum(buf, state);
+    }
+
+    public static WeatheringCopperState readWeatheringCopperState(ByteBuf buf) {
+        return WeatheringCopperState.from(MinecraftTypes.readVarInt(buf));
+    }
+
+    public static void writeWeatheringCopperState(ByteBuf buf, WeatheringCopperState state) {
         MinecraftTypes.writeEnum(buf, state);
     }
 

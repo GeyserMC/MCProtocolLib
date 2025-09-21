@@ -13,6 +13,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
 import java.util.ArrayList;
@@ -505,6 +507,31 @@ public class ItemTypes {
         MinecraftTypes.writeResourceLocation(buf, pattern.assetId());
         MinecraftTypes.writeComponent(buf, pattern.description());
         buf.writeBoolean(pattern.decal());
+    }
+
+    public static <T extends Enum<?>> TypedEntityData<T> readTypedEntityData(ByteBuf buf, Function<ByteBuf, T> reader) {
+        return new TypedEntityData<>(reader.apply(buf), MinecraftTypes.readCompoundTag(buf));
+    }
+
+    public static <T> void writeTypedEntityData(ByteBuf buf, TypedEntityData<T> typedEntityData, BiConsumer<ByteBuf, T> writer) {
+        writer.accept(buf, typedEntityData.type());
+        MinecraftTypes.writeAnyTag(buf, typedEntityData.tag());
+    }
+
+    public static EntityType readEntityType(ByteBuf buf) {
+        return EntityType.from(MinecraftTypes.readVarInt(buf));
+    }
+
+    public static void writeEntityType(ByteBuf buf, EntityType state) {
+        MinecraftTypes.writeVarInt(buf, state.ordinal());
+    }
+
+    public static BlockEntityType readBlockEntityType(ByteBuf buf) {
+        return BlockEntityType.from(MinecraftTypes.readVarInt(buf));
+    }
+
+    public static void writeBlockEntityType(ByteBuf buf, BlockEntityType state) {
+        MinecraftTypes.writeVarInt(buf, state.ordinal());
     }
 
     public static InstrumentComponent readInstrumentComponent(ByteBuf buf) {

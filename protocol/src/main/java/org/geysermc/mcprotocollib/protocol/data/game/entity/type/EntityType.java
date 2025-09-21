@@ -30,6 +30,7 @@ public enum EntityType {
     CHEST_MINECART,
     CHICKEN,
     COD,
+    COPPER_GOLEM,
     COMMAND_BLOCK_MINECART,
     COW,
     CREAKING,
