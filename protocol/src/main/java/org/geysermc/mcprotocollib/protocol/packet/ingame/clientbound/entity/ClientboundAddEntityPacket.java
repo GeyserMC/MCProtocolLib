@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.With;
+import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
@@ -31,27 +32,25 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     private final double x;
     private final double y;
     private final double z;
+    private final Vector3d movement;
     private final float yaw;
     private final float headYaw;
     private final float pitch;
-    private final double motionX;
-    private final double motionY;
-    private final double motionZ;
 
     public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
                                       double x, double y, double z, float yaw, float pitch, float headYaw) {
-        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, 0, 0, 0);
+        this(entityId, uuid, type, EMPTY_DATA, x, y, z, Vector3d.ZERO, yaw, headYaw, pitch);
     }
 
     public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type, @NonNull ObjectData data,
                                       double x, double y, double z, float yaw, float pitch, float headYaw) {
-        this(entityId, uuid, type, data, x, y, z, yaw, headYaw, pitch, 0, 0, 0);
+        this(entityId, uuid, type, data, x, y, z, Vector3d.ZERO, yaw, headYaw, pitch);
     }
 
     public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
-                                      double x, double y, double z, float yaw, float pitch,
-                                      float headYaw, double motionX, double motionY, double motionZ) {
-        this(entityId, uuid, type, EMPTY_DATA, x, y, z, yaw, headYaw, pitch, motionX, motionY, motionZ);
+                                      double x, double y, double z, Vector3d movement, float yaw,
+                                      float pitch, float headYaw) {
+        this(entityId, uuid, type, EMPTY_DATA, x, y, z, movement, yaw, headYaw, pitch);
     }
 
     public ClientboundAddEntityPacket(ByteBuf in) {
@@ -61,6 +60,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         this.x = in.readDouble();
         this.y = in.readDouble();
         this.z = in.readDouble();
+        this.movement = MinecraftTypes.readLpVec3(in);
         this.pitch = in.readByte() * 360 / 256f;
         this.yaw = in.readByte() * 360 / 256f;
         this.headYaw = in.readByte() * 360 / 256f;
@@ -83,10 +83,6 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
                 this.data = new GenericObjectData(data);
             }
         }
-
-        this.motionX = in.readShort() / 8000D;
-        this.motionY = in.readShort() / 8000D;
-        this.motionZ = in.readShort() / 8000D;
     }
 
     @Override
@@ -97,6 +93,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);
+        MinecraftTypes.writeLpVec3(out, this.movement);
         out.writeByte((byte) (this.pitch * 256 / 360));
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.headYaw * 256 / 360));
@@ -115,10 +112,6 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         }
 
         MinecraftTypes.writeVarInt(out, data);
-
-        out.writeShort((int) (this.motionX * 8000));
-        out.writeShort((int) (this.motionY * 8000));
-        out.writeShort((int) (this.motionZ * 8000));
     }
 
     @Override

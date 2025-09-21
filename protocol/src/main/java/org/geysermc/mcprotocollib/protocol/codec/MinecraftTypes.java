@@ -669,6 +669,50 @@ public class MinecraftTypes {
         MinecraftTypes.writeVarInt(buf, vec.getZ());
     }
 
+    public static Vector3d readLpVec3(ByteBuf buf) {
+        int first = buf.readUnsignedByte();
+        if (first == 0) {
+            return Vector3d.ZERO;
+        }
+
+        int second = buf.readUnsignedByte();
+        long third = buf.readUnsignedInt();
+        long packed = third << 16 | second << 8 | first;
+        double encodedX = packed >> 3 & Short.MAX_VALUE;
+        double encodedY = packed >> 18 & Short.MAX_VALUE;
+        double encodedZ = packed >> 33 & Short.MAX_VALUE;
+        int k = first & 3;
+        if ((first & 4) == 4) {
+            k |= MinecraftTypes.readVarInt(buf) << 2;
+        }
+
+        return Vector3d.from((encodedX / 16383.0 - 1.0) * k, (encodedY / 16383.0 - 1.0) * k, (encodedZ / 16383.0 - 1.0) * k);
+    }
+
+    public static void writeLpVec3(ByteBuf buf, Vector3d vec) {
+        double maxVal = Math.max(Math.abs(vec.getX()), Math.max(Math.abs(vec.getY()), Math.abs(vec.getZ())));
+        if (maxVal < 1.0E-5F) {
+            buf.writeByte(0);
+            return;
+        }
+
+        int scale = (int) Math.ceil(maxVal);
+        double quantizationFactor = 0.5 / scale;
+        long encodedX = (long)((vec.getX() * quantizationFactor + 0.5) * 32767.0);
+        long encodedY = (long)((vec.getY() * quantizationFactor + 0.5) * 32767.0);
+        long encodedZ = (long)((vec.getZ() * quantizationFactor + 0.5) * 32767.0);
+
+        boolean scaleTooLargeForBits = (scale & 3) != scale;
+        int scaleBits = scaleTooLargeForBits ? scale & 3 | 4 : scale;
+        long packed = scaleBits | encodedX << 3 | encodedY << 18 | encodedZ << 33;
+        buf.writeByte((byte)packed);
+        buf.writeByte((byte)(packed >> 8));
+        buf.writeInt((int)(packed >> 16));
+        if (scaleTooLargeForBits) {
+            MinecraftTypes.writeVarInt(buf, scale >> 2);
+        }
+    }
+
     public static Vector3i readPosition(ByteBuf buf) {
         long val = buf.readLong();
 
