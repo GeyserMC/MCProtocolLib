@@ -1346,6 +1346,7 @@ public enum BuiltinSound implements Sound {
     BLOCK_SHELF_PLACE_ITEM("block.shelf.place_item"),
     BLOCK_SHELF_SINGLE_SWAP("block.shelf.single_swap"),
     BLOCK_SHELF_STEP("block.shelf.step"),
+    SHELF_TAKE_ITEM("block.shelf.take_item"),
     ITEM_SHIELD_BLOCK("item.shield.block"),
     ITEM_SHIELD_BREAK("item.shield.break"),
     BLOCK_SHROOMLIGHT_BREAK("block.shroomlight.break"),
