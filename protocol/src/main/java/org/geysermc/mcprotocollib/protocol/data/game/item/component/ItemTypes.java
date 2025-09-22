@@ -697,22 +697,19 @@ public class ItemTypes {
         buf.writeBoolean(explosion.isHasTwinkle());
     }
 
-    public static GameProfile readResolvableProfile(ByteBuf buf) {
-        String name = MinecraftTypes.readNullable(buf, MinecraftTypes::readString);
-        UUID id = MinecraftTypes.readNullable(buf, MinecraftTypes::readUUID);
-        GameProfile profile = new GameProfile(id, name);
-
-        List<GameProfile.Property> properties = MinecraftTypes.readList(buf, MinecraftTypes::readProperty);
-        profile.setProperties(properties);
-
-        return profile;
+    public static ResolvableProfile readResolvableProfile(ByteBuf buf) {
+        return buf.readBoolean()
+            ? new ResolvableProfile(MinecraftTypes.readStaticGameProfile(buf), false)
+            : new ResolvableProfile(MinecraftTypes.readDynamicGameProfile(buf), true);
     }
 
-    public static void writeResolvableProfile(ByteBuf buf, GameProfile profile) {
-        MinecraftTypes.writeNullable(buf, profile.getName(), MinecraftTypes::writeString);
-        MinecraftTypes.writeNullable(buf, profile.getId(), MinecraftTypes::writeUUID);
-
-        MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
+    public static void writeResolvableProfile(ByteBuf buf, ResolvableProfile profile) {
+        buf.writeBoolean(!profile.isDynamic());
+        if (!profile.isDynamic()) {
+            MinecraftTypes.writeStaticGameProfile(buf, profile.getProfile());
+        } else {
+            MinecraftTypes.writeDynamicGameProfile(buf, profile.getProfile());
+        }
     }
 
     public static BannerPatternLayer readBannerPatternLayer(ByteBuf buf) {

@@ -678,39 +678,59 @@ public class MinecraftTypes {
         int second = buf.readUnsignedByte();
         long third = buf.readUnsignedInt();
         long packed = third << 16 | second << 8 | first;
-        double encodedX = packed >> 3 & Short.MAX_VALUE;
-        double encodedY = packed >> 18 & Short.MAX_VALUE;
-        double encodedZ = packed >> 33 & Short.MAX_VALUE;
-        int k = first & 3;
+        long magicMultiplier = first & 3;
         if ((first & 4) == 4) {
-            k |= MinecraftTypes.readVarInt(buf) << 2;
+            magicMultiplier |= (MinecraftTypes.readVarInt(buf) & 0xFFFFFFFFL) << 2;
         }
 
-        return Vector3d.from((encodedX / 16383.0 - 1.0) * k, (encodedY / 16383.0 - 1.0) * k, (encodedZ / 16383.0 - 1.0) * k);
+        return Vector3d.from(
+            unpackLpVec3Component(packed >> 3) * magicMultiplier,
+            unpackLpVec3Component(packed >> 18) * magicMultiplier,
+            unpackLpVec3Component(packed >> 33) * magicMultiplier
+        );
+    }
+
+    private static double unpackLpVec3Component(long packed) {
+        return Math.min(packed & 32767L, 32766.0) * 2.0 / 32766.0 - 1.0;
     }
 
     public static void writeLpVec3(ByteBuf buf, Vector3d vec) {
-        double maxVal = Math.max(Math.abs(vec.getX()), Math.max(Math.abs(vec.getY()), Math.abs(vec.getZ())));
-        if (maxVal < 1.0E-5F) {
+        double sanitizedX = sanitizeLpVec3Component(vec.getX());
+        double sanitizedY = sanitizeLpVec3Component(vec.getY());
+        double sanitizedZ = sanitizeLpVec3Component(vec.getZ());
+        double maxVal = Math.max(Math.abs(sanitizedX), Math.max(Math.abs(sanitizedY), Math.abs(sanitizedZ)));
+        if (maxVal < 3.051944088384301E-5) {
             buf.writeByte(0);
             return;
         }
-
-        int scale = (int) Math.ceil(maxVal);
-        double quantizationFactor = 0.5 / scale;
-        long encodedX = (long)((vec.getX() * quantizationFactor + 0.5) * 32767.0);
-        long encodedY = (long)((vec.getY() * quantizationFactor + 0.5) * 32767.0);
-        long encodedZ = (long)((vec.getZ() * quantizationFactor + 0.5) * 32767.0);
-
-        boolean scaleTooLargeForBits = (scale & 3) != scale;
-        int scaleBits = scaleTooLargeForBits ? scale & 3 | 4 : scale;
-        long packed = scaleBits | encodedX << 3 | encodedY << 18 | encodedZ << 33;
-        buf.writeByte((byte)packed);
-        buf.writeByte((byte)(packed >> 8));
-        buf.writeInt((int)(packed >> 16));
+        long scale = (long) Math.ceil(maxVal);
+        boolean scaleTooLargeForBits = (scale & 3L) != scale;
+        long scaleBits = scaleTooLargeForBits ? scale & 3L | 4L : scale;
+        long encodedX = packLpVec3Component(sanitizedX / scale) << 3;
+        long encodedY = packLpVec3Component(sanitizedY / scale) << 18;
+        long encodedZ = packLpVec3Component(sanitizedZ / scale) << 33;
+        long packed = scaleBits | encodedX | encodedY | encodedZ;
+        buf.writeByte((byte) packed);
+        buf.writeByte((byte) (packed >> 8));
+        buf.writeInt((int) (packed >> 16));
         if (scaleTooLargeForBits) {
-            MinecraftTypes.writeVarInt(buf, scale >> 2);
+            MinecraftTypes.writeVarInt(buf, (int) (scale >> 2));
         }
+    }
+
+    private static double sanitizeLpVec3Component(double d) {
+        if (Double.isNaN(d)) {
+            return 0.0;
+        } else if (d < -1.7179869183E10) {
+            return -1.7179869183E10;
+        } else if (d > 1.7179869183E10) {
+            return 1.7179869183E10;
+        }
+        return d;
+    }
+
+    private static long packLpVec3Component(double d) {
+        return Math.round((d * 0.5 + 0.5) * 32766.0);
     }
 
     public static Vector3i readPosition(ByteBuf buf) {
@@ -1492,6 +1512,36 @@ public class MinecraftTypes {
             byte[] bytes = bitSet.toByteArray();
             buf.writeBytes(Arrays.copyOf(bytes, -Math.floorDiv(-length, 8)));
         }
+    }
+
+    public static GameProfile readStaticGameProfile(ByteBuf buf) {
+        GameProfile profile = new GameProfile(MinecraftTypes.readUUID(buf), MinecraftTypes.readString(buf));
+        profile.setProperties(MinecraftTypes.readList(buf, MinecraftTypes::readProperty));
+        return profile;
+    }
+
+    public static void writeStaticGameProfile(ByteBuf buf, GameProfile profile) {
+        MinecraftTypes.writeUUID(buf, profile.getId());
+        MinecraftTypes.writeString(buf, profile.getName());
+        MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
+    }
+
+    public static GameProfile readDynamicGameProfile(ByteBuf buf) {
+        String name = MinecraftTypes.readNullable(buf, MinecraftTypes::readString);
+        UUID id = MinecraftTypes.readNullable(buf, MinecraftTypes::readUUID);
+        GameProfile profile = new GameProfile(id, name);
+
+        List<GameProfile.Property> properties = MinecraftTypes.readList(buf, MinecraftTypes::readProperty);
+        profile.setProperties(properties);
+
+        return profile;
+    }
+
+    public static void writeDynamicGameProfile(ByteBuf buf, GameProfile profile) {
+        MinecraftTypes.writeNullable(buf, profile.getName(), MinecraftTypes::writeString);
+        MinecraftTypes.writeNullable(buf, profile.getId(), MinecraftTypes::writeUUID);
+
+        MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
     }
 
     public static GameProfile.Property readProperty(ByteBuf buf) {

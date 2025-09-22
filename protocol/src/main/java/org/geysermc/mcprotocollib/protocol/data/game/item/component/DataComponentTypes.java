@@ -7,7 +7,6 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
-import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
@@ -87,7 +86,7 @@ public class DataComponentTypes {
     public static final DataComponentType<LodestoneTracker> LODESTONE_TRACKER = register(id -> new DataComponentType<>(id, "lodestone_tracker", ItemTypes::readLodestoneTarget, ItemTypes::writeLodestoneTarget, ObjectDataComponent::new));
     public static final DataComponentType<Fireworks.FireworkExplosion> FIREWORK_EXPLOSION = register(id -> new DataComponentType<>(id, "firework_explosion", ItemTypes::readFireworkExplosion, ItemTypes::writeFireworkExplosion, ObjectDataComponent::new));
     public static final DataComponentType<Fireworks> FIREWORKS = register(id -> new DataComponentType<>(id, "fireworks", ItemTypes::readFireworks, ItemTypes::writeFireworks, ObjectDataComponent::new));
-    public static final DataComponentType<GameProfile> PROFILE = register(id -> new DataComponentType<>(id, "profile", ItemTypes::readResolvableProfile, ItemTypes::writeResolvableProfile, ObjectDataComponent::new));
+    public static final DataComponentType<ResolvableProfile> PROFILE = register(id -> new DataComponentType<>(id, "profile", ItemTypes::readResolvableProfile, ItemTypes::writeResolvableProfile, ObjectDataComponent::new));
     public static final DataComponentType<Key> NOTE_BLOCK_SOUND = register(id -> new DataComponentType<>(id, "note_block_sound", MinecraftTypes::readResourceLocation, MinecraftTypes::writeResourceLocation, ObjectDataComponent::new));
     public static final DataComponentType<List<BannerPatternLayer>> BANNER_PATTERNS = register(id -> new DataComponentType<>(id, "banner_patterns", listReader(ItemTypes::readBannerPatternLayer), listWriter(ItemTypes::writeBannerPatternLayer), ObjectDataComponent::new));
     public static final IntComponentType BASE_COLOR = register(id -> new IntComponentType(id, "base_color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
