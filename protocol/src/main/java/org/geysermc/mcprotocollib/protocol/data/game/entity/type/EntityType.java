@@ -85,6 +85,7 @@ public enum EntityType {
     MAGMA_CUBE,
     MANGROVE_BOAT,
     MANGROVE_CHEST_BOAT,
+    MANNEQUIN,
     MARKER,
     MINECART,
     MOOSHROOM,

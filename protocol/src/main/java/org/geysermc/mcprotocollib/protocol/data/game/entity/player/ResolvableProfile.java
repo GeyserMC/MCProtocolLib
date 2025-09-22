@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.protocol.data.game.item.component;
+package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

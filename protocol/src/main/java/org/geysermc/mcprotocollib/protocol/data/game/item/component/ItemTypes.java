@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
-import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -695,21 +693,6 @@ public class ItemTypes {
 
         buf.writeBoolean(explosion.isHasTrail());
         buf.writeBoolean(explosion.isHasTwinkle());
-    }
-
-    public static ResolvableProfile readResolvableProfile(ByteBuf buf) {
-        return buf.readBoolean()
-            ? new ResolvableProfile(MinecraftTypes.readStaticGameProfile(buf), false)
-            : new ResolvableProfile(MinecraftTypes.readDynamicGameProfile(buf), true);
-    }
-
-    public static void writeResolvableProfile(ByteBuf buf, ResolvableProfile profile) {
-        buf.writeBoolean(!profile.isDynamic());
-        if (!profile.isDynamic()) {
-            MinecraftTypes.writeStaticGameProfile(buf, profile.getProfile());
-        } else {
-            MinecraftTypes.writeDynamicGameProfile(buf, profile.getProfile());
-        }
     }
 
     public static BannerPatternLayer readBannerPatternLayer(ByteBuf buf) {

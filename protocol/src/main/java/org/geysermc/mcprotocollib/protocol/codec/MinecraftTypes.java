@@ -44,6 +44,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.CopperGolemState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MannequinProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
@@ -55,6 +56,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.ResolvableProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
 import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
@@ -78,8 +80,10 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ItemParticle
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.PowerParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.SculkChargeParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ShriekParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.SpellParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.TrailParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.VibrationParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.BlockPositionSource;
@@ -985,6 +989,7 @@ public class MinecraftTypes {
     public static ParticleData readParticleData(ByteBuf buf, ParticleType type) {
         return switch (type) {
             case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR, BLOCK_CRUMBLE -> new BlockParticleData(MinecraftTypes.readVarInt(buf));
+            case DRAGON_BREATH -> new PowerParticleData(buf.readFloat());
             case DUST -> {
                 int color = buf.readInt();
                 float scale = buf.readFloat();
@@ -996,7 +1001,12 @@ public class MinecraftTypes {
                 float scale = buf.readFloat();
                 yield new DustColorTransitionParticleData(color, scale, newColor);
             }
-            case ENTITY_EFFECT, TINTED_LEAVES -> new ColorParticleData(buf.readInt());
+            case EFFECT, INSTANT_EFFECT -> {
+                int color = buf.readInt();
+                float power = buf.readFloat();
+                yield new SpellParticleData(color, power);
+            }
+            case ENTITY_EFFECT, TINTED_LEAVES, FLASH -> new ColorParticleData(buf.readInt());
             case ITEM -> new ItemParticleData(MinecraftTypes.readItemStack(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(MinecraftTypes.readVarInt(buf));
@@ -1542,6 +1552,51 @@ public class MinecraftTypes {
         MinecraftTypes.writeNullable(buf, profile.getId(), MinecraftTypes::writeUUID);
 
         MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
+    }
+
+    public static ResolvableProfile readResolvableProfile(ByteBuf buf) {
+        return buf.readBoolean()
+            ? new ResolvableProfile(MinecraftTypes.readStaticGameProfile(buf), false)
+            : new ResolvableProfile(MinecraftTypes.readDynamicGameProfile(buf), true);
+    }
+
+    public static void writeResolvableProfile(ByteBuf buf, ResolvableProfile profile) {
+        buf.writeBoolean(!profile.isDynamic());
+        if (!profile.isDynamic()) {
+            MinecraftTypes.writeStaticGameProfile(buf, profile.getProfile());
+        } else {
+            MinecraftTypes.writeDynamicGameProfile(buf, profile.getProfile());
+        }
+    }
+
+    public static MannequinProfile.CustomProfile readCustomProfile(ByteBuf buf) {
+        Key texture = MinecraftTypes.readResourceLocation(buf);
+        Key capeTexture = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        Key elytraTexture = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        GameProfile.TextureModel model = buf.readBoolean() ? GameProfile.TextureModel.SLIM : GameProfile.TextureModel.WIDE;
+        return new MannequinProfile.CustomProfile(texture, capeTexture, elytraTexture, model);
+    }
+
+    public static void writeCustomProfile(ByteBuf buf, MannequinProfile.CustomProfile profile) {
+        MinecraftTypes.writeResourceLocation(buf, profile.getTexture());
+        MinecraftTypes.writeNullable(buf, profile.getCapeTexture(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, profile.getElytraTexture(), MinecraftTypes::writeResourceLocation);
+        buf.writeBoolean(profile.getModel() == GameProfile.TextureModel.SLIM);
+    }
+
+    public static MannequinProfile readMannequinProfile(ByteBuf buf) {
+        return buf.readBoolean()
+            ? new MannequinProfile(MinecraftTypes.readCustomProfile(buf), null)
+            : new MannequinProfile(null, MinecraftTypes.readResolvableProfile(buf));
+    }
+
+    public static void writeMannequinProfile(ByteBuf buf, MannequinProfile profile) {
+        buf.writeBoolean(profile.getCustomProfile() != null);
+        if (profile.getCustomProfile() != null) {
+            MinecraftTypes.writeCustomProfile(buf, profile.getCustomProfile());
+        } else {
+            MinecraftTypes.writeResolvableProfile(buf, profile.getProfile());
+        }
     }
 
     public static GameProfile.Property readProperty(ByteBuf buf) {

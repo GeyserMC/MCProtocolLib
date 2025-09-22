@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
@@ -45,7 +44,6 @@ public class MetadataTypes {
     public static final MetadataType<Optional<UUID>> OPTIONAL_LIVING_ENTITY_REFERENCE = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readUUID), optionalWriter(MinecraftTypes::writeUUID), ObjectEntityMetadata::new));
     public static final IntMetadataType BLOCK_STATE = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType OPTIONAL_BLOCK_STATE = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
-    public static final MetadataType<NbtMap> COMPOUND_TAG = register(id -> new MetadataType<>(id, MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectEntityMetadata::new));
     public static final MetadataType<Particle> PARTICLE = register(id -> new MetadataType<>(id, MinecraftTypes::readParticle, MinecraftTypes::writeParticle, ObjectEntityMetadata::new));
     public static final MetadataType<List<Particle>> PARTICLES = register(id -> new MetadataType<>(id, listReader(MinecraftTypes::readParticle), listWriter(MinecraftTypes::writeParticle), ObjectEntityMetadata::new));
     public static final MetadataType<VillagerData> VILLAGER_DATA = register(id -> new MetadataType<>(id, MinecraftTypes::readVillagerData, MinecraftTypes::writeVillagerData, ObjectEntityMetadata::new));
@@ -66,6 +64,7 @@ public class MetadataTypes {
     public static final MetadataType<WeatheringCopperState> WEATHERING_COPPER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readWeatheringCopperState, MinecraftTypes::writeWeatheringCopperState, ObjectEntityMetadata::new));
     public static final MetadataType<Vector3f> VECTOR3 = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
     public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
+    public static final MetadataType<MannequinProfile> MANNEQUIN_PROFILE = register(id -> new MetadataType<>(id, MinecraftTypes::readMannequinProfile, MinecraftTypes::writeMannequinProfile, ObjectEntityMetadata::new));
 
     public static <T extends MetadataType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());
