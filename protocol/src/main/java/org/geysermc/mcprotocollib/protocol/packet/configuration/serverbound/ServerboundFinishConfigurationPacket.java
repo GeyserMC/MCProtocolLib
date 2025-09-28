@@ -12,7 +12,7 @@ public class ServerboundFinishConfigurationPacket implements MinecraftPacket {
     public ServerboundFinishConfigurationPacket(ByteBuf in) {
     }
 
-    public void serialize(ByteBuf buf) {
+    public void serialize(ByteBuf out) {
     }
 
     @Override

@@ -42,13 +42,13 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int PISTON = 138;
     private static final int MOB_SPAWNER = 197;
     private static final int CHEST = 200;
-    private static final int ENDER_CHEST = 381;
-    private static final int TRAPPED_CHEST = 450;
-    private static final int END_GATEWAY = 647;
-    private static final int SHULKER_BOX_LOWER = 657;
-    private static final int SHULKER_BOX_HIGHER = 673;
-    private static final int BELL = 828;
-    private static final int DECORATED_POT = 1127;
+    private static final int ENDER_CHEST = 399;
+    private static final int TRAPPED_CHEST = 468;
+    private static final int END_GATEWAY = 665;
+    private static final int SHULKER_BOX_LOWER = 675;
+    private static final int SHULKER_BOX_HIGHER = 691;
+    private static final int BELL = 846;
+    private static final int DECORATED_POT = 1153;
     private static final Logger log = LoggerFactory.getLogger(ClientboundBlockEventPacket.class);
 
     private final @NonNull Vector3i position;

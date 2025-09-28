@@ -8,7 +8,7 @@ public class ServerboundAcceptCodeOfConductPacket implements MinecraftPacket {
     public ServerboundAcceptCodeOfConductPacket(ByteBuf in) {}
 
     @Override
-    public void serialize(ByteBuf buf) {}
+    public void serialize(ByteBuf out) {}
 
     @Override
     public boolean shouldRunOnGameThread() {

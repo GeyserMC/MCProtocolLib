@@ -39,10 +39,11 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundCommandsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundCooldownPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundCustomChatCompletionsPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDebugSamplePacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.debug.ClientboundDebugSamplePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDeleteChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDisguisedChatPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundGameTestHighlightPosPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
@@ -65,6 +66,10 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundTickingStepPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundUpdateAdvancementsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundUpdateRecipesPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.debug.ClientboundDebugBlockValuePacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.debug.ClientboundDebugChunkValuePacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.debug.ClientboundDebugEntityValuePacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.debug.ClientboundDebugEventPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundAddEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundAnimatePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundDamageEventPacket;
@@ -162,7 +167,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.Serverbound
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundClientTickEndPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundCommandSuggestionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundConfigurationAcknowledgedPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundDebugSampleSubscriptionPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundDebugSubscriptionRequestPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundLockDifficultyPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.ServerboundPlayerLoadedPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory.ServerboundContainerButtonClickPacket;
@@ -226,8 +231,8 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 267)
-            .minecraftVersion("25w36b")
+            .protocolVersion((1 << 30) | 268)
+            .minecraftVersion("25w37a")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -306,6 +311,10 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundCustomChatCompletionsPacket.class, ClientboundCustomChatCompletionsPacket::new)
                     .registerClientboundPacket(ClientboundCustomPayloadPacket.class, ClientboundCustomPayloadPacket::new)
                     .registerClientboundPacket(ClientboundDamageEventPacket.class, ClientboundDamageEventPacket::new)
+                    .registerClientboundPacket(ClientboundDebugBlockValuePacket.class, ClientboundDebugBlockValuePacket::new)
+                    .registerClientboundPacket(ClientboundDebugChunkValuePacket.class, ClientboundDebugChunkValuePacket::new)
+                    .registerClientboundPacket(ClientboundDebugEntityValuePacket.class, ClientboundDebugEntityValuePacket::new)
+                    .registerClientboundPacket(ClientboundDebugEventPacket.class, ClientboundDebugEventPacket::new)
                     .registerClientboundPacket(ClientboundDebugSamplePacket.class, ClientboundDebugSamplePacket::new)
                     .registerClientboundPacket(ClientboundDeleteChatPacket.class, ClientboundDeleteChatPacket::new)
                     .registerClientboundPacket(ClientboundDisconnectPacket.class, ClientboundDisconnectPacket::new)
@@ -315,6 +324,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundExplodePacket.class, ClientboundExplodePacket::new)
                     .registerClientboundPacket(ClientboundForgetLevelChunkPacket.class, ClientboundForgetLevelChunkPacket::new)
                     .registerClientboundPacket(ClientboundGameEventPacket.class, ClientboundGameEventPacket::new)
+                    .registerClientboundPacket(ClientboundGameTestHighlightPosPacket.class, ClientboundGameTestHighlightPosPacket::new)
                     .registerClientboundPacket(ClientboundHorseScreenOpenPacket.class, ClientboundHorseScreenOpenPacket::new)
                     .registerClientboundPacket(ClientboundHurtAnimationPacket.class, ClientboundHurtAnimationPacket::new)
                     .registerClientboundPacket(ClientboundInitializeBorderPacket.class, ClientboundInitializeBorderPacket::new)
@@ -436,7 +446,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundContainerSlotStateChangedPacket.class, ServerboundContainerSlotStateChangedPacket::new)
                     .registerServerboundPacket(ServerboundCookieResponsePacket.class, ServerboundCookieResponsePacket::new)
                     .registerServerboundPacket(ServerboundCustomPayloadPacket.class, ServerboundCustomPayloadPacket::new)
-                    .registerServerboundPacket(ServerboundDebugSampleSubscriptionPacket.class, ServerboundDebugSampleSubscriptionPacket::new)
+                    .registerServerboundPacket(ServerboundDebugSubscriptionRequestPacket.class, ServerboundDebugSubscriptionRequestPacket::new)
                     .registerServerboundPacket(ServerboundEditBookPacket.class, ServerboundEditBookPacket::new)
                     .registerServerboundPacket(ServerboundEntityTagQuery.class, ServerboundEntityTagQuery::new)
                     .registerServerboundPacket(ServerboundInteractPacket.class, ServerboundInteractPacket::new)
