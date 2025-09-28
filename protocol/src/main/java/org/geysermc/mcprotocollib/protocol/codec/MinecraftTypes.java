@@ -44,7 +44,6 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.CopperGolemState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
-import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MannequinProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
@@ -1837,9 +1836,15 @@ public class MinecraftTypes {
     }
 
     public static ResolvableProfile readResolvableProfile(ByteBuf buf) {
-        return buf.readBoolean()
-            ? new ResolvableProfile(MinecraftTypes.readStaticGameProfile(buf), false)
-            : new ResolvableProfile(MinecraftTypes.readDynamicGameProfile(buf), true);
+        boolean dynamic = !buf.readBoolean();
+        GameProfile profile = dynamic ? MinecraftTypes.readDynamicGameProfile(buf) : MinecraftTypes.readStaticGameProfile(buf);
+        Key body = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        Key cape = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        Key elytra = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        GameProfile.TextureModel model = MinecraftTypes.readNullable(buf, in -> {
+            return in.readBoolean() ? GameProfile.TextureModel.SLIM : GameProfile.TextureModel.WIDE;
+        });
+        return new ResolvableProfile(profile, body, cape, elytra, model, dynamic);
     }
 
     public static void writeResolvableProfile(ByteBuf buf, ResolvableProfile profile) {
@@ -1849,36 +1854,11 @@ public class MinecraftTypes {
         } else {
             MinecraftTypes.writeDynamicGameProfile(buf, profile.getProfile());
         }
-    }
 
-    public static MannequinProfile.CustomProfile readCustomProfile(ByteBuf buf) {
-        Key texture = MinecraftTypes.readResourceLocation(buf);
-        Key capeTexture = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
-        Key elytraTexture = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
-        GameProfile.TextureModel model = buf.readBoolean() ? GameProfile.TextureModel.SLIM : GameProfile.TextureModel.WIDE;
-        return new MannequinProfile.CustomProfile(texture, capeTexture, elytraTexture, model);
-    }
-
-    public static void writeCustomProfile(ByteBuf buf, MannequinProfile.CustomProfile profile) {
-        MinecraftTypes.writeResourceLocation(buf, profile.getTexture());
-        MinecraftTypes.writeNullable(buf, profile.getCapeTexture(), MinecraftTypes::writeResourceLocation);
-        MinecraftTypes.writeNullable(buf, profile.getElytraTexture(), MinecraftTypes::writeResourceLocation);
-        buf.writeBoolean(profile.getModel() == GameProfile.TextureModel.SLIM);
-    }
-
-    public static MannequinProfile readMannequinProfile(ByteBuf buf) {
-        return buf.readBoolean()
-            ? new MannequinProfile(MinecraftTypes.readCustomProfile(buf), null)
-            : new MannequinProfile(null, MinecraftTypes.readResolvableProfile(buf));
-    }
-
-    public static void writeMannequinProfile(ByteBuf buf, MannequinProfile profile) {
-        buf.writeBoolean(profile.getCustomProfile() != null);
-        if (profile.getCustomProfile() != null) {
-            MinecraftTypes.writeCustomProfile(buf, profile.getCustomProfile());
-        } else {
-            MinecraftTypes.writeResolvableProfile(buf, profile.getProfile());
-        }
+        MinecraftTypes.writeNullable(buf, profile.getBody(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, profile.getCape(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, profile.getElytra(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, profile.getModel(), (out, model) -> out.writeBoolean(model == GameProfile.TextureModel.SLIM));
     }
 
     public static GameProfile.Property readProperty(ByteBuf buf) {

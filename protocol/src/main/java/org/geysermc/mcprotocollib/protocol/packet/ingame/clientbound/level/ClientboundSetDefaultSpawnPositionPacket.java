@@ -3,28 +3,30 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
-import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetDefaultSpawnPositionPacket implements MinecraftPacket {
-    private final @NonNull Vector3i position;
-    private final float angle;
+    private final GlobalPos globalPos;
+    private final float yaw;
+    private final float pitch;
 
     public ClientboundSetDefaultSpawnPositionPacket(ByteBuf in) {
-        this.position = MinecraftTypes.readPosition(in);
-        this.angle = in.readFloat();
+        this.globalPos = MinecraftTypes.readGlobalPos(in);
+        this.yaw = in.readFloat();
+        this.pitch = in.readFloat();
     }
 
     @Override
     public void serialize(ByteBuf out) {
-        MinecraftTypes.writePosition(out, this.position);
-        out.writeFloat(this.angle);
+        MinecraftTypes.writeGlobalPos(out, this.globalPos);
+        out.writeFloat(this.yaw);
+        out.writeFloat(this.pitch);
     }
 
     @Override

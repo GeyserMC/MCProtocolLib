@@ -16,6 +16,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.IntEnt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.LongEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.ResolvableProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 
@@ -64,7 +65,7 @@ public class MetadataTypes {
     public static final MetadataType<WeatheringCopperState> WEATHERING_COPPER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readWeatheringCopperState, MinecraftTypes::writeWeatheringCopperState, ObjectEntityMetadata::new));
     public static final MetadataType<Vector3f> VECTOR3 = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
     public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
-    public static final MetadataType<MannequinProfile> MANNEQUIN_PROFILE = register(id -> new MetadataType<>(id, MinecraftTypes::readMannequinProfile, MinecraftTypes::writeMannequinProfile, ObjectEntityMetadata::new));
+    public static final MetadataType<ResolvableProfile> RESOLVABLE_PROFILE = register(id -> new MetadataType<>(id, MinecraftTypes::readResolvableProfile, MinecraftTypes::writeResolvableProfile, ObjectEntityMetadata::new));
 
     public static <T extends MetadataType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());
