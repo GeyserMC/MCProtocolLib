@@ -17,4 +17,9 @@ public class ResolvableProfile {
     private final @Nullable Key elytra;
     private final @Nullable GameProfile.TextureModel model;
     private final boolean dynamic;
+
+    public ResolvableProfile(GameProfile profile) {
+        // A profile is dynamic in Java 1.21.9 when it is missing UUID, name, or properties (empty properties are fine)
+        this(profile, null, null, null, null, !profile.isComplete() || profile.getProperties() == null);
+    }
 }
