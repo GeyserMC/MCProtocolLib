@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.protocol.data.game;
+package org.geysermc.mcprotocollib.protocol.data.game.debug;
 
 public enum RemoteDebugSampleType {
     TICK_TIME;

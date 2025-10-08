@@ -16,16 +16,12 @@ public class ClientboundLoginFinishedPacket implements MinecraftPacket {
     private final @NonNull GameProfile profile;
 
     public ClientboundLoginFinishedPacket(ByteBuf in) {
-        GameProfile profile = new GameProfile(MinecraftTypes.readUUID(in), MinecraftTypes.readString(in));
-        profile.setProperties(MinecraftTypes.readList(in, MinecraftTypes::readProperty));
-        this.profile = profile;
+        this.profile = MinecraftTypes.readStaticGameProfile(in);
     }
 
     @Override
     public void serialize(ByteBuf out) {
-        MinecraftTypes.writeUUID(out, this.profile.getId());
-        MinecraftTypes.writeString(out, this.profile.getName());
-        MinecraftTypes.writeList(out, this.profile.getProperties(), MinecraftTypes::writeProperty);
+        MinecraftTypes.writeStaticGameProfile(out, profile);
     }
 
     @Override

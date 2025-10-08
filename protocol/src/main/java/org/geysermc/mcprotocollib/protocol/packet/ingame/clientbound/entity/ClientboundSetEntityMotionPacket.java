@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
+import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
@@ -12,23 +13,17 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @AllArgsConstructor
 public class ClientboundSetEntityMotionPacket implements MinecraftPacket {
     private final int entityId;
-    private final double motionX;
-    private final double motionY;
-    private final double motionZ;
+    private final Vector3d movement;
 
     public ClientboundSetEntityMotionPacket(ByteBuf in) {
         this.entityId = MinecraftTypes.readVarInt(in);
-        this.motionX = in.readShort() / 8000D;
-        this.motionY = in.readShort() / 8000D;
-        this.motionZ = in.readShort() / 8000D;
+        this.movement = MinecraftTypes.readLpVec3(in);
     }
 
     @Override
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeVarInt(out, this.entityId);
-        out.writeShort((int) (this.motionX * 8000));
-        out.writeShort((int) (this.motionY * 8000));
-        out.writeShort((int) (this.motionZ * 8000));
+        MinecraftTypes.writeLpVec3(out, this.movement);
     }
 
     @Override

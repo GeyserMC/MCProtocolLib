@@ -41,6 +41,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EntityEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloState;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.CopperGolemState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
@@ -49,10 +50,12 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVar
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.Pose;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.SnifferState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.VillagerData;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.WeatheringCopperState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.BlockBreakStage;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.ResolvableProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.VillagerTrade;
 import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
@@ -76,8 +79,10 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ItemParticle
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.PowerParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.SculkChargeParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ShriekParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.SpellParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.TrailParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.VibrationParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.positionsource.BlockPositionSource;
@@ -107,6 +112,24 @@ import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.Smithin
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.TagSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.WithRemainderSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.StatisticCategory;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBeeInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBrainDump;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBreezeInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugEntityBlockIntersection;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGameEventInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGameEventListenerInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGoalInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugHiveInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugNeighborUpdateInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugOrientationInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugPathInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugPoiInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugRaidsInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugStructuresInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugSubscriptions;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugVillageSectionsInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DedicatedServerTickTimeInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -119,6 +142,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -667,6 +691,70 @@ public class MinecraftTypes {
         MinecraftTypes.writeVarInt(buf, vec.getZ());
     }
 
+    public static Vector3d readLpVec3(ByteBuf buf) {
+        int first = buf.readUnsignedByte();
+        if (first == 0) {
+            return Vector3d.ZERO;
+        }
+
+        int second = buf.readUnsignedByte();
+        long third = buf.readUnsignedInt();
+        long packed = third << 16 | second << 8 | first;
+        long magicMultiplier = first & 3;
+        if ((first & 4) == 4) {
+            magicMultiplier |= (MinecraftTypes.readVarInt(buf) & 0xFFFFFFFFL) << 2;
+        }
+
+        return Vector3d.from(
+            unpackLpVec3Component(packed >> 3) * magicMultiplier,
+            unpackLpVec3Component(packed >> 18) * magicMultiplier,
+            unpackLpVec3Component(packed >> 33) * magicMultiplier
+        );
+    }
+
+    private static double unpackLpVec3Component(long packed) {
+        return Math.min(packed & 32767L, 32766.0) * 2.0 / 32766.0 - 1.0;
+    }
+
+    public static void writeLpVec3(ByteBuf buf, Vector3d vec) {
+        double sanitizedX = sanitizeLpVec3Component(vec.getX());
+        double sanitizedY = sanitizeLpVec3Component(vec.getY());
+        double sanitizedZ = sanitizeLpVec3Component(vec.getZ());
+        double maxVal = Math.max(Math.abs(sanitizedX), Math.max(Math.abs(sanitizedY), Math.abs(sanitizedZ)));
+        if (maxVal < 3.051944088384301E-5) {
+            buf.writeByte(0);
+            return;
+        }
+        long scale = (long) Math.ceil(maxVal);
+        boolean scaleTooLargeForBits = (scale & 3L) != scale;
+        long scaleBits = scaleTooLargeForBits ? scale & 3L | 4L : scale;
+        long encodedX = packLpVec3Component(sanitizedX / scale) << 3;
+        long encodedY = packLpVec3Component(sanitizedY / scale) << 18;
+        long encodedZ = packLpVec3Component(sanitizedZ / scale) << 33;
+        long packed = scaleBits | encodedX | encodedY | encodedZ;
+        buf.writeByte((byte) packed);
+        buf.writeByte((byte) (packed >> 8));
+        buf.writeInt((int) (packed >> 16));
+        if (scaleTooLargeForBits) {
+            MinecraftTypes.writeVarInt(buf, (int) (scale >> 2));
+        }
+    }
+
+    private static double sanitizeLpVec3Component(double d) {
+        if (Double.isNaN(d)) {
+            return 0.0;
+        } else if (d < -1.7179869183E10) {
+            return -1.7179869183E10;
+        } else if (d > 1.7179869183E10) {
+            return 1.7179869183E10;
+        }
+        return d;
+    }
+
+    private static long packLpVec3Component(double d) {
+        return Math.round((d * 0.5 + 0.5) * 32766.0);
+    }
+
     public static Vector3i readPosition(ByteBuf buf) {
         long val = buf.readLong();
 
@@ -779,6 +867,22 @@ public class MinecraftTypes {
     }
 
     public static void writeArmadilloState(ByteBuf buf, ArmadilloState state) {
+        MinecraftTypes.writeEnum(buf, state);
+    }
+
+    public static CopperGolemState readCopperGolemState(ByteBuf buf) {
+        return CopperGolemState.from(MinecraftTypes.readVarInt(buf));
+    }
+
+    public static void writeCopperGolemState(ByteBuf buf, CopperGolemState state) {
+        MinecraftTypes.writeEnum(buf, state);
+    }
+
+    public static WeatheringCopperState readWeatheringCopperState(ByteBuf buf) {
+        return WeatheringCopperState.from(MinecraftTypes.readVarInt(buf));
+    }
+
+    public static void writeWeatheringCopperState(ByteBuf buf, WeatheringCopperState state) {
         MinecraftTypes.writeEnum(buf, state);
     }
 
@@ -903,6 +1007,7 @@ public class MinecraftTypes {
     public static ParticleData readParticleData(ByteBuf buf, ParticleType type) {
         return switch (type) {
             case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR, BLOCK_CRUMBLE -> new BlockParticleData(MinecraftTypes.readVarInt(buf));
+            case DRAGON_BREATH -> new PowerParticleData(buf.readFloat());
             case DUST -> {
                 int color = buf.readInt();
                 float scale = buf.readFloat();
@@ -914,7 +1019,12 @@ public class MinecraftTypes {
                 float scale = buf.readFloat();
                 yield new DustColorTransitionParticleData(color, scale, newColor);
             }
-            case ENTITY_EFFECT, TINTED_LEAVES -> new ColorParticleData(buf.readInt());
+            case EFFECT, INSTANT_EFFECT -> {
+                int color = buf.readInt();
+                float power = buf.readFloat();
+                yield new SpellParticleData(color, power);
+            }
+            case ENTITY_EFFECT, TINTED_LEAVES, FLASH -> new ColorParticleData(buf.readInt());
             case ITEM -> new ItemParticleData(MinecraftTypes.readItemStack(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(MinecraftTypes.readVarInt(buf));
@@ -1332,6 +1442,269 @@ public class MinecraftTypes {
         }
     }
 
+    public static DebugInfo readDebugSubscriptionUpdate(ByteBuf buf, DebugSubscriptions type) {
+        if (type == DebugSubscriptions.DEDICATED_SERVER_TICK_TIME) {
+            // This throws an NPE in vanilla, currently just returning for leniency
+            return DedicatedServerTickTimeInfo.INSTANCE;
+        }
+
+        if (buf.readBoolean()) {
+            return MinecraftTypes.readDebugSubscription(buf, type);
+        } else {
+            return null;
+        }
+    }
+
+    public static void writeDebugSubscriptionUpdate(ByteBuf buf, DebugSubscriptions type, DebugInfo debugInfo) {
+        if (type == DebugSubscriptions.DEDICATED_SERVER_TICK_TIME) {
+            // This throws an NPE in vanilla, currently just returning for leniency
+            return;
+        }
+
+        boolean present = debugInfo != null;
+        buf.writeBoolean(present);
+        if (!present) return;
+
+        MinecraftTypes.writeDebugSubscription(buf, type, debugInfo);
+    }
+
+    public static DebugInfo readDebugSubscription(ByteBuf buf, DebugSubscriptions type) {
+        DebugInfo info;
+        switch (type) {
+            case BEES -> {
+                Vector3i hivePos = MinecraftTypes.readNullable(buf, MinecraftTypes::readPosition);
+                Vector3i flowerPos = MinecraftTypes.readNullable(buf, MinecraftTypes::readPosition);
+                int travelTicks = MinecraftTypes.readVarInt(buf);
+                List<Vector3i> blacklistedHives = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
+                info = new DebugBeeInfo(hivePos, flowerPos, travelTicks, blacklistedHives);
+            }
+            case BRAINS -> {
+                String name = MinecraftTypes.readString(buf);
+                String profession = MinecraftTypes.readString(buf);
+                int xp = buf.readInt();
+                float health = buf.readFloat();
+                float maxHealth = buf.readFloat();
+                String inventory = MinecraftTypes.readString(buf);
+                boolean wantsGolem = buf.readBoolean();
+                int angerLevel = buf.readInt();
+                List<String> activities = MinecraftTypes.readList(buf, MinecraftTypes::readString);
+                List<String> behaviors = MinecraftTypes.readList(buf, MinecraftTypes::readString);
+                List<String> memories = MinecraftTypes.readList(buf, MinecraftTypes::readString);
+                List<String> gossips = MinecraftTypes.readList(buf, MinecraftTypes::readString);
+                List<Vector3i> pois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
+                List<Vector3i> potentialPois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
+                info = new DebugBrainDump(name, profession, xp, health, maxHealth, inventory, wantsGolem, angerLevel,
+                    activities, behaviors, memories, gossips, pois, potentialPois);
+            }
+            case BREEZES -> {
+                OptionalInt attackTarget = buf.readBoolean() ? OptionalInt.of(MinecraftTypes.readVarInt(buf)) : OptionalInt.empty();
+                Vector3i jumpTarget = MinecraftTypes.readNullable(buf, MinecraftTypes::readPosition);
+                info = new DebugBreezeInfo(attackTarget, jumpTarget);
+            }
+            case GOAL_SELECTORS -> {
+                List<DebugGoalInfo.DebugGoal> goals = MinecraftTypes.readList(buf, in -> {
+                    int priority = MinecraftTypes.readVarInt(in);
+                    boolean isRunning = in.readBoolean();
+                    String name = MinecraftTypes.readString(in, 255);
+                    return new DebugGoalInfo.DebugGoal(priority, isRunning, name);
+                });
+                info = new DebugGoalInfo(goals);
+            }
+            case ENTITY_PATHS -> {
+                boolean reached = buf.readBoolean();
+                int nextNodeIndex = buf.readInt();
+                Vector3i target = MinecraftTypes.readPosition(buf);
+                List<DebugPathInfo.Node> nodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode);
+
+                List<DebugPathInfo.Node> targetNodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode);
+                DebugPathInfo.Node[] openSet = new DebugPathInfo.Node[MinecraftTypes.readVarInt(buf)];
+                for (int i = 0; i < openSet.length; i++) {
+                    openSet[i] = MinecraftTypes.readDebugPathNode(buf);
+                }
+                DebugPathInfo.Node[] closedSet = new DebugPathInfo.Node[MinecraftTypes.readVarInt(buf)];
+                for (int i = 0; i < closedSet.length; i++) {
+                    closedSet[i] = MinecraftTypes.readDebugPathNode(buf);
+                }
+                DebugPathInfo.Path.DebugData debugData = new DebugPathInfo.Path.DebugData(targetNodes, openSet, closedSet);
+
+                DebugPathInfo.Path path = new DebugPathInfo.Path(reached, nextNodeIndex, target, nodes, debugData);
+                float maxNodeDistance = buf.readFloat();
+                info = new DebugPathInfo(path, maxNodeDistance);
+            }
+            case ENTITY_BLOCK_INTERSECTIONS -> info = DebugEntityBlockIntersection.from(MinecraftTypes.readVarInt(buf));
+            case BEE_HIVES -> {
+                int blockType = MinecraftTypes.readVarInt(buf);
+                int occupantCount =  MinecraftTypes.readVarInt(buf);
+                int honeyLevel = MinecraftTypes.readVarInt(buf);
+                boolean sedated = buf.readBoolean();
+                info = new DebugHiveInfo(blockType, occupantCount, honeyLevel, sedated);
+            }
+            case POIS -> info = new DebugPoiInfo(MinecraftTypes.readPosition(buf), MinecraftTypes.readVarInt(buf), MinecraftTypes.readVarInt(buf));
+            case REDSTONE_WIRE_ORIENTATIONS -> info = new DebugOrientationInfo(MinecraftTypes.readVarInt(buf));
+            case VILLAGE_SECTIONS -> info = DebugVillageSectionsInfo.INSTANCE;
+            case RAIDS -> info = new DebugRaidsInfo(MinecraftTypes.readList(buf, MinecraftTypes::readPosition));
+            case STRUCTURES -> {
+                List<DebugStructuresInfo.StructureInfo> structures = MinecraftTypes.readList(buf, in -> {
+                    Vector3i min = MinecraftTypes.readPosition(in);
+                    Vector3i max = MinecraftTypes.readPosition(in);
+                    DebugStructuresInfo.BoundingBox boundingBox = new DebugStructuresInfo.BoundingBox(min, max);
+
+                    List<DebugStructuresInfo.StructureInfo.Piece> pieces = MinecraftTypes.readList(in, bufx -> {
+                        Vector3i pieceMin = MinecraftTypes.readPosition(bufx);
+                        Vector3i pieceMax = MinecraftTypes.readPosition(bufx);
+                        DebugStructuresInfo.BoundingBox pieceBoundingBox = new DebugStructuresInfo.BoundingBox(pieceMin, pieceMax);
+                        boolean isStart = bufx.readBoolean();
+                        return new DebugStructuresInfo.StructureInfo.Piece(pieceBoundingBox, isStart);
+                    });
+                    return new DebugStructuresInfo.StructureInfo(boundingBox, pieces);
+                });
+                info = new DebugStructuresInfo(structures);
+            }
+            case GAME_EVENT_LISTENERS -> info = new DebugGameEventListenerInfo(MinecraftTypes.readVarInt(buf));
+            case NEIGHBOR_UPDATES -> info = new DebugNeighborUpdateInfo(MinecraftTypes.readPosition(buf));
+            case GAME_EVENTS -> info = new DebugGameEventInfo(MinecraftTypes.readVarInt(buf), MinecraftTypes.readPosition(buf));
+            default -> info = null;
+        }
+        return info;
+    }
+
+    public static void writeDebugSubscription(ByteBuf buf, DebugSubscriptions type, DebugInfo debugInfo) {
+        if (type == DebugSubscriptions.DEDICATED_SERVER_TICK_TIME) {
+            // This throws an NPE in vanilla, currently just returning for leniency
+            return;
+        }
+
+        switch (debugInfo.getType()) {
+            case BEES -> {
+                DebugBeeInfo beeInfo = (DebugBeeInfo) debugInfo;
+
+                MinecraftTypes.writeNullable(buf, beeInfo.hivePos(), MinecraftTypes::writePosition);
+                MinecraftTypes.writeNullable(buf, beeInfo.flowerPos(), MinecraftTypes::writePosition);
+                MinecraftTypes.writeVarInt(buf, beeInfo.travelTicks());
+                MinecraftTypes.writeList(buf, beeInfo.blacklistedHives(), MinecraftTypes::writePosition);
+            }
+            case BRAINS -> {
+                DebugBrainDump brainDump = (DebugBrainDump) debugInfo;
+
+                MinecraftTypes.writeString(buf, brainDump.name());
+                MinecraftTypes.writeString(buf, brainDump.profession());
+                buf.writeInt(brainDump.xp());
+                buf.writeFloat(brainDump.health());
+                buf.writeFloat(brainDump.maxHealth());
+                MinecraftTypes.writeString(buf, brainDump.inventory());
+                buf.writeBoolean(brainDump.wantsGolem());
+                buf.writeInt(brainDump.angerLevel());
+                MinecraftTypes.writeList(buf, brainDump.activities(), MinecraftTypes::writeString);
+                MinecraftTypes.writeList(buf, brainDump.behaviors(), MinecraftTypes::writeString);
+                MinecraftTypes.writeList(buf, brainDump.memories(), MinecraftTypes::writeString);
+                MinecraftTypes.writeList(buf, brainDump.gossips(), MinecraftTypes::writeString);
+                MinecraftTypes.writeList(buf, brainDump.pois(), MinecraftTypes::writePosition);
+                MinecraftTypes.writeList(buf, brainDump.potentialPois(), MinecraftTypes::writePosition);
+            }
+            case BREEZES -> {
+                DebugBreezeInfo breezeInfo = (DebugBreezeInfo) debugInfo;
+
+                buf.writeBoolean(breezeInfo.attackTarget().isPresent());
+                if (breezeInfo.attackTarget().isPresent()) {
+                    MinecraftTypes.writeVarInt(buf, breezeInfo.attackTarget().getAsInt());
+                }
+                MinecraftTypes.writeNullable(buf, breezeInfo.jumpTarget(), MinecraftTypes::writePosition);
+            }
+            case GOAL_SELECTORS -> {
+                DebugGoalInfo goalInfo = (DebugGoalInfo) debugInfo;
+
+                MinecraftTypes.writeList(buf, goalInfo.goals(), (out, goal) -> {
+                    MinecraftTypes.writeVarInt(out, goal.priority());
+                    out.writeBoolean(goal.isRunning());
+                    MinecraftTypes.writeString(out, goal.name());
+                });
+            }
+            case ENTITY_PATHS -> {
+                DebugPathInfo pathInfo = (DebugPathInfo) debugInfo;
+
+                buf.writeBoolean(pathInfo.path().reached());
+                buf.writeInt(pathInfo.path().nextNodeIndex());
+                MinecraftTypes.writePosition(buf, pathInfo.path().target());
+                MinecraftTypes.writeList(buf, pathInfo.path().nodes(), MinecraftTypes::writeDebugPathNode);
+                MinecraftTypes.writeList(buf, pathInfo.path().debugData().targetNodes(), MinecraftTypes::writeDebugPathNode);
+
+                MinecraftTypes.writeVarInt(buf, pathInfo.path().debugData().openSet().length);
+                for (DebugPathInfo.Node node : pathInfo.path().debugData().openSet()) {
+                    MinecraftTypes.writeDebugPathNode(buf, node);
+                }
+
+                MinecraftTypes.writeVarInt(buf, pathInfo.path().debugData().closedSet().length);
+                for (DebugPathInfo.Node node : pathInfo.path().debugData().closedSet()) {
+                    MinecraftTypes.writeDebugPathNode(buf, node);
+                }
+
+                buf.writeFloat(pathInfo.maxNodeDistance());
+            }
+            case ENTITY_BLOCK_INTERSECTIONS -> MinecraftTypes.writeVarInt(buf, ((DebugEntityBlockIntersection) debugInfo).ordinal());
+            case BEE_HIVES -> {
+                DebugHiveInfo hiveInfo = (DebugHiveInfo) debugInfo;
+
+                MinecraftTypes.writeVarInt(buf, hiveInfo.blockType());
+                MinecraftTypes.writeVarInt(buf, hiveInfo.occupantCount());
+                MinecraftTypes.writeVarInt(buf, hiveInfo.honeyLevel());
+                buf.writeBoolean(hiveInfo.sedated());
+            }
+            case POIS -> {
+                DebugPoiInfo poiInfo = (DebugPoiInfo) debugInfo;
+
+                MinecraftTypes.writePosition(buf, poiInfo.pos());
+                MinecraftTypes.writeVarInt(buf, poiInfo.poiType());
+                MinecraftTypes.writeVarInt(buf, poiInfo.freeTicketCount());
+            }
+            case REDSTONE_WIRE_ORIENTATIONS -> MinecraftTypes.writeVarInt(buf, ((DebugOrientationInfo) debugInfo).orientationId());
+            case RAIDS -> MinecraftTypes.writeList(buf, ((DebugRaidsInfo) debugInfo).positions(), MinecraftTypes::writePosition);
+            case STRUCTURES -> {
+                DebugStructuresInfo structuresInfo = (DebugStructuresInfo) debugInfo;
+
+                MinecraftTypes.writeList(buf, structuresInfo.info(), (out, structureInfo) -> {
+                    MinecraftTypes.writePosition(out, structureInfo.boundingBox().min());
+                    MinecraftTypes.writePosition(out, structureInfo.boundingBox().max());
+                    MinecraftTypes.writeList(out, structureInfo.pieces(), (bufx, pieceInfo) -> {
+                        MinecraftTypes.writePosition(bufx, pieceInfo.boundingBox().min());
+                        MinecraftTypes.writePosition(bufx, pieceInfo.boundingBox().max());
+                        bufx.writeBoolean(pieceInfo.isStart());
+                    });
+                });
+            }
+            case GAME_EVENT_LISTENERS -> MinecraftTypes.writeVarInt(buf, ((DebugGameEventListenerInfo) debugInfo).listenerRadius());
+            case NEIGHBOR_UPDATES -> MinecraftTypes.writePosition(buf, ((DebugNeighborUpdateInfo) debugInfo).pos());
+            case GAME_EVENTS -> {
+                DebugGameEventInfo gameEventInfo = (DebugGameEventInfo) debugInfo;
+
+                MinecraftTypes.writeVarInt(buf, gameEventInfo.eventId());
+                MinecraftTypes.writePosition(buf, gameEventInfo.pos());
+            }
+        }
+    }
+
+    public static DebugPathInfo.Node readDebugPathNode(ByteBuf buf) {
+        int x = buf.readInt();
+        int y = buf.readInt();
+        int z = buf.readInt();
+        float walkedDistance = buf.readFloat();
+        float costMalus = buf.readFloat();
+        boolean closed = buf.readBoolean();
+        DebugPathInfo.PathType pathType = DebugPathInfo.PathType.from(MinecraftTypes.readVarInt(buf));
+        float f = buf.readFloat();
+        return new DebugPathInfo.Node(x, y, z, walkedDistance, costMalus, closed, pathType, f);
+    }
+
+    public static void writeDebugPathNode(ByteBuf buf, DebugPathInfo.Node node) {
+        buf.writeInt(node.x());
+        buf.writeInt(node.y());
+        buf.writeInt(node.z());
+        buf.writeFloat(node.walkedDistance());
+        buf.writeFloat(node.costMalus());
+        buf.writeBoolean(node.closed());
+        MinecraftTypes.writeVarInt(buf, node.type().ordinal());
+        buf.writeFloat(node.f());
+    }
+
     public static DataPalette readDataPalette(ByteBuf buf, PaletteType paletteType, int registrySize) {
         int bitsPerEntry = buf.readByte() & 0xFF;
         Palette palette = MinecraftTypes.readPalette(buf, paletteType, bitsPerEntry);
@@ -1432,6 +1805,62 @@ public class MinecraftTypes {
         }
     }
 
+    public static GameProfile readStaticGameProfile(ByteBuf buf) {
+        GameProfile profile = new GameProfile(MinecraftTypes.readUUID(buf), MinecraftTypes.readString(buf));
+        profile.setProperties(MinecraftTypes.readList(buf, MinecraftTypes::readProperty));
+        return profile;
+    }
+
+    public static void writeStaticGameProfile(ByteBuf buf, GameProfile profile) {
+        MinecraftTypes.writeUUID(buf, profile.getId());
+        MinecraftTypes.writeString(buf, profile.getName());
+        MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
+    }
+
+    public static GameProfile readDynamicGameProfile(ByteBuf buf) {
+        String name = MinecraftTypes.readNullable(buf, MinecraftTypes::readString);
+        UUID id = MinecraftTypes.readNullable(buf, MinecraftTypes::readUUID);
+        GameProfile profile = new GameProfile(id, name);
+
+        List<GameProfile.Property> properties = MinecraftTypes.readList(buf, MinecraftTypes::readProperty);
+        profile.setProperties(properties);
+
+        return profile;
+    }
+
+    public static void writeDynamicGameProfile(ByteBuf buf, GameProfile profile) {
+        MinecraftTypes.writeNullable(buf, profile.getName(), MinecraftTypes::writeString);
+        MinecraftTypes.writeNullable(buf, profile.getId(), MinecraftTypes::writeUUID);
+
+        MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
+    }
+
+    public static ResolvableProfile readResolvableProfile(ByteBuf buf) {
+        boolean dynamic = !buf.readBoolean();
+        GameProfile profile = dynamic ? MinecraftTypes.readDynamicGameProfile(buf) : MinecraftTypes.readStaticGameProfile(buf);
+        Key body = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        Key cape = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        Key elytra = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        GameProfile.TextureModel model = MinecraftTypes.readNullable(buf, in -> {
+            return in.readBoolean() ? GameProfile.TextureModel.SLIM : GameProfile.TextureModel.WIDE;
+        });
+        return new ResolvableProfile(profile, body, cape, elytra, model, dynamic);
+    }
+
+    public static void writeResolvableProfile(ByteBuf buf, ResolvableProfile profile) {
+        buf.writeBoolean(!profile.isDynamic());
+        if (!profile.isDynamic()) {
+            MinecraftTypes.writeStaticGameProfile(buf, profile.getProfile());
+        } else {
+            MinecraftTypes.writeDynamicGameProfile(buf, profile.getProfile());
+        }
+
+        MinecraftTypes.writeNullable(buf, profile.getBody(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, profile.getCape(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, profile.getElytra(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, profile.getModel(), (out, model) -> out.writeBoolean(model == GameProfile.TextureModel.SLIM));
+    }
+
     public static GameProfile.Property readProperty(ByteBuf buf) {
         String name = MinecraftTypes.readString(buf);
         String value = MinecraftTypes.readString(buf);
@@ -1479,4 +1908,6 @@ public class MinecraftTypes {
             buf.writeFloat(soundEvent.getRange());
         }
     }
+
+
 }
