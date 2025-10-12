@@ -1,18 +1,17 @@
 package org.geysermc.mcprotocollib.protocol.packet.configuration.serverbound;
 
 import io.netty.buffer.ByteBuf;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServerboundFinishConfigurationPacket implements MinecraftPacket {
+    public static final ServerboundFinishConfigurationPacket INSTANCE = new ServerboundFinishConfigurationPacket();
 
-    public ServerboundFinishConfigurationPacket(ByteBuf in) {
-    }
-
-    public void serialize(ByteBuf buf) {
+    public void serialize(ByteBuf out) {
     }
 
     @Override

@@ -6,6 +6,7 @@ public enum ParticleType {
     BLOCK_MARKER,
     BUBBLE,
     CLOUD,
+    COPPER_FIRE_FLAME,
     CRIT,
     DAMAGE_INDICATOR,
     DRAGON_BREATH,

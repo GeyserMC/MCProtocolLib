@@ -23,15 +23,15 @@ public class ClientboundRecipeBookSettingsPacket implements MinecraftPacket {
     }
 
     @Override
-    public void serialize(ByteBuf buf) {
-        buf.writeBoolean(this.crafting.open());
-        buf.writeBoolean(this.crafting.filtering());
-        buf.writeBoolean(this.furnace.open());
-        buf.writeBoolean(this.furnace.filtering());
-        buf.writeBoolean(this.blastFurnace.open());
-        buf.writeBoolean(this.blastFurnace.filtering());
-        buf.writeBoolean(this.smoker.open());
-        buf.writeBoolean(this.smoker.filtering());
+    public void serialize(ByteBuf out) {
+        out.writeBoolean(this.crafting.open());
+        out.writeBoolean(this.crafting.filtering());
+        out.writeBoolean(this.furnace.open());
+        out.writeBoolean(this.furnace.filtering());
+        out.writeBoolean(this.blastFurnace.open());
+        out.writeBoolean(this.blastFurnace.filtering());
+        out.writeBoolean(this.smoker.open());
+        out.writeBoolean(this.smoker.filtering());
     }
 
     @Override

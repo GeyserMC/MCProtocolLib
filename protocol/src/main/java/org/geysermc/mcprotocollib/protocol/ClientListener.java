@@ -155,7 +155,7 @@ public class ClientListener extends SessionAdapter {
                 session.send(new ServerboundKeepAlivePacket(keepAlivePacket.getPingId()));
             } else if (packet instanceof ClientboundFinishConfigurationPacket) {
                 session.switchInboundState(() -> protocol.setInboundState(ProtocolState.GAME));
-                session.send(new ServerboundFinishConfigurationPacket());
+                session.send(ServerboundFinishConfigurationPacket.INSTANCE);
                 session.switchOutboundState(() -> protocol.setOutboundState(ProtocolState.GAME));
             } else if (packet instanceof ClientboundSelectKnownPacks) {
                 if (session.getFlag(MinecraftConstants.SEND_BLANK_KNOWN_PACKS_RESPONSE, true)) {

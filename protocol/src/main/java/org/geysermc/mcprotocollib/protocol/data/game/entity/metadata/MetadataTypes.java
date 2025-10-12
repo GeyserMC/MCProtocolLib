@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
-import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.BooleanEntityMetadata;
@@ -17,6 +16,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.IntEnt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.LongEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.player.ResolvableProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 
@@ -45,7 +45,6 @@ public class MetadataTypes {
     public static final MetadataType<Optional<UUID>> OPTIONAL_LIVING_ENTITY_REFERENCE = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readUUID), optionalWriter(MinecraftTypes::writeUUID), ObjectEntityMetadata::new));
     public static final IntMetadataType BLOCK_STATE = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType OPTIONAL_BLOCK_STATE = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
-    public static final MetadataType<NbtMap> COMPOUND_TAG = register(id -> new MetadataType<>(id, MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectEntityMetadata::new));
     public static final MetadataType<Particle> PARTICLE = register(id -> new MetadataType<>(id, MinecraftTypes::readParticle, MinecraftTypes::writeParticle, ObjectEntityMetadata::new));
     public static final MetadataType<List<Particle>> PARTICLES = register(id -> new MetadataType<>(id, listReader(MinecraftTypes::readParticle), listWriter(MinecraftTypes::writeParticle), ObjectEntityMetadata::new));
     public static final MetadataType<VillagerData> VILLAGER_DATA = register(id -> new MetadataType<>(id, MinecraftTypes::readVillagerData, MinecraftTypes::writeVillagerData, ObjectEntityMetadata::new));
@@ -62,8 +61,11 @@ public class MetadataTypes {
     public static final MetadataType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectEntityMetadata::new));
     public static final MetadataType<SnifferState> SNIFFER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readSnifferState, MinecraftTypes::writeSnifferState, ObjectEntityMetadata::new));
     public static final MetadataType<ArmadilloState> ARMADILLO_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readArmadilloState, MinecraftTypes::writeArmadilloState, ObjectEntityMetadata::new));
+    public static final MetadataType<CopperGolemState> COPPER_GOLEM_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readCopperGolemState, MinecraftTypes::writeCopperGolemState, ObjectEntityMetadata::new));
+    public static final MetadataType<WeatheringCopperState> WEATHERING_COPPER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readWeatheringCopperState, MinecraftTypes::writeWeatheringCopperState, ObjectEntityMetadata::new));
     public static final MetadataType<Vector3f> VECTOR3 = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
     public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
+    public static final MetadataType<ResolvableProfile> RESOLVABLE_PROFILE = register(id -> new MetadataType<>(id, MinecraftTypes::readResolvableProfile, MinecraftTypes::writeResolvableProfile, ObjectEntityMetadata::new));
 
     public static <T extends MetadataType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());

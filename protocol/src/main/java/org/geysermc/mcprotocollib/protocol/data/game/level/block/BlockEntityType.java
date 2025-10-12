@@ -43,13 +43,15 @@ public enum BlockEntityType {
     SCULK_CATALYST,
     SCULK_SHRIEKER,
     CHISELED_BOOKSHELF,
+    SHELF,
     BRUSHABLE_BLOCK,
     DECORATED_POT,
     CRAFTER,
     TRIAL_SPAWNER,
     VAULT,
     TEST_BLOCK,
-    TEST_INSTANCE_BLOCK;
+    TEST_INSTANCE_BLOCK,
+    COPPER_GOLEM_STATUE;
 
     private static final BlockEntityType[] VALUES = values();
 
