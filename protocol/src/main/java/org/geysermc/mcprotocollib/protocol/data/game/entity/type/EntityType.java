@@ -13,6 +13,10 @@ public interface EntityType {
         return BuiltinEntityType.VALUES[id];
     }
 
+    default boolean is(EntityType type) {
+        return id() == type.id();
+    }
+
     record Custom(int id) implements EntityType {
         @Override
         public boolean isProjectile() {
