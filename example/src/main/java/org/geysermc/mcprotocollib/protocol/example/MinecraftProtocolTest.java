@@ -5,10 +5,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.raphimc.minecraftauth.MinecraftAuth;
-import net.raphimc.minecraftauth.step.java.StepMCProfile;
-import net.raphimc.minecraftauth.step.java.StepMCToken;
-import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
-import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
+import net.raphimc.minecraftauth.java.JavaAuthManager;
+import net.raphimc.minecraftauth.java.model.MinecraftProfile;
+import net.raphimc.minecraftauth.java.model.MinecraftToken;
+import net.raphimc.minecraftauth.msa.model.MsaCredentials;
+import net.raphimc.minecraftauth.msa.service.impl.CredentialsMsaAuthService;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.ClientSession;
@@ -187,21 +188,19 @@ public class MinecraftProtocolTest {
     private static void login() {
         MinecraftProtocol protocol;
         if (SHOULD_AUTHENTICATE) {
-            StepFullJavaSession.FullJavaSession fullJavaSession;
             try {
-                fullJavaSession = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
-                        MinecraftAuth.createHttpClient(),
-                        new StepCredentialsMsaCode.MsaCredentials(USERNAME, PASSWORD));
+                JavaAuthManager authManager = JavaAuthManager.create(MinecraftAuth.createHttpClient()).login(CredentialsMsaAuthService::new, new MsaCredentials(USERNAME, PASSWORD));
+
+                MinecraftProfile mcProfile = authManager.getMinecraftProfile().getUpToDate();
+                MinecraftToken mcToken = authManager.getMinecraftToken().getUpToDate();
+                protocol = new MinecraftProtocol(
+                    new GameProfile(mcProfile.getId(), mcProfile.getName()),
+                    mcToken.getToken());
+
+                log.info("Successfully authenticated user.");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-
-            StepMCProfile.MCProfile mcProfile = fullJavaSession.getMcProfile();
-            StepMCToken.MCToken mcToken = mcProfile.getMcToken();
-            protocol = new MinecraftProtocol(
-                    new GameProfile(mcProfile.getId(), mcProfile.getName()),
-                    mcToken.getAccessToken());
-            log.info("Successfully authenticated user.");
         } else {
             protocol = new MinecraftProtocol(USERNAME);
         }
