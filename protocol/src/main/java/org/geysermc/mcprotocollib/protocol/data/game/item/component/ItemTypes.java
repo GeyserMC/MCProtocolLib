@@ -507,7 +507,7 @@ public class ItemTypes {
         buf.writeBoolean(pattern.decal());
     }
 
-    public static <T extends Enum<?>> TypedEntityData<T> readTypedEntityData(ByteBuf buf, Function<ByteBuf, T> reader) {
+    public static <T> TypedEntityData<T> readTypedEntityData(ByteBuf buf, Function<ByteBuf, T> reader) {
         return new TypedEntityData<>(reader.apply(buf), MinecraftTypes.readCompoundTag(buf));
     }
 
@@ -521,7 +521,7 @@ public class ItemTypes {
     }
 
     public static void writeEntityType(ByteBuf buf, EntityType state) {
-        MinecraftTypes.writeVarInt(buf, state.ordinal());
+        MinecraftTypes.writeVarInt(buf, state.id());
     }
 
     public static BlockEntityType readBlockEntityType(ByteBuf buf) {

@@ -1,60 +1,16 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.type;
 
-public enum PaintingType {
-    KEBAB,
-    AZTEC,
-    ALBAN,
-    AZTEC2,
-    BOMB,
-    PLANT,
-    WASTELAND,
-    POOL,
-    COURBET,
-    SEA,
-    SUNSET,
-    CREEBET,
-    WANDERER,
-    GRAHAM,
-    MATCH,
-    BUST,
-    STAGE,
-    VOID,
-    SKULL_AND_ROSES,
-    WITHER,
-    FIGHTERS,
-    POINTER,
-    PIGSCENE,
-    BURNING_SKULL,
-    SKELETON,
-    EARTH,
-    WIND,
-    WATER,
-    FIRE,
-    DONKEY_KONG,
-    BAROQUE,
-    HUMBLE,
-    MEDITATIVE,
-    PRAIRIE_RIDE,
-    UNPACKED,
-    BACKYARD,
-    BOUQUET,
-    CAVEBIRD,
-    CHANGING,
-    COTAN,
-    ENDBOSS,
-    FERN,
-    FINDING,
-    LOWMIST,
-    ORB,
-    OWLEMONS,
-    PASSAGE,
-    POND,
-    SUNFLOWERS,
-    TIDES;
+public interface PaintingType {
 
-    private static final PaintingType[] VALUES = values();
+    int id();
 
-    public static PaintingType from(int id) {
-        return VALUES[id];
+    static PaintingType from(int id) {
+        if (id < 0 || id >= BuiltinPaintingType.values().length) {
+            return new Custom(id);
+        }
+        return BuiltinPaintingType.VALUES[id];
+    }
+
+    record Custom(int id) implements PaintingType {
     }
 }
