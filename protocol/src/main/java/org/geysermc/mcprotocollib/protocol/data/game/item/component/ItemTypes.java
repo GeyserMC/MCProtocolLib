@@ -298,6 +298,7 @@ public class ItemTypes {
         float minReach = buf.readFloat();
         float maxReach = buf.readFloat();
         float hitboxMargin = buf.readFloat();
+        int contactCooldownTicks = MinecraftTypes.readVarInt(buf);
         int delayTicks = MinecraftTypes.readVarInt(buf);
         KineticWeapon.Condition dismountConditions = MinecraftTypes.readNullable(buf, ItemTypes::readKineticCondition);
         KineticWeapon.Condition knockbackConditions = MinecraftTypes.readNullable(buf, ItemTypes::readKineticCondition);
@@ -307,7 +308,7 @@ public class ItemTypes {
         Sound sound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
         Sound hitSound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
 
-        return new KineticWeapon(minReach, maxReach, hitboxMargin, delayTicks, dismountConditions,
+        return new KineticWeapon(minReach, maxReach, hitboxMargin, contactCooldownTicks, delayTicks, dismountConditions,
             knockbackConditions, damageConditions, forwardMovement, damageMultiplier, sound, hitSound);
     }
 
@@ -315,6 +316,7 @@ public class ItemTypes {
         buf.writeFloat(kineticWeapon.minReach());
         buf.writeFloat(kineticWeapon.maxReach());
         buf.writeFloat(kineticWeapon.hitboxMargin());
+        MinecraftTypes.writeVarInt(buf, kineticWeapon.contactCooldownTicks());
         MinecraftTypes.writeVarInt(buf, kineticWeapon.delayTicks());
         MinecraftTypes.writeNullable(buf, kineticWeapon.dismountConditions(), ItemTypes::writeKineticCondition);
         MinecraftTypes.writeNullable(buf, kineticWeapon.knockbackConditions(), ItemTypes::writeKineticCondition);

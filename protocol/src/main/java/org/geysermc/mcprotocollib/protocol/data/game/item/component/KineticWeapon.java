@@ -5,8 +5,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 import org.jetbrains.annotations.Nullable;
 
 @Builder(toBuilder = true)
-public record KineticWeapon(float minReach, float maxReach, float hitboxMargin, int delayTicks,
-                            @Nullable Condition dismountConditions, @Nullable Condition knockbackConditions,
+public record KineticWeapon(float minReach, float maxReach, float hitboxMargin, int contactCooldownTicks,
+                            int delayTicks, @Nullable Condition dismountConditions, @Nullable Condition knockbackConditions,
                             @Nullable Condition damageConditions, float forwardMovement, float damageMultiplier,
                             @Nullable Sound sound, @Nullable Sound hitSound) {
 
