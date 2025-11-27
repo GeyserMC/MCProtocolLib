@@ -7,7 +7,8 @@ public enum PlayerAction {
     DROP_ITEM_STACK,
     DROP_ITEM,
     RELEASE_USE_ITEM,
-    SWAP_HANDS;
+    SWAP_HANDS,
+    STAB;
 
     private static final PlayerAction[] VALUES = values();
 
