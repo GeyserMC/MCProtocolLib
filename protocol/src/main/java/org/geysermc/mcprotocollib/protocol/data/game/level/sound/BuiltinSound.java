@@ -119,6 +119,7 @@ public enum BuiltinSound implements Sound {
     ENTITY_BABY_NAUTILUS_DEATH("entity.baby_nautilus.death"),
     ENTITY_BABY_NAUTILUS_EAT("entity.baby_nautilus.eat"),
     ENTITY_BABY_NAUTILUS_HURT("entity.baby_nautilus.hurt"),
+    ENTITY_NAUTILUS_RIDING("entity.nautilus.riding"),
     ENTITY_BABY_NAUTILUS_SWIM("entity.baby_nautilus.swim"),
     BLOCK_BAMBOO_BREAK("block.bamboo.break"),
     BLOCK_BAMBOO_FALL("block.bamboo.fall"),
@@ -1808,7 +1809,8 @@ public enum BuiltinSound implements Sound {
     EVENT_MOB_EFFECT_BAD_OMEN("event.mob_effect.bad_omen"),
     EVENT_MOB_EFFECT_TRIAL_OMEN("event.mob_effect.trial_omen"),
     EVENT_MOB_EFFECT_RAID_OMEN("event.mob_effect.raid_omen"),
-    ITEM_SADDLE_UNEQUIP("item.saddle.unequip");
+    ITEM_SADDLE_UNEQUIP("item.saddle.unequip"),
+    ITEM_UNDERWATER_SADDLE_EQUIP("item.underwater_saddle.equip");
 
     private final @NonNull String name;
 
