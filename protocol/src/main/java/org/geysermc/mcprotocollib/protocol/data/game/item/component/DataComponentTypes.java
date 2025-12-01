@@ -56,6 +56,7 @@ public class DataComponentTypes {
     public static final DataComponentType<Key> DAMAGE_RESISTANT = register(id -> new DataComponentType<>(id, "damage_resistant", MinecraftTypes::readResourceLocation, MinecraftTypes::writeResourceLocation, ObjectDataComponent::new));
     public static final DataComponentType<ToolData> TOOL = register(id -> new DataComponentType<>(id, "tool", ItemTypes::readToolData, ItemTypes::writeToolData, ObjectDataComponent::new));
     public static final DataComponentType<Weapon> WEAPON = register(id -> new DataComponentType<>(id, "weapon", ItemTypes::readWeapon, ItemTypes::writeWeapon, ObjectDataComponent::new));
+    public static final DataComponentType<AttackRange> ATTACK_RANGE = register(id -> new DataComponentType<>(id, "attack_range", ItemTypes::readAttackRange, ItemTypes::writeAttackRange, ObjectDataComponent::new));
     public static final IntComponentType ENCHANTABLE = register(id -> new IntComponentType(id, "enchantable", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<Equippable> EQUIPPABLE = register(id -> new DataComponentType<>(id, "equippable", ItemTypes::readEquippable, ItemTypes::writeEquippable, ObjectDataComponent::new));
     public static final DataComponentType<HolderSet> REPAIRABLE = register(id -> new DataComponentType<>(id, "repairable", MinecraftTypes::readHolderSet, MinecraftTypes::writeHolderSet, ObjectDataComponent::new));

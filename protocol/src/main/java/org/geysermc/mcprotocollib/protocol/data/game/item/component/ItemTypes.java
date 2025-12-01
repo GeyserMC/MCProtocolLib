@@ -207,6 +207,22 @@ public class ItemTypes {
         buf.writeFloat(weapon.disableBlockingForSeconds());
     }
 
+    public static AttackRange readAttackRange(ByteBuf buf) {
+        float minRange = buf.readFloat();
+        float maxRange = buf.readFloat();
+        float hitboxMargin = buf.readFloat();
+        float mobFactor = buf.readFloat();
+
+        return new AttackRange(minRange, maxRange, hitboxMargin, mobFactor);
+    }
+
+    public static void writeAttackRange(ByteBuf buf, AttackRange attackRange) {
+        buf.writeFloat(attackRange.minRange());
+        buf.writeFloat(attackRange.maxRange());
+        buf.writeFloat(attackRange.hitboxMargin());
+        buf.writeFloat(attackRange.mobFactor());
+    }
+
     public static Equippable readEquippable(ByteBuf buf) {
         EquipmentSlot slot = EquipmentSlot.fromId(MinecraftTypes.readVarInt(buf));
         Sound equipSound = MinecraftTypes.readSound(buf);
@@ -275,21 +291,15 @@ public class ItemTypes {
     }
 
     public static PiercingWeapon readPiercingWeapon(ByteBuf buf) {
-        float minReach = buf.readFloat();
-        float maxReach = buf.readFloat();
-        float hitboxMargin = buf.readFloat();
         boolean dealsKnockback = buf.readBoolean();
         boolean dismounts = buf.readBoolean();
         Sound sound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
         Sound hitSound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
 
-        return new PiercingWeapon(minReach, maxReach, hitboxMargin, dealsKnockback, dismounts, sound, hitSound);
+        return new PiercingWeapon(dealsKnockback, dismounts, sound, hitSound);
     }
 
     public static void writePiercingWeapon(ByteBuf buf, PiercingWeapon piercingWeapon) {
-        buf.writeFloat(piercingWeapon.minReach());
-        buf.writeFloat(piercingWeapon.maxReach());
-        buf.writeFloat(piercingWeapon.hitboxMargin());
         buf.writeBoolean(piercingWeapon.dealsKnockback());
         buf.writeBoolean(piercingWeapon.dismounts());
         MinecraftTypes.writeNullable(buf, piercingWeapon.sound(), MinecraftTypes::writeSound);
@@ -297,9 +307,6 @@ public class ItemTypes {
     }
 
     public static KineticWeapon readKineticWeapon(ByteBuf buf) {
-        float minReach = buf.readFloat();
-        float maxReach = buf.readFloat();
-        float hitboxMargin = buf.readFloat();
         int contactCooldownTicks = MinecraftTypes.readVarInt(buf);
         int delayTicks = MinecraftTypes.readVarInt(buf);
         KineticWeapon.Condition dismountConditions = MinecraftTypes.readNullable(buf, ItemTypes::readKineticCondition);
@@ -310,14 +317,11 @@ public class ItemTypes {
         Sound sound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
         Sound hitSound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
 
-        return new KineticWeapon(minReach, maxReach, hitboxMargin, contactCooldownTicks, delayTicks, dismountConditions,
+        return new KineticWeapon(contactCooldownTicks, delayTicks, dismountConditions,
             knockbackConditions, damageConditions, forwardMovement, damageMultiplier, sound, hitSound);
     }
 
     public static void writeKineticWeapon(ByteBuf buf, KineticWeapon kineticWeapon) {
-        buf.writeFloat(kineticWeapon.minReach());
-        buf.writeFloat(kineticWeapon.maxReach());
-        buf.writeFloat(kineticWeapon.hitboxMargin());
         MinecraftTypes.writeVarInt(buf, kineticWeapon.contactCooldownTicks());
         MinecraftTypes.writeVarInt(buf, kineticWeapon.delayTicks());
         MinecraftTypes.writeNullable(buf, kineticWeapon.dismountConditions(), ItemTypes::writeKineticCondition);
