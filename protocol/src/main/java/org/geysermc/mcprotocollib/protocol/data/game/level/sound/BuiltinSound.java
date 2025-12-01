@@ -1804,6 +1804,7 @@ public enum BuiltinSound implements Sound {
     ENTITY_ZOMBIE_HORSE_AMBIENT("entity.zombie_horse.ambient"),
     ENTITY_ZOMBIE_HORSE_ANGRY("entity.zombie_horse.angry"),
     ENTITY_ZOMBIE_HORSE_DEATH("entity.zombie_horse.death"),
+    ENTITY_ZOMBIE_HORSE_EAT("entity.zombie_horse.eat"),
     ENTITY_ZOMBIE_HORSE_HURT("entity.zombie_horse.hurt"),
     ENTITY_ZOMBIE_HURT("entity.zombie.hurt"),
     ENTITY_ZOMBIE_INFECT("entity.zombie.infect"),

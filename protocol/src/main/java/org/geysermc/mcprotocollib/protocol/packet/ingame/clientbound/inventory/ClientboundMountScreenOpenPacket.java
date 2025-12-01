@@ -10,12 +10,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @Data
 @With
 @AllArgsConstructor
-public class ClientboundHorseScreenOpenPacket implements MinecraftPacket {
+public class ClientboundMountScreenOpenPacket implements MinecraftPacket {
     private final int containerId;
     private final int inventoryColumns;
     private final int entityId;
 
-    public ClientboundHorseScreenOpenPacket(ByteBuf in) {
+    public ClientboundMountScreenOpenPacket(ByteBuf in) {
         this.containerId = MinecraftTypes.readVarInt(in);
         this.inventoryColumns = MinecraftTypes.readVarInt(in);
         this.entityId = in.readInt();

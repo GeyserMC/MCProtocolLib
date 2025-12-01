@@ -38,13 +38,15 @@ public class ItemTypes {
 
     public static UseEffects readUseEffects(ByteBuf buf) {
         boolean canSprint = buf.readBoolean();
+        boolean interactVibrations = buf.readBoolean();
         float speedMultiplier = buf.readFloat();
 
-        return new UseEffects(canSprint, speedMultiplier);
+        return new UseEffects(canSprint, interactVibrations, speedMultiplier);
     }
 
     public static void writeUseEffects(ByteBuf buf, UseEffects useEffects) {
         buf.writeBoolean(useEffects.canSprint());
+        buf.writeBoolean(useEffects.interactVibrations());
         buf.writeFloat(useEffects.speedMultiplier());
     }
 

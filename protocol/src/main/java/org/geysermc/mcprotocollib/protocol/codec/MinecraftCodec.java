@@ -109,7 +109,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.C
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetDataPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundHorseScreenOpenPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundMountScreenOpenPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundMerchantOffersPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundOpenBookPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundOpenScreenPacket;
@@ -231,8 +231,8 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 277)
-            .minecraftVersion("25w45a")
+            .protocolVersion((1 << 30) | 278)
+            .minecraftVersion("25w46a")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -325,7 +325,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundForgetLevelChunkPacket.class, ClientboundForgetLevelChunkPacket::new)
                     .registerClientboundPacket(ClientboundGameEventPacket.class, ClientboundGameEventPacket::new)
                     .registerClientboundPacket(ClientboundGameTestHighlightPosPacket.class, ClientboundGameTestHighlightPosPacket::new)
-                    .registerClientboundPacket(ClientboundHorseScreenOpenPacket.class, ClientboundHorseScreenOpenPacket::new)
+                    .registerClientboundPacket(ClientboundMountScreenOpenPacket.class, ClientboundMountScreenOpenPacket::new)
                     .registerClientboundPacket(ClientboundHurtAnimationPacket.class, ClientboundHurtAnimationPacket::new)
                     .registerClientboundPacket(ClientboundInitializeBorderPacket.class, ClientboundInitializeBorderPacket::new)
                     .registerClientboundPacket(ClientboundKeepAlivePacket.class, ClientboundKeepAlivePacket::new)
