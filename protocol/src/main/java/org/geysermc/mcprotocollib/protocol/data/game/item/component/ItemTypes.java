@@ -210,15 +210,19 @@ public class ItemTypes {
     public static AttackRange readAttackRange(ByteBuf buf) {
         float minRange = buf.readFloat();
         float maxRange = buf.readFloat();
+        float minCreativeRange = buf.readFloat();
+        float maxCreativeRange = buf.readFloat();
         float hitboxMargin = buf.readFloat();
         float mobFactor = buf.readFloat();
 
-        return new AttackRange(minRange, maxRange, hitboxMargin, mobFactor);
+        return new AttackRange(minRange, maxRange, minCreativeRange, maxCreativeRange, hitboxMargin, mobFactor);
     }
 
     public static void writeAttackRange(ByteBuf buf, AttackRange attackRange) {
         buf.writeFloat(attackRange.minRange());
         buf.writeFloat(attackRange.maxRange());
+        buf.writeFloat(attackRange.minCreativeRange());
+        buf.writeFloat(attackRange.maxCreativeRange());
         buf.writeFloat(attackRange.hitboxMargin());
         buf.writeFloat(attackRange.mobFactor());
     }
