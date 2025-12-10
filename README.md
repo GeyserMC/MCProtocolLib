@@ -19,7 +19,7 @@ Follow the below steps to add MCProtocolLib as a dependency to your project.
 <repositories>
     <repository>
         <id>opencollab</id>
-        <url>https://repo.opencollab.dev/maven-snapshots/</url>
+        <url>https://repo.opencollab.dev/main/</url>
     </repository>
 </repositories>
 ```
@@ -42,7 +42,7 @@ Follow the below steps to add MCProtocolLib as a dependency to your project.
 repositories {
     maven { 
         name 'opencollab'
-        url 'https://repo.opencollab.dev/maven-snapshots/'
+        url 'https://repo.opencollab.dev/main/'
     }
 }
 ```
@@ -61,7 +61,7 @@ dependencies {
 
 ```kotlin
 repositories {
-    maven("https://repo.opencollab.dev/maven-snapshots/") {
+    maven("https://repo.opencollab.dev/main/") {
         name = "opencollab"
     }
 }
@@ -74,6 +74,10 @@ dependencies {
     implementation("org.geysermc.mcprotocollib:protocol:(version here)")
 }
 ```
+
+### Snapshots
+
+To use snapshot builds, switch the URL to `https://repo.opencollab.dev/maven-snapshots/`.
 
 ### Javadocs
 
