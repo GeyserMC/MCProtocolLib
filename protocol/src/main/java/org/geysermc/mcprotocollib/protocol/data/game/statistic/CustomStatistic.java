@@ -29,6 +29,7 @@ public enum CustomStatistic implements Statistic {
     AVIATE_ONE_CM(StatisticFormat.DISTANCE),
     SWIM_ONE_CM(StatisticFormat.DISTANCE),
     STRIDER_ONE_CM(StatisticFormat.DISTANCE),
+    NAUTILUS_ONE_CM(StatisticFormat.DISTANCE),
     JUMP,
     DROP,
     DAMAGE_DEALT(StatisticFormat.TENTHS),

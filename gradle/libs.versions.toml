@@ -2,14 +2,14 @@ metadata.format.version = "1.1"
 
 [versions]
 
-adventure = "4.17.0"
+adventure = "4.25.0"
 cloudburstnbt = "3.0.0.Final"
 slf4j = "2.0.9"
 math = "2.0"
 fastutil-maps = "8.5.3"
 netty = "4.2.1.Final"
 gson = "2.11.0"
-minecraftauth = "4.1.1"
+minecraftauth = "5.0.0"
 checkerframework = "3.42.0"
 junit = "5.8.2"
 

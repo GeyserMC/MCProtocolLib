@@ -1,10 +1,11 @@
 package org.geysermc.mcprotocollib.auth.example;
 
 import net.raphimc.minecraftauth.MinecraftAuth;
-import net.raphimc.minecraftauth.step.java.StepMCProfile;
-import net.raphimc.minecraftauth.step.java.StepMCToken;
-import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
-import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
+import net.raphimc.minecraftauth.java.JavaAuthManager;
+import net.raphimc.minecraftauth.java.model.MinecraftProfile;
+import net.raphimc.minecraftauth.java.model.MinecraftToken;
+import net.raphimc.minecraftauth.msa.model.MsaCredentials;
+import net.raphimc.minecraftauth.msa.service.impl.CredentialsMsaAuthService;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
@@ -27,24 +28,24 @@ public class MinecraftAuthTest {
         SessionService service = new SessionService();
         service.setProxy(PROXY);
 
-        StepFullJavaSession.FullJavaSession fullJavaSession;
+        JavaAuthManager authManager;
         try {
-            fullJavaSession = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
-                    MinecraftAuth.createHttpClient(),
-                    new StepCredentialsMsaCode.MsaCredentials(EMAIL, PASSWORD));
+            authManager = JavaAuthManager.create(MinecraftAuth.createHttpClient()).login(CredentialsMsaAuthService::new, new MsaCredentials(EMAIL, PASSWORD));
+            authManager.getMinecraftToken().refresh(); // Preload the Minecraft token
+            authManager.getMinecraftProfile().refresh(); // Preload the Minecraft profile
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        StepMCProfile.MCProfile mcProfile = fullJavaSession.getMcProfile();
-        StepMCToken.MCToken mcToken = mcProfile.getMcToken();
+        MinecraftProfile mcProfile = authManager.getMinecraftProfile().getCached();
+        MinecraftToken mcToken = authManager.getMinecraftToken().getCached();
         GameProfile profile = new GameProfile(mcProfile.getId(), mcProfile.getName());
         try {
             service.fillProfileProperties(profile);
 
             log.info("Selected Profile: {}", profile);
             log.info("Selected Profile Textures: {}", profile.getTextures(REQUIRE_SECURE_TEXTURES));
-            log.info("Access Token: {}", mcToken.getAccessToken());
+            log.info("Access Token: {}", mcToken.getToken());
             log.info("Expire Time: {}", mcToken.getExpireTimeMs());
         } catch (Exception e) {
             log.error("Failed to get properties and textures of selected profile {}.", profile, e);

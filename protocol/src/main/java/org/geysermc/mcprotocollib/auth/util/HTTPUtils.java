@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.lenni0451.commons.httpclient.HttpResponse;
 import net.lenni0451.commons.httpclient.constants.ContentTypes;
-import net.lenni0451.commons.httpclient.constants.Headers;
+import net.lenni0451.commons.httpclient.constants.HttpHeaders;
 import net.lenni0451.commons.httpclient.content.HttpContent;
 import net.lenni0451.commons.httpclient.proxy.ProxyHandler;
 import net.lenni0451.commons.httpclient.proxy.ProxyType;
@@ -14,7 +14,6 @@ import net.lenni0451.commons.httpclient.requests.HttpRequest;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -40,13 +39,13 @@ public class HTTPUtils {
             .execute(input == null ? new HttpRequest("GET", uri.toURL()) :
                 new HttpContentRequest("POST", uri.toURL())
                     .setContent(HttpContent.string(GSON.toJson(input)))
-                    .setHeader(Headers.CONTENT_TYPE, ContentTypes.APPLICATION_JSON.toString()));
+                    .setHeader(HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON.toString()));
 
         if (responseType == null) {
             return null;
         }
 
-        return GSON.fromJson(new InputStreamReader(new ByteArrayInputStream(response.getContent())), responseType);
+        return GSON.fromJson(new InputStreamReader(response.getContent().getAsStream()), responseType);
     }
 
     public static HttpClient createHttpClient(@Nullable ProxyInfo proxy) {
@@ -57,8 +56,8 @@ public class HTTPUtils {
                 .setReadTimeout(timeout * 2)
                 .setCookieManager(null)
                 .setFollowRedirects(false)
-                .setHeader(Headers.ACCEPT, ContentTypes.APPLICATION_JSON.toString())
-                .setHeader(Headers.ACCEPT_LANGUAGE, "en-US,en");
+                .setHeader(HttpHeaders.ACCEPT, ContentTypes.APPLICATION_JSON.toString())
+                .setHeader(HttpHeaders.ACCEPT_LANGUAGE, "en-US,en");
 
         if (proxy != null) {
             client.setProxyHandler(new ProxyHandler(switch (proxy.type()) {

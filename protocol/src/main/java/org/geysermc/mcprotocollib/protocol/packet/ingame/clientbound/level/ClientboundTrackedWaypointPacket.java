@@ -87,4 +87,9 @@ public class ClientboundTrackedWaypointPacket implements MinecraftPacket {
             out.writeFloat(azimuthData.angle());
         }
     }
+
+    @Override
+    public boolean shouldRunOnGameThread() {
+        return true;
+    }
 }
