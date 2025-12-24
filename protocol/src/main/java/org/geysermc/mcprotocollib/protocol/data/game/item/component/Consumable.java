@@ -21,12 +21,13 @@ public record Consumable(float consumeSeconds, ItemUseAnimation animation, Sound
         DRINK,
         BLOCK,
         BOW,
-        SPEAR,
+        TRIDENT,
         CROSSBOW,
         SPYGLASS,
         TOOT_HORN,
         BRUSH,
-        BUNDLE;
+        BUNDLE,
+        SPEAR;
 
         private static final ItemUseAnimation[] VALUES = values();
 

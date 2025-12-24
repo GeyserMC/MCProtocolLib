@@ -57,6 +57,7 @@ public class MetadataTypes {
     public static final IntMetadataType FROG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType PIG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType CHICKEN_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType ZOMBIE_NAUTILUS_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readGlobalPos), optionalWriter(MinecraftTypes::writeGlobalPos), ObjectEntityMetadata::new));
     public static final MetadataType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectEntityMetadata::new));
     public static final MetadataType<SnifferState> SNIFFER_STATE = register(id -> new MetadataType<>(id, MinecraftTypes::readSnifferState, MinecraftTypes::writeSnifferState, ObjectEntityMetadata::new));
@@ -66,6 +67,7 @@ public class MetadataTypes {
     public static final MetadataType<Vector3f> VECTOR3 = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
     public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
     public static final MetadataType<ResolvableProfile> RESOLVABLE_PROFILE = register(id -> new MetadataType<>(id, MinecraftTypes::readResolvableProfile, MinecraftTypes::writeResolvableProfile, ObjectEntityMetadata::new));
+    public static final MetadataType<HumanoidArm> HUMANOID_ARM = register(id -> new MetadataType<>(id, MinecraftTypes::readHumanoidArm, MinecraftTypes::writeHumanoidArm, ObjectEntityMetadata::new));
 
     public static <T extends MetadataType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());

@@ -39,7 +39,8 @@ public enum Effect {
     WIND_CHARGED,
     WEAVING,
     OOZING,
-    INFESTED;
+    INFESTED,
+    BREATH_OF_THE_NAUTILUS;
 
     public static final Effect[] VALUES = values();
 

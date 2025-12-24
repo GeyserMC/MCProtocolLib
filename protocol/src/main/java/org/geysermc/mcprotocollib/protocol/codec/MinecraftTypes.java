@@ -44,6 +44,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloSt
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.CopperGolemState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.EntityMetadata;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.GlobalPos;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.HumanoidArm;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.MetadataTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.PaintingVariant;
@@ -837,6 +838,24 @@ public class MinecraftTypes {
         }
     }
 
+    public static Holder<Key> readZombieNautilusVariant(ByteBuf buf) {
+        if (buf.readBoolean()) {
+            return Holder.ofId(MinecraftTypes.readVarInt(buf));
+        } else {
+            return Holder.ofCustom(MinecraftTypes.readResourceLocation(buf));
+        }
+    }
+
+    public static void writeZombieNautilusVariant(ByteBuf buf, Holder<Key> variant) {
+        if (variant.isId()) {
+            buf.writeBoolean(true);
+            MinecraftTypes.writeVarInt(buf, variant.id());
+        } else {
+            buf.writeBoolean(false);
+            MinecraftTypes.writeResourceLocation(buf, variant.custom());
+        }
+    }
+
     public static Holder<PaintingVariant> readPaintingVariant(ByteBuf buf) {
         return MinecraftTypes.readHolder(buf, input -> {
             return new PaintingVariant(MinecraftTypes.readVarInt(input), MinecraftTypes.readVarInt(input), MinecraftTypes.readResourceLocation(input),
@@ -884,6 +903,14 @@ public class MinecraftTypes {
 
     public static void writeWeatheringCopperState(ByteBuf buf, WeatheringCopperState state) {
         MinecraftTypes.writeEnum(buf, state);
+    }
+
+    public static HumanoidArm readHumanoidArm(ByteBuf buf) {
+        return HumanoidArm.from(MinecraftTypes.readVarInt(buf));
+    }
+
+    public static void writeHumanoidArm(ByteBuf buf, HumanoidArm arm) {
+        MinecraftTypes.writeVarInt(buf, arm.ordinal());
     }
 
     private static void writeEnum(ByteBuf buf, Enum<?> e) {
