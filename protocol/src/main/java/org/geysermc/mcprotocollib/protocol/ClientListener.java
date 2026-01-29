@@ -105,7 +105,7 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
                 int threshold = loginCompressionPacket.getThreshold();
                 if (threshold >= 0) {
-                    session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), false));
+                    session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), session.getFlag(BuiltinFlags.VALIDATE_DECOMPRESSION, false)));
                 }
             }
         } else if (protocol.getInboundState() == ProtocolState.STATUS) {

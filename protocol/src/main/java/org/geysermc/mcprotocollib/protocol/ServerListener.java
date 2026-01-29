@@ -7,6 +7,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.auth.SessionService;
+import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
 import org.geysermc.mcprotocollib.network.compression.ZlibCompression;
@@ -263,7 +264,7 @@ public class ServerListener extends SessionAdapter {
         int threshold = session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, DEFAULT_COMPRESSION_THRESHOLD);
         if (threshold >= 0) {
             session.send(new ClientboundLoginCompressionPacket(threshold), () ->
-                session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), true)));
+                session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), session.getFlag(BuiltinFlags.VALIDATE_DECOMPRESSION, true))));
         }
 
         session.send(new ClientboundLoginFinishedPacket(profile));

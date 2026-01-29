@@ -54,6 +54,14 @@ public class BuiltinFlags {
      */
     public static final Flag<ByteBufAllocator> ALLOCATOR = new Flag<>("allocator", ByteBufAllocator.class);
 
+    /**
+     * Whether to validate compression.
+     * Used by both server and client, but with different defaults:
+     * Clients by default do not validate compression for servers,
+     * but servers validate client compression.
+     */
+    public static Flag<Boolean> VALIDATE_DECOMPRESSION = new Flag<>("validate-decompression", Boolean.class);
+
     private BuiltinFlags() {
     }
 }
