@@ -35,6 +35,9 @@ public class ZlibCompression implements PacketCompression {
                 ByteBuffer destNioBuf = destination.nioBuffer(destination.writerIndex(),
                     destination.writableBytes());
                 int produced = inflater.inflate(destNioBuf);
+                if (produced < 1) {
+                    break;
+                }
                 destination.writerIndex(destination.writerIndex() + produced);
             }
 
