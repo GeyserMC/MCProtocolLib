@@ -58,6 +58,12 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ClientListener extends SessionAdapter {
     private final @NonNull HandshakeIntent handshakeIntent;
+    private final boolean shouldValidateDecompression;
+
+    public ClientListener(@NonNull HandshakeIntent handshakeIntent) {
+        this.handshakeIntent = handshakeIntent;
+        this.shouldValidateDecompression = false;
+    }
 
     @SneakyThrows
     @Override
@@ -105,7 +111,7 @@ public class ClientListener extends SessionAdapter {
             } else if (packet instanceof ClientboundLoginCompressionPacket loginCompressionPacket) {
                 int threshold = loginCompressionPacket.getThreshold();
                 if (threshold >= 0) {
-                    session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), false));
+                    session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), shouldValidateDecompression));
                 }
             }
         } else if (protocol.getInboundState() == ProtocolState.STATUS) {

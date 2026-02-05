@@ -1,6 +1,7 @@
 package org.geysermc.mcprotocollib.network.compression;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.DecoderException;
 
 import java.nio.ByteBuffer;
 import java.util.zip.DataFormatException;
@@ -23,26 +24,31 @@ public class ZlibCompression implements PacketCompression {
 
     @Override
     public void inflate(ByteBuf source, ByteBuf destination, int uncompressedSize) throws DataFormatException {
-        final int originalIndex = source.readerIndex();
-        inflater.setInput(source.nioBuffer());
+        ByteBuffer input;
+        if (source.nioBufferCount() > 0) {
+            input = source.nioBuffer();
+            source.skipBytes(source.readableBytes());
+        } else {
+            input = ByteBuffer.allocateDirect(source.readableBytes());
+            source.readBytes(input);
+            input.flip();
+        }
+        inflater.setInput(input);
 
         try {
-            while (!inflater.finished() && inflater.getBytesWritten() < uncompressedSize) {
-                if (!destination.isWritable()) {
-                    destination.ensureWritable(ZLIB_BUFFER_SIZE);
-                }
-
-                ByteBuffer destNioBuf = destination.nioBuffer(destination.writerIndex(),
-                    destination.writableBytes());
-                int produced = inflater.inflate(destNioBuf);
-                destination.writerIndex(destination.writerIndex() + produced);
+            ByteBuffer nioBuffer = destination.internalNioBuffer(0, uncompressedSize);
+            int pos = nioBuffer.position();
+            inflater.inflate(nioBuffer);
+            int actualUncompressedSize = nioBuffer.position() - pos;
+            if (actualUncompressedSize != uncompressedSize) {
+                throw new DecoderException(
+                    "Badly compressed packet - actual size of uncompressed payload "
+                    + actualUncompressedSize
+                    + " does not match declared size "
+                    + uncompressedSize);
+            } else {
+                destination.writerIndex(destination.writerIndex() + actualUncompressedSize);
             }
-
-            if (!inflater.finished()) {
-                throw new DataFormatException("Received a deflate stream that was too large, wanted " + uncompressedSize);
-            }
-
-            source.readerIndex(originalIndex + inflater.getTotalIn());
         } finally {
             inflater.reset();
         }
