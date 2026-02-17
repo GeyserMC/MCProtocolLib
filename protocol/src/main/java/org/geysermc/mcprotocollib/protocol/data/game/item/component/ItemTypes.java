@@ -243,7 +243,7 @@ public class ItemTypes {
     }
 
     public static void writeEquippable(ByteBuf buf, Equippable equippable) {
-        MinecraftTypes.writeVarInt(buf, equippable.slot().ordinal());
+        MinecraftTypes.writeVarInt(buf, equippable.slot().networkId());
         MinecraftTypes.writeSound(buf, equippable.equipSound());
         MinecraftTypes.writeNullable(buf, equippable.model(), MinecraftTypes::writeResourceLocation);
         MinecraftTypes.writeNullable(buf, equippable.cameraOverlay(), MinecraftTypes::writeResourceLocation);
