@@ -3,7 +3,7 @@ metadata.format.version = "1.1"
 [versions]
 
 adventure = "4.25.0"
-cloudburstnbt = "3.0.0.Final"
+cloudburstnbt = "3.0.4.Final"
 slf4j = "2.0.9"
 math = "2.0"
 fastutil-maps = "8.5.3"
