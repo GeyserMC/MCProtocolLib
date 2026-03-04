@@ -76,10 +76,10 @@ public class ClientboundAwardStatsPacket implements MinecraftPacket {
                 statisticId = ((DropItemStatistic) statistic).getId();
             } else if (statistic instanceof KillEntityStatistic) {
                 category = StatisticCategory.KILL_ENTITY;
-                statisticId = ((KillEntityStatistic) statistic).getEntity().ordinal();
+                statisticId = ((KillEntityStatistic) statistic).getEntity().id();
             } else if (statistic instanceof KilledByEntityStatistic) {
                 category = StatisticCategory.KILLED_BY_ENTITY;
-                statisticId = ((KilledByEntityStatistic) statistic).getEntity().ordinal();
+                statisticId = ((KilledByEntityStatistic) statistic).getEntity().id();
             } else if (statistic instanceof CustomStatistic) {
                 category = StatisticCategory.CUSTOM;
                 statisticId = ((CustomStatistic) statistic).ordinal();
