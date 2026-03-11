@@ -25,13 +25,14 @@ import java.util.UUID;
 public class GameProfile {
     private static final PublicKey SIGNATURE_KEY = loadSignatureKey();
     private static final Gson GSON = new GsonBuilder()
-        .registerTypeAdapter(UUID.class, new UndashedUUIDAdapter())
-        .create();
+            .registerTypeAdapter(UUID.class, new UndashedUUIDAdapter())
+            .create();
 
     private static PublicKey loadSignatureKey() {
-        try (InputStream in = Objects.requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
+        try (InputStream in = Objects
+                .requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
             return KeyFactory.getInstance("RSA")
-                .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
+                    .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
         } catch (Exception e) {
             throw new RuntimeException("Missing/invalid yggdrasil public key.", e);
         }
@@ -47,7 +48,7 @@ public class GameProfile {
     /**
      * Creates a new GameProfile instance.
      *
-     * @param id ID of the profile.
+     * @param id   ID of the profile.
      * @param name Name of the profile.
      */
     public GameProfile(String id, String name) {
@@ -57,7 +58,7 @@ public class GameProfile {
     /**
      * Creates a new GameProfile instance.
      *
-     * @param id ID of the profile.
+     * @param id   ID of the profile.
      * @param name Name of the profile.
      */
     public GameProfile(UUID id, String name) {
@@ -155,7 +156,8 @@ public class GameProfile {
      * Gets an immutable map of texture types to textures contained in the profile.
      *
      * @return The profile's textures.
-     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's
+     *                               texture property.
      */
     public Map<TextureType, Texture> getTextures() throws IllegalStateException {
         return this.getTextures(true);
@@ -164,9 +166,11 @@ public class GameProfile {
     /**
      * Gets an immutable map of texture types to textures contained in the profile.
      *
-     * @param requireSecure Whether to require the profile's texture payload to be securely signed.
+     * @param requireSecure Whether to require the profile's texture payload to be
+     *                      securely signed.
      * @return The profile's textures.
-     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's
+     *                               texture property.
      */
     public Map<TextureType, Texture> getTextures(boolean requireSecure) throws IllegalStateException {
         if (this.textures == null || (requireSecure && !this.texturesVerified)) {
@@ -184,7 +188,8 @@ public class GameProfile {
 
                 MinecraftTexturesPayload result;
                 try {
-                    String json = new String(Base64.getDecoder().decode(textures.getValue().getBytes(StandardCharsets.UTF_8)));
+                    String json = new String(
+                            Base64.getDecoder().decode(textures.getValue().getBytes(StandardCharsets.UTF_8)));
                     result = GSON.fromJson(json, MinecraftTexturesPayload.class);
                 } catch (Exception e) {
                     throw new IllegalStateException("Could not decode texture payload.", e);
@@ -192,12 +197,13 @@ public class GameProfile {
 
                 if (result != null && result.textures != null) {
                     if (requireSecure) {
-                        for (GameProfile.Texture texture : result.textures.values()) {
+                        for (Texture texture : result.textures.values()) {
                             if (TextureUrlChecker.isAllowedTextureDomain(texture.getURL())) {
                                 continue;
                             }
 
-                            throw new IllegalStateException("Textures payload has been tampered with. (non-whitelisted domain)");
+                            throw new IllegalStateException(
+                                    "Textures payload has been tampered with. (non-whitelisted domain)");
                         }
                     }
 
@@ -220,7 +226,8 @@ public class GameProfile {
      *
      * @param type Type of texture to get.
      * @return The texture of the specified type.
-     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's
+     *                               texture property.
      */
     public Texture getTexture(TextureType type) throws IllegalStateException {
         return this.getTextures().get(type);
@@ -229,10 +236,12 @@ public class GameProfile {
     /**
      * Gets a texture contained in the profile.
      *
-     * @param type Type of texture to get.
-     * @param requireSecure Whether to require the profile's texture payload to be securely signed.
+     * @param type          Type of texture to get.
+     * @param requireSecure Whether to require the profile's texture payload to be
+     *                      securely signed.
      * @return The texture of the specified type.
-     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's
+     *                               texture property.
      */
     public Texture getTexture(TextureType type, boolean requireSecure) throws IllegalStateException {
         return this.getTextures(requireSecure).get(type);
@@ -273,7 +282,7 @@ public class GameProfile {
         /**
          * Creates a new Property instance.
          *
-         * @param name Name of the property.
+         * @param name  Name of the property.
          * @param value Value of the property.
          */
         public Property(String name, String value) {
@@ -283,8 +292,8 @@ public class GameProfile {
         /**
          * Creates a new Property instance.
          *
-         * @param name Name of the property.
-         * @param value Value of the property.
+         * @param name      Name of the property.
+         * @param value     Value of the property.
          * @param signature Signature used to verify the property.
          */
         public Property(String name, String value, String signature) {
@@ -357,100 +366,11 @@ public class GameProfile {
         }
     }
 
-    /**
-     * The type of a profile texture.
-     */
-    public enum TextureType {
-        SKIN,
-        CAPE,
-        ELYTRA;
-    }
-
-    /**
-     * The model used for a profile texture.
-     */
-    public enum TextureModel {
-        WIDE,
-        SLIM;
-    }
-
-    /**
-     * A texture contained within a profile.
-     */
-    public static class Texture {
-        private final String url;
-        private final Map<String, String> metadata;
-
-        /**
-         * Creates a new Texture instance.
-         *
-         * @param url URL of the texture.
-         * @param metadata Metadata of the texture.
-         */
-        public Texture(String url, Map<String, String> metadata) {
-            this.url = url;
-            this.metadata = metadata;
-        }
-
-        /**
-         * Gets the URL of the texture.
-         *
-         * @return The texture's URL.
-         */
-        public String getURL() {
-            return this.url;
-        }
-
-        /**
-         * Gets a metadata string from the texture.
-         *
-         * @return The metadata value corresponding to the given key.
-         */
-        public String getMetadata(String key) {
-            if (this.metadata == null) {
-                return null;
-            }
-
-            return this.metadata.get(key);
-        }
-
-        /**
-         * Gets the model of the texture.
-         *
-         * @return The texture's model.
-         */
-        public TextureModel getModel() {
-            String model = this.getMetadata("model");
-            return model != null && model.equals("slim") ? TextureModel.SLIM : TextureModel.WIDE;
-        }
-
-        /**
-         * Gets the hash of the texture.
-         *
-         * @return The texture's hash.
-         */
-        public String getHash() {
-            String url = this.url.endsWith("/") ? this.url.substring(0, this.url.length() - 1) : this.url;
-            int slash = url.lastIndexOf("/");
-            int dot = url.lastIndexOf(".");
-            if (dot < slash) {
-                dot = url.length();
-            }
-
-            return url.substring(slash + 1, dot != -1 ? dot : url.length());
-        }
-
-        @Override
-        public String toString() {
-            return "Texture{url=" + this.url + ", model=" + this.getModel() + ", hash=" + this.getHash() + "}";
-        }
-    }
-
     private static class MinecraftTexturesPayload {
         public long timestamp;
         public UUID profileId;
         public String profileName;
         public boolean isPublic;
-        public Map<GameProfile.TextureType, GameProfile.Texture> textures;
+        public Map<TextureType, Texture> textures;
     }
 }
