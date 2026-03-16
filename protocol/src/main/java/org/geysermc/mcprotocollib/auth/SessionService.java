@@ -72,11 +72,8 @@ public class SessionService {
      * @throws IOException If an error occurs while making the request.
      */
     public GameProfile getProfileByServer(String name, String serverId) throws IOException {
-        HasJoinedResponse response = HTTPUtils.makeRequest(this.getProxy(),
-                URI.create(String.format(HAS_JOINED_ENDPOINT,
-                        URLEncoder.encode(name, StandardCharsets.UTF_8),
-                        URLEncoder.encode(serverId, StandardCharsets.UTF_8))),
-                null, HasJoinedResponse.class);
+        URI hasJoinedUri = URI.create(String.format(HAS_JOINED_ENDPOINT, URLEncoder.encode(name, StandardCharsets.UTF_8), URLEncoder.encode(serverId, StandardCharsets.UTF_8)));
+        HasJoinedResponse response = HTTPUtils.makeRequest(this.getProxy(), hasJoinedUri, null, HasJoinedResponse.class);
         if (response != null && response.id != null) {
             GameProfile result = new GameProfile(response.id, name);
             result.setProperties(response.properties);
@@ -97,7 +94,8 @@ public class SessionService {
             return;
         }
 
-        MinecraftProfileResponse response = HTTPUtils.makeRequest(this.getProxy(), URI.create(String.format(PROFILE_ENDPOINT, UUIDUtils.convertToNoDashes(profile.getId()))), null, MinecraftProfileResponse.class);
+        URI profileUri = URI.create(String.format(PROFILE_ENDPOINT, UUIDUtils.convertToNoDashes(profile.getId())));
+        MinecraftProfileResponse response = HTTPUtils.makeRequest(this.getProxy(), profileUri, null, MinecraftProfileResponse.class);
         if (response == null) {
             throw new IllegalStateException("Couldn't fetch profile properties for " + profile + " as the profile does not exist.");
         }
