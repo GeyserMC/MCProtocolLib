@@ -25,14 +25,13 @@ import java.util.UUID;
 public class GameProfile {
     private static final PublicKey SIGNATURE_KEY = loadSignatureKey();
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(UUID.class, new UndashedUUIDAdapter())
-            .create();
+        .registerTypeAdapter(UUID.class, new UndashedUUIDAdapter())
+        .create();
 
     private static PublicKey loadSignatureKey() {
-        try (InputStream in = Objects
-                .requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
+        try (InputStream in = Objects.requireNonNull(SessionService.class.getResourceAsStream("/yggdrasil_session_pubkey.der"))) {
             return KeyFactory.getInstance("RSA")
-                    .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
+                .generatePublic(new X509EncodedKeySpec(in.readAllBytes()));
         } catch (Exception e) {
             throw new RuntimeException("Missing/invalid yggdrasil public key.", e);
         }
@@ -156,8 +155,7 @@ public class GameProfile {
      * Gets an immutable map of texture types to textures contained in the profile.
      *
      * @return The profile's textures.
-     * @throws IllegalStateException If an error occurs decoding the profile's
-     *                               texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
     public Map<TextureType, Texture> getTextures() throws IllegalStateException {
         return this.getTextures(true);
@@ -166,11 +164,9 @@ public class GameProfile {
     /**
      * Gets an immutable map of texture types to textures contained in the profile.
      *
-     * @param requireSecure Whether to require the profile's texture payload to be
-     *                      securely signed.
+     * @param requireSecure Whether to require the profile's texture payload to be securely signed.
      * @return The profile's textures.
-     * @throws IllegalStateException If an error occurs decoding the profile's
-     *                               texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
     public Map<TextureType, Texture> getTextures(boolean requireSecure) throws IllegalStateException {
         if (this.textures == null || (requireSecure && !this.texturesVerified)) {
@@ -188,8 +184,7 @@ public class GameProfile {
 
                 MinecraftTexturesPayload result;
                 try {
-                    String json = new String(
-                            Base64.getDecoder().decode(textures.getValue().getBytes(StandardCharsets.UTF_8)));
+                    String json = new String(Base64.getDecoder().decode(textures.getValue().getBytes(StandardCharsets.UTF_8)));
                     result = GSON.fromJson(json, MinecraftTexturesPayload.class);
                 } catch (Exception e) {
                     throw new IllegalStateException("Could not decode texture payload.", e);
@@ -202,8 +197,7 @@ public class GameProfile {
                                 continue;
                             }
 
-                            throw new IllegalStateException(
-                                    "Textures payload has been tampered with. (non-whitelisted domain)");
+                            throw new IllegalStateException("Textures payload has been tampered with. (non-whitelisted domain)");
                         }
                     }
 
@@ -226,8 +220,7 @@ public class GameProfile {
      *
      * @param type Type of texture to get.
      * @return The texture of the specified type.
-     * @throws IllegalStateException If an error occurs decoding the profile's
-     *                               texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
     public Texture getTexture(TextureType type) throws IllegalStateException {
         return this.getTextures().get(type);
@@ -236,12 +229,10 @@ public class GameProfile {
     /**
      * Gets a texture contained in the profile.
      *
-     * @param type          Type of texture to get.
-     * @param requireSecure Whether to require the profile's texture payload to be
-     *                      securely signed.
+     * @param type Type of texture to get.
+     * @param requireSecure Whether to require the profile's texture payload to be securely signed.
      * @return The texture of the specified type.
-     * @throws IllegalStateException If an error occurs decoding the profile's
-     *                               texture property.
+     * @throws IllegalStateException If an error occurs decoding the profile's texture property.
      */
     public Texture getTexture(TextureType type, boolean requireSecure) throws IllegalStateException {
         return this.getTextures(requireSecure).get(type);
@@ -282,7 +273,7 @@ public class GameProfile {
         /**
          * Creates a new Property instance.
          *
-         * @param name  Name of the property.
+         * @param name Name of the property.
          * @param value Value of the property.
          */
         public Property(String name, String value) {
@@ -292,8 +283,8 @@ public class GameProfile {
         /**
          * Creates a new Property instance.
          *
-         * @param name      Name of the property.
-         * @param value     Value of the property.
+         * @param name Name of the property.
+         * @param value Value of the property.
          * @param signature Signature used to verify the property.
          */
         public Property(String name, String value, String signature) {
