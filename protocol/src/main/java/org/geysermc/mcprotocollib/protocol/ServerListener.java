@@ -280,7 +280,8 @@ public class ServerListener extends SessionAdapter {
 
         int threshold = session.getFlag(MinecraftConstants.SERVER_COMPRESSION_THRESHOLD, DEFAULT_COMPRESSION_THRESHOLD);
         if (threshold >= 0) {
-            session.send(new ClientboundLoginCompressionPacket(threshold), () -> session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), true)));
+            session.send(new ClientboundLoginCompressionPacket(threshold), () ->
+                    session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), true)));
         }
 
         session.send(new ClientboundLoginFinishedPacket(profile));
