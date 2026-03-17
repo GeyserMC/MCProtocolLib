@@ -20,7 +20,7 @@ import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
-import org.geysermc.mcprotocollib.auth.TextureModel;
+import org.geysermc.mcprotocollib.auth.texture.TextureModel;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
@@ -1522,11 +1522,10 @@ public class MinecraftTypes {
                 List<Vector3i> pois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
                 List<Vector3i> potentialPois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
                 info = new DebugBrainDump(name, profession, xp, health, maxHealth, inventory, wantsGolem, angerLevel,
-                        activities, behaviors, memories, gossips, pois, potentialPois);
+                    activities, behaviors, memories, gossips, pois, potentialPois);
             }
             case BREEZES -> {
-                OptionalInt attackTarget = buf.readBoolean() ? OptionalInt.of(MinecraftTypes.readVarInt(buf))
-                        : OptionalInt.empty();
+                OptionalInt attackTarget = buf.readBoolean() ? OptionalInt.of(MinecraftTypes.readVarInt(buf)) : OptionalInt.empty();
                 Vector3i jumpTarget = MinecraftTypes.readNullable(buf, MinecraftTypes::readPosition);
                 info = new DebugBreezeInfo(attackTarget, jumpTarget);
             }
@@ -1554,8 +1553,7 @@ public class MinecraftTypes {
                 for (int i = 0; i < closedSet.length; i++) {
                     closedSet[i] = MinecraftTypes.readDebugPathNode(buf);
                 }
-                DebugPathInfo.Path.DebugData debugData = new DebugPathInfo.Path.DebugData(targetNodes, openSet,
-                        closedSet);
+                DebugPathInfo.Path.DebugData debugData = new DebugPathInfo.Path.DebugData(targetNodes, openSet, closedSet);
 
                 DebugPathInfo.Path path = new DebugPathInfo.Path(reached, nextNodeIndex, target, nodes, debugData);
                 float maxNodeDistance = buf.readFloat();
@@ -1564,13 +1562,12 @@ public class MinecraftTypes {
             case ENTITY_BLOCK_INTERSECTIONS -> info = DebugEntityBlockIntersection.from(MinecraftTypes.readVarInt(buf));
             case BEE_HIVES -> {
                 int blockType = MinecraftTypes.readVarInt(buf);
-                int occupantCount = MinecraftTypes.readVarInt(buf);
+                int occupantCount =  MinecraftTypes.readVarInt(buf);
                 int honeyLevel = MinecraftTypes.readVarInt(buf);
                 boolean sedated = buf.readBoolean();
                 info = new DebugHiveInfo(blockType, occupantCount, honeyLevel, sedated);
             }
-            case POIS -> info = new DebugPoiInfo(MinecraftTypes.readPosition(buf), MinecraftTypes.readVarInt(buf),
-                    MinecraftTypes.readVarInt(buf));
+            case POIS -> info = new DebugPoiInfo(MinecraftTypes.readPosition(buf), MinecraftTypes.readVarInt(buf), MinecraftTypes.readVarInt(buf));
             case REDSTONE_WIRE_ORIENTATIONS -> info = new DebugOrientationInfo(MinecraftTypes.readVarInt(buf));
             case VILLAGE_SECTIONS -> info = DebugVillageSectionsInfo.INSTANCE;
             case RAIDS -> info = new DebugRaidsInfo(MinecraftTypes.readList(buf, MinecraftTypes::readPosition));
@@ -1583,8 +1580,7 @@ public class MinecraftTypes {
                     List<DebugStructuresInfo.StructureInfo.Piece> pieces = MinecraftTypes.readList(in, bufx -> {
                         Vector3i pieceMin = MinecraftTypes.readPosition(bufx);
                         Vector3i pieceMax = MinecraftTypes.readPosition(bufx);
-                        DebugStructuresInfo.BoundingBox pieceBoundingBox = new DebugStructuresInfo.BoundingBox(pieceMin,
-                                pieceMax);
+                        DebugStructuresInfo.BoundingBox pieceBoundingBox = new DebugStructuresInfo.BoundingBox(pieceMin, pieceMax);
                         boolean isStart = bufx.readBoolean();
                         return new DebugStructuresInfo.StructureInfo.Piece(pieceBoundingBox, isStart);
                     });
@@ -1594,8 +1590,7 @@ public class MinecraftTypes {
             }
             case GAME_EVENT_LISTENERS -> info = new DebugGameEventListenerInfo(MinecraftTypes.readVarInt(buf));
             case NEIGHBOR_UPDATES -> info = new DebugNeighborUpdateInfo(MinecraftTypes.readPosition(buf));
-            case GAME_EVENTS ->
-                info = new DebugGameEventInfo(MinecraftTypes.readVarInt(buf), MinecraftTypes.readPosition(buf));
+            case GAME_EVENTS -> info = new DebugGameEventInfo(MinecraftTypes.readVarInt(buf), MinecraftTypes.readPosition(buf));
             default -> info = null;
         }
         return info;
@@ -1659,8 +1654,7 @@ public class MinecraftTypes {
                 buf.writeInt(pathInfo.path().nextNodeIndex());
                 MinecraftTypes.writePosition(buf, pathInfo.path().target());
                 MinecraftTypes.writeList(buf, pathInfo.path().nodes(), MinecraftTypes::writeDebugPathNode);
-                MinecraftTypes.writeList(buf, pathInfo.path().debugData().targetNodes(),
-                        MinecraftTypes::writeDebugPathNode);
+                MinecraftTypes.writeList(buf, pathInfo.path().debugData().targetNodes(), MinecraftTypes::writeDebugPathNode);
 
                 MinecraftTypes.writeVarInt(buf, pathInfo.path().debugData().openSet().length);
                 for (DebugPathInfo.Node node : pathInfo.path().debugData().openSet()) {
@@ -1674,8 +1668,7 @@ public class MinecraftTypes {
 
                 buf.writeFloat(pathInfo.maxNodeDistance());
             }
-            case ENTITY_BLOCK_INTERSECTIONS ->
-                MinecraftTypes.writeVarInt(buf, ((DebugEntityBlockIntersection) debugInfo).ordinal());
+            case ENTITY_BLOCK_INTERSECTIONS -> MinecraftTypes.writeVarInt(buf, ((DebugEntityBlockIntersection) debugInfo).ordinal());
             case BEE_HIVES -> {
                 DebugHiveInfo hiveInfo = (DebugHiveInfo) debugInfo;
 
@@ -1691,10 +1684,8 @@ public class MinecraftTypes {
                 MinecraftTypes.writeVarInt(buf, poiInfo.poiType());
                 MinecraftTypes.writeVarInt(buf, poiInfo.freeTicketCount());
             }
-            case REDSTONE_WIRE_ORIENTATIONS ->
-                MinecraftTypes.writeVarInt(buf, ((DebugOrientationInfo) debugInfo).orientationId());
-            case RAIDS ->
-                MinecraftTypes.writeList(buf, ((DebugRaidsInfo) debugInfo).positions(), MinecraftTypes::writePosition);
+            case REDSTONE_WIRE_ORIENTATIONS -> MinecraftTypes.writeVarInt(buf, ((DebugOrientationInfo) debugInfo).orientationId());
+            case RAIDS -> MinecraftTypes.writeList(buf, ((DebugRaidsInfo) debugInfo).positions(), MinecraftTypes::writePosition);
             case STRUCTURES -> {
                 DebugStructuresInfo structuresInfo = (DebugStructuresInfo) debugInfo;
 
@@ -1708,8 +1699,7 @@ public class MinecraftTypes {
                     });
                 });
             }
-            case GAME_EVENT_LISTENERS ->
-                MinecraftTypes.writeVarInt(buf, ((DebugGameEventListenerInfo) debugInfo).listenerRadius());
+            case GAME_EVENT_LISTENERS -> MinecraftTypes.writeVarInt(buf, ((DebugGameEventListenerInfo) debugInfo).listenerRadius());
             case NEIGHBOR_UPDATES -> MinecraftTypes.writePosition(buf, ((DebugNeighborUpdateInfo) debugInfo).pos());
             case GAME_EVENTS -> {
                 DebugGameEventInfo gameEventInfo = (DebugGameEventInfo) debugInfo;
@@ -1794,8 +1784,7 @@ public class MinecraftTypes {
     public static ChunkSection readChunkSection(ByteBuf buf, int blockStateRegistrySize, int biomeRegistrySize) {
         int blockCount = buf.readShort();
 
-        DataPalette blockStatePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BLOCK_STATE,
-                blockStateRegistrySize);
+        DataPalette blockStatePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BLOCK_STATE, blockStateRegistrySize);
         DataPalette biomePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BIOME, biomeRegistrySize);
         return new ChunkSection(blockCount, blockStatePalette, biomePalette);
     }
@@ -1837,8 +1826,7 @@ public class MinecraftTypes {
 
     public static void writeFixedBitSet(ByteBuf buf, BitSet bitSet, int length) {
         if (bitSet.length() > length) {
-            throw new IllegalArgumentException(
-                    "BitSet is larger than expected size (" + bitSet.length() + " > " + length + ")");
+            throw new IllegalArgumentException("BitSet is larger than expected size (" + bitSet.length() + " > " + length + ")");
         } else {
             byte[] bytes = bitSet.toByteArray();
             buf.writeBytes(Arrays.copyOf(bytes, -Math.floorDiv(-length, 8)));
@@ -1877,8 +1865,7 @@ public class MinecraftTypes {
 
     public static ResolvableProfile readResolvableProfile(ByteBuf buf) {
         boolean dynamic = !buf.readBoolean();
-        GameProfile profile = dynamic ? MinecraftTypes.readDynamicGameProfile(buf)
-                : MinecraftTypes.readStaticGameProfile(buf);
+        GameProfile profile = dynamic ? MinecraftTypes.readDynamicGameProfile(buf) : MinecraftTypes.readStaticGameProfile(buf);
         Key body = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
         Key cape = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
         Key elytra = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
@@ -1899,8 +1886,7 @@ public class MinecraftTypes {
         MinecraftTypes.writeNullable(buf, profile.getBody(), MinecraftTypes::writeResourceLocation);
         MinecraftTypes.writeNullable(buf, profile.getCape(), MinecraftTypes::writeResourceLocation);
         MinecraftTypes.writeNullable(buf, profile.getElytra(), MinecraftTypes::writeResourceLocation);
-        MinecraftTypes.writeNullable(buf, profile.getModel(),
-                (out, model) -> out.writeBoolean(model == TextureModel.SLIM));
+        MinecraftTypes.writeNullable(buf, profile.getModel(), (out, model) -> out.writeBoolean(model == TextureModel.SLIM));
     }
 
     public static GameProfile.Property readProperty(ByteBuf buf) {
@@ -1925,7 +1911,7 @@ public class MinecraftTypes {
             MinecraftTypes.writeVarInt(buf, 0);
             MinecraftTypes.writeSoundEvent(buf, sound);
         } else {
-            MinecraftTypes.writeVarInt(buf, ((BuiltinSound) sound).ordinal() + 1);
+            MinecraftTypes.writeVarInt(buf, ((BuiltinSound)sound).ordinal() + 1);
         }
     }
 
@@ -1950,5 +1936,6 @@ public class MinecraftTypes {
             buf.writeFloat(soundEvent.getRange());
         }
     }
+
 
 }

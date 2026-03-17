@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.auth;
+package org.geysermc.mcprotocollib.auth.texture;
 
 import java.util.Map;
 

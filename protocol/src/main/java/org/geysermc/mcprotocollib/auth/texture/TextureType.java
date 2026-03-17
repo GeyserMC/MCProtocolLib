@@ -1,4 +1,4 @@
-package org.geysermc.mcprotocollib.auth;
+package org.geysermc.mcprotocollib.auth.texture;
 
 /**
  * The type of a profile texture.

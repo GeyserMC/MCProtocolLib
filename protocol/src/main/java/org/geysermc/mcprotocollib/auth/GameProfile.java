@@ -2,6 +2,8 @@ package org.geysermc.mcprotocollib.auth;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.geysermc.mcprotocollib.auth.texture.Texture;
+import org.geysermc.mcprotocollib.auth.texture.TextureType;
 import org.geysermc.mcprotocollib.auth.util.TextureUrlChecker;
 import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
 
@@ -47,7 +49,7 @@ public class GameProfile {
     /**
      * Creates a new GameProfile instance.
      *
-     * @param id   ID of the profile.
+     * @param id ID of the profile.
      * @param name Name of the profile.
      */
     public GameProfile(String id, String name) {
@@ -57,7 +59,7 @@ public class GameProfile {
     /**
      * Creates a new GameProfile instance.
      *
-     * @param id   ID of the profile.
+     * @param id ID of the profile.
      * @param name Name of the profile.
      */
     public GameProfile(UUID id, String name) {

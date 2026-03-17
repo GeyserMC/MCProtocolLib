@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.auth.GameProfile;
-import org.geysermc.mcprotocollib.auth.TextureModel;
+import org.geysermc.mcprotocollib.auth.texture.TextureModel;
 import org.jetbrains.annotations.Nullable;
 
 @Data
@@ -20,8 +20,7 @@ public class ResolvableProfile {
     private final boolean dynamic;
 
     public ResolvableProfile(GameProfile profile) {
-        // A profile is dynamic in Java 1.21.9 when it is missing UUID, name, or
-        // properties (empty properties are fine)
+        // A profile is dynamic in Java 1.21.9 when it is missing UUID, name, or properties (empty properties are fine)
         this(profile, null, null, null, null, !profile.isComplete() || profile.getProperties() == null);
     }
 }
