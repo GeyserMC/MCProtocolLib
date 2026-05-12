@@ -1795,19 +1795,18 @@ public class MinecraftTypes {
         MinecraftTypes.writeDataPalette(buf, section.getBiomeData());
     }
 
-    public static <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, Class<E> type, E[] values) {
+    public static <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, Class<E> type) {
+        E[] values = type.getEnumConstants();
         BitSet bitSet = MinecraftTypes.readFixedBitSet(buf, values.length);
-        List<E> readValues = new ArrayList<>();
+        EnumSet<E> result = EnumSet.noneOf(type);
 
         for (int i = 0; i < values.length; i++) {
             if (bitSet.get(i)) {
-                readValues.add(values[i]);
+                result.add(values[i]);
             }
         }
 
-        return readValues.isEmpty()
-            ? EnumSet.noneOf(type)
-            : EnumSet.copyOf(readValues);
+        return result;
     }
 
     public static <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, E[] values) {
