@@ -21,6 +21,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public class DataComponentTypes {
@@ -34,10 +35,10 @@ public class DataComponentTypes {
     public static final DataComponentType<UseEffects> USE_EFFECTS = register(id -> new DataComponentType<>(id, "use_effects", ItemTypes::readUseEffects, ItemTypes::writeUseEffects, ObjectDataComponent::new));
     public static final DataComponentType<Component> CUSTOM_NAME = register(id -> new DataComponentType<>(id, "custom_name", MinecraftTypes::readComponent, MinecraftTypes::writeComponent, ObjectDataComponent::new));
     public static final DataComponentType<Float> MINIMUM_ATTACK_CHARGE = register(id -> new DataComponentType<>(id, "minimum_attack_charge", ByteBuf::readFloat, ByteBuf::writeFloat, ObjectDataComponent::new));
-    public static final DataComponentType<Holder<Key>> DAMAGE_TYPE = register(id -> new DataComponentType<>(id, "damage_type", ItemTypes::readDamageType, ItemTypes::writeDamageType, ObjectDataComponent::new));
+    public static final IntComponentType DAMAGE_TYPE = register(id -> new IntComponentType(id, "damage_type", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<Component> ITEM_NAME = register(id -> new DataComponentType<>(id, "item_name", MinecraftTypes::readComponent, MinecraftTypes::writeComponent, ObjectDataComponent::new));
     public static final DataComponentType<Key> ITEM_MODEL = register(id -> new DataComponentType<>(id, "item_model", MinecraftTypes::readResourceLocation, MinecraftTypes::writeResourceLocation, ObjectDataComponent::new));
-    public static final DataComponentType<List<Component>> LORE = register(id -> new DataComponentType<>(id, "lore", listReader(MinecraftTypes::readComponent), listWriter(MinecraftTypes::writeComponent), ObjectDataComponent::new));
+    public static final DataComponentType<List<Component>> LORE = register(id -> new DataComponentType<>(id, "lore", listReader(MinecraftTypes::readComponent, 256), listWriter(MinecraftTypes::writeComponent, 256), ObjectDataComponent::new));
     public static final IntComponentType RARITY = register(id -> new IntComponentType(id, "rarity", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<ItemEnchantments> ENCHANTMENTS = register(id -> new DataComponentType<>(id, "enchantments", ItemTypes::readItemEnchantments, ItemTypes::writeItemEnchantments, ObjectDataComponent::new));
     public static final DataComponentType<AdventureModePredicate> CAN_PLACE_ON = register(id -> new DataComponentType<>(id, "can_place_on", ItemTypes::readAdventureModePredicate, ItemTypes::writeAdventureModePredicate, ObjectDataComponent::new));
@@ -51,9 +52,9 @@ public class DataComponentTypes {
     public static final DataComponentType<Unit> INTANGIBLE_PROJECTILE = register(id -> new DataComponentType<>(id, "intangible_projectile", emptyNbtReader(), emptyNbtWriter(), ObjectDataComponent::new));
     public static final DataComponentType<FoodProperties> FOOD = register(id -> new DataComponentType<>(id, "food", ItemTypes::readFoodProperties, ItemTypes::writeFoodProperties, ObjectDataComponent::new));
     public static final DataComponentType<Consumable> CONSUMABLE = register(id -> new DataComponentType<>(id, "consumable", ItemTypes::readConsumable, ItemTypes::writeConsumable, ObjectDataComponent::new));
-    public static final DataComponentType<ItemStack> USE_REMAINDER = register(id -> new DataComponentType<>(id, "use_remainder", MinecraftTypes::readItemStack, MinecraftTypes::writeItemStack, ObjectDataComponent::new));
+    public static final DataComponentType<ItemStack> USE_REMAINDER = register(id -> new DataComponentType<>(id, "use_remainder", MinecraftTypes::readItemStackTemplate, MinecraftTypes::writeItemStackTemplate, ObjectDataComponent::new));
     public static final DataComponentType<UseCooldown> USE_COOLDOWN = register(id -> new DataComponentType<>(id, "use_cooldown", ItemTypes::readUseCooldown, ItemTypes::writeUseCooldown, ObjectDataComponent::new));
-    public static final DataComponentType<Key> DAMAGE_RESISTANT = register(id -> new DataComponentType<>(id, "damage_resistant", MinecraftTypes::readResourceLocation, MinecraftTypes::writeResourceLocation, ObjectDataComponent::new));
+    public static final DataComponentType<HolderSet> DAMAGE_RESISTANT = register(id -> new DataComponentType<>(id, "damage_resistant", MinecraftTypes::readHolderSet, MinecraftTypes::writeHolderSet, ObjectDataComponent::new));
     public static final DataComponentType<ToolData> TOOL = register(id -> new DataComponentType<>(id, "tool", ItemTypes::readToolData, ItemTypes::writeToolData, ObjectDataComponent::new));
     public static final DataComponentType<Weapon> WEAPON = register(id -> new DataComponentType<>(id, "weapon", ItemTypes::readWeapon, ItemTypes::writeWeapon, ObjectDataComponent::new));
     public static final DataComponentType<AttackRange> ATTACK_RANGE = register(id -> new DataComponentType<>(id, "attack_range", ItemTypes::readAttackRange, ItemTypes::writeAttackRange, ObjectDataComponent::new));
@@ -67,14 +68,16 @@ public class DataComponentTypes {
     public static final DataComponentType<PiercingWeapon> PIERCING_WEAPON = register(id -> new DataComponentType<>(id, "piercing_weapon", ItemTypes::readPiercingWeapon, ItemTypes::writePiercingWeapon, ObjectDataComponent::new));
     public static final DataComponentType<KineticWeapon> KINETIC_WEAPON = register(id -> new DataComponentType<>(id, "kinetic_weapon", ItemTypes::readKineticWeapon, ItemTypes::writeKineticWeapon, ObjectDataComponent::new));
     public static final DataComponentType<SwingAnimation> SWING_ANIMATION = register(id -> new DataComponentType<>(id, "swing_animation", ItemTypes::readSwingAnimation, ItemTypes::writeSwingAnimation, ObjectDataComponent::new));
+    public static final IntComponentType ADDITIONAL_TRADE_COST = register(id -> new IntComponentType(id, "additional_trade_cost", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<ItemEnchantments> STORED_ENCHANTMENTS = register(id -> new DataComponentType<>(id, "stored_enchantments", ItemTypes::readItemEnchantments, ItemTypes::writeItemEnchantments, ObjectDataComponent::new));
+    public static final IntComponentType DYE = register(id -> new IntComponentType(id, "dye", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType DYED_COLOR = register(id -> new IntComponentType(id, "dyed_color", ByteBuf::readInt, ByteBuf::writeInt, IntDataComponent::new));
     public static final IntComponentType MAP_COLOR = register(id -> new IntComponentType(id, "map_color", ByteBuf::readInt, ByteBuf::writeInt, IntDataComponent::new));
     public static final IntComponentType MAP_ID = register(id -> new IntComponentType(id, "map_id", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<NbtMap> MAP_DECORATIONS = register(id -> new DataComponentType<>(id, "map_decorations", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final IntComponentType MAP_POST_PROCESSING = register(id -> new IntComponentType(id, "map_post_processing", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final DataComponentType<List<ItemStack>> CHARGED_PROJECTILES = register(id -> new DataComponentType<>(id, "charged_projectiles", listReader(MinecraftTypes::readItemStack), listWriter(MinecraftTypes::writeItemStack), ObjectDataComponent::new));
-    public static final DataComponentType<List<ItemStack>> BUNDLE_CONTENTS = register(id -> new DataComponentType<>(id, "bundle_contents", listReader(MinecraftTypes::readItemStack), listWriter(MinecraftTypes::writeItemStack), ObjectDataComponent::new));
+    public static final DataComponentType<List<ItemStack>> CHARGED_PROJECTILES = register(id -> new DataComponentType<>(id, "charged_projectiles", listReader(MinecraftTypes::readItemStackTemplate), listWriter(MinecraftTypes::writeItemStackTemplate), ObjectDataComponent::new));
+    public static final DataComponentType<List<ItemStack>> BUNDLE_CONTENTS = register(id -> new DataComponentType<>(id, "bundle_contents", listReader(MinecraftTypes::readItemStackTemplate), listWriter(MinecraftTypes::writeItemStackTemplate), ObjectDataComponent::new));
     public static final DataComponentType<PotionContents> POTION_CONTENTS = register(id -> new DataComponentType<>(id, "potion_contents", ItemTypes::readPotionContents, ItemTypes::writePotionContents, ObjectDataComponent::new));
     public static final DataComponentType<Float> POTION_DURATION_SCALE = register(id -> new DataComponentType<>(id, "potion_duration_scale", ByteBuf::readFloat, ByteBuf::writeFloat, ObjectDataComponent::new));
     public static final DataComponentType<List<SuspiciousStewEffect>> SUSPICIOUS_STEW_EFFECTS = register(id -> new DataComponentType<>(id, "suspicious_stew_effects", listReader(ItemTypes::readStewEffect), listWriter(ItemTypes::writeStewEffect), ObjectDataComponent::new));
@@ -85,11 +88,11 @@ public class DataComponentTypes {
     public static final DataComponentType<TypedEntityData<EntityType>> ENTITY_DATA = register(id -> new DataComponentType<>(id, "entity_data", buf -> ItemTypes.readTypedEntityData(buf, ItemTypes::readEntityType), (buf, data) -> ItemTypes.writeTypedEntityData(buf, data, ItemTypes::writeEntityType), ObjectDataComponent::new));
     public static final DataComponentType<NbtMap> BUCKET_ENTITY_DATA = register(id -> new DataComponentType<>(id, "bucket_entity_data", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final DataComponentType<TypedEntityData<BlockEntityType>> BLOCK_ENTITY_DATA = register(id -> new DataComponentType<>(id, "block_entity_data", buf -> ItemTypes.readTypedEntityData(buf, ItemTypes::readBlockEntityType), (buf, data) -> ItemTypes.writeTypedEntityData(buf, data, ItemTypes::writeBlockEntityType), ObjectDataComponent::new));
-    public static final DataComponentType<InstrumentComponent> INSTRUMENT = register(id -> new DataComponentType<>(id, "instrument", ItemTypes::readInstrumentComponent, ItemTypes::writeInstrumentComponent, ObjectDataComponent::new));
-    public static final DataComponentType<ProvidesTrimMaterial> PROVIDES_TRIM_MATERIAL = register(id -> new DataComponentType<>(id, "provides_trim_material", ItemTypes::readProvidesTrimMaterial, ItemTypes::writeProvidesTrimMaterial, ObjectDataComponent::new));
+    public static final DataComponentType<Holder<Instrument>> INSTRUMENT = register(id -> new DataComponentType<>(id, "instrument", buf -> MinecraftTypes.readHolder(buf, ItemTypes::readInstrument), (buf, data) -> MinecraftTypes.writeHolder(buf, data, ItemTypes::writeInstrument), ObjectDataComponent::new));
+    public static final DataComponentType<Holder<ArmorTrim.TrimMaterial>> PROVIDES_TRIM_MATERIAL = register(id -> new DataComponentType<>(id, "provides_trim_material", buf -> MinecraftTypes.readHolder(buf, ItemTypes::readTrimMaterial), (buf, data) -> MinecraftTypes.writeHolder(buf, data, ItemTypes::writeTrimMaterial), ObjectDataComponent::new));
     public static final IntComponentType OMINOUS_BOTTLE_AMPLIFIER = register(id -> new IntComponentType(id, "ominous_bottle_amplifier", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final DataComponentType<JukeboxPlayable> JUKEBOX_PLAYABLE = register(id -> new DataComponentType<>(id, "jukebox_playable", ItemTypes::readJukeboxPlayable, ItemTypes::writeJukeboxPlayable, ObjectDataComponent::new));
-    public static final DataComponentType<Key> PROVIDES_BANNER_PATTERNS = register(id -> new DataComponentType<>(id, "provides_banner_patterns", MinecraftTypes::readResourceLocation, MinecraftTypes::writeResourceLocation, ObjectDataComponent::new));
+    public static final DataComponentType<Holder<JukeboxSong>> JUKEBOX_PLAYABLE = register(id -> new DataComponentType<>(id, "jukebox_playable", buf -> MinecraftTypes.readHolder(buf, ItemTypes::readJukeboxSong), (buf, data) -> MinecraftTypes.writeHolder(buf, data, ItemTypes::writeJukeboxSong), ObjectDataComponent::new));
+    public static final DataComponentType<HolderSet> PROVIDES_BANNER_PATTERNS = register(id -> new DataComponentType<>(id, "provides_banner_patterns", MinecraftTypes::readHolderSet, MinecraftTypes::writeHolderSet, ObjectDataComponent::new));
     public static final DataComponentType<NbtList<?>> RECIPES = register(id -> new DataComponentType<>(id, "recipes", ItemTypes::readRecipes, ItemTypes::writeRecipes, ObjectDataComponent::new));
     public static final DataComponentType<LodestoneTracker> LODESTONE_TRACKER = register(id -> new DataComponentType<>(id, "lodestone_tracker", ItemTypes::readLodestoneTarget, ItemTypes::writeLodestoneTarget, ObjectDataComponent::new));
     public static final DataComponentType<Fireworks.FireworkExplosion> FIREWORK_EXPLOSION = register(id -> new DataComponentType<>(id, "firework_explosion", ItemTypes::readFireworkExplosion, ItemTypes::writeFireworkExplosion, ObjectDataComponent::new));
@@ -98,8 +101,8 @@ public class DataComponentTypes {
     public static final DataComponentType<Key> NOTE_BLOCK_SOUND = register(id -> new DataComponentType<>(id, "note_block_sound", MinecraftTypes::readResourceLocation, MinecraftTypes::writeResourceLocation, ObjectDataComponent::new));
     public static final DataComponentType<List<BannerPatternLayer>> BANNER_PATTERNS = register(id -> new DataComponentType<>(id, "banner_patterns", listReader(ItemTypes::readBannerPatternLayer), listWriter(ItemTypes::writeBannerPatternLayer), ObjectDataComponent::new));
     public static final IntComponentType BASE_COLOR = register(id -> new IntComponentType(id, "base_color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final DataComponentType<List<Integer>> POT_DECORATIONS = register(id -> new DataComponentType<>(id, "pot_decorations", listReader(MinecraftTypes::readVarInt), listWriter(MinecraftTypes::writeVarInt), ObjectDataComponent::new));
-    public static final DataComponentType<List<ItemStack>> CONTAINER = register(id -> new DataComponentType<>(id, "container", listReader(MinecraftTypes::readOptionalItemStack), listWriter(MinecraftTypes::writeOptionalItemStack), ObjectDataComponent::new));
+    public static final DataComponentType<List<Integer>> POT_DECORATIONS = register(id -> new DataComponentType<>(id, "pot_decorations", listReader(MinecraftTypes::readVarInt, 4), listWriter(MinecraftTypes::writeVarInt, 4), ObjectDataComponent::new));
+    public static final DataComponentType<List<Optional<ItemStack>>> CONTAINER = register(id -> new DataComponentType<>(id, "container", listReader(optionalReader(MinecraftTypes::readItemStackTemplate), 256), listWriter(optionalWriter(MinecraftTypes::writeItemStackTemplate), 256), ObjectDataComponent::new));
     public static final DataComponentType<BlockStateProperties> BLOCK_STATE = register(id -> new DataComponentType<>(id, "block_state", ItemTypes::readBlockStateProperties, ItemTypes::writeBlockStateProperties, ObjectDataComponent::new));
     public static final DataComponentType<List<BeehiveOccupant>> BEES = register(id -> new DataComponentType<>(id, "bees", listReader(ItemTypes::readBeehiveOccupant), listWriter(ItemTypes::writeBeehiveOccupant), ObjectDataComponent::new));
     public static final DataComponentType<NbtMap> LOCK = register(id -> new DataComponentType<>(id, "lock", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
@@ -118,15 +121,19 @@ public class DataComponentTypes {
     public static final IntComponentType MOOSHROOM_VARIANT = register(id -> new IntComponentType(id, "mooshroom/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType RABBIT_VARIANT = register(id -> new IntComponentType(id, "rabbit/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType PIG_VARIANT = register(id -> new IntComponentType(id, "pig/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType PIG_SOUND_VARIANT = register(id -> new IntComponentType(id, "pig/sound_variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType COW_VARIANT = register(id -> new IntComponentType(id, "cow/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final DataComponentType<Holder<Key>> CHICKEN_VARIANT = register(id -> new DataComponentType<>(id, "chicken/variant", MinecraftTypes::readChickenVariant, MinecraftTypes::writeChickenVariant, ObjectDataComponent::new));
-    public static final DataComponentType<Holder<Key>> ZOMBIE_NAUTILUS_VARIANT = register(id -> new DataComponentType<>(id, "zombie_nautilus/variant", MinecraftTypes::readZombieNautilusVariant, MinecraftTypes::writeZombieNautilusVariant, ObjectDataComponent::new));
+    public static final IntComponentType COW_SOUND_VARIANT = register(id -> new IntComponentType(id, "cow/sound_variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType CHICKEN_VARIANT = register(id -> new IntComponentType(id, "chicken/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType CHICKEN_SOUND_VARIANT = register(id -> new IntComponentType(id, "chicken/sound_variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType ZOMBIE_NAUTILUS_VARIANT = register(id -> new IntComponentType(id, "zombie_nautilus/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType FROG_VARIANT = register(id -> new IntComponentType(id, "frog/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType HORSE_VARIANT = register(id -> new IntComponentType(id, "horse/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new DataComponentType<>(id, "painting/variant", MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectDataComponent::new));
     public static final IntComponentType LLAMA_VARIANT = register(id -> new IntComponentType(id, "llama/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType AXOLOTL_VARIANT = register(id -> new IntComponentType(id, "axolotl/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType CAT_VARIANT = register(id -> new IntComponentType(id, "cat/variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final IntComponentType CAT_SOUND_VARIANT = register(id -> new IntComponentType(id, "cat/sound_variant", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType CAT_COLLAR = register(id -> new IntComponentType(id, "cat/collar", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType SHEEP_COLOR = register(id -> new IntComponentType(id, "sheep/color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType SHULKER_COLOR = register(id -> new IntComponentType(id, "shulker/color", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
@@ -138,9 +145,17 @@ public class DataComponentTypes {
     }
 
     private static <T> DataComponentType.Reader<List<T>> listReader(DataComponentType.Reader<T> reader) {
+        return listReader(reader, Integer.MAX_VALUE);
+    }
+
+    private static <T> DataComponentType.Reader<List<T>> listReader(DataComponentType.Reader<T> reader, int maxSize) {
         return (input) -> {
             List<T> ret = new ArrayList<>();
             int size = MinecraftTypes.readVarInt(input);
+            if (size > maxSize) {
+                throw new IllegalArgumentException(size + " elements exceeded max size of: " + maxSize);
+            }
+
             for (int i = 0; i < size; i++) {
                 ret.add(reader.read(input));
             }
@@ -150,11 +165,36 @@ public class DataComponentTypes {
     }
 
     private static <T> DataComponentType.Writer<List<T>> listWriter(DataComponentType.Writer<T> writer) {
+        return listWriter(writer, Integer.MAX_VALUE);
+    }
+
+    private static <T> DataComponentType.Writer<List<T>> listWriter(DataComponentType.Writer<T> writer, int maxSize) {
         return (output, value) -> {
+            if (value.size() > maxSize) {
+                throw new IllegalArgumentException(value.size() + " elements exceeded max size of: " + maxSize);
+            }
+
             MinecraftTypes.writeVarInt(output, value.size());
             for (T object : value) {
                 writer.write(output, object);
             }
+        };
+    }
+
+    private static <T> DataComponentType.Reader<Optional<T>> optionalReader(DataComponentType.Reader<T> reader) {
+        return input -> {
+            if (!input.readBoolean()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(reader.read(input));
+        };
+    }
+
+    private static <T> DataComponentType.Writer<Optional<T>> optionalWriter(DataComponentType.Writer<T> writer) {
+        return (output, value) -> {
+            output.writeBoolean(value.isPresent());
+            value.ifPresent(t -> writer.write(output, t));
         };
     }
 

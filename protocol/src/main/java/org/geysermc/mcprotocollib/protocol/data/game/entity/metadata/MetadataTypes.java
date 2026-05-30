@@ -51,12 +51,16 @@ public class MetadataTypes {
     public static final OptionalIntMetadataType OPTIONAL_UNSIGNED_INT = register(id -> new OptionalIntMetadataType(id, ObjectEntityMetadata::new));
     public static final MetadataType<Pose> POSE = register(id -> new MetadataType<>(id, MinecraftTypes::readPose, MinecraftTypes::writePose, ObjectEntityMetadata::new));
     public static final IntMetadataType CAT_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType CAT_SOUND_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType COW_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType COW_SOUND_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType WOLF_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType WOLF_SOUND_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType FROG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType PIG_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType PIG_SOUND_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType CHICKEN_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
+    public static final IntMetadataType CHICKEN_SOUND_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final IntMetadataType ZOMBIE_NAUTILUS_VARIANT = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
     public static final MetadataType<Optional<GlobalPos>> OPTIONAL_GLOBAL_POS = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readGlobalPos), optionalWriter(MinecraftTypes::writeGlobalPos), ObjectEntityMetadata::new));
     public static final MetadataType<Holder<PaintingVariant>> PAINTING_VARIANT = register(id -> new MetadataType<>(id, MinecraftTypes::readPaintingVariant, MinecraftTypes::writePaintingVariant, ObjectEntityMetadata::new));

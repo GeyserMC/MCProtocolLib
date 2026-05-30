@@ -54,7 +54,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
             DisplayData displayData = MinecraftTypes.readNullable(in, buf -> {
                 Component title = MinecraftTypes.readComponent(buf);
                 Component description = MinecraftTypes.readComponent(buf);
-                ItemStack icon = MinecraftTypes.readOptionalItemStack(buf);
+                ItemStack icon = MinecraftTypes.readItemStackTemplate(buf);
                 AdvancementType advancementType = AdvancementType.from(MinecraftTypes.readVarInt(buf));
 
                 int flags = buf.readInt();
@@ -117,7 +117,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
             MinecraftTypes.writeNullable(out, advancement.getDisplayData(), (buf, data) -> {
                 MinecraftTypes.writeComponent(buf, data.getTitle());
                 MinecraftTypes.writeComponent(buf, data.getDescription());
-                MinecraftTypes.writeOptionalItemStack(buf, data.getIcon());
+                MinecraftTypes.writeItemStackTemplate(buf, data.getIcon());
                 MinecraftTypes.writeVarInt(buf, data.getAdvancementType().ordinal());
 
                 int flags = 0;

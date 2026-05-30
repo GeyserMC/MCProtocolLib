@@ -105,13 +105,16 @@ import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.SmithingReci
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.StonecutterRecipeDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.AnyFuelSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.CompositeSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.DyedSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.EmptySlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.ItemSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.ItemStackSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.OnlyWithComponentSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.RecipeSlotType;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.SlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.SmithingTrimDemoSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.TagSlotDisplay;
+import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.WithAnyPotionSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.WithRemainderSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.StatisticCategory;
 import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBeeInfo;
@@ -522,6 +525,19 @@ public class MinecraftTypes {
         MinecraftTypes.writeOptionalItemStack(buf, item);
     }
 
+    public static ItemStack readItemStackTemplate(ByteBuf buf) {
+        int id = MinecraftTypes.readVarInt(buf);
+        int count = MinecraftTypes.readVarInt(buf);
+        DataComponents components = MinecraftTypes.readDataComponentPatch(buf, false);
+        return new ItemStack(id, count, components);
+    }
+
+    public static void writeItemStackTemplate(ByteBuf buf, ItemStack template) {
+        MinecraftTypes.writeVarInt(buf, template.getId());
+        MinecraftTypes.writeVarInt(buf, template.getAmount());
+        MinecraftTypes.writeDataComponentPatch(buf, template.getDataComponentsPatch(), false);
+    }
+
     @Nullable
     public static DataComponents readDataComponentPatch(ByteBuf buf, boolean untrusted) {
         int nonNullComponents = MinecraftTypes.readVarInt(buf);
@@ -821,42 +837,6 @@ public class MinecraftTypes {
         MinecraftTypes.writeEnum(buf, pose);
     }
 
-    public static Holder<Key> readChickenVariant(ByteBuf buf) {
-        if (buf.readBoolean()) {
-            return Holder.ofId(MinecraftTypes.readVarInt(buf));
-        } else {
-            return Holder.ofCustom(MinecraftTypes.readResourceLocation(buf));
-        }
-    }
-
-    public static void writeChickenVariant(ByteBuf buf, Holder<Key> variant) {
-        if (variant.isId()) {
-            buf.writeBoolean(true);
-            MinecraftTypes.writeVarInt(buf, variant.id());
-        } else {
-            buf.writeBoolean(false);
-            MinecraftTypes.writeResourceLocation(buf, variant.custom());
-        }
-    }
-
-    public static Holder<Key> readZombieNautilusVariant(ByteBuf buf) {
-        if (buf.readBoolean()) {
-            return Holder.ofId(MinecraftTypes.readVarInt(buf));
-        } else {
-            return Holder.ofCustom(MinecraftTypes.readResourceLocation(buf));
-        }
-    }
-
-    public static void writeZombieNautilusVariant(ByteBuf buf, Holder<Key> variant) {
-        if (variant.isId()) {
-            buf.writeBoolean(true);
-            MinecraftTypes.writeVarInt(buf, variant.id());
-        } else {
-            buf.writeBoolean(false);
-            MinecraftTypes.writeResourceLocation(buf, variant.custom());
-        }
-    }
-
     public static Holder<PaintingVariant> readPaintingVariant(ByteBuf buf) {
         return MinecraftTypes.readHolder(buf, input -> {
             return new PaintingVariant(MinecraftTypes.readVarInt(input), MinecraftTypes.readVarInt(input), MinecraftTypes.readResourceLocation(input),
@@ -1053,7 +1033,7 @@ public class MinecraftTypes {
                 yield new SpellParticleData(color, power);
             }
             case ENTITY_EFFECT, TINTED_LEAVES, FLASH -> new ColorParticleData(buf.readInt());
-            case ITEM -> new ItemParticleData(MinecraftTypes.readItemStack(buf));
+            case ITEM -> new ItemParticleData(MinecraftTypes.readItemStackTemplate(buf));
             case SCULK_CHARGE -> new SculkChargeParticleData(buf.readFloat());
             case SHRIEK -> new ShriekParticleData(MinecraftTypes.readVarInt(buf));
             case TRAIL -> new TrailParticleData(Vector3d.from(buf.readDouble(), buf.readDouble(), buf.readDouble()), buf.readInt(), MinecraftTypes.readVarInt(buf));
@@ -1433,13 +1413,15 @@ public class MinecraftTypes {
         switch (type) {
             case EMPTY -> display = EmptySlotDisplay.INSTANCE;
             case ANY_FUEL -> display = new AnyFuelSlotDisplay();
+            case WITH_ANY_POTION -> display = new WithAnyPotionSlotDisplay(MinecraftTypes.readSlotDisplay(buf));
+            case ONLY_WITH_COMPONENT -> display = new OnlyWithComponentSlotDisplay(MinecraftTypes.readSlotDisplay(buf),
+                DataComponentTypes.from(MinecraftTypes.readVarInt(buf)));
             case ITEM -> display = new ItemSlotDisplay(MinecraftTypes.readVarInt(buf));
-            case ITEM_STACK -> display = new ItemStackSlotDisplay(MinecraftTypes.readItemStack(buf));
+            case ITEM_STACK -> display = new ItemStackSlotDisplay(MinecraftTypes.readItemStackTemplate(buf));
             case TAG -> display = new TagSlotDisplay(MinecraftTypes.readResourceLocation(buf));
-            case SMITHING_TRIM -> {
-                display = new SmithingTrimDemoSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf),
-                    MinecraftTypes.readHolder(buf, ItemTypes::readTrimPattern));
-            }
+            case DYED -> display = new DyedSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf));
+            case SMITHING_TRIM -> display = new SmithingTrimDemoSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf),
+                MinecraftTypes.readHolder(buf, ItemTypes::readTrimPattern));
             case WITH_REMAINDER -> display = new WithRemainderSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf));
             case COMPOSITE -> display = new CompositeSlotDisplay(MinecraftTypes.readList(buf, MinecraftTypes::readSlotDisplay));
             default -> throw new IllegalStateException("Unexpected value: " + type);
@@ -1450,9 +1432,22 @@ public class MinecraftTypes {
     public static void writeSlotDisplay(ByteBuf buf, SlotDisplay display) {
         MinecraftTypes.writeVarInt(buf, display.getType().ordinal());
         switch (display.getType()) {
+            case WITH_ANY_POTION -> MinecraftTypes.writeSlotDisplay(buf, ((WithAnyPotionSlotDisplay)display).display());
+            case ONLY_WITH_COMPONENT -> {
+                OnlyWithComponentSlotDisplay onlyWithComponentSlotDisplay = (OnlyWithComponentSlotDisplay) display;
+
+                MinecraftTypes.writeSlotDisplay(buf, onlyWithComponentSlotDisplay.source());
+                MinecraftTypes.writeVarInt(buf, onlyWithComponentSlotDisplay.component().getId());
+            }
             case ITEM -> MinecraftTypes.writeVarInt(buf, ((ItemSlotDisplay)display).item());
-            case ITEM_STACK -> MinecraftTypes.writeItemStack(buf, ((ItemStackSlotDisplay)display).itemStack());
+            case ITEM_STACK -> MinecraftTypes.writeItemStackTemplate(buf, ((ItemStackSlotDisplay)display).itemStack());
             case TAG -> MinecraftTypes.writeResourceLocation(buf, ((TagSlotDisplay)display).tag());
+            case DYED -> {
+                DyedSlotDisplay dyedSlotDisplay = (DyedSlotDisplay) display;
+
+                MinecraftTypes.writeSlotDisplay(buf, dyedSlotDisplay.dye());
+                MinecraftTypes.writeSlotDisplay(buf, dyedSlotDisplay.target());
+            }
             case SMITHING_TRIM -> {
                 SmithingTrimDemoSlotDisplay smithingSlotDisplay = (SmithingTrimDemoSlotDisplay) display;
 
@@ -1783,29 +1778,32 @@ public class MinecraftTypes {
 
     public static ChunkSection readChunkSection(ByteBuf buf, int blockStateRegistrySize, int biomeRegistrySize) {
         int blockCount = buf.readShort();
+        int fluidCount = buf.readShort();
 
         DataPalette blockStatePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BLOCK_STATE, blockStateRegistrySize);
         DataPalette biomePalette = MinecraftTypes.readDataPalette(buf, PaletteType.BIOME, biomeRegistrySize);
-        return new ChunkSection(blockCount, blockStatePalette, biomePalette);
+        return new ChunkSection(blockCount, fluidCount, blockStatePalette, biomePalette);
     }
 
     public static void writeChunkSection(ByteBuf buf, ChunkSection section) {
         buf.writeShort(section.getBlockCount());
+        buf.writeShort(section.getFluidCount());
         MinecraftTypes.writeDataPalette(buf, section.getBlockData());
         MinecraftTypes.writeDataPalette(buf, section.getBiomeData());
     }
 
-    public static <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, E[] values) {
+    public static <E extends Enum<E>> EnumSet<E> readEnumSet(ByteBuf buf, Class<E> type) {
+        E[] values = type.getEnumConstants();
         BitSet bitSet = MinecraftTypes.readFixedBitSet(buf, values.length);
-        List<E> readValues = new ArrayList<>();
+        EnumSet<E> result = EnumSet.noneOf(type);
 
         for (int i = 0; i < values.length; i++) {
             if (bitSet.get(i)) {
-                readValues.add(values[i]);
+                result.add(values[i]);
             }
         }
 
-        return EnumSet.copyOf(readValues);
+        return result;
     }
 
     public static <E extends Enum<E>> void writeEnumSet(ByteBuf buf, EnumSet<E> enumSet, E[] values) {

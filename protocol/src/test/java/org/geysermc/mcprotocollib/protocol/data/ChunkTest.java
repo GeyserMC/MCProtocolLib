@@ -37,7 +37,7 @@ public class ChunkTest {
         SingletonPalette singletonPalette = new SingletonPalette(20);
         DataPalette blockPalette = DataPalette.create(singletonPalette, null, PaletteType.BLOCK_STATE, BLOCK_STATE_REGISTRY_SIZE);
         DataPalette biomePalette = DataPalette.create(singletonPalette, null, PaletteType.BIOME, BIOME_REGISTRY_SIZE);
-        section = new ChunkSection(4096, blockPalette, biomePalette);
+        section = new ChunkSection(4096, 3, blockPalette, biomePalette);
         chunkSectionsToTest.add(section);
     }
 

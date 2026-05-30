@@ -7,6 +7,6 @@ public enum Hand {
     private static final Hand[] VALUES = values();
 
     public static Hand from(int id) {
-        return VALUES[id];
+        return id >= 0 && id < VALUES.length ? VALUES[id] : VALUES[0];
     }
 }

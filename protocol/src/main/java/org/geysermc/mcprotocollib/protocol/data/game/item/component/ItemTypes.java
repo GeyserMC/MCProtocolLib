@@ -50,24 +50,6 @@ public class ItemTypes {
         buf.writeFloat(useEffects.speedMultiplier());
     }
 
-    public static Holder<Key> readDamageType(ByteBuf buf) {
-        if (buf.readBoolean()) {
-            return Holder.ofId(MinecraftTypes.readVarInt(buf));
-        } else {
-            return Holder.ofCustom(MinecraftTypes.readResourceLocation(buf));
-        }
-    }
-
-    public static void writeDamageType(ByteBuf buf, Holder<Key> variant) {
-        if (variant.isId()) {
-            buf.writeBoolean(true);
-            MinecraftTypes.writeVarInt(buf, variant.id());
-        } else {
-            buf.writeBoolean(false);
-            MinecraftTypes.writeResourceLocation(buf, variant.custom());
-        }
-    }
-
     public static ItemEnchantments readItemEnchantments(ByteBuf buf) {
         Map<Integer, Integer> enchantments = new HashMap<>();
         int enchantmentCount = MinecraftTypes.readVarInt(buf);
@@ -219,10 +201,10 @@ public class ItemTypes {
     }
 
     public static void writeAttackRange(ByteBuf buf, AttackRange attackRange) {
-        buf.writeFloat(attackRange.minRange());
-        buf.writeFloat(attackRange.maxRange());
-        buf.writeFloat(attackRange.minCreativeRange());
-        buf.writeFloat(attackRange.maxCreativeRange());
+        buf.writeFloat(attackRange.minReach());
+        buf.writeFloat(attackRange.maxReach());
+        buf.writeFloat(attackRange.minCreativeReach());
+        buf.writeFloat(attackRange.maxCreativeReach());
         buf.writeFloat(attackRange.hitboxMargin());
         buf.writeFloat(attackRange.mobFactor());
     }
@@ -269,7 +251,7 @@ public class ItemTypes {
         });
 
         BlocksAttacks.ItemDamageFunction itemDamage = new BlocksAttacks.ItemDamageFunction(buf.readFloat(), buf.readFloat(), buf.readFloat());
-        Key bypassedBy = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        HolderSet bypassedBy = MinecraftTypes.readNullable(buf, MinecraftTypes::readHolderSet);
         Sound blockSound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
         Sound disableSound = MinecraftTypes.readNullable(buf, MinecraftTypes::readSound);
         return new BlocksAttacks(blockDelaySeconds, disableCooldownScale, damageReductions, itemDamage, bypassedBy, blockSound, disableSound);
@@ -289,7 +271,7 @@ public class ItemTypes {
         buf.writeFloat(blocksAttacks.itemDamage().threshold());
         buf.writeFloat(blocksAttacks.itemDamage().base());
         buf.writeFloat(blocksAttacks.itemDamage().factor());
-        MinecraftTypes.writeNullable(buf, blocksAttacks.bypassedBy(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeNullable(buf, blocksAttacks.bypassedBy(), MinecraftTypes::writeHolderSet);
         MinecraftTypes.writeNullable(buf, blocksAttacks.blockSound(), MinecraftTypes::writeSound);
         MinecraftTypes.writeNullable(buf, blocksAttacks.disableSound(), MinecraftTypes::writeSound);
     }
@@ -666,59 +648,19 @@ public class ItemTypes {
         MinecraftTypes.writeVarInt(buf, state.ordinal());
     }
 
-    public static InstrumentComponent readInstrumentComponent(ByteBuf buf) {
-        Holder<InstrumentComponent.Instrument> instrumentHolder = null;
-        Key instrumentLocation = null;
-        if (buf.readBoolean()) {
-            instrumentHolder = MinecraftTypes.readHolder(buf, ItemTypes::readInstrument);
-        } else {
-            instrumentLocation = MinecraftTypes.readResourceLocation(buf);
-        }
-        return new InstrumentComponent(instrumentHolder, instrumentLocation);
-    }
-
-    public static void writeInstrumentComponent(ByteBuf buf, InstrumentComponent instrumentComponent) {
-        buf.writeBoolean(instrumentComponent.instrumentHolder() != null);
-        if (instrumentComponent.instrumentHolder() != null) {
-            MinecraftTypes.writeHolder(buf, instrumentComponent.instrumentHolder(), ItemTypes::writeInstrument);
-        } else {
-            MinecraftTypes.writeResourceLocation(buf, instrumentComponent.instrumentLocation());
-        }
-    }
-
-    public static InstrumentComponent.Instrument readInstrument(ByteBuf buf) {
+    public static Instrument readInstrument(ByteBuf buf) {
         Sound soundEvent = MinecraftTypes.readSound(buf);
         float useDuration = buf.readFloat();
         float range = buf.readFloat();
         Component description = MinecraftTypes.readComponent(buf);
-        return new InstrumentComponent.Instrument(soundEvent, useDuration, range, description);
+        return new Instrument(soundEvent, useDuration, range, description);
     }
 
-    public static void writeInstrument(ByteBuf buf, InstrumentComponent.Instrument instrument) {
+    public static void writeInstrument(ByteBuf buf, Instrument instrument) {
         MinecraftTypes.writeSound(buf, instrument.soundEvent());
         buf.writeFloat(instrument.useDuration());
         buf.writeFloat(instrument.range());
         MinecraftTypes.writeComponent(buf, instrument.description());
-    }
-
-    public static ProvidesTrimMaterial readProvidesTrimMaterial(ByteBuf buf) {
-        Holder<ArmorTrim.TrimMaterial> instrumentHolder = null;
-        Key instrumentLocation = null;
-        if (buf.readBoolean()) {
-            instrumentHolder = MinecraftTypes.readHolder(buf, ItemTypes::readTrimMaterial);
-        } else {
-            instrumentLocation = MinecraftTypes.readResourceLocation(buf);
-        }
-        return new ProvidesTrimMaterial(instrumentHolder, instrumentLocation);
-    }
-
-    public static void writeProvidesTrimMaterial(ByteBuf buf, ProvidesTrimMaterial trimMaterial) {
-        buf.writeBoolean(trimMaterial.materialHolder() != null);
-        if (trimMaterial.materialHolder() != null) {
-            MinecraftTypes.writeHolder(buf, trimMaterial.materialHolder(), ItemTypes::writeTrimMaterial);
-        } else {
-            MinecraftTypes.writeResourceLocation(buf, trimMaterial.materialLocation());
-        }
     }
 
     public static NbtList<?> readRecipes(ByteBuf buf) {
@@ -729,35 +671,15 @@ public class ItemTypes {
         MinecraftTypes.writeAnyTag(buf, recipes);
     }
 
-    public static JukeboxPlayable readJukeboxPlayable(ByteBuf buf) {
-        Holder<JukeboxPlayable.JukeboxSong> songHolder = null;
-        Key songLocation = null;
-        if (buf.readBoolean()) {
-            songHolder = MinecraftTypes.readHolder(buf, ItemTypes::readJukeboxSong);
-        } else {
-            songLocation = MinecraftTypes.readResourceLocation(buf);
-        }
-        return new JukeboxPlayable(songHolder, songLocation);
-    }
-
-    public static void writeJukeboxPlayable(ByteBuf buf, JukeboxPlayable playable) {
-        buf.writeBoolean(playable.songHolder() != null);
-        if (playable.songHolder() != null) {
-            MinecraftTypes.writeHolder(buf, playable.songHolder(), ItemTypes::writeJukeboxSong);
-        } else {
-            MinecraftTypes.writeResourceLocation(buf, playable.songLocation());
-        }
-    }
-
-    public static JukeboxPlayable.JukeboxSong readJukeboxSong(ByteBuf buf) {
+    public static JukeboxSong readJukeboxSong(ByteBuf buf) {
         Sound soundEvent = MinecraftTypes.readSound(buf);
         Component description = MinecraftTypes.readComponent(buf);
         float lengthInSeconds = buf.readFloat();
         int comparatorOutput = MinecraftTypes.readVarInt(buf);
-        return new JukeboxPlayable.JukeboxSong(soundEvent, description, lengthInSeconds, comparatorOutput);
+        return new JukeboxSong(soundEvent, description, lengthInSeconds, comparatorOutput);
     }
 
-    public static void writeJukeboxSong(ByteBuf buf, JukeboxPlayable.JukeboxSong song) {
+    public static void writeJukeboxSong(ByteBuf buf, JukeboxSong song) {
         MinecraftTypes.writeSound(buf, song.soundEvent());
         MinecraftTypes.writeComponent(buf, song.description());
         buf.writeFloat(song.lengthInSeconds());

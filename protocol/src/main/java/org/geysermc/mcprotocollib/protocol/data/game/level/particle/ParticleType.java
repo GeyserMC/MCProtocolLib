@@ -51,6 +51,8 @@ public enum ParticleType {
     ITEM,
     VIBRATION,
     TRAIL,
+    PAUSE_MOB_GROWTH,
+    RESET_MOB_GROWTH,
     ITEM_SLIME,
     ITEM_COBWEB,
     ITEM_SNOWBALL,

@@ -9,9 +9,9 @@ import java.util.List;
 
 @Builder(toBuilder = true)
 public record BlocksAttacks(float blockDelaySeconds, float disableCooldownScale, List<DamageReduction> damageReductions,
-                            ItemDamageFunction itemDamage, @Nullable Key bypassedBy, @Nullable Sound blockSound, @Nullable Sound disableSound) {
+                            ItemDamageFunction itemDamage, @Nullable HolderSet bypassedBy, @Nullable Sound blockSound, @Nullable Sound disableSound) {
     public BlocksAttacks(float blockDelaySeconds, float disableCooldownScale, List<DamageReduction> damageReductions,
-                         ItemDamageFunction itemDamage, @Nullable Key bypassedBy, @Nullable Sound blockSound, @Nullable Sound disableSound) {
+                         ItemDamageFunction itemDamage, @Nullable HolderSet bypassedBy, @Nullable Sound blockSound, @Nullable Sound disableSound) {
         this.blockDelaySeconds = blockDelaySeconds;
         this.disableCooldownScale = disableCooldownScale;
         this.damageReductions = List.copyOf(damageReductions);

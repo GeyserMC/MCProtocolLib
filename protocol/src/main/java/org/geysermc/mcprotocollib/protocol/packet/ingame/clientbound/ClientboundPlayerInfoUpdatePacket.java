@@ -26,7 +26,7 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
     private final PlayerListEntry[] entries;
 
     public ClientboundPlayerInfoUpdatePacket(ByteBuf in) {
-        this.actions = MinecraftTypes.readEnumSet(in, PlayerListEntryAction.VALUES);
+        this.actions = MinecraftTypes.readEnumSet(in, PlayerListEntryAction.class);
         this.entries = new PlayerListEntry[MinecraftTypes.readVarInt(in)];
         for (int count = 0; count < this.entries.length; count++) {
             PlayerListEntry entry = new PlayerListEntry(MinecraftTypes.readUUID(in));
