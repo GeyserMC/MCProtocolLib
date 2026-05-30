@@ -20,6 +20,7 @@ import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.auth.texture.TextureModel;
 import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
@@ -1868,8 +1869,8 @@ public class MinecraftTypes {
         Key body = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
         Key cape = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
         Key elytra = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
-        GameProfile.TextureModel model = MinecraftTypes.readNullable(buf, in -> {
-            return in.readBoolean() ? GameProfile.TextureModel.SLIM : GameProfile.TextureModel.WIDE;
+        TextureModel model = MinecraftTypes.readNullable(buf, in -> {
+            return in.readBoolean() ? TextureModel.SLIM : TextureModel.WIDE;
         });
         return new ResolvableProfile(profile, body, cape, elytra, model, dynamic);
     }
@@ -1885,7 +1886,7 @@ public class MinecraftTypes {
         MinecraftTypes.writeNullable(buf, profile.getBody(), MinecraftTypes::writeResourceLocation);
         MinecraftTypes.writeNullable(buf, profile.getCape(), MinecraftTypes::writeResourceLocation);
         MinecraftTypes.writeNullable(buf, profile.getElytra(), MinecraftTypes::writeResourceLocation);
-        MinecraftTypes.writeNullable(buf, profile.getModel(), (out, model) -> out.writeBoolean(model == GameProfile.TextureModel.SLIM));
+        MinecraftTypes.writeNullable(buf, profile.getModel(), (out, model) -> out.writeBoolean(model == TextureModel.SLIM));
     }
 
     public static GameProfile.Property readProperty(ByteBuf buf) {

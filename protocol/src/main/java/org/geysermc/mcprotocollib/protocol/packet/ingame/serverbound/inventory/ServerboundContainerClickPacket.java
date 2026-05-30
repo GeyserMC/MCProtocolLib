@@ -9,15 +9,9 @@ import lombok.With;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.ClickItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerActionType;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.CreativeGrabAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.DropItemAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.FillStackAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.MoveToHotbarAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.ShiftClickItemAction;
-import org.geysermc.mcprotocollib.protocol.data.game.inventory.SpreadItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
 
 import java.util.Map;
@@ -45,7 +39,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
                                            @NonNull ContainerActionType action, @NonNull ContainerAction param,
                                            @Nullable HashedStack carriedItem, @NonNull Int2ObjectMap<@Nullable HashedStack> changedSlots) {
         if ((param == DropItemAction.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemAction.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
-                && slot != -CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
+                && slot != CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT
                     + " with param LEFT_CLICK_OUTSIDE_NOT_HOLDING or RIGHT_CLICK_OUTSIDE_NOT_HOLDING");
         }
@@ -65,23 +59,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.slot = in.readShort();
         byte param = in.readByte();
         this.action = ContainerActionType.from(in.readByte());
-        if (this.action == ContainerActionType.CLICK_ITEM) {
-            this.param = ClickItemAction.from(param);
-        } else if (this.action == ContainerActionType.SHIFT_CLICK_ITEM) {
-            this.param = ShiftClickItemAction.from(param);
-        } else if (this.action == ContainerActionType.MOVE_TO_HOTBAR_SLOT) {
-            this.param = MoveToHotbarAction.from(param);
-        } else if (this.action == ContainerActionType.CREATIVE_GRAB_MAX_STACK) {
-            this.param = CreativeGrabAction.from(param);
-        } else if (this.action == ContainerActionType.DROP_ITEM) {
-            this.param = DropItemAction.from(param + (this.slot != -999 ? 2 : 0));
-        } else if (this.action == ContainerActionType.SPREAD_ITEM) {
-            this.param = SpreadItemAction.from(param);
-        } else if (this.action == ContainerActionType.FILL_STACK) {
-            this.param = FillStackAction.from(param);
-        } else {
-            throw new IllegalStateException();
-        }
+        this.param = this.action.actionFrom(param, this.slot);
 
         int changedItemsSize = MinecraftTypes.readVarInt(in);
         this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);

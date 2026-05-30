@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.auth.texture.TextureModel;
 import org.jetbrains.annotations.Nullable;
 
 @Data
@@ -15,7 +16,7 @@ public class ResolvableProfile {
     private final @Nullable Key body;
     private final @Nullable Key cape;
     private final @Nullable Key elytra;
-    private final @Nullable GameProfile.TextureModel model;
+    private final @Nullable TextureModel model;
     private final boolean dynamic;
 
     public ResolvableProfile(GameProfile profile) {
