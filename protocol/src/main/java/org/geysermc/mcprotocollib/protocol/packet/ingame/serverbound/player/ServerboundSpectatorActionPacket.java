@@ -16,21 +16,13 @@ public class ServerboundSpectatorActionPacket implements MinecraftPacket {
     private final OptionalInt entityId;
 
     public ServerboundSpectatorActionPacket(ByteBuf in) {
-        if (in.readBoolean()) {
-            this.entityId = OptionalInt.of(MinecraftTypes.readVarInt(in));
-        } else {
-            this.entityId = OptionalInt.empty();
-        }
+        int i = MinecraftTypes.readVarInt(in);
+        this.entityId = i == 0 ? OptionalInt.empty() : OptionalInt.of(i - 1);
     }
 
     @Override
     public void serialize(ByteBuf out) {
-        if (this.entityId.isPresent()) {
-            out.writeBoolean(true);
-            MinecraftTypes.writeVarInt(out, this.entityId.getAsInt());
-        } else {
-            out.writeBoolean(false);
-        }
+        MinecraftTypes.writeVarInt(out, this.entityId.isPresent() ? this.entityId.getAsInt() + 1 : 0);
     }
 
     @Override
