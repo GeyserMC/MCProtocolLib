@@ -28,7 +28,7 @@ public abstract class DataComponent<V, T extends DataComponentType<V>> {
 
     @Override
     public String toString() {
-        return "DataComponent(type=" + type + ", value=" + getValue().toString() + ")";
+        return "DataComponent(type=" + type + ", value=" + String.valueOf(getValue()) + ")";
     }
 
     @Override

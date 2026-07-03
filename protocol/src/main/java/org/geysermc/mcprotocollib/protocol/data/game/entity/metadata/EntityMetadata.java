@@ -29,7 +29,7 @@ public abstract class EntityMetadata<V, T extends MetadataType<V>> {
 
     @Override
     public String toString() {
-        return "EntityMetadata(id=" + id + ", type=" + type + ", value=" + getValue().toString() + ")";
+        return "EntityMetadata(id=" + id + ", type=" + type + ", value=" + String.valueOf(getValue()) + ")";
     }
 
     @Override
