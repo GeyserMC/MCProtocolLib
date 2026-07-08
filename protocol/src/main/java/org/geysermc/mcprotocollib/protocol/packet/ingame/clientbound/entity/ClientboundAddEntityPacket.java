@@ -15,6 +15,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.object.MinecartType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.ObjectData;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.ProjectileData;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.object.WardenData;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.type.BuiltinEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 
 import java.util.UUID;
@@ -66,15 +67,15 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
         this.headYaw = in.readByte() * 360 / 256f;
 
         int data = MinecraftTypes.readVarInt(in);
-        if (this.type == EntityType.MINECART) {
+        if (this.type == BuiltinEntityType.MINECART) {
             this.data = MinecartType.from(data);
-        } else if (this.type == EntityType.ITEM_FRAME || this.type == EntityType.GLOW_ITEM_FRAME || this.type == EntityType.PAINTING) {
+        } else if (this.type == BuiltinEntityType.ITEM_FRAME || this.type == BuiltinEntityType.GLOW_ITEM_FRAME || this.type == BuiltinEntityType.PAINTING) {
             this.data = Direction.VALUES[data];
-        } else if (this.type == EntityType.FALLING_BLOCK) {
+        } else if (this.type == BuiltinEntityType.FALLING_BLOCK) {
             this.data = new FallingBlockData(data & 65535, data >> 16);
-        } else if (this.type.isProjectile()) {
+        } else if (type.isProjectile()) {
             this.data = new ProjectileData(data);
-        } else if (this.type == EntityType.WARDEN) {
+        } else if (this.type == BuiltinEntityType.WARDEN) {
             this.data = new WardenData(data);
         } else {
             if (data == 0) {
@@ -89,7 +90,7 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeVarInt(out, this.entityId);
         MinecraftTypes.writeUUID(out, this.uuid);
-        MinecraftTypes.writeVarInt(out, this.type.ordinal());
+        MinecraftTypes.writeVarInt(out, this.type.id());
         out.writeDouble(this.x);
         out.writeDouble(this.y);
         out.writeDouble(this.z);

@@ -5,7 +5,7 @@ plugins {
     jacoco
 }
 
-version = "26.1-SNAPSHOT"
+version = "26.1-feature-custom-entities-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
 dependencies {

@@ -1,180 +1,26 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.type;
 
-import lombok.Getter;
+public interface EntityType {
 
-public enum EntityType {
-    ACACIA_BOAT,
-    ACACIA_CHEST_BOAT,
-    ALLAY,
-    AREA_EFFECT_CLOUD,
-    ARMADILLO,
-    ARMOR_STAND,
-    ARROW(true),
-    AXOLOTL,
-    BAMBOO_CHEST_RAFT,
-    BAMBOO_RAFT,
-    BAT,
-    BEE,
-    BIRCH_BOAT,
-    BIRCH_CHEST_BOAT,
-    BLAZE,
-    BLOCK_DISPLAY,
-    BOGGED,
-    BREEZE,
-    BREEZE_WIND_CHARGE(true),
-    CAMEL,
-    CAMEL_HUSK,
-    CAT,
-    CAVE_SPIDER,
-    CHERRY_BOAT,
-    CHERRY_CHEST_BOAT,
-    CHEST_MINECART,
-    CHICKEN,
-    COD,
-    COPPER_GOLEM,
-    COMMAND_BLOCK_MINECART,
-    COW,
-    CREAKING,
-    CREEPER,
-    DARK_OAK_BOAT,
-    DARK_OAK_CHEST_BOAT,
-    DOLPHIN,
-    DONKEY,
-    DRAGON_FIREBALL(true),
-    DROWNED,
-    EGG(true),
-    ELDER_GUARDIAN,
-    ENDERMAN,
-    ENDERMITE,
-    ENDER_DRAGON,
-    ENDER_PEARL(true),
-    END_CRYSTAL,
-    EVOKER,
-    EVOKER_FANGS,
-    EXPERIENCE_BOTTLE(true),
-    EXPERIENCE_ORB,
-    EYE_OF_ENDER,
-    FALLING_BLOCK,
-    FIREBALL(true),
-    FIREWORK_ROCKET(true),
-    FOX,
-    FROG,
-    FURNACE_MINECART,
-    GHAST,
-    HAPPY_GHAST,
-    GIANT,
-    GLOW_ITEM_FRAME,
-    GLOW_SQUID,
-    GOAT,
-    GUARDIAN,
-    HOGLIN,
-    HOPPER_MINECART,
-    HORSE,
-    HUSK,
-    ILLUSIONER,
-    INTERACTION,
-    IRON_GOLEM,
-    ITEM,
-    ITEM_DISPLAY,
-    ITEM_FRAME,
-    JUNGLE_BOAT,
-    JUNGLE_CHEST_BOAT,
-    LEASH_KNOT,
-    LIGHTNING_BOLT,
-    LLAMA,
-    LLAMA_SPIT(true),
-    MAGMA_CUBE,
-    MANGROVE_BOAT,
-    MANGROVE_CHEST_BOAT,
-    MANNEQUIN,
-    MARKER,
-    MINECART,
-    MOOSHROOM,
-    MULE,
-    NAUTILUS,
-    OAK_BOAT,
-    OAK_CHEST_BOAT,
-    OCELOT,
-    OMINOUS_ITEM_SPAWNER,
-    PAINTING,
-    PALE_OAK_BOAT,
-    PALE_OAK_CHEST_BOAT,
-    PANDA,
-    PARCHED,
-    PARROT,
-    PHANTOM,
-    PIG,
-    PIGLIN,
-    PIGLIN_BRUTE,
-    PILLAGER,
-    POLAR_BEAR,
-    SPLASH_POTION(true),
-    LINGERING_POTION(true),
-    PUFFERFISH,
-    RABBIT,
-    RAVAGER,
-    SALMON,
-    SHEEP,
-    SHULKER,
-    SHULKER_BULLET(true),
-    SILVERFISH,
-    SKELETON,
-    SKELETON_HORSE,
-    SLIME,
-    SMALL_FIREBALL(true),
-    SNIFFER,
-    SNOWBALL(true),
-    SNOW_GOLEM,
-    SPAWNER_MINECART,
-    SPECTRAL_ARROW(true),
-    SPIDER,
-    SPRUCE_BOAT,
-    SPRUCE_CHEST_BOAT,
-    SQUID,
-    STRAY,
-    STRIDER,
-    TADPOLE,
-    TEXT_DISPLAY,
-    TNT,
-    TNT_MINECART,
-    TRADER_LLAMA,
-    TRIDENT(true),
-    TROPICAL_FISH,
-    TURTLE,
-    VEX,
-    VILLAGER,
-    VINDICATOR,
-    WANDERING_TRADER,
-    WARDEN,
-    WIND_CHARGE(true),
-    WITCH,
-    WITHER,
-    WITHER_SKELETON,
-    WITHER_SKULL(true),
-    WOLF,
-    ZOGLIN,
-    ZOMBIE,
-    ZOMBIE_HORSE,
-    ZOMBIE_NAUTILUS,
-    ZOMBIE_VILLAGER,
-    ZOMBIFIED_PIGLIN,
-    PLAYER,
-    FISHING_BOBBER(true);
+    int id();
 
-    @Getter
-    private final boolean projectile;
+    boolean isProjectile();
 
-    EntityType() {
-        this.projectile = false;
+    static EntityType from(int id) {
+        if (id < 0 || id >= BuiltinEntityType.VALUES.length) {
+            return new Custom(id);
+        }
+        return BuiltinEntityType.VALUES[id];
     }
 
-    EntityType(boolean projectile) {
-        this.projectile = projectile;
+    default boolean is(EntityType type) {
+        return id() == type.id();
     }
 
-    private static final EntityType[] VALUES = values();
-
-    public static EntityType from(int id) {
-        return VALUES[id];
+    record Custom(int id) implements EntityType {
+        @Override
+        public boolean isProjectile() {
+            return false;
+        }
     }
 }
