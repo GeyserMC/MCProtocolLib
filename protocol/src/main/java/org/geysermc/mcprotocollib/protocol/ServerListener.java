@@ -211,6 +211,7 @@ public class ServerListener extends SessionAdapter {
             session.send(new ClientboundStatusResponsePacket(info));
         } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
             session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
+            session.disconnect(Component.translatable("multiplayer.status.request_handled"));
         }
     }
 
@@ -225,7 +226,6 @@ public class ServerListener extends SessionAdapter {
             keepAliveState = new KeepAliveState();
         } else if (packet instanceof ServerboundPingRequestPacket pingRequestPacket) {
             session.send(new ClientboundPongResponsePacket(pingRequestPacket.getPingTime()));
-            session.disconnect(Component.translatable("multiplayer.status.request_handled"));
         }
     }
 
