@@ -1,5 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.Ingredient;
@@ -20,7 +21,7 @@ public class ServerDeclareRecipesTest extends PacketTest {
                         }},
                         new ArrayList<>(){{
                             add(new ClientboundUpdateRecipesPacket.SelectableRecipe(
-                                new Ingredient(new HolderSet(new int[]{6})),
+                                new Ingredient(new HolderSet(IntList.of(6))),
                                 new ItemStackSlotDisplay(new ItemStack(662, 2, null))
                             ));
                         }}

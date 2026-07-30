@@ -17,7 +17,7 @@ public class ClientboundPlayerInfoRemovePacket implements MinecraftPacket {
     private final List<UUID> profileIds;
 
     public ClientboundPlayerInfoRemovePacket(ByteBuf in) {
-        this.profileIds = MinecraftTypes.readList(in, MinecraftTypes::readUUID);
+        this.profileIds = MinecraftTypes.readList(in, MinecraftTypes::readUUID, false);
     }
 
     public void serialize(ByteBuf out) {

@@ -6,6 +6,8 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -259,8 +261,18 @@ public class MinecraftTypes {
     }
 
     public static <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader) {
+        return readList(buf, reader, true);
+    }
+
+    public static <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader, boolean isNew) {
         int size = MinecraftTypes.readVarInt(buf);
-        List<T> list = new ArrayList<>(size);
+        List<T> list;
+        if (isNew) {
+            list = new ArrayList<>(Math.min(size, 65536));
+        } else {
+            list = new ArrayList<>(size);
+        }
+
         for (int i = 0; i < size; i++) {
             list.add(reader.apply(buf));
         }
@@ -320,9 +332,9 @@ public class MinecraftTypes {
         if (length == -1) {
             return new HolderSet(MinecraftTypes.readResourceLocation(buf));
         } else {
-            int[] holders = new int[length];
+            IntList holders = new IntArrayList(Math.min(length, 65536));
             for (int i = 0; i < length; i++) {
-                holders[i] = MinecraftTypes.readVarInt(buf);
+                holders.add(MinecraftTypes.readVarInt(buf));
             }
 
             return new HolderSet(holders);
@@ -335,7 +347,7 @@ public class MinecraftTypes {
             MinecraftTypes.writeResourceLocation(buf, holderSet.getLocation());
         } else {
             assert holderSet.getHolders() != null;
-            MinecraftTypes.writeVarInt(buf, holderSet.getHolders().length + 1);
+            MinecraftTypes.writeVarInt(buf, holderSet.getHolders().size() + 1);
             for (int holder : holderSet.getHolders()) {
                 MinecraftTypes.writeVarInt(buf, holder);
             }
@@ -1514,12 +1526,12 @@ public class MinecraftTypes {
                 String inventory = MinecraftTypes.readString(buf);
                 boolean wantsGolem = buf.readBoolean();
                 int angerLevel = buf.readInt();
-                List<String> activities = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<String> behaviors = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<String> memories = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<String> gossips = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<Vector3i> pois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
-                List<Vector3i> potentialPois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
+                List<String> activities = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<String> behaviors = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<String> memories = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<String> gossips = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<Vector3i> pois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition, false);
+                List<Vector3i> potentialPois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition, false);
                 info = new DebugBrainDump(name, profession, xp, health, maxHealth, inventory, wantsGolem, angerLevel,
                     activities, behaviors, memories, gossips, pois, potentialPois);
             }
@@ -1541,7 +1553,7 @@ public class MinecraftTypes {
                 boolean reached = buf.readBoolean();
                 int nextNodeIndex = buf.readInt();
                 Vector3i target = MinecraftTypes.readPosition(buf);
-                List<DebugPathInfo.Node> nodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode);
+                List<DebugPathInfo.Node> nodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode, false);
 
                 List<DebugPathInfo.Node> targetNodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode);
                 DebugPathInfo.Node[] openSet = new DebugPathInfo.Node[MinecraftTypes.readVarInt(buf)];

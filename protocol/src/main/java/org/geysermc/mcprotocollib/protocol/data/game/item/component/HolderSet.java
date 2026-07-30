@@ -1,11 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Data;
 import lombok.NonNull;
 import net.kyori.adventure.key.Key;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -15,11 +16,11 @@ import java.util.function.Function;
 @Data
 public final class HolderSet {
     private final @Nullable Key location;
-    private final int @Nullable [] holders;
+    private final @Nullable IntList holders;
 
-    public HolderSet(int @NonNull [] holders) {
+    public HolderSet(@NonNull IntList holders) {
         this.location = null;
-        this.holders = holders;
+        this.holders = new IntArrayList(holders);
     }
 
     public HolderSet(@NonNull Key location) {
@@ -33,7 +34,7 @@ public final class HolderSet {
      * @param tagResolver The function to resolve the tag location to get the holders.
      * @return The holders.
      */
-    public int[] resolve(Function<Key, int[]> tagResolver) {
+    public IntList resolve(Function<Key, IntList> tagResolver) {
         if (holders != null) {
             return holders;
         }
@@ -44,7 +45,7 @@ public final class HolderSet {
     @Override
     public String toString() {
         if (this.holders != null) {
-            return getClass().getSimpleName() + "[holders=" + Arrays.toString(this.holders) + "]";
+            return getClass().getSimpleName() + "[holders=" + this.holders + "]";
         } else {
             return getClass().getSimpleName() + "[location=" + this.location + "]";
         }
