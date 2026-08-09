@@ -22,7 +22,7 @@ dependencies {
     api(libs.slf4j.api)
 
     // Kyori adventure
-    api(libs.bundles.adventure)
+    api(libs.adventure.text.serializer.gson)
 
     // Math utilities
     api(libs.bundles.math)

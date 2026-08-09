@@ -2,7 +2,7 @@ metadata.format.version = "1.1"
 
 [versions]
 
-adventure = "4.25.0"
+adventure = "5.2.0"
 cloudburstnbt = "3.0.4.Final"
 slf4j = "2.0.9"
 math = "2.0"
@@ -21,7 +21,6 @@ lombok-plugin = "8.4"
 [libraries]
 
 adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
-adventure-text-serializer-json-legacy-impl = { module = "net.kyori:adventure-text-serializer-json-legacy-impl", version.ref = "adventure" }
 
 cloudburstnbt = { module = "org.cloudburstmc:nbt", version.ref = "cloudburstnbt" }
 
@@ -52,6 +51,5 @@ lombok = { module = "io.freefair.gradle:lombok-plugin", version.ref = "lombok-pl
 
 [bundles]
 
-adventure = ["adventure-text-serializer-gson", "adventure-text-serializer-json-legacy-impl"]
 math = ["math-api", "math-immutable"]
 fastutil = ["fastutil-object2int-maps", "fastutil-int2object-maps", "fastutil-int2int-maps"]
