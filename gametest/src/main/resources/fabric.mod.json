@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "mcpl-gametest",
+  "name": "MCProtocolLib Gametest",
+  "version": "1.0.0",
+  "environment": "*",
+  "license": "MIT",
+  "entrypoints": {
+    "fabric-gametest": [
+      "org.geysermc.mcprotocollib.gametest.TextAndStyleTests",
+      "org.geysermc.mcprotocollib.gametest.TranslatableTests",
+      "org.geysermc.mcprotocollib.gametest.ContentTypeTests",
+      "org.geysermc.mcprotocollib.gametest.ObjectComponentTests",
+      "org.geysermc.mcprotocollib.gametest.EventTests",
+      "org.geysermc.mcprotocollib.gametest.OpaquePayloadTests",
+      "org.geysermc.mcprotocollib.gametest.DiscriminatedTagTests"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "fabric-gametest-api-v1": "*",
+    "minecraft": "~26.2"
+  }
+}

@@ -1,7 +1,19 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+pluginManagement {
+    repositories {
+        maven("https://maven.fabricmc.net/") {
+            name = "fabricmc"
+        }
+        gradlePluginPortal()
+    }
+}
+
 dependencyResolutionManagement {
     repositories {
+        maven("https://maven.fabricmc.net/") {
+            name = "fabricmc"
+        }
         maven("https://repo.opencollab.dev/maven-releases/") {
             name = "opencollab-releases"
         }
@@ -19,5 +31,6 @@ rootProject.name = "mcprotocollib"
 
 include(
     "protocol",
-    "example"
+    "example",
+    "gametest"
 )

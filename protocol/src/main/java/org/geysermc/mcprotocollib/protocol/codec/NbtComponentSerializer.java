@@ -4,8 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.internal.LazilyParsedNumber;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtList;
@@ -15,33 +13,83 @@ import org.cloudburstmc.nbt.NbtType;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
- * Taken from <a href="https://github.com/ViaVersion/ViaVersion/blob/4aefc23bb8074303c713a94d7f583ba4020dda04/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_3to1_20_2/util/ComponentConverter.java">ViaVersion's ComponentConverter</a>
+ * Converts between the nbt representation of a text component, as sent over the network, and its json
+ * representation, as understood by adventure's gson serializer.
+ *
+ * <p>Originally taken from <a href="https://github.com/ViaVersion/ViaVersion/blob/4aefc23bb8074303c713a94d7f583ba4020dda04/common/src/main/java/com/viaversion/viaversion/protocols/protocol1_20_3to1_20_2/util/ComponentConverter.java">ViaVersion's ComponentConverter</a>,
+ * since adjusted to match vanilla's {@code ComponentSerialization} and {@code NbtOps}.
  */
 public class NbtComponentSerializer {
 
+    /**
+     * Vanilla stores heterogeneous nbt lists as a list of compounds, wrapping every entry that isn't
+     * already a plain compound in a single-entry compound under this key. See {@code ListTag#write}
+     * and {@code ListTag#addAndUnwrap}.
+     */
+    private static final String WRAPPER_MARKER = "";
+
+    /**
+     * Every {@code Codec.BOOL} field reachable from a component. Booleans have no direct nbt
+     * representation, so they arrive as bytes and have to be turned back into json booleans.
+     */
     private static final Set<String> BOOLEAN_TYPES = Set.of(
-            "interpret",
-            "bold",
-            "italic",
-            "underlined",
-            "strikethrough",
-            "obfuscated"
+        // NbtContents
+        "interpret",
+        "plain",
+        // PlayerSprite, of the object content type
+        "hat",
+        // Style
+        "bold",
+        "italic",
+        "underlined",
+        "strikethrough",
+        "obfuscated"
     );
-    // Order is important
-    private static final List<Pair<String, String>> COMPONENT_TYPES = List.of(
-            new Pair<>("text", "text"),
-            new Pair<>("translatable", "translate"),
-            new Pair<>("score", "score"),
-            new Pair<>("selector", "selector"),
-            new Pair<>("keybind", "keybind"),
-            new Pair<>("nbt", "nbt")
+
+    /**
+     * The component content types, along with the fields that identify them when no explicit
+     * {@code type} discriminator is present.
+     *
+     * <p>Order is important: it must match the registration order in
+     * {@code ComponentSerialization#bootstrap}, which is the order vanilla's {@code FuzzyCodec}
+     * tries the content codecs in.
+     */
+    private static final List<ComponentType> COMPONENT_TYPES = List.of(
+        new ComponentType("text", List.of("text")),
+        new ComponentType("translatable", List.of("translate")),
+        new ComponentType("keybind", List.of("keybind")),
+        new ComponentType("score", List.of("score")),
+        new ComponentType("selector", List.of("selector")),
+        new ComponentType("nbt", List.of("nbt")),
+        // ObjectContents has no field of its own; it inlines ObjectInfos, which is itself a legacy
+        // component matcher keyed on "object", with atlas ("sprite") and player ("player") variants
+        new ComponentType("object", List.of("object", "sprite", "player"))
+    );
+
+    private static final Set<String> COMPONENT_TYPE_NAMES = COMPONENT_TYPES.stream()
+        .map(ComponentType::name)
+        .collect(Collectors.toUnmodifiableSet());
+
+    /**
+     * Fields of a component whose contents are arbitrary nbt rather than more component data: a custom
+     * click event's payload, and the data components of a shown item.
+     *
+     * <p>Everything below one of these is passed through untouched. The rest of this class works off
+     * field names, and that data is free to use any name it likes - a payload holding
+     * {@code {"type": "translatable", "bold": 1b}} means nothing to the component codec, and must not
+     * be rewritten as if it did.
+     */
+    private static final Set<String> OPAQUE_FIELDS = Set.of(
+        // ClickEvent.Custom
+        "payload",
+        // ItemStackTemplate, of a show_item hover event
+        "components"
     );
 
     private NbtComponentSerializer() {
@@ -50,29 +98,35 @@ public class NbtComponentSerializer {
 
     @Contract("null -> null")
     public static JsonElement tagComponentToJson(@Nullable final Object tag) {
-        return convertToJson(null, tag);
+        return convertToJson(null, tag, false);
     }
-
 
     public static @Nullable Object jsonComponentToTag(@Nullable final JsonElement component) {
-        return convertToTag(component);
+        return convertToTag(component, false);
     }
 
-    @Contract("null -> null")
-    private static Object convertToTag(final @Nullable JsonElement element) {
+    /**
+     * @param opaque whether this sits inside one of the {@link #OPAQUE_FIELDS}, in which case the
+     *               contents are passed through without any component specific interpretation
+     */
+    @Contract("null, _ -> null")
+    private static Object convertToTag(final @Nullable JsonElement element, final boolean opaque) {
         if (element == null || element.isJsonNull()) {
             return null;
         } else if (element.isJsonObject()) {
             final NbtMapBuilder tag = NbtMap.builder();
             final JsonObject jsonObject = element.getAsJsonObject();
             for (final Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                convertObjectEntry(entry.getKey(), entry.getValue(), tag);
+                final String key = entry.getKey();
+                tag.put(key, convertToTag(entry.getValue(), opaque || OPAQUE_FIELDS.contains(key)));
             }
 
-            addComponentType(jsonObject, tag);
+            if (!opaque) {
+                addComponentType(jsonObject, tag);
+            }
             return tag.build();
         } else if (element.isJsonArray()) {
-            return convertJsonArray(element.getAsJsonArray());
+            return convertJsonArray(element.getAsJsonArray(), opaque);
         } else if (element.isJsonPrimitive()) {
             final JsonPrimitive primitive = element.getAsJsonPrimitive();
             if (primitive.isString()) {
@@ -94,27 +148,48 @@ public class NbtComponentSerializer {
                 return number.doubleValue();
             } else if (number instanceof Float) {
                 return number.floatValue();
-            } else if (number instanceof LazilyParsedNumber) {
-                // TODO: This might need better handling
-                return number.intValue();
             }
-            return number.intValue(); // ???
+            return convertUntypedNumber(number);
         }
         throw new IllegalArgumentException("Unhandled json type " + element.getClass().getSimpleName() + " with value " + element.getAsString());
     }
 
-    private static NbtList<?> convertJsonArray(final JsonArray array) {
-        // TODO Number arrays?
+    /**
+     * Gson hands back a {@code LazilyParsedNumber} for every unqualified json number, so the original
+     * java type is lost. Recover the narrowest tag type that holds the value without truncating it -
+     * vanilla's {@code ExtraCodecs#JAVA} keeps a translation argument as whatever number it was.
+     */
+    private static Object convertUntypedNumber(final Number number) {
+        final String value = number.toString();
+        // Anything that isn't a plain integer literal (decimals, exponents, NaN, Infinity) can only
+        // be represented as a double
+        if (value.indexOf('.') == -1 && value.indexOf('e') == -1 && value.indexOf('E') == -1
+            && value.indexOf('N') == -1 && value.indexOf('I') == -1) {
+            try {
+                return Integer.parseInt(value);
+            } catch (final NumberFormatException ignored) {
+            }
+
+            try {
+                return Long.parseLong(value);
+            } catch (final NumberFormatException ignored) {
+            }
+        }
+
+        return number.doubleValue();
+    }
+
+    private static NbtList<?> convertJsonArray(final JsonArray array, final boolean opaque) {
         NbtListBuilder<?> listBuilder = null;
         for (final JsonElement entry : array) {
-            final Object convertedEntryTag = convertToTag(entry);
-            NbtType<?> convertedTagType = NbtType.byClass(convertedEntryTag.getClass());
+            final Object convertedEntryTag = convertToTag(entry, opaque);
+            final NbtType<?> convertedTagType = NbtType.byClass(convertedEntryTag.getClass());
 
             if (listBuilder == null) {
                 listBuilder = new NbtListBuilder<>(convertedTagType);
             }
 
-            // If we have different types mixed, fallback to compounds below.
+            // If we have different types mixed, fall back to the wrapped compound form below
             if (listBuilder.type != convertedTagType) {
                 listBuilder = null;
                 break;
@@ -127,56 +202,42 @@ public class NbtComponentSerializer {
             return listBuilder.build();
         }
 
-        // Generally, vanilla-esque serializers should not produce this format, so it should be rare
-        // Lists are only used for lists of components ("extra" and "with")
-        final NbtListBuilder<NbtMap> processedListTag = new NbtListBuilder<>(NbtType.COMPOUND);
-        for (final JsonElement entry : array) {
-            final Object convertedTag = convertToTag(entry);
-            if (convertedTag instanceof NbtMap nbtMap) {
-                processedListTag.add(nbtMap);
-                continue;
-            }
-
-            // Wrap all entries in compound tags, as lists can only consist of one type of tag
-            final NbtMapBuilder compoundTag = NbtMap.builder();
-            compoundTag.put("type", "text");
-            if (convertedTag instanceof NbtList<?> list) {
-                compoundTag.put("text", "");
-                compoundTag.put("extra", list);
-            } else {
-                compoundTag.put("text", stringValue(convertedTag));
-            }
-            processedListTag.add(compoundTag.build());
+        if (array.isEmpty()) {
+            // Vanilla's ListTag reports TAG_End as the element type of an empty list
+            return new NbtList<>(NbtType.END, List.of());
         }
 
-        return processedListTag.build();
+        // Mixed types. This is the normal case for a translatable component's "with" arguments,
+        // which may hold any mix of numbers, booleans, strings and components, and vanilla stores
+        // them as a list of compounds with every non-compound entry wrapped in {"": value}.
+        final NbtListBuilder<NbtMap> wrappedList = new NbtListBuilder<>(NbtType.COMPOUND);
+        for (final JsonElement entry : array) {
+            wrappedList.add(wrapListEntry(convertToTag(entry, opaque)));
+        }
+
+        return wrappedList.build();
     }
 
-    /**
-     * Converts a json object entry to a tag entry.
-     *
-     * @param key key of the entry
-     * @param value value of the entry
-     * @param tag the resulting compound tag
-     */
-    private static void convertObjectEntry(final String key, final JsonElement value, final NbtMapBuilder tag) {
-        if ((key.equals("contents")) && value.isJsonObject()) {
-            // Store show_entity id as int array instead of uuid string
-            // Not really required, but we might as well make it more compact
-            final JsonObject hoverEvent = value.getAsJsonObject();
-            final JsonElement id = hoverEvent.get("id");
-            final UUID uuid;
-            if (id != null && id.isJsonPrimitive() && (uuid = parseUUID(id.getAsString())) != null) {
-                hoverEvent.remove("id");
-
-                final NbtMapBuilder convertedTag = ((NbtMap) convertToTag(value)).toBuilder();
-                convertedTag.put("id", toIntArray(uuid));
-                tag.put(key, convertedTag.build());
-                return;
-            }
+    private static NbtMap wrapListEntry(final Object tag) {
+        if (tag instanceof NbtMap map && !isWrappedListEntry(map)) {
+            return map;
         }
 
-        tag.put(key, convertToTag(value));
+        final NbtMapBuilder wrapper = NbtMap.builder();
+        wrapper.put(WRAPPER_MARKER, tag);
+        return wrapper.build();
+    }
+
+    private static Object unwrapListEntry(final Object tag) {
+        if (tag instanceof NbtMap map && isWrappedListEntry(map)) {
+            return map.get(WRAPPER_MARKER);
+        }
+
+        return tag;
+    }
+
+    private static boolean isWrappedListEntry(final NbtMap map) {
+        return map.size() == 1 && map.containsKey(WRAPPER_MARKER);
     }
 
     private static void addComponentType(final JsonObject object, final NbtMapBuilder tag) {
@@ -184,36 +245,44 @@ public class NbtComponentSerializer {
             return;
         }
 
-        // Add the type to speed up deserialization and make DFU errors slightly more useful
-        for (final Pair<String, String> pair : COMPONENT_TYPES) {
-            if (object.has(pair.value)) {
-                tag.put("type", pair.key);
-                return;
+        // Add the type so vanilla's StrictEither takes the typed path instead of the FuzzyCodec,
+        // which speeds up deserialization and makes DFU errors slightly more useful
+        for (final ComponentType componentType : COMPONENT_TYPES) {
+            for (final String field : componentType.fields()) {
+                if (object.has(field)) {
+                    tag.put("type", componentType.name());
+                    return;
+                }
             }
         }
     }
 
-    private static @Nullable JsonElement convertToJson(final @Nullable String key, final @Nullable Object tag) {
+    /**
+     * @param opaque whether this sits inside one of the {@link #OPAQUE_FIELDS}, in which case the
+     *               contents are passed through without any component specific interpretation
+     */
+    private static @Nullable JsonElement convertToJson(final @Nullable String key, final @Nullable Object tag, final boolean opaque) {
         if (tag == null) {
             return null;
         } else if (tag instanceof NbtMap nbtMap) {
             final JsonObject object = new JsonObject();
-            if (!"value".equals(key)) {
-                removeComponentType(object);
+            for (final Map.Entry<String, Object> entry : nbtMap.entrySet()) {
+                final String entryKey = entry.getKey();
+                object.add(entryKey, convertToJson(entryKey, entry.getValue(), opaque || OPAQUE_FIELDS.contains(entryKey)));
             }
 
-            for (Map.Entry<String, Object> entry : nbtMap.entrySet()) {
-                convertNbtMapEntry(entry.getKey(), entry.getValue(), object);
+            if (!opaque) {
+                removeComponentType(object);
             }
             return object;
         } else if (tag instanceof NbtList<?> list) {
             final JsonArray array = new JsonArray();
             for (final Object listEntry : list) {
-                array.add(convertToJson(null, listEntry));
+                array.add(convertToJson(null, unwrapListEntry(listEntry), opaque));
             }
             return array;
         } else if (tag instanceof Number number) {
-            if (key != null && BOOLEAN_TYPES.contains(key)) {
+            if (!opaque && key != null && BOOLEAN_TYPES.contains(key)) {
                 // Booleans don't have a direct representation in nbt
                 return new JsonPrimitive(number.byteValue() != 0);
             }
@@ -242,94 +311,38 @@ public class NbtComponentSerializer {
         throw new IllegalArgumentException("Unhandled tag type " + tag.getClass().getSimpleName());
     }
 
-    private static void convertNbtMapEntry(final String key, final Object tag, final JsonObject object) {
-        if ((key.equals("contents")) && tag instanceof NbtMap showEntity) {
-            // Back to a UUID string
-            final Object idTag = showEntity.get("id");
-            if (idTag instanceof int[] array) {
-                final JsonObject convertedElement = (JsonObject) convertToJson(key, tag);
-                final UUID uuid = fromIntArray(array);
-                convertedElement.addProperty("id", uuid.toString());
-                object.add(key, convertedElement);
-                return;
-            }
-        }
-
-        // "":1 is a valid tag, but not a valid json component
-        object.add(key.isEmpty() ? "text" : key, convertToJson(key, tag));
-    }
-
+    /**
+     * Strips the {@code type} discriminator and the fields belonging to the other content types.
+     *
+     * <p>Vanilla itself never writes {@code type} - its {@code StrictEither} only reads it - but other
+     * senders do, and adventure ignores it entirely, picking the content type purely by field
+     * presence. Without this, {@code {"type": "translatable", "text": "a", "translate": "b"}} would be
+     * read as translatable by vanilla but as text by adventure.
+     */
     private static void removeComponentType(final JsonObject object) {
-        final JsonElement type = object.remove("type");
-        if (type == null || !type.isJsonPrimitive()) {
+        final JsonElement type = object.get("type");
+        if (type == null || !type.isJsonPrimitive() || !type.getAsJsonPrimitive().isString()) {
             return;
         }
 
-        // Remove the other fields
         final String typeString = type.getAsString();
-        for (final Pair<String, String> pair : COMPONENT_TYPES) {
-            if (!pair.key.equals(typeString)) {
-                object.remove(pair.value);
+        // Arbitrary nbt travels inside components (item components, custom click event payloads) and
+        // may carry a "type" field that has nothing to do with component content types
+        if (!COMPONENT_TYPE_NAMES.contains(typeString)) {
+            return;
+        }
+
+        object.remove("type");
+
+        // Remove the other content types' fields
+        for (final ComponentType componentType : COMPONENT_TYPES) {
+            if (!componentType.name().equals(typeString)) {
+                componentType.fields().forEach(object::remove);
             }
         }
     }
 
-    // Last adopted from https://github.com/ViaVersion/ViaVersion/blob/8e38e25cbad1798abb628b4994f4047eaf64640d/common/src/main/java/com/viaversion/viaversion/util/UUIDUtil.java
-    public static UUID fromIntArray(final int[] parts) {
-        if (parts.length != 4) {
-            return new UUID(0, 0);
-        }
-        return new UUID((long) parts[0] << 32 | (parts[1] & 0xFFFFFFFFL), (long) parts[2] << 32 | (parts[3] & 0xFFFFFFFFL));
-    }
-
-    public static int[] toIntArray(final UUID uuid) {
-        return toIntArray(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits());
-    }
-
-    public static int[] toIntArray(final long msb, final long lsb) {
-        return new int[]{(int) (msb >> 32), (int) msb, (int) (lsb >> 32), (int) lsb};
-    }
-
-    public static @Nullable UUID parseUUID(final String uuidString) {
-        try {
-            return UUID.fromString(uuidString);
-        } catch (final IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    // Last adopted from https://github.com/ViaVersion/ViaNBT/commit/ad8ac024c48c2fc25e18dc689b3ca62602420ab9
-    private static String stringValue(Object tag) {
-        if (tag instanceof byte[] bytes) {
-            return Arrays.toString(bytes);
-        } else if (tag instanceof Byte byteTag) {
-            return Byte.toString(byteTag);
-        } else if (tag instanceof Double doubleTag) {
-            return Double.toString(doubleTag);
-        } else if (tag instanceof Float floatTag) {
-            return Float.toString(floatTag);
-        } else if (tag instanceof int[] intArray) {
-            return Arrays.toString(intArray);
-        } else if (tag instanceof Integer integer) {
-            return Integer.toString(integer);
-        } else if (tag instanceof long[] longs) {
-            return Arrays.toString(longs);
-        } else if (tag instanceof Long longTag) {
-            return Long.toString(longTag);
-        } else if (tag instanceof Short shortTag) {
-            return Short.toString(shortTag);
-        } else if (tag instanceof String string) {
-            return string;
-        } else {
-            return tag.toString();
-        }
-    }
-
-    // Implemented in the same way as ViaVersion's custom Pair class in order to reduce diff
-    @AllArgsConstructor
-    private static class Pair<K, V> {
-        private final K key;
-        private final V value;
+    private record ComponentType(String name, List<String> fields) {
     }
 
     @RequiredArgsConstructor

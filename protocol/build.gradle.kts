@@ -39,6 +39,7 @@ dependencies {
     // Test dependencies
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.slf4j.simple)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.test {
