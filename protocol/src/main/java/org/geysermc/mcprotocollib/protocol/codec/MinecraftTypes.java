@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -11,6 +10,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.math.imaginary.Quaternionf;
@@ -22,8 +22,8 @@ import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.geysermc.mcprotocollib.auth.GameProfile;
+import org.geysermc.mcprotocollib.text.serializer.nbt.NbtComponentSerializer;
 import org.geysermc.mcprotocollib.auth.texture.TextureModel;
-import org.geysermc.mcprotocollib.protocol.data.DefaultComponentSerializer;
 import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatType;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.ChatTypeDecoration;
@@ -918,14 +918,12 @@ public class MinecraftTypes {
         if (tag == null) {
             throw new IllegalArgumentException("Got end-tag when trying to read Component");
         }
-        JsonElement json = NbtComponentSerializer.tagComponentToJson(tag);
-        return DefaultComponentSerializer.get().deserializeFromTree(json);
+        GsonComponentSerializer
+        return NbtComponentSerializer.nbt().deserialize(tag);
     }
 
     public static void writeComponent(ByteBuf buf, Component component) {
-        JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
-        Object tag = NbtComponentSerializer.jsonComponentToTag(json);
-        writeAnyTag(buf, tag);
+        writeAnyTag(buf, NbtComponentSerializer.nbt().serialize(component));
     }
 
     public static EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) {

@@ -2,13 +2,17 @@ package org.geysermc.mcprotocollib.gametest;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 
 import java.net.URI;
 import java.util.Optional;
@@ -73,6 +77,39 @@ public class EventTests {
     public void showItemStacked(final GameTestHelper helper) {
         ComponentChecks.roundTrip(helper, ComponentChecks.styled(new HoverEvent.ShowItem(
             new ItemStackTemplate(Items.STONE, 32))));
+    }
+
+    /**
+     * The {@code components} map of a {@code show_item} is opaque item data, not text, so it has to
+     * come back byte for byte - including a value that is itself a component, which a converter that
+     * recursed into everything it recognised would rewrite.
+     */
+    @GameTest
+    public void showItemWithComponents(final GameTestHelper helper) {
+        final CompoundTag customData = ComponentChecks.compound(tag -> {
+            tag.putString("type", "translatable");
+            tag.putString("text", "opaque item data");
+            tag.putInt("count", 3);
+        });
+
+        ComponentChecks.roundTrip(helper, ComponentChecks.styled(new HoverEvent.ShowItem(
+            new ItemStackTemplate(Items.DIAMOND_SWORD, DataComponentPatch.builder()
+                .set(DataComponents.CUSTOM_NAME, Component.literal("Excalibur").withStyle(ChatFormatting.GOLD))
+                .set(DataComponents.DAMAGE, 12)
+                .set(DataComponents.CUSTOM_DATA, CustomData.of(customData))
+                .build()))));
+    }
+
+    /**
+     * A patch can also say a component is explicitly absent, which vanilla writes as the id prefixed
+     * with {@code !} because nbt has no other way to express a removal.
+     */
+    @GameTest
+    public void showItemWithRemovedComponent(final GameTestHelper helper) {
+        ComponentChecks.roundTrip(helper, ComponentChecks.styled(new HoverEvent.ShowItem(
+            new ItemStackTemplate(Items.STONE, DataComponentPatch.builder()
+                .remove(DataComponents.LORE)
+                .build()))));
     }
 
     @GameTest

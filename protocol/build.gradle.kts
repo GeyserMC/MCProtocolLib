@@ -9,6 +9,9 @@ version = "26.2-SNAPSHOT"
 description = "MCProtocolLib is a simple library for communicating with Minecraft clients and servers."
 
 dependencies {
+    // Text components, as sent over the network
+    api(projects.nbtComponentSerializer)
+
     // Minecraft related libraries
     api(libs.cloudburstnbt)
 

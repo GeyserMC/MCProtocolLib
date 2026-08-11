@@ -12,11 +12,13 @@ import net.minecraft.resources.Identifier;
 import java.util.Optional;
 
 /**
- * Components carrying opaque nbt that happens to use field names the converter cares about. Vanilla
- * passes this data straight through, so the converter has to as well.
+ * Custom click events, whose payload is arbitrary nbt chosen by whoever sent it.
  *
- * <p>Only checked at the nbt to json level: adventure models a custom click event's payload as an snbt
- * string rather than as structured data, which is a difference in adventure, not in the converter.
+ * <p>Vanilla passes this data straight through without looking inside, so the serializer has to as
+ * well - including when the payload happens to use the very field names a component is made of. The
+ * payload survives as structured nbt in both directions: adventure holds it as a
+ * {@code BinaryTagHolder}, which is a string plus the codec that produced it, and the module supplies
+ * an snbt codec over cloudburst tags for exactly that.
  */
 public class OpaquePayloadTests {
 
@@ -29,7 +31,27 @@ public class OpaquePayloadTests {
             tag.putByte("bold", (byte) 1);
         });
 
-        ComponentChecks.nbtToJson(helper, ComponentChecks.styled(
+        ComponentChecks.opaque(helper, ComponentChecks.styled(
+            new ClickEvent.Custom(Identifier.withDefaultNamespace("test"), Optional.of(payload))));
+    }
+
+    /**
+     * The same trap one level down, where a naive converter would recurse into the nested compound.
+     */
+    @GameTest
+    public void nestedPayloadShapedLikeComponent(final GameTestHelper helper) {
+        final CompoundTag payload = ComponentChecks.compound(tag -> {
+            tag.putString("type", "text");
+            tag.putString("text", "outer");
+            tag.put("extra", ComponentChecks.compound(nested -> {
+                nested.putString("type", "translatable");
+                nested.putString("translate", "inner");
+                nested.putByte("bold", (byte) 0);
+                nested.putInt("color", 42);
+            }));
+        });
+
+        ComponentChecks.opaque(helper, ComponentChecks.styled(
             new ClickEvent.Custom(Identifier.withDefaultNamespace("test"), Optional.of(payload))));
     }
 
@@ -40,7 +62,7 @@ public class OpaquePayloadTests {
             tag.putString("text", "must survive");
         });
 
-        ComponentChecks.nbtToJson(helper, ComponentChecks.styled(
+        ComponentChecks.opaque(helper, ComponentChecks.styled(
             new ClickEvent.Custom(Identifier.withDefaultNamespace("test"), Optional.of(payload))));
     }
 
@@ -52,7 +74,36 @@ public class OpaquePayloadTests {
 
         final CompoundTag payload = ComponentChecks.compound(tag -> tag.put("values", mixedList));
 
-        ComponentChecks.nbtToJson(helper, ComponentChecks.styled(
+        ComponentChecks.opaque(helper, ComponentChecks.styled(
             new ClickEvent.Custom(Identifier.withDefaultNamespace("test"), Optional.of(payload))));
+    }
+
+    /**
+     * Every scalar type nbt has, so a payload cannot quietly lose a number's width on the way through
+     * the snbt form adventure stores it in.
+     */
+    @GameTest
+    public void payloadWithEveryScalarType(final GameTestHelper helper) {
+        final CompoundTag payload = ComponentChecks.compound(tag -> {
+            tag.putByte("a byte", (byte) -3);
+            tag.putShort("a short", (short) 300);
+            tag.putInt("an int", 70000);
+            tag.putLong("a long", 5000000000L);
+            tag.putFloat("a float", 1.5F);
+            tag.putDouble("a double", 2.5D);
+            tag.putString("a string", "quoted \" and \\ escaped");
+            tag.putByteArray("bytes", new byte[]{1, 2, 3});
+            tag.putIntArray("ints", new int[]{4, 5, 6});
+            tag.putLongArray("longs", new long[]{7L, 8L, 9L});
+        });
+
+        ComponentChecks.opaque(helper, ComponentChecks.styled(
+            new ClickEvent.Custom(Identifier.withDefaultNamespace("test"), Optional.of(payload))));
+    }
+
+    @GameTest
+    public void payloadAbsent(final GameTestHelper helper) {
+        ComponentChecks.opaque(helper, ComponentChecks.styled(
+            new ClickEvent.Custom(Identifier.withDefaultNamespace("test"), Optional.empty())));
     }
 }

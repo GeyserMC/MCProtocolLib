@@ -9,8 +9,8 @@ import net.minecraft.gametest.framework.GameTestHelper;
  * <p>Vanilla's {@code StrictEither} reads a {@code type} discriminator but its encoder never emits one,
  * so no round trip starting from a vanilla component can reach that path. Senders that do write it -
  * ViaVersion, Geyser, and MCProtocolLib itself - can, and when {@code type} disagrees with the fields
- * present, vanilla goes by {@code type} while adventure goes by field order, so the conflicting fields
- * have to be dropped on the way to json.
+ * present, the discriminator decides the content type and the stale fields are ignored, which is what
+ * vanilla does and what the serializer has to do too.
  */
 public class DiscriminatedTagTests {
 

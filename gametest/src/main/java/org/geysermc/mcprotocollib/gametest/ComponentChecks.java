@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.gametest;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -27,18 +26,20 @@ public final class ComponentChecks {
     }
 
     /**
-     * The full path MCProtocolLib uses at runtime: nbt to json, plus wire nbt to adventure and back.
+     * The full path MCProtocolLib uses at runtime: wire nbt to an adventure component and back to nbt,
+     * checked against vanilla's own read of the same bytes.
      */
     public static void roundTrip(final GameTestHelper helper, final Component component) {
-        ComponentRoundTrip.assertNbtToJson(helper.getLevel().registryAccess(), component);
+        ComponentRoundTrip.assertMatchesVanilla(helper.getLevel().registryAccess(), component);
         helper.succeed();
     }
 
     /**
-     * Only the nbt to json level, for components adventure cannot model faithfully.
+     * The same check, for components whose payload is nbt the serializer must carry rather than
+     * understand. Named apart from {@link #roundTrip} only so a failure says which kind of case broke.
      */
-    public static void nbtToJson(final GameTestHelper helper, final Component component) {
-        ComponentRoundTrip.assertNbtToJson(helper.getLevel().registryAccess(), component);
+    public static void opaque(final GameTestHelper helper, final Component component) {
+        ComponentRoundTrip.assertMatchesVanilla(helper.getLevel().registryAccess(), component);
         helper.succeed();
     }
 
@@ -46,7 +47,7 @@ public final class ComponentChecks {
      * A hand built tag, for the shapes vanilla can read but never writes.
      */
     public static void rawTag(final GameTestHelper helper, final Tag tag) {
-        ComponentRoundTrip.assertRawNbtMatchesVanilla(helper.getLevel().registryAccess(), tag);
+        ComponentRoundTrip.assertRawTagMatchesVanilla(helper.getLevel().registryAccess(), tag);
         helper.succeed();
     }
 

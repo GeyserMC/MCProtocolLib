@@ -26,6 +26,7 @@ fabric-api = "0.156.0+26.2"
 
 [libraries]
 
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 
 cloudburstnbt = { module = "org.cloudburstmc:nbt", version.ref = "cloudburstnbt" }

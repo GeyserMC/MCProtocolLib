@@ -30,6 +30,7 @@ dependencyResolutionManagement {
 rootProject.name = "mcprotocollib"
 
 include(
+    "nbt-component-serializer",
     "protocol",
     "example",
     "gametest"
