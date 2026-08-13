@@ -30,6 +30,12 @@ public enum ContainerType {
     private static final ContainerType[] VALUES = values();
 
     public static ContainerType from(int id) {
+        // Modded servers can send menu type ids outside the vanilla range
+        // (e.g. Waystones). Return null so callers can fall back instead of
+        // crashing with ArrayIndexOutOfBoundsException.
+        if (id < 0 || id >= VALUES.length) {
+            return null;
+        }
         return VALUES[id];
     }
 }
