@@ -25,7 +25,7 @@ final class HoverEventSerializerImpl {
             return HoverEvent.showItem(id, count, BinaryTagHolder.binaryTagHolder(components.toString()));
         } else if (action == HoverEvent.Action.SHOW_ENTITY) {
             Key id = Key.key(map.getString("id"));
-            UUID uuid = NbtSerializationUtil.deserializeLenientUUID(map.get("uuid"));
+            UUID uuid = NbtUtil.deserializeLenientUUID(map.get("uuid"));
             Object name = map.get("name");
             return HoverEvent.showEntity(id, uuid, componentSerializer.deserializeOrNull(name));
         } else {
@@ -52,7 +52,7 @@ final class HoverEventSerializerImpl {
         } else if (action == HoverEvent.Action.SHOW_ENTITY) {
             HoverEvent.ShowEntity entity = (HoverEvent.ShowEntity) value;
             builder.putString("id", entity.type().asString());
-            builder.putIntArray("uuid", NbtSerializationUtil.serializeUUID(entity.id()));
+            builder.putIntArray("uuid", NbtUtil.serializeUUID(entity.id()));
 
             if (entity.name() != null) {
                 builder.put("name", componentSerializer.serialize(entity.name()));

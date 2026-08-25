@@ -14,7 +14,7 @@ final class ResolvableProfileSerializerImpl {
     static PlayerHeadObjectContents.Builder deserialize(NbtMap map) {
         PlayerHeadObjectContents.Builder builder = ObjectContents.playerHead();
         map.listenForString("name", builder::name);
-        map.listenForIntArray("id", array -> builder.id(NbtSerializationUtil.deserializeUUID(array)));
+        map.listenForIntArray("id", array -> builder.id(NbtUtil.deserializeUUID(array)));
         map.listenForString("texture", texture -> builder.texture(Key.key(texture)));
 
         map.listenForList("properties", NbtType.COMPOUND, properties -> properties.stream().map(ResolvableProfileSerializerImpl::deserializeProfileProperty).forEach(builder::profileProperty));
@@ -23,9 +23,9 @@ final class ResolvableProfileSerializerImpl {
 
     static NbtMap serialize(PlayerHeadObjectContents profile) {
         NbtMapBuilder builder = NbtMap.builder();
-        NbtSerializationUtil.checkNonNull(profile.name(), name -> builder.putString("name", name));
-        NbtSerializationUtil.checkNonNull(profile.id(), uuid -> builder.putIntArray("id", NbtSerializationUtil.serializeUUID(uuid)));
-        NbtSerializationUtil.checkNonNull(profile.texture(), texture -> builder.putString("texture", texture.asString()));
+        NbtUtil.checkNonNull(profile.name(), name -> builder.putString("name", name));
+        NbtUtil.checkNonNull(profile.id(), uuid -> builder.putIntArray("id", NbtUtil.serializeUUID(uuid)));
+        NbtUtil.checkNonNull(profile.texture(), texture -> builder.putString("texture", texture.asString()));
 
         List<NbtMap> properties = profile.profileProperties().stream().map(ResolvableProfileSerializerImpl::serializeProfileProperty).toList();
         if (!properties.isEmpty()) {
@@ -46,7 +46,7 @@ final class ResolvableProfileSerializerImpl {
         NbtMapBuilder builder = NbtMap.builder();
         builder.putString("name", property.name());
         builder.putString("value", property.value());
-        NbtSerializationUtil.checkNonNull(property.signature(), signature -> builder.putString("signature", signature));
+        NbtUtil.checkNonNull(property.signature(), signature -> builder.putString("signature", signature));
         return builder.build();
     }
 }

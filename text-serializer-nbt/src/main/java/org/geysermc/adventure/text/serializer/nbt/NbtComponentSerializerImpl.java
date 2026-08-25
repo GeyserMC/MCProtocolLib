@@ -56,7 +56,7 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
             case TextComponent text -> builder.putString("text", text.content());
             case TranslatableComponent translatable -> {
                 builder.putString("translate", translatable.key());
-                NbtSerializationUtil.checkNonNull(translatable.fallback(), fallback -> builder.putString("fallback", fallback));
+                NbtUtil.checkNonNull(translatable.fallback(), fallback -> builder.putString("fallback", fallback));
 
                 NbtList<?> arguments = translatable.arguments().stream().map(this::serializeTranslationArgument).collect(HeterogeneousNbtList.collector());
                 if (!arguments.isEmpty()) {
@@ -71,7 +71,7 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
             );
             case SelectorComponent selector -> {
                 builder.putString("selector", selector.pattern());
-                NbtSerializationUtil.checkNonNull(selector.separator(), separator -> builder.put("separator", serialize(separator)));
+                NbtUtil.checkNonNull(selector.separator(), separator -> builder.put("separator", serialize(separator)));
             }
             case NBTComponent<?> nbtComponent -> serializeNbtContentsComponent(builder, nbtComponent);
             case ObjectComponent objectComponent -> serializeObjectComponent(builder, objectComponent);
@@ -164,9 +164,9 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
 
     private void serializeNbtContentsComponent(NbtMapBuilder builder, NBTComponent<?> component) {
         builder.putString("nbt", component.nbtPath());
-        NbtSerializationUtil.putIfTrue(builder, "interpret", component.interpret());
-        NbtSerializationUtil.putIfTrue(builder, "plain", component.plain());
-        NbtSerializationUtil.checkNonNull(component.separator(), separator -> builder.put("separator", serialize(separator)));
+        NbtUtil.putIfTrue(builder, "interpret", component.interpret());
+        NbtUtil.putIfTrue(builder, "plain", component.plain());
+        NbtUtil.checkNonNull(component.separator(), separator -> builder.put("separator", serialize(separator)));
 
         switch (component) {
             case EntityNBTComponent entity -> builder.putString("entity", entity.selector());
@@ -196,7 +196,7 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     }
 
     private void serializeObjectComponent(NbtMapBuilder builder, ObjectComponent component) {
-        NbtSerializationUtil.checkNonNull(component.fallback(), fallback -> builder.put("fallback", serialize(fallback)));
+        NbtUtil.checkNonNull(component.fallback(), fallback -> builder.put("fallback", serialize(fallback)));
 
         switch (component.contents()) {
             case SpriteObjectContents sprite -> {
@@ -207,7 +207,7 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
             }
             case PlayerHeadObjectContents playerHead -> {
                 builder.putCompound("player", ResolvableProfileSerializerImpl.serialize(playerHead));
-                NbtSerializationUtil.putIfFalse(builder, "hat", playerHead.hat());
+                NbtUtil.putIfFalse(builder, "hat", playerHead.hat());
             }
         }
     }

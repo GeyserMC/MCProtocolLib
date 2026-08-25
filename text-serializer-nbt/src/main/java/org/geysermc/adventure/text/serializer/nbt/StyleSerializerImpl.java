@@ -21,7 +21,7 @@ final class StyleSerializerImpl {
             });
             Object shadowColor = map.get("shadow_color");
             if (shadowColor != null) {
-                builder.shadowColor(NbtSerializationUtil.deserializeARGB(shadowColor));
+                builder.shadowColor(NbtUtil.deserializeARGB(shadowColor));
             }
 
             map.listenForBoolean("bold", bold -> builder.decoration(TextDecoration.BOLD, bold));
@@ -39,14 +39,14 @@ final class StyleSerializerImpl {
     }
 
     static void serialize(NbtMapBuilder builder, Style style, NbtComponentSerializer componentSerializer) {
-        NbtSerializationUtil.checkNonNull(style.color(), color -> {
+        NbtUtil.checkNonNull(style.color(), color -> {
             if (color instanceof NamedTextColor named) {
                 builder.putString("color", named.name());
             } else {
                 builder.putString("color", color.asHexString());
             }
         });
-        NbtSerializationUtil.checkNonNull(style.shadowColor(), color -> builder.putInt("shadow_color", color.value()));
+        NbtUtil.checkNonNull(style.shadowColor(), color -> builder.putInt("shadow_color", color.value()));
 
         style.decorations().forEach((decoration, state) -> {
             if (state != TextDecoration.State.NOT_SET) {
@@ -54,10 +54,10 @@ final class StyleSerializerImpl {
             }
         });
 
-        NbtSerializationUtil.checkNonNull(style.clickEvent(), clickEvent -> builder.putCompound("click_event", ClickEventSerializerImpl.serialize(clickEvent)));
-        NbtSerializationUtil.checkNonNull(style.hoverEvent(), hoverEvent -> builder.putCompound("hover_event", HoverEventSerializerImpl.serialize(hoverEvent, componentSerializer)));
+        NbtUtil.checkNonNull(style.clickEvent(), clickEvent -> builder.putCompound("click_event", ClickEventSerializerImpl.serialize(clickEvent)));
+        NbtUtil.checkNonNull(style.hoverEvent(), hoverEvent -> builder.putCompound("hover_event", HoverEventSerializerImpl.serialize(hoverEvent, componentSerializer)));
 
-        NbtSerializationUtil.checkNonNull(style.insertion(), insertion -> builder.putString("insertion", insertion));
-        NbtSerializationUtil.checkNonNull(style.font(), font -> builder.putString("font", font.asString()));
+        NbtUtil.checkNonNull(style.insertion(), insertion -> builder.putString("insertion", insertion));
+        NbtUtil.checkNonNull(style.font(), font -> builder.putString("font", font.asString()));
     }
 }

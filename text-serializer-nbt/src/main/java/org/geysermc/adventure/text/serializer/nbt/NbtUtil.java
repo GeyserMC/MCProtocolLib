@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-final class NbtSerializationUtil {
+final class NbtUtil {
 
     static UUID deserializeLenientUUID(Object object) {
         if (object instanceof int[] array) {
