@@ -6,10 +6,15 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.jetbrains.annotations.VisibleForTesting;
 
+import java.util.List;
 import java.util.UUID;
 
 final class HoverEventSerializerImpl {
+    @VisibleForTesting
+    static final List<HoverEvent.Action<?>> SUPPORTED_EVENTS = List.of(HoverEvent.Action.SHOW_TEXT, HoverEvent.Action.SHOW_ITEM,
+        HoverEvent.Action.SHOW_ENTITY, HoverEvent.Action.SHOW_ACHIEVEMENT); // We throw on show_achievement, but that's intended
 
     static HoverEvent<?> deserialize(NbtMap map, NbtComponentSerializer componentSerializer) {
         HoverEvent.Action<?> action = HoverEvent.Action.NAMES.valueOrThrow(map.getString("action"));
@@ -20,9 +25,9 @@ final class HoverEventSerializerImpl {
         } else if (action == HoverEvent.Action.SHOW_ITEM) {
             Key id = Key.key(map.getString("id"));
             int count = map.getInt("count", 1);
-            NbtMap components = map.getCompound("components");
+            NbtMap components = map.getCompound("components", null);
             // FIXME
-            return HoverEvent.showItem(id, count, BinaryTagHolder.binaryTagHolder(components.toString()));
+            return HoverEvent.showItem(id, count, components == null ? null : BinaryTagHolder.binaryTagHolder(components.toString()));
         } else if (action == HoverEvent.Action.SHOW_ENTITY) {
             Key id = Key.key(map.getString("id"));
             UUID uuid = NbtUtil.deserializeLenientUUID(map.get("uuid"));
