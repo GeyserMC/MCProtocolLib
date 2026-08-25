@@ -33,15 +33,15 @@ public class HoverEventSerializerTest {
         Arguments.arguments(
             hoverEvent("show_entity")
                 .putString("id", "minecraft:zombie")
-                .putIntArray("uuid", new int[]{-476674174, 1357660845, -1694618559, 456679868}),
-            HoverEvent.showEntity(Key.key("zombie"), UUID.fromString("e3968782-50ec-42ad-9afe-2c411b3861bc"))
+                .putIntArray("uuid", new int[]{-1672631430,-75086590,-1822946037,1701451835}),
+            HoverEvent.showEntity(Key.key("zombie"), new UUID(-7183897285891832574L, -7829493609586354117L))
         ),
         Arguments.arguments(
             hoverEvent("show_entity")
                 .putString("name", "eclipseisoffline")
                 .putString("id", "minecraft:player")
                 .putIntArray("uuid", new int[]{-476674174, 1357660845, -1694618559, 456679868}),
-            HoverEvent.showEntity(Key.key("player"), UUID.fromString("e3968782-50ec-42ad-9afe-2c411b3861bc"), Component.text("eclipseisoffline"))
+            HoverEvent.showEntity(Key.key("player"), new UUID(-2047299986820152659L, -7278331289642966596L), Component.text("eclipseisoffline"))
         )
     );
 

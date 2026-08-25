@@ -26,8 +26,8 @@ public class ClickEventSerializerTest {
             ClickEvent.runCommand("give eclipseisoffline diamond 64")
         ),
         Arguments.arguments(
-            clickEvent("suggest_command").putString("command", "clear aur.ri.ri diamond 64"),
-            ClickEvent.suggestCommand("clear aur.ri.ri diamond 64")
+            clickEvent("suggest_command").putString("command", "clear AuriiU diamond 64"),
+            ClickEvent.suggestCommand("clear AuriiU diamond 64")
         ),
         Arguments.arguments(
             clickEvent("change_page").putInt("page", 5),
