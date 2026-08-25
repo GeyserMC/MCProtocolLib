@@ -2,7 +2,15 @@ package org.geysermc.adventure.text.serializer.nbt;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.KeybindComponent;
+import net.kyori.adventure.text.NBTComponent;
+import net.kyori.adventure.text.ObjectComponent;
+import net.kyori.adventure.text.ScoreComponent;
+import net.kyori.adventure.text.SelectorComponent;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.Style;
+import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 
@@ -15,10 +23,17 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     public Component deserialize(Object input) {
         if (input instanceof String simpleText) {
             return Component.text(simpleText);
-        } else if (input instanceof List<?> list) {
-            return Component.join(JoinConfiguration.noSeparators(), list.stream().map(this::deserialize).toList());
+        } else if (input instanceof NbtList<?> list) {
+            return Component.join(JoinConfiguration.noSeparators(), HeterogeneousNbtList.tryUnwrap(list).stream().map(this::deserialize).toList());
+        } else if (input instanceof NbtMap map) {
+            Style style = StyleSerializerImpl.deserialize(map, this);
+            Object extra = map.get("extra");
+            List<Component> children;
+            if (extra instanceof NbtList<?> list) {
+                children = HeterogeneousNbtList.tryUnwrap(list).stream().map(this::deserialize).toList();
+            }
         }
-        return null;
+        throw new IllegalArgumentException("Don't know how to parse component: " + input);
     }
 
     @Override
@@ -28,6 +43,16 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         }
 
         NbtMapBuilder builder = NbtMap.builder();
+
+        switch (component) {
+            case TextComponent text -> {}
+            case TranslatableComponent translatable -> {}
+            case KeybindComponent keybind -> {}
+            case ScoreComponent score -> {}
+            case SelectorComponent selector -> {}
+            case NBTComponent<?> nbtComponent -> {}
+            case ObjectComponent objectComponent -> {}
+        }
 
         if (!component.children().isEmpty()) {
             builder.put("extra", component.children().stream().map(this::serialize).collect(HeterogeneousNbtList.collector()).build());
