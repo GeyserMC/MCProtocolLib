@@ -7,9 +7,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
-import org.jspecify.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 final class StyleSerializerImpl {
 
@@ -42,14 +39,14 @@ final class StyleSerializerImpl {
     }
 
     static void serialize(NbtMapBuilder builder, Style style, NbtComponentSerializer componentSerializer) {
-        checkNonNull(style.color(), color -> {
+        NbtSerializationUtil.checkNonNull(style.color(), color -> {
             if (color instanceof NamedTextColor named) {
                 builder.putString("color", named.name());
             } else {
                 builder.putString("color", color.asHexString());
             }
         });
-        checkNonNull(style.shadowColor(), color -> builder.putInt("shadow_color", color.value()));
+        NbtSerializationUtil.checkNonNull(style.shadowColor(), color -> builder.putInt("shadow_color", color.value()));
 
         style.decorations().forEach((decoration, state) -> {
             if (state != TextDecoration.State.NOT_SET) {
@@ -57,16 +54,10 @@ final class StyleSerializerImpl {
             }
         });
 
-        checkNonNull(style.clickEvent(), clickEvent -> builder.putCompound("click_event", ClickEventSerializerImpl.serialize(clickEvent)));
-        checkNonNull(style.hoverEvent(), hoverEvent -> builder.putCompound("hover_event", HoverEventSerializerImpl.serialize(hoverEvent, componentSerializer)));
+        NbtSerializationUtil.checkNonNull(style.clickEvent(), clickEvent -> builder.putCompound("click_event", ClickEventSerializerImpl.serialize(clickEvent)));
+        NbtSerializationUtil.checkNonNull(style.hoverEvent(), hoverEvent -> builder.putCompound("hover_event", HoverEventSerializerImpl.serialize(hoverEvent, componentSerializer)));
 
-        checkNonNull(style.insertion(), insertion -> builder.putString("insertion", insertion));
-        checkNonNull(style.font(), font -> builder.putString("font", font.asString()));
-    }
-
-    private static <T> void checkNonNull(@Nullable T value, Consumer<T> consumer) {
-        if (value != null) {
-            consumer.accept(value);
-        }
+        NbtSerializationUtil.checkNonNull(style.insertion(), insertion -> builder.putString("insertion", insertion));
+        NbtSerializationUtil.checkNonNull(style.font(), font -> builder.putString("font", font.asString()));
     }
 }

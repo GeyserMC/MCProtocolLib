@@ -46,8 +46,8 @@ final class HeterogeneousNbtList {
         return flattenList(getSingleType());
     }
 
-    public static <T> Collector<T, ?, HeterogeneousNbtList> collector() {
-        return new Collector<T, HeterogeneousNbtList, HeterogeneousNbtList>() {
+    public static <T> Collector<T, ?, NbtList<?>> collector() {
+        return new Collector<T, HeterogeneousNbtList, NbtList<?>>() {
             @Override
             public Supplier<HeterogeneousNbtList> supplier() {
                 return HeterogeneousNbtList::new;
@@ -68,8 +68,8 @@ final class HeterogeneousNbtList {
             }
 
             @Override
-            public Function<HeterogeneousNbtList, HeterogeneousNbtList> finisher() {
-                return Function.identity();
+            public Function<HeterogeneousNbtList, NbtList<?>> finisher() {
+                return HeterogeneousNbtList::build;
             }
 
             @Override

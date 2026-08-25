@@ -3,9 +3,12 @@ package org.geysermc.adventure.text.serializer.nbt;
 import net.kyori.adventure.text.format.ShadowColor;
 import net.kyori.adventure.util.ARGBLike;
 import org.cloudburstmc.nbt.NbtList;
+import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
+import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 final class NbtSerializationUtil {
 
@@ -43,5 +46,23 @@ final class NbtSerializationUtil {
 
     private static int ratioFloatToByte(float f) {
         return (int) Math.floor(f * 255.0F);
+    }
+
+    static <T> void checkNonNull(@Nullable T value, Consumer<T> consumer) {
+        if (value != null) {
+            consumer.accept(value);
+        }
+    }
+
+    static void putIfFalse(NbtMapBuilder builder, String key, boolean value) {
+        if (!value) {
+            builder.putBoolean(key, false);
+        }
+    }
+
+    static void putIfTrue(NbtMapBuilder builder, String key, boolean value) {
+        if (value) {
+            builder.putBoolean(key, true);
+        }
     }
 }
