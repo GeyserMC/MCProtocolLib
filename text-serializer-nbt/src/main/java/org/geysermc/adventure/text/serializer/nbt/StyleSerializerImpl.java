@@ -50,7 +50,7 @@ final class StyleSerializerImpl {
 
         style.decorations().forEach((decoration, state) -> {
             if (state != TextDecoration.State.NOT_SET) {
-                builder.putBoolean(decoration.name(), state == TextDecoration.State.TRUE);
+                builder.putBoolean(decoration.toString(), state == TextDecoration.State.TRUE);
             }
         });
 
