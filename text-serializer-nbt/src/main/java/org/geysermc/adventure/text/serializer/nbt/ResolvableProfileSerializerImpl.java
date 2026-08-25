@@ -1,5 +1,7 @@
 package org.geysermc.adventure.text.serializer.nbt;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.object.ObjectContents;
 import net.kyori.adventure.text.object.PlayerHeadObjectContents;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
@@ -10,7 +12,13 @@ import java.util.List;
 final class ResolvableProfileSerializerImpl {
 
     static PlayerHeadObjectContents.Builder deserialize(NbtMap map) {
+        PlayerHeadObjectContents.Builder builder = ObjectContents.playerHead();
+        map.listenForString("name", builder::name);
+        map.listenForIntArray("id", array -> builder.id(NbtSerializationUtil.deserializeUUID(array)));
+        map.listenForString("texture", texture -> builder.texture(Key.key(texture)));
 
+        map.listenForList("properties", NbtType.COMPOUND, properties -> properties.stream().map(ResolvableProfileSerializerImpl::deserializeProfileProperty).forEach(builder::profileProperty));
+        return builder;
     }
 
     static NbtMap serialize(PlayerHeadObjectContents profile) {
@@ -25,6 +33,13 @@ final class ResolvableProfileSerializerImpl {
         }
 
         return builder.build();
+    }
+
+    private static PlayerHeadObjectContents.ProfileProperty deserializeProfileProperty(NbtMap map) {
+        String name = map.getString("name");
+        String value = map.getString("value");
+        String signature = map.getString("signature", null);
+        return PlayerHeadObjectContents.property(name, value, signature);
     }
 
     private static NbtMap serializeProfileProperty(PlayerHeadObjectContents.ProfileProperty property) {

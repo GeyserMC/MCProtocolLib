@@ -7,6 +7,7 @@ import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -14,14 +15,18 @@ final class NbtSerializationUtil {
 
     static UUID deserializeLenientUUID(Object object) {
         if (object instanceof int[] array) {
-            if (array.length != 4) {
-                return new UUID(0, 0);
-            }
-            return new UUID((long) array[0] << 32 | (array[1] & 0xFFFFFFFFL), (long) array[2] << 32 | (array[3] & 0xFFFFFFFFL));
+            return deserializeUUID(array);
         } else if (object instanceof String string) {
             return UUID.fromString(string);
         }
         throw new IllegalArgumentException("Don't know how to leniently parse UUID: " + object);
+    }
+
+    static UUID deserializeUUID(int[] array) {
+        if (array.length != 4) {
+            throw new IllegalArgumentException("UUID int array must have exactly 4 ints, got: " + Arrays.toString(array));
+        }
+        return new UUID((long) array[0] << 32 | (array[1] & 0xFFFFFFFFL), (long) array[2] << 32 | (array[3] & 0xFFFFFFFFL));
     }
 
     static int[] serializeUUID(UUID uuid) {
