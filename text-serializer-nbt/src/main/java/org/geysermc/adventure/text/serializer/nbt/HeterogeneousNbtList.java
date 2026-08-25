@@ -41,8 +41,8 @@ final class HeterogeneousNbtList {
         return unwrapped;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void add(Object value) {
-        //noinspection unchecked,rawtypes
         add((NbtType) NbtType.byClass(value.getClass()), value);
     }
 

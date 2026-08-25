@@ -12,7 +12,7 @@ netty = "4.2.1.Final"
 gson = "2.11.0"
 minecraftauth = "5.0.0"
 checkerframework = "3.42.0"
-junit = "5.8.2"
+junit = "5.13.3"
 
 # buildSrc
 indra = "3.1.3"

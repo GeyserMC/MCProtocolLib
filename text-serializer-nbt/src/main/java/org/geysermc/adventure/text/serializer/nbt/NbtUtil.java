@@ -40,8 +40,7 @@ final class NbtUtil {
             if (list.size() != 4 || list.getType() != NbtType.FLOAT) {
                 throw new IllegalArgumentException("ARGB vector must contain exactly 4 floats, got: " + list);
             }
-            //noinspection unchecked
-            NbtList<Float> floats = (NbtList<Float>) list;
+            @SuppressWarnings("unchecked") NbtList<Float> floats = (NbtList<Float>) list;
             return ShadowColor.shadowColor(ratioFloatToByte(floats.get(0)), ratioFloatToByte(floats.get(1)), ratioFloatToByte(floats.get(2)), ratioFloatToByte(floats.get(3)));
         } else if (object instanceof Integer integer) {
             return ShadowColor.shadowColor(integer);
