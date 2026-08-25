@@ -41,9 +41,7 @@ final class StyleSerializerImpl {
         });
     }
 
-    static NbtMap serialize(Style style, NbtComponentSerializer componentSerializer) {
-        NbtMapBuilder builder = NbtMap.builder();
-
+    static void serialize(NbtMapBuilder builder, Style style, NbtComponentSerializer componentSerializer) {
         checkNonNull(style.color(), color -> {
             if (color instanceof NamedTextColor named) {
                 builder.putString("color", named.name());
@@ -64,8 +62,6 @@ final class StyleSerializerImpl {
 
         checkNonNull(style.insertion(), insertion -> builder.putString("insertion", insertion));
         checkNonNull(style.font(), font -> builder.putString("font", font.asString()));
-
-        return builder.build();
     }
 
     private static <T> void checkNonNull(@Nullable T value, Consumer<T> consumer) {
