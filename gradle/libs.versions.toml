@@ -1,6 +1,7 @@
 metadata.format.version = "1.1"
 
 [versions]
+jspecify = "1.0.0"
 
 adventure = "5.2.0"
 cloudburstnbt = "3.0.5.Final"
@@ -19,7 +20,9 @@ lombok-version = "1.18.30"
 lombok-plugin = "8.4"
 
 [libraries]
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
 adventure-text-serializer-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 
 cloudburstnbt = { module = "org.cloudburstmc:nbt", version.ref = "cloudburstnbt" }

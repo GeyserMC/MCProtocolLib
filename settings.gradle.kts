@@ -18,6 +18,7 @@ dependencyResolutionManagement {
 rootProject.name = "mcprotocollib"
 
 include(
+    "text-serializer-nbt",
     "protocol",
     "example"
 )
