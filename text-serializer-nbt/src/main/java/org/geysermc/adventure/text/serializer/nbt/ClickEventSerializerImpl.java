@@ -28,7 +28,7 @@ final class ClickEventSerializerImpl {
                 } else if (tag instanceof NbtMap inline) {
                     yield ClickEvent.showDialog(new NbtDialog(inline));
                 }
-                throw new IllegalStateException("Expected \"dialog\" of \"show_dialog\" click event to be a string reference or compound tag, got: " + tag.getClass());
+                throw new IllegalArgumentException("Expected \"dialog\" of \"show_dialog\" click event to be a string reference or compound tag, got: " + tag.getClass());
             }
             case ClickEvent.Action.Custom ignored -> {
                 Key id = Key.key(map.getString("id"));

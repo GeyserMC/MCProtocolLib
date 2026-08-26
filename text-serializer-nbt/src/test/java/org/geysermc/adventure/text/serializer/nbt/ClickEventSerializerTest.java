@@ -5,6 +5,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -62,6 +63,14 @@ public class ClickEventSerializerTest {
     @FieldSource("CLICK_EVENTS")
     void testSerialize(NbtMapBuilder result, ClickEvent<?> event) {
         Assertions.assertEquals(result.build(), ClickEventSerializerImpl.serialize(event));
+    }
+
+    @Test
+    void testDeserializeInvalidDialog() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ClickEventSerializerImpl.deserialize(NbtMap.builder()
+            .putString("action", "show_dialog")
+            .putInt("dialog", 12345)
+            .build()));
     }
 
     private static NbtMapBuilder clickEvent(String action) {

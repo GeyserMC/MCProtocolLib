@@ -4,6 +4,7 @@ import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 
@@ -75,5 +76,11 @@ public class HeterogeneousNbtListTest {
         } else {
             Assertions.assertSame(wrappedList, HeterogeneousNbtList.tryUnwrap(wrappedList), "unwrapping an already homogeneous NBT list must return the same list");
         }
+    }
+
+    @Test
+    void testShorthandMethods() {
+        Assertions.assertEquals(NbtList.EMPTY, HeterogeneousNbtList.of());
+        Assertions.assertEquals(List.of(1, "2", 4.5), HeterogeneousNbtList.tryUnwrap(HeterogeneousNbtList.of(1, "2", 4.5)));
     }
 }

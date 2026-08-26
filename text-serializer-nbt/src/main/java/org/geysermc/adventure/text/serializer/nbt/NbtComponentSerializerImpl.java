@@ -32,8 +32,13 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     public Component deserialize(Object input) {
         return switch (input) {
             case String simpleText -> Component.text(simpleText);
-            // TODO does this properly apply the style of the first component in the list?
-            case NbtList<?> list -> Component.join(JoinConfiguration.noSeparators(), HeterogeneousNbtList.tryUnwrap(list).stream().map(this::deserialize).toList());
+            // Vanilla takes the first element in the list and appends the rest of them to that
+            // Vanilla also refuses to accept empty lists
+            // See https://mcsrc.dev/2/26.2/net/minecraft/network/chat/ComponentSerialization#L108
+            case NbtList<?> list -> HeterogeneousNbtList.tryUnwrap(list).stream()
+                .map(this::deserialize)
+                .reduce(Component::append)
+                .orElseThrow(() -> new IllegalArgumentException("List of text components must have at least one element"));
             case NbtMap map -> {
                 Component baseComponent = deserializeFuzzyComponent(map);
                 // TODO possible performance issue

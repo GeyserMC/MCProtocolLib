@@ -33,7 +33,7 @@ final class HoverEventSerializerImpl {
             Object name = map.get("name");
             return HoverEvent.showEntity(id, uuid, componentSerializer.deserializeOrNull(name));
         } else {
-            throw new IllegalStateException("Don't know how to parse hover event action: " + action.name());
+            throw new IllegalArgumentException("Don't know how to parse hover event action: " + action.name());
         }
     }
 
@@ -62,7 +62,7 @@ final class HoverEventSerializerImpl {
                 builder.put("name", componentSerializer.serialize(entity.name()));
             }
         } else {
-            throw new IllegalStateException("Don't know how to encode hover event action: " + action.name());
+            throw new IllegalArgumentException("Don't know how to encode hover event action: " + action.name());
         }
 
         return builder.build();

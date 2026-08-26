@@ -7,12 +7,15 @@ import net.kyori.adventure.text.NBTComponent;
 import net.kyori.adventure.text.ObjectComponent;
 import net.kyori.adventure.text.TranslationArgument;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.object.ObjectContents;
+import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -210,6 +213,40 @@ public class NbtComponentSerializerTest {
                 .build()).fallback(Component.keybind("key.forward").decorate(TextDecoration.STRIKETHROUGH)))
         )
     );
+    static final List<Arguments> LIST_COMPONENTS = List.of(
+        Arguments.arguments(
+            HeterogeneousNbtList.of("test", "5", "4", "6"),
+            // When parsing lists, vanilla takes the first component, and appends the rest to that as children
+            Component.text("test")
+                .append(Component.text("5"))
+                .append(Component.text("4"))
+                .append(Component.text("6"))
+        ),
+        Arguments.arguments(
+            HeterogeneousNbtList.of("test", HeterogeneousNbtList.of("5", "4", "6")),
+            Component.text("test")
+                .append(Component.text("5")
+                    .append(Component.text("4"))
+                    .append(Component.text("6")))
+        ),
+        Arguments.arguments(
+            HeterogeneousNbtList.of(NbtMap.builder()
+                .putString("translate", "hello.world")
+                .putString("color", "#BBEEBB")
+                .putBoolean("bold", false)
+                .build(),
+                HeterogeneousNbtList.of("123", NbtMap.builder()
+                    .putString("text", "done!")
+                    .putBoolean("bold", true)
+                    .build())),
+            Component.translatable("hello.world")
+                .color(TextColor.fromHexString("#BBEEBB"))
+                .decoration(TextDecoration.BOLD, false)
+                .append(Component.text("123")
+                    .append(Component.text("done!")
+                        .decorate(TextDecoration.BOLD)))
+        )
+    );
 
     private final NbtComponentSerializerImpl serializer = (NbtComponentSerializerImpl) NbtComponentSerializer.nbt();
 
@@ -264,5 +301,22 @@ public class NbtComponentSerializerTest {
     void testSerializeObjectComponent(NbtMapBuilder result, Optional<ObjectComponent> component) {
         // If empty then this component isn't an object component (for deserializing test only), so skip
         component.ifPresent(objectComponent -> Assertions.assertEquals(result.build(), serializer.serializeObjectComponent(objectComponent).build()));
+    }
+
+    @ParameterizedTest
+    @FieldSource("LIST_COMPONENTS")
+    void testListComponentDeserialize(NbtList<?> list, Component result) {
+        Assertions.assertEquals(result, serializer.deserialize(list));
+    }
+
+    @Test
+    void testDeserializeInvalidComponent() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> serializer.deserialize(5));
+    }
+
+    @Test
+    void testDeserializeInvalidNbtContentsComponent() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> serializer.deserializeFuzzyNbtContentsComponent(NbtMap.builder().putString("nbt", "path_without_spruce").build()));
     }
 }

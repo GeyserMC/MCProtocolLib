@@ -63,6 +63,18 @@ public class HoverEventSerializerTest {
             "HoverEventSerializerImpl must support hover event: " + action.name()));
     }
 
+    @Test
+    void testDeserializeInvalidAction() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HoverEventSerializerImpl.deserialize(NbtMap.builder()
+            .putString("action", "show_achievement")
+            .build(), NbtComponentSerializer.nbt()));
+    }
+
+    @Test
+    void testSerializeInvalidAction() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HoverEventSerializerImpl.serialize(HoverEvent.showAchievement("return_to_sender"), NbtComponentSerializer.nbt()));
+    }
+
     private static NbtMapBuilder hoverEvent(String action) {
         return NbtMap.builder().putString("action", action);
     }
