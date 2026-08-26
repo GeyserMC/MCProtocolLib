@@ -7,6 +7,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -73,5 +74,15 @@ public class ResolvableProfileSerializerTest {
     @FieldSource("PROFILES")
     void testSerialize(NbtMapBuilder result, PlayerHeadObjectContents.Builder profile) {
         Assertions.assertEquals(result.build(), ResolvableProfileSerializerImpl.serialize(profile.build()));
+    }
+
+    @Test
+    void testDeserializePlayerName() {
+        Assertions.assertEquals(ObjectContents.playerHead("Redned"), ResolvableProfileSerializerImpl.deserialize("Redned").build());
+    }
+
+    @Test
+    void testDeserializeInvalidProfile() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ResolvableProfileSerializerImpl.deserialize(1234));
     }
 }
