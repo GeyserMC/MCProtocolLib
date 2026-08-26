@@ -15,7 +15,7 @@ public class HeterogeneousNbtListTest {
         List.of("1", 5, -6L),
         List.of(NbtMap.builder().putInt("test", 5).build(), 6.3),
         List.of("21325", new NbtList<>(NbtType.DOUBLE, List.of(5.0, 2.1, 3.5)), -4L,
-            NbtMap.builder().putLong("213", 25).build())
+            NbtMap.builder().putLong("213", 25L).build())
     );
     static final List<List<Object>> HOMOGENEOUS_LISTS = List.of(
         List.of(1, 2, 5, 4, 3),

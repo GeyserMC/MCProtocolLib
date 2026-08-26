@@ -85,6 +85,8 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         return builder.build();
     }
 
+    // When adding support for new components, make sure to follow the same parsing order as here:
+    // https://mcsrc.dev/2/26.2/net/minecraft/network/chat/ComponentSerialization#L120-128
     private Component deserializeFuzzyComponent(NbtMap map) {
         String text = map.getString("text", null);
         if (text != null) {
@@ -104,11 +106,9 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         if (score != null) {
             return Component.score(map.getString("name", null), map.getString("objective", null));
         }
-        String nbtPath = map.getString("nbt", null);
-        if (nbtPath != null) {
-            return deserializeFuzzyNbtContentsComponent(map, nbtPath);
-        }
-        return deserializeFuzzyObjectComponent(map).orElseThrow(() -> new IllegalArgumentException("Don't know how to parse component: " + map));
+        return deserializeFuzzyNbtContentsComponent(map)
+            .or(() -> deserializeFuzzyObjectComponent(map))
+            .orElseThrow(() -> new IllegalArgumentException("Don't know how to parse component: " + map));
     }
 
     private TranslationArgument deserializeTranslationArgument(Object object) {
@@ -126,7 +126,13 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         return argument.value();
     }
 
-    private NBTComponent<?> deserializeFuzzyNbtContentsComponent(NbtMap map, String nbtPath) {
+    @VisibleForTesting
+    Optional<Component> deserializeFuzzyNbtContentsComponent(NbtMap map) {
+        String nbtPath = map.getString("nbt", null);
+        if (nbtPath == null) {
+            return Optional.empty();
+        }
+
         // TODO maybe make this cleaner
         boolean interpret = map.getBoolean("interpret", false);
         boolean plain = map.getBoolean("plain", false);
@@ -134,30 +140,30 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
 
         String entity = map.getString("entity", null);
         if (entity != null) {
-            return Component.entityNBT(builder -> builder
+            return Optional.of(Component.entityNBT(builder -> builder
                 .nbtPath(nbtPath)
                 .interpret(interpret)
                 .plain(plain)
                 .separator(separator)
-                .selector(entity));
+                .selector(entity)));
         }
         String block = map.getString("block", null);
         if (block != null) {
-            return Component.blockNBT(builder -> builder
+            return Optional.of(Component.blockNBT(builder -> builder
                 .nbtPath(nbtPath)
                 .interpret(interpret)
                 .plain(plain)
                 .separator(separator)
-                .pos(BlockNBTComponent.Pos.fromString(block)));
+                .pos(BlockNBTComponent.Pos.fromString(block))));
         }
         String storage = map.getString("storage", null);
         if (storage != null) {
-            return Component.storageNBT(builder -> builder
+            return Optional.of(Component.storageNBT(builder -> builder
                 .nbtPath(nbtPath)
                 .interpret(interpret)
                 .plain(plain)
                 .separator(separator)
-                .storage(Key.key(storage)));
+                .storage(Key.key(storage))));
         }
         throw new IllegalArgumentException("Don't know how to parse NBT component: " + map);
     }
@@ -175,7 +181,8 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         }
     }
 
-    private Optional<ObjectComponent> deserializeFuzzyObjectComponent(NbtMap map) {
+    @VisibleForTesting
+    Optional<Component> deserializeFuzzyObjectComponent(NbtMap map) {
         Component fallback = deserializeOrNull(map.get("fallback"));
         String sprite = map.getString("sprite", null);
         if (sprite != null) {
@@ -184,7 +191,7 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
                 .contents(ObjectContents.sprite(atlas == null ? SpriteObjectContents.DEFAULT_ATLAS : Key.key(atlas), Key.key(sprite)))
                 .fallback(fallback)));
         }
-        NbtMap player = map.getCompound("player", null);
+        Object player = map.get("player");
         if (player != null) {
             PlayerHeadObjectContents.Builder contents = ResolvableProfileSerializerImpl.deserialize(player)
                 .hat(map.getBoolean("hat", true));

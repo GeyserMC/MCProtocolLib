@@ -19,7 +19,6 @@ final class HoverEventSerializerImpl {
     static HoverEvent<?> deserialize(NbtMap map, NbtComponentSerializer componentSerializer) {
         HoverEvent.Action<?> action = HoverEvent.Action.NAMES.valueOrThrow(map.getString("action"));
 
-        // TODO test this (new actions)
         if (action == HoverEvent.Action.SHOW_TEXT) {
             return HoverEvent.showText(componentSerializer.deserialize(map.get("value")));
         } else if (action == HoverEvent.Action.SHOW_ITEM) {

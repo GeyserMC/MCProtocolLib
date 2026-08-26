@@ -5,6 +5,7 @@ import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,14 @@ import java.util.stream.Collector;
 final class HeterogeneousNbtList {
     private final List<NbtType<?>> types = new ArrayList<>();
     private final List<Object> values = new ArrayList<>();
+
+    public static NbtList<?> of() {
+        return NbtList.EMPTY;
+    }
+
+    public static NbtList<?> of(Object... values) {
+        return Arrays.stream(values).collect(collector());
+    }
 
     public static List<Object> getList(NbtMap map, String key) {
         Object list = map.get(key);

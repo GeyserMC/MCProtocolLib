@@ -11,14 +11,20 @@ import java.util.List;
 
 final class ResolvableProfileSerializerImpl {
 
-    static PlayerHeadObjectContents.Builder deserialize(NbtMap map) {
-        PlayerHeadObjectContents.Builder builder = ObjectContents.playerHead();
-        map.listenForString("name", builder::name);
-        map.listenForIntArray("id", array -> builder.id(NbtUtil.deserializeUUID(array)));
-        map.listenForString("texture", texture -> builder.texture(Key.key(texture)));
+    static PlayerHeadObjectContents.Builder deserialize(Object object) {
+        return switch (object) {
+            case String name -> ObjectContents.playerHead(name).toBuilder();
+            case NbtMap map -> {
+                PlayerHeadObjectContents.Builder builder = ObjectContents.playerHead();
+                map.listenForString("name", builder::name);
+                map.listenForIntArray("id", array -> builder.id(NbtUtil.deserializeUUID(array)));
+                map.listenForString("texture", texture -> builder.texture(Key.key(texture)));
 
-        map.listenForList("properties", NbtType.COMPOUND, properties -> properties.stream().map(ResolvableProfileSerializerImpl::deserializeProfileProperty).forEach(builder::profileProperty));
-        return builder;
+                map.listenForList("properties", NbtType.COMPOUND, properties -> properties.stream().map(ResolvableProfileSerializerImpl::deserializeProfileProperty).forEach(builder::profileProperty));
+                yield builder;
+            }
+            default -> throw new IllegalArgumentException("Don't know how to parse resolvable profile: " + object);
+        };
     }
 
     static NbtMap serialize(PlayerHeadObjectContents profile) {
