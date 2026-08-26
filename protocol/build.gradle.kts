@@ -38,8 +38,10 @@ dependencies {
     api(libs.checkerframework.qual)
 
     // Test dependencies
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.slf4j.simple)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.test {
