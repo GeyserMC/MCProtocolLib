@@ -23,6 +23,7 @@ dependencies {
 
     // Kyori adventure
     api(libs.adventure.text.serializer.gson)
+    api(project(":text-serializer-nbt"))
 
     // Math utilities
     api(libs.bundles.math)

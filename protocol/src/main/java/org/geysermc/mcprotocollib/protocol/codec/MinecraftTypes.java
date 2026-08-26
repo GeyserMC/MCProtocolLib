@@ -913,19 +913,16 @@ public class MinecraftTypes {
     }
 
     public static Component readComponent(ByteBuf buf) {
-        // do not use NbtMap, as mojang serializes a plaintext component as just a single StringTag
+        // do not use NbtMap, as mojang serializes a plaintext component as just a single StringTag, and technically 3rd-party servers could send lists
         Object tag = readAnyTag(buf);
         if (tag == null) {
             throw new IllegalArgumentException("Got end-tag when trying to read Component");
         }
-        JsonElement json = NbtComponentSerializer.tagComponentToJson(tag);
-        return DefaultComponentSerializer.get().deserializeFromTree(json);
+        return DefaultComponentSerializer.nbt().deserialize(tag);
     }
 
     public static void writeComponent(ByteBuf buf, Component component) {
-        JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
-        Object tag = NbtComponentSerializer.jsonComponentToTag(json);
-        writeAnyTag(buf, tag);
+        writeAnyTag(buf, DefaultComponentSerializer.nbt().serialize(component));
     }
 
     public static EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) {
