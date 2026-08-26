@@ -20,6 +20,7 @@ import net.kyori.adventure.text.object.SpriteObjectContents;
 import org.cloudburstmc.nbt.NbtList;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.List;
 import java.util.Optional;
@@ -111,7 +112,8 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
             .orElseThrow(() -> new IllegalArgumentException("Don't know how to parse component: " + map));
     }
 
-    private TranslationArgument deserializeTranslationArgument(Object object) {
+    @VisibleForTesting
+    TranslationArgument deserializeTranslationArgument(Object object) {
         return switch (object) {
             case Boolean bool -> TranslationArgument.bool(bool);
             case Number number -> TranslationArgument.numeric(number);
@@ -119,7 +121,8 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         };
     }
 
-    private Object serializeTranslationArgument(TranslationArgument argument) {
+    @VisibleForTesting
+    Object serializeTranslationArgument(TranslationArgument argument) {
         if (argument.value() instanceof Component component) {
             return serialize(component);
         }
@@ -168,7 +171,8 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         throw new IllegalArgumentException("Don't know how to parse NBT component: " + map);
     }
 
-    private void serializeNbtContentsComponent(NbtMapBuilder builder, NBTComponent<?> component) {
+    @VisibleForTesting
+    void serializeNbtContentsComponent(NbtMapBuilder builder, NBTComponent<?> component) {
         builder.putString("nbt", component.nbtPath());
         NbtUtil.putIfTrue(builder, "interpret", component.interpret());
         NbtUtil.putIfTrue(builder, "plain", component.plain());
@@ -202,7 +206,8 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         return Optional.empty();
     }
 
-    private void serializeObjectComponent(NbtMapBuilder builder, ObjectComponent component) {
+    @VisibleForTesting
+    void serializeObjectComponent(NbtMapBuilder builder, ObjectComponent component) {
         NbtUtil.checkNonNull(component.fallback(), fallback -> builder.put("fallback", serialize(fallback)));
 
         switch (component.contents()) {
