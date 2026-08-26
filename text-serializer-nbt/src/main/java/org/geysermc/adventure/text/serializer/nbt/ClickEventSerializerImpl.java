@@ -13,6 +13,7 @@ final class ClickEventSerializerImpl {
     static ClickEvent<?> deserialize(NbtMap map) {
         ClickEvent.Action<?> action = ClickEvent.Action.NAMES.valueOrThrow(map.getString("action"));
 
+        // switch case will intentionally break compile with new actions
         return switch (action) {
             case ClickEvent.Action.OpenUrl ignored -> ClickEvent.openUrl(map.getString("url"));
             case ClickEvent.Action.OpenFile ignored -> ClickEvent.openFile(map.getString("path"));
@@ -27,7 +28,7 @@ final class ClickEventSerializerImpl {
                 } else if (tag instanceof NbtMap inline) {
                     yield ClickEvent.showDialog(new NbtDialog(inline));
                 }
-                throw new IllegalStateException("Expected \"dialog\" of \"show_dialog\" click event to be a string reference or NbtMap, got: " + tag.getClass());
+                throw new IllegalStateException("Expected \"dialog\" of \"show_dialog\" click event to be a string reference or compound tag, got: " + tag.getClass());
             }
             case ClickEvent.Action.Custom ignored -> {
                 Key id = Key.key(map.getString("id"));
@@ -46,14 +47,14 @@ final class ClickEventSerializerImpl {
         builder.putString("action", event.action().name());
         ClickEvent.Payload payload = event.payload();
 
-        // Doing it like this to cause compilation error when new actions are added
-        switch (event.action()) {
-            case ClickEvent.Action.OpenUrl ignored -> builder.putString("url", asText(payload));
-            case ClickEvent.Action.OpenFile ignored -> builder.putString("path", asText(payload));
-            case ClickEvent.Action.RunCommand ignored -> builder.putString("command", asText(payload));
-            case ClickEvent.Action.SuggestCommand ignored -> builder.putString("command", asText(payload));
-            case ClickEvent.Action.ChangePage ignored -> builder.putInt("page", asInt(payload));
-            case ClickEvent.Action.CopyToClipboard ignored -> builder.putString("value", asText(payload));
+        // switch case will intentionally break compile with new actions
+        return switch (event.action()) {
+            case ClickEvent.Action.OpenUrl ignored -> builder.putString("url", asText(payload)).build();
+            case ClickEvent.Action.OpenFile ignored -> builder.putString("path", asText(payload)).build();
+            case ClickEvent.Action.RunCommand ignored -> builder.putString("command", asText(payload)).build();
+            case ClickEvent.Action.SuggestCommand ignored -> builder.putString("command", asText(payload)).build();
+            case ClickEvent.Action.ChangePage ignored -> builder.putInt("page", asInt(payload)).build();
+            case ClickEvent.Action.CopyToClipboard ignored -> builder.putString("value", asText(payload)).build();
             case ClickEvent.Action.ShowDialog ignored -> {
                 ClickEvent.Payload.Dialog dialogPayload = (ClickEvent.Payload.Dialog) payload;
                 if (dialogPayload.dialog() instanceof NbtDialog(Optional<Key> reference, Optional<NbtMap> inline)) {
@@ -62,6 +63,7 @@ final class ClickEventSerializerImpl {
                 } else {
                     // FIXME
                 }
+                yield builder.build();
             }
             case ClickEvent.Action.Custom ignored -> {
                 ClickEvent.Payload.Custom customPayload = (ClickEvent.Payload.Custom) payload;
@@ -70,10 +72,9 @@ final class ClickEventSerializerImpl {
                 if (customPayload.nbt() != null) {
                     // FIXME
                 }
+                yield builder.build();
             }
-        }
-
-        return builder.build();
+        };
     }
 
     private static String asText(ClickEvent.Payload payload) {

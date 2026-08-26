@@ -250,11 +250,7 @@ public class NbtComponentSerializerTest {
     @FieldSource("NBT_COMPONENTS")
     void testSerializeNbtContentsComponent(NbtMapBuilder result, Optional<NBTComponent<?>> component) {
         // If empty then this component isn't an NBT contents component (for deserializing test only), so skip
-        if (component.isPresent()) {
-            NbtMapBuilder builder = NbtMap.builder();
-            serializer.serializeNbtContentsComponent(builder, component.get());
-            Assertions.assertEquals(result.build(), builder.build());
-        }
+        component.ifPresent(nbtComponent -> Assertions.assertEquals(result.build(), serializer.serializeNbtContentsComponent(nbtComponent).build()));
     }
 
     @ParameterizedTest
@@ -267,10 +263,6 @@ public class NbtComponentSerializerTest {
     @FieldSource("OBJECT_COMPONENTS")
     void testSerializeObjectComponent(NbtMapBuilder result, Optional<ObjectComponent> component) {
         // If empty then this component isn't an object component (for deserializing test only), so skip
-        if (component.isPresent()) {
-            NbtMapBuilder builder = NbtMap.builder();
-            serializer.serializeObjectComponent(builder, component.get());
-            Assertions.assertEquals(result.build(), builder.build());
-        }
+        component.ifPresent(objectComponent -> Assertions.assertEquals(result.build(), serializer.serializeObjectComponent(objectComponent).build()));
     }
 }

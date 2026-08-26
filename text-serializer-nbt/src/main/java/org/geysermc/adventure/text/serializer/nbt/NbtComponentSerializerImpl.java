@@ -51,32 +51,35 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
             return text.content();
         }
 
-        NbtMapBuilder builder = NbtMap.builder();
-
-        switch (component) {
-            case TextComponent text -> builder.putString("text", text.content());
+        // switch case will intentionally break compile with new component types
+        NbtMapBuilder builder = switch (component) {
+            case TextComponent text -> NbtMap.builder().putString("text", text.content());
             case TranslatableComponent translatable -> {
-                builder.putString("translate", translatable.key());
-                NbtUtil.checkNonNull(translatable.fallback(), fallback -> builder.putString("fallback", fallback));
+                NbtMapBuilder map = NbtMap.builder();
+                map.putString("translate", translatable.key());
+                NbtUtil.checkNonNull(translatable.fallback(), fallback -> map.putString("fallback", fallback));
 
                 NbtList<?> arguments = translatable.arguments().stream().map(this::serializeTranslationArgument).collect(HeterogeneousNbtList.collector());
                 if (!arguments.isEmpty()) {
-                    builder.put("with", arguments);
+                    map.put("with", arguments);
                 }
+                yield map;
             }
-            case KeybindComponent keybind -> builder.putString("keybind", keybind.keybind());
-            case ScoreComponent score -> builder.putCompound("score", NbtMap.builder()
+            case KeybindComponent keybind -> NbtMap.builder().putString("keybind", keybind.keybind());
+            case ScoreComponent score -> NbtMap.builder().putCompound("score", NbtMap.builder()
                 .putString("name", score.name())
                 .putString("objective", score.objective())
                 .build()
             );
             case SelectorComponent selector -> {
-                builder.putString("selector", selector.pattern());
-                NbtUtil.checkNonNull(selector.separator(), separator -> builder.put("separator", serialize(separator)));
+                NbtMapBuilder map = NbtMap.builder();
+                map.putString("selector", selector.pattern());
+                NbtUtil.checkNonNull(selector.separator(), separator -> map.put("separator", serialize(separator)));
+                yield map;
             }
-            case NBTComponent<?> nbtComponent -> serializeNbtContentsComponent(builder, nbtComponent);
-            case ObjectComponent objectComponent -> serializeObjectComponent(builder, objectComponent);
-        }
+            case NBTComponent<?> nbtComponent -> serializeNbtContentsComponent(nbtComponent);
+            case ObjectComponent objectComponent -> serializeObjectComponent(objectComponent);
+        };
 
         if (!component.children().isEmpty()) {
             builder.put("extra", component.children().stream().map(this::serialize).collect(HeterogeneousNbtList.collector()));
@@ -177,17 +180,20 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     }
 
     @VisibleForTesting
-    void serializeNbtContentsComponent(NbtMapBuilder builder, NBTComponent<?> component) {
+    NbtMapBuilder serializeNbtContentsComponent(NBTComponent<?> component) {
+        NbtMapBuilder builder = NbtMap.builder();
+
         builder.putString("nbt", component.nbtPath());
         NbtUtil.putIfTrue(builder, "interpret", component.interpret());
         NbtUtil.putIfTrue(builder, "plain", component.plain());
         NbtUtil.checkNonNull(component.separator(), separator -> builder.put("separator", serialize(separator)));
 
-        switch (component) {
+        // switch case will intentionally break compile with new component types
+        return switch (component) {
             case EntityNBTComponent entity -> builder.putString("entity", entity.selector());
             case BlockNBTComponent block -> builder.putString("block", block.pos().asString());
             case StorageNBTComponent storage -> builder.putString("storage", storage.storage().asString());
-        }
+        };
     }
 
     @VisibleForTesting
@@ -212,20 +218,24 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     }
 
     @VisibleForTesting
-    void serializeObjectComponent(NbtMapBuilder builder, ObjectComponent component) {
+    NbtMapBuilder serializeObjectComponent(ObjectComponent component) {
+        NbtMapBuilder builder = NbtMap.builder();
         NbtUtil.checkNonNull(component.fallback(), fallback -> builder.put("fallback", serialize(fallback)));
 
-        switch (component.contents()) {
+        // switch case will intentionally break compile with new component types
+        return switch (component.contents()) {
             case SpriteObjectContents sprite -> {
                 if (!sprite.atlas().equals(SpriteObjectContents.DEFAULT_ATLAS)) {
                     builder.putString("atlas", sprite.atlas().asString());
                 }
                 builder.putString("sprite", sprite.sprite().asString());
+                yield builder;
             }
             case PlayerHeadObjectContents playerHead -> {
                 builder.putCompound("player", ResolvableProfileSerializerImpl.serialize(playerHead));
                 NbtUtil.putIfFalse(builder, "hat", playerHead.hat());
+                yield builder;
             }
-        }
+        };
     }
 }
