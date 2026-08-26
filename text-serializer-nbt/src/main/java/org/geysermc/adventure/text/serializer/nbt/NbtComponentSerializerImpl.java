@@ -105,7 +105,12 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
         }
         NbtMap score = map.getCompound("score", null);
         if (score != null) {
-            return Component.score(map.getString("name", null), map.getString("objective", null));
+            return Component.score(score.getString("name", null), score.getString("objective", null));
+        }
+        String selector = map.getString("selector", null);
+        if (selector != null) {
+            Component separator = deserializeOrNull(map.get("separator"));
+            return Component.selector(selector, separator);
         }
         return deserializeFuzzyNbtContentsComponent(map)
             .or(() -> deserializeFuzzyObjectComponent(map))
