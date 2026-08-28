@@ -12,6 +12,18 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Objects;
 
+/**
+ * This implementation of {@link BinaryTagHolder}, and its codec ({@link NbtBinaryTagHolder#NBT_CODEC}), serialize NBT tags
+ * to uncompressed, Base64 representations, <em>and not to SNBT strings</em>. This does not follow the official specification.
+ *
+ * <p>The reason for this design choice was simple: in essence, Cloudburst's NBT library is designed for Bedrock Edition, which does not support the SNBT format. As such,
+ * Cloudburst's library also does not support the SNBT format, so we simply cannot encode or decode to and from SNBT here.
+ * <em>This does make this implementation of {@link BinaryTagHolder} incompatible with any other implementations.</em></p>
+ *
+ * <p>The NBT tag this holder represents can be accessed directly through {@link NbtBinaryTagHolder#tag()}.</p>
+ *
+ * @see NbtComponentSerializer
+ */
 public final class NbtBinaryTagHolder implements BinaryTagHolder {
     public static final Codec<Object, String, RuntimeException, RuntimeException> NBT_CODEC = Codec.codec(NbtBinaryTagHolder::decodeNbtFromBase64, NbtBinaryTagHolder::encodeNbtToBase64);
     private final Object tag;
