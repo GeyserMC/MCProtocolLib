@@ -32,12 +32,11 @@ final class ClickEventSerializerImpl {
             }
             case ClickEvent.Action.Custom ignored -> {
                 Key id = Key.key(map.getString("id"));
-                NbtMap payload = map.getCompound("payload");
-                if (payload.isEmpty()) {
+                Object payload = map.get("payload");
+                if (payload == null) {
                     yield ClickEvent.custom(id);
                 }
-                // FIXME
-                yield ClickEvent.custom(id, BinaryTagHolder.binaryTagHolder(payload.toString()));
+                yield ClickEvent.custom(id, new NbtBinaryTagHolder(payload));
             }
         };
     }
@@ -61,7 +60,7 @@ final class ClickEventSerializerImpl {
                     reference.ifPresent(key -> builder.putString("dialog", key.asString()));
                     inline.ifPresent(map -> builder.putCompound("dialog", map));
                 } else {
-                    // FIXME
+                    throw new IllegalArgumentException("Unable to encode \"show_dialog\" click event with DialogLike that is not an NbtDialog");
                 }
                 yield builder.build();
             }
@@ -69,8 +68,16 @@ final class ClickEventSerializerImpl {
                 ClickEvent.Payload.Custom customPayload = (ClickEvent.Payload.Custom) payload;
                 builder.putString("id", customPayload.key().asString());
 
-                if (customPayload.nbt() != null) {
-                    // FIXME
+                BinaryTagHolder payloadTag = customPayload.nbt();
+                if (payloadTag != null) {
+                    if (payloadTag instanceof NbtBinaryTagHolder payloadNbt) {
+                        builder.put("payload", payloadNbt.tag());
+                    } else {
+                        // Try to decode the "SNBT" to Cloudburst's NBT
+                        // This'll likely fail and throw a RuntimeException, since our codec doesn't support decoding SNBT,
+                        // instead interpreting the string as a Base64, uncompressed representation of the NBT
+                        builder.put("payload", payloadTag.get(NbtBinaryTagHolder.NBT_CODEC));
+                    }
                 }
                 yield builder.build();
             }
