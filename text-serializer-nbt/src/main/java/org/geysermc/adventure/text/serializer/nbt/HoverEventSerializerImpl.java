@@ -74,8 +74,7 @@ final class HoverEventSerializerImpl {
         return builder.build();
     }
 
-    @VisibleForTesting
-    static Map<Key, ? extends DataComponentValue> deserializeDataComponents(@Nullable NbtMap components) {
+    private static Map<Key, ? extends DataComponentValue> deserializeDataComponents(@Nullable NbtMap components) {
         if (components == null) {
             return Map.of();
         }

@@ -311,12 +311,13 @@ public class NbtComponentSerializerTest {
 
     @Test
     void testDeserializeInvalidComponent() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> serializer.deserialize(5));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> serializer.deserialize(5), "deserialize must throw IllegalArgumentException for invalid components");
     }
 
     @Test
     void testDeserializeInvalidNbtContentsComponent() {
         Assertions.assertThrows(IllegalArgumentException.class,
-            () -> serializer.deserializeFuzzyNbtContentsComponent(NbtMap.builder().putString("nbt", "path_without_spruce").build()));
+            () -> serializer.deserializeFuzzyNbtContentsComponent(NbtMap.builder().putString("nbt", "path_without_spruce").build()),
+            "deserializeFuzzyNbtContentsComponent must throw IllegalArgumentException for components without recognised source");
     }
 }

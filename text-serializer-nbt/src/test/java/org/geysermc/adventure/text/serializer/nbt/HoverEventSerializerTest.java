@@ -1,7 +1,10 @@
 package org.geysermc.adventure.text.serializer.nbt;
 
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.DataComponentValue;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
@@ -12,6 +15,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class HoverEventSerializerTest {
@@ -26,10 +30,27 @@ public class HoverEventSerializerTest {
         ),
         Arguments.arguments(
             hoverEvent("show_item")
+                .putString("id", "minecraft:stone"),
+            HoverEvent.showItem(Key.key("stone"), 1)
+        ),
+        Arguments.arguments(
+            hoverEvent("show_item")
                 .putString("id", "minecraft:diamond")
                 .putInt("count", 32),
             HoverEvent.showItem(Key.key("diamond"), 32)
-        ), // FIXME when binary tag holder impl (data components)
+        ),
+        Arguments.arguments(
+            hoverEvent("show_item")
+                .putString("id", "minecraft:diamond_sword")
+                .putCompound("components", NbtMap.builder()
+                    .putInt("minecraft:damage", 50)
+                    .putCompound("!minecraft:item_name", NbtMap.EMPTY)
+                    .build()),
+            HoverEvent.showItem(Key.key("diamond_sword"), 1, Map.of(
+                Key.key("damage"), new NbtBinaryTagHolder(50),
+                Key.key("item_name"), DataComponentValue.removed()
+            ))
+        ),
         Arguments.arguments(
             hoverEvent("show_entity")
                 .putString("id", "minecraft:zombie")
@@ -73,6 +94,38 @@ public class HoverEventSerializerTest {
     @Test
     void testSerializeInvalidAction() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> HoverEventSerializerImpl.serialize(HoverEvent.showAchievement("return_to_sender"), NbtComponentSerializer.nbt()));
+    }
+
+    @Test
+    void testEmptyMapForEmptyComponents() {
+        Assertions.assertSame(NbtMap.EMPTY, HoverEventSerializerImpl.serializeDataComponents(Map.of()));
+    }
+
+    @Test
+    void testDataComponentBinaryTagSerializeShortcut() {
+        NbtMap attackReach = NbtMap.builder()
+            .putFloat("min_reach", 3.0F)
+            .putFloat("max_creative_reach", 6.0F)
+            .build();
+        BinaryTagHolder attackReachHolder = new NbtBinaryTagHolder(attackReach);
+
+        NbtMap serialized = HoverEventSerializerImpl.serializeDataComponents(Map.of(Key.key("attack_reach"), attackReachHolder));
+        Assertions.assertSame(attackReach, serialized.get("minecraft:attack_reach"));
+    }
+
+    @Test
+    void testSerializeBase64BinaryTagHolder() {
+        // Intentionally create a new BinaryTagHolder from the string encoded by NbtBinaryTagHolder, so the serializer can't use the shortcut
+        BinaryTagHolder damage = BinaryTagHolder.binaryTagHolder(new NbtBinaryTagHolder(50).string());
+
+        NbtMap serialized = HoverEventSerializerImpl.serializeDataComponents(Map.of(Key.key("damage"), damage));
+        Assertions.assertEquals(50, serialized.getInt("minecraft:damage"));
+    }
+
+    @Test
+    void testSerializeInvalidDataComponent() {
+        Assertions.assertThrows(IllegalArgumentException.class,
+            () -> HoverEventSerializerImpl.serializeDataComponents(Map.of(Key.key("invalid"), new DataComponentValue() {})));
     }
 
     private static NbtMapBuilder hoverEvent(String action) {

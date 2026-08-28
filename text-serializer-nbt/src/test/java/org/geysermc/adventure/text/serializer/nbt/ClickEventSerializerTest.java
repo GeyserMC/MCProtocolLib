@@ -1,6 +1,8 @@
 package org.geysermc.adventure.text.serializer.nbt;
 
+import net.kyori.adventure.dialog.DialogLike;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
@@ -46,10 +48,19 @@ public class ClickEventSerializerTest {
             clickEvent("show_dialog").putCompound("dialog", NbtMap.EMPTY),
             ClickEvent.showDialog(new NbtDialog(NbtMap.EMPTY))
         ),
-        // FIXME when binary tag holder impl
         Arguments.arguments(
             clickEvent("custom").putString("id", "geyser:my_payload"),
             ClickEvent.custom(Key.key("geyser", "my_payload"))
+        ),
+        Arguments.arguments(
+            clickEvent("custom")
+                .putString("id", "geyser:complicated_payload")
+                .putCompound("payload", NbtMap.builder()
+                    .putString("complicated", "Very much")
+                    .build()),
+            ClickEvent.custom(Key.key("geyser", "complicated_payload"), new NbtBinaryTagHolder(NbtMap.builder()
+                .putString("complicated", "Very much")
+                .build()))
         )
     );
 
@@ -70,7 +81,31 @@ public class ClickEventSerializerTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> ClickEventSerializerImpl.deserialize(NbtMap.builder()
             .putString("action", "show_dialog")
             .putInt("dialog", 12345)
-            .build()));
+            .build()), "decoding a dialog that is not a string or NbtMap should throw an IllegalArgumentException");
+    }
+
+    @Test
+    void testSerializeInvalidDialog() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ClickEventSerializerImpl.serialize(ClickEvent.showDialog(new DialogLike() {})),
+            "encoding a dialog that is not an NbtDialog should throw an IllegalArgumentException");
+    }
+
+    @Test
+    void testCustomBinaryTagSerializeShortcut() {
+        NbtMap map = NbtMap.builder().putString("a_payload", "yep").build();
+        BinaryTagHolder payload = new NbtBinaryTagHolder(map);
+
+        NbtMap serialized = ClickEventSerializerImpl.serialize(ClickEvent.custom(Key.key("geyser", "test"), payload));
+        Assertions.assertSame(map, serialized.get("payload"), "encoding an NbtBinaryTagHolder should use encode its held tag directly");
+    }
+
+    @Test
+    void testSerializeBase64BinaryTagHolder() {
+        // Intentionally create a new BinaryTagHolder from the string encoded by NbtBinaryTagHolder, so the serializer can't use the shortcut
+        BinaryTagHolder payload = BinaryTagHolder.binaryTagHolder(new NbtBinaryTagHolder(50).string());
+
+        NbtMap serialized = ClickEventSerializerImpl.serialize(ClickEvent.custom(Key.key("geyser", "test"), payload));
+        Assertions.assertEquals(50, serialized.getInt("payload"));
     }
 
     private static NbtMapBuilder clickEvent(String action) {

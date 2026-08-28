@@ -11,7 +11,9 @@ public class NbtDialogTest {
 
     @Test
     public void testEmptyOrBothNbtDialog() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new NbtDialog(Optional.empty(), Optional.empty()));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new NbtDialog(Optional.of(Key.key("quick_actions")), Optional.of(NbtMap.EMPTY)));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new NbtDialog(Optional.empty(), Optional.empty()),
+            "NbtDialog constructor must throw IllegalArgumentException when there is no reference and no inline dialog");
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new NbtDialog(Optional.of(Key.key("quick_actions")), Optional.of(NbtMap.EMPTY)),
+            "NbtDialog constructor must throw IllegalArgumentException when there is both a reference and an inline dialog");
     }
 }

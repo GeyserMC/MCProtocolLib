@@ -80,7 +80,7 @@ public class HeterogeneousNbtListTest {
 
     @Test
     void testShorthandMethods() {
-        Assertions.assertEquals(NbtList.EMPTY, HeterogeneousNbtList.of());
+        Assertions.assertSame(NbtList.EMPTY, HeterogeneousNbtList.of(), "HeterogeneousNbtList#of must always return NbtList.EMPTY for empty lists");
         Assertions.assertEquals(List.of(1, "2", 4.5), HeterogeneousNbtList.tryUnwrap(HeterogeneousNbtList.of(1, "2", 4.5)));
     }
 }
