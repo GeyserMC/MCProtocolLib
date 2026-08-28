@@ -11,8 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
-public record CloudburstDataComponentValue(Object value) implements DataComponentValue.TagSerializable {
-    public static final Codec<Object, String, RuntimeException, RuntimeException> NBT_CODEC = Codec.codec(CloudburstDataComponentValue::decodeNbtFromBase64, CloudburstDataComponentValue::encodeNbtToBase64);
+public record NbtDataComponentValue(Object value) implements DataComponentValue.TagSerializable {
+    public static final Codec<Object, String, RuntimeException, RuntimeException> NBT_CODEC = Codec.codec(NbtDataComponentValue::decodeNbtFromBase64, NbtDataComponentValue::encodeNbtToBase64);
 
     @Override
     public BinaryTagHolder asBinaryTag() {
