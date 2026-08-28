@@ -3,6 +3,7 @@ package org.geysermc.adventure.text.serializer.nbt;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.BlockNBTComponent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.NBTComponent;
 import net.kyori.adventure.text.ObjectComponent;
 import net.kyori.adventure.text.TranslationArgument;
@@ -280,7 +281,7 @@ public class NbtComponentSerializerTest {
     @ParameterizedTest
     @FieldSource("NBT_COMPONENTS")
     void testDeserializeFuzzyNbtContentsComponent(NbtMapBuilder map, Optional<NBTComponent<?>> result) {
-        Assertions.assertEquals(result, serializer.deserializeFuzzyNbtContentsComponent(map.build()));
+        Assertions.assertEquals(result, serializer.deserializeFuzzyNbtContentsComponent(map.build()).map(ComponentBuilder::build));
     }
 
     @ParameterizedTest
@@ -293,7 +294,7 @@ public class NbtComponentSerializerTest {
     @ParameterizedTest
     @FieldSource("OBJECT_COMPONENTS")
     void testDeserializeFuzzyObjectComponent(NbtMapBuilder map, Optional<ObjectComponent> result) {
-        Assertions.assertEquals(result, serializer.deserializeFuzzyObjectComponent(map.build()));
+        Assertions.assertEquals(result, serializer.deserializeFuzzyObjectComponent(map.build()).map(ComponentBuilder::build));
     }
 
     @ParameterizedTest

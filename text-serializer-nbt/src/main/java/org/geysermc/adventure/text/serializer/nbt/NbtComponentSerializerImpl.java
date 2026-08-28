@@ -3,10 +3,12 @@ package org.geysermc.adventure.text.serializer.nbt;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.BlockNBTComponent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.EntityNBTComponent;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.KeybindComponent;
 import net.kyori.adventure.text.NBTComponent;
+import net.kyori.adventure.text.NBTComponentBuilder;
 import net.kyori.adventure.text.ObjectComponent;
 import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.SelectorComponent;
@@ -24,6 +26,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     static final NbtComponentSerializerImpl INSTANCE = new NbtComponentSerializerImpl();
@@ -39,13 +42,10 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
                 .map(this::deserialize)
                 .reduce(Component::append)
                 .orElseThrow(() -> new IllegalArgumentException("List of text components must have at least one element"));
-            case NbtMap map -> {
-                Component baseComponent = deserializeFuzzyComponent(map);
-                // TODO possible performance issue
-                baseComponent = baseComponent.children(HeterogeneousNbtList.getList(map, "extra").stream().map(this::deserialize).toList());
-                // TODO possible performance issue
-                yield baseComponent.style(StyleSerializerImpl.deserialize(map, this));
-            }
+            case NbtMap map -> deserializeFuzzyComponent(map)
+                .append(HeterogeneousNbtList.getList(map, "extra").stream().map(this::deserialize).toList())
+                .style(StyleSerializerImpl.deserialize(map, this))
+                .build();
             default -> throw new IllegalArgumentException("Don't know how to parse component: " + input);
         };
     }
@@ -96,29 +96,36 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
 
     // When adding support for new components, make sure to follow the same parsing order as here:
     // https://mcsrc.dev/2/26.2/net/minecraft/network/chat/ComponentSerialization#L120-128
-    private Component deserializeFuzzyComponent(NbtMap map) {
+    private ComponentBuilder<?, ?> deserializeFuzzyComponent(NbtMap map) {
         String text = map.getString("text", null);
         if (text != null) {
-            return Component.text(text);
+            return Component.text().content(text);
         }
         String translate = map.getString("translate", null);
         if (translate != null) {
             String fallback = map.getString("fallback", null);
             List<TranslationArgument> translationArguments = HeterogeneousNbtList.getList(map, "with").stream().map(this::deserializeTranslationArgument).toList();
-            return Component.translatable(translate, fallback, translationArguments);
+            return Component.translatable()
+                .key(translate)
+                .fallback(fallback)
+                .arguments(translationArguments);
         }
         String keybind = map.getString("keybind", null);
         if (keybind != null) {
-            return Component.keybind(keybind);
+            return Component.keybind().keybind(keybind);
         }
         NbtMap score = map.getCompound("score", null);
         if (score != null) {
-            return Component.score(score.getString("name", null), score.getString("objective", null));
+            return Component.score()
+                .name(score.getString("name", null))
+                .objective(score.getString("objective", null));
         }
         String selector = map.getString("selector", null);
         if (selector != null) {
             Component separator = deserializeOrNull(map.get("separator"));
-            return Component.selector(selector, separator);
+            return Component.selector()
+                .pattern(selector)
+                .separator(separator);
         }
         return deserializeFuzzyNbtContentsComponent(map)
             .or(() -> deserializeFuzzyObjectComponent(map))
@@ -143,43 +150,33 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     }
 
     @VisibleForTesting
-    Optional<Component> deserializeFuzzyNbtContentsComponent(NbtMap map) {
+    Optional<ComponentBuilder<?, ?>> deserializeFuzzyNbtContentsComponent(NbtMap map) {
         String nbtPath = map.getString("nbt", null);
         if (nbtPath == null) {
             return Optional.empty();
         }
 
-        // TODO maybe make this cleaner
         boolean interpret = map.getBoolean("interpret", false);
         boolean plain = map.getBoolean("plain", false);
         Component separator = deserializeOrNull(map.get("separator"));
 
+        UnaryOperator<NBTComponentBuilder<?, ?>> baseBuilder = builder -> builder
+            .nbtPath(nbtPath)
+            .interpret(interpret)
+            .plain(plain)
+            .separator(separator);
+
         String entity = map.getString("entity", null);
         if (entity != null) {
-            return Optional.of(Component.entityNBT(builder -> builder
-                .nbtPath(nbtPath)
-                .interpret(interpret)
-                .plain(plain)
-                .separator(separator)
-                .selector(entity)));
+            return Optional.of(baseBuilder.apply(Component.entityNBT().selector(entity)));
         }
         String block = map.getString("block", null);
         if (block != null) {
-            return Optional.of(Component.blockNBT(builder -> builder
-                .nbtPath(nbtPath)
-                .interpret(interpret)
-                .plain(plain)
-                .separator(separator)
-                .pos(BlockNBTComponent.Pos.fromString(block))));
+            return Optional.of(baseBuilder.apply(Component.blockNBT().pos(BlockNBTComponent.Pos.fromString(block))));
         }
         String storage = map.getString("storage", null);
         if (storage != null) {
-            return Optional.of(Component.storageNBT(builder -> builder
-                .nbtPath(nbtPath)
-                .interpret(interpret)
-                .plain(plain)
-                .separator(separator)
-                .storage(Key.key(storage))));
+            return Optional.of(baseBuilder.apply(Component.storageNBT().storage(Key.key(storage))));
         }
         throw new IllegalArgumentException("Don't know how to parse NBT component: " + map);
     }
@@ -202,22 +199,22 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
     }
 
     @VisibleForTesting
-    Optional<Component> deserializeFuzzyObjectComponent(NbtMap map) {
+    Optional<ComponentBuilder<?, ?>> deserializeFuzzyObjectComponent(NbtMap map) {
         Component fallback = deserializeOrNull(map.get("fallback"));
         String sprite = map.getString("sprite", null);
         if (sprite != null) {
             String atlas = map.getString("atlas", null);
-            return Optional.of(Component.object(builder -> builder
+            return Optional.of(Component.object()
                 .contents(ObjectContents.sprite(atlas == null ? SpriteObjectContents.DEFAULT_ATLAS : Key.key(atlas), Key.key(sprite)))
-                .fallback(fallback)));
+                .fallback(fallback));
         }
         Object player = map.get("player");
         if (player != null) {
             PlayerHeadObjectContents.Builder contents = ResolvableProfileSerializerImpl.deserialize(player)
                 .hat(map.getBoolean("hat", true));
-            return Optional.of(Component.object(builder -> builder
+            return Optional.of(Component.object()
                 .contents(contents.build())
-                .fallback(fallback)));
+                .fallback(fallback));
         }
         return Optional.empty();
     }
