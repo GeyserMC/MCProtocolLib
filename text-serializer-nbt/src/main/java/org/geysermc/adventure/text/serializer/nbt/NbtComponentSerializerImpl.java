@@ -40,7 +40,9 @@ final class NbtComponentSerializerImpl implements NbtComponentSerializer {
             // See https://mcsrc.dev/2/26.2/net/minecraft/network/chat/ComponentSerialization#L108
             case NbtList<?> list -> HeterogeneousNbtList.tryUnwrap(list).stream()
                 .map(this::deserialize)
-                .reduce(Component::append)
+                .map(Component::toBuilder)
+                .reduce(ComponentBuilder::append)
+                .map(ComponentBuilder::build)
                 .orElseThrow(() -> new IllegalArgumentException("List of text components must have at least one element"));
             case NbtMap map -> deserializeFuzzyComponent(map)
                 .append(HeterogeneousNbtList.getList(map, "extra").stream().map(this::deserialize).toList())
