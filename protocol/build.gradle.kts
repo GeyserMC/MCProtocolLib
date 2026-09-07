@@ -23,6 +23,7 @@ dependencies {
 
     // Kyori adventure
     api(libs.adventure.text.serializer.gson)
+    api(project(":text-serializer-nbt"))
 
     // Math utilities
     api(libs.bundles.math)
@@ -37,8 +38,10 @@ dependencies {
     api(libs.checkerframework.qual)
 
     // Test dependencies
+    testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.slf4j.simple)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 tasks.test {
