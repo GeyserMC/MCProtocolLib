@@ -85,7 +85,7 @@ final class HoverEventSerializerImpl {
             if (string.startsWith("!")) {
                 deserialized.put(Key.key(string.substring(1)), DataComponentValue.removed());
             } else {
-                deserialized.put(Key.key(string), new NbtBinaryTagHolder(tag));
+                deserialized.put(Key.key(string), new NbtDataComponentValue(tag));
             }
         });
         return Collections.unmodifiableMap(deserialized);
@@ -102,17 +102,8 @@ final class HoverEventSerializerImpl {
             if (component instanceof DataComponentValue.Removed) {
                 // Removed components are prefixed with a '!', and always represented as an empty map
                 serialized.putCompound("!" + key.asString(), NbtMap.EMPTY);
-            } else if (component instanceof DataComponentValue.TagSerializable tagSerializable) {
-                BinaryTagHolder tagHolder = tagSerializable.asBinaryTag();
-                if (tagHolder instanceof NbtBinaryTagHolder nbtBinaryTag) {
-                    // This is easy, just put the tag we already stored when deserialising in the map
-                    serialized.put(key.asString(), nbtBinaryTag.tag());
-                } else {
-                    // Try to decode the "SNBT" to Cloudburst's NBT
-                    // This'll likely fail and throw a RuntimeException, since our codec doesn't support decoding SNBT,
-                    // instead interpreting the string as a Base64, uncompressed representation of the NBT
-                    serialized.put(key.asString(), tagHolder.get(NbtBinaryTagHolder.NBT_CODEC));
-                }
+            } else if (component instanceof NbtDataComponentValue(Object tag)) {
+                serialized.put(key.asString(), tag);
             } else {
                 throw new IllegalArgumentException("Don't know how to serialise component of type: " + component.getClass());
             }

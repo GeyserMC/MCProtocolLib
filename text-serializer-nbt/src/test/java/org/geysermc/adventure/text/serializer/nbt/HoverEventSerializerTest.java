@@ -1,9 +1,7 @@
 package org.geysermc.adventure.text.serializer.nbt;
 
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.nbt.api.BinaryTagHolder;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.DataComponentValue;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.cloudburstmc.nbt.NbtMap;
@@ -47,7 +45,7 @@ public class HoverEventSerializerTest {
                     .putCompound("!minecraft:item_name", NbtMap.EMPTY)
                     .build()),
             HoverEvent.showItem(Key.key("diamond_sword"), 1, Map.of(
-                Key.key("damage"), new NbtBinaryTagHolder(50),
+                Key.key("damage"), new NbtDataComponentValue(50),
                 Key.key("item_name"), DataComponentValue.removed()
             ))
         ),
@@ -99,27 +97,6 @@ public class HoverEventSerializerTest {
     @Test
     void testEmptyMapForEmptyComponents() {
         Assertions.assertSame(NbtMap.EMPTY, HoverEventSerializerImpl.serializeDataComponents(Map.of()));
-    }
-
-    @Test
-    void testDataComponentBinaryTagSerializeShortcut() {
-        NbtMap attackReach = NbtMap.builder()
-            .putFloat("min_reach", 3.0F)
-            .putFloat("max_creative_reach", 6.0F)
-            .build();
-        BinaryTagHolder attackReachHolder = new NbtBinaryTagHolder(attackReach);
-
-        NbtMap serialized = HoverEventSerializerImpl.serializeDataComponents(Map.of(Key.key("attack_reach"), attackReachHolder));
-        Assertions.assertSame(attackReach, serialized.get("minecraft:attack_reach"));
-    }
-
-    @Test
-    void testSerializeBase64BinaryTagHolder() {
-        // Intentionally create a new BinaryTagHolder from the string encoded by NbtBinaryTagHolder, so the serializer can't use the shortcut
-        BinaryTagHolder damage = BinaryTagHolder.binaryTagHolder(new NbtBinaryTagHolder(50).string());
-
-        NbtMap serialized = HoverEventSerializerImpl.serializeDataComponents(Map.of(Key.key("damage"), damage));
-        Assertions.assertEquals(50, serialized.getInt("minecraft:damage"));
     }
 
     @Test

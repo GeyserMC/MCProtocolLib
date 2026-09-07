@@ -30,14 +30,8 @@ final class ClickEventSerializerImpl {
                 }
                 throw new IllegalArgumentException("Expected \"dialog\" of \"show_dialog\" click event to be a string reference or compound tag, got: " + tag.getClass());
             }
-            case ClickEvent.Action.Custom ignored -> {
-                Key id = Key.key(map.getString("id"));
-                Object payload = map.get("payload");
-                if (payload == null) {
-                    yield ClickEvent.custom(id);
-                }
-                yield ClickEvent.custom(id, new NbtBinaryTagHolder(payload));
-            }
+            // Note: not decoding payload!
+            case ClickEvent.Action.Custom ignored -> ClickEvent.custom(Key.key(map.getString("id")));
         };
     }
 
@@ -68,17 +62,7 @@ final class ClickEventSerializerImpl {
                 ClickEvent.Payload.Custom customPayload = (ClickEvent.Payload.Custom) payload;
                 builder.putString("id", customPayload.key().asString());
 
-                BinaryTagHolder payloadTag = customPayload.nbt();
-                if (payloadTag != null) {
-                    if (payloadTag instanceof NbtBinaryTagHolder payloadNbt) {
-                        builder.put("payload", payloadNbt.tag());
-                    } else {
-                        // Try to decode the "SNBT" to Cloudburst's NBT
-                        // This'll likely fail and throw a RuntimeException, since our codec doesn't support decoding SNBT,
-                        // instead interpreting the string as a Base64, uncompressed representation of the NBT
-                        builder.put("payload", payloadTag.get(NbtBinaryTagHolder.NBT_CODEC));
-                    }
-                }
+                // Note: not encoding payload!
                 yield builder.build();
             }
         };
