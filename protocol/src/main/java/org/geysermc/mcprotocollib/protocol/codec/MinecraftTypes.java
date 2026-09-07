@@ -471,7 +471,8 @@ public class MinecraftTypes {
 
             NbtType<?> type = NbtType.byId(typeId);
 
-            return new NBTInputStream(input).readValue(type, 512);
+            // Mojang's codecs, for untrusted sources, use a maximum size of 2048 KiB when reading: https://mcsrc.dev/2/26.2/net/minecraft/nbt/NbtAccounter#L6
+            return new NBTInputStream(input, 2097152L).readValue(type, 512);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
