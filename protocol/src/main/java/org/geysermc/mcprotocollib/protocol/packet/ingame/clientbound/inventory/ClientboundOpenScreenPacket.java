@@ -15,7 +15,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerType;
 @AllArgsConstructor
 public class ClientboundOpenScreenPacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull ContainerType type;
+    private final ContainerType type;
     private final @NonNull Component title;
 
     public ClientboundOpenScreenPacket(ByteBuf in) {
