@@ -69,6 +69,7 @@ public class DataComponentTypes {
     public static final DataComponentType<KineticWeapon> KINETIC_WEAPON = register(id -> new DataComponentType<>(id, "kinetic_weapon", ItemTypes::readKineticWeapon, ItemTypes::writeKineticWeapon, ObjectDataComponent::new));
     public static final DataComponentType<SwingAnimation> SWING_ANIMATION = register(id -> new DataComponentType<>(id, "swing_animation", ItemTypes::readSwingAnimation, ItemTypes::writeSwingAnimation, ObjectDataComponent::new));
     public static final IntComponentType ADDITIONAL_TRADE_COST = register(id -> new IntComponentType(id, "additional_trade_cost", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
+    public static final DataComponentType<BlockTransformer> BLOCK_TRANSFORMER = register(id -> new DataComponentType<>(id, "block_transformer", ItemTypes::readBlockTransformer, ItemTypes::writeBlockTransformer, ObjectDataComponent::new));
     public static final DataComponentType<ItemEnchantments> STORED_ENCHANTMENTS = register(id -> new DataComponentType<>(id, "stored_enchantments", ItemTypes::readItemEnchantments, ItemTypes::writeItemEnchantments, ObjectDataComponent::new));
     public static final IntComponentType DYE = register(id -> new IntComponentType(id, "dye", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType DYED_COLOR = register(id -> new IntComponentType(id, "dyed_color", ByteBuf::readInt, ByteBuf::writeInt, IntDataComponent::new));

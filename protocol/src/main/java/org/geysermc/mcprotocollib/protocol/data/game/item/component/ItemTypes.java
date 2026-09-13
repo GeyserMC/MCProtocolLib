@@ -12,6 +12,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.Holder;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.object.Direction;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
@@ -344,6 +345,40 @@ public class ItemTypes {
     public static void writeSwingAnimation(ByteBuf buf, SwingAnimation swingAnimation) {
         MinecraftTypes.writeVarInt(buf, swingAnimation.type().ordinal());
         MinecraftTypes.writeVarInt(buf, swingAnimation.duration());
+    }
+
+    public static BlockTransformer readBlockTransformer(ByteBuf buf) {
+        return new BlockTransformer(MinecraftTypes.readList(buf, ItemTypes::readBlockTransformData));
+    }
+
+    public static void writeBlockTransformer(ByteBuf buf, BlockTransformer blockTransformer) {
+        MinecraftTypes.writeList(buf, blockTransformer.transforms(), ItemTypes::writeBlockTransformData);
+    }
+
+    public static BlockTransformer.BlockTransformerData readBlockTransformData(ByteBuf buf) {
+        Object blockStateProvider = MinecraftTypes.readAnyTag(buf);
+        Sound sound = MinecraftTypes.readSound(buf);
+        BlockTransformer.TransformParticle particle = BlockTransformer.TransformParticle.from(MinecraftTypes.readVarInt(buf));
+        List<Direction> disallowedFaces = MinecraftTypes.readList(buf, bufx -> Direction.from(MinecraftTypes.readVarInt(bufx)));
+        Key loot = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
+        BlockTransformer.DropStrategy dropStrategy = BlockTransformer.DropStrategy.from(MinecraftTypes.readVarInt(buf));
+        BlockTransformer.TransformType transformType = BlockTransformer.TransformType.from(MinecraftTypes.readVarInt(buf));
+        boolean consumeOnUse = buf.readBoolean();
+        int itemDamagePerUse = MinecraftTypes.readVarInt(buf);
+        return new BlockTransformer.BlockTransformerData(blockStateProvider, sound, particle, disallowedFaces, loot,
+            dropStrategy, transformType, consumeOnUse, itemDamagePerUse);
+    }
+
+    public static void writeBlockTransformData(ByteBuf buf, BlockTransformer.BlockTransformerData data) {
+        MinecraftTypes.writeAnyTag(buf, data.blockStateProvider());
+        MinecraftTypes.writeSound(buf, data.sound());
+        MinecraftTypes.writeVarInt(buf, data.particle().ordinal());
+        MinecraftTypes.writeList(buf, data.disallowedFaces(), (bufx, dir) -> MinecraftTypes.writeVarInt(bufx, dir.ordinal()));
+        MinecraftTypes.writeNullable(buf, data.loot(), MinecraftTypes::writeResourceLocation);
+        MinecraftTypes.writeVarInt(buf, data.dropStrategy().ordinal());
+        MinecraftTypes.writeVarInt(buf, data.transformType().ordinal());
+        buf.writeBoolean(data.consumeOnUse());
+        MinecraftTypes.writeVarInt(buf, data.itemDamagePerUse());
     }
 
     public static ItemAttributeModifiers readItemAttributeModifiers(ByteBuf buf) {
