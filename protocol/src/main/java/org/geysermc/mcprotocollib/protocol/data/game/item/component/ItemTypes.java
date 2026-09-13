@@ -13,6 +13,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
@@ -586,27 +587,13 @@ public class ItemTypes {
     }
 
     public static ArmorTrim.TrimMaterial readTrimMaterial(ByteBuf buf) {
-        String assetBase = MinecraftTypes.readString(buf);
-
-        Map<Key, String> assetOverrides = new HashMap<>();
-        int overrideCount = MinecraftTypes.readVarInt(buf);
-        for (int i = 0; i < overrideCount; i++) {
-            assetOverrides.put(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readString(buf));
-        }
-
+        Key paletteId = MinecraftTypes.readResourceLocation(buf);
         Component description = MinecraftTypes.readComponent(buf);
-        return new ArmorTrim.TrimMaterial(assetBase, assetOverrides, description);
+        return new ArmorTrim.TrimMaterial(paletteId, description);
     }
 
     public static void writeTrimMaterial(ByteBuf buf, ArmorTrim.TrimMaterial material) {
-        MinecraftTypes.writeString(buf, material.assetBase());
-
-        MinecraftTypes.writeVarInt(buf, material.assetOverrides().size());
-        for (Map.Entry<Key, String> entry : material.assetOverrides().entrySet()) {
-            MinecraftTypes.writeResourceLocation(buf, entry.getKey());
-            MinecraftTypes.writeString(buf, entry.getValue());
-        }
-
+        MinecraftTypes.writeResourceLocation(buf, material.paletteId());
         MinecraftTypes.writeComponent(buf, material.description());
     }
 
@@ -652,14 +639,16 @@ public class ItemTypes {
         Sound soundEvent = MinecraftTypes.readSound(buf);
         float useDuration = buf.readFloat();
         float range = buf.readFloat();
+        int durabilityDamage = MinecraftTypes.readVarInt(buf);
         Component description = MinecraftTypes.readComponent(buf);
-        return new Instrument(soundEvent, useDuration, range, description);
+        return new Instrument(soundEvent, useDuration, range, durabilityDamage, description);
     }
 
     public static void writeInstrument(ByteBuf buf, Instrument instrument) {
         MinecraftTypes.writeSound(buf, instrument.soundEvent());
         buf.writeFloat(instrument.useDuration());
         buf.writeFloat(instrument.range());
+        MinecraftTypes.writeVarInt(buf, instrument.durabilityDamage());
         MinecraftTypes.writeComponent(buf, instrument.description());
     }
 
@@ -767,6 +756,21 @@ public class ItemTypes {
     public static void writeBannerPattern(ByteBuf buf, BannerPatternLayer.BannerPattern pattern) {
         MinecraftTypes.writeResourceLocation(buf, pattern.getAssetId());
         MinecraftTypes.writeString(buf, pattern.getTranslationKey());
+    }
+
+    public static PotDecorations readPotDecorations(ByteBuf buf) {
+        ItemStack back = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        ItemStack left = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        ItemStack right = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        ItemStack front = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        return new PotDecorations(back, left, right, front);
+    }
+
+    public static void writePotDecorations(ByteBuf buf, PotDecorations potDecorations) {
+        MinecraftTypes.writeNullable(buf, potDecorations.back(), MinecraftTypes::writeItemStackTemplate);
+        MinecraftTypes.writeNullable(buf, potDecorations.left(), MinecraftTypes::writeItemStackTemplate);
+        MinecraftTypes.writeNullable(buf, potDecorations.right(), MinecraftTypes::writeItemStackTemplate);
+        MinecraftTypes.writeNullable(buf, potDecorations.front(), MinecraftTypes::writeItemStackTemplate);
     }
 
     public static BlockStateProperties readBlockStateProperties(ByteBuf buf) {

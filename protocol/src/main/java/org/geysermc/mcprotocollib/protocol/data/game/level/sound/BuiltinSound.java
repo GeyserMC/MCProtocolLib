@@ -499,6 +499,10 @@ public enum BuiltinSound implements Sound {
     ITEM_CROSSBOW_QUICK_CHARGE_2("item.crossbow.quick_charge_2"),
     ITEM_CROSSBOW_QUICK_CHARGE_3("item.crossbow.quick_charge_3"),
     ITEM_CROSSBOW_SHOOT("item.crossbow.shoot"),
+    ENTITY_CUSHION_BREAK("entity.cushion.break"),
+    ENTITY_CUSHION_PLACE("entity.cushion.place"),
+    ENTITY_CUSHION_SIT("entity.cushion.sit"),
+    ENTITY_CUSHION_GET_UP("entity.cushion.get_up"),
     BLOCK_DEADBUSH_IDLE("block.deadbush.idle"),
     BLOCK_DECORATED_POT_BREAK("block.decorated_pot.break"),
     BLOCK_DECORATED_POT_FALL("block.decorated_pot.fall"),
@@ -1974,7 +1978,26 @@ public enum BuiltinSound implements Sound {
     ENTITY_SMALL_SULFUR_CUBE_HURT("entity.small_sulfur_cube.hurt"),
     ENTITY_SMALL_SULFUR_CUBE_JUMP("entity.small_sulfur_cube.jump"),
     ENTITY_SMALL_SULFUR_CUBE_SQUISH("entity.small_sulfur_cube.squish"),
-    ENTITY_SMALL_SULFUR_CUBE_EAT("entity.small_sulfur_cube.eat");
+    ENTITY_SMALL_SULFUR_CUBE_EAT("entity.small_sulfur_cube.eat"),
+    BLOCK_SHELF_MUSHROOM_BREAK("block.shelf_mushroom.break"),
+    BLOCK_SHELF_MUSHROOM_FALL("block.shelf_mushroom.fall"),
+    BLOCK_SHELF_MUSHROOM_PLACE("block.shelf_mushroom.place"),
+    BLOCK_SHELF_MUSHROOM_STEP("block.shelf_mushroom.step"),
+    BLOCK_SHELF_MUSHROOM_BOUNCE("block.shelf_mushroom.bounce"),
+    BLOCK_POPLAR_LEAVES_BREAK("block.poplar_leaves.break"),
+    BLOCK_POPLAR_LEAVES_HIT("block.poplar_leaves.hit"),
+    BLOCK_POPLAR_LEAVES_FALL("block.poplar_leaves.fall"),
+    BLOCK_POPLAR_LEAVES_PLACE("block.poplar_leaves.place"),
+    BLOCK_POPLAR_LEAVES_STEP("block.poplar_leaves.step"),
+    BLOCK_POPLAR_LEAVES_AMBIENT("block.poplar_leaves.ambient"),
+    BLOCK_STRAW_BED_BREAK("block.straw_bed.break"),
+    BLOCK_STRAW_BED_BREAK_LEAVE("block.straw_bed.break_leave"),
+    BLOCK_STRAW_BED_STEP("block.straw_bed.step"),
+    BLOCK_STRAW_BED_PLACE("block.straw_bed.place"),
+    BLOCK_STRAW_BED_HIT("block.straw_bed.hit"),
+    BLOCK_STRAW_BED_FALL("block.straw_bed.fall"),
+    BLOCK_RED_SHRUB_BREAK("block.red_shrub.break"),
+    BLOCK_RED_SHRUB_PLACE("block.red_shrub.place");
 
     private final @NonNull String name;
 

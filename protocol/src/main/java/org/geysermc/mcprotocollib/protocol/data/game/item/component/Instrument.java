@@ -5,5 +5,5 @@ import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
 @Builder(toBuilder = true)
-public record Instrument(Sound soundEvent, float useDuration, float range, Component description) {
+public record Instrument(Sound soundEvent, float useDuration, float range, int durabilityDamage, Component description) {
 }

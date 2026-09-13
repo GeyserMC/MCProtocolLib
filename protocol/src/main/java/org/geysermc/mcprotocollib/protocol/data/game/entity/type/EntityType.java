@@ -108,6 +108,8 @@ public enum EntityType {
     PIGLIN_BRUTE,
     PILLAGER,
     POLAR_BEAR,
+    POPLAR_BOAT,
+    POPLAR_CHEST_BOAT,
     SPLASH_POTION(true),
     LINGERING_POTION(true),
     PUFFERFISH,

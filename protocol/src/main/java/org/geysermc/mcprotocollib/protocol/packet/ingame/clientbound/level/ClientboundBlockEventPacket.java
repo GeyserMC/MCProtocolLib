@@ -37,20 +37,20 @@ import org.slf4j.LoggerFactory;
 @AllArgsConstructor
 public class ClientboundBlockEventPacket implements MinecraftPacket {
     // Do we really want these hardcoded values?
-    private static final int NOTE_BLOCK = 109;
-    private static final int STICKY_PISTON = 128;
-    private static final int PISTON = 138;
-    private static final int MOB_SPAWNER = 198;
-    private static final int CHEST = 201;
-    private static final int ENDER_CHEST = 400;
-    private static final int TRAPPED_CHEST = 470;
-    private static final int END_GATEWAY = 667;
-    private static final int SHULKER_BOX_LOWER = 677;
-    private static final int SHULKER_BOX_HIGHER = 693;
-    private static final int BELL = 848;
-    private static final int COPPER_CHEST_LOWER = 1108;
-    private static final int COPPER_CHEST_HIGHER = 1115;
-    private static final int DECORATED_POT = 1183;
+    private static final int NOTE_BLOCK = 118;
+    private static final int STICKY_PISTON = 138;
+    private static final int PISTON = 149;
+    private static final int MOB_SPAWNER = 242;
+    private static final int CHEST = 245;
+    private static final int ENDER_CHEST = 451;
+    private static final int TRAPPED_CHEST = 523;
+    private static final int END_GATEWAY = 725;
+    private static final int SHULKER_BOX_LOWER = 735;
+    private static final int SHULKER_BOX_HIGHER = 751;
+    private static final int BELL = 938;
+    private static final int COPPER_CHEST_LOWER = 1198;
+    private static final int COPPER_CHEST_HIGHER = 1205;
+    private static final int DECORATED_POT = 1273;
     private static final Logger log = LoggerFactory.getLogger(ClientboundBlockEventPacket.class);
 
     private final @NonNull Vector3i position;
