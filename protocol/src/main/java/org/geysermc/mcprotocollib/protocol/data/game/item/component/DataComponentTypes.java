@@ -111,7 +111,7 @@ public class DataComponentTypes {
     public static final DataComponentType<NbtMap> LOCK = register(id -> new DataComponentType<>(id, "lock", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final DataComponentType<NbtMap> CONTAINER_LOOT = register(id -> new DataComponentType<>(id, "container_loot", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final DataComponentType<Sound> BREAK_SOUND = register(id -> new DataComponentType<>(id, "break_sound", MinecraftTypes::readSound, MinecraftTypes::writeSound, ObjectDataComponent::new));
-    public static final DataComponentType<Key> COMPOSTABLE = register(id -> new DataComponentType<>(id, "compostable", MinecraftTypes::readResourceLocation, MinecraftTypes::writeResourceLocation, ObjectDataComponent::new));
+    public static final DataComponentType<ResolvableNumber> COMPOSTABLE = register(id -> new DataComponentType<>(id, "compostable", MinecraftTypes::readResolvableNumber, MinecraftTypes::writeResolvableNumber, ObjectDataComponent::new));
     public static final DataComponentType<CookingFuel> COOKING_FUEL = register(id -> new DataComponentType<>(id, "cooking_fuel", ItemTypes::readCookingFuel, ItemTypes::writeCookingFuel, ObjectDataComponent::new));
     public static final DataComponentType<BrewingFuel> BREWING_FUEL = register(id -> new DataComponentType<>(id, "brewing_fuel", ItemTypes::readBrewingFuel, ItemTypes::writeBrewingFuel, ObjectDataComponent::new));
     public static final DataComponentType<MobVisibility> MOB_VISIBILITY = register(id -> new DataComponentType<>(id, "mob_visibility", ItemTypes::readMobVisibility, ItemTypes::writeMobVisibility, ObjectDataComponent::new));

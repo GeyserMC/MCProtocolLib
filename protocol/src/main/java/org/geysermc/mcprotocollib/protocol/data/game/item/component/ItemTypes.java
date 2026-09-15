@@ -839,21 +839,21 @@ public class ItemTypes {
     }
 
     public static CookingFuel readCookingFuel(ByteBuf buf) {
-        return new CookingFuel(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readResourceLocation(buf));
+        return new CookingFuel(MinecraftTypes.readResolvableNumber(buf), MinecraftTypes.readResolvableNumber(buf));
     }
 
     public static void writeCookingFuel(ByteBuf buf, CookingFuel cookingFuel) {
-        MinecraftTypes.writeResourceLocation(buf, cookingFuel.burnTime());
-        MinecraftTypes.writeResourceLocation(buf, cookingFuel.speedMultiplier());
+        MinecraftTypes.writeResolvableNumber(buf, cookingFuel.burnTime());
+        MinecraftTypes.writeResolvableNumber(buf, cookingFuel.speedMultiplier());
     }
 
     public static BrewingFuel readBrewingFuel(ByteBuf buf) {
-        return new BrewingFuel(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readResourceLocation(buf));
+        return new BrewingFuel(MinecraftTypes.readResolvableNumber(buf), MinecraftTypes.readResolvableNumber(buf));
     }
 
     public static void writeBrewingFuel(ByteBuf buf, BrewingFuel cookingFuel) {
-        MinecraftTypes.writeResourceLocation(buf, cookingFuel.uses());
-        MinecraftTypes.writeResourceLocation(buf, cookingFuel.speedMultiplier());
+        MinecraftTypes.writeResolvableNumber(buf, cookingFuel.uses());
+        MinecraftTypes.writeResolvableNumber(buf, cookingFuel.speedMultiplier());
     }
 
     public static MobVisibility readMobVisibility(ByteBuf buf) {

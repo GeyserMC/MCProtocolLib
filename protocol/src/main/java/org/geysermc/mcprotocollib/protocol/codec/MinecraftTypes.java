@@ -69,6 +69,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponen
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemTypes;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.ResolvableNumber;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.TestInstanceBlockEntity;
@@ -1873,6 +1874,22 @@ public class MinecraftTypes {
         MinecraftTypes.writeNullable(buf, profile.getId(), MinecraftTypes::writeUUID);
 
         MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
+    }
+
+    public static ResolvableNumber readResolvableNumber(ByteBuf buf) {
+        boolean constant = buf.readBoolean();
+        if (constant)
+            return new ResolvableNumber(true, buf.readFloat(), null);
+        else
+            return new ResolvableNumber(false, 0, MinecraftTypes.readResourceLocation(buf));
+    }
+
+    public static void writeResolvableNumber(ByteBuf buf, ResolvableNumber number) {
+        buf.writeBoolean(number.isConstant());
+        if (number.isConstant())
+            buf.writeFloat(number.value());
+        else
+            MinecraftTypes.writeResourceLocation(buf, number.key());
     }
 
     public static ResolvableProfile readResolvableProfile(ByteBuf buf) {
