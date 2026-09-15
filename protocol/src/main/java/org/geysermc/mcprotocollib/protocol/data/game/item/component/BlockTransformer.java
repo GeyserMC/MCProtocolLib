@@ -53,16 +53,19 @@ public record BlockTransformer(List<BlockTransformerData> transforms) {
     @Builder(toBuilder = true)
     public record BlockTransformerData(Object blockStateProvider, Sound sound, TransformParticle particle,
                                        List<Direction> disallowedFaces, @Nullable Key loot, DropStrategy dropStrategy,
-                                       TransformType transformType, boolean consumeOnUse, int itemDamagePerUse) {
+                                       boolean updateFromNeighbors, TransformType transformType, boolean consumeOnUse,
+                                       int itemDamagePerUse) {
         public BlockTransformerData(Object blockStateProvider, Sound sound, TransformParticle particle,
                                     List<Direction> disallowedFaces, @Nullable Key loot, DropStrategy dropStrategy,
-                                    TransformType transformType, boolean consumeOnUse, int itemDamagePerUse) {
+                                    boolean updateFromNeighbors, TransformType transformType, boolean consumeOnUse,
+                                    int itemDamagePerUse) {
             this.blockStateProvider = blockStateProvider;
             this.sound = sound;
             this.particle = particle;
             this.disallowedFaces = List.copyOf(disallowedFaces);
             this.loot = loot;
             this.dropStrategy = dropStrategy;
+            this.updateFromNeighbors = updateFromNeighbors;
             this.transformType = transformType;
             this.consumeOnUse = consumeOnUse;
             this.itemDamagePerUse = itemDamagePerUse;

@@ -18,17 +18,17 @@ public class ClientboundMoveEntityRotPacket implements MinecraftPacket {
 
     public ClientboundMoveEntityRotPacket(ByteBuf in) {
         this.entityId = MinecraftTypes.readVarInt(in);
+        this.onGround = in.readBoolean();
         this.yaw = in.readByte() * 360 / 256f;
         this.pitch = in.readByte() * 360 / 256f;
-        this.onGround = in.readBoolean();
     }
 
     @Override
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeVarInt(out, this.entityId);
+        out.writeBoolean(this.onGround);
         out.writeByte((byte) (this.yaw * 256 / 360));
         out.writeByte((byte) (this.pitch * 256 / 360));
-        out.writeBoolean(this.onGround);
     }
 
     @Override

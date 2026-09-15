@@ -7,6 +7,7 @@ import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.Clientbound
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundPingPacket;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundPostEffectsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundResourcePackPopPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundResourcePackPushPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundServerLinksPacket;
@@ -236,8 +237,8 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 324)
-            .minecraftVersion("26.3 Snapshot 2")
+            .protocolVersion((1 << 30) | 325)
+            .minecraftVersion("26.3 Snapshot 3")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -269,6 +270,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundRegistryDataPacket.class, ClientboundRegistryDataPacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
+                    .registerClientboundPacket(ClientboundPostEffectsPacket.class, ClientboundPostEffectsPacket::new)
                     .registerClientboundPacket(ClientboundStoreCookiePacket.class, ClientboundStoreCookiePacket::new)
                     .registerClientboundPacket(ClientboundTransferPacket.class, ClientboundTransferPacket::new)
                     .registerClientboundPacket(ClientboundUpdateEnabledFeaturesPacket.class, ClientboundUpdateEnabledFeaturesPacket::new)
@@ -372,6 +374,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundResetScorePacket.class, ClientboundResetScorePacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPopPacket.class, ClientboundResourcePackPopPacket::new)
                     .registerClientboundPacket(ClientboundResourcePackPushPacket.class, ClientboundResourcePackPushPacket::new)
+                    .registerClientboundPacket(ClientboundPostEffectsPacket.class, ClientboundPostEffectsPacket::new)
                     .registerClientboundPacket(ClientboundRespawnPacket.class, ClientboundRespawnPacket::new)
                     .registerClientboundPacket(ClientboundRotateHeadPacket.class, ClientboundRotateHeadPacket::new)
                     .registerClientboundPacket(ClientboundSectionBlocksUpdatePacket.class, ClientboundSectionBlocksUpdatePacket::new)

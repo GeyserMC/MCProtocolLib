@@ -362,11 +362,12 @@ public class ItemTypes {
         List<Direction> disallowedFaces = MinecraftTypes.readList(buf, bufx -> Direction.from(MinecraftTypes.readVarInt(bufx)));
         Key loot = MinecraftTypes.readNullable(buf, MinecraftTypes::readResourceLocation);
         BlockTransformer.DropStrategy dropStrategy = BlockTransformer.DropStrategy.from(MinecraftTypes.readVarInt(buf));
+        boolean updateFromNeighbors = buf.readBoolean();
         BlockTransformer.TransformType transformType = BlockTransformer.TransformType.from(MinecraftTypes.readVarInt(buf));
         boolean consumeOnUse = buf.readBoolean();
         int itemDamagePerUse = MinecraftTypes.readVarInt(buf);
         return new BlockTransformer.BlockTransformerData(blockStateProvider, sound, particle, disallowedFaces, loot,
-            dropStrategy, transformType, consumeOnUse, itemDamagePerUse);
+            dropStrategy, updateFromNeighbors, transformType, consumeOnUse, itemDamagePerUse);
     }
 
     public static void writeBlockTransformData(ByteBuf buf, BlockTransformer.BlockTransformerData data) {
@@ -376,6 +377,7 @@ public class ItemTypes {
         MinecraftTypes.writeList(buf, data.disallowedFaces(), (bufx, dir) -> MinecraftTypes.writeVarInt(bufx, dir.ordinal()));
         MinecraftTypes.writeNullable(buf, data.loot(), MinecraftTypes::writeResourceLocation);
         MinecraftTypes.writeVarInt(buf, data.dropStrategy().ordinal());
+        buf.writeBoolean(data.updateFromNeighbors());
         MinecraftTypes.writeVarInt(buf, data.transformType().ordinal());
         buf.writeBoolean(data.consumeOnUse());
         MinecraftTypes.writeVarInt(buf, data.itemDamagePerUse());

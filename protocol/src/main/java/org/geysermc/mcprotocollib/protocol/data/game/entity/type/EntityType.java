@@ -36,6 +36,7 @@ public enum EntityType {
     COW,
     CREAKING,
     CREEPER,
+    CUSHION,
     DARK_OAK_BOAT,
     DARK_OAK_CHEST_BOAT,
     DOLPHIN,

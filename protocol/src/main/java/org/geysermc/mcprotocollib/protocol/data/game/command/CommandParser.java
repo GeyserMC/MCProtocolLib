@@ -58,6 +58,7 @@ public enum CommandParser {
     LOOT_MODIFIER,
     SLOT_SOURCE,
     DIALOG,
+    FEATURE,
     UUID;
 
     private static final CommandParser[] VALUES = values();
