@@ -27,7 +27,7 @@ public class ClientboundAnimatePacket implements MinecraftPacket {
         if (this.animation == null) {
             out.writeByte(-1); // Client does nothing on unknown ID
         } else {
-            out.writeByte(this.animation.getId());
+            out.writeByte(this.animation.ordinal());
         }
     }
 

@@ -93,6 +93,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.Clie
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityMotionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundSetPassengersPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundSwingAnimationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundTakeItemEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundTeleportEntityPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.ClientboundUpdateAttributesPacket;
@@ -216,9 +217,9 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.Serv
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundPlayerAbilitiesPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundPlayerActionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundPlayerCommandPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundPunchPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundSpectatorActionPacket;
-import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundSwingPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemOnPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
 import org.geysermc.mcprotocollib.protocol.packet.login.clientbound.ClientboundCustomQueryPacket;
@@ -237,8 +238,8 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 328)
-            .minecraftVersion("26.3 Snapshot 6")
+            .protocolVersion((1 << 30) | 329)
+            .minecraftVersion("26.3 Snapshot 7")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -414,6 +415,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundStartConfigurationPacket.class, ClientboundStartConfigurationPacket::new)
                     .registerClientboundPacket(ClientboundStopSoundPacket.class, ClientboundStopSoundPacket::new)
                     .registerClientboundPacket(ClientboundStoreCookiePacket.class, ClientboundStoreCookiePacket::new)
+                    .registerClientboundPacket(ClientboundSwingAnimationPacket.class, ClientboundSwingAnimationPacket::new)
                     .registerClientboundPacket(ClientboundSystemChatPacket.class, ClientboundSystemChatPacket::new)
                     .registerClientboundPacket(ClientboundTabListPacket.class, ClientboundTabListPacket::new)
                     .registerClientboundPacket(ClientboundTagQueryPacket.class, ClientboundTagQueryPacket::new)
@@ -480,6 +482,7 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundPlayerInputPacket.class, ServerboundPlayerInputPacket::new)
                     .registerServerboundPacket(ServerboundPlayerLoadedPacket.class, (buf) -> ServerboundPlayerLoadedPacket.INSTANCE)
                     .registerServerboundPacket(ServerboundPongPacket.class, ServerboundPongPacket::new)
+                    .registerServerboundPacket(ServerboundPunchPacket.class, ServerboundPunchPacket::new)
                     .registerServerboundPacket(ServerboundRecipeBookChangeSettingsPacket.class, ServerboundRecipeBookChangeSettingsPacket::new)
                     .registerServerboundPacket(ServerboundRecipeBookSeenRecipePacket.class, ServerboundRecipeBookSeenRecipePacket::new)
                     .registerServerboundPacket(ServerboundRenameItemPacket.class, ServerboundRenameItemPacket::new)
@@ -497,7 +500,6 @@ public class MinecraftCodec {
                     .registerServerboundPacket(ServerboundSetTestBlockPacket.class, ServerboundSetTestBlockPacket::new)
                     .registerServerboundPacket(ServerboundSignUpdatePacket.class, ServerboundSignUpdatePacket::new)
                     .registerServerboundPacket(ServerboundSpectatorActionPacket.class, ServerboundSpectatorActionPacket::new)
-                    .registerServerboundPacket(ServerboundSwingPacket.class, ServerboundSwingPacket::new)
                     .registerServerboundPacket(ServerboundTeleportToEntityPacket.class, ServerboundTeleportToEntityPacket::new)
                     .registerServerboundPacket(ServerboundTestInstanceBlockActionPacket.class, ServerboundTestInstanceBlockActionPacket::new)
                     .registerServerboundPacket(ServerboundUseItemOnPacket.class, ServerboundUseItemOnPacket::new)

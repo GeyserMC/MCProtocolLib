@@ -59,6 +59,7 @@ public enum CommandParser {
     SLOT_SOURCE,
     DIALOG,
     FEATURE,
+    SWING_ANIMATION,
     UUID;
 
     private static final CommandParser[] VALUES = values();
