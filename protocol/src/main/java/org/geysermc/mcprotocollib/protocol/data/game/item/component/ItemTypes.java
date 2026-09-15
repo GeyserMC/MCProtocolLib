@@ -837,4 +837,64 @@ public class ItemTypes {
         MinecraftTypes.writeVarInt(buf, occupant.getTicksInHive());
         MinecraftTypes.writeVarInt(buf, occupant.getMinTicksInHive());
     }
+
+    public static CookingFuel readCookingFuel(ByteBuf buf) {
+        return new CookingFuel(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readResourceLocation(buf));
+    }
+
+    public static void writeCookingFuel(ByteBuf buf, CookingFuel cookingFuel) {
+        MinecraftTypes.writeResourceLocation(buf, cookingFuel.burnTime());
+        MinecraftTypes.writeResourceLocation(buf, cookingFuel.speedMultiplier());
+    }
+
+    public static BrewingFuel readBrewingFuel(ByteBuf buf) {
+        return new BrewingFuel(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readResourceLocation(buf));
+    }
+
+    public static void writeBrewingFuel(ByteBuf buf, BrewingFuel cookingFuel) {
+        MinecraftTypes.writeResourceLocation(buf, cookingFuel.uses());
+        MinecraftTypes.writeResourceLocation(buf, cookingFuel.speedMultiplier());
+    }
+
+    public static MobVisibility readMobVisibility(ByteBuf buf) {
+        return new MobVisibility(MinecraftTypes.readHolderSet(buf), buf.readFloat());
+    }
+
+    public static void writeMobVisibility(ByteBuf buf, MobVisibility mobVisibility) {
+        MinecraftTypes.writeHolderSet(buf, mobVisibility.targetingEntityTypes());
+        buf.writeFloat(mobVisibility.visibility());
+    }
+
+    public static SignText readSignText(ByteBuf buf) {
+        List<Component> messages = new ArrayList<>(4);
+        for (int i = 0; i < 4; i++) {
+            messages.add(MinecraftTypes.readComponent(buf));
+        }
+
+        List<Component> filteredMessages = null;
+        if (buf.readBoolean()) {
+            filteredMessages = new ArrayList<>(4);
+            for (int i = 0; i < 4; i++) {
+                filteredMessages.add(MinecraftTypes.readComponent(buf));
+            }
+        }
+        int color = MinecraftTypes.readVarInt(buf);
+        boolean hasGlowingText = buf.readBoolean();
+        return new SignText(messages, filteredMessages, color, hasGlowingText);
+    }
+
+    public static void writeSignText(ByteBuf buf, SignText signText) {
+        for (int i = 0; i < 4; i++) {
+            MinecraftTypes.writeComponent(buf, signText.messages().get(i));
+        }
+
+        buf.writeBoolean(signText.filteredMessages() != null);
+        if (signText.filteredMessages() != null) {
+            for (int i = 0; i < 4; i++) {
+                MinecraftTypes.writeComponent(buf, signText.filteredMessages().get(i));
+            }
+        }
+        MinecraftTypes.writeVarInt(buf, signText.color());
+        buf.writeBoolean(signText.hasGlowingText());
+    }
 }

@@ -18,7 +18,7 @@ public class ClientboundOpenSignEditorPacket implements MinecraftPacket {
 
     public ClientboundOpenSignEditorPacket(ByteBuf in) {
         this.position = MinecraftTypes.readPosition(in);
-        this.isFrontText = in.readBoolean();
+        this.isFrontText = MinecraftTypes.readVarInt(in) == 1;
     }
 
     @Override
