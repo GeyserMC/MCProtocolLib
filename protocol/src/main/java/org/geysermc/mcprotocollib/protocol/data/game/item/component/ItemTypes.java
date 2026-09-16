@@ -511,7 +511,7 @@ public class ItemTypes {
             case 0 -> new ConsumeEffect.ApplyEffects(MinecraftTypes.readList(buf, ItemTypes::readEffectInstance), buf.readFloat());
             case 1 -> new ConsumeEffect.RemoveEffects(MinecraftTypes.readHolderSet(buf));
             case 2 -> new ConsumeEffect.ClearAllEffects();
-            case 3 -> new ConsumeEffect.TeleportRandomly(buf.readFloat());
+            case 3 -> new ConsumeEffect.TeleportRandomly(buf.readFloat(), buf.readBoolean());
             case 4 -> new ConsumeEffect.PlaySound(MinecraftTypes.readSound(buf));
             default -> throw new IllegalStateException("Unexpected value: " + MinecraftTypes.readVarInt(buf));
         };
@@ -530,6 +530,7 @@ public class ItemTypes {
         } else if (consumeEffect instanceof ConsumeEffect.TeleportRandomly teleportRandomly) {
             MinecraftTypes.writeVarInt(buf, 3);
             buf.writeFloat(teleportRandomly.diameter());
+            buf.writeBoolean(teleportRandomly.directionalParticles());
         } else if (consumeEffect instanceof ConsumeEffect.PlaySound playSound) {
             MinecraftTypes.writeVarInt(buf, 4);
             MinecraftTypes.writeSound(buf, playSound.sound());

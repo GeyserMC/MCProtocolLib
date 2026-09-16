@@ -70,7 +70,7 @@ public class DataComponentTypes {
     public static final DataComponentType<SwingAnimation> ATTACK_ANIMATION = register(id -> new DataComponentType<>(id, "attack_animation", ItemTypes::readSwingAnimation, ItemTypes::writeSwingAnimation, ObjectDataComponent::new));
     public static final DataComponentType<SwingAnimation> INTERACT_ANIMATION = register(id -> new DataComponentType<>(id, "interact_animation", ItemTypes::readSwingAnimation, ItemTypes::writeSwingAnimation, ObjectDataComponent::new));
     public static final IntComponentType ADDITIONAL_TRADE_COST = register(id -> new IntComponentType(id, "additional_trade_cost", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final DataComponentType<BlockTransformer> BLOCK_TRANSFORMER = register(id -> new DataComponentType<>(id, "block_transformer", ItemTypes::readBlockTransformer, ItemTypes::writeBlockTransformer, ObjectDataComponent::new));
+    public static final IntComponentType BLOCK_TRANSFORMER = register(id -> new IntComponentType(id, "block_transformer", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType VILLAGER_FOOD = register(id -> new IntComponentType(id, "villager_food", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<ItemEnchantments> STORED_ENCHANTMENTS = register(id -> new DataComponentType<>(id, "stored_enchantments", ItemTypes::readItemEnchantments, ItemTypes::writeItemEnchantments, ObjectDataComponent::new));
     public static final IntComponentType DYE = register(id -> new IntComponentType(id, "dye", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));

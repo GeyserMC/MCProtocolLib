@@ -56,6 +56,7 @@ public enum CommandParser {
     LOOT_TABLE,
     LOOT_PREDICATE,
     LOOT_MODIFIER,
+    NUMBER_PROVIDER,
     SLOT_SOURCE,
     DIALOG,
     FEATURE,
