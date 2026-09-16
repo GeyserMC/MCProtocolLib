@@ -56,7 +56,7 @@ public class Advancement {
             private static final AdvancementType[] VALUES = values();
 
             public static AdvancementType from(int id) {
-                return VALUES[id];
+                return id >= 0 & id < VALUES.length ? VALUES[id] : VALUES[0];
             }
         }
     }
