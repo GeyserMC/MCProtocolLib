@@ -19,13 +19,13 @@ public class ServerboundSignUpdatePacket implements MinecraftPacket {
     private final @NonNull List<String> lines;
     private final boolean isFrontText;
 
-    public ServerboundSignUpdatePacket(@NonNull Vector3i position, @NonNull String[] lines, boolean isFrontText) {
-        if (lines.length != 4) {
+    public ServerboundSignUpdatePacket(@NonNull Vector3i position, @NonNull List<String> lines, boolean isFrontText) {
+        if (lines.size() != 4) {
             throw new IllegalArgumentException("Lines must contain exactly 4 strings.");
         }
 
         this.position = position;
-        this.lines = List.of(lines);
+        this.lines = List.copyOf(lines);
         this.isFrontText = isFrontText;
     }
 

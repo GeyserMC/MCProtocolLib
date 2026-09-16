@@ -1,6 +1,5 @@
 package org.geysermc.mcprotocollib.protocol.codec;
 
-import com.google.gson.JsonElement;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -69,7 +68,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponen
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.DataComponents;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.ItemTypes;
-import org.geysermc.mcprotocollib.protocol.data.game.item.component.ResolvableNumber;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.ResolvableFloat;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.ResolvableInt;
 import org.geysermc.mcprotocollib.protocol.data.game.level.LightUpdateData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.TestInstanceBlockEntity;
@@ -1876,18 +1876,34 @@ public class MinecraftTypes {
         MinecraftTypes.writeList(buf, profile.getProperties(), MinecraftTypes::writeProperty);
     }
 
-    public static ResolvableNumber readResolvableNumber(ByteBuf buf) {
+    public static ResolvableFloat readResolvableFloat(ByteBuf buf) {
         boolean constant = buf.readBoolean();
         if (constant)
-            return new ResolvableNumber(true, buf.readFloat(), null);
+            return new ResolvableFloat(true, buf.readFloat(), null);
         else
-            return new ResolvableNumber(false, 0, MinecraftTypes.readResourceLocation(buf));
+            return new ResolvableFloat(false, 0, MinecraftTypes.readResourceLocation(buf));
     }
 
-    public static void writeResolvableNumber(ByteBuf buf, ResolvableNumber number) {
+    public static void writeResolvableFloat(ByteBuf buf, ResolvableFloat number) {
         buf.writeBoolean(number.isConstant());
         if (number.isConstant())
             buf.writeFloat(number.value());
+        else
+            MinecraftTypes.writeResourceLocation(buf, number.key());
+    }
+
+    public static ResolvableInt readResolvableInt(ByteBuf buf) {
+        boolean constant = buf.readBoolean();
+        if (constant)
+            return new ResolvableInt(true, buf.readInt(), null);
+        else
+            return new ResolvableInt(false, 0, MinecraftTypes.readResourceLocation(buf));
+    }
+
+    public static void writeResolvableInt(ByteBuf buf, ResolvableInt number) {
+        buf.writeBoolean(number.isConstant());
+        if (number.isConstant())
+            buf.writeInt(number.value());
         else
             MinecraftTypes.writeResourceLocation(buf, number.key());
     }
