@@ -1,0 +1,25 @@
+name: Build and publish text-serializer-nbt
+
+on:
+  workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Setup Gradle
+              uses: GeyserMC/actions/setup-gradle-composite@master
+              with:
+                  setup-java_java-version: 21
+
+            - name: Build MCPL
+              run: ./gradlew :text-serializer-nbt:build
+
+            - name: Publish to Maven Repository
+              if: ${{ success() && github.repository == 'GeyserMC/MCProtocolLib' && (github.ref_name == 'master' || startsWith(github.ref_name, 'feature/')) }}
+              uses: gradle/gradle-build-action@3bfe3a46584a206fb8361cdedd0647b0c4204232
+              env:
+                  ORG_GRADLE_PROJECT_geysermcUsername: ${{ vars.DEPLOY_USER }}
+                  ORG_GRADLE_PROJECT_geysermcPassword: ${{ secrets.DEPLOY_PASS }}
+              with:
+                  arguments: :text-serializer-nbt:publish
