@@ -120,6 +120,7 @@ import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.C
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundPlaceGhostRecipePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundSetCursorItemPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory.ClientboundSetPlayerInventoryPacket;
+import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundAddTransientBlockPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundBlockDestructionPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level.ClientboundBlockEventPacket;
@@ -238,8 +239,8 @@ import org.geysermc.mcprotocollib.protocol.packet.status.serverbound.Serverbound
 
 public class MinecraftCodec {
     public static final PacketCodec CODEC = PacketCodec.builder()
-            .protocolVersion((1 << 30) | 333)
-            .minecraftVersion("26.3 Pre-Release 1")
+            .protocolVersion(777)
+            .minecraftVersion("26.3")
             .state(ProtocolState.HANDSHAKE, MinecraftPacketRegistry.builder()
                     .registerServerboundPacket(ClientIntentionPacket.class, ClientIntentionPacket::new)
             )
@@ -330,6 +331,7 @@ public class MinecraftCodec {
                     .registerClientboundPacket(ClientboundEntityEventPacket.class, ClientboundEntityEventPacket::new)
                     .registerClientboundPacket(ClientboundEntityPositionSyncPacket.class, ClientboundEntityPositionSyncPacket::new)
                     .registerClientboundPacket(ClientboundExplodePacket.class, ClientboundExplodePacket::new)
+                    .registerClientboundPacket(ClientboundAddTransientBlockPacket.class, ClientboundAddTransientBlockPacket::new)
                     .registerClientboundPacket(ClientboundForgetLevelChunkPacket.class, ClientboundForgetLevelChunkPacket::new)
                     .registerClientboundPacket(ClientboundGameEventPacket.class, ClientboundGameEventPacket::new)
                     .registerClientboundPacket(ClientboundGameRuleValuesPacket.class, ClientboundGameRuleValuesPacket::new)
