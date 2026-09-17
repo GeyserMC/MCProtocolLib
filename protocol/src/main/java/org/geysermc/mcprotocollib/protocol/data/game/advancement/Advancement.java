@@ -17,17 +17,19 @@ public class Advancement {
     private final String parentId;
     private final DisplayData displayData;
     private final boolean sendsTelemetryEvent;
+    private final float posX;
+    private final float posY;
 
     public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, boolean sendsTelemetryEvent) {
-        this(id, requirements, null, null, sendsTelemetryEvent);
+        this(id, requirements, null, null, sendsTelemetryEvent, 0.0F, 0.0F);
     }
 
     public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, String parentId, boolean sendsTelemetryEvent) {
-        this(id, requirements, parentId, null, sendsTelemetryEvent);
+        this(id, requirements, parentId, null, sendsTelemetryEvent, 0.0F, 0.0F);
     }
 
     public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, DisplayData displayData, boolean sendsTelemetryEvent) {
-        this(id, requirements, null, displayData, sendsTelemetryEvent);
+        this(id, requirements, null, displayData, sendsTelemetryEvent, 0.0F, 0.0F);
     }
 
     @Data
@@ -39,13 +41,11 @@ public class Advancement {
         private final @NonNull AdvancementType advancementType;
         private final boolean showToast;
         private final boolean hidden;
-        private final float posX;
-        private final float posY;
         private final @Nullable String backgroundTexture;
 
         public DisplayData(@NonNull Component title, @NonNull Component description, @NonNull ItemStack icon, @NonNull AdvancementType advancementType,
-                           boolean showToast, boolean hidden, float posX, float posY) {
-            this(title, description, icon, advancementType, showToast, hidden, posX, posY, null);
+                           boolean showToast, boolean hidden) {
+            this(title, description, icon, advancementType, showToast, hidden, null);
         }
 
         public enum AdvancementType {

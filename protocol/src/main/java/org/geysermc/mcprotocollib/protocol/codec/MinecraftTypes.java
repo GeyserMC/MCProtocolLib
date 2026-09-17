@@ -1236,10 +1236,10 @@ public class MinecraftTypes {
     }
 
     public static LightUpdateData readLightUpdateData(ByteBuf buf) {
-        BitSet skyYMask = BitSet.valueOf(MinecraftTypes.readLongArray(buf));
-        BitSet blockYMask = BitSet.valueOf(MinecraftTypes.readLongArray(buf));
-        BitSet emptySkyYMask = BitSet.valueOf(MinecraftTypes.readLongArray(buf));
-        BitSet emptyBlockYMask = BitSet.valueOf(MinecraftTypes.readLongArray(buf));
+        BitSet skyYMask = BitSet.valueOf(MinecraftTypes.readByteArray(buf));
+        BitSet blockYMask = BitSet.valueOf(MinecraftTypes.readByteArray(buf));
+        BitSet emptySkyYMask = BitSet.valueOf(MinecraftTypes.readByteArray(buf));
+        BitSet emptyBlockYMask = BitSet.valueOf(MinecraftTypes.readByteArray(buf));
 
         int skyUpdateSize = MinecraftTypes.readVarInt(buf);
         List<byte[]> skyUpdates = new ArrayList<>(skyUpdateSize);
@@ -1274,8 +1274,7 @@ public class MinecraftTypes {
     }
 
     private static void writeBitSet(ByteBuf buf, BitSet bitSet) {
-        long[] array = bitSet.toLongArray();
-        MinecraftTypes.writeLongArray(buf, array);
+        MinecraftTypes.writeByteArray(buf, bitSet.toByteArray());
     }
 
     public static LevelEvent readLevelEvent(ByteBuf buf) {
@@ -1433,7 +1432,7 @@ public class MinecraftTypes {
                 DataComponentTypes.from(MinecraftTypes.readVarInt(buf)));
             case ITEM -> display = new ItemSlotDisplay(MinecraftTypes.readVarInt(buf));
             case ITEM_STACK -> display = new ItemStackSlotDisplay(MinecraftTypes.readItemStackTemplate(buf));
-            case TAG -> display = new TagSlotDisplay(MinecraftTypes.readResourceLocation(buf));
+            case TAG -> display = new TagSlotDisplay(MinecraftTypes.readHolderSet(buf));
             case DYED -> display = new DyedSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf));
             case SMITHING_TRIM -> display = new SmithingTrimDemoSlotDisplay(MinecraftTypes.readSlotDisplay(buf), MinecraftTypes.readSlotDisplay(buf),
                 MinecraftTypes.readHolder(buf, ItemTypes::readTrimPattern));
@@ -1456,7 +1455,7 @@ public class MinecraftTypes {
             }
             case ITEM -> MinecraftTypes.writeVarInt(buf, ((ItemSlotDisplay)display).item());
             case ITEM_STACK -> MinecraftTypes.writeItemStackTemplate(buf, ((ItemStackSlotDisplay)display).itemStack());
-            case TAG -> MinecraftTypes.writeResourceLocation(buf, ((TagSlotDisplay)display).tag());
+            case TAG -> MinecraftTypes.writeHolderSet(buf, ((TagSlotDisplay)display).holderSet());
             case DYED -> {
                 DyedSlotDisplay dyedSlotDisplay = (DyedSlotDisplay) display;
 
