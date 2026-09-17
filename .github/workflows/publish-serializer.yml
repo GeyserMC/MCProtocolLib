@@ -1,8 +1,7 @@
-name: Build and publish protocol
+name: Build and publish text-serializer-nbt
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
     build:
@@ -14,7 +13,7 @@ jobs:
                   setup-java_java-version: 21
 
             - name: Build MCPL
-              run: ./gradlew :protocol:build
+              run: ./gradlew :text-serializer-nbt:build
 
             - name: Publish to Maven Repository
               if: ${{ success() && github.repository == 'GeyserMC/MCProtocolLib' && (github.ref_name == 'master' || startsWith(github.ref_name, 'feature/')) }}
@@ -23,4 +22,4 @@ jobs:
                   ORG_GRADLE_PROJECT_geysermcUsername: ${{ vars.DEPLOY_USER }}
                   ORG_GRADLE_PROJECT_geysermcPassword: ${{ secrets.DEPLOY_PASS }}
               with:
-                  arguments: :protocol:publish
+                  arguments: :text-serializer-nbt:publish
