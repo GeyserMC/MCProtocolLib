@@ -6,7 +6,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import org.geysermc.mcprotocollib.network.codec.PacketDefinition;
 import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -247,5 +250,19 @@ public class PacketRegistry {
         }
 
         return definition;
+    }
+
+    /**
+     * @return a collection of all serverbound packets in the registry
+     */
+    public Collection<PacketDefinition<? extends Packet>> getAllServerboundPackets() {
+        return Collections.unmodifiableCollection(serverbound.values());
+    }
+
+    /**
+     * @return a collection of all clientbound packets in the registry
+     */
+    public Collection<PacketDefinition<? extends Packet>> getAllClientboundPackets() {
+        return Collections.unmodifiableCollection(clientbound.values());
     }
 }
