@@ -16,13 +16,11 @@ public enum TeamColor {
     RED,
     LIGHT_PURPLE,
     YELLOW,
-    WHITE,
-    OBFUSCATED,
-    BOLD,
-    STRIKETHROUGH,
-    UNDERLINED,
-    ITALIC,
-    RESET;
+    WHITE;
 
-    public static final TeamColor[] VALUES = values();
+    private static final TeamColor[] VALUES = values();
+
+    public static TeamColor from(int id) {
+        return id >= 0 && id < VALUES.length ? VALUES[id] : VALUES[0];
+    }
 }

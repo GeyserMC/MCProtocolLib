@@ -6,6 +6,8 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -77,6 +79,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.BlockParticl
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ColorParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.GeyserBaseParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.GeyserParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ItemParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleData;
@@ -257,8 +261,18 @@ public class MinecraftTypes {
     }
 
     public static <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader) {
+        return readList(buf, reader, true);
+    }
+
+    public static <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader, boolean isNew) {
         int size = MinecraftTypes.readVarInt(buf);
-        List<T> list = new ArrayList<>(size);
+        List<T> list;
+        if (isNew) {
+            list = new ArrayList<>(Math.min(size, 65536));
+        } else {
+            list = new ArrayList<>(size);
+        }
+
         for (int i = 0; i < size; i++) {
             list.add(reader.apply(buf));
         }
@@ -318,9 +332,9 @@ public class MinecraftTypes {
         if (length == -1) {
             return new HolderSet(MinecraftTypes.readResourceLocation(buf));
         } else {
-            int[] holders = new int[length];
+            IntList holders = new IntArrayList(Math.min(length, 65536));
             for (int i = 0; i < length; i++) {
-                holders[i] = MinecraftTypes.readVarInt(buf);
+                holders.add(MinecraftTypes.readVarInt(buf));
             }
 
             return new HolderSet(holders);
@@ -333,7 +347,7 @@ public class MinecraftTypes {
             MinecraftTypes.writeResourceLocation(buf, holderSet.getLocation());
         } else {
             assert holderSet.getHolders() != null;
-            MinecraftTypes.writeVarInt(buf, holderSet.getHolders().length + 1);
+            MinecraftTypes.writeVarInt(buf, holderSet.getHolders().size() + 1);
             for (int holder : holderSet.getHolders()) {
                 MinecraftTypes.writeVarInt(buf, holder);
             }
@@ -457,7 +471,8 @@ public class MinecraftTypes {
 
             NbtType<?> type = NbtType.byId(typeId);
 
-            return new NBTInputStream(input).readValue(type, 512);
+            // Mojang's codecs, for untrusted sources, use a maximum size of 2048 KiB when reading: https://mcsrc.dev/2/26.2/net/minecraft/nbt/NbtAccounter#L6
+            return new NBTInputStream(input, 2097152L).readValue(type, 512);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -899,19 +914,16 @@ public class MinecraftTypes {
     }
 
     public static Component readComponent(ByteBuf buf) {
-        // do not use NbtMap, as mojang serializes a plaintext component as just a single StringTag
+        // do not use NbtMap, as mojang serializes a plaintext component as just a single StringTag, and technically 3rd-party servers could send lists
         Object tag = readAnyTag(buf);
         if (tag == null) {
             throw new IllegalArgumentException("Got end-tag when trying to read Component");
         }
-        JsonElement json = NbtComponentSerializer.tagComponentToJson(tag);
-        return DefaultComponentSerializer.get().deserializeFromTree(json);
+        return DefaultComponentSerializer.nbt().deserialize(tag);
     }
 
     public static void writeComponent(ByteBuf buf, Component component) {
-        JsonElement json = DefaultComponentSerializer.get().serializeToTree(component);
-        Object tag = NbtComponentSerializer.jsonComponentToTag(json);
-        writeAnyTag(buf, tag);
+        writeAnyTag(buf, DefaultComponentSerializer.nbt().serialize(component));
     }
 
     public static EntityMetadata<?, ?>[] readEntityMetadata(ByteBuf buf) {
@@ -1015,6 +1027,8 @@ public class MinecraftTypes {
     public static ParticleData readParticleData(ByteBuf buf, ParticleType type) {
         return switch (type) {
             case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR, BLOCK_CRUMBLE -> new BlockParticleData(MinecraftTypes.readVarInt(buf));
+            case GEYSER, GEYSER_PLUME -> new GeyserParticleData(buf.readInt());
+            case GEYSER_BASE, GEYSER_POOF -> new GeyserBaseParticleData(buf.readInt(), buf.readFloat());
             case DRAGON_BREATH -> new PowerParticleData(buf.readFloat());
             case DUST -> {
                 int color = buf.readInt();
@@ -1510,12 +1524,12 @@ public class MinecraftTypes {
                 String inventory = MinecraftTypes.readString(buf);
                 boolean wantsGolem = buf.readBoolean();
                 int angerLevel = buf.readInt();
-                List<String> activities = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<String> behaviors = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<String> memories = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<String> gossips = MinecraftTypes.readList(buf, MinecraftTypes::readString);
-                List<Vector3i> pois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
-                List<Vector3i> potentialPois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition);
+                List<String> activities = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<String> behaviors = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<String> memories = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<String> gossips = MinecraftTypes.readList(buf, MinecraftTypes::readString, false);
+                List<Vector3i> pois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition, false);
+                List<Vector3i> potentialPois = MinecraftTypes.readList(buf, MinecraftTypes::readPosition, false);
                 info = new DebugBrainDump(name, profession, xp, health, maxHealth, inventory, wantsGolem, angerLevel,
                     activities, behaviors, memories, gossips, pois, potentialPois);
             }
@@ -1537,7 +1551,7 @@ public class MinecraftTypes {
                 boolean reached = buf.readBoolean();
                 int nextNodeIndex = buf.readInt();
                 Vector3i target = MinecraftTypes.readPosition(buf);
-                List<DebugPathInfo.Node> nodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode);
+                List<DebugPathInfo.Node> nodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode, false);
 
                 List<DebugPathInfo.Node> targetNodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode);
                 DebugPathInfo.Node[] openSet = new DebugPathInfo.Node[MinecraftTypes.readVarInt(buf)];

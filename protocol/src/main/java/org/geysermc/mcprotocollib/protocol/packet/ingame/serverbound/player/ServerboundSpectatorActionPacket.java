@@ -7,19 +7,22 @@ import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
+import java.util.OptionalInt;
+
 @Data
 @With
 @AllArgsConstructor
-public class ServerboundSpectateEntityPacket implements MinecraftPacket {
-    private final int entityId;
+public class ServerboundSpectatorActionPacket implements MinecraftPacket {
+    private final OptionalInt entityId;
 
-    public ServerboundSpectateEntityPacket(ByteBuf in) {
-        this.entityId = MinecraftTypes.readVarInt(in);
+    public ServerboundSpectatorActionPacket(ByteBuf in) {
+        int i = MinecraftTypes.readVarInt(in);
+        this.entityId = i == 0 ? OptionalInt.empty() : OptionalInt.of(i - 1);
     }
 
     @Override
     public void serialize(ByteBuf out) {
-        MinecraftTypes.writeVarInt(out, this.entityId);
+        MinecraftTypes.writeVarInt(out, this.entityId.isPresent() ? this.entityId.getAsInt() + 1 : 0);
     }
 
     @Override

@@ -17,7 +17,7 @@ public enum CommandParser {
     BLOCK_PREDICATE,
     ITEM_STACK,
     ITEM_PREDICATE,
-    COLOR,
+    TEAM_COLOR,
     HEX_COLOR,
     COMPONENT,
     STYLE,

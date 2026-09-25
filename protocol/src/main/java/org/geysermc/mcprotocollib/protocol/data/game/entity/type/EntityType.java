@@ -133,6 +133,7 @@ public enum EntityType {
     SQUID,
     STRAY,
     STRIDER,
+    SULFUR_CUBE,
     TADPOLE,
     TEXT_DISPLAY,
     TNT,

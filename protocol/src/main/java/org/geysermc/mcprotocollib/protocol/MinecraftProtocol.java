@@ -41,6 +41,13 @@ public class MinecraftProtocol extends PacketProtocol {
      */
     @Nullable
     private static NbtMap DEFAULT_NETWORK_CODEC;
+    /**
+     * The tags sent from the server to the client during {@link ProtocolState#CONFIGURATION}.
+     * Lazily loaded once when {@link #newServerSession(Server, Session)} is invoked,
+     * if {@link #isUseDefaultListeners()} is true.
+     */
+    @Nullable
+    private static NbtMap DEFAULT_NETWORK_TAGS;
 
     /**
      * The codec used for the Minecraft protocol.
@@ -173,7 +180,11 @@ public class MinecraftProtocol extends PacketProtocol {
                 DEFAULT_NETWORK_CODEC = loadNetworkCodec();
             }
 
-            session.addListener(new ServerListener(DEFAULT_NETWORK_CODEC));
+            if (DEFAULT_NETWORK_TAGS == null) {
+                DEFAULT_NETWORK_TAGS = loadNetworkTags();
+            }
+
+            session.addListener(new ServerListener(DEFAULT_NETWORK_CODEC, DEFAULT_NETWORK_TAGS));
         }
     }
 
@@ -240,6 +251,14 @@ public class MinecraftProtocol extends PacketProtocol {
             return (NbtMap) NbtUtils.createGZIPReader(inputStream).readTag(512);
         } catch (Exception e) {
             throw new AssertionError("Unable to load network codec.", e);
+        }
+    }
+
+    public static NbtMap loadNetworkTags() {
+        try (InputStream inputStream = Objects.requireNonNull(MinecraftProtocol.class.getClassLoader().getResourceAsStream("networkTags.nbt"))) {
+            return (NbtMap) NbtUtils.createGZIPReader(inputStream).readTag(512);
+        } catch (Exception e) {
+            throw new AssertionError("Unable to load network tags.", e);
         }
     }
 }

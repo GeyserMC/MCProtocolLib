@@ -18,7 +18,7 @@ public class ClientboundChunksBiomesPacket implements MinecraftPacket {
         this.chunkBiomeData = MinecraftTypes.readList(in, buf -> {
             long raw = buf.readLong();
             return new ChunkBiomeData((int) raw, (int) (raw >> 32), MinecraftTypes.readByteArray(buf));
-        });
+        }, false);
     }
 
     @Override
