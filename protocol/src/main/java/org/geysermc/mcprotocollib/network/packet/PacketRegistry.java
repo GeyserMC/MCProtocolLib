@@ -9,7 +9,6 @@ import org.geysermc.mcprotocollib.network.codec.PacketSerializer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

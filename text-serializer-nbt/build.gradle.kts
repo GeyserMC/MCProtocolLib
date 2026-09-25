@@ -4,7 +4,7 @@ plugins {
     id("mcprotocollib.publish-conventions")
 }
 
-version = "0.1.0"
+version = "0.2.0"
 description = "Adventure text component serializers for Cloudburst's NBT library"
 
 dependencies {
