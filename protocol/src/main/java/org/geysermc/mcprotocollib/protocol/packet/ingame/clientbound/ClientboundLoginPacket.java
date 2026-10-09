@@ -24,6 +24,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     private final boolean enableRespawnScreen;
     private final boolean doLimitedCrafting;
     private final PlayerSpawnInfo commonPlayerSpawnInfo;
+    private final boolean onlineMode;
     private final boolean enforcesSecureChat;
 
     public ClientboundLoginPacket(ByteBuf in) {
@@ -41,6 +42,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         this.enableRespawnScreen = in.readBoolean();
         this.doLimitedCrafting = in.readBoolean();
         this.commonPlayerSpawnInfo = MinecraftTypes.readPlayerSpawnInfo(in);
+        this.onlineMode = in.readBoolean();
         this.enforcesSecureChat = in.readBoolean();
     }
 
@@ -59,6 +61,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
         out.writeBoolean(this.enableRespawnScreen);
         out.writeBoolean(this.doLimitedCrafting);
         MinecraftTypes.writePlayerSpawnInfo(out, this.commonPlayerSpawnInfo);
+        out.writeBoolean(this.onlineMode);
         out.writeBoolean(this.enforcesSecureChat);
     }
 

@@ -102,6 +102,7 @@ public class MinecraftProtocolTest {
                                     100,
                                     5
                             ),
+                            true,
                             true
                     ))
             );
@@ -149,8 +150,8 @@ public class MinecraftProtocolTest {
             server.bind();
         }
 
-        status();
-        login();
+//        status();
+//        login();
     }
 
     private static void status() {

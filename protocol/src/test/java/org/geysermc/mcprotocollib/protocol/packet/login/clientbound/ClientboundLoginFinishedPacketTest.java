@@ -9,6 +9,6 @@ import java.util.UUID;
 public class ClientboundLoginFinishedPacketTest extends PacketTest {
     @BeforeEach
     public void setup() {
-        this.setPackets(new ClientboundLoginFinishedPacket(new GameProfile(UUID.randomUUID(), "Username")));
+        this.setPackets(new ClientboundLoginFinishedPacket(new GameProfile(UUID.randomUUID(), "Username"), UUID.randomUUID()));
     }
 }

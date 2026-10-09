@@ -16,9 +16,11 @@ import java.util.Map;
 @With
 @AllArgsConstructor
 public class ClientboundUpdateTagsPacket implements MinecraftPacket {
-    private final @NonNull Map<Key, Map<Key, int[]>> tags = new HashMap<>();
+    private final Map<Key, Map<Key, int[]>> tags;
 
     public ClientboundUpdateTagsPacket(ByteBuf in) {
+        this.tags = new HashMap<>();
+
         int totalTagCount = MinecraftTypes.readVarInt(in);
         for (int i = 0; i < totalTagCount; i++) {
             Map<Key, int[]> tag = new HashMap<>();
