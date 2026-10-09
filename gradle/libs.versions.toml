@@ -4,7 +4,7 @@ metadata.format.version = "1.1"
 jspecify = "1.0.0"
 
 adventure = "5.2.0"
-cloudburstnbt = "3.0.5.Final"
+cloudburstnbt = "3.1.0.Final"
 slf4j = "2.0.9"
 math = "2.0"
 fastutil-maps = "8.5.3"
