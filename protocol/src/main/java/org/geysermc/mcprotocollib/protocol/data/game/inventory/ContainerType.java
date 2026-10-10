@@ -29,7 +29,17 @@ public enum ContainerType {
 
     private static final ContainerType[] VALUES = values();
 
+    /**
+     * Returns the container type for the given id, or {@code null} when the
+     * id is outside the vanilla range (modded servers, e.g. Waystones, send
+     * such ids). Callers that need to log or re-encode the exact id should
+     * keep the raw id alongside this lookup — see
+     * {@code ClientboundOpenScreenPacket#rawTypeId}.
+     */
     public static ContainerType from(int id) {
+        if (id < 0 || id >= VALUES.length) {
+            return null;
+        }
         return VALUES[id];
     }
 }

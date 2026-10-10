@@ -15,19 +15,31 @@ import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerType;
 @AllArgsConstructor
 public class ClientboundOpenScreenPacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull ContainerType type;
+    /**
+     * The menu type. {@code null} when the server sent a modded id outside
+     * the vanilla {@link ContainerType} range; {@link #rawTypeId} still
+     * carries the exact id that was sent.
+     */
+    private final ContainerType type;
+    /**
+     * The raw menu type id as sent over the wire. Always valid, even when
+     * {@link #type} is {@code null} (modded servers), so logging callers can
+     * report which menu type was sent and re-encoding round-trips exactly.
+     */
+    private final int rawTypeId;
     private final @NonNull Component title;
 
     public ClientboundOpenScreenPacket(ByteBuf in) {
         this.containerId = MinecraftTypes.readVarInt(in);
-        this.type = ContainerType.from(MinecraftTypes.readVarInt(in));
+        this.rawTypeId = MinecraftTypes.readVarInt(in);
+        this.type = ContainerType.from(this.rawTypeId);
         this.title = MinecraftTypes.readComponent(in);
     }
 
     @Override
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeVarInt(out, this.containerId);
-        MinecraftTypes.writeVarInt(out, this.type.ordinal());
+        MinecraftTypes.writeVarInt(out, this.rawTypeId);
         MinecraftTypes.writeComponent(out, this.title);
     }
 
