@@ -11,12 +11,7 @@ import java.util.Map;
 public record ArmorTrim(Holder<TrimMaterial> material, Holder<TrimPattern> pattern) {
 
     @Builder(toBuilder = true)
-    public record TrimMaterial(String assetBase, Map<Key, String> assetOverrides, Component description) {
-        public TrimMaterial(String assetBase, Map<Key, String> assetOverrides, Component description) {
-            this.assetBase = assetBase;
-            this.assetOverrides = Map.copyOf(assetOverrides);
-            this.description = description;
-        }
+    public record TrimMaterial(Key paletteId, Component description) {
     }
 
     @Builder(toBuilder = true)

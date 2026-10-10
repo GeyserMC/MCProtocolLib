@@ -11,7 +11,8 @@ import java.util.Map;
 public enum SuggestionType {
     ASK_SERVER,
     AVAILABLE_SOUNDS,
-    SUMMONABLE_ENTITIES;
+    SUMMONABLE_ENTITIES,
+    POST_EFFECTS;
 
     private final Key resourceLocation;
 

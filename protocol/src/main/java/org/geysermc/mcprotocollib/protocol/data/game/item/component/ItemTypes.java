@@ -13,6 +13,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
+import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
@@ -473,7 +474,7 @@ public class ItemTypes {
             case 0 -> new ConsumeEffect.ApplyEffects(MinecraftTypes.readList(buf, ItemTypes::readEffectInstance), buf.readFloat());
             case 1 -> new ConsumeEffect.RemoveEffects(MinecraftTypes.readHolderSet(buf));
             case 2 -> new ConsumeEffect.ClearAllEffects();
-            case 3 -> new ConsumeEffect.TeleportRandomly(buf.readFloat());
+            case 3 -> new ConsumeEffect.TeleportRandomly(buf.readFloat(), buf.readBoolean());
             case 4 -> new ConsumeEffect.PlaySound(MinecraftTypes.readSound(buf));
             default -> throw new IllegalStateException("Unexpected value: " + MinecraftTypes.readVarInt(buf));
         };
@@ -492,6 +493,7 @@ public class ItemTypes {
         } else if (consumeEffect instanceof ConsumeEffect.TeleportRandomly teleportRandomly) {
             MinecraftTypes.writeVarInt(buf, 3);
             buf.writeFloat(teleportRandomly.diameter());
+            buf.writeBoolean(teleportRandomly.directionalParticles());
         } else if (consumeEffect instanceof ConsumeEffect.PlaySound playSound) {
             MinecraftTypes.writeVarInt(buf, 4);
             MinecraftTypes.writeSound(buf, playSound.sound());
@@ -586,27 +588,13 @@ public class ItemTypes {
     }
 
     public static ArmorTrim.TrimMaterial readTrimMaterial(ByteBuf buf) {
-        String assetBase = MinecraftTypes.readString(buf);
-
-        Map<Key, String> assetOverrides = new HashMap<>();
-        int overrideCount = MinecraftTypes.readVarInt(buf);
-        for (int i = 0; i < overrideCount; i++) {
-            assetOverrides.put(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readString(buf));
-        }
-
+        Key paletteId = MinecraftTypes.readResourceLocation(buf);
         Component description = MinecraftTypes.readComponent(buf);
-        return new ArmorTrim.TrimMaterial(assetBase, assetOverrides, description);
+        return new ArmorTrim.TrimMaterial(paletteId, description);
     }
 
     public static void writeTrimMaterial(ByteBuf buf, ArmorTrim.TrimMaterial material) {
-        MinecraftTypes.writeString(buf, material.assetBase());
-
-        MinecraftTypes.writeVarInt(buf, material.assetOverrides().size());
-        for (Map.Entry<Key, String> entry : material.assetOverrides().entrySet()) {
-            MinecraftTypes.writeResourceLocation(buf, entry.getKey());
-            MinecraftTypes.writeString(buf, entry.getValue());
-        }
-
+        MinecraftTypes.writeResourceLocation(buf, material.paletteId());
         MinecraftTypes.writeComponent(buf, material.description());
     }
 
@@ -652,14 +640,16 @@ public class ItemTypes {
         Sound soundEvent = MinecraftTypes.readSound(buf);
         float useDuration = buf.readFloat();
         float range = buf.readFloat();
+        int durabilityDamage = MinecraftTypes.readVarInt(buf);
         Component description = MinecraftTypes.readComponent(buf);
-        return new Instrument(soundEvent, useDuration, range, description);
+        return new Instrument(soundEvent, useDuration, range, durabilityDamage, description);
     }
 
     public static void writeInstrument(ByteBuf buf, Instrument instrument) {
         MinecraftTypes.writeSound(buf, instrument.soundEvent());
         buf.writeFloat(instrument.useDuration());
         buf.writeFloat(instrument.range());
+        MinecraftTypes.writeVarInt(buf, instrument.durabilityDamage());
         MinecraftTypes.writeComponent(buf, instrument.description());
     }
 
@@ -769,6 +759,21 @@ public class ItemTypes {
         MinecraftTypes.writeString(buf, pattern.getTranslationKey());
     }
 
+    public static PotDecorations readPotDecorations(ByteBuf buf) {
+        ItemStack back = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        ItemStack left = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        ItemStack right = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        ItemStack front = MinecraftTypes.readNullable(buf, MinecraftTypes::readItemStackTemplate);
+        return new PotDecorations(back, left, right, front);
+    }
+
+    public static void writePotDecorations(ByteBuf buf, PotDecorations potDecorations) {
+        MinecraftTypes.writeNullable(buf, potDecorations.back(), MinecraftTypes::writeItemStackTemplate);
+        MinecraftTypes.writeNullable(buf, potDecorations.left(), MinecraftTypes::writeItemStackTemplate);
+        MinecraftTypes.writeNullable(buf, potDecorations.right(), MinecraftTypes::writeItemStackTemplate);
+        MinecraftTypes.writeNullable(buf, potDecorations.front(), MinecraftTypes::writeItemStackTemplate);
+    }
+
     public static BlockStateProperties readBlockStateProperties(ByteBuf buf) {
         Map<String, String> properties = new HashMap<>();
         int propertyCount = MinecraftTypes.readVarInt(buf);
@@ -795,5 +800,65 @@ public class ItemTypes {
         ItemTypes.writeTypedEntityData(buf, occupant.getEntityData(), ItemTypes::writeEntityType);
         MinecraftTypes.writeVarInt(buf, occupant.getTicksInHive());
         MinecraftTypes.writeVarInt(buf, occupant.getMinTicksInHive());
+    }
+
+    public static CookingFuel readCookingFuel(ByteBuf buf) {
+        return new CookingFuel(MinecraftTypes.readResolvableInt(buf), MinecraftTypes.readResolvableFloat(buf));
+    }
+
+    public static void writeCookingFuel(ByteBuf buf, CookingFuel cookingFuel) {
+        MinecraftTypes.writeResolvableInt(buf, cookingFuel.burnTime());
+        MinecraftTypes.writeResolvableFloat(buf, cookingFuel.speedMultiplier());
+    }
+
+    public static BrewingFuel readBrewingFuel(ByteBuf buf) {
+        return new BrewingFuel(MinecraftTypes.readResolvableInt(buf), MinecraftTypes.readResolvableFloat(buf));
+    }
+
+    public static void writeBrewingFuel(ByteBuf buf, BrewingFuel cookingFuel) {
+        MinecraftTypes.writeResolvableInt(buf, cookingFuel.uses());
+        MinecraftTypes.writeResolvableFloat(buf, cookingFuel.speedMultiplier());
+    }
+
+    public static MobVisibility readMobVisibility(ByteBuf buf) {
+        return new MobVisibility(MinecraftTypes.readHolderSet(buf), buf.readFloat());
+    }
+
+    public static void writeMobVisibility(ByteBuf buf, MobVisibility mobVisibility) {
+        MinecraftTypes.writeHolderSet(buf, mobVisibility.targetingEntityTypes());
+        buf.writeFloat(mobVisibility.visibility());
+    }
+
+    public static SignText readSignText(ByteBuf buf) {
+        List<Component> messages = new ArrayList<>(4);
+        for (int i = 0; i < 4; i++) {
+            messages.add(MinecraftTypes.readComponent(buf));
+        }
+
+        List<Component> filteredMessages = null;
+        if (buf.readBoolean()) {
+            filteredMessages = new ArrayList<>(4);
+            for (int i = 0; i < 4; i++) {
+                filteredMessages.add(MinecraftTypes.readComponent(buf));
+            }
+        }
+        int color = MinecraftTypes.readVarInt(buf);
+        boolean hasGlowingText = buf.readBoolean();
+        return new SignText(messages, filteredMessages, color, hasGlowingText);
+    }
+
+    public static void writeSignText(ByteBuf buf, SignText signText) {
+        for (int i = 0; i < 4; i++) {
+            MinecraftTypes.writeComponent(buf, signText.messages().get(i));
+        }
+
+        buf.writeBoolean(signText.filteredMessages() != null);
+        if (signText.filteredMessages() != null) {
+            for (int i = 0; i < 4; i++) {
+                MinecraftTypes.writeComponent(buf, signText.filteredMessages().get(i));
+            }
+        }
+        MinecraftTypes.writeVarInt(buf, signText.color());
+        buf.writeBoolean(signText.hasGlowingText());
     }
 }

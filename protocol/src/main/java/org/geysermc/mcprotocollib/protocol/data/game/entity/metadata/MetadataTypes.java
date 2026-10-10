@@ -72,6 +72,7 @@ public class MetadataTypes {
     public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
     public static final MetadataType<ResolvableProfile> RESOLVABLE_PROFILE = register(id -> new MetadataType<>(id, MinecraftTypes::readResolvableProfile, MinecraftTypes::writeResolvableProfile, ObjectEntityMetadata::new));
     public static final MetadataType<HumanoidArm> HUMANOID_ARM = register(id -> new MetadataType<>(id, MinecraftTypes::readHumanoidArm, MinecraftTypes::writeHumanoidArm, ObjectEntityMetadata::new));
+    public static final IntMetadataType DYE_COLOR = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
 
     public static <T extends MetadataType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());

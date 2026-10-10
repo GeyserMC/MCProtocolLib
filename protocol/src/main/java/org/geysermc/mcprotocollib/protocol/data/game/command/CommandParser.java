@@ -56,7 +56,12 @@ public enum CommandParser {
     LOOT_TABLE,
     LOOT_PREDICATE,
     LOOT_MODIFIER,
+    CONTEXT_FLOAT_PROVIDER,
+    CONTEXT_INT_PROVIDER,
+    SLOT_SOURCE,
     DIALOG,
+    FEATURE,
+    SWING_ANIMATION,
     UUID;
 
     private static final CommandParser[] VALUES = values();

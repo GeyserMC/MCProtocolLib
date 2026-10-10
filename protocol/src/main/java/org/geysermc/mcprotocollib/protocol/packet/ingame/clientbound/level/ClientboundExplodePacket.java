@@ -26,6 +26,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     private final @NonNull Particle explosionParticle;
     private final @NonNull Sound explosionSound;
     private final @NonNull WeightedList<BlockParticleInfo> blockParticles;
+    private final boolean playSound;
 
     public ClientboundExplodePacket(ByteBuf in) {
         this.center = Vector3d.from(in.readDouble(), in.readDouble(), in.readDouble());
@@ -35,6 +36,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
         this.explosionParticle = MinecraftTypes.readParticle(in);
         this.explosionSound = MinecraftTypes.readById(in, BuiltinSound::from, MinecraftTypes::readSoundEvent);
         this.blockParticles = new WeightedList<>(in, BlockParticleInfo::new);
+        this.playSound = in.readBoolean();
     }
 
     @Override
@@ -57,6 +59,7 @@ public class ClientboundExplodePacket implements MinecraftPacket {
             MinecraftTypes.writeVarInt(out, ((BuiltinSound) this.explosionSound).ordinal() + 1);
         }
         blockParticles.write(out, BlockParticleInfo::write);
+        out.writeBoolean(this.playSound);
     }
 
     @Override

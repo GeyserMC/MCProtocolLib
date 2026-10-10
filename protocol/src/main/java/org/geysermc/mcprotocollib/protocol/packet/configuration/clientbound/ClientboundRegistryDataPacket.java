@@ -20,7 +20,7 @@ public class ClientboundRegistryDataPacket implements MinecraftPacket {
 
     public ClientboundRegistryDataPacket(ByteBuf in) {
         this.registry = MinecraftTypes.readResourceLocation(in);
-        this.entries = MinecraftTypes.readList(in, buf -> new RegistryEntry(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readNullable(buf, MinecraftTypes::readCompoundTag)));
+        this.entries = MinecraftTypes.readList(in, buf -> new RegistryEntry(MinecraftTypes.readResourceLocation(buf), MinecraftTypes.readNullable(buf, MinecraftTypes::readAnyTag)));
     }
 
     @Override

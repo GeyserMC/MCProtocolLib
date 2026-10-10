@@ -63,17 +63,17 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 boolean hidden = (flags & FLAG_HIDDEN) != 0;
 
                 String backgroundTexture = hasBackgroundTexture ? MinecraftTypes.readString(buf) : null;
-                float posX = buf.readFloat();
-                float posY = buf.readFloat();
 
-                return new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
+                return new DisplayData(title, description, icon, advancementType, showToast, hidden, backgroundTexture);
             });
 
             List<List<String>> requirements = MinecraftTypes.readList(in, buf -> MinecraftTypes.readList(buf, MinecraftTypes::readString), false);
 
             boolean sendTelemetryEvent = in.readBoolean();
+            float posX = in.readFloat();
+            float posY = in.readFloat();
 
-            this.advancements[i] = new Advancement(id, requirements, parentId, displayData, sendTelemetryEvent);
+            this.advancements[i] = new Advancement(id, requirements, parentId, displayData, sendTelemetryEvent, posX, posY);
         }
 
         this.removedAdvancements = new String[MinecraftTypes.readVarInt(in)];
@@ -138,14 +138,13 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 if (data.getBackgroundTexture() != null) {
                     MinecraftTypes.writeString(buf, data.getBackgroundTexture());
                 }
-
-                buf.writeFloat(data.getPosX());
-                buf.writeFloat(data.getPosY());
             });
 
             MinecraftTypes.writeList(out, advancement.getRequirements(), (buf, requirement) -> MinecraftTypes.writeList(buf, requirement, MinecraftTypes::writeString));
 
             out.writeBoolean(advancement.isSendsTelemetryEvent());
+            out.writeFloat(advancement.getPosX());
+            out.writeFloat(advancement.getPosY());
         }
 
         MinecraftTypes.writeVarInt(out, this.removedAdvancements.length);

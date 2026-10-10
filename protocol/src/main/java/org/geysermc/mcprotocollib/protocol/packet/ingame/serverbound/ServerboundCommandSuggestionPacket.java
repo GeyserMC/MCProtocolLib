@@ -17,7 +17,7 @@ public class ServerboundCommandSuggestionPacket implements MinecraftPacket {
 
     public ServerboundCommandSuggestionPacket(ByteBuf in) {
         this.transactionId = MinecraftTypes.readVarInt(in);
-        this.text = MinecraftTypes.readString(in);
+        this.text = MinecraftTypes.readString(in, 32500);
     }
 
     @Override

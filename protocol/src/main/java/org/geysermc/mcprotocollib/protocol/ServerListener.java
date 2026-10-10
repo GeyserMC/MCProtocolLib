@@ -165,7 +165,7 @@ public class ServerListener extends SessionAdapter {
                     @SuppressWarnings("PatternValidation")
                     Key nameTag = Key.key(compoundTag.getString("name"));
                     int id = compoundTag.getInt("id");
-                    entries.add(id, new RegistryEntry(nameTag, compoundTag.getCompound("element")));
+                    entries.add(id, new RegistryEntry(nameTag, compoundTag.get("element")));
                 }
 
                 session.send(new ClientboundRegistryDataPacket(typeTag, entries));

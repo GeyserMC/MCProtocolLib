@@ -42,8 +42,8 @@ final class NbtUtil {
             }
             @SuppressWarnings("unchecked") NbtList<Float> floats = (NbtList<Float>) list;
             return ShadowColor.shadowColor(ratioFloatToByte(floats.get(0)), ratioFloatToByte(floats.get(1)), ratioFloatToByte(floats.get(2)), ratioFloatToByte(floats.get(3)));
-        } else if (object instanceof Integer integer) {
-            return ShadowColor.shadowColor(integer);
+        } else if (object instanceof Number number) {
+            return ShadowColor.shadowColor(number.intValue());
         }
         throw new IllegalArgumentException("Don't know how to parse ARGB colour: " + object);
     }

@@ -10,5 +10,5 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 public class RegistryEntry {
     private final Key id;
-    private final @Nullable NbtMap data;
+    private final @Nullable Object data;
 }

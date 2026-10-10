@@ -1,8 +1,8 @@
 package org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot;
 
-import net.kyori.adventure.key.Key;
+import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
 
-public record TagSlotDisplay(Key tag) implements SlotDisplay {
+public record TagSlotDisplay(HolderSet holderSet) implements SlotDisplay {
     @Override
     public RecipeSlotType getType() {
         return RecipeSlotType.TAG;

@@ -8,6 +8,6 @@ public enum ChatVisibility {
     private static final ChatVisibility[] VALUES = values();
 
     public static ChatVisibility from(int id) {
-        return VALUES[id];
+        return VALUES[Math.floorMod(id, VALUES.length)];
     }
 }

@@ -12,6 +12,9 @@ import java.util.function.Function;
 /**
  * Represents a set of holders that could either be explicit, or resolved from a tag location.
  * The client has to know how to resolve the tag location to get the holders.
+ *
+ * <p>Note that in NBT format, holder sets can also hold inline-defined holders, or even a combination of inline-defined and registry referenced holders.
+ * As of Java Edition 26.3, the stream codec still only supports registry referenced holders and tags.</p>
  */
 @Data
 public final class HolderSet {
