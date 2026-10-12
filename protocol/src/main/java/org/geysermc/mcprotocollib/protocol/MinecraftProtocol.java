@@ -54,11 +54,11 @@ public class MinecraftProtocol extends PacketProtocol {
     @Getter
     private final PacketCodec codec;
 
-    private ProtocolState inboundState;
-    private PacketRegistry inboundStateRegistry;
+    private @Nullable ProtocolState inboundState;
+    private @Nullable PacketRegistry inboundStateRegistry;
 
-    private ProtocolState outboundState;
-    private PacketRegistry outboundStateRegistry;
+    private @Nullable ProtocolState outboundState;
+    private @Nullable PacketRegistry outboundStateRegistry;
 
     private final HandshakeIntent handshakeIntent;
 
@@ -66,13 +66,13 @@ public class MinecraftProtocol extends PacketProtocol {
      * The player's identity.
      */
     @Getter
-    private GameProfile profile;
+    private @Nullable GameProfile profile;
 
     /**
      * Authentication access token.
      */
     @Getter
-    private String accessToken;
+    private @Nullable String accessToken;
 
     /**
      * Whether to add the default client and server listeners for performing initial login.
@@ -125,7 +125,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(GameProfile profile, String accessToken) {
+    public MinecraftProtocol(GameProfile profile, @Nullable String accessToken) {
         this(MinecraftCodec.CODEC, profile, accessToken);
     }
 
@@ -136,7 +136,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(PacketCodec codec, GameProfile profile, String accessToken) {
+    public MinecraftProtocol(PacketCodec codec, GameProfile profile, @Nullable String accessToken) {
         this.codec = codec;
         this.handshakeIntent = HandshakeIntent.LOGIN;
         this.profile = profile;
@@ -189,12 +189,12 @@ public class MinecraftProtocol extends PacketProtocol {
 
     @Override
     public PacketRegistry getInboundPacketRegistry() {
-        return this.inboundStateRegistry;
+        return Objects.requireNonNull(this.inboundStateRegistry, "packet registries not yet initialised");
     }
 
     @Override
     public PacketRegistry getOutboundPacketRegistry() {
-        return this.outboundStateRegistry;
+        return Objects.requireNonNull(this.outboundStateRegistry, "packet registries not yet initialised");
     }
 
     protected EncryptionConfig createEncryption(Key key) {
@@ -218,7 +218,7 @@ public class MinecraftProtocol extends PacketProtocol {
      *
      * @return The current inbound {@link ProtocolState}.
      */
-    public ProtocolState getInboundState() {
+    public @Nullable ProtocolState getInboundState() {
         return this.inboundState;
     }
 
@@ -227,7 +227,7 @@ public class MinecraftProtocol extends PacketProtocol {
      *
      * @return The current outbound {@link ProtocolState}.
      */
-    public ProtocolState getOutboundState() {
+    public @Nullable ProtocolState getOutboundState() {
         return this.outboundState;
     }
 

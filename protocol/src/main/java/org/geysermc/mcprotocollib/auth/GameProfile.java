@@ -6,6 +6,7 @@ import org.geysermc.mcprotocollib.auth.texture.Texture;
 import org.geysermc.mcprotocollib.auth.texture.TextureType;
 import org.geysermc.mcprotocollib.auth.util.TextureUrlChecker;
 import org.geysermc.mcprotocollib.auth.util.UndashedUUIDAdapter;
+import org.jspecify.annotations.Nullable;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -39,11 +40,11 @@ public class GameProfile {
         }
     }
 
-    private final UUID id;
-    private final String name;
+    private final @Nullable UUID id;
+    private final @Nullable String name;
 
-    private List<Property> properties;
-    private Map<TextureType, Texture> textures;
+    private @Nullable List<Property> properties;
+    private @Nullable Map<TextureType, Texture> textures;
     private boolean texturesVerified;
 
     /**
@@ -52,7 +53,7 @@ public class GameProfile {
      * @param id ID of the profile.
      * @param name Name of the profile.
      */
-    public GameProfile(String id, String name) {
+    public GameProfile(@Nullable String id, @Nullable String name) {
         this(id == null || id.isEmpty() ? null : UUID.fromString(id), name);
     }
 
@@ -62,7 +63,7 @@ public class GameProfile {
      * @param id ID of the profile.
      * @param name Name of the profile.
      */
-    public GameProfile(UUID id, String name) {
+    public GameProfile(@Nullable UUID id, @Nullable String name) {
         this.id = id;
         this.name = name;
     }
@@ -81,7 +82,7 @@ public class GameProfile {
      *
      * @return The profile's ID.
      */
-    public UUID getId() {
+    public @Nullable UUID getId() {
         return this.id;
     }
 
@@ -99,7 +100,7 @@ public class GameProfile {
      *
      * @return The profile's name.
      */
-    public String getName() {
+    public @Nullable String getName() {
         return this.name;
     }
 
@@ -121,7 +122,7 @@ public class GameProfile {
      *
      * @param properties Properties belonging to this profile.
      */
-    public void setProperties(List<Property> properties) {
+    public void setProperties(@Nullable List<Property> properties) {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         } else {
@@ -143,7 +144,7 @@ public class GameProfile {
      * @param name Name of the property.
      * @return The property with the specified name.
      */
-    public Property getProperty(String name) {
+    public @Nullable Property getProperty(String name) {
         for (Property property : this.getProperties()) {
             if (property.getName().equals(name)) {
                 return property;
@@ -270,7 +271,7 @@ public class GameProfile {
     public static class Property {
         private final String name;
         private final String value;
-        private final String signature;
+        private final @Nullable String signature;
 
         /**
          * Creates a new Property instance.
@@ -289,7 +290,7 @@ public class GameProfile {
          * @param value Value of the property.
          * @param signature Signature used to verify the property.
          */
-        public Property(String name, String value, String signature) {
+        public Property(String name, String value, @Nullable String signature) {
             this.name = name;
             this.value = value;
             this.signature = signature;
@@ -327,7 +328,7 @@ public class GameProfile {
          *
          * @return The property's signature.
          */
-        public String getSignature() {
+        public @Nullable String getSignature() {
             return this.signature;
         }
 
@@ -347,6 +348,7 @@ public class GameProfile {
                 Signature sig = Signature.getInstance("SHA1withRSA");
                 sig.initVerify(key);
                 sig.update(this.value.getBytes());
+                assert this.signature != null;
                 return sig.verify(Base64.getDecoder().decode(this.signature.getBytes(StandardCharsets.UTF_8)));
             } catch (Exception e) {
                 throw new IllegalStateException("Could not validate property signature.", e);
@@ -361,9 +363,9 @@ public class GameProfile {
 
     private static class MinecraftTexturesPayload {
         public long timestamp;
-        public UUID profileId;
-        public String profileName;
+        public @Nullable UUID profileId;
+        public @Nullable String profileName;
         public boolean isPublic;
-        public Map<TextureType, Texture> textures;
+        public @Nullable Map<TextureType, Texture> textures;
     }
 }

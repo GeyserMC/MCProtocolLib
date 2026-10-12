@@ -8,6 +8,7 @@ import org.geysermc.mcprotocollib.network.packet.PacketHeader;
 import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoBuilder;
 import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoHandler;
 import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerPingTimeHandler;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Class containing various constants for Minecraft sessions.
@@ -38,7 +39,7 @@ public final class MinecraftConstants {
     /**
      * Session flag where the user's access token is stored. Client only.
      */
-    public static final Flag<String> ACCESS_TOKEN_KEY = new Flag<>("access-token", String.class);
+    public static final Flag<@Nullable String> ACCESS_TOKEN_KEY = new Flag<>("access-token", String.class);
 
     /**
      * Session flag for providing a custom server info response handler. Client only.

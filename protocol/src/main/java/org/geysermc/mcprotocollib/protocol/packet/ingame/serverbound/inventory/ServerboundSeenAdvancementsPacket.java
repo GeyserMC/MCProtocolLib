@@ -7,7 +7,9 @@ import lombok.ToString;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.AdvancementTabAction;
+import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @ToString
@@ -15,7 +17,7 @@ import java.util.function.Consumer;
 public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     @Getter
     private final AdvancementTabAction action;
-    private final String tabId;
+    private final @Nullable String tabId;
 
     public ServerboundSeenAdvancementsPacket() {
         this.action = AdvancementTabAction.CLOSED_SCREEN;
@@ -36,6 +38,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
                     + " but it was " + this.action);
         }
 
+        assert this.tabId != null;
         return this.tabId;
     }
 
@@ -50,10 +53,10 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     @Override
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeVarInt(out, this.action.ordinal());
-        Consumer<String> tabIdWriter = switch (this.action) {
+        Consumer<@Nullable String> tabIdWriter = switch (this.action) {
             case CLOSED_SCREEN -> tabId -> {
             };
-            case OPENED_TAB -> tabId -> MinecraftTypes.writeString(out, tabId);
+            case OPENED_TAB -> tabId -> MinecraftTypes.writeString(out, Objects.requireNonNull(tabId, "tabId must not be null for OPENED_TAB action"));
         };
         tabIdWriter.accept(this.tabId);
     }

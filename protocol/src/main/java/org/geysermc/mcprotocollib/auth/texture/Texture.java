@@ -1,5 +1,7 @@
 package org.geysermc.mcprotocollib.auth.texture;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 
 /**
@@ -7,7 +9,7 @@ import java.util.Map;
  */
 public class Texture {
     private final String url;
-    private final Map<String, String> metadata;
+    private final @Nullable Map<String, String> metadata;
 
     /**
      * Creates a new Texture instance.
@@ -15,7 +17,7 @@ public class Texture {
      * @param url      URL of the texture.
      * @param metadata Metadata of the texture.
      */
-    public Texture(String url, Map<String, String> metadata) {
+    public Texture(String url, @Nullable Map<String, String> metadata) {
         this.url = url;
         this.metadata = metadata;
     }
@@ -34,7 +36,7 @@ public class Texture {
      *
      * @return The metadata value corresponding to the given key.
      */
-    public String getMetadata(String key) {
+    public @Nullable String getMetadata(String key) {
         if (this.metadata == null) {
             return null;
         }

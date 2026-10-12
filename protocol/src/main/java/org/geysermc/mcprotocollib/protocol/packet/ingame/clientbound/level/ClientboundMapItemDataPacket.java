@@ -10,6 +10,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapIcon;
 import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapIconType;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
@@ -20,7 +21,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
     private final boolean locked;
     private final MapIcon[] icons;
 
-    private final MapData data;
+    private final @Nullable MapData data;
 
     public ClientboundMapItemDataPacket(int mapId, byte scale, boolean locked, MapIcon[] icons) {
         this(mapId, scale, locked, icons, null);

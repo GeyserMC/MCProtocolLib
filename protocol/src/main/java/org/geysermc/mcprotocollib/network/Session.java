@@ -27,7 +27,7 @@ public interface Session {
      *
      * @return The local address, or null if the session is not connected.
      */
-    SocketAddress getLocalAddress();
+    @Nullable SocketAddress getLocalAddress();
 
     /**
      * Gets the remote address of the session.
@@ -49,7 +49,7 @@ public interface Session {
      *
      * @return This session's flags.
      */
-    Map<String, Object> getFlags();
+    Map<String, @Nullable Object> getFlags();
 
     /**
      * Checks whether this session has a flag set. If this session belongs to a server,
@@ -70,14 +70,14 @@ public interface Session {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    default <T> T getFlag(Flag<T> flag) {
+    default <T extends @Nullable Object> @Nullable T getFlag(Flag<T> flag) {
         return this.getFlagSupplied(flag, () -> null);
     }
 
     /**
      * @see #getFlagSupplied(Flag, Supplier)
      */
-    default <T> T getFlag(Flag<T> flag, T def) {
+    default <T extends @Nullable Object> T getFlag(Flag<T> flag, T def) {
         return this.getFlagSupplied(flag, () -> def);
     }
 
@@ -92,7 +92,7 @@ public interface Session {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier);
+    <T extends @Nullable Object> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier);
 
     /**
      * Sets the value of a flag. This does not change a server's flags if this session
@@ -102,7 +102,7 @@ public interface Session {
      * @param flag Flag to check for.
      * @param value Value to set the flag to.
      */
-    <T> void setFlag(Flag<T> flag, T value);
+    <T extends @Nullable Object> void setFlag(Flag<T> flag, T value);
 
     /**
      * Sets the values for a collection of flags.

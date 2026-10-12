@@ -15,7 +15,7 @@ public class ClientboundShowDialogConfigurationPacket implements MinecraftPacket
     private final NbtMap dialog;
 
     public ClientboundShowDialogConfigurationPacket(ByteBuf in) {
-        this.dialog = MinecraftTypes.readCompoundTag(in);
+        this.dialog = MinecraftTypes.readCompoundTagOrThrow(in);
     }
 
     @Override

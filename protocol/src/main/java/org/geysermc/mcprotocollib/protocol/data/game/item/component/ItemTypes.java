@@ -14,13 +14,13 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.EquipmentSlot;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.type.EntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
-import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -90,7 +90,7 @@ public class ItemTypes {
             });
         });
 
-        NbtMap nbt = MinecraftTypes.readNullable(buf, MinecraftTypes::readCompoundTag);
+        NbtMap nbt = MinecraftTypes.readNullable(buf, MinecraftTypes::readCompoundTagOrThrow);
 
         DataComponentMatchers components = ItemTypes.readDataComponentMatchers(buf);
 
@@ -108,8 +108,8 @@ public class ItemTypes {
                     MinecraftTypes.writeString(buf, matcher.getValue());
                 } else {
                     buf.writeBoolean(false);
-                    MinecraftTypes.writeString(buf, matcher.getMinValue());
-                    MinecraftTypes.writeString(buf, matcher.getMaxValue());
+                    MinecraftTypes.writeString(buf, Objects.requireNonNull(matcher.getMinValue(), "PropertyMatcher must have a min value if not exact"));
+                    MinecraftTypes.writeString(buf, Objects.requireNonNull(matcher.getMaxValue(), "PropertyMatcher must have a max value if not exact"));
                 }
             }
         });
@@ -130,7 +130,7 @@ public class ItemTypes {
 
         for (int i = 0; i < count; i++) {
             DataComponentMatchers.PredicateType type = new DataComponentMatchers.PredicateType(buf.readBoolean(), MinecraftTypes.readVarInt(buf));
-            partialMatchers.put(type, MinecraftTypes.readCompoundTag(buf));
+            partialMatchers.put(type, MinecraftTypes.readCompoundTagOrThrow(buf));
         }
 
         return new DataComponentMatchers(exactMatchers, partialMatchers);
@@ -379,7 +379,7 @@ public class ItemTypes {
             MinecraftTypes.writeVarInt(output, entry.getSlot().ordinal());
             MinecraftTypes.writeVarInt(output, entry.getDisplay().getType().ordinal());
             if (entry.getDisplay().getType() == ItemAttributeModifiers.DisplayType.OVERRIDE) {
-                MinecraftTypes.writeComponent(output, entry.getDisplay().getComponent());
+                MinecraftTypes.writeComponent(output, Objects.requireNonNull(entry.getDisplay().getComponent(), "ItemAttributeModifiers.Display must have a component if of OVERRIDE type"));
             }
         });
     }
@@ -612,7 +612,7 @@ public class ItemTypes {
     }
 
     public static <T extends Enum<?>> TypedEntityData<T> readTypedEntityData(ByteBuf buf, Function<ByteBuf, T> reader) {
-        return new TypedEntityData<>(reader.apply(buf), MinecraftTypes.readCompoundTag(buf));
+        return new TypedEntityData<>(reader.apply(buf), MinecraftTypes.readCompoundTagOrThrow(buf));
     }
 
     public static <T> void writeTypedEntityData(ByteBuf buf, TypedEntityData<T> typedEntityData, BiConsumer<ByteBuf, T> writer) {
@@ -625,14 +625,6 @@ public class ItemTypes {
     }
 
     public static void writeEntityType(ByteBuf buf, EntityType state) {
-        MinecraftTypes.writeVarInt(buf, state.ordinal());
-    }
-
-    public static BlockEntityType readBlockEntityType(ByteBuf buf) {
-        return BlockEntityType.from(MinecraftTypes.readVarInt(buf));
-    }
-
-    public static void writeBlockEntityType(ByteBuf buf, BlockEntityType state) {
         MinecraftTypes.writeVarInt(buf, state.ordinal());
     }
 
@@ -654,7 +646,7 @@ public class ItemTypes {
     }
 
     public static NbtList<?> readRecipes(ByteBuf buf) {
-        return MinecraftTypes.readAnyTag(buf, NbtType.LIST);
+        return MinecraftTypes.readTagOrThrow(buf, NbtType.LIST);
     }
 
     public static void writeRecipes(ByteBuf buf, NbtList<?> recipes) {

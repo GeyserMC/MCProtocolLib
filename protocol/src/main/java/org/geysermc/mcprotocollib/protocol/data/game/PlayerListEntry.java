@@ -21,7 +21,7 @@ public class PlayerListEntry {
     private @Nullable Component displayName;
     private boolean showHat;
     private int listOrder;
-    private UUID sessionId;
+    private @Nullable UUID sessionId;
     private long expiresAt;
     private @Nullable PublicKey publicKey;
     private byte @Nullable [] keySignature;

@@ -10,6 +10,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ParticleType;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 @Data
 @With
 @AllArgsConstructor
@@ -44,7 +46,9 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
         this.yMaxSpeed = in.readFloat();
         this.zMaxSpeed = in.readFloat();
         this.amount = MinecraftTypes.readVarInt(in);
-        this.randomizationType = RandomizationType.from(MinecraftTypes.readVarInt(in));
+
+        int randomization = MinecraftTypes.readVarInt(in);
+        this.randomizationType = Objects.requireNonNull(RandomizationType.from(randomization), "invalid particle randomization type received: " + randomization);
     }
 
     @Override

@@ -36,6 +36,7 @@ public class MetadataTypes {
     public static final MetadataType<String> STRING = register(id -> new MetadataType<>(id, MinecraftTypes::readString, MinecraftTypes::writeString, ObjectEntityMetadata::new));
     public static final MetadataType<Component> COMPONENT = register(id -> new MetadataType<>(id, MinecraftTypes::readComponent, MinecraftTypes::writeComponent, ObjectEntityMetadata::new));
     public static final MetadataType<Optional<Component>> OPTIONAL_COMPONENT = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readComponent), optionalWriter(MinecraftTypes::writeComponent), ObjectEntityMetadata::new));
+    // TODO: ideally don't use a hidden null here
     public static final MetadataType<ItemStack> ITEM_STACK = register(id -> new MetadataType<>(id, MinecraftTypes::readOptionalItemStack, MinecraftTypes::writeOptionalItemStack, ObjectEntityMetadata::new));
     public static final BooleanMetadataType BOOLEAN = register(id -> new BooleanMetadataType(id, ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanEntityMetadata::new));
     public static final MetadataType<Vector3f> ROTATIONS = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));

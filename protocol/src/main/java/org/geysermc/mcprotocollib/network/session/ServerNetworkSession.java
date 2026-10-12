@@ -5,6 +5,7 @@ import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.ServerSession;
 import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.HashMap;
@@ -26,8 +27,8 @@ public class ServerNetworkSession extends NetworkSession implements ServerSessio
     }
 
     @Override
-    public Map<String, Object> getFlags() {
-        Map<String, Object> ret = new HashMap<>();
+    public Map<String, @Nullable Object> getFlags() {
+        Map<String, @Nullable Object> ret = new HashMap<>();
         ret.putAll(this.server.getGlobalFlags());
         ret.putAll(super.getFlags());
         return ret;
@@ -43,7 +44,7 @@ public class ServerNetworkSession extends NetworkSession implements ServerSessio
     }
 
     @Override
-    public <T> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
+    public <T extends @Nullable Object> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
         T ret = super.getFlagSupplied(flag, () -> null);
         if (ret != null) {
             return ret;

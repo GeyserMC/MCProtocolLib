@@ -11,7 +11,9 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarAction;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarColor;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarDivision;
+import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
@@ -21,12 +23,12 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
     private final UUID uuid;
     private final BossBarAction action;
 
-    private final Component title;
+    private final @Nullable Component title;
 
     private final float health;
 
-    private final BossBarColor color;
-    private final BossBarDivision division;
+    private final @Nullable BossBarColor color;
+    private final @Nullable BossBarDivision division;
 
     private final boolean darkenSky;
     private final boolean playEndMusic;
@@ -108,7 +110,7 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         MinecraftTypes.writeVarInt(out, this.action.ordinal());
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            MinecraftTypes.writeComponent(out, this.title);
+            MinecraftTypes.writeComponent(out, Objects.requireNonNull(this.title, "title must not be null for ADD or UPDATE_TITLE actions"));
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -116,8 +118,8 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            MinecraftTypes.writeVarInt(out, this.color.ordinal());
-            MinecraftTypes.writeVarInt(out, this.division.ordinal());
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.color, "color must not be null for ADD or UPDATE_STYLE actions").ordinal());
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.division, "division must not be null for ADD or UPDATE_STYLE actions").ordinal());
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {

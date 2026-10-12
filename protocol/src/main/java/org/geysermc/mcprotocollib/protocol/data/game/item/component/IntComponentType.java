@@ -3,6 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.key.KeyPattern;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntDataComponent;
+import org.jspecify.annotations.Nullable;
 
 public class IntComponentType extends DataComponentType<Integer> {
     protected final IntReader primitiveReader;
@@ -55,11 +56,11 @@ public class IntComponentType extends DataComponentType<Integer> {
 
     @FunctionalInterface
     public interface IntDataComponentFactory extends DataComponentFactory<Integer> {
-        IntDataComponent createPrimitive(IntComponentType type, Integer value);
+        IntDataComponent createPrimitive(IntComponentType type, @Nullable Integer value);
 
         @Deprecated
         @Override
-        default DataComponent<Integer, IntComponentType> create(DataComponentType<Integer> type, Integer value) {
+        default DataComponent<Integer, IntComponentType> create(DataComponentType<Integer> type, @Nullable Integer value) {
             throw new UnsupportedOperationException("Unsupported read method! Use primitive createPrimitive!");
         }
     }

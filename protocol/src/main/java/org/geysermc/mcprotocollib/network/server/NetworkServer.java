@@ -16,6 +16,7 @@ import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
 import org.geysermc.mcprotocollib.network.session.NetworkSession;
 import org.geysermc.mcprotocollib.network.session.ServerNetworkSession;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +29,9 @@ public class NetworkServer extends AbstractServer {
     private static final Logger log = LoggerFactory.getLogger(NetworkServer.class);
 
     private final Supplier<Executor> packetHandlerExecutorFactory;
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
-    private Channel channel;
+    private @Nullable EventLoopGroup bossGroup;
+    private @Nullable EventLoopGroup workerGroup;
+    private @Nullable Channel channel;
 
     public NetworkServer(SocketAddress bindAddress, Supplier<? extends MinecraftProtocol> protocol) {
         this(bindAddress, protocol, DefaultPacketHandlerExecutor::createExecutor);
@@ -47,7 +48,7 @@ public class NetworkServer extends AbstractServer {
     }
 
     @Override
-    public void bindImpl(boolean wait, final Runnable callback) {
+    public void bindImpl(boolean wait, final @Nullable Runnable callback) {
         if (this.bossGroup != null || this.workerGroup != null || this.channel != null) {
             return;
         }
@@ -63,7 +64,7 @@ public class NetworkServer extends AbstractServer {
 
         setOptions(bootstrap);
 
-        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        CompletableFuture<@Nullable Void> handleFuture = new CompletableFuture<>();
         bootstrap.bind().addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
                 this.channel = future.channel();
@@ -123,13 +124,13 @@ public class NetworkServer extends AbstractServer {
         closeBossGroup(wait);
     }
 
-    private void closeChannel(Runnable callback, boolean wait) {
+    private void closeChannel(@Nullable Runnable callback, boolean wait) {
         if (this.channel == null) {
             return;
         }
 
         if (this.channel.isOpen()) {
-            CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+            CompletableFuture<@Nullable Void> handleFuture = new CompletableFuture<>();
             this.channel.close().addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
                     if (callback != null) {
@@ -155,7 +156,7 @@ public class NetworkServer extends AbstractServer {
             return;
         }
 
-        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        CompletableFuture<@Nullable Void> handleFuture = new CompletableFuture<>();
         this.workerGroup.shutdownGracefully().addListener(future -> {
             if (!future.isSuccess()) {
                 log.debug("Failed to close connection listener.", future.cause());
@@ -176,7 +177,7 @@ public class NetworkServer extends AbstractServer {
             return;
         }
 
-        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        CompletableFuture<@Nullable Void> handleFuture = new CompletableFuture<>();
         this.bossGroup.shutdownGracefully().addListener(future -> {
             if (!future.isSuccess()) {
                 log.debug("Failed to close connection listener.", future.cause());

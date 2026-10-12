@@ -13,8 +13,8 @@ import java.util.List;
 public class Advancement {
     private final String id;
     private final List<List<String>> requirements;
-    private final String parentId;
-    private final DisplayData displayData;
+    private final @Nullable String parentId;
+    private final @Nullable DisplayData displayData;
     private final boolean sendsTelemetryEvent;
     private final float posX;
     private final float posY;

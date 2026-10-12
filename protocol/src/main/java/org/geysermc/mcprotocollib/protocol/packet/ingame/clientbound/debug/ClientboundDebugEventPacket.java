@@ -8,13 +8,14 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugInfo;
 import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugSubscriptions;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundDebugEventPacket implements MinecraftPacket {
     private final DebugSubscriptions subscriptionType;
-    private final DebugInfo subscription;
+    private final @Nullable DebugInfo subscription;
 
     public ClientboundDebugEventPacket(ByteBuf in) {
         this.subscriptionType = DebugSubscriptions.from(MinecraftTypes.readVarInt(in));

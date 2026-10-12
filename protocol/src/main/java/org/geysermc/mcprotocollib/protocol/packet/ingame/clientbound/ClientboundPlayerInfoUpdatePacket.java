@@ -17,6 +17,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.EnumSet;
+import java.util.Objects;
 
 @Data
 @With
@@ -105,16 +106,16 @@ public class ClientboundPlayerInfoUpdatePacket implements MinecraftPacket {
                             throw new IllegalArgumentException("Cannot ADD " + entry.getProfileId() + " without a profile.");
                         }
 
-                        MinecraftTypes.writeString(out, profile.getName());
+                        MinecraftTypes.writeString(out, Objects.requireNonNull(profile.getName(), "GameProfile name required for ADD action"));
                         MinecraftTypes.writeList(out, profile.getProperties(), MinecraftTypes::writeProperty);
                     }
                     case INITIALIZE_CHAT -> {
                         out.writeBoolean(entry.getPublicKey() != null);
                         if (entry.getPublicKey() != null) {
-                            MinecraftTypes.writeUUID(out, entry.getSessionId());
+                            MinecraftTypes.writeUUID(out, Objects.requireNonNull(entry.getSessionId(), "session ID required for INITIALIZE_CHAT action"));
                             out.writeLong(entry.getExpiresAt());
                             MinecraftTypes.writeByteArray(out, entry.getPublicKey().getEncoded());
-                            MinecraftTypes.writeByteArray(out, entry.getKeySignature());
+                            MinecraftTypes.writeByteArray(out, Objects.requireNonNull(entry.getKeySignature(), "key signature required for INITIALIZE_CHAT action"));
                         }
                     }
                     case UPDATE_GAME_MODE -> MinecraftTypes.writeVarInt(out, entry.getGameMode().ordinal());

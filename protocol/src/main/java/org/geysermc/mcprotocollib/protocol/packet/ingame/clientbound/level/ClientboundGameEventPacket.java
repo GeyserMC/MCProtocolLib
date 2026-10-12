@@ -15,13 +15,14 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.notify.LimitedCraftin
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.RainStrengthValue;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.RespawnScreenValue;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.ThunderStrengthValue;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundGameEventPacket implements MinecraftPacket {
     private final GameEvent notification;
-    private final GameEventValue value;
+    private final @Nullable GameEventValue value;
 
     public ClientboundGameEventPacket(ByteBuf in) {
         this.notification = GameEvent.from(in.readUnsignedByte());

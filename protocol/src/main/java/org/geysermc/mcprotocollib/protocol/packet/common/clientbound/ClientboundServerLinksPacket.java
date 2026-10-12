@@ -12,6 +12,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.ServerLinkType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @With
@@ -45,7 +46,7 @@ public class ClientboundServerLinksPacket implements MinecraftPacket {
             if (link.knownType() != null) {
                 MinecraftTypes.writeVarInt(out, link.knownType().ordinal());
             } else {
-                MinecraftTypes.writeComponent(out, link.unknownType());
+                MinecraftTypes.writeComponent(out, Objects.requireNonNull(link.unknownType(), "server link must specify unknown type component if known type is null"));
             }
 
             MinecraftTypes.writeString(out, link.link());

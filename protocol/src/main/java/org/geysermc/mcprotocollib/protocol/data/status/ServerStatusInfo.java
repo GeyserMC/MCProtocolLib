@@ -14,6 +14,6 @@ public class ServerStatusInfo {
     private Component description;
     private @Nullable PlayerInfo playerInfo;
     private @Nullable VersionInfo versionInfo;
-    private byte[] iconPng;
+    private byte @Nullable [] iconPng;
     private boolean enforcesSecureChat;
 }

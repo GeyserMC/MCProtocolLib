@@ -18,6 +18,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.IntData
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.ObjectDataComponent;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class DataComponentTypes {
     private static final List<DataComponentType<?>> VALUES = new ArrayList<>();
 
-    public static final DataComponentType<NbtMap> CUSTOM_DATA = register(id -> new DataComponentType<>(id, "custom_data", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final DataComponentType<NbtMap> CUSTOM_DATA = register(id -> new DataComponentType<>(id, "custom_data", MinecraftTypes::readCompoundTagOrThrow, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final IntComponentType MAX_STACK_SIZE = register(id -> new IntComponentType(id, "max_stack_size", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType MAX_DAMAGE = register(id -> new IntComponentType(id, "max_damage", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType DAMAGE = register(id -> new IntComponentType(id, "damage", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
@@ -76,7 +77,7 @@ public class DataComponentTypes {
     public static final IntComponentType DYE = register(id -> new IntComponentType(id, "dye", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final IntComponentType DYED_COLOR = register(id -> new IntComponentType(id, "dyed_color", ByteBuf::readInt, ByteBuf::writeInt, IntDataComponent::new));
     public static final IntComponentType MAP_ID = register(id -> new IntComponentType(id, "map_id", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
-    public static final DataComponentType<NbtMap> MAP_DECORATIONS = register(id -> new DataComponentType<>(id, "map_decorations", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final DataComponentType<NbtMap> MAP_DECORATIONS = register(id -> new DataComponentType<>(id, "map_decorations", MinecraftTypes::readCompoundTagOrThrow, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final IntComponentType MAP_POST_PROCESSING = register(id -> new IntComponentType(id, "map_post_processing", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
     public static final DataComponentType<List<ItemStack>> CHARGED_PROJECTILES = register(id -> new DataComponentType<>(id, "charged_projectiles", listReader(MinecraftTypes::readItemStackTemplate, 1024), listWriter(MinecraftTypes::writeItemStackTemplate, 1024), ObjectDataComponent::new));
     public static final DataComponentType<List<ItemStack>> BUNDLE_CONTENTS = register(id -> new DataComponentType<>(id, "bundle_contents", listReader(MinecraftTypes::readItemStackTemplate), listWriter(MinecraftTypes::writeItemStackTemplate), ObjectDataComponent::new));
@@ -86,10 +87,10 @@ public class DataComponentTypes {
     public static final DataComponentType<WritableBookContent> WRITABLE_BOOK_CONTENT = register(id -> new DataComponentType<>(id, "writable_book_content", ItemTypes::readWritableBookContent, ItemTypes::writeWritableBookContent, ObjectDataComponent::new));
     public static final DataComponentType<WrittenBookContent> WRITTEN_BOOK_CONTENT = register(id -> new DataComponentType<>(id, "written_book_content", ItemTypes::readWrittenBookContent, ItemTypes::writeWrittenBookContent, ObjectDataComponent::new));
     public static final DataComponentType<ArmorTrim> TRIM = register(id -> new DataComponentType<>(id, "trim", ItemTypes::readArmorTrim, ItemTypes::writeArmorTrim, ObjectDataComponent::new));
-    public static final DataComponentType<NbtMap> DEBUG_STICK_STATE = register(id -> new DataComponentType<>(id, "debug_stick_state", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final DataComponentType<NbtMap> DEBUG_STICK_STATE = register(id -> new DataComponentType<>(id, "debug_stick_state", MinecraftTypes::readCompoundTagOrThrow, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final DataComponentType<TypedEntityData<EntityType>> ENTITY_DATA = register(id -> new DataComponentType<>(id, "entity_data", buf -> ItemTypes.readTypedEntityData(buf, ItemTypes::readEntityType), (buf, data) -> ItemTypes.writeTypedEntityData(buf, data, ItemTypes::writeEntityType), ObjectDataComponent::new));
-    public static final DataComponentType<NbtMap> BUCKET_ENTITY_DATA = register(id -> new DataComponentType<>(id, "bucket_entity_data", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
-    public static final DataComponentType<TypedEntityData<BlockEntityType>> BLOCK_ENTITY_DATA = register(id -> new DataComponentType<>(id, "block_entity_data", buf -> ItemTypes.readTypedEntityData(buf, ItemTypes::readBlockEntityType), (buf, data) -> ItemTypes.writeTypedEntityData(buf, data, ItemTypes::writeBlockEntityType), ObjectDataComponent::new));
+    public static final DataComponentType<NbtMap> BUCKET_ENTITY_DATA = register(id -> new DataComponentType<>(id, "bucket_entity_data", MinecraftTypes::readCompoundTagOrThrow, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final DataComponentType<TypedEntityData<BlockEntityType>> BLOCK_ENTITY_DATA = register(id -> new DataComponentType<>(id, "block_entity_data", buf -> ItemTypes.readTypedEntityData(buf, MinecraftTypes::readBlockEntityType), (buf, data) -> ItemTypes.writeTypedEntityData(buf, data, MinecraftTypes::writeBlockEntityType), ObjectDataComponent::new));
     public static final DataComponentType<Holder<Instrument>> INSTRUMENT = register(id -> new DataComponentType<>(id, "instrument", buf -> MinecraftTypes.readHolder(buf, ItemTypes::readInstrument), (buf, data) -> MinecraftTypes.writeHolder(buf, data, ItemTypes::writeInstrument), ObjectDataComponent::new));
     public static final DataComponentType<Holder<ArmorTrim.TrimMaterial>> PROVIDES_TRIM_MATERIAL = register(id -> new DataComponentType<>(id, "provides_trim_material", buf -> MinecraftTypes.readHolder(buf, ItemTypes::readTrimMaterial), (buf, data) -> MinecraftTypes.writeHolder(buf, data, ItemTypes::writeTrimMaterial), ObjectDataComponent::new));
     public static final IntComponentType OMINOUS_BOTTLE_AMPLIFIER = register(id -> new IntComponentType(id, "ominous_bottle_amplifier", MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntDataComponent::new));
@@ -108,8 +109,8 @@ public class DataComponentTypes {
     public static final DataComponentType<BlockStateProperties> BLOCK_STATE = register(id -> new DataComponentType<>(id, "block_state", ItemTypes::readBlockStateProperties, ItemTypes::writeBlockStateProperties, ObjectDataComponent::new));
     public static final DataComponentType<List<BeehiveOccupant>> BEES = register(id -> new DataComponentType<>(id, "bees", listReader(ItemTypes::readBeehiveOccupant), listWriter(ItemTypes::writeBeehiveOccupant), ObjectDataComponent::new));
     public static final DataComponentType<ItemStack> SULFUR_CUBE_CONTENT = register(id -> new DataComponentType<>(id, "sulfur_cube_content", MinecraftTypes::readItemStackTemplate, MinecraftTypes::writeItemStackTemplate, ObjectDataComponent::new));
-    public static final DataComponentType<NbtMap> LOCK = register(id -> new DataComponentType<>(id, "lock", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
-    public static final DataComponentType<NbtMap> CONTAINER_LOOT = register(id -> new DataComponentType<>(id, "container_loot", MinecraftTypes::readCompoundTag, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final DataComponentType<NbtMap> LOCK = register(id -> new DataComponentType<>(id, "lock", MinecraftTypes::readCompoundTagOrThrow, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
+    public static final DataComponentType<NbtMap> CONTAINER_LOOT = register(id -> new DataComponentType<>(id, "container_loot", MinecraftTypes::readCompoundTagOrThrow, MinecraftTypes::writeAnyTag, ObjectDataComponent::new));
     public static final DataComponentType<Sound> BREAK_SOUND = register(id -> new DataComponentType<>(id, "break_sound", MinecraftTypes::readSound, MinecraftTypes::writeSound, ObjectDataComponent::new));
     public static final DataComponentType<ResolvableInt> COMPOSTABLE = register(id -> new DataComponentType<>(id, "compostable", MinecraftTypes::readResolvableInt, MinecraftTypes::writeResolvableInt, ObjectDataComponent::new));
     public static final DataComponentType<CookingFuel> COOKING_FUEL = register(id -> new DataComponentType<>(id, "cooking_fuel", ItemTypes::readCookingFuel, ItemTypes::writeCookingFuel, ObjectDataComponent::new));
@@ -243,7 +244,7 @@ public class DataComponentTypes {
         return VALUES.get(id);
     }
 
-    public static DataComponentType<?> fromKey(Key key) {
+    public static @Nullable DataComponentType<?> fromKey(Key key) {
         return VALUES.stream().filter(component -> component.getKey().equals(key)).findFirst().orElse(null);
     }
 

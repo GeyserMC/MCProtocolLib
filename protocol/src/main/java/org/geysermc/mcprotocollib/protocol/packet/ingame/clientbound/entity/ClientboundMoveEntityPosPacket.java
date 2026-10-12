@@ -10,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @With
@@ -65,7 +66,7 @@ public class ClientboundMoveEntityPosPacket implements MinecraftPacket {
             out.writeShort((int) (this.moveY * 4096));
             out.writeShort((int) (this.moveZ * 4096));
         } else {
-            for (DeltaStep step : this.steps) {
+            for (DeltaStep step : Objects.requireNonNull(this.steps, "steps must not be null if stepCount is above 0")) {
                 MinecraftTypes.writeVarInt(out, step.ticks());
                 out.writeShort((int) (step.moveX() * 4096));
                 out.writeShort((int) (step.moveY() * 4096));

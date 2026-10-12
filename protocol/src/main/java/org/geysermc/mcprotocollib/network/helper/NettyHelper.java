@@ -179,7 +179,7 @@ public class NettyHelper {
         }
     }
 
-    public static void addProxy(ProxyInfo proxy, ChannelPipeline pipeline) {
+    public static void addProxy(@Nullable ProxyInfo proxy, ChannelPipeline pipeline) {
         if (proxy == null) {
             return;
         }

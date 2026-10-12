@@ -7,6 +7,7 @@ import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.RotationOrigin;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
@@ -18,7 +19,7 @@ public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
     private final double z;
 
     private final int targetEntityId;
-    private final RotationOrigin targetEntityOrigin;
+    private final @Nullable RotationOrigin targetEntityOrigin;
 
     public ClientboundPlayerLookAtPacket(RotationOrigin origin, double x, double y, double z) {
         this(origin, x, y, z, 0, null);

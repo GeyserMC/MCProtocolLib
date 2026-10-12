@@ -14,6 +14,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.waypoint.Vec3iWaypoin
 import org.geysermc.mcprotocollib.protocol.data.game.level.waypoint.WaypointData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.waypoint.WaypointOperation;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,7 +63,7 @@ public class ClientboundTrackedWaypointPacket implements MinecraftPacket {
             MinecraftTypes.writeUUID(out, this.waypoint.uuid());
         } else {
             out.writeBoolean(false);
-            MinecraftTypes.writeString(out, this.waypoint.id());
+            MinecraftTypes.writeString(out, Objects.requireNonNull(this.waypoint.id(), "waypoint must have a string ID if it does not have a UUID"));
         }
 
         MinecraftTypes.writeResourceLocation(out, this.waypoint.icon().style());

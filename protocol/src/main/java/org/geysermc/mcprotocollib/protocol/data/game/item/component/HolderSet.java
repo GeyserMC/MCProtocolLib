@@ -41,6 +41,7 @@ public final class HolderSet {
             return holders;
         }
 
+        assert location != null;
         return tagResolver.apply(location);
     }
 

@@ -2,6 +2,7 @@ package org.geysermc.mcprotocollib.network.event.session;
 
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.network.Session;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Called when the session is about to disconnect.
@@ -9,7 +10,7 @@ import org.geysermc.mcprotocollib.network.Session;
 public class DisconnectingEvent implements SessionEvent {
     private final Session session;
     private final Component reason;
-    private final Throwable cause;
+    private final @Nullable Throwable cause;
 
     /**
      * Creates a new DisconnectingEvent instance.
@@ -18,7 +19,7 @@ public class DisconnectingEvent implements SessionEvent {
      * @param reason Reason for the session to disconnect.
      * @param cause Throwable that caused the disconnect.
      */
-    public DisconnectingEvent(Session session, Component reason, Throwable cause) {
+    public DisconnectingEvent(Session session, Component reason, @Nullable Throwable cause) {
         this.session = session;
         this.reason = reason;
         this.cause = cause;
@@ -47,7 +48,7 @@ public class DisconnectingEvent implements SessionEvent {
      *
      * @return The Throwable responsible for the disconnect, or null if the disconnect was not caused by a Throwable.
      */
-    public Throwable getCause() {
+    public @Nullable Throwable getCause() {
         return this.cause;
     }
 

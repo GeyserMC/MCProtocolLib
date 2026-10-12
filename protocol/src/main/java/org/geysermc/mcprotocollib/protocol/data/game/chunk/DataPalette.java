@@ -9,6 +9,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.MapPalette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.Palette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPalette;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 @EqualsAndHashCode
@@ -17,11 +18,11 @@ public class DataPalette {
     private static final double LOG_2 = Math.log(2.0);
 
     private Palette palette;
-    private BitStorage storage;
+    private @Nullable BitStorage storage;
     private final PaletteType paletteType;
     private final int globalPaletteBitsPerEntry;
 
-    private DataPalette(Palette palette, BitStorage storage, PaletteType paletteType, int globalPaletteBitsPerEntry) {
+    private DataPalette(Palette palette, @Nullable BitStorage storage, PaletteType paletteType, int globalPaletteBitsPerEntry) {
         this.palette = palette;
         this.storage = storage;
         this.paletteType = paletteType;
@@ -44,7 +45,7 @@ public class DataPalette {
         return create(new SingletonPalette(initial), null, paletteType, registrySize);
     }
 
-    public static DataPalette create(Palette palette, BitStorage storage, PaletteType paletteType, int registrySize) {
+    public static DataPalette create(Palette palette, @Nullable BitStorage storage, PaletteType paletteType, int registrySize) {
         return new DataPalette(palette, storage, paletteType, calculateBitsPerEntry(registrySize));
     }
 
@@ -88,6 +89,10 @@ public class DataPalette {
     }
 
     private void resize() {
+        if (this.storage == null) {
+            return;
+        }
+
         Palette oldPalette = this.palette;
         BitStorage oldData = this.storage;
 

@@ -10,6 +10,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @With
@@ -47,13 +48,14 @@ public class ClientboundEntityPositionSyncPacket implements MinecraftPacket {
         MinecraftTypes.writeVarInt(out, this.id);
         out.writeBoolean(this.isStepped);
         if (this.isStepped) {
-            MinecraftTypes.writeList(out, this.steps, (buf, step) -> {
+            MinecraftTypes.writeList(out, Objects.requireNonNull(this.steps, "steps must not be null if stepped"), (buf, step) -> {
                 buf.writeDouble(step.position.getX());
                 buf.writeDouble(step.position.getY());
                 buf.writeDouble(step.position.getZ());
                 MinecraftTypes.writeVarInt(buf, step.tickOffset);
             });
         } else {
+            Objects.requireNonNull(this.endPosition, "endPosition must not be null if not stepped");
             out.writeDouble(this.endPosition.getX());
             out.writeDouble(this.endPosition.getY());
             out.writeDouble(this.endPosition.getZ());

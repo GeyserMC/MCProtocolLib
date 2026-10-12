@@ -17,6 +17,7 @@ import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -30,10 +31,8 @@ public class HTTPUtils {
     private HTTPUtils() {
     }
 
-    public static <T> T makeRequest(@Nullable ProxyInfo proxy, URI uri, Object input, Class<T> responseType) throws IOException {
-        if (uri == null) {
-            throw new IllegalArgumentException("URI cannot be null.");
-        }
+    public static <T> @Nullable T makeRequest(@Nullable ProxyInfo proxy, URI uri, @Nullable Object input, @Nullable Class<T> responseType) throws IOException {
+        Objects.requireNonNull(uri, "URI cannot be null.");
 
         HttpResponse response = createHttpClient(proxy)
             .execute(input == null ? new HttpRequest("GET", uri.toURL()) :

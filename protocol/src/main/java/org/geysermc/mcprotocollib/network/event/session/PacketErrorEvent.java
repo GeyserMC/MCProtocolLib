@@ -48,7 +48,7 @@ public class PacketErrorEvent implements SessionEvent {
      *
      * @return the packet class related to this packet error
      */
-    public Class<? extends Packet> getPacketClass() {
+    public @Nullable Class<? extends Packet> getPacketClass() {
         return this.packetClass;
     }
 

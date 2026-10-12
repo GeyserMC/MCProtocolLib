@@ -12,6 +12,7 @@ import org.geysermc.mcprotocollib.network.event.server.ServerListener;
 import org.geysermc.mcprotocollib.network.event.server.SessionAddedEvent;
 import org.geysermc.mcprotocollib.network.event.server.SessionRemovedEvent;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public abstract class AbstractServer implements Server {
     }
 
     @Override
-    public <T> T getGlobalFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
+    public <T extends @Nullable Object> T getGlobalFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
         Object value = this.flags.get(flag.key());
         if (value == null) {
             return defSupplier.get();
@@ -129,7 +130,7 @@ public abstract class AbstractServer implements Server {
     }
 
     @Override
-    public AbstractServer bind(boolean wait, Runnable callback) {
+    public AbstractServer bind(boolean wait, @Nullable Runnable callback) {
         this.bindImpl(wait, () -> {
             callEvent(new ServerBoundEvent(AbstractServer.this));
             if (callback != null) {
@@ -153,7 +154,7 @@ public abstract class AbstractServer implements Server {
     }
 
     @Override
-    public void close(boolean wait, Runnable callback) {
+    public void close(boolean wait, @Nullable Runnable callback) {
         this.callEvent(new ServerClosingEvent(this));
         for (Session session : this.getSessions()) {
             if (session.isConnected()) {

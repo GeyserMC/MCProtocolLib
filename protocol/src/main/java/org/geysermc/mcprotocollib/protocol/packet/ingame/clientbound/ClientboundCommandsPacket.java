@@ -21,6 +21,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.command.properties.ScoreHol
 import org.geysermc.mcprotocollib.protocol.data.game.command.properties.StringProperties;
 import org.geysermc.mcprotocollib.protocol.data.game.command.properties.TimeProperties;
 
+import java.util.Objects;
 import java.util.OptionalInt;
 
 @Data
@@ -186,14 +187,15 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
             }
 
             if (node.getType() == CommandType.LITERAL || node.getType() == CommandType.ARGUMENT) {
-                MinecraftTypes.writeString(out, node.getName());
+                MinecraftTypes.writeString(out, Objects.requireNonNull(node.getName(), "node must have a name if LITERAL or ARGUMENT"));
             }
 
             if (node.getType() == CommandType.ARGUMENT) {
-                MinecraftTypes.writeVarInt(out, node.getParser().ordinal());
+                MinecraftTypes.writeVarInt(out, Objects.requireNonNull(node.getParser(), "node must have a parser if ARGUMENT").ordinal());
+                CommandProperties nodeProperties = Objects.requireNonNull(node.getProperties(), "node must have properties if ARGUMENT");
                 switch (node.getParser()) {
                     case DOUBLE -> {
-                        DoubleProperties properties = (DoubleProperties) node.getProperties();
+                        DoubleProperties properties = (DoubleProperties) nodeProperties;
 
                         int numberFlags = 0;
                         if (properties.getMin() != -Double.MAX_VALUE) {
@@ -214,7 +216,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
                     }
                     case FLOAT -> {
-                        FloatProperties properties = (FloatProperties) node.getProperties();
+                        FloatProperties properties = (FloatProperties) nodeProperties;
 
                         int numberFlags = 0;
                         if (properties.getMin() != -Float.MAX_VALUE) {
@@ -235,7 +237,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
                     }
                     case INTEGER -> {
-                        IntegerProperties properties = (IntegerProperties) node.getProperties();
+                        IntegerProperties properties = (IntegerProperties) nodeProperties;
 
                         int numberFlags = 0;
                         if (properties.getMin() != Integer.MIN_VALUE) {
@@ -256,7 +258,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                         }
                     }
                     case LONG -> {
-                        LongProperties properties = (LongProperties) node.getProperties();
+                        LongProperties properties = (LongProperties) nodeProperties;
 
                         int numberFlags = 0;
                         if (properties.getMin() != Long.MIN_VALUE) {
@@ -276,9 +278,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
                             out.writeLong(properties.getMax());
                         }
                     }
-                    case STRING -> MinecraftTypes.writeVarInt(out, ((StringProperties) node.getProperties()).ordinal());
+                    case STRING -> MinecraftTypes.writeVarInt(out, ((StringProperties) nodeProperties).ordinal());
                     case ENTITY -> {
-                        EntityProperties properties = (EntityProperties) node.getProperties();
+                        EntityProperties properties = (EntityProperties) nodeProperties;
                         int entityFlags = 0;
                         if (properties.isSingleTarget()) {
                             entityFlags |= ENTITY_FLAG_SINGLE_TARGET;
@@ -290,9 +292,9 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
                         out.writeByte(entityFlags);
                     }
-                    case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) node.getProperties()).isAllowMultiple());
-                    case TIME -> out.writeInt(((TimeProperties) node.getProperties()).getMin());
-                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY, RESOURCE_SELECTOR -> MinecraftTypes.writeResourceLocation(out, ((ResourceProperties) node.getProperties()).getRegistryKey());
+                    case SCORE_HOLDER -> out.writeBoolean(((ScoreHolderProperties) nodeProperties).isAllowMultiple());
+                    case TIME -> out.writeInt(((TimeProperties) nodeProperties).getMin());
+                    case RESOURCE_OR_TAG, RESOURCE_OR_TAG_KEY, RESOURCE, RESOURCE_KEY, RESOURCE_SELECTOR -> MinecraftTypes.writeResourceLocation(out, ((ResourceProperties) nodeProperties).getRegistryKey());
                     default -> {
                     }
                 }

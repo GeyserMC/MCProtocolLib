@@ -5,12 +5,13 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundBundlePacket;
 import org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BundlerUnpackerDecoder extends MessageToMessageDecoder<MinecraftPacket> {
-    private List<MinecraftPacket> currentPackets;
+    private @Nullable List<MinecraftPacket> currentPackets;
 
     @Override
     protected void decode(ChannelHandlerContext ctx, MinecraftPacket packet, List<Object> out) {

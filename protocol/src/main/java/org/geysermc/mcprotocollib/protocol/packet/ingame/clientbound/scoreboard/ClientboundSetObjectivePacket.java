@@ -11,6 +11,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ObjectiveAction;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ScoreType;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 @Data
 @With
 public class ClientboundSetObjectivePacket implements MinecraftPacket {
@@ -77,8 +79,8 @@ public class ClientboundSetObjectivePacket implements MinecraftPacket {
         MinecraftTypes.writeString(out, this.name);
         out.writeByte(this.action.ordinal());
         if (this.action == ObjectiveAction.ADD || this.action == ObjectiveAction.UPDATE) {
-            MinecraftTypes.writeComponent(out, this.displayName);
-            MinecraftTypes.writeVarInt(out, this.type.ordinal());
+            MinecraftTypes.writeComponent(out, Objects.requireNonNull(this.displayName, "displayName must not be null for ADD or UPDATE actions"));
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.type, "type must not be null for ADD or UPDATE actions").ordinal());
             MinecraftTypes.writeNullable(out, this.numberFormat, MinecraftTypes::writeNumberFormat);
         }
     }
