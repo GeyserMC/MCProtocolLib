@@ -3,10 +3,10 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @AllArgsConstructor

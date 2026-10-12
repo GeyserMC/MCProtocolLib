@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -16,8 +15,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.sound.SoundCategory;
 @With
 @AllArgsConstructor
 public class ClientboundSoundPacket implements MinecraftPacket {
-    private final @NonNull Sound sound;
-    private final @NonNull SoundCategory category;
+    private final Sound sound;
+    private final SoundCategory category;
     private final double x;
     private final double y;
     private final double z;

@@ -11,8 +11,8 @@ import net.lenni0451.commons.httpclient.proxy.ProxyHandler;
 import net.lenni0451.commons.httpclient.proxy.ProxyType;
 import net.lenni0451.commons.httpclient.requests.HttpContentRequest;
 import net.lenni0451.commons.httpclient.requests.HttpRequest;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -3,8 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class ToolData {
     @AllArgsConstructor
     @Builder(toBuilder = true)
     public static class Rule {
-        private final @NonNull HolderSet blocks;
+        private final HolderSet blocks;
         private final @Nullable Float speed;
         private final @Nullable Boolean correctForDrops;
     }

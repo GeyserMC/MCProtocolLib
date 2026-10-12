@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.title;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -13,7 +12,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @With
 @AllArgsConstructor
 public class ClientboundSetTitleTextPacket implements MinecraftPacket {
-    private final @NonNull Component text;
+    private final Component text;
 
     public ClientboundSetTitleTextPacket(ByteBuf in) {
         this.text = MinecraftTypes.readComponent(in);

@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.data.game.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.data.game.command.properties.CommandProperties;
 
@@ -14,7 +13,7 @@ public class CommandNode {
     /**
      * Type of command.
      */
-    private final @NonNull CommandType type;
+    private final CommandType type;
 
     /**
      * Whether the node is executable.
@@ -29,7 +28,7 @@ public class CommandNode {
     /**
      * Child node indices.
      */
-    private final int @NonNull [] childIndices;
+    private final int [] childIndices;
 
     /**
      * Redirect index, or empty if none is set.

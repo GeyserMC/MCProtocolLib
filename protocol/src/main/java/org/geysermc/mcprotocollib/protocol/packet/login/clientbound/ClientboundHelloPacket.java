@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -17,9 +16,9 @@ import java.security.spec.X509EncodedKeySpec;
 @With
 @AllArgsConstructor
 public class ClientboundHelloPacket implements MinecraftPacket {
-    private final @NonNull String serverId;
-    private final @NonNull PublicKey publicKey;
-    private final byte @NonNull [] challenge;
+    private final String serverId;
+    private final PublicKey publicKey;
+    private final byte [] challenge;
     private final boolean shouldAuthenticate;
 
     public ClientboundHelloPacket(ByteBuf in) {

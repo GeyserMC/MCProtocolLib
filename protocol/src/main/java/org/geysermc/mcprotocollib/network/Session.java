@@ -2,8 +2,6 @@ package org.geysermc.mcprotocollib.network;
 
 import io.netty.channel.Channel;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
 import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
@@ -11,6 +9,7 @@ import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.netty.FlushHandler;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -183,7 +182,7 @@ public interface Session {
      *
      * @param packet Packet to send.
      */
-    default void send(@NonNull Packet packet) {
+    default void send(Packet packet) {
         this.send(packet, null);
     }
 
@@ -193,7 +192,7 @@ public interface Session {
      * @param packet Packet to send.
      * @param onSent Callback to run when the packet has been sent.
      */
-    void send(@NonNull Packet packet, @Nullable Runnable onSent);
+    void send(Packet packet, @Nullable Runnable onSent);
 
     /**
      * Disconnects the session.
@@ -203,7 +202,7 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @see #disconnect(String, Throwable)
      */
-    default void disconnect(@NonNull String reason) {
+    default void disconnect(String reason) {
         this.disconnect(reason, null);
     }
 
@@ -216,7 +215,7 @@ public interface Session {
      * @param cause Throwable responsible for disconnecting.
      * @see #disconnect(Component, Throwable)
      */
-    default void disconnect(@NonNull String reason, @Nullable Throwable cause) {
+    default void disconnect(String reason, @Nullable Throwable cause) {
         this.disconnect(Component.text(reason), cause);
     }
 
@@ -225,7 +224,7 @@ public interface Session {
      *
      * @param reason Reason for disconnecting.
      */
-    default void disconnect(@NonNull Component reason) {
+    default void disconnect(Component reason) {
         this.disconnect(reason, null);
     }
 
@@ -235,7 +234,7 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @param cause Throwable responsible for disconnecting.
      */
-    void disconnect(@NonNull Component reason, @Nullable Throwable cause);
+    void disconnect(Component reason, @Nullable Throwable cause);
 
     /**
      * Auto read in netty means that the server is automatically reading from the channel.

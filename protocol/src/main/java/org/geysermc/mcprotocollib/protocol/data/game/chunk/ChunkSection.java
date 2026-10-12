@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 @Data
@@ -18,9 +17,9 @@ public class ChunkSection {
 
     private int blockCount;
     private int fluidCount;
-    private @NonNull DataPalette blockData;
+    private DataPalette blockData;
     @Getter
-    private @NonNull DataPalette biomeData;
+    private DataPalette biomeData;
 
     public ChunkSection(int initialBlockState, int blockStateRegistrySize, int initialBiome, int biomeRegistrySize) {
         this(0, 0, DataPalette.createForBlockState(initialBlockState, blockStateRegistrySize), DataPalette.createForBiome(initialBiome, biomeRegistrySize));

@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.metadata;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.type.ObjectEntityMetadata;
 
 import java.util.Objects;
@@ -12,7 +11,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public abstract class EntityMetadata<V, T extends MetadataType<V>> {
     protected final int id;
-    protected final @NonNull T type;
+    protected final T type;
 
     /**
      * May be null depending on type

@@ -7,7 +7,7 @@ import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With

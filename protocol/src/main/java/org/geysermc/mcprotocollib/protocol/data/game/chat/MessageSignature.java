@@ -3,8 +3,8 @@ package org.geysermc.mcprotocollib.protocol.data.game.chat;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @AllArgsConstructor

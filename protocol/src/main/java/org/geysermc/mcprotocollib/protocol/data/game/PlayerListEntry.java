@@ -2,11 +2,10 @@ package org.geysermc.mcprotocollib.protocol.data.game;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.auth.GameProfile;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
+import org.jspecify.annotations.Nullable;
 
 import java.security.PublicKey;
 import java.util.UUID;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class PlayerListEntry {
-    private final @NonNull UUID profileId;
+    private final UUID profileId;
     private @Nullable GameProfile profile;
     private boolean listed;
     private int latency;

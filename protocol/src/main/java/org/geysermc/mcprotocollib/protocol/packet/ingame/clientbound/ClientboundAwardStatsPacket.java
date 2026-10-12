@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -26,7 +25,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.statistic.UseItemStatistic;
 @With
 @AllArgsConstructor
 public class ClientboundAwardStatsPacket implements MinecraftPacket {
-    private final @NonNull Object2IntMap<Statistic> statistics = new Object2IntOpenHashMap<>();
+    private final Object2IntMap<Statistic> statistics = new Object2IntOpenHashMap<>();
 
     public ClientboundAwardStatsPacket(ByteBuf in) {
         int length = MinecraftTypes.readVarInt(in);

@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
@@ -57,10 +56,10 @@ import java.util.Objects;
  */
 @AllArgsConstructor
 public class ClientListener extends SessionAdapter {
-    private final @NonNull HandshakeIntent handshakeIntent;
+    private final HandshakeIntent handshakeIntent;
     private final boolean shouldValidateDecompression;
 
-    public ClientListener(@NonNull HandshakeIntent handshakeIntent) {
+    public ClientListener(HandshakeIntent handshakeIntent) {
         this.handshakeIntent = handshakeIntent;
         this.shouldValidateDecompression = false;
     }

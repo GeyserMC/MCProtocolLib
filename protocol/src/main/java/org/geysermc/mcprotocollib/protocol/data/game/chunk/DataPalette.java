@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.data.game.chunk;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.ToString;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.GlobalPalette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.ListPalette;
@@ -17,12 +16,12 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPale
 public class DataPalette {
     private static final double LOG_2 = Math.log(2.0);
 
-    private @NonNull Palette palette;
+    private Palette palette;
     private BitStorage storage;
     private final PaletteType paletteType;
     private final int globalPaletteBitsPerEntry;
 
-    private DataPalette(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int globalPaletteBitsPerEntry) {
+    private DataPalette(Palette palette, BitStorage storage, PaletteType paletteType, int globalPaletteBitsPerEntry) {
         this.palette = palette;
         this.storage = storage;
         this.paletteType = paletteType;
@@ -45,7 +44,7 @@ public class DataPalette {
         return create(new SingletonPalette(initial), null, paletteType, registrySize);
     }
 
-    public static DataPalette create(@NonNull Palette palette, BitStorage storage, PaletteType paletteType, int registrySize) {
+    public static DataPalette create(Palette palette, BitStorage storage, PaletteType paletteType, int registrySize) {
         return new DataPalette(palette, storage, paletteType, calculateBitsPerEntry(registrySize));
     }
 

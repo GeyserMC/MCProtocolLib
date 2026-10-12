@@ -3,9 +3,7 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -29,6 +27,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.NoteBlock
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.NoteBlockValueType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PistonValue;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PistonValueType;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int DECORATED_POT = 1273;
     private static final Logger log = LoggerFactory.getLogger(ClientboundBlockEventPacket.class);
 
-    private final @NonNull Vector3i position;
+    private final Vector3i position;
     private final int rawType;
     private final int rawValue;
     private @Nullable BlockValueType type;

@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.nbt.NbtMap;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -22,10 +21,10 @@ import java.util.Map;
 public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final byte @NonNull [] chunkData;
-    private final @NonNull Map<HeightmapTypes, long[]> heightMaps;
-    private final @NonNull BlockEntityInfo @NonNull [] blockEntities;
-    private final @NonNull LightUpdateData lightData;
+    private final byte [] chunkData;
+    private final Map<HeightmapTypes, long[]> heightMaps;
+    private final BlockEntityInfo [] blockEntities;
+    private final LightUpdateData lightData;
 
     public ClientboundLevelChunkWithLightPacket(ByteBuf in) {
         this.x = in.readInt();

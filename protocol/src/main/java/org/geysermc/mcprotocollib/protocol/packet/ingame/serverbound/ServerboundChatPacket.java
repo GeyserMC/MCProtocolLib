@@ -3,11 +3,10 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
+import org.jspecify.annotations.Nullable;
 
 import java.util.BitSet;
 
@@ -15,7 +14,7 @@ import java.util.BitSet;
 @With
 @AllArgsConstructor
 public class ServerboundChatPacket implements MinecraftPacket {
-    private final @NonNull String message;
+    private final String message;
     private final long timeStamp;
     private final long salt;
     private final byte @Nullable [] signature;

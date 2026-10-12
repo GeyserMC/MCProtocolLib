@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.common.serverbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -16,8 +15,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ServerboundResourcePackPacket implements MinecraftPacket {
 
-    private final @NonNull UUID id;
-    private final @NonNull ResourcePackStatus status;
+    private final UUID id;
+    private final ResourcePackStatus status;
 
     public ServerboundResourcePackPacket(ByteBuf in) {
         this.id = MinecraftTypes.readUUID(in);

@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

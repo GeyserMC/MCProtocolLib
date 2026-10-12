@@ -3,7 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.With;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With

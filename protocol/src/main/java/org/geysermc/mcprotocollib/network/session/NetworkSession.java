@@ -5,8 +5,6 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.Session;
@@ -20,6 +18,7 @@ import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +52,9 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     private volatile Component delayedDisconnect;
 
     public NetworkSession(
-        @NonNull SocketAddress remoteAddress,
-        @NonNull MinecraftProtocol protocol,
-        @NonNull Executor packetHandlerExecutor
+        SocketAddress remoteAddress,
+        MinecraftProtocol protocol,
+        Executor packetHandlerExecutor
     ) {
         this.remoteAddress = remoteAddress;
         this.protocol = protocol;
@@ -185,7 +184,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public void send(@NonNull Packet packet, @Nullable Runnable onSent) {
+    public void send(Packet packet, @Nullable Runnable onSent) {
         if (this.isConnected()) {
             this.flushQueue();
             this.sendPacket(packet, onSent);
@@ -194,7 +193,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
         }
     }
 
-    private void sendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
+    private void sendPacket(Packet packet, @Nullable Runnable onSent) {
         if (this.channel.eventLoop().inEventLoop()) {
             this.doSendPacket(packet, onSent);
         } else {
@@ -202,7 +201,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
         }
     }
 
-    private void doSendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
+    private void doSendPacket(Packet packet, @Nullable Runnable onSent) {
         PacketSendingEvent sendingEvent = new PacketSendingEvent(this, packet);
         this.callEvent(sendingEvent);
 
@@ -227,7 +226,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public void disconnect(@NonNull Component reason, @Nullable Throwable cause) {
+    public void disconnect(Component reason, @Nullable Throwable cause) {
         if (this.channel == null) {
             this.delayedDisconnect = reason;
         }

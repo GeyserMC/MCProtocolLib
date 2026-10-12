@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -16,10 +15,10 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
     private final int transactionId;
     private final int start;
     private final int length;
-    private final @NonNull String @NonNull [] matches;
-    private final Component @NonNull [] tooltips;
+    private final String [] matches;
+    private final Component [] tooltips;
 
-    public ClientboundCommandSuggestionsPacket(int transactionId, int start, int length, @NonNull String @NonNull [] matches, Component @NonNull [] tooltips) {
+    public ClientboundCommandSuggestionsPacket(int transactionId, int start, int length, String [] matches, Component [] tooltips) {
         if (tooltips.length != matches.length) {
             throw new IllegalArgumentException("Length of matches and tooltips must be equal.");
         }

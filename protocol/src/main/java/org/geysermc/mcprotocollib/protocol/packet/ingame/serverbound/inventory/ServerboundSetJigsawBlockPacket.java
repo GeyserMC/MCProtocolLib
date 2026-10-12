@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.cloudburstmc.math.vector.Vector3i;
@@ -14,12 +13,12 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @With
 @AllArgsConstructor
 public class ServerboundSetJigsawBlockPacket implements MinecraftPacket {
-    private final @NonNull Vector3i position;
-    private final @NonNull Key name;
-    private final @NonNull Key target;
-    private final @NonNull Key pool;
-    private final @NonNull String finalState;
-    private final @NonNull String jointType;
+    private final Vector3i position;
+    private final Key name;
+    private final Key target;
+    private final Key pool;
+    private final String finalState;
+    private final String jointType;
     private final int selectionPriority;
     private final int placementPriority;
 

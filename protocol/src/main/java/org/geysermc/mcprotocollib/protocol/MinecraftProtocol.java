@@ -1,9 +1,7 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.mcprotocollib.auth.GameProfile;
@@ -19,6 +17,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.handshake.HandshakeIntent;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +105,7 @@ public class MinecraftProtocol extends PacketProtocol {
      *
      * @param username Username to use.
      */
-    public MinecraftProtocol(@NonNull String username) {
+    public MinecraftProtocol(String username) {
         this(new GameProfile(UUID.randomUUID(), username), null);
     }
 
@@ -116,7 +115,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param codec The packet codec to use.
      * @param username Username to use.
      */
-    public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull String username) {
+    public MinecraftProtocol(PacketCodec codec, String username) {
         this(codec, new GameProfile(UUID.randomUUID(), username), null);
     }
 
@@ -126,7 +125,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(@NonNull GameProfile profile, String accessToken) {
+    public MinecraftProtocol(GameProfile profile, String accessToken) {
         this(MinecraftCodec.CODEC, profile, accessToken);
     }
 
@@ -137,7 +136,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull GameProfile profile, String accessToken) {
+    public MinecraftProtocol(PacketCodec codec, GameProfile profile, String accessToken) {
         this.codec = codec;
         this.handshakeIntent = HandshakeIntent.LOGIN;
         this.profile = profile;

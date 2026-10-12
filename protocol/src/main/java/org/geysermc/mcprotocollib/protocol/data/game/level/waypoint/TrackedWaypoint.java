@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.waypoint;
 
 import net.kyori.adventure.key.Key;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;

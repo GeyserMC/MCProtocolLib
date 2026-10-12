@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -13,7 +12,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.particle.Particle;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.BuiltinSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.CustomSound;
 import org.geysermc.mcprotocollib.protocol.data.game.level.sound.Sound;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
@@ -23,9 +22,9 @@ public class ClientboundExplodePacket implements MinecraftPacket {
     private final float radius;
     private final int blockCount;
     private final @Nullable Vector3d playerKnockback;
-    private final @NonNull Particle explosionParticle;
-    private final @NonNull Sound explosionSound;
-    private final @NonNull WeightedList<BlockParticleInfo> blockParticles;
+    private final Particle explosionParticle;
+    private final Sound explosionSound;
+    private final WeightedList<BlockParticleInfo> blockParticles;
     private final boolean playSound;
 
     public ClientboundExplodePacket(ByteBuf in) {

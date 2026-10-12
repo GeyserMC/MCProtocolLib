@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.common.serverbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -13,8 +12,8 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @With
 @AllArgsConstructor
 public class ServerboundCustomPayloadPacket implements MinecraftPacket {
-    private final @NonNull Key channel;
-    private final byte @NonNull [] data;
+    private final Key channel;
+    private final byte [] data;
 
     public ServerboundCustomPayloadPacket(ByteBuf in) {
         this.channel = MinecraftTypes.readResourceLocation(in);

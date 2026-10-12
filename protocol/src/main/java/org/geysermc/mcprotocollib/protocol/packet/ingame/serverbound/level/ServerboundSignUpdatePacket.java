@@ -2,24 +2,22 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.level;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Data
 @With
 public class ServerboundSignUpdatePacket implements MinecraftPacket {
-    private final @NonNull Vector3i position;
-    private final @NonNull List<String> lines;
+    private final Vector3i position;
+    private final List<String> lines;
     private final boolean isFrontText;
 
-    public ServerboundSignUpdatePacket(@NonNull Vector3i position, @NonNull List<String> lines, boolean isFrontText) {
+    public ServerboundSignUpdatePacket(Vector3i position, List<String> lines, boolean isFrontText) {
         if (lines.size() != 4) {
             throw new IllegalArgumentException("Lines must contain exactly 4 strings.");
         }

@@ -4,16 +4,15 @@ import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.CollisionRule;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.NameTagVisibility;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.TeamAction;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.TeamColor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -21,8 +20,8 @@ import java.util.Arrays;
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
-    private final @NonNull String teamName;
-    private final @NonNull TeamAction action;
+    private final String teamName;
+    private final TeamAction action;
 
     private final Component displayName;
     private final Component playerPrefix;
@@ -35,7 +34,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
 
     private final String[] players;
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName) {
+    public ClientboundSetPlayerTeamPacket(String teamName) {
         this.teamName = teamName;
         this.action = TeamAction.REMOVE;
 
@@ -51,9 +50,9 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = null;
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component playerPrefix, @NonNull Component playerSuffix,
-                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @Nullable TeamColor color) {
+    public ClientboundSetPlayerTeamPacket(String teamName, Component displayName, Component playerPrefix, Component playerSuffix,
+                                          boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility,
+                                          CollisionRule collisionRule, @Nullable TeamColor color) {
         this.teamName = teamName;
         this.action = TeamAction.UPDATE;
 
@@ -69,7 +68,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = null;
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull TeamAction action, @NonNull String[] players) {
+    public ClientboundSetPlayerTeamPacket(String teamName, TeamAction action, String[] players) {
         if (action != TeamAction.ADD_PLAYER && action != TeamAction.REMOVE_PLAYER) {
             throw new IllegalArgumentException("(name, action, players) constructor only valid for adding and removing players.");
         }
@@ -89,9 +88,9 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component playerPrefix, @NonNull Component playerSuffix,
-                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @Nullable TeamColor color, @NonNull String[] players) {
+    public ClientboundSetPlayerTeamPacket(String teamName, Component displayName, Component playerPrefix, Component playerSuffix,
+                                          boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility,
+                                          CollisionRule collisionRule, @Nullable TeamColor color, String[] players) {
         this.teamName = teamName;
         this.action = TeamAction.CREATE;
 

@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public enum Animation {
     WAKE_UP,

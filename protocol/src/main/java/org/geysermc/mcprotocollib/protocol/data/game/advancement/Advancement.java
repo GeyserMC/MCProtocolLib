@@ -2,48 +2,47 @@ package org.geysermc.mcprotocollib.protocol.data.game.advancement;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class Advancement {
-    private final @NonNull String id;
-    private final @NonNull List<List<String>> requirements;
+    private final String id;
+    private final List<List<String>> requirements;
     private final String parentId;
     private final DisplayData displayData;
     private final boolean sendsTelemetryEvent;
     private final float posX;
     private final float posY;
 
-    public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, boolean sendsTelemetryEvent) {
+    public Advancement(String id, List<List<String>> requirements, boolean sendsTelemetryEvent) {
         this(id, requirements, null, null, sendsTelemetryEvent, 0.0F, 0.0F);
     }
 
-    public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, String parentId, boolean sendsTelemetryEvent) {
+    public Advancement(String id, List<List<String>> requirements, String parentId, boolean sendsTelemetryEvent) {
         this(id, requirements, parentId, null, sendsTelemetryEvent, 0.0F, 0.0F);
     }
 
-    public Advancement(@NonNull String id, @NonNull List<List<String>> requirements, DisplayData displayData, boolean sendsTelemetryEvent) {
+    public Advancement(String id, List<List<String>> requirements, DisplayData displayData, boolean sendsTelemetryEvent) {
         this(id, requirements, null, displayData, sendsTelemetryEvent, 0.0F, 0.0F);
     }
 
     @Data
     @AllArgsConstructor
     public static class DisplayData {
-        private final @NonNull Component title;
-        private final @NonNull Component description;
-        private final @NonNull ItemStack icon;
-        private final @NonNull AdvancementType advancementType;
+        private final Component title;
+        private final Component description;
+        private final ItemStack icon;
+        private final AdvancementType advancementType;
         private final boolean showToast;
         private final boolean hidden;
         private final @Nullable String backgroundTexture;
 
-        public DisplayData(@NonNull Component title, @NonNull Component description, @NonNull ItemStack icon, @NonNull AdvancementType advancementType,
+        public DisplayData(Component title, Component description, ItemStack icon, AdvancementType advancementType,
                            boolean showToast, boolean hidden) {
             this(title, description, icon, advancementType, showToast, hidden, null);
         }

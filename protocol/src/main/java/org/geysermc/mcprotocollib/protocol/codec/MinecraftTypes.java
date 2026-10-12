@@ -10,8 +10,6 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.math.imaginary.Quaternionf;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.cloudburstmc.math.vector.Vector3f;
@@ -39,6 +37,24 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.MapPalette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.Palette;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPalette;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBeeInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBrainDump;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBreezeInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugEntityBlockIntersection;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGameEventInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGameEventListenerInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGoalInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugHiveInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugNeighborUpdateInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugOrientationInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugPathInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugPoiInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugRaidsInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugStructuresInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugSubscriptions;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugVillageSectionsInfo;
+import org.geysermc.mcprotocollib.protocol.data.game.debug.DedicatedServerTickTimeInfo;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EntityEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
@@ -77,9 +93,9 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.LevelEventType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.event.UnknownLevelEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.BlockParticleData;
+import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ColorParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustColorTransitionParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.DustParticleData;
-import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ColorParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.GeyserBaseParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.GeyserParticleData;
 import org.geysermc.mcprotocollib.protocol.data.game.level.particle.ItemParticleData;
@@ -122,25 +138,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.TagSlot
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.WithAnyPotionSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.recipe.display.slot.WithRemainderSlotDisplay;
 import org.geysermc.mcprotocollib.protocol.data.game.statistic.StatisticCategory;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBeeInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBrainDump;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugBreezeInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugEntityBlockIntersection;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGameEventInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGameEventListenerInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugGoalInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugHiveInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugNeighborUpdateInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugOrientationInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugPathInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugPoiInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugRaidsInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugStructuresInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugSubscriptions;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugVillageSectionsInfo;
-import org.geysermc.mcprotocollib.protocol.data.game.debug.DedicatedServerTickTimeInfo;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -435,7 +433,6 @@ public class MinecraftTypes {
         return readAnyTag(buf, NbtType.COMPOUND);
     }
 
-    @NonNull
     public static NbtMap readCompoundTagOrThrow(ByteBuf buf) {
         NbtMap tag = readCompoundTag(buf);
         if (tag == null) {
@@ -532,12 +529,11 @@ public class MinecraftTypes {
         }
     }
 
-    @NotNull
     public static ItemStack readItemStack(ByteBuf buf) {
         return MinecraftTypes.readOptionalItemStack(buf);
     }
 
-    public static void writeItemStack(ByteBuf buf, @NotNull ItemStack item) {
+    public static void writeItemStack(ByteBuf buf, ItemStack item) {
         MinecraftTypes.writeOptionalItemStack(buf, item);
     }
 

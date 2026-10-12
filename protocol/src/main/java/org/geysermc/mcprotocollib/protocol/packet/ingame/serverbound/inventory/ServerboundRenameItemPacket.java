@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -12,7 +11,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @With
 @AllArgsConstructor
 public class ServerboundRenameItemPacket implements MinecraftPacket {
-    private final @NonNull String name;
+    private final String name;
 
     public ServerboundRenameItemPacket(ByteBuf in) {
         this.name = MinecraftTypes.readString(in);

@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -13,7 +12,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @AllArgsConstructor
 public class ClientboundSetPassengersPacket implements MinecraftPacket {
     private final int entityId;
-    private final int @NonNull [] passengerIds;
+    private final int [] passengerIds;
 
     public ClientboundSetPassengersPacket(ByteBuf in) {
         this.entityId = MinecraftTypes.readVarInt(in);

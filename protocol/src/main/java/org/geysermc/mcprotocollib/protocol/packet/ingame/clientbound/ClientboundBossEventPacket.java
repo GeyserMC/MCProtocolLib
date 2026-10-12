@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -19,8 +18,8 @@ import java.util.UUID;
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundBossEventPacket implements MinecraftPacket {
-    private final @NonNull UUID uuid;
-    private final @NonNull BossBarAction action;
+    private final UUID uuid;
+    private final BossBarAction action;
 
     private final Component title;
 
@@ -33,28 +32,28 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
     private final boolean playEndMusic;
     private final boolean showFog;
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid) {
+    public ClientboundBossEventPacket(UUID uuid) {
         this(uuid, BossBarAction.REMOVE, null, 0f, null, null, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull Component title) {
+    public ClientboundBossEventPacket(UUID uuid, Component title) {
         this(uuid, BossBarAction.UPDATE_TITLE, title, 0f, null, null, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, float health) {
+    public ClientboundBossEventPacket(UUID uuid, float health) {
         this(uuid, BossBarAction.UPDATE_HEALTH, null, health, null, null, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull BossBarColor color, @NonNull BossBarDivision division) {
+    public ClientboundBossEventPacket(UUID uuid, BossBarColor color, BossBarDivision division) {
         this(uuid, BossBarAction.UPDATE_STYLE, null, 0f, color, division, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, boolean darkenSky, boolean playEndMusic, boolean showFog) {
+    public ClientboundBossEventPacket(UUID uuid, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this(uuid, BossBarAction.UPDATE_FLAGS, null, 0f, null, null, darkenSky, playEndMusic, showFog);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull Component title, float health, @NonNull BossBarColor color,
-                                      @NonNull BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
+    public ClientboundBossEventPacket(UUID uuid, Component title, float health, BossBarColor color,
+                                      BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this.uuid = uuid;
         this.action = BossBarAction.ADD;
 

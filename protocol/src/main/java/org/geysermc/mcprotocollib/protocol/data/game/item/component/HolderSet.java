@@ -3,9 +3,8 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Data;
-import lombok.NonNull;
 import net.kyori.adventure.key.Key;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Function;
 
@@ -21,12 +20,12 @@ public final class HolderSet {
     private final @Nullable Key location;
     private final @Nullable IntList holders;
 
-    public HolderSet(@NonNull IntList holders) {
+    public HolderSet(IntList holders) {
         this.location = null;
         this.holders = new IntArrayList(holders);
     }
 
-    public HolderSet(@NonNull Key location) {
+    public HolderSet(Key location) {
         this.location = location;
         this.holders = null;
     }

@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -19,11 +18,11 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
     private final int mapId;
     private final byte scale;
     private final boolean locked;
-    private final @NonNull MapIcon[] icons;
+    private final MapIcon[] icons;
 
     private final MapData data;
 
-    public ClientboundMapItemDataPacket(int mapId, byte scale, boolean locked, @NonNull MapIcon[] icons) {
+    public ClientboundMapItemDataPacket(int mapId, byte scale, boolean locked, MapIcon[] icons) {
         this(mapId, scale, locked, icons, null);
     }
 

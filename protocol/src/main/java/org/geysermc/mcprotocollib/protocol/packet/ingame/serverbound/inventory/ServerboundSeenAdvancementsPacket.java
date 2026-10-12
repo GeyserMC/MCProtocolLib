@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound.inventory;
 import io.netty.buffer.ByteBuf;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.ToString;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -15,7 +14,7 @@ import java.util.function.Consumer;
 @EqualsAndHashCode
 public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
     @Getter
-    private final @NonNull AdvancementTabAction action;
+    private final AdvancementTabAction action;
     private final String tabId;
 
     public ServerboundSeenAdvancementsPacket() {
@@ -23,7 +22,7 @@ public class ServerboundSeenAdvancementsPacket implements MinecraftPacket {
         this.tabId = null;
     }
 
-    public ServerboundSeenAdvancementsPacket(@NonNull String tabId) {
+    public ServerboundSeenAdvancementsPacket(String tabId) {
         this.action = AdvancementTabAction.OPENED_TAB;
         this.tabId = tabId;
     }

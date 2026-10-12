@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.scoreboard
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -13,8 +12,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.ScoreboardPositi
 @With
 @AllArgsConstructor
 public class ClientboundSetDisplayObjectivePacket implements MinecraftPacket {
-    private final @NonNull ScoreboardPosition position;
-    private final @NonNull String name;
+    private final ScoreboardPosition position;
+    private final String name;
 
     public ClientboundSetDisplayObjectivePacket(ByteBuf in) {
         this.position = ScoreboardPosition.from(MinecraftTypes.readVarInt(in));

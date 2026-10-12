@@ -1,7 +1,6 @@
 package org.geysermc.mcprotocollib.network.session;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.ServerSession;
 import org.geysermc.mcprotocollib.network.server.NetworkServer;
@@ -17,10 +16,10 @@ public class ServerNetworkSession extends NetworkSession implements ServerSessio
     private final NetworkServer server;
 
     public ServerNetworkSession(
-        @NonNull SocketAddress remoteAddress,
-        @NonNull MinecraftProtocol protocol,
-        @NonNull NetworkServer server,
-        @NonNull Executor packetHandlerExecutor
+        SocketAddress remoteAddress,
+        MinecraftProtocol protocol,
+        NetworkServer server,
+        Executor packetHandlerExecutor
     ) {
         super(remoteAddress, protocol, packetHandlerExecutor);
         this.server = server;

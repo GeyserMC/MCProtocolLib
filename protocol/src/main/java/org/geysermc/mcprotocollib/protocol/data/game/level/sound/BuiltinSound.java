@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.data.game.level.sound;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 
 @Getter
 @AllArgsConstructor
@@ -1999,7 +1998,7 @@ public enum BuiltinSound implements Sound {
     BLOCK_RED_SHRUB_BREAK("block.red_shrub.break"),
     BLOCK_RED_SHRUB_PLACE("block.red_shrub.place");
 
-    private final @NonNull String name;
+    private final String name;
 
     @Override
     public boolean isNewSystem() {

@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -26,16 +25,16 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     private static final int FLAG_HIDDEN = 0x04;
 
     private final boolean reset;
-    private final @NonNull Advancement[] advancements;
-    private final @NonNull String[] removedAdvancements;
-    private final @NonNull Map<String, Map<String, Long>> progress;
+    private final Advancement[] advancements;
+    private final String[] removedAdvancements;
+    private final Map<String, Map<String, Long>> progress;
     private final boolean showAdvancements;
 
-    public Map<String, Long> getProgress(@NonNull String advancementId) {
+    public Map<String, Long> getProgress(String advancementId) {
         return this.progress.get(advancementId);
     }
 
-    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
+    public long getAchievedDate(String advancementId, String criterionId) {
         Map<String, Long> progress = this.getProgress(advancementId);
         if (progress == null || !progress.containsKey(criterionId)) {
             return -1;

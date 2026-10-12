@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -40,7 +39,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     private static final int ENTITY_FLAG_SINGLE_TARGET = 0x01;
     private static final int ENTITY_FLAG_PLAYERS_ONLY = 0x02;
 
-    private final @NonNull CommandNode[] nodes;
+    private final CommandNode[] nodes;
     private final int firstNodeIndex;
 
     public ClientboundCommandsPacket(ByteBuf in) {
