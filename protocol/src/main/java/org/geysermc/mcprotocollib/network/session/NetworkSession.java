@@ -49,8 +49,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     private @Nullable Channel channel;
     protected boolean disconnected = false;
-    @Nullable
-    private volatile Component delayedDisconnect;
+    private volatile @Nullable Component delayedDisconnect;
 
     public NetworkSession(
         SocketAddress remoteAddress,

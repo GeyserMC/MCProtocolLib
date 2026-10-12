@@ -9,8 +9,7 @@ public enum Animation {
 
     private static final Animation[] VALUES = values();
 
-    @Nullable
-    public static Animation from(int id) {
+    public static @Nullable Animation from(int id) {
         return id >= 0 && id < VALUES.length ? VALUES[id] : null;
     }
 }

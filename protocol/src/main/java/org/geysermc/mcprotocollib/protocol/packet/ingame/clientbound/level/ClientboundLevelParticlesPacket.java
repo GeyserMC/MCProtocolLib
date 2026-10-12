@@ -82,8 +82,7 @@ public class ClientboundLevelParticlesPacket implements MinecraftPacket {
 
         private static final RandomizationType[] VALUES = values();
 
-        @Nullable
-        public static RandomizationType from(int id) {
+        public static @Nullable RandomizationType from(int id) {
             return id >= 0 && id < VALUES.length ? VALUES[id] : null;
         }
     }

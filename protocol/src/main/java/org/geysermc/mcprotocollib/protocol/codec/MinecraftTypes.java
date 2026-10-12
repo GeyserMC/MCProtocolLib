@@ -242,8 +242,7 @@ public class MinecraftTypes {
         buf.writeCharSequence(value, StandardCharsets.UTF_8);
     }
 
-    @Nullable
-    public static <T> T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
+    public static <T> @Nullable T readNullable(ByteBuf buf, Function<ByteBuf, T> ifPresent) {
         if (buf.readBoolean()) {
             return ifPresent.apply(buf);
         } else {
@@ -429,8 +428,7 @@ public class MinecraftTypes {
         }
     }
 
-    @Nullable
-    public static NbtMap readCompoundTag(ByteBuf buf) {
+    public static @Nullable NbtMap readCompoundTag(ByteBuf buf) {
         return readTag(buf, NbtType.COMPOUND);
     }
 
@@ -566,8 +564,7 @@ public class MinecraftTypes {
         MinecraftTypes.writeDataComponentPatch(buf, template.getDataComponentsPatch(), false);
     }
 
-    @Nullable
-    public static DataComponents readDataComponentPatch(ByteBuf buf, boolean untrusted) {
+    public static @Nullable DataComponents readDataComponentPatch(ByteBuf buf, boolean untrusted) {
         int nonNullComponents = MinecraftTypes.readVarInt(buf);
         int nullComponents = MinecraftTypes.readVarInt(buf);
         if (nonNullComponents == 0 && nullComponents == 0) {

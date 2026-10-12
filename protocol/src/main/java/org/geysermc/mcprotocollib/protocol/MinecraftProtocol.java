@@ -38,15 +38,13 @@ public class MinecraftProtocol extends PacketProtocol {
      * Lazily loaded once when {@link #newServerSession(Server, Session)} is invoked,
      * if {@link #isUseDefaultListeners()} is true.
      */
-    @Nullable
-    private static NbtMap DEFAULT_NETWORK_CODEC;
+    private static @Nullable NbtMap DEFAULT_NETWORK_CODEC;
     /**
      * The tags sent from the server to the client during {@link ProtocolState#CONFIGURATION}.
      * Lazily loaded once when {@link #newServerSession(Server, Session)} is invoked,
      * if {@link #isUseDefaultListeners()} is true.
      */
-    @Nullable
-    private static NbtMap DEFAULT_NETWORK_TAGS;
+    private static @Nullable NbtMap DEFAULT_NETWORK_TAGS;
 
     /**
      * The codec used for the Minecraft protocol.

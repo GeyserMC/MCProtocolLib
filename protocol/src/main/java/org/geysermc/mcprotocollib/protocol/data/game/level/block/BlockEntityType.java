@@ -55,8 +55,7 @@ public enum BlockEntityType {
 
     private static final BlockEntityType[] VALUES = values();
 
-    @Nullable
-    public static BlockEntityType from(int id) {
+    public static @Nullable BlockEntityType from(int id) {
         if (id >= 0 && id < VALUES.length) {
             return VALUES[id];
         } else {

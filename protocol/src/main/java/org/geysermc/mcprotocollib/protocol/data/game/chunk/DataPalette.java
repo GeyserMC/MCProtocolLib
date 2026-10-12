@@ -11,6 +11,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.PaletteType;
 import org.geysermc.mcprotocollib.protocol.data.game.chunk.palette.SingletonPalette;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 @Getter
 @EqualsAndHashCode
 @ToString
@@ -89,14 +91,10 @@ public class DataPalette {
     }
 
     private void resize() {
-        if (this.storage == null) {
-            return;
-        }
-
         Palette oldPalette = this.palette;
         BitStorage oldData = this.storage;
 
-        int bitsPerEntry = sanitizeBitsPerEntry(oldPalette instanceof SingletonPalette ? 1 : oldData.getBitsPerEntry() + 1);
+        int bitsPerEntry = sanitizeBitsPerEntry(oldPalette instanceof SingletonPalette ? 1 : Objects.requireNonNull(oldData, "must have a BitStorage if not singleton palette").getBitsPerEntry() + 1);
         this.palette = createPalette(bitsPerEntry, paletteType);
         this.storage = new BitStorage(bitsPerEntry, paletteType.getStorageSize());
 
