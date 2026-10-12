@@ -28,7 +28,6 @@ public enum BlockEntityType {
     END_GATEWAY,
     COMMAND_BLOCK,
     SHULKER_BOX,
-    BED,
     CONDUIT,
     BARREL,
     SMOKER,
@@ -51,7 +50,8 @@ public enum BlockEntityType {
     VAULT,
     TEST_BLOCK,
     TEST_INSTANCE_BLOCK,
-    COPPER_GOLEM_STATUE;
+    COPPER_GOLEM_STATUE,
+    POTENT_SULFUR;
 
     private static final BlockEntityType[] VALUES = values();
 

@@ -22,6 +22,7 @@ import org.geysermc.mcprotocollib.protocol.data.status.VersionInfo;
 import org.geysermc.mcprotocollib.protocol.data.status.handler.ServerInfoBuilder;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundKeepAlivePacket;
+import org.geysermc.mcprotocollib.protocol.packet.common.clientbound.ClientboundUpdateTagsPacket;
 import org.geysermc.mcprotocollib.protocol.packet.common.serverbound.ServerboundKeepAlivePacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundFinishConfigurationPacket;
 import org.geysermc.mcprotocollib.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
@@ -48,6 +49,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -76,6 +78,7 @@ public class ServerListener extends SessionAdapter {
     }
 
     private final NbtMap networkCodec;
+    private final NbtMap networkTags;
 
     private final byte[] challenge = new byte[4];
     private String username = "";
@@ -84,8 +87,9 @@ public class ServerListener extends SessionAdapter {
     @Getter
     private boolean isTransfer = false;
 
-    public ServerListener(NbtMap networkCodec) {
+    public ServerListener(NbtMap networkCodec, NbtMap networkTags) {
         this.networkCodec = networkCodec;
+        this.networkTags = networkTags;
         new Random().nextBytes(this.challenge);
     }
 
@@ -166,6 +170,25 @@ public class ServerListener extends SessionAdapter {
 
                 session.send(new ClientboundRegistryDataPacket(typeTag, entries));
             }
+
+            Map<Key, Map<Key, int[]>> tags = new HashMap<>();
+            for (Map.Entry<String, Object> entry : networkTags.entrySet()) {
+                @SuppressWarnings("PatternValidation")
+                Key registryKey = Key.key(entry.getKey());
+                NbtMap registry = (NbtMap) entry.getValue();
+
+                Map<Key, int[]> registryTags = new HashMap<>();
+                for (String tag : registry.keySet()) {
+                    @SuppressWarnings("PatternValidation")
+                    Key tagKey = Key.key(tag);
+                    int[] tagData = registry.getIntArray(tag);
+
+                    registryTags.put(tagKey, tagData);
+                }
+
+                tags.put(registryKey, registryTags);
+            }
+            session.send(new ClientboundUpdateTagsPacket(tags));
 
             session.send(new ClientboundFinishConfigurationPacket());
         }
@@ -284,7 +307,7 @@ public class ServerListener extends SessionAdapter {
                     session.setCompression(new CompressionConfig(threshold, new ZlibCompression(), true)));
         }
 
-        session.send(new ClientboundLoginFinishedPacket(profile));
+        session.send(new ClientboundLoginFinishedPacket(profile, UUID.randomUUID()));
     }
 
     private void keepAlive(Session session) {

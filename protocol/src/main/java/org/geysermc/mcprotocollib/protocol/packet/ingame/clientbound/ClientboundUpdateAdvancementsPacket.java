@@ -69,7 +69,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 return new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
             });
 
-            List<List<String>> requirements = MinecraftTypes.readList(in, buf -> MinecraftTypes.readList(buf, MinecraftTypes::readString));
+            List<List<String>> requirements = MinecraftTypes.readList(in, buf -> MinecraftTypes.readList(buf, MinecraftTypes::readString), false);
 
             boolean sendTelemetryEvent = in.readBoolean();
 

@@ -25,13 +25,13 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
     private final @NonNull TeamAction action;
 
     private final Component displayName;
-    private final Component prefix;
-    private final Component suffix;
-    private final boolean friendlyFire;
-    private final boolean seeFriendlyInvisibles;
+    private final Component playerPrefix;
+    private final Component playerSuffix;
     private final @Nullable NameTagVisibility nameTagVisibility;
     private final @Nullable CollisionRule collisionRule;
-    private final TeamColor color;
+    private final @Nullable TeamColor color;
+    private final boolean friendlyFire;
+    private final boolean seeFriendlyInvisibles;
 
     private final String[] players;
 
@@ -40,8 +40,8 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.action = TeamAction.REMOVE;
 
         this.displayName = null;
-        this.prefix = null;
-        this.suffix = null;
+        this.playerPrefix = null;
+        this.playerSuffix = null;
         this.friendlyFire = false;
         this.seeFriendlyInvisibles = false;
         this.nameTagVisibility = null;
@@ -51,15 +51,15 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = null;
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
+    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component playerPrefix, @NonNull Component playerSuffix,
                                           boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @NonNull TeamColor color) {
+                                          @NonNull CollisionRule collisionRule, @Nullable TeamColor color) {
         this.teamName = teamName;
         this.action = TeamAction.UPDATE;
 
         this.displayName = displayName;
-        this.prefix = prefix;
-        this.suffix = suffix;
+        this.playerPrefix = playerPrefix;
+        this.playerSuffix = playerSuffix;
         this.friendlyFire = friendlyFire;
         this.seeFriendlyInvisibles = seeFriendlyInvisibles;
         this.nameTagVisibility = nameTagVisibility;
@@ -78,8 +78,8 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.action = action;
 
         this.displayName = null;
-        this.prefix = null;
-        this.suffix = null;
+        this.playerPrefix = null;
+        this.playerSuffix = null;
         this.friendlyFire = false;
         this.seeFriendlyInvisibles = false;
         this.nameTagVisibility = null;
@@ -89,15 +89,15 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
+    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component playerPrefix, @NonNull Component playerSuffix,
                                           boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @NonNull TeamColor color, @NonNull String[] players) {
+                                          @NonNull CollisionRule collisionRule, @Nullable TeamColor color, @NonNull String[] players) {
         this.teamName = teamName;
         this.action = TeamAction.CREATE;
 
         this.displayName = displayName;
-        this.prefix = prefix;
-        this.suffix = suffix;
+        this.playerPrefix = playerPrefix;
+        this.playerSuffix = playerSuffix;
         this.friendlyFire = friendlyFire;
         this.seeFriendlyInvisibles = seeFriendlyInvisibles;
         this.nameTagVisibility = nameTagVisibility;
@@ -112,20 +112,24 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.action = TeamAction.from(in.readByte());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             this.displayName = MinecraftTypes.readComponent(in);
-            byte flags = in.readByte();
-            this.friendlyFire = (flags & 0x1) != 0;
-            this.seeFriendlyInvisibles = (flags & 0x2) != 0;
+            this.playerPrefix = MinecraftTypes.readComponent(in);
+            this.playerSuffix = MinecraftTypes.readComponent(in);
             this.nameTagVisibility = NameTagVisibility.from(MinecraftTypes.readVarInt(in));
             this.collisionRule = CollisionRule.from(MinecraftTypes.readVarInt(in));
 
-            this.color = TeamColor.VALUES[MinecraftTypes.readVarInt(in)];
+            if (in.readBoolean()) {
+                this.color = TeamColor.from(MinecraftTypes.readVarInt(in));
+            } else {
+                this.color = null;
+            }
 
-            this.prefix = MinecraftTypes.readComponent(in);
-            this.suffix = MinecraftTypes.readComponent(in);
+            byte flags = in.readByte();
+            this.friendlyFire = (flags & 0x1) != 0;
+            this.seeFriendlyInvisibles = (flags & 0x2) != 0;
         } else {
             this.displayName = null;
-            this.prefix = null;
-            this.suffix = null;
+            this.playerPrefix = null;
+            this.playerSuffix = null;
             this.friendlyFire = false;
             this.seeFriendlyInvisibles = false;
             this.nameTagVisibility = null;
@@ -149,12 +153,18 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         out.writeByte(this.action.ordinal());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
             MinecraftTypes.writeComponent(out, this.displayName);
-            out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
+            MinecraftTypes.writeComponent(out, this.playerPrefix);
+            MinecraftTypes.writeComponent(out, this.playerSuffix);
             MinecraftTypes.writeVarInt(out, this.nameTagVisibility.ordinal());
             MinecraftTypes.writeVarInt(out, this.collisionRule.ordinal());
-            MinecraftTypes.writeVarInt(out, this.color.ordinal());
-            MinecraftTypes.writeComponent(out, this.prefix);
-            MinecraftTypes.writeComponent(out, this.suffix);
+            if (this.color != null) {
+                out.writeBoolean(true);
+                MinecraftTypes.writeVarInt(out, this.color.ordinal());
+            } else {
+                out.writeBoolean(false);
+            }
+
+            out.writeByte((this.friendlyFire ? 0x1 : 0x0) | (this.seeFriendlyInvisibles ? 0x2 : 0x0));
         }
 
         if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
