@@ -12,6 +12,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapIcon;
 import org.geysermc.mcprotocollib.protocol.data.game.level.map.MapIconType;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 @Data
 @With
 @AllArgsConstructor
@@ -41,7 +43,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
                 int rotation = in.readByte();
                 Component displayName = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
 
-                this.icons[index] = new MapIcon(x, z, MapIconType.from(type), rotation, displayName);
+                this.icons[index] = new MapIcon(x, z, Objects.requireNonNull(MapIconType.from(type), "received invalid MapIconType: " + type), rotation, displayName);
             }
         }
 
