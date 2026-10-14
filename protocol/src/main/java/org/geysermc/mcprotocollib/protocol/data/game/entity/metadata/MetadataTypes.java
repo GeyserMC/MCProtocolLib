@@ -36,6 +36,7 @@ public class MetadataTypes {
     public static final MetadataType<String> STRING = register(id -> new MetadataType<>(id, MinecraftTypes::readString, MinecraftTypes::writeString, ObjectEntityMetadata::new));
     public static final MetadataType<Component> COMPONENT = register(id -> new MetadataType<>(id, MinecraftTypes::readComponent, MinecraftTypes::writeComponent, ObjectEntityMetadata::new));
     public static final MetadataType<Optional<Component>> OPTIONAL_COMPONENT = register(id -> new MetadataType<>(id, optionalReader(MinecraftTypes::readComponent), optionalWriter(MinecraftTypes::writeComponent), ObjectEntityMetadata::new));
+    // TODO: ideally don't use a hidden null here
     public static final MetadataType<ItemStack> ITEM_STACK = register(id -> new MetadataType<>(id, MinecraftTypes::readOptionalItemStack, MinecraftTypes::writeOptionalItemStack, ObjectEntityMetadata::new));
     public static final BooleanMetadataType BOOLEAN = register(id -> new BooleanMetadataType(id, ByteBuf::readBoolean, ByteBuf::writeBoolean, BooleanEntityMetadata::new));
     public static final MetadataType<Vector3f> ROTATIONS = register(id -> new MetadataType<>(id, MinecraftTypes::readRotation, MinecraftTypes::writeRotation, ObjectEntityMetadata::new));
@@ -72,6 +73,7 @@ public class MetadataTypes {
     public static final MetadataType<Quaternionf> QUATERNION = register(id ->  new MetadataType<>(id, MinecraftTypes::readQuaternion, MinecraftTypes::writeQuaternion, ObjectEntityMetadata::new));
     public static final MetadataType<ResolvableProfile> RESOLVABLE_PROFILE = register(id -> new MetadataType<>(id, MinecraftTypes::readResolvableProfile, MinecraftTypes::writeResolvableProfile, ObjectEntityMetadata::new));
     public static final MetadataType<HumanoidArm> HUMANOID_ARM = register(id -> new MetadataType<>(id, MinecraftTypes::readHumanoidArm, MinecraftTypes::writeHumanoidArm, ObjectEntityMetadata::new));
+    public static final IntMetadataType DYE_COLOR = register(id -> new IntMetadataType(id, MinecraftTypes::readVarInt, MinecraftTypes::writeVarInt, IntEntityMetadata::new));
 
     public static <T extends MetadataType<?>> T register(Int2ObjectFunction<T> factory) {
         T value = factory.apply(VALUES.size());

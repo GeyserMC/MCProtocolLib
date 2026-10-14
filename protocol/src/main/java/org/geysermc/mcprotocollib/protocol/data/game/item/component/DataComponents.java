@@ -2,7 +2,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +23,8 @@ import java.util.Map;
 public class DataComponents {
     private final Map<DataComponentType<?>, DataComponent<?, ?>> dataComponents;
 
-    @Nullable
     @SuppressWarnings("unchecked")
-    public <T> T get(DataComponentType<T> type) {
+    public <T> @Nullable T get(DataComponentType<T> type) {
         DataComponent<?, ?> component = dataComponents.get(type);
         return component == null ? null : (T) component.getValue();
     }

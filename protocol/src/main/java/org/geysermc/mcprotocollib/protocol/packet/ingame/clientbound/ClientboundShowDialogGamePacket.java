@@ -16,7 +16,7 @@ public class ClientboundShowDialogGamePacket implements MinecraftPacket {
     private final Holder<NbtMap> dialog;
 
     public ClientboundShowDialogGamePacket(ByteBuf in) {
-        this.dialog = MinecraftTypes.readHolder(in, MinecraftTypes::readCompoundTag);
+        this.dialog = MinecraftTypes.readHolder(in, MinecraftTypes::readCompoundTagOrThrow);
     }
 
     @Override

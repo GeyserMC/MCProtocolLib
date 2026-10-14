@@ -1,8 +1,9 @@
 package org.geysermc.mcprotocollib.network.event.session;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Session;
 import org.geysermc.mcprotocollib.network.packet.Packet;
+import org.jspecify.annotations.Nullable;
+
 /**
  * Called when a session encounters an error while reading or writing packet data.
  */
@@ -47,7 +48,7 @@ public class PacketErrorEvent implements SessionEvent {
      *
      * @return the packet class related to this packet error
      */
-    public Class<? extends Packet> getPacketClass() {
+    public @Nullable Class<? extends Packet> getPacketClass() {
         return this.packetClass;
     }
 

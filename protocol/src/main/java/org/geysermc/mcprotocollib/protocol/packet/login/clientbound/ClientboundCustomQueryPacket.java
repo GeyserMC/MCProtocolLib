@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -14,8 +13,8 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @AllArgsConstructor
 public class ClientboundCustomQueryPacket implements MinecraftPacket {
     private final int messageId;
-    private final @NonNull Key channel;
-    private final byte @NonNull [] data;
+    private final Key channel;
+    private final byte [] data;
 
     public ClientboundCustomQueryPacket(ByteBuf in) {
         this.messageId = MinecraftTypes.readVarInt(in);

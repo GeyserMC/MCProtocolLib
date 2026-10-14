@@ -1,18 +1,20 @@
 package org.geysermc.mcprotocollib.network;
 
+import org.jspecify.annotations.Nullable;
+
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 /**
  * Information describing a network proxy.
  */
-public record ProxyInfo(Type type, SocketAddress address, String username, String password) {
+public record ProxyInfo(Type type, SocketAddress address, @Nullable String username, @Nullable String password) {
     /**
      * Creates a new unauthenticated proxy info.
      *
      * @param type Type of proxy.
      */
-    public ProxyInfo(Type type, String host, int port, String username, String password) {
+    public ProxyInfo(Type type, String host, int port, @Nullable String username, @Nullable String password) {
         this(type, new InetSocketAddress(host, port), username, password);
     }
 

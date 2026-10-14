@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -26,9 +25,9 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     private static final GenericObjectData EMPTY_DATA = new GenericObjectData(0);
 
     private final int entityId;
-    private final @NonNull UUID uuid;
-    private final @NonNull EntityType type;
-    private final @NonNull ObjectData data;
+    private final UUID uuid;
+    private final EntityType type;
+    private final ObjectData data;
     private final double x;
     private final double y;
     private final double z;
@@ -37,17 +36,17 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
     private final float headYaw;
     private final float pitch;
 
-    public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
+    public ClientboundAddEntityPacket(int entityId, UUID uuid, EntityType type,
                                       double x, double y, double z, float yaw, float pitch, float headYaw) {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, Vector3d.ZERO, yaw, headYaw, pitch);
     }
 
-    public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type, @NonNull ObjectData data,
+    public ClientboundAddEntityPacket(int entityId, UUID uuid, EntityType type, ObjectData data,
                                       double x, double y, double z, float yaw, float pitch, float headYaw) {
         this(entityId, uuid, type, data, x, y, z, Vector3d.ZERO, yaw, headYaw, pitch);
     }
 
-    public ClientboundAddEntityPacket(int entityId, @NonNull UUID uuid, @NonNull EntityType type,
+    public ClientboundAddEntityPacket(int entityId, UUID uuid, EntityType type,
                                       double x, double y, double z, Vector3d movement, float yaw,
                                       float pitch, float headYaw) {
         this(entityId, uuid, type, EMPTY_DATA, x, y, z, movement, yaw, headYaw, pitch);

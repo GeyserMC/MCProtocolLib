@@ -3,10 +3,11 @@ package org.geysermc.mcprotocollib.network;
 import io.netty.util.AttributeKey;
 import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
 import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
+import org.jspecify.annotations.Nullable;
 
 public class NetworkConstants {
-    public static final AttributeKey<CompressionConfig> COMPRESSION_ATTRIBUTE_KEY = AttributeKey.valueOf("compression");
-    public static final AttributeKey<EncryptionConfig> ENCRYPTION_ATTRIBUTE_KEY = AttributeKey.valueOf("encryption");
+    public static final AttributeKey<@Nullable CompressionConfig> COMPRESSION_ATTRIBUTE_KEY = AttributeKey.valueOf("compression");
+    public static final AttributeKey<@Nullable EncryptionConfig> ENCRYPTION_ATTRIBUTE_KEY = AttributeKey.valueOf("encryption");
     public static final String PROXY_NAME = "proxy";
     public static final String PROXY_PROTOCOL_ENCODER_NAME = "proxy-protocol-encoder";
     public static final String PROXY_PROTOCOL_PACKET_SENDER_NAME = "proxy-protocol-packet-sender";

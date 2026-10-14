@@ -2,8 +2,6 @@ package org.geysermc.mcprotocollib.network;
 
 import io.netty.channel.Channel;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.compression.CompressionConfig;
 import org.geysermc.mcprotocollib.network.crypt.EncryptionConfig;
 import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
@@ -11,6 +9,7 @@ import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.netty.FlushHandler;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -28,7 +27,7 @@ public interface Session {
      *
      * @return The local address, or null if the session is not connected.
      */
-    SocketAddress getLocalAddress();
+    @Nullable SocketAddress getLocalAddress();
 
     /**
      * Gets the remote address of the session.
@@ -50,7 +49,7 @@ public interface Session {
      *
      * @return This session's flags.
      */
-    Map<String, Object> getFlags();
+    Map<String, @Nullable Object> getFlags();
 
     /**
      * Checks whether this session has a flag set. If this session belongs to a server,
@@ -71,14 +70,14 @@ public interface Session {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    default <T> T getFlag(Flag<T> flag) {
+    default <T extends @Nullable Object> @Nullable T getFlag(Flag<T> flag) {
         return this.getFlagSupplied(flag, () -> null);
     }
 
     /**
      * @see #getFlagSupplied(Flag, Supplier)
      */
-    default <T> T getFlag(Flag<T> flag, T def) {
+    default <T extends @Nullable Object> T getFlag(Flag<T> flag, T def) {
         return this.getFlagSupplied(flag, () -> def);
     }
 
@@ -93,7 +92,7 @@ public interface Session {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier);
+    <T extends @Nullable Object> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier);
 
     /**
      * Sets the value of a flag. This does not change a server's flags if this session
@@ -103,7 +102,7 @@ public interface Session {
      * @param flag Flag to check for.
      * @param value Value to set the flag to.
      */
-    <T> void setFlag(Flag<T> flag, T value);
+    <T extends @Nullable Object> void setFlag(Flag<T> flag, T value);
 
     /**
      * Sets the values for a collection of flags.
@@ -183,7 +182,7 @@ public interface Session {
      *
      * @param packet Packet to send.
      */
-    default void send(@NonNull Packet packet) {
+    default void send(Packet packet) {
         this.send(packet, null);
     }
 
@@ -193,7 +192,7 @@ public interface Session {
      * @param packet Packet to send.
      * @param onSent Callback to run when the packet has been sent.
      */
-    void send(@NonNull Packet packet, @Nullable Runnable onSent);
+    void send(Packet packet, @Nullable Runnable onSent);
 
     /**
      * Disconnects the session.
@@ -203,7 +202,7 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @see #disconnect(String, Throwable)
      */
-    default void disconnect(@NonNull String reason) {
+    default void disconnect(String reason) {
         this.disconnect(reason, null);
     }
 
@@ -216,7 +215,7 @@ public interface Session {
      * @param cause Throwable responsible for disconnecting.
      * @see #disconnect(Component, Throwable)
      */
-    default void disconnect(@NonNull String reason, @Nullable Throwable cause) {
+    default void disconnect(String reason, @Nullable Throwable cause) {
         this.disconnect(Component.text(reason), cause);
     }
 
@@ -225,7 +224,7 @@ public interface Session {
      *
      * @param reason Reason for disconnecting.
      */
-    default void disconnect(@NonNull Component reason) {
+    default void disconnect(Component reason) {
         this.disconnect(reason, null);
     }
 
@@ -235,7 +234,7 @@ public interface Session {
      * @param reason Reason for disconnecting.
      * @param cause Throwable responsible for disconnecting.
      */
-    void disconnect(@NonNull Component reason, @Nullable Throwable cause);
+    void disconnect(Component reason, @Nullable Throwable cause);
 
     /**
      * Auto read in netty means that the server is automatically reading from the channel.

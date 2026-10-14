@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.player.GameMode;
@@ -16,13 +15,14 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.notify.LimitedCraftin
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.RainStrengthValue;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.RespawnScreenValue;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.ThunderStrengthValue;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundGameEventPacket implements MinecraftPacket {
-    private final @NonNull GameEvent notification;
-    private final GameEventValue value;
+    private final GameEvent notification;
+    private final @Nullable GameEventValue value;
 
     public ClientboundGameEventPacket(ByteBuf in) {
         this.notification = GameEvent.from(in.readUnsignedByte());

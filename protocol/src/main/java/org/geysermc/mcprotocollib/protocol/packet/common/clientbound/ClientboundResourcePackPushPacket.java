@@ -3,12 +3,11 @@ package org.geysermc.mcprotocollib.protocol.packet.common.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
+import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -16,9 +15,9 @@ import java.util.UUID;
 @With
 @AllArgsConstructor
 public class ClientboundResourcePackPushPacket implements MinecraftPacket {
-    private final @NonNull UUID id;
-    private final @NonNull String url;
-    private final @NonNull String hash;
+    private final UUID id;
+    private final String url;
+    private final String hash;
     private final boolean required;
     private final @Nullable Component prompt;
 

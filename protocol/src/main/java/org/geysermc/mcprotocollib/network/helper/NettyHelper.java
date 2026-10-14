@@ -12,12 +12,11 @@ import io.netty.handler.codec.haproxy.HAProxyProxiedProtocol;
 import io.netty.handler.proxy.HttpProxyHandler;
 import io.netty.handler.proxy.Socks4ProxyHandler;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.network.Session;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +53,7 @@ public class NettyHelper {
         }
     }
 
-    public static @NonNull SocketAddress resolveAddress(Session session, SocketAddress address) {
+    public static SocketAddress resolveAddress(Session session, SocketAddress address) {
         if (address instanceof InetSocketAddress inetAddress && inetAddress.isUnresolved()) {
             SocketAddress resolved = resolveAddress(session, inetAddress.getHostString(), inetAddress.getPort());
             if (resolved != null) {
@@ -180,7 +179,7 @@ public class NettyHelper {
         }
     }
 
-    public static void addProxy(ProxyInfo proxy, ChannelPipeline pipeline) {
+    public static void addProxy(@Nullable ProxyInfo proxy, ChannelPipeline pipeline) {
         if (proxy == null) {
             return;
         }

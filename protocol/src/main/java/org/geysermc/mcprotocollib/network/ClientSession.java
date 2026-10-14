@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.network;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A network client session.

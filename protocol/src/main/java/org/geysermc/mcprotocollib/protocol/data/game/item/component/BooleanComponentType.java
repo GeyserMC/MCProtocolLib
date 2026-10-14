@@ -3,6 +3,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.key.KeyPattern;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.type.BooleanDataComponent;
+import org.jspecify.annotations.Nullable;
 
 public class BooleanComponentType extends DataComponentType<Boolean> {
     protected final BooleanReader primitiveReader;
@@ -55,11 +56,11 @@ public class BooleanComponentType extends DataComponentType<Boolean> {
 
     @FunctionalInterface
     public interface BooleanDataComponentFactory extends DataComponentFactory<Boolean> {
-        BooleanDataComponent createPrimitive(BooleanComponentType type, Boolean value);
+        BooleanDataComponent createPrimitive(BooleanComponentType type, @Nullable Boolean value);
 
         @Deprecated
         @Override
-        default DataComponent<Boolean, BooleanComponentType> create(DataComponentType<Boolean> type, Boolean value) {
+        default DataComponent<Boolean, BooleanComponentType> create(DataComponentType<Boolean> type, @Nullable Boolean value) {
             throw new UnsupportedOperationException("Unsupported read method! Use primitive createPrimitive!");
         }
     }

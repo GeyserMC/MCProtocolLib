@@ -68,6 +68,7 @@ public enum CustomStatistic implements Statistic {
     INTERACT_WITH_CRAFTING_TABLE,
     OPEN_CHEST,
     SLEEP_IN_BED,
+    SLEEP_IN_STRAW_BED,
     OPEN_SHULKER_BOX,
     OPEN_BARREL,
     INTERACT_WITH_BLAST_FURNACE,

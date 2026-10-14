@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.attribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +9,15 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class Attribute {
-    private final @NonNull AttributeType type;
+    private final AttributeType type;
     private final double value;
-    private final @NonNull List<AttributeModifier> modifiers;
+    private final List<AttributeModifier> modifiers;
 
-    public Attribute(@NonNull AttributeType type) {
+    public Attribute(AttributeType type) {
         this(type, 0);
     }
 
-    public Attribute(@NonNull AttributeType type, double value) {
+    public Attribute(AttributeType type, double value) {
         this(type, value, new ArrayList<>());
     }
 }

@@ -1,9 +1,7 @@
 package org.geysermc.mcprotocollib.protocol;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.geysermc.mcprotocollib.auth.GameProfile;
@@ -19,6 +17,7 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftCodec;
 import org.geysermc.mcprotocollib.protocol.codec.PacketCodec;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
 import org.geysermc.mcprotocollib.protocol.data.handshake.HandshakeIntent;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,15 +38,13 @@ public class MinecraftProtocol extends PacketProtocol {
      * Lazily loaded once when {@link #newServerSession(Server, Session)} is invoked,
      * if {@link #isUseDefaultListeners()} is true.
      */
-    @Nullable
-    private static NbtMap DEFAULT_NETWORK_CODEC;
+    private static @Nullable NbtMap DEFAULT_NETWORK_CODEC;
     /**
      * The tags sent from the server to the client during {@link ProtocolState#CONFIGURATION}.
      * Lazily loaded once when {@link #newServerSession(Server, Session)} is invoked,
      * if {@link #isUseDefaultListeners()} is true.
      */
-    @Nullable
-    private static NbtMap DEFAULT_NETWORK_TAGS;
+    private static @Nullable NbtMap DEFAULT_NETWORK_TAGS;
 
     /**
      * The codec used for the Minecraft protocol.
@@ -55,11 +52,11 @@ public class MinecraftProtocol extends PacketProtocol {
     @Getter
     private final PacketCodec codec;
 
-    private ProtocolState inboundState;
-    private PacketRegistry inboundStateRegistry;
+    private @Nullable ProtocolState inboundState;
+    private @Nullable PacketRegistry inboundStateRegistry;
 
-    private ProtocolState outboundState;
-    private PacketRegistry outboundStateRegistry;
+    private @Nullable ProtocolState outboundState;
+    private @Nullable PacketRegistry outboundStateRegistry;
 
     private final HandshakeIntent handshakeIntent;
 
@@ -67,13 +64,13 @@ public class MinecraftProtocol extends PacketProtocol {
      * The player's identity.
      */
     @Getter
-    private GameProfile profile;
+    private @Nullable GameProfile profile;
 
     /**
      * Authentication access token.
      */
     @Getter
-    private String accessToken;
+    private @Nullable String accessToken;
 
     /**
      * Whether to add the default client and server listeners for performing initial login.
@@ -106,7 +103,7 @@ public class MinecraftProtocol extends PacketProtocol {
      *
      * @param username Username to use.
      */
-    public MinecraftProtocol(@NonNull String username) {
+    public MinecraftProtocol(String username) {
         this(new GameProfile(UUID.randomUUID(), username), null);
     }
 
@@ -116,7 +113,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param codec The packet codec to use.
      * @param username Username to use.
      */
-    public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull String username) {
+    public MinecraftProtocol(PacketCodec codec, String username) {
         this(codec, new GameProfile(UUID.randomUUID(), username), null);
     }
 
@@ -126,7 +123,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(@NonNull GameProfile profile, String accessToken) {
+    public MinecraftProtocol(GameProfile profile, @Nullable String accessToken) {
         this(MinecraftCodec.CODEC, profile, accessToken);
     }
 
@@ -137,7 +134,7 @@ public class MinecraftProtocol extends PacketProtocol {
      * @param profile GameProfile to use.
      * @param accessToken Access token to use, or null if using offline mode.
      */
-    public MinecraftProtocol(@NonNull PacketCodec codec, @NonNull GameProfile profile, String accessToken) {
+    public MinecraftProtocol(PacketCodec codec, GameProfile profile, @Nullable String accessToken) {
         this.codec = codec;
         this.handshakeIntent = HandshakeIntent.LOGIN;
         this.profile = profile;
@@ -190,12 +187,12 @@ public class MinecraftProtocol extends PacketProtocol {
 
     @Override
     public PacketRegistry getInboundPacketRegistry() {
-        return this.inboundStateRegistry;
+        return Objects.requireNonNull(this.inboundStateRegistry, "packet registries not yet initialised");
     }
 
     @Override
     public PacketRegistry getOutboundPacketRegistry() {
-        return this.outboundStateRegistry;
+        return Objects.requireNonNull(this.outboundStateRegistry, "packet registries not yet initialised");
     }
 
     protected EncryptionConfig createEncryption(Key key) {
@@ -219,7 +216,7 @@ public class MinecraftProtocol extends PacketProtocol {
      *
      * @return The current inbound {@link ProtocolState}.
      */
-    public ProtocolState getInboundState() {
+    public @Nullable ProtocolState getInboundState() {
         return this.inboundState;
     }
 
@@ -228,7 +225,7 @@ public class MinecraftProtocol extends PacketProtocol {
      *
      * @return The current outbound {@link ProtocolState}.
      */
-    public ProtocolState getOutboundState() {
+    public @Nullable ProtocolState getOutboundState() {
         return this.outboundState;
     }
 

@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.recipe.display;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.data.game.item.component.HolderSet;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.OptionalInt;

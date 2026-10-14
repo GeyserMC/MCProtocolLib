@@ -4,38 +4,38 @@ import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.CollisionRule;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.NameTagVisibility;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.TeamAction;
 import org.geysermc.mcprotocollib.protocol.data.game.scoreboard.TeamColor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
-    private final @NonNull String teamName;
-    private final @NonNull TeamAction action;
+    private final String teamName;
+    private final TeamAction action;
 
-    private final Component displayName;
-    private final Component playerPrefix;
-    private final Component playerSuffix;
+    private final @Nullable Component displayName;
+    private final @Nullable Component playerPrefix;
+    private final @Nullable Component playerSuffix;
     private final @Nullable NameTagVisibility nameTagVisibility;
     private final @Nullable CollisionRule collisionRule;
     private final @Nullable TeamColor color;
     private final boolean friendlyFire;
     private final boolean seeFriendlyInvisibles;
 
-    private final String[] players;
+    private final @Nullable String @Nullable [] players;
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName) {
+    public ClientboundSetPlayerTeamPacket(String teamName) {
         this.teamName = teamName;
         this.action = TeamAction.REMOVE;
 
@@ -51,9 +51,9 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = null;
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component playerPrefix, @NonNull Component playerSuffix,
-                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @Nullable TeamColor color) {
+    public ClientboundSetPlayerTeamPacket(String teamName, Component displayName, Component playerPrefix, Component playerSuffix,
+                                          boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility,
+                                          CollisionRule collisionRule, @Nullable TeamColor color) {
         this.teamName = teamName;
         this.action = TeamAction.UPDATE;
 
@@ -69,7 +69,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = null;
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull TeamAction action, @NonNull String[] players) {
+    public ClientboundSetPlayerTeamPacket(String teamName, TeamAction action, String[] players) {
         if (action != TeamAction.ADD_PLAYER && action != TeamAction.REMOVE_PLAYER) {
             throw new IllegalArgumentException("(name, action, players) constructor only valid for adding and removing players.");
         }
@@ -89,9 +89,9 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         this.players = Arrays.copyOf(players, players.length);
     }
 
-    public ClientboundSetPlayerTeamPacket(@NonNull String teamName, @NonNull Component displayName, @NonNull Component playerPrefix, @NonNull Component playerSuffix,
-                                          boolean friendlyFire, boolean seeFriendlyInvisibles, @NonNull NameTagVisibility nameTagVisibility,
-                                          @NonNull CollisionRule collisionRule, @Nullable TeamColor color, @NonNull String[] players) {
+    public ClientboundSetPlayerTeamPacket(String teamName, Component displayName, Component playerPrefix, Component playerSuffix,
+                                          boolean friendlyFire, boolean seeFriendlyInvisibles, NameTagVisibility nameTagVisibility,
+                                          CollisionRule collisionRule, @Nullable TeamColor color, String[] players) {
         this.teamName = teamName;
         this.action = TeamAction.CREATE;
 
@@ -152,11 +152,11 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         MinecraftTypes.writeString(out, this.teamName);
         out.writeByte(this.action.ordinal());
         if (this.action == TeamAction.CREATE || this.action == TeamAction.UPDATE) {
-            MinecraftTypes.writeComponent(out, this.displayName);
-            MinecraftTypes.writeComponent(out, this.playerPrefix);
-            MinecraftTypes.writeComponent(out, this.playerSuffix);
-            MinecraftTypes.writeVarInt(out, this.nameTagVisibility.ordinal());
-            MinecraftTypes.writeVarInt(out, this.collisionRule.ordinal());
+            MinecraftTypes.writeComponent(out, Objects.requireNonNull(this.displayName, "displayName must not be null for CREATE or UPDATE actions"));
+            MinecraftTypes.writeComponent(out, Objects.requireNonNull(this.playerPrefix, "playerPrefix must not be null for CREATE or UPDATE actions"));
+            MinecraftTypes.writeComponent(out, Objects.requireNonNull(this.playerSuffix, "playerSuffix must not be null for CREATE or UPDATE actions"));
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.nameTagVisibility, "nameTagVisibility must not be null for CREATE or UPDATE actions").ordinal());
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.collisionRule, "collisionRule must not be null for CREATE or UPDATE actions").ordinal());
             if (this.color != null) {
                 out.writeBoolean(true);
                 MinecraftTypes.writeVarInt(out, this.color.ordinal());
@@ -168,7 +168,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         }
 
         if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
-            MinecraftTypes.writeVarInt(out, this.players.length);
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.players, "players must not be null for CREATE, ADD_PLAYER, or REMOVE_PLAYER actions").length);
             for (String player : this.players) {
                 if (player != null) {
                     MinecraftTypes.writeString(out, player);

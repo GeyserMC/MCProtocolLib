@@ -1,10 +1,15 @@
 package org.geysermc.mcprotocollib.auth.util;
 
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.Nullable;
+
 import java.util.HexFormat;
 import java.util.UUID;
 
 public class UUIDUtils {
-    public static UUID convertToDashed(String noDashes) {
+
+    @Contract("null -> null; !null -> !null")
+    public static @Nullable UUID convertToDashed(@Nullable String noDashes) {
         if (noDashes == null) {
             return null;
         }
@@ -15,7 +20,8 @@ public class UUIDUtils {
         );
     }
 
-    public static String convertToNoDashes(UUID uuid) {
+    @Contract("null -> null; !null -> !null")
+    public static @Nullable String convertToNoDashes(@Nullable UUID uuid) {
         if (uuid == null) {
             return null;
         }

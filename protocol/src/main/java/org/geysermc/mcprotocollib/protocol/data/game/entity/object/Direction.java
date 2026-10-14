@@ -25,6 +25,6 @@ public enum Direction implements ObjectData {
     }
 
     public static Direction from(int id) {
-        return VALUES[id];
+        return VALUES[Math.floorMod(id, VALUES.length)];
     }
 }

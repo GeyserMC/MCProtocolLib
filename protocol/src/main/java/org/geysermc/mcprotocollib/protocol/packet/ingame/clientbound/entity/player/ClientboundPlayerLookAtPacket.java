@@ -3,23 +3,23 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.pla
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.RotationOrigin;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundPlayerLookAtPacket implements MinecraftPacket {
-    private final @NonNull RotationOrigin origin;
+    private final RotationOrigin origin;
     private final double x;
     private final double y;
     private final double z;
 
     private final int targetEntityId;
-    private final RotationOrigin targetEntityOrigin;
+    private final @Nullable RotationOrigin targetEntityOrigin;
 
     public ClientboundPlayerLookAtPacket(RotationOrigin origin, double x, double y, double z) {
         this(origin, x, y, z, 0, null);

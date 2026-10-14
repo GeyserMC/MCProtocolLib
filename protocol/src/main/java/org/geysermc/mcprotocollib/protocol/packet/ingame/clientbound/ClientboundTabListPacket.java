@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -13,8 +12,8 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @With
 @AllArgsConstructor
 public class ClientboundTabListPacket implements MinecraftPacket {
-    private final @NonNull Component header;
-    private final @NonNull Component footer;
+    private final Component header;
+    private final Component footer;
 
     public ClientboundTabListPacket(ByteBuf in) {
         this.header = MinecraftTypes.readComponent(in);

@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -18,11 +17,11 @@ import java.util.List;
 public class ClientboundLightUpdatePacket implements MinecraftPacket {
     private final int x;
     private final int z;
-    private final @NonNull LightUpdateData lightData;
+    private final LightUpdateData lightData;
 
-    public ClientboundLightUpdatePacket(int x, int z, @NonNull BitSet skyYMask, @NonNull BitSet blockYMask,
-                                        @NonNull BitSet emptySkyYMask, @NonNull BitSet emptyBlockYMask,
-                                        @NonNull List<byte[]> skyUpdates, @NonNull List<byte[]> blockUpdates) {
+    public ClientboundLightUpdatePacket(int x, int z, BitSet skyYMask, BitSet blockYMask,
+                                        BitSet emptySkyYMask, BitSet emptyBlockYMask,
+                                        List<byte[]> skyUpdates, List<byte[]> blockUpdates) {
         for (byte[] content : skyUpdates) {
             if (content.length != 2048) {
                 throw new IllegalArgumentException("All arrays in skyUpdates must be length of 2048!");

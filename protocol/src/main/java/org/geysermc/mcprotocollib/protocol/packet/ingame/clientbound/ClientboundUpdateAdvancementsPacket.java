@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -26,16 +25,16 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     private static final int FLAG_HIDDEN = 0x04;
 
     private final boolean reset;
-    private final @NonNull Advancement[] advancements;
-    private final @NonNull String[] removedAdvancements;
-    private final @NonNull Map<String, Map<String, Long>> progress;
+    private final Advancement[] advancements;
+    private final String[] removedAdvancements;
+    private final Map<String, Map<String, Long>> progress;
     private final boolean showAdvancements;
 
-    public Map<String, Long> getProgress(@NonNull String advancementId) {
+    public Map<String, Long> getProgress(String advancementId) {
         return this.progress.get(advancementId);
     }
 
-    public long getAchievedDate(@NonNull String advancementId, @NonNull String criterionId) {
+    public long getAchievedDate(String advancementId, String criterionId) {
         Map<String, Long> progress = this.getProgress(advancementId);
         if (progress == null || !progress.containsKey(criterionId)) {
             return -1;
@@ -63,17 +62,17 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 boolean hidden = (flags & FLAG_HIDDEN) != 0;
 
                 String backgroundTexture = hasBackgroundTexture ? MinecraftTypes.readString(buf) : null;
-                float posX = buf.readFloat();
-                float posY = buf.readFloat();
 
-                return new DisplayData(title, description, icon, advancementType, showToast, hidden, posX, posY, backgroundTexture);
+                return new DisplayData(title, description, icon, advancementType, showToast, hidden, backgroundTexture);
             });
 
             List<List<String>> requirements = MinecraftTypes.readList(in, buf -> MinecraftTypes.readList(buf, MinecraftTypes::readString), false);
 
             boolean sendTelemetryEvent = in.readBoolean();
+            float posX = in.readFloat();
+            float posY = in.readFloat();
 
-            this.advancements[i] = new Advancement(id, requirements, parentId, displayData, sendTelemetryEvent);
+            this.advancements[i] = new Advancement(id, requirements, parentId, displayData, sendTelemetryEvent, posX, posY);
         }
 
         this.removedAdvancements = new String[MinecraftTypes.readVarInt(in)];
@@ -138,14 +137,13 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
                 if (data.getBackgroundTexture() != null) {
                     MinecraftTypes.writeString(buf, data.getBackgroundTexture());
                 }
-
-                buf.writeFloat(data.getPosX());
-                buf.writeFloat(data.getPosY());
             });
 
             MinecraftTypes.writeList(out, advancement.getRequirements(), (buf, requirement) -> MinecraftTypes.writeList(buf, requirement, MinecraftTypes::writeString));
 
             out.writeBoolean(advancement.isSendsTelemetryEvent());
+            out.writeFloat(advancement.getPosX());
+            out.writeFloat(advancement.getPosY());
         }
 
         MinecraftTypes.writeVarInt(out, this.removedAdvancements.length);

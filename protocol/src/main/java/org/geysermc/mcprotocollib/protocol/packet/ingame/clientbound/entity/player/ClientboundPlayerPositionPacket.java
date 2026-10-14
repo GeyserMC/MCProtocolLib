@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity.pla
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -23,7 +22,7 @@ public class ClientboundPlayerPositionPacket implements MinecraftPacket {
     private final Vector3d deltaMovement;
     private final float yRot;
     private final float xRot;
-    private final @NonNull List<PositionElement> relatives;
+    private final List<PositionElement> relatives;
 
     public ClientboundPlayerPositionPacket(int id, double x, double y, double z, double dX, double dY, double dZ, float yRot, float xRot, PositionElement... relative) {
         this(id, Vector3d.from(x, y, z), Vector3d.from(dX, dY, dZ), yRot, xRot, Arrays.asList(relative != null ? relative : new PositionElement[0]));

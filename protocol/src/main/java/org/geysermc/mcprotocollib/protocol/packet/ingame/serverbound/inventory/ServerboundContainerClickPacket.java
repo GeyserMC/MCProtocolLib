@@ -4,15 +4,14 @@ import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerAction;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.ContainerActionType;
 import org.geysermc.mcprotocollib.protocol.data.game.inventory.DropItemAction;
 import org.geysermc.mcprotocollib.protocol.data.game.item.HashedStack;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -24,20 +23,20 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
     private final int containerId;
     private final int stateId;
     private final int slot;
-    private final @NonNull ContainerActionType action;
-    private final @NonNull ContainerAction param;
+    private final ContainerActionType action;
+    private final ContainerAction param;
     private final @Nullable HashedStack carriedItem;
-    private final @NonNull Int2ObjectMap<@Nullable HashedStack> changedSlots;
+    private final Int2ObjectMap<@Nullable HashedStack> changedSlots;
 
     public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
-                                           @NonNull ContainerActionType action, @NonNull ContainerAction param,
-                                           @Nullable HashedStack carriedItem, @NonNull Map<Integer, @Nullable HashedStack> changedSlots) {
+                                           ContainerActionType action, ContainerAction param,
+                                           @Nullable HashedStack carriedItem, Map<Integer, @Nullable HashedStack> changedSlots) {
         this(containerId, stateId, slot, action, param, carriedItem, new Int2ObjectOpenHashMap<>(changedSlots));
     }
 
     public ServerboundContainerClickPacket(int containerId, int stateId, int slot,
-                                           @NonNull ContainerActionType action, @NonNull ContainerAction param,
-                                           @Nullable HashedStack carriedItem, @NonNull Int2ObjectMap<@Nullable HashedStack> changedSlots) {
+                                           ContainerActionType action, ContainerAction param,
+                                           @Nullable HashedStack carriedItem, Int2ObjectMap<@Nullable HashedStack> changedSlots) {
         if ((param == DropItemAction.LEFT_CLICK_OUTSIDE_NOT_HOLDING || param == DropItemAction.RIGHT_CLICK_OUTSIDE_NOT_HOLDING)
                 && slot != CLICK_OUTSIDE_NOT_HOLDING_SLOT) {
             throw new IllegalArgumentException("Slot must be " + CLICK_OUTSIDE_NOT_HOLDING_SLOT

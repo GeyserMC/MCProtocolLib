@@ -2,6 +2,7 @@ package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
 public enum PlayerAction {
     START_DIGGING,
+    CHANGE_DIGGING_DIRECTION,
     CANCEL_DIGGING,
     FINISH_DIGGING,
     DROP_ITEM_STACK,

@@ -9,6 +9,6 @@ public enum StructureRotation {
     private static final StructureRotation[] VALUES = values();
 
     public static StructureRotation from(int id) {
-        return VALUES[id];
+        return VALUES[Math.floorMod(id, VALUES.length)];
     }
 }

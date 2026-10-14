@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.serverbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -13,11 +12,11 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 @AllArgsConstructor
 public class ServerboundCommandSuggestionPacket implements MinecraftPacket {
     private final int transactionId;
-    private final @NonNull String text;
+    private final String text;
 
     public ServerboundCommandSuggestionPacket(ByteBuf in) {
         this.transactionId = MinecraftTypes.readVarInt(in);
-        this.text = MinecraftTypes.readString(in);
+        this.text = MinecraftTypes.readString(in, 32500);
     }
 
     @Override

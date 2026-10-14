@@ -5,8 +5,6 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.NetworkConstants;
 import org.geysermc.mcprotocollib.network.Session;
@@ -20,6 +18,7 @@ import org.geysermc.mcprotocollib.network.event.session.SessionEvent;
 import org.geysermc.mcprotocollib.network.event.session.SessionListener;
 import org.geysermc.mcprotocollib.network.packet.Packet;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -44,18 +44,17 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     protected final Executor packetHandlerExecutor;
 
     private final Queue<Consumer<NetworkSession>> pendingActions = new ConcurrentLinkedQueue<>();
-    private final Map<String, Object> flags = new HashMap<>();
+    private final Map<String, @Nullable Object> flags = new HashMap<>();
     private final List<SessionListener> listeners = new CopyOnWriteArrayList<>();
 
-    private Channel channel;
+    private @Nullable Channel channel;
     protected boolean disconnected = false;
-    @Nullable
-    private volatile Component delayedDisconnect;
+    private volatile @Nullable Component delayedDisconnect;
 
     public NetworkSession(
-        @NonNull SocketAddress remoteAddress,
-        @NonNull MinecraftProtocol protocol,
-        @NonNull Executor packetHandlerExecutor
+        SocketAddress remoteAddress,
+        MinecraftProtocol protocol,
+        Executor packetHandlerExecutor
     ) {
         this.remoteAddress = remoteAddress;
         this.protocol = protocol;
@@ -63,7 +62,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public SocketAddress getLocalAddress() {
+    public @Nullable SocketAddress getLocalAddress() {
         return this.channel != null ? this.channel.localAddress() : null;
     }
 
@@ -78,7 +77,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public Map<String, Object> getFlags() {
+    public Map<String, @Nullable Object> getFlags() {
         return Collections.unmodifiableMap(this.flags);
     }
 
@@ -88,7 +87,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public <T> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
+    public <T extends @Nullable Object> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
         Object value = this.flags.get(flag.key());
         if (value == null) {
             return defSupplier.get();
@@ -102,12 +101,12 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public <T> void setFlag(Flag<T> flag, T value) {
+    public <T extends @Nullable Object> void setFlag(Flag<T> flag, T value) {
         this.flags.put(flag.key(), value);
     }
 
     @Override
-    public void setFlags(Map<String, Object> flags) {
+    public void setFlags(Map<String, @Nullable Object> flags) {
         this.flags.putAll(flags);
     }
 
@@ -185,7 +184,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public void send(@NonNull Packet packet, @Nullable Runnable onSent) {
+    public void send(Packet packet, @Nullable Runnable onSent) {
         if (this.isConnected()) {
             this.flushQueue();
             this.sendPacket(packet, onSent);
@@ -194,21 +193,21 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
         }
     }
 
-    private void sendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
-        if (this.channel.eventLoop().inEventLoop()) {
+    private void sendPacket(Packet packet, @Nullable Runnable onSent) {
+        if (getChannel().eventLoop().inEventLoop()) {
             this.doSendPacket(packet, onSent);
         } else {
-            this.channel.eventLoop().execute(() -> this.doSendPacket(packet, onSent));
+            getChannel().eventLoop().execute(() -> this.doSendPacket(packet, onSent));
         }
     }
 
-    private void doSendPacket(@NonNull Packet packet, @Nullable Runnable onSent) {
+    private void doSendPacket(Packet packet, @Nullable Runnable onSent) {
         PacketSendingEvent sendingEvent = new PacketSendingEvent(this, packet);
         this.callEvent(sendingEvent);
 
         if (!sendingEvent.isCancelled()) {
             final Packet toSend = sendingEvent.getPacket();
-            this.channel.writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
+            getChannel().writeAndFlush(toSend).addListener((ChannelFutureListener) future -> {
                 if (onSent != null) {
                     onSent.run();
                 }
@@ -217,7 +216,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
                 if (!future.isSuccess()) {
                     // Mirrors Java client handling; uses a void promise when there's no runnable
                     if (onSent != null) {
-                        channel.pipeline().fireExceptionCaught(future.cause());
+                        getChannel().pipeline().fireExceptionCaught(future.cause());
                     }
                 } else {
                     callPacketSent(toSend);
@@ -227,7 +226,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
     }
 
     @Override
-    public void disconnect(@NonNull Component reason, @Nullable Throwable cause) {
+    public void disconnect(Component reason, @Nullable Throwable cause) {
         if (this.channel == null) {
             this.delayedDisconnect = reason;
         }
@@ -240,7 +239,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
         if (this.isConnected()) {
             this.callEvent(new DisconnectingEvent(this, reason, cause));
-            this.channel.flush().close().awaitUninterruptibly();
+            getChannel().flush().close().awaitUninterruptibly();
             this.callEvent(new DisconnectedEvent(NetworkSession.this, reason, cause));
         } else {
             this.callEvent(new DisconnectedEvent(this, reason, cause));
@@ -256,7 +255,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     public Channel getChannel() {
-        return this.channel;
+        return Objects.requireNonNull(this.channel, "channel accessed before initialised");
     }
 
     @Override
@@ -286,7 +285,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (this.channel.isOpen()) {
+        if (getChannel().isOpen()) {
             Component message;
             if (cause instanceof TimeoutException) {
                 message = Component.translatable("disconnect.timeout");
@@ -315,7 +314,7 @@ public abstract class NetworkSession extends SimpleChannelInboundHandler<Packet>
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
-        if (!this.channel.isOpen()) {
+        if (!getChannel().isOpen()) {
             return;
         }
 

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyPattern;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 public class DataComponentType<T> {
@@ -55,7 +56,7 @@ public class DataComponentType<T> {
 
     @FunctionalInterface
     public interface DataComponentFactory<V> {
-        DataComponent<V, ? extends DataComponentType<V>> create(DataComponentType<V> type, V value);
+        DataComponent<V, ? extends DataComponentType<V>> create(DataComponentType<V> type, @Nullable V value);
     }
 
     @Override

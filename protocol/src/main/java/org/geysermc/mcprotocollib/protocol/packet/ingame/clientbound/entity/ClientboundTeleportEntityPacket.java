@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -22,7 +21,7 @@ public class ClientboundTeleportEntityPacket implements MinecraftPacket {
     private final Vector3d deltaMovement;
     private final float yRot;
     private final float xRot;
-    private final @NonNull List<PositionElement> relatives;
+    private final List<PositionElement> relatives;
     private final boolean onGround;
 
     public ClientboundTeleportEntityPacket(ByteBuf in) {

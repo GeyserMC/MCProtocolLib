@@ -21,7 +21,7 @@ public interface ConsumeEffect {
     record ClearAllEffects() implements ConsumeEffect {
     }
 
-    record TeleportRandomly(float diameter) implements ConsumeEffect {
+    record TeleportRandomly(float diameter, boolean directionalParticles) implements ConsumeEffect {
     }
 
     record PlaySound(Sound sound) implements ConsumeEffect {

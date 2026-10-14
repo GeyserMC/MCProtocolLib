@@ -12,7 +12,7 @@ jobs:
               with:
                   setup-java_java-version: 21
 
-            - name: Build MCPL
+            - name: Build text-serializer-nbt
               run: ./gradlew :text-serializer-nbt:build
 
             - name: Publish to Maven Repository

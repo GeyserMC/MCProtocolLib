@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.inventory;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -17,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ClientboundMerchantOffersPacket implements MinecraftPacket {
     private final int containerId;
-    private final @NonNull List<VillagerTrade> offers;
+    private final List<VillagerTrade> offers;
     private final int villagerLevel;
     private final int villagerXp;
     private final boolean showProgress;

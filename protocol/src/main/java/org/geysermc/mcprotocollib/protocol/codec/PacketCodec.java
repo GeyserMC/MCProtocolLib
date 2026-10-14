@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.geysermc.mcprotocollib.network.packet.PacketRegistry;
 import org.geysermc.mcprotocollib.protocol.data.ProtocolState;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumMap;
+import java.util.Objects;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PacketCodec {
@@ -39,7 +41,7 @@ public class PacketCodec {
 
     public static class Builder {
         private int protocolVersion = -1;
-        private String minecraftVersion = null;
+        private @Nullable String minecraftVersion = null;
         private EnumMap<ProtocolState, PacketRegistry> stateProtocols = new EnumMap<>(ProtocolState.class);
 
         public Builder protocolVersion(int protocolVersion) {
@@ -58,7 +60,7 @@ public class PacketCodec {
         }
 
         public PacketCodec build() {
-            return new PacketCodec(this.protocolVersion, this.minecraftVersion, this.stateProtocols);
+            return new PacketCodec(this.protocolVersion, Objects.requireNonNull(this.minecraftVersion, "minecraftVersion must be set"), this.stateProtocols);
         }
     }
 }

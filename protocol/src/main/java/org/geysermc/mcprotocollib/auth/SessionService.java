@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.geysermc.mcprotocollib.auth.util.HTTPUtils;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
 import org.geysermc.mcprotocollib.auth.util.UUIDUtils;
+import org.jspecify.annotations.Nullable;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -59,7 +61,7 @@ public class SessionService {
      * @throws IOException If an error occurs while making the request.
      */
     public void joinServer(GameProfile profile, String authenticationToken, String serverId) throws IOException {
-        JoinServerRequest request = new JoinServerRequest(authenticationToken, profile.getId(), serverId);
+        JoinServerRequest request = new JoinServerRequest(authenticationToken, Objects.requireNonNull(profile.getId(), "GameProfile must have a UUID to join server"), serverId);
         HTTPUtils.makeRequest(this.getProxy(), JOIN_ENDPOINT, request, null);
     }
 
@@ -71,7 +73,7 @@ public class SessionService {
      * @return The profile of the given user, or null if they are not logged in to the given server.
      * @throws IOException If an error occurs while making the request.
      */
-    public GameProfile getProfileByServer(String name, String serverId) throws IOException {
+    public @Nullable GameProfile getProfileByServer(String name, String serverId) throws IOException {
         URI hasJoinedUri = URI.create(String.format(HAS_JOINED_ENDPOINT, URLEncoder.encode(name, StandardCharsets.UTF_8), URLEncoder.encode(serverId, StandardCharsets.UTF_8)));
         HasJoinedResponse response = HTTPUtils.makeRequest(this.getProxy(), hasJoinedUri, null, HasJoinedResponse.class);
         if (response != null && response.id != null) {
@@ -112,13 +114,13 @@ public class SessionService {
     }
 
     private static class HasJoinedResponse {
-        public UUID id;
-        public List<GameProfile.Property> properties;
+        public @Nullable UUID id;
+        public @Nullable List<GameProfile.Property> properties;
     }
 
     private static class MinecraftProfileResponse {
-        public UUID id;
-        public String name;
-        public List<GameProfile.Property> properties;
+        public @Nullable UUID id;
+        public @Nullable String name;
+        public @Nullable List<GameProfile.Property> properties;
     }
 }

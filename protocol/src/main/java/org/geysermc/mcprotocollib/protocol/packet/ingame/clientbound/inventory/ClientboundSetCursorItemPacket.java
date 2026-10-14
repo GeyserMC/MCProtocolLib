@@ -7,12 +7,13 @@ import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor
 public class ClientboundSetCursorItemPacket implements MinecraftPacket {
-    private final ItemStack contents;
+    private final @Nullable ItemStack contents;
 
     public ClientboundSetCursorItemPacket(ByteBuf in) {
         this.contents = MinecraftTypes.readOptionalItemStack(in);

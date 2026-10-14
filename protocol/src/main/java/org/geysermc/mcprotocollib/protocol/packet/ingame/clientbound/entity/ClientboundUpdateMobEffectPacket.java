@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.entity;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
@@ -19,7 +18,7 @@ public class ClientboundUpdateMobEffectPacket implements MinecraftPacket {
     private static final int FLAG_BLEND = 0x08;
 
     private final int entityId;
-    private final @NonNull Effect effect;
+    private final Effect effect;
     private final int amplifier;
     private final int duration;
     private final boolean ambient;

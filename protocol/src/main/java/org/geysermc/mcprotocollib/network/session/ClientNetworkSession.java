@@ -8,8 +8,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.network.BuiltinFlags;
 import org.geysermc.mcprotocollib.network.ClientSession;
 import org.geysermc.mcprotocollib.network.ProxyInfo;
@@ -17,6 +15,7 @@ import org.geysermc.mcprotocollib.network.helper.NettyHelper;
 import org.geysermc.mcprotocollib.network.helper.TransportHelper;
 import org.geysermc.mcprotocollib.network.netty.MinecraftChannelInitializer;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +24,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class ClientNetworkSession extends NetworkSession implements ClientSession {
-    private static EventLoopGroup EVENT_LOOP_GROUP;
+    private static @Nullable EventLoopGroup EVENT_LOOP_GROUP;
 
     /**
      * See {@link EventLoopGroup#shutdownGracefully(long, long, TimeUnit)}
@@ -33,13 +32,13 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
     private static final int SHUTDOWN_QUIET_PERIOD_MS = 100;
     private static final int SHUTDOWN_TIMEOUT_MS = 500;
 
-    protected final SocketAddress bindAddress;
-    protected final ProxyInfo proxy;
+    protected final @Nullable SocketAddress bindAddress;
+    protected final @Nullable ProxyInfo proxy;
 
     public ClientNetworkSession(
-        @NonNull SocketAddress remoteAddress,
-        @NonNull MinecraftProtocol protocol,
-        @NonNull Executor packetHandlerExecutor,
+        SocketAddress remoteAddress,
+        MinecraftProtocol protocol,
+        Executor packetHandlerExecutor,
         @Nullable SocketAddress bindAddress,
         @Nullable ProxyInfo proxy
     ) {
@@ -65,7 +64,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
 
         setOptions(bootstrap);
 
-        CompletableFuture<Void> handleFuture = new CompletableFuture<>();
+        CompletableFuture<@Nullable Void> handleFuture = new CompletableFuture<>();
         bootstrap.connect().addListener((futureListener) -> {
             if (!futureListener.isSuccess()) {
                 this.disconnect(this.getGenericDisconnectMessage(futureListener.cause()), futureListener.cause());
@@ -87,6 +86,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
     protected EventLoopGroup getEventLoopGroup() {
         createEventLoopGroup();
 
+        assert EVENT_LOOP_GROUP != null : "EVENT_LOOP_GROUP may not be null after createEventLoopGroup call";
         return EVENT_LOOP_GROUP;
     }
 
@@ -113,7 +113,7 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
             return ClientNetworkSession.this;
         }, true) {
             @Override
-            public void initChannel(@NonNull Channel channel) throws Exception {
+            public void initChannel(Channel channel) throws Exception {
                 NettyHelper.addProxy(proxy, channel.pipeline());
                 NettyHelper.initializeHAProxySupport(ClientNetworkSession.this, channel);
 
@@ -130,7 +130,10 @@ public class ClientNetworkSession extends NetworkSession implements ClientSessio
         EVENT_LOOP_GROUP = TransportHelper.TRANSPORT_TYPE.eventLoopGroupFactory().apply(0, newThreadFactory());
 
         Runtime.getRuntime().addShutdownHook(new Thread(
-            () -> EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)));
+            () -> {
+                assert EVENT_LOOP_GROUP != null;
+                EVENT_LOOP_GROUP.shutdownGracefully(SHUTDOWN_QUIET_PERIOD_MS, SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            }));
     }
 
     protected static ThreadFactory newThreadFactory() {

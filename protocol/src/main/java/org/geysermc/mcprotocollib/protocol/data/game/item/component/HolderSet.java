@@ -3,27 +3,29 @@ package org.geysermc.mcprotocollib.protocol.data.game.item.component;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.Data;
-import lombok.NonNull;
 import net.kyori.adventure.key.Key;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Function;
 
 /**
  * Represents a set of holders that could either be explicit, or resolved from a tag location.
  * The client has to know how to resolve the tag location to get the holders.
+ *
+ * <p>Note that in NBT format, holder sets can also hold inline-defined holders, or even a combination of inline-defined and registry referenced holders.
+ * As of Java Edition 26.3, the stream codec still only supports registry referenced holders and tags.</p>
  */
 @Data
 public final class HolderSet {
     private final @Nullable Key location;
     private final @Nullable IntList holders;
 
-    public HolderSet(@NonNull IntList holders) {
+    public HolderSet(IntList holders) {
         this.location = null;
         this.holders = new IntArrayList(holders);
     }
 
-    public HolderSet(@NonNull Key location) {
+    public HolderSet(Key location) {
         this.location = location;
         this.holders = null;
     }
@@ -39,6 +41,7 @@ public final class HolderSet {
             return holders;
         }
 
+        assert location != null;
         return tagResolver.apply(location);
     }
 

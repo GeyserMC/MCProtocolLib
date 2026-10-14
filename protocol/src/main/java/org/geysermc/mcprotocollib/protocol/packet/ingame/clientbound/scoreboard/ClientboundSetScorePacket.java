@@ -4,20 +4,19 @@ import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.chat.numbers.NumberFormat;
+import org.jspecify.annotations.Nullable;
 
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundSetScorePacket implements MinecraftPacket {
-    private final @NonNull String owner;
-    private final @NonNull String objective;
+    private final String owner;
+    private final String objective;
     private final int value;
     private final @Nullable Component display;
     private final @Nullable NumberFormat numberFormat;
@@ -25,7 +24,7 @@ public class ClientboundSetScorePacket implements MinecraftPacket {
     /**
      * Creates a set score packet that adds or updates the entry.
      */
-    public ClientboundSetScorePacket(@NonNull String owner, @NonNull String objective, int value) {
+    public ClientboundSetScorePacket(String owner, String objective, int value) {
         this.owner = owner;
         this.objective = objective;
         this.value = value;

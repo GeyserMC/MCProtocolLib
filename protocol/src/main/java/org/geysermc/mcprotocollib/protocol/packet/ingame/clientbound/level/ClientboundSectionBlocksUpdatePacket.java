@@ -2,7 +2,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound.level;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -18,7 +17,7 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
     /**
      * The server sends the record position in terms of the local chunk coordinate but it is stored here in terms of global coordinates.
      */
-    private final @NonNull BlockChangeEntry[] entries;
+    private final BlockChangeEntry[] entries;
 
     public ClientboundSectionBlocksUpdatePacket(int chunkX, int chunkY, int chunkZ, BlockChangeEntry... entries) {
         if (entries == null || entries.length == 0) {

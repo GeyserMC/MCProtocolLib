@@ -1,6 +1,6 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.block;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public enum BlockEntityType {
     FURNACE,
@@ -55,8 +55,7 @@ public enum BlockEntityType {
 
     private static final BlockEntityType[] VALUES = values();
 
-    @Nullable
-    public static BlockEntityType from(int id) {
+    public static @Nullable BlockEntityType from(int id) {
         if (id >= 0 && id < VALUES.length) {
             return VALUES[id];
         } else {

@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.debug;
 
 import org.cloudburstmc.math.vector.Vector3i;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

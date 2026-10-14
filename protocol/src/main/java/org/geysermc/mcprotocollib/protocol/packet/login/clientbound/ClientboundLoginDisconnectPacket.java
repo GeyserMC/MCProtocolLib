@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.login.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -17,7 +16,7 @@ public class ClientboundLoginDisconnectPacket implements MinecraftPacket {
 
     private static final int MAX_COMPONENT_STRING_LENGTH = 262144;
 
-    private final @NonNull Component reason;
+    private final Component reason;
 
     public ClientboundLoginDisconnectPacket(String text) {
         this(DefaultComponentSerializer.get().deserialize(text));

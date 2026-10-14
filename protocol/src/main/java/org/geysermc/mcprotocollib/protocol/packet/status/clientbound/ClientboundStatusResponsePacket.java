@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.auth.GameProfile;
@@ -31,9 +30,9 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
     // vanilla behavior falls back to false if the field was not sent
     private static final boolean ENFORCES_SECURE_CHAT_DEFAULT = false;
 
-    private final @NonNull JsonObject data;
+    private final JsonObject data;
 
-    public ClientboundStatusResponsePacket(@NonNull ServerStatusInfo info) {
+    public ClientboundStatusResponsePacket(ServerStatusInfo info) {
         this(toJson(info));
     }
 
@@ -86,7 +85,7 @@ public class ClientboundStatusResponsePacket implements MinecraftPacket {
         return new ServerStatusInfo(description, players, version, icon, enforcesSecureChat);
     }
 
-    public ClientboundStatusResponsePacket withInfo(@NonNull ServerStatusInfo info) {
+    public ClientboundStatusResponsePacket withInfo(ServerStatusInfo info) {
         return withData(toJson(info));
     }
 

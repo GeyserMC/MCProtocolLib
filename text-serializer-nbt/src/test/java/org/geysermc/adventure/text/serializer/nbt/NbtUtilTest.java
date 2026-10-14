@@ -28,6 +28,6 @@ public class NbtUtilTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> NbtUtil.deserializeARGB(HeterogeneousNbtList.of(0.2F, 0.4F)));
 
         Assertions.assertEquals(ShadowColor.shadowColor(0x21325678), NbtUtil.deserializeARGB(0x21325678));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> NbtUtil.deserializeARGB((byte) 0));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> NbtUtil.deserializeARGB("0"));
     }
 }

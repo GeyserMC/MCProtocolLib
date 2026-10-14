@@ -3,6 +3,7 @@ package org.geysermc.mcprotocollib.network;
 import org.geysermc.mcprotocollib.network.event.server.ServerListener;
 import org.geysermc.mcprotocollib.network.server.AbstractServer;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -57,14 +58,14 @@ public interface Server {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    default <T> T getGlobalFlag(Flag<T> flag) {
+    default <T extends @Nullable Object> @Nullable T getGlobalFlag(Flag<T> flag) {
         return getGlobalFlagSupplied(flag, () -> null);
     }
 
     /**
      * @see #getGlobalFlagSupplied(Flag, Supplier)
      */
-    default <T> T getGlobalFlag(Flag<T> flag, T def) {
+    default <T extends @Nullable Object> T getGlobalFlag(Flag<T> flag, T def) {
         return getGlobalFlagSupplied(flag, () -> def);
     }
 
@@ -78,7 +79,7 @@ public interface Server {
      * @return Value of the flag.
      * @throws IllegalStateException If the flag's value isn't of the required type.
      */
-    <T> T getGlobalFlagSupplied(Flag<T> flag, Supplier<T> defSupplier);
+    <T extends @Nullable Object> T getGlobalFlagSupplied(Flag<T> flag, Supplier<T> defSupplier);
 
     /**
      * Sets the value of a flag. The flag will be used in sessions if a session does

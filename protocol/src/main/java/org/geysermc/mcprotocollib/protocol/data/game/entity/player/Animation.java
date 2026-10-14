@@ -1,36 +1,15 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public enum Animation {
-    SWING_ARM(0),
-    LEAVE_BED(2),
-    SWING_OFFHAND(3),
-    CRITICAL_HIT(4),
-    ENCHANTMENT_CRITICAL_HIT(5);
+    WAKE_UP,
+    CRITICAL_HIT,
+    MAGIC_CRITICAL_HIT;
 
-    private final int id;
+    private static final Animation[] VALUES = values();
 
-    Animation(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    private static final Int2ObjectMap<Animation> VALUES = new Int2ObjectOpenHashMap<>();
-
-    @Nullable
-    public static Animation from(int id) {
-        return VALUES.get(id);
-    }
-
-    static {
-        for (Animation animation : values()) {
-            VALUES.put(animation.id, animation);
-        }
+    public static @Nullable Animation from(int id) {
+        return id >= 0 && id < VALUES.length ? VALUES[id] : null;
     }
 }

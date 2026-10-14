@@ -3,7 +3,6 @@ package org.geysermc.mcprotocollib.protocol.packet.ingame.clientbound;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.key.Key;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -16,7 +15,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.entity.player.PlayerSpawnIn
 public class ClientboundLoginPacket implements MinecraftPacket {
     private final int entityId;
     private final boolean hardcore;
-    private final @NonNull Key[] worldNames;
+    private final Key[] worldNames;
     private final int maxPlayers;
     private final int viewDistance;
     private final int simulationDistance;

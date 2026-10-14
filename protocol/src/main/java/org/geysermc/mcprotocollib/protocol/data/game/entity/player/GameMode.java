@@ -1,7 +1,7 @@
 package org.geysermc.mcprotocollib.protocol.data.game.entity.player;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.geysermc.mcprotocollib.protocol.data.game.level.notify.GameEventValue;
+import org.jspecify.annotations.Nullable;
 
 public enum GameMode implements GameEventValue {
     SURVIVAL,
@@ -17,8 +17,7 @@ public enum GameMode implements GameEventValue {
         return id >= 0 && id < VALUES.length ? VALUES[id] : VALUES[0];
     }
 
-    @Nullable
-    public static GameMode byNullableId(int id) {
+    public static @Nullable GameMode byNullableId(int id) {
         return id == -1 ? null : byId(id);
     }
 

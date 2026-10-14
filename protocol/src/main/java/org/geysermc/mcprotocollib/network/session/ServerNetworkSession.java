@@ -1,11 +1,11 @@
 package org.geysermc.mcprotocollib.network.session;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.geysermc.mcprotocollib.network.Flag;
 import org.geysermc.mcprotocollib.network.ServerSession;
 import org.geysermc.mcprotocollib.network.server.NetworkServer;
 import org.geysermc.mcprotocollib.protocol.MinecraftProtocol;
+import org.jspecify.annotations.Nullable;
 
 import java.net.SocketAddress;
 import java.util.HashMap;
@@ -17,18 +17,18 @@ public class ServerNetworkSession extends NetworkSession implements ServerSessio
     private final NetworkServer server;
 
     public ServerNetworkSession(
-        @NonNull SocketAddress remoteAddress,
-        @NonNull MinecraftProtocol protocol,
-        @NonNull NetworkServer server,
-        @NonNull Executor packetHandlerExecutor
+        SocketAddress remoteAddress,
+        MinecraftProtocol protocol,
+        NetworkServer server,
+        Executor packetHandlerExecutor
     ) {
         super(remoteAddress, protocol, packetHandlerExecutor);
         this.server = server;
     }
 
     @Override
-    public Map<String, Object> getFlags() {
-        Map<String, Object> ret = new HashMap<>();
+    public Map<String, @Nullable Object> getFlags() {
+        Map<String, @Nullable Object> ret = new HashMap<>();
         ret.putAll(this.server.getGlobalFlags());
         ret.putAll(super.getFlags());
         return ret;
@@ -44,7 +44,7 @@ public class ServerNetworkSession extends NetworkSession implements ServerSessio
     }
 
     @Override
-    public <T> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
+    public <T extends @Nullable Object> T getFlagSupplied(Flag<T> flag, Supplier<T> defSupplier) {
         T ret = super.getFlagSupplied(flag, () -> null);
         if (ret != null) {
             return ret;

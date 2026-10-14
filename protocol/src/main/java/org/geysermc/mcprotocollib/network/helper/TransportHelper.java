@@ -28,6 +28,7 @@ import io.netty.channel.uring.IoUringDatagramChannel;
 import io.netty.channel.uring.IoUringIoHandler;
 import io.netty.channel.uring.IoUringServerSocketChannel;
 import io.netty.channel.uring.IoUringSocketChannel;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.function.BiFunction;
@@ -48,7 +49,7 @@ public class TransportHelper {
                                 ChannelFactory<? extends SocketChannel> socketChannelFactory,
                                 Class<? extends DatagramChannel> datagramChannelClass,
                                 ChannelFactory<? extends DatagramChannel> datagramChannelFactory,
-                                BiFunction<Integer, ThreadFactory, EventLoopGroup> eventLoopGroupFactory,
+                                BiFunction<Integer, @Nullable ThreadFactory, EventLoopGroup> eventLoopGroupFactory,
                                 boolean supportsTcpFastOpenServer,
                                 boolean supportsTcpFastOpenClient) {
     }

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.With;
 import net.kyori.adventure.text.Component;
 import org.geysermc.mcprotocollib.protocol.codec.MinecraftPacket;
@@ -12,49 +11,51 @@ import org.geysermc.mcprotocollib.protocol.codec.MinecraftTypes;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarAction;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarColor;
 import org.geysermc.mcprotocollib.protocol.data.game.BossBarDivision;
+import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
 @With
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClientboundBossEventPacket implements MinecraftPacket {
-    private final @NonNull UUID uuid;
-    private final @NonNull BossBarAction action;
+    private final UUID uuid;
+    private final BossBarAction action;
 
-    private final Component title;
+    private final @Nullable Component title;
 
     private final float health;
 
-    private final BossBarColor color;
-    private final BossBarDivision division;
+    private final @Nullable BossBarColor color;
+    private final @Nullable BossBarDivision division;
 
     private final boolean darkenSky;
     private final boolean playEndMusic;
     private final boolean showFog;
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid) {
+    public ClientboundBossEventPacket(UUID uuid) {
         this(uuid, BossBarAction.REMOVE, null, 0f, null, null, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull Component title) {
+    public ClientboundBossEventPacket(UUID uuid, Component title) {
         this(uuid, BossBarAction.UPDATE_TITLE, title, 0f, null, null, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, float health) {
+    public ClientboundBossEventPacket(UUID uuid, float health) {
         this(uuid, BossBarAction.UPDATE_HEALTH, null, health, null, null, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull BossBarColor color, @NonNull BossBarDivision division) {
+    public ClientboundBossEventPacket(UUID uuid, BossBarColor color, BossBarDivision division) {
         this(uuid, BossBarAction.UPDATE_STYLE, null, 0f, color, division, false, false, false);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, boolean darkenSky, boolean playEndMusic, boolean showFog) {
+    public ClientboundBossEventPacket(UUID uuid, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this(uuid, BossBarAction.UPDATE_FLAGS, null, 0f, null, null, darkenSky, playEndMusic, showFog);
     }
 
-    public ClientboundBossEventPacket(@NonNull UUID uuid, @NonNull Component title, float health, @NonNull BossBarColor color,
-                                      @NonNull BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
+    public ClientboundBossEventPacket(UUID uuid, Component title, float health, BossBarColor color,
+                                      BossBarDivision division, boolean darkenSky, boolean playEndMusic, boolean showFog) {
         this.uuid = uuid;
         this.action = BossBarAction.ADD;
 
@@ -109,7 +110,7 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         MinecraftTypes.writeVarInt(out, this.action.ordinal());
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_TITLE) {
-            MinecraftTypes.writeComponent(out, this.title);
+            MinecraftTypes.writeComponent(out, Objects.requireNonNull(this.title, "title must not be null for ADD or UPDATE_TITLE actions"));
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_HEALTH) {
@@ -117,8 +118,8 @@ public class ClientboundBossEventPacket implements MinecraftPacket {
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_STYLE) {
-            MinecraftTypes.writeVarInt(out, this.color.ordinal());
-            MinecraftTypes.writeVarInt(out, this.division.ordinal());
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.color, "color must not be null for ADD or UPDATE_STYLE actions").ordinal());
+            MinecraftTypes.writeVarInt(out, Objects.requireNonNull(this.division, "division must not be null for ADD or UPDATE_STYLE actions").ordinal());
         }
 
         if (this.action == BossBarAction.ADD || this.action == BossBarAction.UPDATE_FLAGS) {

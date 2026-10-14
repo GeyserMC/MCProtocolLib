@@ -1,45 +1,56 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.map;
 
+import org.jspecify.annotations.Nullable;
+
 public enum MapIconType {
-    WHITE_ARROW,
-    GREEN_ARROW,
-    RED_ARROW,
-    BLUE_ARROW,
-    WHITE_CROSS,
-    RED_POINTER,
-    WHITE_CIRCLE,
-    SMALL_WHITE_CIRCLE,
+    PLAYER,
+    FRAME,
+    RED_MARKER,
+    BLUE_MARKER,
+    TARGET_X,
+    TARGET_POINT,
+    PLAYER_OFF_MAP,
+    PLAYER_OFF_LIMITS,
     MANSION,
-    TEMPLE,
-    WHITE_BANNER,
-    ORANGE_BANNER,
-    MAGENTA_BANNER,
-    LIGHT_BLUE_BANNER,
-    YELLOW_BANNER,
-    LIME_BANNER,
-    PINK_BANNER,
-    GRAY_BANNER,
-    LIGHT_GRAY_BANNER,
-    CYAN_BANNER,
-    PURPLE_BANNER,
-    BLUE_BANNER,
-    BROWN_BANNER,
-    GREEN_BANNER,
-    RED_BANNER,
-    BLACK_BANNER,
-    TREASURE_MARKER,
-    DESERT_VILLAGE,
-    PLAINS_VILLAGE,
-    SAVANNA_VILLAGE,
-    SNOWY_VILLAGE,
-    TAIGA_VILLAGE,
+    MONUMENT,
+    BANNER_WHITE,
+    BANNER_ORANGE,
+    BANNER_MAGENTA,
+    BANNER_LIGHT_BLUE,
+    BANNER_YELLOW,
+    BANNER_LIME,
+    BANNER_PINK,
+    BANNER_GRAY,
+    BANNER_LIGHT_GRAY,
+    BANNER_CYAN,
+    BANNER_PURPLE,
+    BANNER_BLUE,
+    BANNER_BROWN,
+    BANNER_GREEN,
+    BANNER_RED,
+    BANNER_BLACK,
+    RED_X,
+    VILLAGE_DESERT,
+    VILLAGE_PLAINS,
+    VILLAGE_SAVANNA,
+    VILLAGE_SNOWY,
+    VILLAGE_TAIGA,
     JUNGLE_TEMPLE,
     SWAMP_HUT,
-    TRIAL_CHAMBERS;
+    TRIAL_CHAMBERS,
+    ABANDONED_CAMP,
+    ANCIENT_CITY,
+    DESERT_PYRAMID,
+    MINESHAFT,
+    OCEAN_RUIN_WARM;
 
     private static final MapIconType[] VALUES = values();
 
-    public static MapIconType from(int id) {
-        return VALUES[id];
+    public static @Nullable MapIconType from(int id) {
+        if (id >= 0 && id < VALUES.length) {
+            return VALUES[id];
+        } else {
+            return null;
+        }
     }
 }
