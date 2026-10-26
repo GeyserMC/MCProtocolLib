@@ -14,6 +14,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.block.BlockEntityType
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Data
 @With
@@ -33,7 +34,8 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
         this.heightMaps = new EnumMap<>(HeightmapTypes.class);
         int length = MinecraftTypes.readVarInt(in);
         for (int i = 0; i < length; i++) {
-            this.heightMaps.put(HeightmapTypes.from(MinecraftTypes.readVarInt(in)), MinecraftTypes.readLongArray(in));
+            int heightMap = MinecraftTypes.readVarInt(in);
+            this.heightMaps.put(Objects.requireNonNull(HeightmapTypes.from(heightMap), "Received invalid heightmap: " + heightMap), MinecraftTypes.readLongArray(in));
         }
 
         this.chunkData = MinecraftTypes.readByteArray(in);
