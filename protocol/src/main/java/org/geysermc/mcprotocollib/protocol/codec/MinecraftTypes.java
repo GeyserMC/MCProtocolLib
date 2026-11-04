@@ -1017,7 +1017,8 @@ public class MinecraftTypes {
     }
 
     public static ParticleType readParticleType(ByteBuf buf) {
-        return ParticleType.from(MinecraftTypes.readVarInt(buf));
+        int id = MinecraftTypes.readVarInt(buf);
+        return Objects.requireNonNull(ParticleType.from(id), "Received invalid particle type: " + id);
     }
 
     public static void writeParticleType(ByteBuf buf, ParticleType type) {

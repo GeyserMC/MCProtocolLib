@@ -1,5 +1,12 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.particle;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import net.kyori.adventure.key.Key;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Locale;
+
 public enum ParticleType {
     ANGRY_VILLAGER,
     BLOCK,
@@ -119,8 +126,8 @@ public enum ParticleType {
     SHRIEK,
     EGG_CRACK,
     DUST_PLUME,
-    TRIAL_SPAWNER_DETECTED_PLAYER,
-    TRIAL_SPAWNER_DETECTED_PLAYER_OMINOUS,
+    TRIAL_SPAWNER_DETECTION,
+    TRIAL_SPAWNER_DETECTION_OMINOUS,
     VAULT_CONNECTION,
     DUST_PILLAR,
     OMINOUS_SPAWNING,
@@ -132,7 +139,27 @@ public enum ParticleType {
 
     private static final ParticleType[] VALUES = values();
 
-    public static ParticleType from(int id) {
+    @Getter
+    @Accessors(fluent = true)
+    private final Key key;
+
+    ParticleType() {
+        this.key = Key.key("minecraft", name().toLowerCase(Locale.ROOT));
+    }
+
+    public static @Nullable ParticleType from(int id) {
+        if (id < 0 || id >= VALUES.length) {
+            return null;
+        }
         return VALUES[id];
+    }
+
+    public static @Nullable ParticleType from(Key key) {
+        for (ParticleType type : VALUES) {
+            if (type.key.equals(key)) {
+                return type;
+            }
+        }
+        return null;
     }
 }
