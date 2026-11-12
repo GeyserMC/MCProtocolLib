@@ -46,7 +46,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
     public ClientboundUpdateAdvancementsPacket(ByteBuf in) {
         this.reset = in.readBoolean();
 
-        this.advancements = new Advancement[MinecraftTypes.readVarInt(in)];
+        this.advancements = new Advancement[MinecraftTypes.readCount(in, 1)];
         for (int i = 0; i < this.advancements.length; i++) {
             String id = MinecraftTypes.readString(in);
             String parentId = MinecraftTypes.readNullable(in, MinecraftTypes::readString);
@@ -75,7 +75,7 @@ public class ClientboundUpdateAdvancementsPacket implements MinecraftPacket {
             this.advancements[i] = new Advancement(id, requirements, parentId, displayData, sendTelemetryEvent, posX, posY);
         }
 
-        this.removedAdvancements = new String[MinecraftTypes.readVarInt(in)];
+        this.removedAdvancements = new String[MinecraftTypes.readCount(in, 1)];
         for (int i = 0; i < this.removedAdvancements.length; i++) {
             this.removedAdvancements[i] = MinecraftTypes.readString(in);
         }

@@ -14,6 +14,7 @@ import org.geysermc.mcprotocollib.protocol.data.game.chat.MessageSignature;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,9 +32,18 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
     private final List<MessageSignature> lastSeenMessages;
     private final @Nullable Component unsignedContent;
     private final ChatFilterType filterMask;
+    private final BitSet filteredIndices;
     private final Holder<ChatType> chatType;
     private final Component name;
     private final @Nullable Component targetName;
+
+    public ClientboundPlayerChatPacket(int globalIndex, UUID sender, int index, byte @Nullable [] messageSignature,
+                                       String content, long timeStamp, long salt, List<MessageSignature> lastSeenMessages,
+                                       @Nullable Component unsignedContent, ChatFilterType filterMask, Holder<ChatType> chatType,
+                                       Component name, @Nullable Component targetName) {
+        this(globalIndex, sender, index, messageSignature, content, timeStamp, salt, lastSeenMessages, unsignedContent,
+            filterMask, new BitSet(), chatType, name, targetName);
+    }
 
     public ClientboundPlayerChatPacket(ByteBuf in) {
         this.globalIndex = MinecraftTypes.readVarInt(in);
@@ -57,6 +67,8 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 
         this.unsignedContent = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
         this.filterMask = ChatFilterType.from(MinecraftTypes.readVarInt(in));
+        this.filteredIndices = this.filterMask == ChatFilterType.PARTIALLY_FILTERED
+            ? BitSet.valueOf(MinecraftTypes.readByteArray(in)) : new BitSet();
         this.chatType = MinecraftTypes.readHolder(in, MinecraftTypes::readChatType);
         this.name = MinecraftTypes.readComponent(in);
         this.targetName = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
@@ -69,7 +81,7 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
         MinecraftTypes.writeVarInt(out, this.index);
         MinecraftTypes.writeNullable(out, this.messageSignature, ByteBuf::writeBytes);
 
-        MinecraftTypes.writeString(out, this.content);
+        MinecraftTypes.writeString(out, this.content, 256);
         out.writeLong(this.timeStamp);
         out.writeLong(this.salt);
 
@@ -83,6 +95,9 @@ public class ClientboundPlayerChatPacket implements MinecraftPacket {
 
         MinecraftTypes.writeNullable(out, this.unsignedContent, MinecraftTypes::writeComponent);
         MinecraftTypes.writeVarInt(out, this.filterMask.ordinal());
+        if (this.filterMask == ChatFilterType.PARTIALLY_FILTERED) {
+            MinecraftTypes.writeByteArray(out, this.filteredIndices.toByteArray());
+        }
         MinecraftTypes.writeHolder(out, this.chatType, MinecraftTypes::writeChatType);
         MinecraftTypes.writeComponent(out, this.name);
         MinecraftTypes.writeNullable(out, this.targetName, MinecraftTypes::writeComponent);

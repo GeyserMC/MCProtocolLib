@@ -19,7 +19,7 @@ public class ClientIntentionPacket implements MinecraftPacket {
 
     public ClientIntentionPacket(ByteBuf in) {
         this.protocolVersion = MinecraftTypes.readVarInt(in);
-        this.hostname = MinecraftTypes.readString(in);
+        this.hostname = MinecraftTypes.readString(in, 255);
         this.port = in.readUnsignedShort();
         this.intent = HandshakeIntent.from(MinecraftTypes.readVarInt(in) - 1);
     }

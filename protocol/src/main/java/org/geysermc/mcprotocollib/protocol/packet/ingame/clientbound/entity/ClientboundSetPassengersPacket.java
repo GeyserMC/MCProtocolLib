@@ -16,7 +16,7 @@ public class ClientboundSetPassengersPacket implements MinecraftPacket {
 
     public ClientboundSetPassengersPacket(ByteBuf in) {
         this.entityId = MinecraftTypes.readVarInt(in);
-        this.passengerIds = new int[MinecraftTypes.readVarInt(in)];
+        this.passengerIds = new int[MinecraftTypes.readCount(in, 1)];
         for (int index = 0; index < this.passengerIds.length; index++) {
             this.passengerIds[index] = MinecraftTypes.readVarInt(in);
         }

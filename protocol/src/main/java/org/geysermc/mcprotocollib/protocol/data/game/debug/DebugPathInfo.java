@@ -44,7 +44,8 @@ public record DebugPathInfo(Path path, float maxNodeDistance) implements DebugIn
         STICKY_HONEY,
         COCOA,
         DAMAGE_CAUTIOUS,
-        DANGER_TRAPDOOR;
+        DANGER_TRAPDOOR,
+        BIG_MOBS_CLOSE_TO_DANGER;
 
         private static final PathType[] VALUES = values();
 

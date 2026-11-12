@@ -43,7 +43,7 @@ public class ClientboundRecipeBookAddPacket implements MinecraftPacket {
         MinecraftTypes.writeList(out, this.entries, (buf, entry) -> {
             MinecraftTypes.writeVarInt(buf, entry.contents().id());
             MinecraftTypes.writeRecipeDisplay(buf, entry.contents().display());
-            MinecraftTypes.writeVarInt(buf, entry.contents().group().isEmpty() ? 0 : entry.contents().group().getAsInt());
+            MinecraftTypes.writeVarInt(buf, entry.contents().group().isEmpty() ? 0 : entry.contents().group().getAsInt() + 1);
             MinecraftTypes.writeVarInt(buf, entry.contents().category());
             MinecraftTypes.writeNullable(buf, entry.contents().craftingRequirements(), (buf1, reqs) -> MinecraftTypes.writeList(buf1, reqs, MinecraftTypes::writeHolderSet));
 

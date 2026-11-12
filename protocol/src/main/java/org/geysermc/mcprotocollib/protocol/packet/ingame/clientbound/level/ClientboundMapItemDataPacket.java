@@ -34,7 +34,7 @@ public class ClientboundMapItemDataPacket implements MinecraftPacket {
         this.scale = in.readByte();
         this.locked = in.readBoolean();
         boolean hasIcons = in.readBoolean();
-        this.icons = new MapIcon[hasIcons ? MinecraftTypes.readVarInt(in) : 0];
+        this.icons = new MapIcon[hasIcons ? MinecraftTypes.readCount(in, 1) : 0];
         if (hasIcons) {
             for (int index = 0; index < this.icons.length; index++) {
                 int type = MinecraftTypes.readVarInt(in);

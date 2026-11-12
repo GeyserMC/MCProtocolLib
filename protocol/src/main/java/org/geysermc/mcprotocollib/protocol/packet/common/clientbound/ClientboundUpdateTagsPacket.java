@@ -27,7 +27,7 @@ public class ClientboundUpdateTagsPacket implements MinecraftPacket {
             int tagsCount = MinecraftTypes.readVarInt(in);
             for (int j = 0; j < tagsCount; j++) {
                 Key name = MinecraftTypes.readResourceLocation(in);
-                int entriesCount = MinecraftTypes.readVarInt(in);
+                int entriesCount = MinecraftTypes.readCount(in, 1);
                 int[] entries = new int[entriesCount];
                 for (int index = 0; index < entriesCount; index++) {
                     entries[index] = MinecraftTypes.readVarInt(in);

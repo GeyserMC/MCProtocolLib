@@ -17,13 +17,13 @@ public class ServerboundHelloPacket implements MinecraftPacket {
     private final UUID profileId;
 
     public ServerboundHelloPacket(ByteBuf in) {
-        this.username = MinecraftTypes.readString(in);
+        this.username = MinecraftTypes.readString(in, 16);
         this.profileId = MinecraftTypes.readUUID(in);
     }
 
     @Override
     public void serialize(ByteBuf out) {
-        MinecraftTypes.writeString(out, this.username);
+        MinecraftTypes.writeString(out, this.username, 16);
         MinecraftTypes.writeUUID(out, this.profileId);
     }
 }

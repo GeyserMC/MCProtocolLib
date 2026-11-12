@@ -22,7 +22,7 @@ public class ClientboundHelloPacket implements MinecraftPacket {
     private final boolean shouldAuthenticate;
 
     public ClientboundHelloPacket(ByteBuf in) {
-        this.serverId = MinecraftTypes.readString(in);
+        this.serverId = MinecraftTypes.readString(in, 20);
         byte[] publicKey = MinecraftTypes.readByteArray(in);
         this.challenge = MinecraftTypes.readByteArray(in);
         this.shouldAuthenticate = in.readBoolean();

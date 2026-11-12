@@ -24,7 +24,7 @@ public class ClientboundResourcePackPushPacket implements MinecraftPacket {
     public ClientboundResourcePackPushPacket(ByteBuf in) {
         this.id = MinecraftTypes.readUUID(in);
         this.url = MinecraftTypes.readString(in);
-        this.hash = MinecraftTypes.readString(in);
+        this.hash = MinecraftTypes.readString(in, 40);
         this.required = in.readBoolean();
         this.prompt = MinecraftTypes.readNullable(in, MinecraftTypes::readComponent);
     }
@@ -33,7 +33,7 @@ public class ClientboundResourcePackPushPacket implements MinecraftPacket {
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeUUID(out, this.id);
         MinecraftTypes.writeString(out, this.url);
-        MinecraftTypes.writeString(out, this.hash);
+        MinecraftTypes.writeString(out, this.hash, 40);
         out.writeBoolean(this.required);
         MinecraftTypes.writeNullable(out, this.prompt, MinecraftTypes::writeComponent);
     }

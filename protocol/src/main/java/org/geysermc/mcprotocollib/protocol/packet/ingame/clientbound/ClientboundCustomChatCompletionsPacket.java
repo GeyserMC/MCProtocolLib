@@ -17,7 +17,7 @@ public class ClientboundCustomChatCompletionsPacket implements MinecraftPacket {
 
     public ClientboundCustomChatCompletionsPacket(ByteBuf in) {
         this.action = ChatCompletionAction.from(MinecraftTypes.readVarInt(in));
-        this.entries = new String[MinecraftTypes.readVarInt(in)];
+        this.entries = new String[MinecraftTypes.readCount(in, 1)];
         for (int i = 0; i < this.entries.length; i++) {
             this.entries[i] = MinecraftTypes.readString(in);
         }
