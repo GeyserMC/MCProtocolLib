@@ -1,6 +1,11 @@
 package org.geysermc.mcprotocollib.protocol.data.game.level.map;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import net.kyori.adventure.key.Key;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Locale;
 
 public enum MapIconType {
     PLAYER,
@@ -46,11 +51,28 @@ public enum MapIconType {
 
     private static final MapIconType[] VALUES = values();
 
+    @Getter
+    @Accessors(fluent = true)
+    private final Key key;
+
+    MapIconType() {
+        this.key = Key.key("minecraft", name().toLowerCase(Locale.ROOT));
+    }
+
     public static @Nullable MapIconType from(int id) {
         if (id >= 0 && id < VALUES.length) {
             return VALUES[id];
         } else {
             return null;
         }
+    }
+
+    public static @Nullable MapIconType from(Key key) {
+        for (MapIconType type : VALUES) {
+            if (type.key.equals(key)) {
+                return type;
+            }
+        }
+        return null;
     }
 }
