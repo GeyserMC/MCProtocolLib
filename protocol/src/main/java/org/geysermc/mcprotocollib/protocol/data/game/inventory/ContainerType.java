@@ -8,7 +8,7 @@ public enum ContainerType {
     GENERIC_9X5,
     GENERIC_9X6,
     GENERIC_3X3,
-    CRAFTER_3x3,
+    CRAFTER_3X3,
     ANVIL,
     BEACON,
     BLAST_FURNACE,
@@ -24,7 +24,7 @@ public enum ContainerType {
     SHULKER_BOX,
     SMITHING,
     SMOKER,
-    CARTOGRAPHY,
+    CARTOGRAPHY_TABLE,
     STONECUTTER;
 
     private static final ContainerType[] VALUES = values();
