@@ -20,14 +20,17 @@ public class ServerboundEditBookPacket implements MinecraftPacket {
 
     public ServerboundEditBookPacket(ByteBuf in) {
         this.slot = MinecraftTypes.readVarInt(in);
-        this.pages = MinecraftTypes.readList(in, MinecraftTypes::readString);
-        this.title = MinecraftTypes.readNullable(in, MinecraftTypes::readString);
+        this.pages = MinecraftTypes.readList(in, buf -> MinecraftTypes.readString(buf, 1024), 100);
+        this.title = MinecraftTypes.readNullable(in, buf -> MinecraftTypes.readString(buf, 32));
     }
 
     @Override
     public void serialize(ByteBuf out) {
         MinecraftTypes.writeVarInt(out, slot);
-        MinecraftTypes.writeList(out, pages, MinecraftTypes::writeString);
-        MinecraftTypes.writeNullable(out, title, MinecraftTypes::writeString);
+        if (this.pages.size() > 100) {
+            throw new IllegalArgumentException("Book exceeds maximum of 100 pages");
+        }
+        MinecraftTypes.writeList(out, pages, (buf, page) -> MinecraftTypes.writeString(buf, page, 1024));
+        MinecraftTypes.writeNullable(out, title, (buf, value) -> MinecraftTypes.writeString(buf, value, 32));
     }
 }

@@ -60,7 +60,7 @@ public class ServerboundContainerClickPacket implements MinecraftPacket {
         this.action = ContainerActionType.from(in.readByte());
         this.param = this.action.actionFrom(param, this.slot);
 
-        int changedItemsSize = MinecraftTypes.readVarInt(in);
+        int changedItemsSize = MinecraftTypes.readCount(in, 3);
         this.changedSlots = new Int2ObjectOpenHashMap<>(changedItemsSize);
         for (int i = 0; i < changedItemsSize; i++) {
             int key = in.readShort();

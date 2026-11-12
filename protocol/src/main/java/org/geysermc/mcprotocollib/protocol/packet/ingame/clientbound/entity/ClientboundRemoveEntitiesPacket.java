@@ -14,7 +14,7 @@ public class ClientboundRemoveEntitiesPacket implements MinecraftPacket {
     private final int [] entityIds;
 
     public ClientboundRemoveEntitiesPacket(ByteBuf in) {
-        this.entityIds = new int[MinecraftTypes.readVarInt(in)];
+        this.entityIds = new int[MinecraftTypes.readCount(in, 1)];
         for (int i = 0; i < this.entityIds.length; i++) {
             this.entityIds[i] = MinecraftTypes.readVarInt(in);
         }

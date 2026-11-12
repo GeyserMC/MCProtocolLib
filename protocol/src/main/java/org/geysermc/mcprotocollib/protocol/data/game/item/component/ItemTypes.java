@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -85,7 +86,9 @@ public class ItemTypes {
                 if (input2.readBoolean()) {
                     return new AdventureModePredicate.PropertyMatcher(name, MinecraftTypes.readString(input2), null, null);
                 } else {
-                    return new AdventureModePredicate.PropertyMatcher(name, null, MinecraftTypes.readString(input2), MinecraftTypes.readString(input2));
+                    return new AdventureModePredicate.PropertyMatcher(name, null,
+                        MinecraftTypes.readNullable(input2, MinecraftTypes::readString),
+                        MinecraftTypes.readNullable(input2, MinecraftTypes::readString));
                 }
             });
         });
@@ -100,18 +103,17 @@ public class ItemTypes {
     public static void writeBlockPredicate(ByteBuf buf, AdventureModePredicate.BlockPredicate blockPredicate) {
         MinecraftTypes.writeNullable(buf, blockPredicate.getBlocks(), MinecraftTypes::writeHolderSet);
         MinecraftTypes.writeNullable(buf, blockPredicate.getProperties(), (output, properties) -> {
-            buf.writeBoolean(true);
-            for (AdventureModePredicate.PropertyMatcher matcher : properties) {
-                MinecraftTypes.writeString(buf, matcher.getName());
+            MinecraftTypes.writeList(output, properties, (target, matcher) -> {
+                MinecraftTypes.writeString(target, matcher.getName());
                 if (matcher.getValue() != null) {
-                    buf.writeBoolean(true);
-                    MinecraftTypes.writeString(buf, matcher.getValue());
+                    target.writeBoolean(true);
+                    MinecraftTypes.writeString(target, matcher.getValue());
                 } else {
-                    buf.writeBoolean(false);
-                    MinecraftTypes.writeString(buf, Objects.requireNonNull(matcher.getMinValue(), "PropertyMatcher must have a min value if not exact"));
-                    MinecraftTypes.writeString(buf, Objects.requireNonNull(matcher.getMaxValue(), "PropertyMatcher must have a max value if not exact"));
+                    target.writeBoolean(false);
+                    MinecraftTypes.writeNullable(target, matcher.getMinValue(), MinecraftTypes::writeString);
+                    MinecraftTypes.writeNullable(target, matcher.getMaxValue(), MinecraftTypes::writeString);
                 }
-            }
+            });
         });
 
         MinecraftTypes.writeNullable(buf, blockPredicate.getNbt(), MinecraftTypes::writeAnyTag);
@@ -121,7 +123,7 @@ public class ItemTypes {
 
     public static DataComponentMatchers readDataComponentMatchers(ByteBuf buf) {
         Map<DataComponentType<?>, DataComponent<?, ?>> exactMatchers = MinecraftTypes.readExactComponentMatcher(buf);
-        Map<DataComponentMatchers.PredicateType, NbtMap> partialMatchers = new HashMap<>();
+        Map<DataComponentMatchers.PredicateType, Object> partialMatchers = new HashMap<>();
 
         int count = MinecraftTypes.readVarInt(buf);
         if (count > 64) {
@@ -130,7 +132,7 @@ public class ItemTypes {
 
         for (int i = 0; i < count; i++) {
             DataComponentMatchers.PredicateType type = new DataComponentMatchers.PredicateType(buf.readBoolean(), MinecraftTypes.readVarInt(buf));
-            partialMatchers.put(type, MinecraftTypes.readCompoundTagOrThrow(buf));
+            partialMatchers.put(type, MinecraftTypes.readAnyTagOrThrow(buf));
         }
 
         return new DataComponentMatchers(exactMatchers, partialMatchers);
@@ -145,7 +147,7 @@ public class ItemTypes {
         }
 
         MinecraftTypes.writeVarInt(buf, count);
-        for (Map.Entry<DataComponentMatchers.PredicateType, NbtMap> entry : matchers.partialMatchers().entrySet()) {
+        for (Map.Entry<DataComponentMatchers.PredicateType, ?> entry : matchers.partialMatchers().entrySet()) {
             buf.writeBoolean(entry.getKey().isPredicate());
             MinecraftTypes.writeVarInt(buf, entry.getKey().id());
             MinecraftTypes.writeAnyTag(buf, entry.getValue());
@@ -412,7 +414,7 @@ public class ItemTypes {
 
     public static PotionContents readPotionContents(ByteBuf buf) {
         int potionId = buf.readBoolean() ? MinecraftTypes.readVarInt(buf) : -1;
-        int customColor = buf.readBoolean() ? buf.readInt() : -1;
+        OptionalInt customColor = buf.readBoolean() ? OptionalInt.of(buf.readInt()) : OptionalInt.empty();
 
         List<MobEffectInstance> customEffects = MinecraftTypes.readList(buf, ItemTypes::readEffectInstance);
         String customName = MinecraftTypes.readNullable(buf, MinecraftTypes::readString);
@@ -427,7 +429,7 @@ public class ItemTypes {
             MinecraftTypes.writeVarInt(buf, contents.getPotionId());
         }
 
-        if (contents.getCustomColor() < 0) {
+        if (!contents.hasCustomColor()) {
             buf.writeBoolean(false);
         } else {
             buf.writeBoolean(true);
@@ -701,12 +703,12 @@ public class ItemTypes {
     public static Fireworks.FireworkExplosion readFireworkExplosion(ByteBuf buf) {
         int shapeId = MinecraftTypes.readVarInt(buf);
 
-        int[] colors = new int[MinecraftTypes.readVarInt(buf)];
+        int[] colors = new int[MinecraftTypes.readCount(buf, Integer.BYTES)];
         for (int i = 0; i < colors.length; i++) {
             colors[i] = buf.readInt();
         }
 
-        int[] fadeColors = new int[MinecraftTypes.readVarInt(buf)];
+        int[] fadeColors = new int[MinecraftTypes.readCount(buf, Integer.BYTES)];
         for (int i = 0; i < fadeColors.length; i++) {
             fadeColors[i] = buf.readInt();
         }

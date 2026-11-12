@@ -238,7 +238,15 @@ public class MinecraftTypes {
     }
 
     public static void writeString(ByteBuf buf, String value) {
-        MinecraftTypes.writeVarInt(buf, ByteBufUtil.utf8Bytes(value));
+        MinecraftTypes.writeString(buf, value, Short.MAX_VALUE);
+    }
+
+    public static void writeString(ByteBuf buf, String value, int maxLength) {
+        int length = ByteBufUtil.utf8Bytes(value);
+        if (value.length() > maxLength || length > (long) maxLength * 3) {
+            throw new IllegalArgumentException("String is longer than maximum allowed length: " + maxLength);
+        }
+        MinecraftTypes.writeVarInt(buf, length);
         buf.writeCharSequence(value, StandardCharsets.UTF_8);
     }
 
@@ -260,23 +268,23 @@ public class MinecraftTypes {
     }
 
     public static <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader) {
-        return readList(buf, reader, true);
+        return readList(buf, reader, Integer.MAX_VALUE);
     }
 
     public static <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader, boolean isNew) {
+        return readList(buf, reader);
+    }
+
+    public static <T> List<T> readList(ByteBuf buf, Function<ByteBuf, T> reader, int maxSize) {
         int size = MinecraftTypes.readVarInt(buf);
-        List<T> list;
-        if (isNew) {
-            list = new ArrayList<>(Math.min(size, 65536));
-        } else {
-            list = new ArrayList<>(size);
+        if (size < 0 || size > maxSize) {
+            throw new IllegalArgumentException("List size exceeds maximum allowed: " + maxSize);
         }
-
+        List<T> values = new ArrayList<>(Math.min(size, 65536));
         for (int i = 0; i < size; i++) {
-            list.add(reader.apply(buf));
+            values.add(reader.apply(buf));
         }
-
-        return list;
+        return values;
     }
 
     public static <T> void writeList(ByteBuf buf, List<T> value, BiConsumer<ByteBuf, T> writer) {
@@ -288,11 +296,22 @@ public class MinecraftTypes {
 
     public static <T extends @Nullable Object> T readLengthPrefixed(ByteBuf buf, int maxLength, Function<ByteBuf, T> reader) {
         int length = MinecraftTypes.readVarInt(buf);
-        if (length > maxLength) {
+        if (length < 0 || length > maxLength || length > buf.readableBytes()) {
             throw new IllegalArgumentException("Buffer is longer than maximum allowed length");
         } else {
-            return reader.apply(buf);
+            return reader.apply(buf.readSlice(length));
         }
+    }
+
+    public static int readCount(ByteBuf buf, int minimumBytesPerElement) {
+        if (minimumBytesPerElement <= 0) {
+            throw new IllegalArgumentException("Minimum element size must be positive");
+        }
+        int count = MinecraftTypes.readVarInt(buf);
+        if (count < 0 || count > buf.readableBytes() / minimumBytesPerElement) {
+            throw new IllegalArgumentException("Array size exceeds available input: " + count);
+        }
+        return count;
     }
 
     public static <T extends @Nullable Object> void writeLengthPrefixed(ByteBuf buf, int maxLength, T value, BiConsumer<ByteBuf, T> writer) {
@@ -377,6 +396,9 @@ public class MinecraftTypes {
 
     public static byte[] readByteArray(ByteBuf buf, ToIntFunction<ByteBuf> reader) {
         int length = reader.applyAsInt(buf);
+        if (length < 0 || length > buf.readableBytes()) {
+            throw new IllegalArgumentException("Byte array size exceeds available input: " + length);
+        }
         byte[] bytes = new byte[length];
         buf.readBytes(bytes);
         return bytes;
@@ -397,8 +419,8 @@ public class MinecraftTypes {
 
     public static long[] readLongArray(ByteBuf buf, ToIntFunction<ByteBuf> reader) {
         int length = reader.applyAsInt(buf);
-        if (length < 0) {
-            throw new IllegalArgumentException("Array cannot have length less than 0.");
+        if (length < 0 || length > buf.readableBytes() / Long.BYTES) {
+            throw new IllegalArgumentException("Long array size exceeds available input: " + length);
         }
 
         long[] l = new long[length];
@@ -1069,6 +1091,18 @@ public class MinecraftTypes {
 
     public static void writeParticleData(ByteBuf buf, ParticleType type, @Nullable ParticleData data) {
         switch (type) {
+            case GEYSER, GEYSER_PLUME -> buf.writeInt(((GeyserParticleData) Objects.requireNonNull(data)).waterBlocks());
+            case GEYSER_BASE, GEYSER_POOF -> {
+                GeyserBaseParticleData geyser = (GeyserBaseParticleData) Objects.requireNonNull(data);
+                buf.writeInt(geyser.waterBlocks());
+                buf.writeFloat(geyser.burstImpulseBase());
+            }
+            case DRAGON_BREATH -> buf.writeFloat(((PowerParticleData) Objects.requireNonNull(data)).getPower());
+            case EFFECT, INSTANT_EFFECT -> {
+                SpellParticleData spell = (SpellParticleData) Objects.requireNonNull(data);
+                buf.writeInt(spell.getColor());
+                buf.writeFloat(spell.getPower());
+            }
             case BLOCK, BLOCK_MARKER, FALLING_DUST, DUST_PILLAR, BLOCK_CRUMBLE -> {
                 BlockParticleData blockData = (BlockParticleData) Objects.requireNonNull(data);
                 MinecraftTypes.writeVarInt(buf, blockData.getBlockState());
@@ -1084,7 +1118,7 @@ public class MinecraftTypes {
                 buf.writeInt(dustData.getNewColor());
                 buf.writeFloat(dustData.getScale());
             }
-            case ENTITY_EFFECT -> {
+            case ENTITY_EFFECT, TINTED_LEAVES, FLASH -> {
                 ColorParticleData entityEffectData = (ColorParticleData) Objects.requireNonNull(data);
                 buf.writeInt(entityEffectData.getColor());
             }
@@ -1152,10 +1186,10 @@ public class MinecraftTypes {
     public static ChatTypeDecoration readChatTypeDecoration(ByteBuf buf) {
         String translationKey = MinecraftTypes.readString(buf);
 
-        int size = MinecraftTypes.readVarInt(buf);
+        int size = MinecraftTypes.readCount(buf, 1);
         List<ChatTypeDecoration.Parameter> parameters = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            parameters.add(ChatTypeDecoration.Parameter.VALUES[MinecraftTypes.readVarInt(buf)]);
+            parameters.add(ChatTypeDecoration.Parameter.fromId(MinecraftTypes.readVarInt(buf)));
         }
 
         NbtMap style = MinecraftTypes.readCompoundTagOrThrow(buf);
@@ -1167,7 +1201,7 @@ public class MinecraftTypes {
 
         MinecraftTypes.writeVarInt(buf, decoration.parameters().size());
         for (ChatTypeDecoration.Parameter parameter : decoration.parameters()) {
-            MinecraftTypes.writeVarInt(buf, parameter.ordinal());
+            MinecraftTypes.writeVarInt(buf, parameter.getId());
         }
 
         MinecraftTypes.writeAnyTag(buf, decoration.style());
@@ -1251,13 +1285,13 @@ public class MinecraftTypes {
         BitSet emptySkyYMask = BitSet.valueOf(MinecraftTypes.readByteArray(buf));
         BitSet emptyBlockYMask = BitSet.valueOf(MinecraftTypes.readByteArray(buf));
 
-        int skyUpdateSize = MinecraftTypes.readVarInt(buf);
+        int skyUpdateSize = MinecraftTypes.readCount(buf, 1);
         List<byte[]> skyUpdates = new ArrayList<>(skyUpdateSize);
         for (int i = 0; i < skyUpdateSize; i++) {
             skyUpdates.add(MinecraftTypes.readByteArray(buf));
         }
 
-        int blockUpdateSize = MinecraftTypes.readVarInt(buf);
+        int blockUpdateSize = MinecraftTypes.readCount(buf, 1);
         List<byte[]> blockUpdates = new ArrayList<>(blockUpdateSize);
         for (int i = 0; i < blockUpdateSize; i++) {
             blockUpdates.add(MinecraftTypes.readByteArray(buf));
@@ -1564,11 +1598,11 @@ public class MinecraftTypes {
                 List<DebugPathInfo.Node> nodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode, false);
 
                 List<DebugPathInfo.Node> targetNodes = MinecraftTypes.readList(buf, MinecraftTypes::readDebugPathNode);
-                DebugPathInfo.Node[] openSet = new DebugPathInfo.Node[MinecraftTypes.readVarInt(buf)];
+                DebugPathInfo.Node[] openSet = new DebugPathInfo.Node[MinecraftTypes.readCount(buf, 1)];
                 for (int i = 0; i < openSet.length; i++) {
                     openSet[i] = MinecraftTypes.readDebugPathNode(buf);
                 }
-                DebugPathInfo.Node[] closedSet = new DebugPathInfo.Node[MinecraftTypes.readVarInt(buf)];
+                DebugPathInfo.Node[] closedSet = new DebugPathInfo.Node[MinecraftTypes.readCount(buf, 1)];
                 for (int i = 0; i < closedSet.length; i++) {
                     closedSet[i] = MinecraftTypes.readDebugPathNode(buf);
                 }
@@ -1609,7 +1643,7 @@ public class MinecraftTypes {
             }
             case GAME_EVENT_LISTENERS -> info = new DebugGameEventListenerInfo(MinecraftTypes.readVarInt(buf));
             case NEIGHBOR_UPDATES -> info = new DebugNeighborUpdateInfo(MinecraftTypes.readPosition(buf));
-            case GAME_EVENTS -> info = new DebugGameEventInfo(MinecraftTypes.readVarInt(buf), MinecraftTypes.readPosition(buf));
+            case GAME_EVENTS -> info = new DebugGameEventInfo(MinecraftTypes.readVarInt(buf), Vector3d.from(buf.readDouble(), buf.readDouble(), buf.readDouble()));
             default -> info = null;
         }
         return info;
@@ -1724,7 +1758,9 @@ public class MinecraftTypes {
                 DebugGameEventInfo gameEventInfo = (DebugGameEventInfo) debugInfo;
 
                 MinecraftTypes.writeVarInt(buf, gameEventInfo.eventId());
-                MinecraftTypes.writePosition(buf, gameEventInfo.pos());
+                buf.writeDouble(gameEventInfo.pos().getX());
+                buf.writeDouble(gameEventInfo.pos().getY());
+                buf.writeDouble(gameEventInfo.pos().getZ());
             }
         }
     }

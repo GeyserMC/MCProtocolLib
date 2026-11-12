@@ -138,7 +138,7 @@ public class ClientboundSetPlayerTeamPacket implements MinecraftPacket {
         }
 
         if (this.action == TeamAction.CREATE || this.action == TeamAction.ADD_PLAYER || this.action == TeamAction.REMOVE_PLAYER) {
-            this.players = new String[MinecraftTypes.readVarInt(in)];
+            this.players = new String[MinecraftTypes.readCount(in, 1)];
             for (int index = 0; index < this.players.length; index++) {
                 this.players[index] = MinecraftTypes.readString(in);
             }

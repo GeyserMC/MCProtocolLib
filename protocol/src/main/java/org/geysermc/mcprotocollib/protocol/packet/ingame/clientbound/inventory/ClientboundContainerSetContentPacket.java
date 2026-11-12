@@ -21,7 +21,7 @@ public class ClientboundContainerSetContentPacket implements MinecraftPacket {
     public ClientboundContainerSetContentPacket(ByteBuf in) {
         this.containerId = MinecraftTypes.readVarInt(in);
         this.stateId = MinecraftTypes.readVarInt(in);
-        this.items = new ItemStack[MinecraftTypes.readVarInt(in)];
+        this.items = new ItemStack[MinecraftTypes.readCount(in, 1)];
         for (int index = 0; index < this.items.length; index++) {
             this.items[index] = MinecraftTypes.readOptionalItemStack(in);
         }

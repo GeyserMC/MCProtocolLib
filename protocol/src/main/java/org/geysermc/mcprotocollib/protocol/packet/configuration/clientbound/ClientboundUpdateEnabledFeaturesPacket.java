@@ -15,7 +15,7 @@ public class ClientboundUpdateEnabledFeaturesPacket implements MinecraftPacket {
     private final Key[] features;
 
     public ClientboundUpdateEnabledFeaturesPacket(ByteBuf in) {
-        this.features = new Key[MinecraftTypes.readVarInt(in)];
+        this.features = new Key[MinecraftTypes.readCount(in, 1)];
         for (int i = 0; i < this.features.length; i++) {
             this.features[i] = MinecraftTypes.readResourceLocation(in);
         }

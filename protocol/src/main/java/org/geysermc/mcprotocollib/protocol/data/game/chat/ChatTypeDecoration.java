@@ -13,9 +13,27 @@ public interface ChatTypeDecoration {
     NbtMap style();
 
     enum Parameter {
-        CONTENT,
-        SENDER,
-        TARGET;
+        CONTENT(2),
+        SENDER(0),
+        TARGET(1);
+
+        private final int id;
+
+        Parameter(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return this.id;
+        }
+
+        public static Parameter fromId(int id) {
+            return switch (id) {
+                case 1 -> TARGET;
+                case 2 -> CONTENT;
+                default -> SENDER;
+            };
+        }
 
         public static final Parameter[] VALUES = values();
     }

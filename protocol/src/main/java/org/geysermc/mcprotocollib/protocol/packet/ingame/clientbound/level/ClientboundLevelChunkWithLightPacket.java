@@ -40,7 +40,7 @@ public class ClientboundLevelChunkWithLightPacket implements MinecraftPacket {
 
         this.chunkData = MinecraftTypes.readByteArray(in);
 
-        this.blockEntities = new BlockEntityInfo[MinecraftTypes.readVarInt(in)];
+        this.blockEntities = new BlockEntityInfo[MinecraftTypes.readCount(in, 1)];
         for (int i = 0; i < this.blockEntities.length; i++) {
             byte xz = in.readByte();
             int blockEntityX = (xz >> 4) & 15;

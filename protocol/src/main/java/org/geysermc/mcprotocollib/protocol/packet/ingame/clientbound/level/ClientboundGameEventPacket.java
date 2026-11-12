@@ -58,6 +58,8 @@ public class ClientboundGameEventPacket implements MinecraftPacket {
             value = ((DemoMessageValue) this.value).getId();
         } else if (this.value instanceof Enum<?>) {
             value = ((Enum<?>) this.value).ordinal();
+        } else if (this.value instanceof ElderGuardianEffectValue) {
+            value = ((ElderGuardianEffectValue) this.value).isAudible() ? 1 : 0;
         } else if (this.value instanceof RainStrengthValue) {
             value = ((RainStrengthValue) this.value).getStrength();
         } else if (this.value instanceof ThunderStrengthValue) {

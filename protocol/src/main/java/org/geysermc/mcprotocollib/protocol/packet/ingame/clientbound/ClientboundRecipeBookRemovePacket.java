@@ -14,7 +14,7 @@ public class ClientboundRecipeBookRemovePacket implements MinecraftPacket {
     private final int[] recipes;
 
     public ClientboundRecipeBookRemovePacket(ByteBuf in) {
-        int recipeCount = MinecraftTypes.readVarInt(in);
+        int recipeCount = MinecraftTypes.readCount(in, 1);
         int[] recipes = new int[recipeCount];
         for (int index = 0; index < recipeCount; index++) {
             recipes[index] = MinecraftTypes.readVarInt(in);

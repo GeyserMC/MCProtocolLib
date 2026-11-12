@@ -32,7 +32,7 @@ public class ServerboundClientInformationPacket implements MinecraftPacket {
     private final ParticleStatus particleStatus;
 
     public ServerboundClientInformationPacket(ByteBuf in) {
-        this.locale = MinecraftTypes.readString(in);
+        this.locale = MinecraftTypes.readString(in, 16);
         this.renderDistance = in.readByte();
         this.chatVisibility = ChatVisibility.from(MinecraftTypes.readVarInt(in));
         this.useChatColors = in.readBoolean();

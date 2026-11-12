@@ -35,7 +35,7 @@ public class ClientboundSectionBlocksUpdatePacket implements MinecraftPacket {
         this.chunkX = (int) (chunkPosition >> 42);
         this.chunkY = (int) (chunkPosition << 44 >> 44);
         this.chunkZ = (int) (chunkPosition << 22 >> 42);
-        this.entries = new BlockChangeEntry[MinecraftTypes.readVarInt(in)];
+        this.entries = new BlockChangeEntry[MinecraftTypes.readCount(in, 1)];
         for (int index = 0; index < this.entries.length; index++) {
             long blockData = MinecraftTypes.readVarLong(in);
             short position = (short) (blockData & 0xFFFL);

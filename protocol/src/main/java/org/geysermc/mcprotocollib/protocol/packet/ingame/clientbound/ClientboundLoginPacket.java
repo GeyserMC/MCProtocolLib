@@ -29,7 +29,7 @@ public class ClientboundLoginPacket implements MinecraftPacket {
     public ClientboundLoginPacket(ByteBuf in) {
         this.entityId = in.readInt();
         this.hardcore = in.readBoolean();
-        int worldCount = MinecraftTypes.readVarInt(in);
+        int worldCount = MinecraftTypes.readCount(in, 1);
         this.worldNames = new Key[worldCount];
         for (int i = 0; i < worldCount; i++) {
             this.worldNames[i] = MinecraftTypes.readResourceLocation(in);

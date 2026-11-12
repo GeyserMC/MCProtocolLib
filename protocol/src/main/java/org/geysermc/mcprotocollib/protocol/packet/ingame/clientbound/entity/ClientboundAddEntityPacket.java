@@ -106,6 +106,8 @@ public class ClientboundAddEntityPacket implements MinecraftPacket {
             data = ((FallingBlockData) this.data).getId() | ((FallingBlockData) this.data).getMetadata() << 16;
         } else if (this.data instanceof ProjectileData) {
             data = ((ProjectileData) this.data).getOwnerId();
+        } else if (this.data instanceof WardenData) {
+            data = ((WardenData) this.data).isEmerging() ? 1 : 0;
         } else if (this.data instanceof GenericObjectData) {
             data = ((GenericObjectData) this.data).getValue();
         }

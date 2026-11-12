@@ -26,7 +26,7 @@ public class ClientboundUpdateRecipesPacket implements MinecraftPacket {
         int itemCount = MinecraftTypes.readVarInt(in);
         for (int i = 0; i < itemCount; i++) {
             Key propertySetType = MinecraftTypes.readResourceLocation(in);
-            int[] propertySet = new int[MinecraftTypes.readVarInt(in)];
+            int[] propertySet = new int[MinecraftTypes.readCount(in, 1)];
             for (int j = 0; j < propertySet.length; j++) {
                 propertySet[j] = MinecraftTypes.readVarInt(in);
             }

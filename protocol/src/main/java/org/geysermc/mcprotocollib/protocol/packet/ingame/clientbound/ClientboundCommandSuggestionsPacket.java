@@ -34,7 +34,7 @@ public class ClientboundCommandSuggestionsPacket implements MinecraftPacket {
         this.transactionId = MinecraftTypes.readVarInt(in);
         this.start = MinecraftTypes.readVarInt(in);
         this.length = MinecraftTypes.readVarInt(in);
-        this.matches = new String[MinecraftTypes.readVarInt(in)];
+        this.matches = new String[MinecraftTypes.readCount(in, 1)];
         this.tooltips = new Component[this.matches.length];
         for (int index = 0; index < this.matches.length; index++) {
             this.matches[index] = MinecraftTypes.readString(in);

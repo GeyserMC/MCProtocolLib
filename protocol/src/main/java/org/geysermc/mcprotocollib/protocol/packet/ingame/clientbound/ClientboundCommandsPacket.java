@@ -44,14 +44,14 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
     private final int firstNodeIndex;
 
     public ClientboundCommandsPacket(ByteBuf in) {
-        this.nodes = new CommandNode[MinecraftTypes.readVarInt(in)];
+        this.nodes = new CommandNode[MinecraftTypes.readCount(in, 1)];
         for (int i = 0; i < this.nodes.length; i++) {
             byte flags = in.readByte();
             CommandType type = CommandType.from(flags & FLAG_TYPE_MASK);
             boolean executable = (flags & FLAG_EXECUTABLE) != 0;
             boolean restricted = (flags & FLAG_RESTRICTED) != 0;
 
-            int[] children = new int[MinecraftTypes.readVarInt(in)];
+            int[] children = new int[MinecraftTypes.readCount(in, 1)];
             for (int j = 0; j < children.length; j++) {
                 children[j] = MinecraftTypes.readVarInt(in);
             }
@@ -192,7 +192,7 @@ public class ClientboundCommandsPacket implements MinecraftPacket {
 
             if (node.getType() == CommandType.ARGUMENT) {
                 MinecraftTypes.writeVarInt(out, Objects.requireNonNull(node.getParser(), "node must have a parser if ARGUMENT").ordinal());
-                CommandProperties nodeProperties = Objects.requireNonNull(node.getProperties(), "node must have properties if ARGUMENT");
+                CommandProperties nodeProperties = node.getProperties();
                 switch (node.getParser()) {
                     case DOUBLE -> {
                         DoubleProperties properties = (DoubleProperties) nodeProperties;

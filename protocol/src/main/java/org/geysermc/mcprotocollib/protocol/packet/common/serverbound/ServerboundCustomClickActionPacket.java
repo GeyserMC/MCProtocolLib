@@ -22,14 +22,16 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ServerboundCustomClickActionPacket implements MinecraftPacket {
     private final Key id;
-    private final @Nullable NbtMap payload;
+    private final @Nullable Object payload;
+
+    public ServerboundCustomClickActionPacket(Key id, @Nullable NbtMap payload) {
+        this(id, (Object) payload);
+    }
 
     public ServerboundCustomClickActionPacket(ByteBuf in) {
         this.id = MinecraftTypes.readResourceLocation(in);
 
         this.payload = MinecraftTypes.readLengthPrefixed(in, 65536, buf -> {
-            if (!buf.readBoolean()) return null;
-
             Object tag;
             try {
                 ByteBufInputStream input = new ByteBufInputStream(buf);
@@ -40,22 +42,13 @@ public class ServerboundCustomClickActionPacket implements MinecraftPacket {
                 } else {
                     NbtType<?> type = NbtType.byId(typeId);
 
-                    tag = new NBTInputStream(input).readValue(type, 16);
+                    tag = new NBTInputStream(input, 32768L).readValue(type, 16);
                 }
             } catch (IOException e) {
                 throw new IllegalArgumentException(e);
             }
 
-            if (tag == null) {
-                return null;
-            }
-
-            Class<NbtMap> tagClass = NbtType.COMPOUND.getTagClass();
-            if (!tagClass.isInstance(tag)) {
-                throw new IllegalArgumentException("Expected tag of type " + tagClass.getName() + " but got " + tag.getClass().getName());
-            }
-
-            return tagClass.cast(tag);
+            return tag;
         });
     }
 
