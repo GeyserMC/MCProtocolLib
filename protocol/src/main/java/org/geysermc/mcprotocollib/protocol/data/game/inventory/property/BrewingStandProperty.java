@@ -5,10 +5,26 @@ package org.geysermc.mcprotocollib.protocol.data.game.inventory.property;
  */
 public enum BrewingStandProperty implements ContainerProperty {
     /**
-     * Time remaining for potions to finish brewing.
-     * Usually a value between 0 (done) and 400 (just started).
+     * Ticks remaining until the potions finish brewing.
+     * Counts down from {@link #TOTAL_BREW_TIME} to 0.
      */
-    BREW_TIME;
+    BREW_TIME,
+
+    /**
+     * Brewing operations left from the current fuel.
+     */
+    FUEL_USES,
+
+    /**
+     * Ticks the current brewing operation takes in total.
+     * Usually 400, or less when the brewing stand brews faster.
+     */
+    TOTAL_BREW_TIME,
+
+    /**
+     * Brewing operations the current fuel provided in total.
+     */
+    TOTAL_FUEL_USES;
 
     private static final BrewingStandProperty[] VALUES = values();
 

@@ -57,6 +57,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.debug.DebugVillageSectionsI
 import org.geysermc.mcprotocollib.protocol.data.game.debug.DedicatedServerTickTimeInfo;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.Effect;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.EntityEvent;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.EntityEventType;
+import org.geysermc.mcprotocollib.protocol.data.game.entity.UnknownEntityEvent;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.attribute.ModifierOperation;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.ArmadilloState;
 import org.geysermc.mcprotocollib.protocol.data.game.entity.metadata.CopperGolemState;
@@ -1317,11 +1319,16 @@ public class MinecraftTypes {
     }
 
     public static EntityEvent readEntityEvent(ByteBuf buf) {
-        return EntityEvent.from(buf.readByte());
+        int id = buf.readByte();
+        EntityEventType type = EntityEventType.from(id);
+        if (type != null) {
+            return type;
+        }
+        return new UnknownEntityEvent(id);
     }
 
     public static void writeEntityEvent(ByteBuf buf, EntityEvent event) {
-        buf.writeByte(event.ordinal());
+        buf.writeByte(event.getId());
     }
 
     public static Ingredient readRecipeIngredient(ByteBuf buf) {
