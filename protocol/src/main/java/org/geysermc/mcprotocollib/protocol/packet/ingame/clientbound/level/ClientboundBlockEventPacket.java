@@ -27,6 +27,8 @@ import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.NoteBlock
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.NoteBlockValueType;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PistonValue;
 import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PistonValueType;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PotentSulfurValue;
+import org.geysermc.mcprotocollib.protocol.data.game.level.block.value.PotentSulfurValueType;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +49,7 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
     private static final int SHULKER_BOX_LOWER = 735;
     private static final int SHULKER_BOX_HIGHER = 751;
     private static final int BELL = 938;
+    private static final int POTENT_SULFUR = 1089;
     private static final int COPPER_CHEST_LOWER = 1198;
     private static final int COPPER_CHEST_HIGHER = 1205;
     private static final int DECORATED_POT = 1273;
@@ -87,6 +90,9 @@ public class ClientboundBlockEventPacket implements MinecraftPacket {
             } else if (this.blockId == BELL) {
                 this.type = BellValueType.from(rawType - 1);
                 this.value = new BellValue(Direction.from(Math.abs(rawValue % 6)));
+            } else if (this.blockId == POTENT_SULFUR) {
+                this.type = PotentSulfurValueType.from(rawType);
+                this.value = new PotentSulfurValue();
             } else if (this.blockId == DECORATED_POT) {
                 this.type = DecoratedPotValueType.from(rawType - 1);
                 this.value = new DecoratedPotValue(WobbleStyle.from(Math.abs(rawValue % 2)));
