@@ -5,17 +5,17 @@ package org.geysermc.mcprotocollib.protocol.data.game.inventory.property;
  */
 public enum EnchantmentTableProperty implements ContainerProperty {
     /**
-     * Level of the enchantment in slot 1.
+     * Experience level required for the enchantment in slot 1, or 0 if the slot is empty.
      */
     LEVEL_SLOT_1,
 
     /**
-     * Level of the enchantment in slot 2.
+     * Experience level required for the enchantment in slot 2, or 0 if the slot is empty.
      */
     LEVEL_SLOT_2,
 
     /**
-     * Level of the enchantment in slot 3.
+     * Experience level required for the enchantment in slot 3, or 0 if the slot is empty.
      */
     LEVEL_SLOT_3,
 
@@ -25,64 +25,38 @@ public enum EnchantmentTableProperty implements ContainerProperty {
     XP_SEED,
 
     /**
-     * The enchantment for slot 1.
-     *
-     * @see #getEnchantment(int, int)
+     * Enchantment registry ID shown as the hint for slot 1, or -1 if there is no hint.
      */
     ENCHANTMENT_SLOT_1,
 
     /**
-     * The enchantment for slot 2.
-     *
-     * @see #getEnchantment(int, int)
+     * Enchantment registry ID shown as the hint for slot 2, or -1 if there is no hint.
      */
     ENCHANTMENT_SLOT_2,
 
     /**
-     * The enchantment for slot 3.
-     *
-     * @see #getEnchantment(int, int)
+     * Enchantment registry ID shown as the hint for slot 3, or -1 if there is no hint.
      */
-    ENCHANTMENT_SLOT_3;
+    ENCHANTMENT_SLOT_3,
+
+    /**
+     * Level of the hinted enchantment in slot 1, or -1 if there is no hint.
+     */
+    ENCHANTMENT_LEVEL_SLOT_1,
+
+    /**
+     * Level of the hinted enchantment in slot 2, or -1 if there is no hint.
+     */
+    ENCHANTMENT_LEVEL_SLOT_2,
+
+    /**
+     * Level of the hinted enchantment in slot 3, or -1 if there is no hint.
+     */
+    ENCHANTMENT_LEVEL_SLOT_3;
 
     private static final EnchantmentTableProperty[] VALUES = values();
 
     public static EnchantmentTableProperty from(int id) {
         return VALUES[id];
-    }
-
-    /**
-     * Packs enchantment type and level into one integer as used for the ENCHANTMENT_SLOT_X properties.
-     *
-     * @param type Id of the enchantment
-     * @param level Level of the enchantment
-     * @return Packed value
-     * @see #getEnchantmentType(int)
-     * @see #getEnchantmentLevel(int)
-     */
-    public static int getEnchantment(int type, int level) {
-        return type | level << 8;
-    }
-
-    /**
-     * Unpacks the enchantment type from one integer as used for the ENCHANTMENT_SLOT_X properties.
-     *
-     * @param enchantmentInfo Packed value
-     * @return Id of the enchantment
-     * @see #getEnchantment(int, int)
-     */
-    public static int getEnchantmentType(int enchantmentInfo) {
-        return enchantmentInfo & 0xff;
-    }
-
-    /**
-     * Unpacks the enchantment level from one integer as used for the ENCHANTMENT_SLOT_X properties.
-     *
-     * @param enchantmentInfo Packed value
-     * @return Level of the enchantment
-     * @see #getEnchantment(int, int)
-     */
-    public static int getEnchantmentLevel(int enchantmentInfo) {
-        return enchantmentInfo >> 8;
     }
 }
